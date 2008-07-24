@@ -1,8 +1,0 @@
-CREDITS
-
-[ MUSIC ]
-victory_8-bit.ogg
-	author: NickPerrin
-	source: newgrounds.com
-	link: http://www.newgrounds.com/audio/listen/156161
-

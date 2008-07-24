@@ -6,10 +6,13 @@ EndRem
 
 '______________________________________________________________________________
 'Fonts
-Global consolas_normal_10:TImageFont = LoadImageFont( "fonts/consolas.ttf", 10 )
-Global consolas_normal_12:TImageFont = LoadImageFont( "fonts/consolas.ttf", 12 )
-Global consolas_normal_24:TImageFont = LoadImageFont( "fonts/consolas.ttf", 24 )
-Global consolas_bold_50:TImageFont = LoadImageFont( "fonts/consolas_bold.ttf", 50 )
+Global font_path_prefix$ = "fonts/"
+
+Global consolas_normal_10:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 10 )
+Global consolas_normal_12:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 12 )
+Global consolas_normal_24:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 24 )
+Global consolas_bold_24:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 24 )
+Global consolas_bold_50:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 50 )
 
 '______________________________________________________________________________
 'Sound
@@ -23,8 +26,8 @@ SetChannelVolume( bg_music, 0.5000 )
 '______________________________________________________________________________
 'Images
 AutoImageFlags( FILTEREDIMAGE | MIPMAPPEDIMAGE )
-
 Global image_path_prefix$ = "art/"
+
 Function LoadImage_SetHandle:TImage( path$, x# = 0, y# = 0 )
 	Local img:TImage = LoadImage( image_path_prefix + path )
 	SetImageHandle( img, x, y )

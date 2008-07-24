@@ -15,7 +15,7 @@ Const MODE_ENABLED_FOREVER% = 3
 
 Type EMITTER extends MANAGED_OBJECT
 	
-	Field parent:POINT 'parent point object (optional)
+	Field parent:POINT 'parent object (for position and angle offsets)
 	Field emitter_type% 'emitter type (particle/projectile)
 	Field archetype_index_min% 'particle archetype range - lower bound
 	Field archetype_index_max% 'particle archetype range - upper bound
@@ -34,6 +34,7 @@ Type EMITTER extends MANAGED_OBJECT
 	Field inherit_ang_from_dist_ang% 'setting - whether to set the angle to the already-determined "dist_ang" or a new angle
 	Field inherit_vel_ang_from_ang% 'setting - whether to set the velocity angle to the already-determined "ang" or a new angle
 	Field inherit_acc_ang_from_vel_ang% 'setting - whether to set the acceleration angle to the already-determined "vel_ang" or a new angle
+	Field source_id% '(optional) emitter source (for projectile no_collides)
 	
 	Field offset# 'offset vector magnitude (added to parent's position)
 	Field offset_ang# 'offset vector angle (added to parent's position)
@@ -101,7 +102,7 @@ Type EMITTER extends MANAGED_OBJECT
 	
 	'like the fire() method of the TANK type, this method should be treated like a request.
 	'ie, this method will only emit if it's appropriate.
-	Method emit( source_agent:COMPLEX_AGENT = Null ) '( alignment% = ALIGNMENT_NOT_APPLICABLE )
+	Method emit() '( alignment% = ALIGNMENT_NOT_APPLICABLE )
 		If ready()
 		
 			'create a new object (particle/projectile) and set it up
@@ -110,7 +111,7 @@ Type EMITTER extends MANAGED_OBJECT
 				Case EMITS_PARTICLES
 					emit_particle( Copy_PARTICLE( particle_archetype[index] ))
 				Case EMITS_PROJECTILES
-					emit_projectile( Copy_PROJECTILE( projectile_archetype[index], source_agent:COMPLEX_AGENT ))
+					emit_projectile( Copy_PROJECTILE( projectile_archetype[index], source_id ))
 			End Select
 			
 			'interval
@@ -287,7 +288,7 @@ scale_delta_min# = 0.0, scale_delta_max# = 0.0 )
 	Return em
 End Function
 '______________________________________________________________________________
-Function Copy_EMITTER:EMITTER( other:EMITTER, managed_list:TList = Null, new_parent:POINT = Null )
+Function Copy_EMITTER:EMITTER( other:EMITTER, managed_list:TList = Null, new_parent:POINT = Null, source_id% = NULL_ID )
 	Local em:EMITTER = New EMITTER
 	If other = Null Then Return em
 	
@@ -304,6 +305,7 @@ Function Copy_EMITTER:EMITTER( other:EMITTER, managed_list:TList = Null, new_par
 	em.interval = Rand( em.interval_min, em.interval_max )
 	em.last_enable_ts = now()
 	em.count_min = other.count_min; em.count_max = other.count_max
+	em.source_id = source_id
 	
 	'emitted particle-specific fields
 	em.life_time_min = other.life_time_min; em.life_time_max = other.life_time_max

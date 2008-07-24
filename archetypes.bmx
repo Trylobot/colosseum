@@ -120,7 +120,7 @@ pickup_archetype[ 0] = Archetype_PICKUP( img_pickup_ammo_main_5, AMMO_PICKUP, 5,
 Global turret_archetype:TURRET[ 5]
 
 'turret 0 - tank cannon
-turret_archetype[ 0] = Archetype_TURRET( img_player_tank_turret_base, img_player_tank_turret_barrel, 450, 40, -7, 0 )
+turret_archetype[ 0] = Archetype_TURRET( img_player_tank_turret_base, img_player_tank_turret_barrel, 1.0, 450, 40, -7, 0 )
 	turret_archetype[ 0].projectile_emitter = Copy_EMITTER( projectile_emitter_archetype[ 0] )
 	turret_archetype[ 0].projectile_emitter.attach_to( turret_archetype[ 0], 20, 0, 0, 0, 0, 0, 4.3, 4.7, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0 )
 	turret_archetype[ 0].muzzle_flash_emitter = Copy_EMITTER( particle_emitter_archetype[ 0] )
@@ -131,7 +131,7 @@ turret_archetype[ 0] = Archetype_TURRET( img_player_tank_turret_base, img_player
 	turret_archetype[ 0].ejector_port_emitter.attach_to( turret_archetype[ 0], -3, 3, 0, 0, 0, 0, 0.4, 0.6, 80, 100, -0.005, -0.005, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
 
 'turret 1 - machine gun
-turret_archetype[ 1] = Archetype_TURRET( Null, img_player_mgun_turret, 75, INFINITY, 0, 0 )
+turret_archetype[ 1] = Archetype_TURRET( Null, img_player_mgun_turret, 1.0, 75, INFINITY, 0, 0 )
 	turret_archetype[ 1].projectile_emitter = Copy_EMITTER( projectile_emitter_archetype[ 1] )
 	turret_archetype[ 1].projectile_emitter.attach_to( turret_archetype[ 1], 14, 2, 0, 0, 0, 0, 5.300, 5.700, 0, 0, 0, 0, 0, 0, -3, 3, 0, 0, 0, 0 )
 	turret_archetype[ 1].muzzle_flash_emitter = Copy_EMITTER( particle_emitter_archetype[ 4] )
@@ -142,7 +142,7 @@ turret_archetype[ 1] = Archetype_TURRET( Null, img_player_mgun_turret, 75, INFIN
 	turret_archetype[ 1].ejector_port_emitter.attach_to( turret_archetype[ 1], 8, 2, 0, 0, 0, 0, 0.3, 0.4, 85, 95, -0.004, -0.004, 0, 0, -5, 5, -5, 5, 0, 0 )
 
 'turret 2 - rocket turret
-turret_archetype[ 2] = Archetype_TURRET( Null, img_enemy_stationary_emplacement_1_turret, 5000, INFINITY, 0, 0 )
+turret_archetype[ 2] = Archetype_TURRET( Null, img_enemy_stationary_emplacement_1_turret, 0.8, 4000, INFINITY, 0, 0 )
 	turret_archetype[ 2].projectile_emitter = Copy_EMITTER( projectile_emitter_archetype[ 2] )
 	turret_archetype[ 2].projectile_emitter.attach_to( turret_archetype[ 2], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.05, 0.05, 0, 0, 0, 0, 0, 0, 0, 0 )
 '	turret_archetype[ 2].muzzle_flash_emitter = Copy_EMITTER( particle_emitter_archetype[11] )
@@ -153,7 +153,9 @@ turret_archetype[ 2] = Archetype_TURRET( Null, img_enemy_stationary_emplacement_
 Global enemy_archetype:COMPLEX_AGENT[10]
 
 'enemy 0 - "the box"
-enemy_archetype[ 0] = Archetype_COMPLEX_AGENT( img_box, 50, 100, 200.0, 1.0, 0, 1, 1, 1.2 )
+enemy_archetype[ 0] = Archetype_COMPLEX_AGENT( img_box, 50, 100, 200.0, 0.0, 0, 1, 2.0, 0.0 )
+	enemy_archetype[ 0].forward_trail_emitters[ 0] = Copy_EMITTER( particle_emitter_archetype[10] )
+	enemy_archetype[ 0].forward_trail_emitters[ 0].attach_to( enemy_archetype[ 0], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	enemy_archetype[ 0].rear_trail_emitters[ 0] = Copy_EMITTER( particle_emitter_archetype[10] )
 	enemy_archetype[ 0].rear_trail_emitters[ 0].attach_to( enemy_archetype[ 0], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 
@@ -167,7 +169,7 @@ enemy_archetype[ 1] = Archetype_COMPLEX_AGENT( img_enemy_stationary_emplacement_
 Global player_archetype:COMPLEX_AGENT[ 4]
 
 'player 0 - temporary testing player - tank cannon, machine gun, two tank tread motivators (substituted for with eight individual emitters for now)
-player_archetype[ 0] = Archetype_COMPLEX_AGENT( img_player_tank_chassis, 0, 500, 800.0, 20.0, 2, 2, 8.0, 16.0 )
+player_archetype[ 0] = Archetype_COMPLEX_AGENT( img_player_tank_chassis, 0, 500, 800.0, 40.0, 2, 2, 16.0, 32.0 )
 	player_archetype[ 0].turrets[ 0] = Copy_TURRET( turret_archetype[ 0] ) 'main cannon
 	player_archetype[ 0].turrets[ 0].attach_to( player_archetype[ 0], -5, 0 )
 	player_archetype[ 0].turrets[ 1] = Copy_TURRET( turret_archetype[ 1] ) 'machine gun

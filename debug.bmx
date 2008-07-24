@@ -24,23 +24,23 @@ Function debug()
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
-	For Local c:COMPLEX_AGENT = EachIn friendly_agent_list
-		SetLineWidth( 2 )
-		Local length# = 40
-		SetColor( 127, 64, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.vel_x*length, c.pos_y + c.vel_y*length )
-		SetColor( 64, 127, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.acc_x*length, c.pos_y + c.acc_y*length )
-		SetColor( 64, 64, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + Cos(c.ang)*length, c.pos_y + Sin(c.ang)*length )
-		SetColor( 255, 127, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.driving_force.control_pct*Cos(c.driving_force.direction + c.ang), c.pos_y + length*c.driving_force.control_pct*Sin(c.driving_force.direction + c.ang) )
-		SetColor( 127, 255, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.turning_force.control_pct*Cos(c.ang + 90),                             c.pos_y + length*c.turning_force.control_pct*Sin(c.ang + 90) )
-	Next
-	
 	Local p:COMPLEX_AGENT = player, t:TURRET = p.turrets[0]
 	sx = 4; sy = 4
 	h = 10
 	
-	'debug_drawtext 
+	debug_drawtext( "agents " + friendly_agent_list.Count() + hostile_agent_list.Count() )
 
 
+'	For Local c:COMPLEX_AGENT = EachIn friendly_agent_list
+'		SetLineWidth( 2 )
+'		Local length# = 40
+'		SetColor( 127, 64, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.vel_x*length, c.pos_y + c.vel_y*length )
+'		SetColor( 64, 127, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.acc_x*length, c.pos_y + c.acc_y*length )
+'		SetColor( 64, 64, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + Cos(c.ang)*length, c.pos_y + Sin(c.ang)*length )
+'		SetColor( 255, 127, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.driving_force.control_pct*Cos(c.driving_force.direction + c.ang), c.pos_y + length*c.driving_force.control_pct*Sin(c.driving_force.direction + c.ang) )
+'		SetColor( 127, 255, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.turning_force.control_pct*Cos(c.ang + 90),                             c.pos_y + length*c.turning_force.control_pct*Sin(c.ang + 90) )
+'	Next
+'	
 '	px :+ speed * KeyDown( KEY_RIGHT ) - speed * KeyDown( KEY_LEFT )
 '	py :+ speed * KeyDown( KEY_DOWN ) - speed * KeyDown( KEY_UP )
 '	maus_x = MouseX() - arena_offset

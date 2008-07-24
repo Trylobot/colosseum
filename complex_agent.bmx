@@ -62,15 +62,15 @@ Type COMPLEX_AGENT Extends AGENT
 			t.update()
 		Next
 		'emitters
+		Local diff# = ang_diff( ang, ATan2( vel_y, vel_x ))
+		If      Abs( diff ) < 90  Then enable_only_rear_emitters() ..
+		Else If Abs( diff ) > 270 Then enable_only_forward_emitters() ..
+		Else                           disable_all_emitters()
+		
 		For Local em:EMITTER = EachIn emitter_list
 			em.update()
 			em.emit()
 		Next
-'		Local spd# = Sqr( vel_x*vel_x + vel_y*vel_y )
-'		Local dir# = ATan2( vel_y, vel_x )
-'		If      pct < 0 Then enable_only_rear_emitters() ..
-'		Else If pct > 0 Then enable_only_forward_emitters() ..
-'		Else                 disable_all_emitters()
 	End Method
 	
 	Method drive( pct# )
@@ -80,16 +80,14 @@ Type COMPLEX_AGENT Extends AGENT
 		turning_force.control_pct = pct
 	End Method
 	
-	Method turn_turrets( action%, angular_speed# = 0 )
+	Method turn_turrets( pct# )
 		For Local t:TURRET = EachIn turrets
-			Select action
-				Case ALL_STOP
-					t.ang_vel = 0
-				Case ROTATE_CLOCKWISE_DIRECTION
-					t.ang_vel = angular_speed
-				Case ROTATE_COUNTER_CLOCKWISE_DIRECTION
-					t.ang_vel = -( angular_speed )
-			End Select
+			t.turn( pct )
+		Next
+	End Method
+	Method snap_turrets()
+		For Local t:TURRET = EachIn turrets
+			t.ang = ang
 		Next
 	End Method
 	
@@ -172,8 +170,8 @@ turning_force_magnitude# )
 End Function
 '______________________________________________________________________________
 Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT, political_alignment% = ALIGNMENT_NONE )
+	If other = Null Then Return Null
 	Local c:COMPLEX_AGENT = New COMPLEX_AGENT
-	If other = Null Then Return c
 	
 	'static fields
 	c.img = other.img

@@ -7,36 +7,29 @@ EndRem
 '______________________________________________________________________________
 Type TURRET Extends POINT
 	
-	'Parent
-	Field parent:COMPLEX_AGENT
-	'Image
-	Field img_base:TImage
-	Field img_barrel:TImage
-	'Reloading
+	Field parent:COMPLEX_AGENT 'parental complex agent this turret is attached to
+	Field img_base:TImage 'image to be drawn for the "base" of the turret
+	Field img_barrel:TImage 'image to be drawn for the "barrel" of the turret
+	Field max_ang_vel# 'maximum rotation speed for this turret
+	Field control_pct# '[-1, 1] percent of angular velocity that is being used
 	Field reload_time% 'time required to reload
-	'Ammunition
-	Field max_ammo%
+	Field max_ammo% 'maximum number of rounds in reserve (this should be stored in individual ammo objects?)
 	'Field ammo:AMMUNITION 'ammunition object that controls the fired projectiles' look, muzzle velocity, mass, and damage
-	'Recoil
-	Field recoil_offset#
-	Field recoil_offset_ang#
-	'Emitters
-	Field emitter_list:TList
-	Field projectile_emitter:EMITTER
-	Field muzzle_flash_emitter:EMITTER
-	Field muzzle_smoke_emitter:EMITTER
-	Field ejector_port_emitter:EMITTER
+	Field recoil_offset# 'current distance from local origin due to recoil
+	Field recoil_offset_ang# 'current angle of recoil
+	Field emitter_list:TList 'list of all emitters
+	Field projectile_emitter:EMITTER 'emits this turret's main projectile
+	Field muzzle_flash_emitter:EMITTER 'optional muzzle-flash emitter
+	Field muzzle_smoke_emitter:EMITTER 'optional muzzle-smoke emitter
+	Field ejector_port_emitter:EMITTER 'optional shell-casing ejector port
 
-	'Turret offset (in relation to parent)
-	Field offset#
-	Field offset_ang#
-	'Reloading
-	Field last_reloaded_ts%
-	Field reloading_progress_inverse#
-	Field cur_ammo%
-	'Recoil
-	Field cur_recoil_off_x#
-	Field cur_recoil_off_y#
+	Field offset# 'static offset from parent-agent's handle
+	Field offset_ang# 'angle of static offset
+	Field last_reloaded_ts% 'timestamp of last reload
+	Field reloading_progress_inverse# '(private) used for calculating turret position
+	Field cur_ammo% 'remaining ammunition
+	Field cur_recoil_off_x# '(private) used in calculating recoil's effect on final position
+	Field cur_recoil_off_y# '(private) used in calculating recoil's effect on final position
 
 	Method New()
 		emitter_list = CreateList()
@@ -50,6 +43,11 @@ Type TURRET Extends POINT
 		If img_base <> Null
 			DrawImage( img_base, pos_x, pos_y )
 		End If
+	End Method
+	
+	Method turn( pct# )
+		control_pct = pct
+		ang_vel = control_pct*max_ang_vel
 	End Method
 	
 	Method update()
@@ -112,16 +110,16 @@ Type TURRET Extends POINT
 End Type
 '______________________________________________________________________________
 Function Archetype_TURRET:TURRET( ..
-img_base:TImage, ..
-img_barrel:TImage, ..
+img_base:TImage, img_barrel:TImage, ..
+max_ang_vel#, ..
 reload_time%, ..
 max_ammo%, ..
 recoil_off_x#, recoil_off_y# )
 	Local t:TURRET = New TURRET
 	
 	'static fields
-	t.img_base = img_base
-	t.img_barrel = img_barrel
+	t.img_base = img_base; t.img_barrel = img_barrel
+	t.max_ang_vel = max_ang_vel
 	t.reload_time = reload_time
 	t.max_ammo = max_ammo
 	cartesian_to_polar( recoil_off_x, recoil_off_y, t.recoil_offset, t.recoil_offset_ang )
@@ -138,24 +136,27 @@ recoil_off_x#, recoil_off_y# )
 End Function
 '______________________________________________________________________________
 Function Copy_TURRET:TURRET( other:TURRET, new_parent:COMPLEX_AGENT = Null )
+	If other = Null Then Return Null
 	Local t:TURRET = New TURRET
-	If other = Null Then Return t
 	
 	'static fields
-	t.img_base = other.img_base
-	t.img_barrel = other.img_barrel
+	t.parent = new_parent
+	t.img_base = other.img_base; t.img_barrel = other.img_barrel
+	t.max_ang_vel = other.max_ang_vel
 	t.reload_time = other.reload_time
 	t.max_ammo = other.max_ammo
 	t.recoil_offset = other.recoil_offset
 	t.recoil_offset_ang = other.recoil_offset_ang
 	'emitters
-	If other.projectile_emitter <> Null Then t.projectile_emitter = Copy_EMITTER( other.projectile_emitter, t.emitter_list, t )
+	If other.projectile_emitter <> Null
+		If t.parent <> Null Then t.projectile_emitter = Copy_EMITTER( other.projectile_emitter, t.emitter_list, t, new_parent.id ) ..
+		Else                     t.projectile_emitter = Copy_EMITTER( other.projectile_emitter, t.emitter_list, t )
+	End If
 	If other.muzzle_flash_emitter <> Null Then t.muzzle_flash_emitter = Copy_EMITTER( other.muzzle_flash_emitter, t.emitter_list, t )
 	If other.muzzle_smoke_emitter <> Null Then t.muzzle_smoke_emitter = Copy_EMITTER( other.muzzle_smoke_emitter, t.emitter_list, t )
 	If other.ejector_port_emitter <> Null Then t.ejector_port_emitter = Copy_EMITTER( other.ejector_port_emitter, t.emitter_list, t )
 	
 	'dynamic fields
-	t.parent = new_parent
 	t.offset = other.offset
 	t.offset_ang = other.offset_ang
 	t.last_reloaded_ts = other.last_reloaded_ts

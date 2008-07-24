@@ -5,6 +5,31 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Type MANAGED_OBJECT
+	
+	Field link:TLink 'back-reference to the list which contains this object
+	Field id% 'unique identification number
+	
+	Method New()
+		id = get_new_id()
+	End Method
+	
+	Method add_me( list:TList )
+		link = ( list.AddLast( Self ))
+	End Method
+	Method remove_me()
+		If link <> Null
+			link.Remove()
+			link = Null
+		End If
+	End Method
+	
+	Method managed%()
+		Return (link <> Null)
+	End Method
+	
+End Type
+'______________________________________________________________________________
 'clock and random
 SeedRnd MilliSecs()
 Global clock:TTimer = CreateTimer( 1000 )
@@ -13,6 +38,14 @@ Function now%()
 End Function
 Function RandF#( lo#, hi# )
 	Return lo + (hi-lo)*RndFloat()
+End Function
+'______________________________________________________________________________
+Global next_managed_object_id% = 0
+Const NULL_ID% = -1
+
+Function get_new_id%()
+	next_managed_object_id :+ 1
+	Return next_managed_object_id
 End Function
 '______________________________________________________________________________
 'vector functions
@@ -38,29 +71,11 @@ Function polar_to_cartesian( r#, a#, x# Var, y# Var )
 	x = r*Cos( a )
 	y = r*Sin( a )
 End Function
-'______________________________________________________________________________
-Type MANAGED_OBJECT
-	
-	Field link:TLink 'back-reference to the list which contains this object
-	
-	Method New()
-	End Method
-	
-	Method add_me( list:TList )
-		link = ( list.AddLast( Self ))
-	End Method
-	Method remove_me()
-		If link <> Null
-			link.Remove()
-			link = Null
-		End If
-	End Method
-	
-	Method managed%()
-		Return (link <> Null)
-	End Method
-	
-End Type
+Function ang_diff#( a1#, a2# )
+	Local diff# = a1 - a2
+	If diff < 0 Then diff :+ 360
+	Return diff
+End Function
 '______________________________________________________________________________
 Type cVEC 'cartesian 2D vector
 	

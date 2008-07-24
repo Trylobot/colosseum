@@ -9,15 +9,15 @@ Global projectile_list:TList = CreateList()
 
 Type PROJECTILE Extends PHYSICAL_OBJECT
 	
-	Field img:TImage
+	Field img:TImage 'image to be drawn
 	Field explosion_particle_index% 'archetype index of particle to be created on hit
 	Field damage# 'maximum damage dealt by projectile
 	Field radius# 'radius of damage spread
-	Field emitter_list:TList
+	Field emitter_list:TList 'emitter-management list
 	Field trail_emitter:EMITTER 'trail particle emitter
 	Field thrust_emitter:EMITTER 'thrust particle emitter
-	Field source:COMPLEX_AGENT '(private) reference to agent which emitted this projectile; allows for collisions with it to be ignored
-	
+	Field source_id% '(private) reference to entity which emitted this projectile; allows for collisions with it to be ignored
+
 	Method New()
 		force_list = CreateList()
 		emitter_list = CreateList()
@@ -34,8 +34,6 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	End Method
 	
 	Method draw()
-		SetAlpha( 1 )
-		SetScale( 1, 1 )
 		SetRotation( ang )
 		DrawImage( img, pos_x, pos_y )
 	End Method
@@ -67,12 +65,12 @@ radius# )
 	Return p
 End Function
 '______________________________________________________________________________
-Function Copy_PROJECTILE:PROJECTILE( other:PROJECTILE, source:COMPLEX_AGENT )
+Function Copy_PROJECTILE:PROJECTILE( other:PROJECTILE, source_id% )
+	If other = Null Then Return Null
 	Local p:PROJECTILE = New PROJECTILE
-	If other = Null Then Return p
 	
 	'static fields
-	p.source = source
+	p.source_id = source_id
 	p.img = other.img
 	p.explosion_particle_index = other.explosion_particle_index
 	p.mass = other.mass

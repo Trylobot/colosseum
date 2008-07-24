@@ -90,8 +90,8 @@ retain% = False )
 End Function
 '______________________________________________________________________________
 Function Copy_PARTICLE:PARTICLE( other:PARTICLE )
+	If other = Null Then Return Null
 	Local p:PARTICLE = New PARTICLE
-	If other = Null Then Return p
 	
 	'static fields
 	p.img = other.img

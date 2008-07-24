@@ -75,8 +75,8 @@ life_time% )
 End Function
 '______________________________________________________________________________
 Function Copy_PICKUP:PICKUP( other:PICKUP )
+	If other = Null Then Return Null
 	Local p:PICKUP = New PICKUP
-	If other = Null Then Return p
 	
 	'static fields
 	p.img = other.img

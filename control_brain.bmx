@@ -7,14 +7,14 @@ EndRem
 '______________________________________________________________________________
 Global control_brain_list:TList = CreateList()
 
-Const CONTROL_TYPE_HUMAN% = 0
-Const CONTROL_TYPE_AI% = 1
-
-Const INPUT_KEYBOARD% = 0
-Const INPUT_XBOX_360_CONTROLLER% = 1
-
-Const AI_BRAIN_ROCKET_TURRET% = 0
-Const AI_BRAIN_TANK% = 1
+Const UNSPECIFIED% = 0
+Const CONTROL_TYPE_HUMAN% = 1
+Const CONTROL_TYPE_AI% = 2
+Const INPUT_KEYBOARD% = 1
+Const INPUT_XBOX_360_CONTROLLER% = 2
+Const AI_BRAIN_MR_THE_BOX% = 1
+Const AI_BRAIN_ROCKET_TURRET% = 2
+Const AI_BRAIN_TANK% = 3
 
 Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
@@ -38,7 +38,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method prune()
-		If avatar = Null Or avatar.dead()
+		If avatar = Null
+			remove_me()
+		Else If avatar.dead()
+			avatar.remove_me()
 			remove_me()
 		End If
 	End Method
@@ -63,12 +66,12 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					avatar.turn( 0.0 )
 				EndIf
 				'turrets angular velocity
-				If KeyDown( KEY_L ) Or KeyDown( KEY_RIGHT )
-					avatar.turn_turrets( ROTATE_CLOCKWISE_DIRECTION, player_turret_angular_velocity_max  )
-				ElseIf KeyDown( KEY_J ) Or KeyDown( KEY_LEFT )
-					avatar.turn_turrets( ROTATE_COUNTER_CLOCKWISE_DIRECTION, player_turret_angular_velocity_max )
+				If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
+					avatar.turn_turrets( -1.0  )
+				ElseIf KeyDown( KEY_LEFT ) Or KeyDown( KEY_J )
+					avatar.turn_turrets( 1.0 )
 				Else
-					avatar.turn_turrets( ALL_STOP )
+					avatar.turn_turrets( 0.0 )
 				EndIf
 				'turrets fire
 				If KeyDown( KEY_SPACE )
@@ -79,7 +82,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				End If
 					
 			Case INPUT_XBOX_360_CONTROLLER
-				
+				'...?
 			
 		End Select
 	End Method
@@ -87,18 +90,21 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Method AI_control()
 		Select ai_type
 
+			Case AI_BRAIN_MR_THE_BOX
+				avatar.drive( 1.0 )
+				avatar.turn( RandF( -1.0, 1.0 ))
+			
 			Case AI_BRAIN_ROCKET_TURRET
 				If target <> Null
 					'analyze current target
 					ang_to_target = vector_diff_angle( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
 					dist_to_target = vector_diff_length( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
-					Local ang_diff# = avatar.turrets[0].ang - ang_to_target
-					'rotate turret if necessary
-					If      ang_diff > 0 Then avatar.turn_turrets( ROTATE_CLOCKWISE_DIRECTION, turret_angular_velocity_max ) ..
-					Else If ang_diff < 0 Then avatar.turn_turrets( ROTATE_COUNTER_CLOCKWISE_DIRECTION, turret_angular_velocity_max )
-					'if enemy in sight then FIRE
-					If Abs( ang_diff ) < 2.500 Then avatar.fire_turret( 0 )
-					'To Do: add code to check for friendlies in the line of fire.
+					Local diff# = ang_diff( avatar.turrets[0].ang, ang_to_target )
+					'if not pointing at enemy, rotate
+					If      diff > 0 Then avatar.turn_turrets( -1.0 ) ..
+					Else If diff < 0 Then avatar.turn_turrets( 1.0 )
+					'if enemy in sight, fire; To Do: add code to check for friendlies in the line of fire.
+					If Abs( diff ) < 2.500 Then avatar.fire_turret( 0 )
 				Else
 					'no target
 					ang_to_target = avatar.turrets[0].ang
@@ -112,6 +118,23 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 End Type
-
+'______________________________________________________________________________
+Function Create_and_Manage_CONTROL_BRAIN:CONTROL_BRAIN( ..
+avatar:COMPLEX_AGENT, ..
+target:POINT, ..
+control_type%, ..
+input_type%, ..
+ai_type% )
+	Local cb:CONTROL_BRAIN = New CONTROL_BRAIN
+	
+	cb.avatar = avatar
+	cb.target = target
+	cb.control_type = control_type
+	cb.input_type = input_type
+	cb.ai_type = ai_type
+	
+	cb.add_me( control_brain_list )
+	Return cb
+End Function
 
 

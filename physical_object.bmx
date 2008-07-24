@@ -33,13 +33,16 @@ Type PHYSICAL_OBJECT Extends POINT
 			End If
 		Next
 		'friction
-		If Abs( vel_x ) > global_driving_roundoff_threshold Then acc_x :+ frictional_coefficient*( -vel_x ) / mass ..
-		Else acc_x :+ -vel_x
-		If Abs( vel_y ) > global_driving_roundoff_threshold Then acc_y :+ frictional_coefficient*( -vel_y ) / mass ..
-		Else acc_y :+ -vel_y
+'		If Abs( vel_x ) > global_driving_roundoff_threshold Then acc_x :+ frictional_coefficient*( -vel_x ) / mass ..
+'		Else acc_x :+ -vel_x
+'		If Abs( vel_y ) > global_driving_roundoff_threshold Then acc_y :+ frictional_coefficient*( -vel_y ) / mass ..
+'		Else acc_y :+ -vel_y
+		acc_x :+ frictional_coefficient*( -vel_x ) / mass ..
+		acc_y :+ frictional_coefficient*( -vel_y ) / mass ..
 		'angular friction
-		If Abs( ang_vel ) > global_driving_roundoff_threshold Then ang_acc :+ frictional_coefficient*( -ang_vel ) / mass ..
-		Else ang_acc :+ -ang_vel
+'		If Abs( ang_vel ) > global_driving_roundoff_threshold Then ang_acc :+ frictional_coefficient*( -ang_vel ) / mass ..
+'		Else ang_acc :+ -ang_vel
+		ang_acc :+ frictional_coefficient*( -ang_vel ) / mass ..
 		'update point variables
 		Super.update()
 	End Method
