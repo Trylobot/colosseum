@@ -1,0 +1,5 @@
+[COLOSSEUM - KNOWN BUG LIST] (F-fixed, O-in progress)
+	F projectiles do not inherit the velocity of the parent properly.
+	F acceleration of ejector port shell casings does not seem to take the angle of the parent into account (it always accelerates straight up).
+	F control brains for rocket emplacements do not point toward the player.
+	
