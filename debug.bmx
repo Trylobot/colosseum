@@ -58,13 +58,21 @@ Function debug_pathing( message$ = "" )
 					DrawRect( c*cell_size + 1, r*cell_size + 1, cell_size - 2, cell_size - 2 )
 			Next
 		Next
-		If Not potential_paths.is_empty()
-			For Local i% = 0 To potential_paths.cur_size - 1
+		For Local i% = 0 To potential_paths.cur_size - 1 + 4
+			If potential_paths.binary_tree[i] <> Null
 				'draw potential paths
 				SetColor( 212, 255, 212 ); SetAlpha( 0.5 )
 				DrawRect( potential_paths.binary_tree[i].col*cell_size + 1, potential_paths.binary_tree[i].row*cell_size + 1, cell_size - 2, cell_size - 2 )
-			Next
-		End If
+				'potential_paths min_heap binary_tree data structure graph
+				SetColor( 127, 127, 127 ); SetAlpha( 1 )
+				SetImageFont( consolas_normal_12 )
+				DrawText( "[" + i + "] " + potential_paths.binary_tree[i].row + ", " + potential_paths.binary_tree[i].col, arena_w + 5, i*12 )
+			Else
+				SetColor( 64, 64, 64 ); SetAlpha( 1 )
+				SetImageFont( consolas_normal_12 )
+				DrawText( "[" + i + "] null", arena_w + 5, i*12 )
+			End If
+		Next
 		
 		'start and goal
 		If global_start <> Null

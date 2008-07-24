@@ -266,8 +266,8 @@ Function backtrace_path:TList( start:CELL, c:CELL )
 End Function
 '______________________________________________________________________________
 Function init_pathing_system()
-	pathing_grid_h = arena_h / cell_size + 1
-	pathing_grid_w = arena_w / cell_size + 1
+	pathing_grid_h = arena_h / cell_size
+	pathing_grid_w = arena_w / cell_size
 	init_pathing_structures()
 	'init_pathing_grid_from_obstacles()
 End Function
@@ -295,8 +295,8 @@ End Function
 '______________________________________________________________________________
 Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
 	Local cell_list:TList = find_path_given_cells( ..
-		CELL.Create( Floor( start_x/cell_size ), Floor( start_y/cell_size )), ..
-		CELL.Create( Floor( goal_x/cell_size ), Floor( goal_y/cell_size )))
+		CELL.Create( Floor( start_y/cell_size ), Floor( start_x/cell_size )), ..
+		CELL.Create( Floor( goal_y/cell_size ), Floor( goal_x/cell_size )))
 	
 	Local list:TList = CreateList()
 	For Local cursor:CELL = EachIn cell_list

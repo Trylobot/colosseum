@@ -23,7 +23,7 @@ Repeat
 	
 	'debugger
 	If KeyHit( KEY_F4 )
-		find_path( player.pos_x, player.pos_y, MouseX(), MouseY() )
+		find_path( player.pos_x, player.pos_y, MouseX() - arena_offset, MouseY() - arena_offset )
 	End If
 	
 	Flip( 1 ) 'draw to screen with vsync enabled
