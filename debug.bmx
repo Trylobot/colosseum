@@ -25,28 +25,13 @@ Function debug()
 	SetAlpha( 1 )
 	
 	For Local c:COMPLEX_AGENT = EachIn friendly_agent_list
-		SetLineWidth( 1 )
-		SetColor( 255, 127, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.vel_x*20, c.pos_y + c.vel_y*20 )
-		SetColor( 127, 255, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.acc_x*20, c.pos_y + c.vel_y*20 )
-		SetColor( 127, 127, 255 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + 20*Cos(c.ang), c.pos_y + 20*Sin(c.ang) )
 		SetLineWidth( 2 )
-		SetColor( 255, 127, 127 );
-		DrawLine ..
-		( ..
-			c.pos_x, ..
-			c.pos_y, ..
-			c.pos_x + c.driving_force.magnitude_cur*Cos(c.driving_force.direction), ..
-			c.pos_y + c.driving_force.magnitude_cur*Sin(c.driving_force.direction) ..
-		)
-		SetColor( 127, 255, 127 );
-		DrawLine ..
-		( ..
-			c.pos_x, ..
-			c.pos_y, ..
-			c.pos_x + c.turning_force.magnitude_cur, ..
-			c.pos_y ..
-		)
-		
+		Local length# = 40
+		SetColor( 127, 64, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.vel_x*length, c.pos_y + c.vel_y*length )
+		SetColor( 64, 127, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.acc_x*length, c.pos_y + c.acc_y*length )
+		SetColor( 64, 64, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + Cos(c.ang)*length, c.pos_y + Sin(c.ang)*length )
+		SetColor( 255, 127, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.driving_force.control_pct*Cos(c.driving_force.direction + c.ang), c.pos_y + length*c.driving_force.control_pct*Sin(c.driving_force.direction + c.ang) )
+		SetColor( 127, 255, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.turning_force.control_pct*Cos(c.ang + 90),                             c.pos_y + length*c.turning_force.control_pct*Sin(c.ang + 90) )
 	Next
 	
 	Local p:COMPLEX_AGENT = player, t:TURRET = p.turrets[0]

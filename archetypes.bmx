@@ -62,12 +62,14 @@ particle_archetype[ 6] = Archetype_PARTICLE( img_mgun_muzzle_smoke, LAYER_FOREGR
 particle_archetype[ 7] = Archetype_PARTICLE( img_mgun_hit, LAYER_FOREGROUND )
 
 'particles 8 through 12 - tank tread debris tiny
+'ToDo: replace this with a complex particle; 1 frame with 5 variants.
 particle_archetype[ 8] = Archetype_PARTICLE( img_debris_tiny_0, LAYER_BACKGROUND )
 particle_archetype[ 9] = Archetype_PARTICLE( img_debris_tiny_1, LAYER_BACKGROUND )
 particle_archetype[10] = Archetype_PARTICLE( img_debris_tiny_2, LAYER_BACKGROUND )
 particle_archetype[11] = Archetype_PARTICLE( img_debris_tiny_3, LAYER_BACKGROUND )
 particle_archetype[12] = Archetype_PARTICLE( img_debris_tiny_4, LAYER_BACKGROUND )
 'particles 13 through 17 - tank tread trail
+'ToDo: replace this with a complex particle; 1 frame with 5 variants.
 particle_archetype[13] = Archetype_PARTICLE( img_trail_0, LAYER_BACKGROUND, True )
 particle_archetype[14] = Archetype_PARTICLE( img_trail_1, LAYER_BACKGROUND, True )
 particle_archetype[15] = Archetype_PARTICLE( img_trail_2, LAYER_BACKGROUND, True )
@@ -151,12 +153,12 @@ turret_archetype[ 2] = Archetype_TURRET( Null, img_enemy_stationary_emplacement_
 Global enemy_archetype:COMPLEX_AGENT[10]
 
 'enemy 0 - "the box"
-enemy_archetype[ 0] = Archetype_COMPLEX_AGENT( img_box, 100, 200, 1.0, 50, 0, 1, 0.1, 0.01 )
+enemy_archetype[ 0] = Archetype_COMPLEX_AGENT( img_box, 50, 100, 200.0, 1.0, 0, 1, 1, 1.2 )
 	enemy_archetype[ 0].rear_trail_emitters[ 0] = Copy_EMITTER( particle_emitter_archetype[10] )
 	enemy_archetype[ 0].rear_trail_emitters[ 0].attach_to( enemy_archetype[ 0], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 
 'enemy 1 - stationary emplacement 1 (rocket launcher emplacement)
-enemy_archetype[ 1] = Archetype_COMPLEX_AGENT( img_enemy_stationary_emplacement_1_base, 150, 0, 0, 100, 1, 0, 0, 0 )
+enemy_archetype[ 1] = Archetype_COMPLEX_AGENT( img_enemy_stationary_emplacement_1_base, 100, 150, 0, 0, 1, 0, 0, 0 )
 	enemy_archetype[ 1].turrets[ 0] = Copy_TURRET( turret_archetype[ 2] )
 	enemy_archetype[ 1].turrets[ 0].attach_to( enemy_archetype[ 1], 0, 0 )
 
@@ -164,8 +166,8 @@ enemy_archetype[ 1] = Archetype_COMPLEX_AGENT( img_enemy_stationary_emplacement_
 '[ PLAYERS ]
 Global player_archetype:COMPLEX_AGENT[ 4]
 
-'player 0 - temporary testing player - tank cannon, machine gun, two tank tread motivators (substitute with eight emitters for now)
-player_archetype[ 0] = Archetype_COMPLEX_AGENT( img_player_tank_chassis, 500, 8000, 1.0, 0, 2, 2, 0.1, 0.01 )
+'player 0 - temporary testing player - tank cannon, machine gun, two tank tread motivators (substituted for with eight individual emitters for now)
+player_archetype[ 0] = Archetype_COMPLEX_AGENT( img_player_tank_chassis, 0, 500, 800.0, 20.0, 2, 2, 8.0, 16.0 )
 	player_archetype[ 0].turrets[ 0] = Copy_TURRET( turret_archetype[ 0] ) 'main cannon
 	player_archetype[ 0].turrets[ 0].attach_to( player_archetype[ 0], -5, 0 )
 	player_archetype[ 0].turrets[ 1] = Copy_TURRET( turret_archetype[ 1] ) 'machine gun

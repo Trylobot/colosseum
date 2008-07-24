@@ -17,11 +17,9 @@ Type PHYSICAL_OBJECT Extends POINT
 	End Method
 	
 	Method update()
-		
 		'reset acceleration and angular acceleration
 		acc_x = 0; acc_y = 0; ang_acc = 0
-		
-		'update forces; calculate net force and torque
+		'net force and torque
 		For Local f:FORCE = EachIn force_list
 			f.update()
 			If f.managed()
@@ -34,15 +32,16 @@ Type PHYSICAL_OBJECT Extends POINT
 				End Select
 			End If
 		Next
-		
-		'friction is ever-present and calculated based on velocity
-		If vel_x <> 0 Then   acc_x :-   frictional_coefficient*vel_x / mass
-		If vel_y <> 0 Then   acc_y :-   frictional_coefficient*vel_y / mass
-		If ang_vel <> 0 Then ang_acc :- frictional_coefficient*ang_vel / mass
-		
+		'friction
+		If Abs( vel_x ) > global_driving_roundoff_threshold Then acc_x :+ frictional_coefficient*( -vel_x ) / mass ..
+		Else acc_x :+ -vel_x
+		If Abs( vel_y ) > global_driving_roundoff_threshold Then acc_y :+ frictional_coefficient*( -vel_y ) / mass ..
+		Else acc_y :+ -vel_y
+		'angular friction
+		If Abs( ang_vel ) > global_driving_roundoff_threshold Then ang_acc :+ frictional_coefficient*( -ang_vel ) / mass ..
+		Else ang_acc :+ -ang_vel
 		'update point variables
 		Super.update()
-		
 	End Method
 	
 End Type

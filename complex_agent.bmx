@@ -55,6 +55,8 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Method update()
+		'update agent variables
+		Super.update()
 		'turrets
 		For Local t:TURRET = EachIn turrets
 			t.update()
@@ -64,8 +66,11 @@ Type COMPLEX_AGENT Extends AGENT
 			em.update()
 			em.emit()
 		Next
-		'update agent variables
-		Super.update()
+'		Local spd# = Sqr( vel_x*vel_x + vel_y*vel_y )
+'		Local dir# = ATan2( vel_y, vel_x )
+'		If      pct < 0 Then enable_only_rear_emitters() ..
+'		Else If pct > 0 Then enable_only_forward_emitters() ..
+'		Else                 disable_all_emitters()
 	End Method
 	
 	Method drive( pct# )
@@ -129,10 +134,10 @@ End Type
 '______________________________________________________________________________
 Function Archetype_COMPLEX_AGENT:COMPLEX_AGENT( ..
 img:TImage, ..
+cash_value%, ..
 max_health#, ..
 mass#, ..
 frictional_coefficient#, ..
-cash_value%, ..
 turret_count%, ..
 motivator_count%, ..
 driving_force_magnitude#, ..
@@ -143,6 +148,7 @@ turning_force_magnitude# )
 	c.img = img
 	c.max_health = max_health
 	c.mass = mass
+	c.frictional_coefficient = frictional_coefficient
 	c.cash_value = cash_value
 	
 	'dynamic fields
@@ -173,6 +179,7 @@ Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT, political_alignm
 	c.img = other.img
 	c.max_health = other.max_health
 	c.mass = other.mass
+	c.frictional_coefficient = other.frictional_coefficient
 	c.cash_value = other.cash_value
 	
 	'dynamic fields
