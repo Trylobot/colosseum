@@ -4,6 +4,14 @@ Rem
 	author: Tyler W Cole
 EndRem
 
+'Basics
+SetGraphicsDriver D3D7Max2DDriver()
+'SetGraphicsDriver GLGraphicsDriver()
+AppTitle = My.Application.AssemblyInfo
+Graphics( window_w, window_h )
+SetClsColor( 0, 0, 0 )
+SetBlend( ALPHABLEND )
+
 'Settings flags
 Global FLAG_in_menu% = True
 Global FLAG_game_over% = False
@@ -113,7 +121,7 @@ Function respawn_enemies()
 		Next
 		
 		'the brand spankin' new ROCKET TURRET
-		For Local i% = 1 To (2*player_level)
+		For Local i% = 1 To (1*player_level)
 			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 1], True )
 
 			nme.pos_x = Rand( 10, arena_w - 10 )
@@ -278,6 +286,11 @@ Function update_objects()
 				nme.ang = 180 - nme.ang
 			End If
 		Next
+		
+		SetOrigin( arena_offset, arena_offset )
+		SetRotation( 0 )
+		SetAlpha( 1 )
+		SetScale( 1, 1 )
 		'control brains
 		For Local cb:CONTROL_BRAIN = EachIn control_brain_list
 			cb.think_and_act()
@@ -290,6 +303,72 @@ Function update_objects()
 		End If
 		
 	End If
+End Function
+'______________________________________________________________________________
+'Drawing to Screen
+Function draw()
+	
+	If FLAG_in_menu
+		'main menu
+		draw_menu()
+	Else
+	
+		SetOrigin( arena_offset, arena_offset )
+		SetViewport( arena_offset, arena_offset, arena_w + 1, arena_h + 1 )
+		
+		'arena & environment
+		draw_arena()
+		'background generic particles
+		For Local part:PARTICLE = EachIn particle_list_background
+			part.draw()
+		Next
+		
+'#####################################################################
+'#####################################################################
+'debugging
+debug()
+SetOrigin( arena_offset, arena_offset )
+SetRotation( 0 )
+SetAlpha( 1 )
+SetScale( 1, 1 )
+For Local cb:CONTROL_BRAIN = EachIn control_brain_list
+	cb.debug()
+Next
+'#####################################################################
+'#####################################################################
+		
+		'projectiles
+		For Local proj:PROJECTILE = EachIn friendly_projectile_list
+			proj.draw()
+		Next
+		For Local proj:PROJECTILE = EachIn hostile_projectile_list
+			proj.draw()
+		Next
+	
+		'enemies
+		For Local nme:COMPLEX_AGENT = EachIn enemy_list
+			nme.draw()
+		Next
+		'player
+		player.draw()
+		
+		'foreground generic particles
+		For Local part:PARTICLE = EachIn particle_list_foreground
+			part.draw()
+		Next
+		'pickups
+		For Local pkp:PICKUP = EachIn pickup_list
+			pkp.draw()
+		Next
+		
+		SetOrigin( 0, 0 )
+		SetViewport( 0, 0, window_w, window_h )
+		
+		'interface
+		draw_stats_panel()
+		
+	End If
+	
 End Function
 '______________________________________________________________________________
 'Collision Detection and Resolution
@@ -389,72 +468,6 @@ Function collide()
 			
 		Next
 	End If
-End Function
-'______________________________________________________________________________
-'Drawing to Screen
-Function draw()
-	
-	If FLAG_in_menu
-		'main menu
-		draw_menu()
-	Else
-	
-		SetOrigin( arena_offset, arena_offset )
-		SetViewport( arena_offset, arena_offset, arena_w + 1, arena_h + 1 )
-		
-		'arena & environment
-		draw_arena()
-		'background generic particles
-		For Local part:PARTICLE = EachIn particle_list_background
-			part.draw()
-		Next
-		
-'#####################################################################
-'#####################################################################
-'debugging
-debug()
-SetOrigin( arena_offset, arena_offset )
-SetRotation( 0 )
-SetAlpha( 1 )
-SetScale( 1, 1 )
-For Local cb:CONTROL_BRAIN = EachIn control_brain_list
-	cb.debug()
-Next
-'#####################################################################
-'#####################################################################
-		
-		'projectiles
-		For Local proj:PROJECTILE = EachIn friendly_projectile_list
-			proj.draw()
-		Next
-		For Local proj:PROJECTILE = EachIn hostile_projectile_list
-			proj.draw()
-		Next
-	
-		'enemies
-		For Local nme:COMPLEX_AGENT = EachIn enemy_list
-			nme.draw()
-		Next
-		'player
-		player.draw()
-		
-		'foreground generic particles
-		For Local part:PARTICLE = EachIn particle_list_foreground
-			part.draw()
-		Next
-		'pickups
-		For Local pkp:PICKUP = EachIn pickup_list
-			pkp.draw()
-		Next
-		
-		SetOrigin( 0, 0 )
-		SetViewport( 0, 0, window_w, window_h )
-		
-		'interface
-		draw_stats_panel()
-		
-	End If
-	
 End Function
 '______________________________________________________________________________
 Function draw_stats_panel()

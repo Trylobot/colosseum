@@ -4,11 +4,8 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-'##############################################################################
-Graphics( window_w, window_h )
-SetClsColor( 0, 0, 0 )
-SetBlend( ALPHABLEND )
-
+'______________________________________________________________________________
+'MAIN
 Local before% = 0
 Repeat
 	If (now() - before) > (1000/60) '60 physics intervals a second

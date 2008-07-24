@@ -5,28 +5,41 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+'Clock and RNG (Random Number Generator)
+SeedRnd MilliSecs()
+Global clock:TTimer = CreateTimer( 1000 )
+Function now%()
+	Return clock.Ticks()
+End Function
+Function RandF#( lo#, hi# )
+	Return lo + (hi-lo)*RndFloat()
+End Function
+
+'______________________________________________________________________________
 'Conversion
 Function cartesian_to_polar( x#, y#, r# Var, a# Var )
 	r = Sqr( x*x + y*y )
-	If x <> 0
-		a = ATan( y/x )
-		If x < 0 Then a :- 180
-	Else 'x = 0
-		If y > 0 Then a = 90 Else If y < 0 Then a = 90 Else a = 0
-	End If
+	a = ATan2( y, x )
 End Function
-Function polar_to_cartesian( p_dist#, p_ang#, c_x# Var, c_y# Var )
-	'...?
+Function polar_to_cartesian( r#, a#, x# Var, y# Var )
+	x = r*Cos( a )
+	y = r*Sin( a )
 End Function
 '______________________________________________________________________________
-Function angle_between#( ax#, ay#, bx#, by# ) 'returns angle of vector from point 1 to point 2
-	Local dot# = (( ax*bx ) + ( ay*by ))
-	Local ang# = ACos( dot / ( Sqr( ax*ax + ay*ay )*Sqr( bx*bx + by*by )))
-	If dot < 0
-		If ang > 0 Then ang :+ 180 ..
-		Else ang :- 180
-	End If
-	Return ang
+'vector functions
+Function vector_length#( vx#, vy# )
+	Return Sqr( vx*vx + vy*vy )
+End Function
+Function vector_angle#( vx#, vy# )
+	Return ATan2( vy, vx )
+End Function
+Function vector_diff_length#( ax#, ay#, bx#, by# )
+	Local dx# = bx - ax, dy# = by - ay
+	Return Sqr( dx*dx + dy*dy )
+End Function
+Function vector_diff_angle#( ax#, ay#, bx#, by# )
+	Local dx# = bx - ax, dy# = by - ay
+	Return ATan2( dy, dx )
 End Function
 '______________________________________________________________________________
 Type MANAGED_OBJECT
