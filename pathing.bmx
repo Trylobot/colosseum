@@ -166,26 +166,33 @@ Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority que
 		If( min_f( binary_tree[left_c], binary_tree[right_c] ) = binary_tree[left_c] ) Then ..
 		Return left_c Else Return right_c
 	End Method
-	Method swap( i%, j% )
-		Local swap_cell:CELL = binary_tree[i]
-		binary_tree[i] = binary_tree[j]
-		binary_tree[j] = swap_cell
+	Method swap%( i%, j% )
+		If i <> j
+			Local swap_cell:CELL = binary_tree[i]
+			binary_tree[i] = binary_tree[j]
+			binary_tree[j] = swap_cell
+			Return True
+		Else
+			Return False
+		End If
 	End Method
 	Method insert%( i:CELL )
 		If cur_size < max_size 'if not full
 			Local item_i% = cur_size 'new item's index is equal to the current size of the heap
 			Local item_parent_i% = parent_i( item_i ) 'pre-cache parent's index
 			binary_tree[item_i] = i.clone() 'deep-copy the argument
-			While Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] ) 
-				'while the min-heap property is violated...
-				swap( item_i, item_parent_i ) 'swap item with its parent
-				item_i = item_parent_i 'item's new index is its current parent's index
-				item_parent_i = parent_i( item_i ) 'calculate item's new parent's index
-			End While
-			If binary_tree[item_parent_i].eq( binary_tree[item_i] )
-				'new item is not unique; no insertion should take place
-				binary_tree[item_i] = Null 'you wasted our time, user.
-				Return False; 'signal
+			If item_i <> item_parent_i
+				While Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] ) 
+					'while the min-heap property is violated...
+					swap( item_i, item_parent_i ) 'swap item with its parent
+					item_i = item_parent_i 'item's new index is its current parent's index
+					item_parent_i = parent_i( item_i ) 'calculate item's new parent's index
+				End While
+				If binary_tree[item_parent_i].eq( binary_tree[item_i] )
+					'new item is not unique; no insertion should take place
+					binary_tree[item_i] = Null 'you wasted our time, user.
+					Return False; 'signal
+				End If
 			End If
 			cur_size :+ 1 'maintain size-tracking field
 			Return True 'successful insert
@@ -196,17 +203,21 @@ Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority que
 	Method pop_root:CELL()
 		If cur_size > 0 'if not empty
 			Local root:CELL = binary_tree[0] 'save the current root; it's always at [0]
-			binary_tree[0] = binary_tree[cur_size] 'set the root to the last element in the heap
-			binary_tree[cur_size] = Null 'remove the reference at end of the heap to the new root
-			cur_size :- 1 'maintain size-tracking field
-			Local item_i% = 0 'index is root index
-			Local child_i% = smallest_child_i( item_i ) 'get the smaller of two children
-			While Not f_less_than( binary_tree[item_i], binary_tree[child_i] ) 
-				'while the heap property is being violated..
-				swap( item_i, child_i ) 'swap item with its smallest child
-				item_i = child_i 'set item to its current smallest child
-				child_i = smallest_child_i( item_i ) 'update item's smallest child
-			End While
+			If cur_size > 1 'if the root is not the only element
+				binary_tree[0] = binary_tree[cur_size] 'set the root to the last element in the heap
+				binary_tree[cur_size] = Null 'remove the reference at end of the heap to the new root
+				cur_size :- 1 'maintain size-tracking field
+				Local item_i% = 0 'index is root index
+				Local child_i% = smallest_child_i( item_i ) 'get the smaller of two children
+				While Not f_less_than( binary_tree[item_i], binary_tree[child_i] ) 
+					'while the heap property is being violated..
+					swap( item_i, child_i ) 'swap item with its smallest child
+					item_i = child_i 'set item to its current smallest child
+					child_i = smallest_child_i( item_i ) 'update item's smallest child
+				End While
+			Else
+				binary_tree[0] = Null
+			End If
 			Return root 'return the root, secure in the knowledge that this is still a min-heap
 		Else
 			Return Null 'the min-heap is empty; it doesn't even have a root
