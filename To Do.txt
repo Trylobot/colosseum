@@ -1,4 +1,6 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ put explosion, smoke, spark and damage scar emitters into projectiles.
+			when the projectile hits something, emit everything ("dump its load").
 	_ sound emitters
 	X emitters should have a particle_archetype_index range (min/max) so that they can emit many different particles
 	_ explosions can also have short-lived "spark" emitters, and sparks have such trails as mentioned above
@@ -12,8 +14,8 @@
 	X create projectile emitter type
 	X weapon accuracy values, implemented with angle variance in the projectile emitter
 	X attach various emitters to turret class to be called logically on fire()
-	_ turret recoil
-	_ emitter's parent can be a particle (or projectile)
+	X turret recoil
+	X emitter's parent can be a particle (or projectile)
 			applications: missiles!
 	X alpha values for particles, birth & death
 	X tread emitter and manager list
@@ -31,7 +33,7 @@
 	_ create blocks for static environments that can be collided with
 	_ create example arenas
 	_ create a rudimentary AI
-	_ create a few enemies with guns
+	X create a few enemies with guns
 	_ create visible damage which "sticks" to agents
 	X separate main components into files
 	

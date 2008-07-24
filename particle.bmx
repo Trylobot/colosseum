@@ -5,9 +5,14 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Global particle_list:TList = CreateList()
+Global retained_particle_list:TList = CreateList()
+
 Type PARTICLE Extends POINT
 	'Images
 	Field img:TImage
+	'Manager flag
+	Field retain% 'if true, on particle's expiration it's copied to the background permanently.
 	'Alpha control
 	Field alpha#
 	Field alpha_delta#
@@ -17,24 +22,22 @@ Type PARTICLE Extends POINT
 	'Lifetime
 	Field life_time% 'desired length of time (in milliseconds) until the particle is deleted (0 for infinite)
 	Field created_ts% 'timestamp of creation
-	'Manager flag
-	Field retain% 'if true, on particle's expiration, its image is added to the dynamic background texture as a permanent artifact.
 	
 	Method New()
 	End Method
 	
-	Method debug()
-		Super.debug()
-		Print "PARTICLE___________"
-		Print "img " + (img <> Null)
-		Print "alpha " + alpha
-		Print "alpha_delta " + alpha_delta
-		Print "scale " + scale
-		Print "scale_delta " + scale_delta
-		Print "life_time " + life_time
-		Print "created_ts " + created_ts
-		Print "retain " + retain
-	End Method
+'	Method debug()
+'		Super.debug()
+'		Print "PARTICLE___________"
+'		Print "img " + (img <> Null)
+'		Print "alpha " + alpha
+'		Print "alpha_delta " + alpha_delta
+'		Print "scale " + scale
+'		Print "scale_delta " + scale_delta
+'		Print "life_time " + life_time
+'		Print "created_ts " + created_ts
+'		Print "retain " + retain
+'	End Method
 	
 	Method dead%()
 		If life_time < 0
@@ -47,6 +50,9 @@ Type PARTICLE Extends POINT
 	Method prune()
 		If dead()
 			remove_me()
+			If retain
+				add_me( retained_particle_list )
+			End If
 		End If
 	End Method	
 	
@@ -58,15 +64,15 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Method update()
+		'update velocity
+		vel_x :+ acc_x
+		vel_y :+ acc_y
 		'update position
 		pos_x :+ vel_x
 		pos_y :+ vel_y
-		'out-of-bounds kill
-		If pos_x > arena_w Then remove_me()
-		If pos_x < 0       Then remove_me()
-		If pos_y > arena_h Then remove_me()
-		If pos_y < 0       Then remove_me()
-		'update angle
+		'update angular velocity
+		ang_vel :+ ang_acc
+		'update orientation
 		ang :+ ang_vel
 		'angle wrap
 		If ang >= 360 Then ang :- 360
@@ -80,11 +86,13 @@ Type PARTICLE Extends POINT
 End Type
 '______________________________________________________________________________
 Function Archetype_PARTICLE:PARTICLE( ..
-img:TImage )
+img:TImage, ..
+retain% = False )
 	Local p:PARTICLE = New PARTICLE
 	
 	'static fields
 	p.img = img
+	p.retain = retain
 	p.created_ts = now()
 	
 	'dynamic fields
@@ -103,9 +111,11 @@ End Function
 '______________________________________________________________________________
 Function Copy_PARTICLE:PARTICLE( other:PARTICLE )
 	Local p:PARTICLE = New PARTICLE
+	If other = Null Then Return p
 	
 	'static fields
 	p.img = other.img
+	p.retain = other.retain
 	p.created_ts = now()
 	
 	'dynamic fields

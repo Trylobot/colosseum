@@ -13,21 +13,26 @@ Type POINT Extends MANAGED_OBJECT
 	'Velocity
 	Field vel_x#
 	Field vel_y#
+	'Acceleration 
+	Field acc_x#
+	Field acc_y#
 	'Orientation
 	Field ang#
-	'Angular Velocity
+	'Angular Velocity 
 	Field ang_vel#
+	'Angular Acceleration
+	Field ang_acc#
 	
 	Method New()
 	End Method
 	
-	Method debug()
-		Super.debug()
-		Print "POINT______________"
-		Print "pos " + pos_x + ", " + pos_y
-		Print "vel " + vel_x + ", " + vel_y
-		Print "ang " + ang
-		Print "ang_vel " + ang_vel
-	End Method
+'	Method debug()
+'		Super.debug()
+'		Print "POINT______________"
+'		Print "pos " + pos_x + ", " + pos_y
+'		Print "vel " + vel_x + ", " + vel_y
+'		Print "ang " + ang
+'		Print "ang_vel " + ang_vel
+'	End Method
 
 End Type

@@ -5,6 +5,8 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Global projectile_list:TList = CreateList()
+
 Type PROJECTILE Extends PARTICLE
 	'Images
 	Field explosion_particle_index%
@@ -19,15 +21,15 @@ Type PROJECTILE Extends PARTICLE
 	Method New()
 	End Method
 	
-	Method debug()
-		Super.debug()
-		Print "PROJECTILE_________"
-		Print "explosion_particle_index " + explosion_particle_index
-		Print "mass " + mass
-		Print "damage " + damage
-		Print "trail_emitter " + (trail_emitter <> Null)
-		Print "thrust_emitter " + (thrust_emitter <> Null)
-	End Method
+'	Method debug()
+'		Super.debug()
+'		Print "PROJECTILE_________"
+'		Print "explosion_particle_index " + explosion_particle_index
+'		Print "mass " + mass
+'		Print "damage " + damage
+'		Print "trail_emitter " + (trail_emitter <> Null)
+'		Print "thrust_emitter " + (thrust_emitter <> Null)
+'	End Method
 	
 	Method dead%()
 		Return False
@@ -63,6 +65,7 @@ End Function
 '______________________________________________________________________________
 Function Copy_PROJECTILE:PROJECTILE( other:PROJECTILE )
 	Local p:PROJECTILE = New PROJECTILE
+	If other = Null Then Return p
 	
 	'static fields
 	p.img = other.img
@@ -71,6 +74,9 @@ Function Copy_PROJECTILE:PROJECTILE( other:PROJECTILE )
 	p.damage = other.damage
 	p.radius = other.radius
 	p.created_ts = now()
+	'emitters
+	p.thrust_emitter = other.thrust_emitter
+	p.trail_emitter = other.trail_emitter
 	
 	'dynamic fields
 	p.pos_x = other.pos_x; p.pos_y = other.pos_y

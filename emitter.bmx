@@ -5,8 +5,10 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const EMITTER_TYPE_PARTICLE% = 0
-Const EMITTER_TYPE_PROJECTILE% = 1
+Global emitter_list:TList = CreateList()
+
+Const EMITS_PARTICLES% = 0
+Const EMITS_PROJECTILES% = 1
 
 Type EMITTER extends MANAGED_OBJECT
 	
@@ -29,6 +31,11 @@ Type EMITTER extends MANAGED_OBJECT
 	Field count_min%
 	Field count_max%
 	Field count_cur% 'desired number of particles to be emitted (-1 for infinite)
+	'Cascade Flags
+	Field inherit_vel_from_parent%
+	Field inherit_ang_from_dist_ang%
+	Field inherit_vel_ang_from_ang%
+	Field inherit_acc_ang_from_vel_ang%
 	
 	'Position offset for the emitter, and a local origin for emitted particles (will try to add to parent's position)
 	Field offset#
@@ -45,12 +52,21 @@ Type EMITTER extends MANAGED_OBJECT
 	'Velocity angle range for emitted particles
 	Field vel_ang_min#
 	Field vel_ang_max#
+	'Acceleration range for emitted particles
+	Field acc_min#
+	Field acc_max#
+	'Acceleration angle range for emitted particles
+	Field acc_ang_min#
+	Field acc_ang_max#
 	'Angle range for emitted particles (will try to include parent's angle)
 	Field ang_min#
 	Field ang_max#
 	'Angular Velocity range for emitted particles
 	Field ang_vel_min#
 	Field ang_vel_max#
+	'Angular Acceleration range for emitted particles
+	Field ang_acc_min#
+	Field ang_acc_max#
 	'Life time range for emitted particles
 	Field life_time_min%
 	Field life_time_max%
@@ -81,7 +97,7 @@ Type EMITTER extends MANAGED_OBJECT
 			count_cur <> 0
 	End Method
 	
-	Method enable_timer( new_enable_time% = infinite_life_time )
+	Method enable_timer( new_enable_time% = INFINITY )
 		enable_time = new_enable_time
 		last_enabled_ts = now()
 	End Method
@@ -89,7 +105,7 @@ Type EMITTER extends MANAGED_OBJECT
 		If limit
 			count_cur = Rand( count_min, count_max )
 		Else
-			count_cur = infinite_count
+			count_cur = INFINITY
 		End If
 	End Method
 	
@@ -106,9 +122,9 @@ Type EMITTER extends MANAGED_OBJECT
 			'reserve space for particle
 			Local p:PARTICLE
 			Local index% = Rand( archetype_index_min, archetype_index_max )
-			If emitter_type = EMITTER_TYPE_PARTICLE
+			If emitter_type = EMITS_PARTICLES
 				p = Copy_PARTICLE( particle_archetype[index] )
-			Else If emitter_type = EMITTER_TYPE_PROJECTILE
+			Else If emitter_type = EMITS_PROJECTILES
 				p = PARTICLE( Copy_PROJECTILE( projectile_archetype[index] ))
 			End If
 			
@@ -124,27 +140,57 @@ Type EMITTER extends MANAGED_OBJECT
 			End If
 			
 			'particle orientation
-			p.ang = RandF( ang_min, ang_max )
+			If inherit_ang_from_dist_ang
+				p.ang = dist_ang
+			Else
+				p.ang = RandF( ang_min, ang_max )
+			End If
 			If parent <> Null
 				p.ang :+ parent.ang
 			End If
-			
+
 			'particle angular velocity
 			p.ang_vel = RandF( ang_vel_min, ang_vel_max )
 			
+			'particle angular acceleration
+			p.ang_acc = RandF( ang_acc_min, ang_acc_max )
+			
 			'particle velocity components
 			Local vel# = RandF( vel_min, vel_max )
-			Local vel_ang# = RandF( vel_ang_min, vel_ang_max )
-			If parent <> Null
-				p.vel_x = vel * Cos( vel_ang + parent.ang )
-				p.vel_y = vel * Sin( vel_ang + parent.ang )
-			Else
+			Local vel_ang#
+			If inherit_vel_ang_from_ang
+				vel_ang = p.ang
 				p.vel_x = vel * Cos( vel_ang )
 				p.vel_y = vel * Sin( vel_ang )
+			Else
+				vel_ang = RandF( vel_ang_min, vel_ang_max )
+				If parent <> Null
+					p.vel_x = vel * Cos( vel_ang + parent.ang )
+					p.vel_y = vel * Sin( vel_ang + parent.ang )
+				Else
+					p.vel_x = vel * Cos( vel_ang )
+					p.vel_y = vel * Sin( vel_ang )
+				End If
 			End If
-			If emitter_type = EMITTER_TYPE_PROJECTILE And parent <> Null
+			If inherit_vel_from_parent And parent <> Null
 				p.vel_x :+ parent.vel_x
 				p.vel_y :+ parent.vel_y
+			End If
+			
+			'particle acceleration components
+			Local acc# = RandF( acc_min, acc_max )
+			Local acc_ang#
+			If inherit_acc_ang_from_vel_ang
+				acc_ang = vel_ang
+			Else
+				acc_ang = RandF( acc_ang_min, acc_ang_max )
+			End If
+			If parent <> Null
+				p.acc_x = acc * Cos( acc_ang + parent.ang )
+				p.acc_y = acc * Sin( acc_ang + parent.ang )
+			Else
+				p.acc_x = acc * Cos( acc_ang )
+				p.acc_y = acc * Sin( acc_ang )
 			End If
 			
 			'particle alpha
@@ -175,8 +221,11 @@ Type EMITTER extends MANAGED_OBJECT
 	dist_ang_min_new#, dist_ang_max_new#, ..
 	vel_min_new#, vel_max_new#, ..
 	vel_ang_min_new#, vel_ang_max_new#, ..
+	acc_min_new#, acc_max_new#, ..
+	acc_ang_min_new#, acc_ang_max_new#, ..
 	ang_min_new#, ang_max_new#, ..
-	ang_vel_min_new#, ang_vel_max_new# )
+	ang_vel_min_new#, ang_vel_max_new#, ..
+	ang_acc_min_new#, ang_acc_max_new# )
 		parent = new_parent
 		offset = Sqr( off_x_new*off_x_new + off_y_new*off_y_new )
 		offset_ang = ATan( off_y_new/off_x_new )
@@ -185,8 +234,11 @@ Type EMITTER extends MANAGED_OBJECT
 		dist_ang_min = dist_ang_min_new; dist_ang_max = dist_ang_max_new
 		vel_min = vel_min_new; vel_max = vel_max_new
 		vel_ang_min = vel_ang_min_new; vel_ang_max = vel_ang_max_new
+		acc_min = acc_min_new; acc_max = acc_max_new
+		acc_ang_min = acc_ang_min_new; acc_ang_max = acc_ang_max_new
 		ang_min = ang_min_new; ang_max = ang_max_new
 		ang_vel_min = ang_vel_min_new; ang_vel_max = ang_vel_max_new
+		ang_acc_min = ang_acc_min_new; ang_acc_max = ang_acc_max_new
 	End Method
 	
 End Type
@@ -194,6 +246,10 @@ End Type
 Function Archetype_EMITTER:EMITTER( ..
 emitter_type%, ..
 archetype_index_min%, archetype_index_max%, ..
+inherit_vel_from_parent%, ..
+inherit_ang_from_dist_ang%, ..
+inherit_vel_ang_from_ang%, ..
+inherit_acc_ang_from_vel_ang%, ..
 interval_min%, interval_max%, ..
 count_min%, count_max%, ..
 life_time_min%, life_time_max%, ..
@@ -206,7 +262,11 @@ scale_delta_min# = 0.0, scale_delta_max# = 0.0 )
 	'static fields
 	'emitter attributes and attribute ranges
 	em.emitter_type = emitter_type
-	em.archetype_index_min = archetype_index_min; em.archetype_index_max = archetype_index_max 
+	em.archetype_index_min = archetype_index_min; em.archetype_index_max = archetype_index_max
+	em.inherit_vel_from_parent = inherit_vel_from_parent
+	em.inherit_ang_from_dist_ang = inherit_ang_from_dist_ang
+	em.inherit_vel_ang_from_ang = inherit_vel_ang_from_ang
+	em.inherit_acc_ang_from_vel_ang = inherit_acc_ang_from_vel_ang
 	em.interval_min = interval_min; em.interval_max = interval_max
 	em.interval_next = Rand( em.interval_min, em.interval_max )
 	em.last_enabled_ts = now()
@@ -226,18 +286,26 @@ scale_delta_min# = 0.0, scale_delta_max# = 0.0 )
 	em.dist_ang_min = 0; em.dist_ang_max = 0
 	em.vel_min = 0; em.vel_max = 0
 	em.vel_ang_min = 0; em.vel_ang_max = 0
+	em.acc_min = 0; em.acc_max = 0
+	em.acc_ang_min = 0; em.acc_ang_max = 0
 	em.ang_min = 0; em.ang_max = 0
 	em.ang_vel_min = 0; em.ang_vel_max = 0
+	em.ang_acc_min = 0; em.ang_acc_max = 0
 
 	Return em
 End Function
 '______________________________________________________________________________
 Function Copy_EMITTER:EMITTER( other:EMITTER, new_parent:POINT = Null )
 	Local em:EMITTER = New EMITTER
+	If other = Null Then Return em
 	
 	'emitter-specific fields
 	em.emitter_type = other.emitter_type
 	em.archetype_index_min = other.archetype_index_min; em.archetype_index_max = other.archetype_index_max 
+	em.inherit_vel_from_parent = other.inherit_vel_from_parent
+	em.inherit_ang_from_dist_ang = other.inherit_ang_from_dist_ang
+	em.inherit_vel_ang_from_ang = other.inherit_vel_ang_from_ang
+	em.inherit_acc_ang_from_vel_ang = other.inherit_acc_ang_from_vel_ang
 	em.interval_min = other.interval_min; em.interval_max = other.interval_max
 	em.interval_next = Rand( em.interval_min, em.interval_max )
 	em.last_enabled_ts = now()
@@ -258,8 +326,11 @@ Function Copy_EMITTER:EMITTER( other:EMITTER, new_parent:POINT = Null )
 	em.dist_ang_min = other.dist_ang_min; em.dist_ang_max = other.dist_ang_max
 	em.vel_min = other.vel_min; em.vel_max = other.vel_max
 	em.vel_ang_min = other.vel_ang_min; em.vel_ang_max = other.vel_ang_max
+	em.acc_min = other.acc_min; em.acc_max = other.acc_max
+	em.acc_ang_min = other.acc_ang_min; em.acc_ang_max = other.acc_ang_max
 	em.ang_min = other.ang_min; em.ang_max = other.ang_max
 	em.ang_vel_min = other.ang_vel_min; em.ang_vel_max = other.ang_vel_max
+	em.ang_acc_min = other.ang_acc_min; em.ang_acc_max = other.ang_acc_max
 	
 	em.add_me( emitter_list )
 	Return em

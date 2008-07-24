@@ -18,9 +18,9 @@ Type MANAGED_OBJECT
 		link.Remove()
 	End Method
 	
-	Method debug()
-		Print "MANAGED_OBJECT_____"
-		Print "link " + (link <> Null)
-	End Method
+'	Method debug()
+'		Print "MANAGED_OBJECT_____"
+'		Print "link " + (link <> Null)
+'	End Method
 
 End Type
