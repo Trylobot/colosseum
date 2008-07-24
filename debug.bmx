@@ -11,12 +11,68 @@ Global sx%, sy%, h%, px#, py#, maus_x#, maus_y#, speed# = 1, r#, a#
 Function debug_ts( message$ )
 	Print( String.FromInt( now() ) + ":" + message )
 End Function
-
 Function debug_drawtext( message$ )
 	DrawText( message, sx, sy )
 	sy :+ h
 End Function
-
+'______________________________________________________________________________
+Function debug_pathing( message$ = "" )
+	SetOrigin( arena_offset, arena_offset )
+	SetColor( 255, 255, 255 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	SetAlpha( 1 )
+	
+	Repeat
+		Cls
+		
+		'draw optional message
+		SetImageFont( consolas_normal_12 )
+		DrawText( message, 3, 3 )
+		
+		Local r%, c%
+		
+		'draw pathing_grid cell border lines
+		SetLineWidth( 1 ); SetColor( 127, 127, 127 ); SetAlpha( 0.75 )
+		For r = 0 To pathing_grid_h
+			DrawLine( 0, r*cell_size, pathing_grid_w*cell_size, r*cell_size )
+		Next
+		For c = 0 To pathing_grid_w
+			DrawLine( c*cell_size, 0, c*cell_size, pathing_grid_h*cell_size )
+		Next
+		
+		'draw pathing_grid contents
+		SetColor( 255, 255, 255 ); SetAlpha( 0.2 )
+		For r = 0 To pathing_grid_h - 1
+			For c = 0 To pathing_grid_w - 1
+				If pathing_grid[r,c] = PATH_BLOCKED Then ..
+					DrawRect( r*cell_size + 1, c*cell_size + 1, cell_size - 2, cell_size - 2 )
+			Next
+		Next
+		
+		'draw pathing_came_from contents
+		SetLineWidth( 1 ); SetColor( 255, 255, 255 ); SetAlpha( 0.75 )
+		For r = 0 To pathing_grid_h - 1
+			For c = 0 To pathing_grid_w - 1
+				If Not pathing_came_from[r,c].eq( CELL.Create( r, c )) Then ..
+					DrawLine( r*cell_size + cell_size/2, c*cell_size + cell_size/2, pathing_came_from[r,c].row*cell_size + cell_size/2, pathing_came_from[r,c].col*cell_size + cell_size/2 )
+			Next
+		Next
+		
+		'draw visited
+		SetColor( 255, 212, 212 ); SetAlpha( 0.2 )
+		For r = 0 To pathing_grid_h - 1
+			For c = 0 To pathing_grid_w - 1
+				If pathing_visited[r,c] Then ..
+					DrawRect( r*cell_size + 1, c*cell_size + 1, cell_size - 2, cell_size - 2 )
+			Next
+		Next	
+		
+		Flip
+	Until KeyHit( KEY_F4 )
+	
+End Function
+'______________________________________________________________________________
 Function debug()
 	SetOrigin( arena_offset, arena_offset )
 	SetColor( 255, 255, 255 )

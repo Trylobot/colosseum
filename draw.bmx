@@ -127,6 +127,10 @@ End Function
 '______________________________________________________________________________
 Function dim_bg_cache()
 	
+	If bg_cache = Null
+		init_bg_cache()
+	End If
+
 	Cls
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )

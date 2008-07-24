@@ -114,6 +114,7 @@ Function initialize_game()
 	FLAG_level_intro = True
 	respawn_player()
 	respawn_enemies()
+	init_pathing_system()
 End Function
 '______________________________________________________________________________
 Function next_enabled_menu_option()
@@ -150,7 +151,6 @@ End Function
 Function respawn_enemies()
 	If hostile_agent_list.IsEmpty()
 		
-		Local nme:COMPLEX_AGENT
 		For Local i% = 1 To 3*player_level
 			'70% chance of mr. the box, 20% chance of a rocket turret, 10% chance of a gun turret
 			Local selector# = RandF( 0.000, 1.000 )

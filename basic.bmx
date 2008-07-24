@@ -127,6 +127,12 @@ Type cVEC 'cartesian coordinate system 2D vector
 	Method New()
 	End Method
 	
+	Function Create:cVEC( x#, y# )
+		Local v:cVEC = New cVEC
+		v.x = x; v.y = y
+		Return v
+	End Function
+	
 End Type
 '______________________________________________________________________________
 Type pVEC 'polar coordinate system 2D vector

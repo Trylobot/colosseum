@@ -21,6 +21,11 @@ Repeat
 	draw_all()
 	play_bg_music()
 	
+	'debugger
+	If KeyHit( KEY_F4 )
+		find_path( player.pos_x, player.pos_y, MouseX(), MouseY() )
+	End If
+	
 	Flip( 1 ) 'draw to screen with vsync enabled
 Until AppTerminate() 'kill app when ESC or close button pressed
 

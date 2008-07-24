@@ -248,15 +248,22 @@ Function backtrace_path:TList( start:CELL, c:CELL )
 End Function
 '______________________________________________________________________________
 Function init_pathing_system()
+	pathing_grid_h = arena_h / cell_size
+	pathing_grid_w = arena_w / cell_size
+	init_pathing_structures()
+	'init_pathing_grid_from_obstacles()
+End Function
+Function init_pathing_structures()
 	pathing_grid = New Int[ pathing_grid_h, pathing_grid_w ]
 	pathing_came_from = New CELL[ pathing_grid_h, pathing_grid_w ]
 	pathing_visited = New Int[ pathing_grid_h, pathing_grid_w ]
 	pathing_h = New Float[ pathing_grid_h, pathing_grid_w ]
 	pathing_g = New Float[ pathing_grid_h, pathing_grid_w ]
+	potential_paths = PRIORITY_QUEUE.Create( pathing_grid_h*pathing_grid_w )
 	For Local r% = 0 To pathing_grid_h - 1
 		For Local c% = 0 To pathing_grid_w - 1
 			pathing_grid[r,c] = PATH_PASSABLE
-			pathing_came_from[r,c].set( r, c )
+			pathing_came_from[r,c] = CELL.Create( r, c )
 			pathing_visited[r,c] = False
 			pathing_h[r,c] = 0
 			pathing_g[r,c] = 0
@@ -268,35 +275,65 @@ Function init_pathing_grid_from_obstacles( obstacles:TList )
 	'  using collide, somehow change correct pathing_grid[,] entries to PATH_BLOCKED
 End Function
 '______________________________________________________________________________
-Function find_path:TList( start:CELL, goal:CELL )
+Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
+	Local cell_list:TList = find_path_given_cells( ..
+		CELL.Create( Floor( start_x/cell_size ), Floor( start_y/cell_size )), ..
+		CELL.Create( Floor( goal_x/cell_size ), Floor( goal_y/cell_size )))
+	
+	Local list:TList = CreateList()
+	For Local cursor:CELL = EachIn cell_list
+		list.AddLast( cVEC.Create( cursor.col*cell_size + cell_size/2, cursor.row*cell_size + cell_size/2 ))
+	Next
+	Return list
+End Function
+'______________________________________________________________________________
+Function find_path_given_cells:TList( start:CELL, goal:CELL )
 	For Local r% = 0 To pathing_grid_h - 1
 		For Local c% = 0 To pathing_grid_w - 1
 			pathing_visited[r,c] = False
 		Next
 	Next
+debug_pathing( "pathing_visited[*,*] = False" )
 	potential_paths.insert( start )
+debug_pathing( "potential_paths.insert( start )" )
 	set_pathing_g( start, 0 )
+debug_pathing( "set_pathing_g( start, 0 )" )
 	While Not potential_paths.is_empty()
+debug_pathing( "Not potential_paths.is_empty()" )
 		Local cursor:CELL = potential_paths.pop_root()
+debug_pathing( "cursor = potential_paths.pop_root()" )
 		If cursor.eq( goal )
+debug_pathing( "cursor.eq( goal ) 'TOUCHDOWN!" )
 			Return backtrace_path( start, cursor )
 		End If
 		set_pathing_visited( cursor, True )
+debug_pathing( "set_pathing_visited( cursor, True )" )
 		For Local neighbor:CELL = EachIn get_passable_unvisited_neighbors( cursor )
+debug_pathing( "neighbor = *_passable_unvisited_neighbors( cursor )" )
 			Local neighbor_g# = get_pathing_g( neighbor ) + distance( cursor, neighbor )
+debug_pathing( "neighbor_g = get_pathing_g( neighbor ) + distance( cursor, neighbor )" )
 			Local neighbor_g_is_better% = False
+debug_pathing( "neighbor_g_is_better = False" )
 			If potential_paths.insert( neighbor )
+debug_pathing( "potential_paths.insert( neighbor ) 'success" )
 				set_pathing_h( neighbor, distance( neighbor, goal ))
-				neighbor_g_is_better = True
+debug_pathing( "set_pathing_h( neighbor, distance( neighbor, goal ))" )
+				neighbor_g_is_better = True; debug_pathing( "neighbor_g_is_better = True" )
 			Else If neighbor_g < get_pathing_g( neighbor )
+debug_pathing( "neighbor_g < get_pathing_g( neighbor )" )
 				neighbor_g_is_better = True
+debug_pathing( "neighbor_g_is_better = True" )
 			End If
 			If neighbor_g_is_better
+debug_pathing( "neighbor_g_is_better" )
 				set_pathing_came_from( neighbor, cursor )
+debug_pathing( "set_pathing_came_from( neighbor, cursor )" )
 				set_pathing_g( neighbor, neighbor_g )
+debug_pathing( "set_pathing_g( neighbor, neighbor_g )" )
 			End If
 		Next
 	End While
+debug_pathing( "FAILURE. OMG" )
 	Return Null
 End Function
 
