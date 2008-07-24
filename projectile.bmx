@@ -3,25 +3,26 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+
 '______________________________________________________________________________
 Type PROJECTILE Extends PARTICLE
-	'projectile information (for explosion, damage calculation, and visual damage)
+
 	Field exp_img:TImage
+	Field mass#
 	Field damage#
 	Field radius#
 	
 	Method New()
 	End Method
 End Type
-'if( lifetime == -1 ) then it never expires;
-'else, the particle expires in (lifetime) seconds.
+'______________________________________________________________________________
 Function Create_PROJECTILE:PROJECTILE( ..
 img:TImage, exp_img:TImage, ..
 pos_x#, pos_y#, ..
 vel_x#, vel_y#, ..
 ang#, ..
-damage#, radius#, ..
-life_time% = -1 )
+mass#, damage#, radius#, ..
+life_time% = infinite_life_time )
 	Local p:PROJECTILE = New PROJECTILE
 	p.img = img
 	p.exp_img = exp_img

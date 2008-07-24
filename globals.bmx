@@ -10,9 +10,9 @@ Function now%()
 	Return clock.Ticks()
 End Function
 
+'scalar quantities
+Const player_max_health# = 100.000
 'distance (pixels)
-Const player_length% = 25
-Const player_width% = 17
 Const player_turret_recoil_dist# = 4.000
 'velocity (pixels per 1/60 second)
 Const player_velocity_max# = 1.100
@@ -27,7 +27,6 @@ Const infinite_count% = -1
 Const player_turret_reload_time% = 450
 Const player_mgun_reload_time% = 75
 Const player_turret_recoil_time% = 450
-Const player_turret_muzzle_life_time% = 125
 Const projectile_explode_life_time% = 300
 
 'object manager lists

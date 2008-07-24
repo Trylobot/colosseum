@@ -4,7 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 '______________________________________________________________________________
-Type EMITTER
+Type EMITTER extends MANAGED_OBJECT
 	'Parent entity (optional, null if not applicable)
 	Field parent:POINT
 	'Image set to use for particle emission
@@ -49,29 +49,11 @@ Type EMITTER
 		End If
 	End Method
 	
-	Method set( ..
-	images_new:TImage[], ..
-	off_x_new#, off_y_new#, ..
-	ang_min_new#, ang_max_new#, ..
-	dist_min_new#, dist_max_new#, ..
-	p_life_min_new#, p_life_max_new#, ..
-	interval_min_new%, interval_max_new%, ..
-	count_min_new%, count_max_new% )
-		images = images_new
-		set_offset( off_x_new, off_y_new )
-		ang_min = ang_min_new; ang_max = ang_max_new
-		dist_min = dist_min_new; dist_max = dist_max_new
-		p_life_min = p_life_min_new; p_life_max = p_life_max_new
-		interval_min = interval_min_new; interval_max = interval_max_new
-		count_min = count_min_new; count_max = count_max_new
-		
-		interval_next = Rand( interval_min_new, interval_max_new )
-		last_enabled_ts = now()
-	End Method
-	
 	Method alive%()
-		Return (enable_time < 0 Or (now() - last_enabled_ts) <= enable_time) And ..
-		       count_cur <> 0
+		Return ..
+			enable_time < 0 Or ..
+			(now() - last_enabled_ts) <= enable_time Or ..
+			count_cur <> 0
 	End Method
 	
 	Method ready%()
@@ -92,7 +74,7 @@ Type EMITTER
 	
 	Method disable()
 		enable_time = 0
-		cur_count = 0
+		count_cur = 0
 	End Method
 	
 	'like the fire() method of the TANK type, this method should be treated like a request.
@@ -111,8 +93,8 @@ Type EMITTER
 				em_part.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist * Cos( em_part.ang )
 				em_part.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist * Sin( em_part.ang )
 			Else
-				em_part.pos_x = off_x + dist * Cos( em_part.ang )
-				em_part.pos_y = off_y + dist * Sin( em_part.ang )
+				em_part.pos_x = offset * Cos( offset_ang ) + dist * Cos( em_part.ang )
+				em_part.pos_y = offset * Sin( offset_ang ) + dist * Sin( em_part.ang )
 			End If
 			Local vel# = 0.001 * Rand( vel_min * 1000, vel_max * 1000 )
 			em_part.vel_x = vel * Cos( em_part.ang )
@@ -142,13 +124,14 @@ p_life_min#, p_life_max#, ..
 interval_min%, interval_max%, ..
 count_min%, count_max% )
 	Local em:EMITTER = New EMITTER
-	em.set( ..
-		images, ..
-		off_x, off_y, ..
-		ang_min, ang_max, ..
-		dist_min, dist_max, ..
-		p_life_min, p_life_max, ..
-		interval_min, interval_max, ..
-		count_min, count_max )
+	em.images = images
+	em.set_offset( off_x, off_y )
+	em.ang_min = ang_min; em.ang_max = ang_max
+	em.dist_min = dist_min; em.dist_max = dist_max
+	em.p_life_min = p_life_min; em.p_life_max = p_life_max
+	em.interval_min = interval_min; em.interval_max = interval_max
+	em.interval_next = Rand( em.interval_min, em.interval_max )
+	em.count_min = count_min; em.count_max = count_max
+	em.last_enabled_ts = now()
 	Return em
 End Function

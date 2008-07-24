@@ -3,60 +3,21 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-'______________________________________________________________________________
-'temporary testing entities
+
+
+'testing entities
+
 'player tank
-Global player:COMPLEX_AGENT = Create_COMPLEX_AGENT()
-player.img = img_player_tank_chassis
+Global player:COMPLEX_AGENT = player_archetype_lib[0]
 player.pos_x = arena_w/2
 player.pos_y = arena_h/2
 player.ang = 270
-player.max_health = 100
-player.cur_health = player.max_health
-'player tank's turret
-Global player_turret:TURRET = Create_TURRET()
-player_turret.img = img_player_tank_turret
-player_turret.muz_img = img_muzzle_flash
-player_turret.proj_img = img_projectile
-player_turret.hit_img = img_hit
-'player_turret.offset = -5
-player_turret.set_offset( -5, 0 )
-player_turret.set_muz_offset( 20, 0 )
-player_turret.muz_vel = player_turret_projectile_muzzle_velocity
-player_turret.reload_time = player_turret_reload_time
-player.add_turret( player_turret )
-'player tank's mgun
-Global player_mgun:TURRET = Create_TURRET()
-player_mgun.img = img_player_mgun_turret
-player_mgun.muz_img = img_mgun_muzzle_flash
-player_mgun.proj_img = img_mgun
-player_mgun.hit_img = img_mgun_hit
-'player_mgun.offset = -5
-player_mgun.set_offset( -5, 0 )
-player_turret.set_muz_offset( 14, 2 )
-player_mgun.muz_vel = player_turret_mgun_muzzle_velocity
-player_mgun.reload_time = player_mgun_reload_time
-player.add_turret( player_mgun )
-'player tank's emitters
-player.tread_debris_emitter[0].set( imglib_debris_tiny, 12, -7, -90, 90, 1, 4.5, 100, 250, 20, 50 )
-player.tread_debris_emitter[1].set( imglib_debris_tiny, 12, 7, -90, 90, 1, 4.5, 100, 250, 20, 50 )
-player.tread_debris_emitter[2].set( imglib_debris_tiny, -12, 7, 90, 270, 1, 4.5, 100, 250, 20, 50 )
-player.tread_debris_emitter[3].set( imglib_debris_tiny, -12, -7, 90, 270, 1, 4.5, 100, 250, 20, 50 )
-'enemy tanks
-For Local i% = 1 To 10
-	Local e:AGENT = Create_AGENT()
-	e.img = img_enemy_agent
-	e.pos_x = Rand( 10, arena_w - 10 )
-	e.pos_y = Rand( 10, arena_h - 10 )
-	e.ang = Rand( 0, 359 )
-	Local vel# = 0.001 * Double( Rand( 200, 500 ))
-	e.vel_x = vel * Cos( e.ang )
-	e.vel_y = vel * Sin( e.ang )
-	e.add_me( enemy_list )
-Next
+
+
+
 
 '______________________________________________________________________________
-Global test_timer:TTimer = CreateTimer( 1.000/0.250 )
+'Global test_timer:TTimer = CreateTimer( 1.000/0.250 )
 Function draw_misc_debug_info()
 	SetRotation( 0 )
 	Local offset% = 1
@@ -93,9 +54,26 @@ Function draw_misc_debug_info()
 '			DrawLine( player.pos_x, player.pos_y, player.pos_x + player.tread_debris_emitter[i].offset * Cos( player.tread_debris_emitter[i].offset_ang + player.ang ), player.pos_y + player.tread_debris_emitter[i].offset * Sin( player.tread_debris_emitter[i].offset_ang + player.ang ))
 '		End If
 '	Next
+'	
 '	SetLineWidth(2)
 '	Local p:COMPLEX_AGENT = player
 '	Local t:TURRET = p.get_turret( 0 )
-'	DrawLine( p.pos_x, p.pos_y, p.pos_x + t.off_x, p.pos_y + t.off_y )
-'	DrawLine( p.pos_x + t.off_x, p.pos_y + t.off_y, p.pos_x + t.off_x + t.muz_off_x, p.pos_y + t.off_y + t.muz_off_y )
+'	Local x#[3], y#[3], i%
+'	
+'	x[0] = p.pos_x
+'	x[1] = p.pos_x + t.offset * Cos( t.offset_ang + p.ang )
+'	x[2] = p.pos_x + t.offset * Cos( t.offset_ang + p.ang ) + t.muz_offset * Cos( t.muz_offset_ang + p.ang + t.ang )
+'	
+'	y[0] = p.pos_y
+'	y[1] = p.pos_y + t.offset * Sin( t.offset_ang + p.ang )
+'	y[2] = p.pos_y + t.offset * Sin( t.offset_ang + p.ang ) + t.muz_offset * Sin( t.muz_offset_ang + p.ang + t.ang )
+'	
+'	For i = 0 To x.Length - 2
+'		DrawLine( x[i], y[i], x[i+1], y[i+1] )
+'	Next
+'	For i = 0 To x.Length - 1
+'		DrawText( "x" + i + " = " + x[i], offset, offset + 10*line ); line :+ 1
+'		DrawText( "y" + i + " = " + y[i], offset, offset + 10*line ); line :+ 1
+'	Next
+'	
 End Function

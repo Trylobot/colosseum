@@ -19,15 +19,22 @@ Type TURRET
 	'Turret offset (from parent's handle)
 	Field offset#
 	Field offset_ang#
-	'Muzzle offset (from this turret's handle)
-	Field muz_offset#
-	Field muz_offset_ang#
-	'Other Data
-	Field muz_vel#
+	'Reloading
 	Field reload_time% 'time required to reload
+	Field last_reloaded_ts% 'timestamp of last reload
+	'Recoil
+	Field barrel_travel_time% 'time required for projectile to travel the length of the barrel
 	Field recoil_offset#
 	Field recoil_offset_ang#
-	Field last_reloaded_ts% 'timestamp of last reload
+'	'Muzzle offset (from this turret's handle)
+'	Field muz_offset#
+'	Field muz_offset_ang#
+'	Field muz_vel#
+	'Emitters
+	Field muzzle_emitter:PROJECTILE_EMITTER
+	Field muzzle_flash_emitter:EMITTER
+	Field muzzle_smoke_emitter:EMITTER
+	Field ejector_port_emitter:EMITTER
 	
 	Method New()
 	End Method
@@ -57,7 +64,10 @@ Type TURRET
 	
 	Method draw()
 		SetRotation( parent.ang + ang )
-		DrawImage( img, parent.pos_x + offset * Cos( parent.ang ), parent.pos_y + offset * Sin( parent.ang ))
+		DrawImage( ..
+			img, ..
+			parent.pos_x + offset * Cos( offset_ang + parent.ang ), ..
+			parent.pos_y + offset * Sin( offset_ang + parent.ang ))
 	End Method
 	
 	Method update()
@@ -80,8 +90,10 @@ Type TURRET
 			'create muzzle flash
 			Create_PARTICLE( ..
 				muz_img, ..
-				parent.pos_x + offset * Cos( parent.ang ) + offset * Cos( parent.ang + ang ), parent.pos_y + offset * Sin( parent.ang ) + offset * Sin( parent.ang + ang ), ..
-				0, 0, ..
+				parent.pos_x + offset * Cos( offset_ang + parent.ang ) + muz_offset * Cos( muz_offset_ang + parent.ang + ang ), ..
+				parent.pos_y + offset * Sin( offset_ang + parent.ang ) + muz_offset * Sin( muz_offset_ang + parent.ang + ang ), ..
+				0, ..
+				0, ..
 				ang + parent.ang, ..
 				1.000, 1.000, ..
 				player_turret_muzzle_life_time)
@@ -90,8 +102,10 @@ Type TURRET
 			Create_PROJECTILE( ..
 				proj_img, ..
 				hit_img, ..
-				parent.pos_x + offset * Cos( parent.ang ) + offset * Cos( parent.ang + ang ), parent.pos_y + offset * Sin( parent.ang ) + offset * Sin( parent.ang + ang ), ..
-				parent.vel_x + muz_vel * Cos( parent.ang + ang ), parent.vel_y + muz_vel * Sin( parent.ang + ang ), ..
+				parent.pos_x + offset * Cos( offset_ang + parent.ang ) + muz_offset * Cos( muz_offset_ang + parent.ang + ang ), ..
+				parent.pos_y + offset * Sin( offset_ang + parent.ang ) + muz_offset * Sin( muz_offset_ang + parent.ang + ang ), ..
+				parent.vel_x + muz_vel * Cos( parent.ang + ang ), ..
+				parent.vel_y + muz_vel * Sin( parent.ang + ang ), ..
 				ang + parent.ang, ..
 				50, 10, ..
 				infinite_life_time )

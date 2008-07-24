@@ -36,11 +36,11 @@ SuperStrict
 '#Region &H04 MyNamespace
 'GUI
 Private
-TYPE z_3c2bd30c_0567_4524_ae6a_a418b51f26da abstract  'Resource folder
+TYPE z_3a46e258_4582_4bc5_88b8_14cb095a19e5 abstract  'Resource folder
 End Type
 
 
-TYPE z_blide_bg1020bf3b_7051_4f80_83b4_4bf15c8f0011 Abstract
+TYPE z_blide_bg7d71ad05_e7e3_4aaa_a18b_72271edc78a5 Abstract
     Const Name:string = "colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
     Const MinorVersion:Int = 1  'This Const contains the minor version number of the program
@@ -50,13 +50,13 @@ TYPE z_blide_bg1020bf3b_7051_4f80_83b4_4bf15c8f0011 Abstract
 EndType
 
 
-Type z_My_1020bf3b_7051_4f80_83b4_4bf15c8f0011 Abstract 'This type has all the run-tima binary information of your assembly
-    Global Application:z_blide_bg1020bf3b_7051_4f80_83b4_4bf15c8f0011  'This item has all the currently available assembly version information.
-    Global Resources:z_3c2bd30c_0567_4524_ae6a_a418b51f26da  'This item has all the currently available incbined files names and relative location.
+Type z_My_7d71ad05_e7e3_4aaa_a18b_72271edc78a5 Abstract 'This type has all the run-tima binary information of your assembly
+    Global Application:z_blide_bg7d71ad05_e7e3_4aaa_a18b_72271edc78a5  'This item has all the currently available assembly version information.
+    Global Resources:z_3a46e258_4582_4bc5_88b8_14cb095a19e5  'This item has all the currently available incbined files names and relative location.
 End Type
 
 
-Global My:z_My_1020bf3b_7051_4f80_83b4_4bf15c8f0011 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
+Global My:z_My_7d71ad05_e7e3_4aaa_a18b_72271edc78a5 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
 Public
 '#EndRegion &H04 MyNamespace
 
@@ -65,13 +65,16 @@ Public
 '#Region &H03 Includes
 Include "globals.bmx"
 Include "load_images.bmx"
+Include "managed_object.bmx"
 Include "point.bmx"
 Include "particle.bmx"
 Include "projectile.bmx"
 Include "agent.bmx"
 Include "turret.bmx"
-Include "complex_agent.bmx"
 Include "emitter.bmx"
+Include "projectile_emitter.bmx"
+Include "complex_agent.bmx"
+Include "archetypes.bmx"
 Include "test.bmx"
 Include "colosseum.bmx"
  

@@ -3,32 +3,6 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-Rem
-	TO DO
-	- alpha values for particles, birth & death
-	- tread emitter and manager list
-	- damage for player and enemies
-	- encapsulate turret logic and make a class for it
-	- create xml format for levels
-	- create a level editor
-	- work on collision resolution
-	- use acceleration values to smooth out movement (translation, rotation, etc)
-	- apply forces for specified amounts of time
-	- create arbitrary forces
-	- define the center of mass for objects
-	- create gibs for enemies
-	- make gibs spawn as particles when enemies die
-	- create scars
-	- create "shells" to be ejected from the ejector port of turret object
-	- create blocks for static environments that can be collided with
-	- create example arenas
-	- create a rudimentary AI
-	- create a few enemies with guns
-	- create visible damage which "sticks" to agents
-	- separate main components into files
-EndRem
-
-'Framework BRL.Max2D
 
 'misc utility functions
 '______________________________________________________________________________
@@ -59,26 +33,15 @@ Function process_input()
 	If KeyDown( KEY_W ) Or KeyDown( KEY_I )
 		player.vel_x = player_velocity_max * Cos( player.ang )
 		player.vel_y = player_velocity_max * Sin( player.ang )
-		'If FLAG_emit_tread
-		'	treadlist.AddLast( point.createPoint( px + (-15*Cos(a)), py + (-15*Sin(a)), a ))
-		'	FLAG_emit_tread = False
-		'EndIf
-		player.enable_only_rear_tread_debris_emitters()
-		'player.enable_only_rear_tread_print_emitters()
+		player.enable_only_rear_emitters()
 	ElseIf KeyDown( KEY_S ) Or KeyDown( KEY_K )
 		player.vel_x = -player_velocity_max * Cos( player.ang )
 		player.vel_y = -player_velocity_max * Sin( player.ang )
-		'If FLAG_emit_tread
-		'	treadlist.AddLast( point.createPoint( px + (15*Cos(a)), py + (15*Sin(a)), a ))
-		'	FLAG_emit_tread = False
-		'EndIf
-		player.enable_only_forward_tread_debris_emitters()
-		'player.enable_only_forward_tread_print_emitters()
+		player.enable_only_forward_emitters()
 	Else
 		player.vel_x = 0
 		player.vel_y = 0
-		player.disable_all_tread_debris_emitters()
-		'player.disable_all_tread_print_emitters()
+		player.disable_all_emitters()
 	EndIf
 	
 	If KeyDown( KEY_D )
@@ -90,14 +53,14 @@ Function process_input()
 	EndIf
 	
 	If KeyDown( KEY_L )
-		(player.get_turret( 0 )).ang_vel = player_turret_angular_velocity_max
-		(player.get_turret( 1 )).ang_vel = player_turret_angular_velocity_max
+		player.turrets[0].ang_vel = player_turret_angular_velocity_max
+		player.turrets[1].ang_vel = player.turrets[0].ang_vel
 	ElseIf KeyDown( KEY_J )
-		(player.get_turret( 0 )).ang_vel = -player_turret_angular_velocity_max
-		(player.get_turret( 1 )).ang_vel = -player_turret_angular_velocity_max
+		player.turrets[0].ang_vel = -player_turret_angular_velocity_max
+		player.turrets[1].ang_vel = player.turrets[0].ang_vel
 	Else
-		(player.get_turret( 0 )).ang_vel = 0
-		(player.get_turret( 1 )).ang_vel = 0
+		player.turrets[0].ang_vel = 0
+		player.turrets[1].ang_vel = player.turrets[0].ang_vel
 	EndIf
 	
 	If KeyDown( KEY_SPACE )
