@@ -37,7 +37,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Case AI_TYPE_ROCKET_TURRET
 					
 					point_at( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y, ang_to_target, dist_to_target )
-					Local comp% = compare_angles( avatar.ang, ang_to_target, 2.0 )
+					
+					Local comp% = compare_angles( avatar.turrets[0].ang, ang_to_target, 2.0 )
 					
 					If comp = RESULT_LESS_THAN
 						avatar.command_all_turrets( ROTATE_COUNTER_CLOCKWISE_DIRECTION, turret_angular_velocity_max )
@@ -48,8 +49,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						avatar.fire( 0 )
 					End If
 					
-'					Local diff# = ang_to_target - avatar.ang
-'					
+'					Local diff# = ang_to_target - avatar.turrets[0].ang
+'
 '					If Abs( diff ) < 1.000
 '						avatar.fire( 0 )
 '					End If
@@ -59,6 +60,13 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 '					Else 'diff >= 0
 '						avatar.command_all_turrets( ROTATE_CLOCKWISE_DIRECTION, turret_angular_velocity_max )
 '					End If
+					
+'					If Abs( ang_to_target - avatar.ang ) < 4
+'						avatar.fire( 0 )
+'					End If
+'					
+'					SetColor( 0, 255, 0 )
+'					DrawLine( avatar.pos_x, avatar.pos_y, avatar
 					
 			End Select
 		End If

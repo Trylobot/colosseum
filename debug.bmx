@@ -7,11 +7,16 @@ EndRem
 
 '______________________________________________________________________________
 'Global test_timer:TTimer = CreateTimer( 1.000/0.250 )
-Function debug_result( result:Object[] )
-	
+Function debug_ts( message$ )
+	Print( String.FromInt( now() ) + ":" + message )
 End Function
 
 Function debug()
+
+	If KeyHit( KEY_F4 )
+		DebugStop
+		Return
+	End If
 
 '	SetRotation( 0 )
 '	SetScale( 1, 1 )
@@ -112,10 +117,6 @@ Function debug()
 '		DrawText( "y" + i + " = " + y[i], offset, offset + 10*line ); line :+ 1
 '	Next
 '	
-
-	If KeyHit( KEY_F4 )
-		DebugStop
-	End If
 	
 End Function
 

@@ -14,8 +14,6 @@ Repeat
 	If (now() - before) > (1000/60) '60 physics intervals a second
 		before = now()
 		
-		respawn_player()
-		respawn_enemies()
 		process_input()
 		update_objects()
 		collide()

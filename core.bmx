@@ -4,52 +4,186 @@ Rem
 	author: Tyler W Cole
 EndRem
 
+'Settings flags
+Global FLAG_in_menu% = True
+Global FLAG_paused% = True
+Global FLAG_game_over% = False
+Global FLAG_draw_help% = False
+
+Const MENU_NEW% = 0
+Const MENU_CONTINUE% = 1
+Const MENU_LOAD% = 2
+Const MENU_SETTINGS% = 3
+Const MENU_QUIT% = 4
+Const menu_option_count% = 5
+
+Global menu_display_string$[] = [ "new game", "continue", "load saved", "settings", "quit" ]
+Global menu_enabled%[] =        [  True,       False,      False,        False,      True  ]
+
+Global menu_option% = MENU_NEW
+
+'______________________________________________________________________________
+'Menu Commands
+Function menu_command()
+	Select menu_option
+		Case MENU_NEW
+			initialize()
+			reset_game()
+			load_next_level()
+			FLAG_paused = False
+			FLAG_in_menu = False
+		Case MENU_CONTINUE
+			'..?
+		Case MENU_LOAD
+			'..?
+		Case MENU_SETTINGS
+			'..?
+		Case MENU_QUIT
+			End
+	End Select
+End Function
+'______________________________________________________________________________
+Function reset_game()
+	player_cash = 0
+	player_level = 0
+End Function
+'______________________________________________________________________________
+Function load_next_level()
+'	particle_list_background.Clear()
+'	particle_list_foreground.Clear()
+'	retained_particle_list.Clear()
+'	emitter_list.Clear()
+'	friendly_projectile_list.Clear()
+'	hostile_projectile_list.Clear()
+'	enemy_list.Clear()
+'	pickup_list.Clear()
+
+	player_level :+ 1
+	respawn_enemies()
+End Function
+'______________________________________________________________________________
+Function initialize()
+	respawn_player()
+End Function
+'______________________________________________________________________________
+'Spawning and Respawning
+Function respawn_player()
+	If player <> Null Then player.remove_me()
+	player = Copy_COMPLEX_AGENT( player_archetype[ 0], True )
+	player.pos_x = arena_w/2
+	player.pos_y = arena_h/2
+	player.ang = -90
+	player.turrets[0].ang = player.ang
+	player.turrets[1].ang = player.ang
+End Function
+'______________________________________________________________________________
+Function respawn_enemies()
+	If enemy_list.IsEmpty()
+		
+		'the infamous "mr. the box"
+'		For Local i% = 1 To 10
+'			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 0], True )
+'			
+'			nme.pos_x = Rand( 10, arena_w - 10 )
+'			nme.pos_y = Rand( 10, arena_h - 10 )
+'			nme.ang = Rand( 0, 359 )
+'			
+'			nme.command_all_motivators( MOVE_FORWARD_DIRECTION, RandF( 0.2, 0.6 ))
+'			nme.rear_trail_emitters[ 0].enable( MODE_ENABLED_FOREVER )
+'			
+'			nme.add_me( enemy_list )
+'		Next
+		
+		'the brand spankin' new ROCKET TURRET
+		'For Local i% = 1 To 5
+		For Local i% = 1 To 1
+			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 1], True )
+
+			nme.pos_x = Rand( 10, arena_w - 10 )
+			nme.pos_y = Rand( 10, arena_h - 10 )
+			nme.turrets[ 0].ang = Rand( 0, 359 )
+
+			Local cb:CONTROL_BRAIN = New CONTROL_BRAIN
+			cb.avatar = nme
+			cb.target = player
+			cb.ai_type = AI_TYPE_ROCKET_TURRET
+			cb.turret_angular_velocity_max = rocket_turret_angular_velocity_max
+			cb.add_me( control_brain_list )
+			
+			nme.add_me( enemy_list )
+		Next
+		
+	End If
+End Function
+'______________________________________________________________________________
+Function spawn_pickup( x#, y# )
+	Local pkp:PICKUP
+	If Rand( 0, 10000 ) < pickup_probability
+		Local index% = Rand( 0, pickup_archetype.Length - 1 )
+		pkp = Copy_PICKUP( pickup_archetype[index] )
+		pkp.pos_x = x; pkp.pos_y = y
+	End If
+End Function
 '______________________________________________________________________________
 'Keyboard Input
 Function process_input()
-	
-	'capture input and update pertinent physical_objects
-	'update player velocity
-	If KeyDown( KEY_W ) Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
-		player.command_all_motivators( MOVE_FORWARD_DIRECTION, player_velocity_max )
-	ElseIf KeyDown( KEY_S ) Or KeyDown( KEY_K ) Or KeyDown( KEY_DOWN )
-		player.command_all_motivators( MOVE_REVERSE_DIRECTION, player_velocity_max )
+	If FLAG_in_menu
+		
+		If KeyHit( KEY_DOWN )
+			next_enabled_menu_option()
+		Else If KeyHit( KEY_UP )
+			prev_enabled_menu_option()
+		End If
+		
+		If KeyHit( KEY_ENTER )
+			menu_command()
+		End If
+		
 	Else
-		player.command_all_motivators( ALL_STOP )
-	EndIf
-	
-	If KeyDown( KEY_D )
-		player.ang_vel = player_angular_velocity_max
-	ElseIf KeyDown( KEY_A )
-		player.ang_vel = -( player_angular_velocity_max )
-	Else
-		player.ang_vel = 0
-	EndIf
-	
-	If KeyDown( KEY_L ) Or KeyDown( KEY_RIGHT )
-		player.command_all_turrets( ROTATE_CLOCKWISE_DIRECTION,player_turret_angular_velocity_max  )
-	ElseIf KeyDown( KEY_J ) Or KeyDown( KEY_LEFT )
-		player.command_all_turrets( ROTATE_COUNTER_CLOCKWISE_DIRECTION, player_turret_angular_velocity_max )
-	Else
-		player.command_all_turrets( ALL_STOP )
-	EndIf
-	
-	If KeyDown( KEY_SPACE )
-		player.fire( 0 )
+
+		'capture input and update pertinent physical_objects
+		'update player velocity
+		If KeyDown( KEY_W ) Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
+			player.command_all_motivators( MOVE_FORWARD_DIRECTION, player_velocity_max )
+		ElseIf KeyDown( KEY_S ) Or KeyDown( KEY_K ) Or KeyDown( KEY_DOWN )
+			player.command_all_motivators( MOVE_REVERSE_DIRECTION, player_velocity_max )
+		Else
+			player.command_all_motivators( ALL_STOP )
+		EndIf
+		
+		If KeyDown( KEY_D )
+			player.ang_vel = player_angular_velocity_max
+		ElseIf KeyDown( KEY_A )
+			player.ang_vel = -( player_angular_velocity_max )
+		Else
+			player.ang_vel = 0
+		EndIf
+		
+		If KeyDown( KEY_L ) Or KeyDown( KEY_RIGHT )
+			player.command_all_turrets( ROTATE_CLOCKWISE_DIRECTION,player_turret_angular_velocity_max  )
+		ElseIf KeyDown( KEY_J ) Or KeyDown( KEY_LEFT )
+			player.command_all_turrets( ROTATE_COUNTER_CLOCKWISE_DIRECTION, player_turret_angular_velocity_max )
+		Else
+			player.command_all_turrets( ALL_STOP )
+		EndIf
+		
+		If KeyDown( KEY_SPACE )
+			player.fire( 0 )
+		End If
+		
+		If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
+			player.fire( 1 )
+		End If
+		
+		If KeyHit( KEY_F1 )
+			FLAG_draw_help = Not FLAG_draw_help
+		End If
+		
+		If KeyHit( KEY_P )' Or KeyHit( KEY_PAUSE ) 'why doesn't this one work? wtf? it's in the docs for chrissake
+			FLAG_paused = Not FLAG_paused
+		End If
+		
 	End If
-	
-	If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
-		player.fire( 1 )
-	End If
-	
-	If KeyHit( KEY_F1 )
-		FLAG_draw_help = Not FLAG_draw_help
-	End If
-	
-	If KeyHit( KEY_P )' Or KeyHit( KEY_PAUSE ) 'why doesn't this one work? wtf? it's in the docs for chrissake
-		FLAG_paused = Not FLAG_paused
-	End If
-	
 End Function
 '______________________________________________________________________________
 'Physics and Timing Update
@@ -123,6 +257,11 @@ Function update_objects()
 			cb.prune()
 		Next
 		
+		'level
+		If enemy_list.IsEmpty()
+			load_next_level()
+		End If
+		
 	End If
 End Function
 '______________________________________________________________________________
@@ -135,23 +274,63 @@ Const HOSTILE_PROJECTILE_COLLIDE_LAYER% = $0010
 Const PICKUP_COLLIDE_LAYER% = $0011
 
 Function collide()
-	Local nme:COMPLEX_AGENT
-	Local proj:PROJECTILE
-	Local pkp:PICKUP
-	Local result:Object[]
+	If Not FLAG_paused
 	
-	ResetCollisions()
-	
-	'collisions between friendly projectiles and enemies
-	For nme = EachIn enemy_list
-		SetRotation( nme.ang )
-		CollideImage( nme.img, nme.pos_x, nme.pos_y, 0, 0, ENEMY_COLLIDE_LAYER, nme )
-	Next
-	For proj = EachIn friendly_projectile_list
-		SetRotation( proj.ang )
-		result = CollideImage( proj.img, proj.pos_x, proj.pos_y, 0, ENEMY_COLLIDE_LAYER, FRIENDLY_PROJECTILE_COLLIDE_LAYER, proj )
-		For nme = EachIn result	
-			'COLLISION! between {proj} & {nme}
+		Local nme:COMPLEX_AGENT
+		Local proj:PROJECTILE
+		Local pkp:PICKUP
+		Local result:Object[]
+		
+		ResetCollisions()
+		
+		'collisions between friendly projectiles and enemies
+		For nme = EachIn enemy_list
+			SetRotation( nme.ang )
+			CollideImage( nme.img, nme.pos_x, nme.pos_y, 0, 0, ENEMY_COLLIDE_LAYER, nme )
+		Next
+		For proj = EachIn friendly_projectile_list
+			SetRotation( proj.ang )
+			result = CollideImage( proj.img, proj.pos_x, proj.pos_y, 0, ENEMY_COLLIDE_LAYER, FRIENDLY_PROJECTILE_COLLIDE_LAYER, proj )
+			For nme = EachIn result	
+				'COLLISION! between {proj} & {nme}
+				
+				'create explosion particle at position of projectile, with random angle
+				'proj.exp_img, proj.pos_x, proj.pos_y, 0, 0, Rand( 0, 359 ), 0, 0, projectile_explode_life_time )
+				Local explode:PARTICLE = Copy_PARTICLE( particle_archetype[ proj.explosion_particle_index ])
+				explode.pos_x = proj.pos_x; explode.pos_y = proj.pos_y
+				explode.vel_x = 0; explode.vel_y = 0
+				explode.ang = Rand( 0, 359 )
+				explode.life_time = Rand( 300, 300 )
+				
+				'activate collision response for affected entity(ies)
+				'most basic response: remove enemy
+				nme.receive_damage( proj.damage )
+				If nme.dead()
+					player_cash :+ nme.cash_value
+					spawn_pickup( nme.pos_x, nme.pos_y )
+					nme.remove_me()
+				End If
+				
+				'show the player how much cash they got for killing this enemy, if they killed it
+				
+				'remove original projectile
+				proj.remove_me()
+				
+				'dump out early, this projectile is no longer valid
+				Exit
+				
+			Next
+		Next
+		
+		'collisions between player and hostile projectiles
+		For proj = EachIn hostile_projectile_list
+			SetRotation( proj.ang )
+			CollideImage( proj.img, proj.pos_x, proj.pos_y, 0, 0, HOSTILE_PROJECTILE_COLLIDE_LAYER, proj )
+		Next
+		SetRotation( player.ang )
+		result = CollideImage( player.img, player.pos_x, player.pos_y, 0, HOSTILE_PROJECTILE_COLLIDE_LAYER, PLAYER_COLLIDE_LAYER, player )
+		For proj = EachIn result
+			'COLLISION! between {player} and {proj}
 			
 			'create explosion particle at position of projectile, with random angle
 			'proj.exp_img, proj.pos_x, proj.pos_y, 0, 0, Rand( 0, 359 ), 0, 0, projectile_explode_life_time )
@@ -162,113 +341,199 @@ Function collide()
 			explode.life_time = Rand( 300, 300 )
 			
 			'activate collision response for affected entity(ies)
-			'most basic response: remove enemy
-			nme.receive_damage( proj.damage )
-			If nme.dead()
-				player_cash :+ nme.cash_value
-				spawn_pickup( nme.pos_x, nme.pos_y )
-				nme.remove_me()
+			player.receive_damage( proj.damage )
+			If player.dead()
+				FLAG_game_over = True
 			End If
-			
-			'show the player how much cash they got for killing this enemy, if they killed it
 			
 			'remove original projectile
 			proj.remove_me()
 			
 		Next
-	Next
-	
-	'collisions between player and hostile projectiles
-	For proj = EachIn hostile_projectile_list
-		SetRotation( proj.ang )
-		CollideImage( proj.img, proj.pos_x, proj.pos_y, 0, 0, HOSTILE_PROJECTILE_COLLIDE_LAYER, proj )
-	Next
-	SetRotation( player.ang )
-	result = CollideImage( player.img, player.pos_x, player.pos_y, 0, HOSTILE_PROJECTILE_COLLIDE_LAYER, PLAYER_COLLIDE_LAYER, player )
-	For proj = EachIn result
-		'COLLISION! between {player} and {proj}
 		
-		'create explosion particle at position of projectile, with random angle
-		'proj.exp_img, proj.pos_x, proj.pos_y, 0, 0, Rand( 0, 359 ), 0, 0, projectile_explode_life_time )
-		Local explode:PARTICLE = Copy_PARTICLE( particle_archetype[ proj.explosion_particle_index ])
-		explode.pos_x = proj.pos_x; explode.pos_y = proj.pos_y
-		explode.vel_x = 0; explode.vel_y = 0
-		explode.ang = Rand( 0, 359 )
-		explode.life_time = Rand( 300, 300 )
-		
-		'activate collision response for affected entity(ies)
-		player.receive_damage( proj.damage )
-		If player.dead()
-			FLAG_game_over = True
-		End If
-		
-		'remove original projectile
-		proj.remove_me()
-		
-	Next
-	
-	'collisions between player and pickups
-	For pkp = EachIn pickup_list
-		SetRotation( 0 )
-		CollideImage( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLIDE_LAYER, pkp )
-	Next
-	SetRotation( player.ang )
-	result = CollideImage( player.img, player.pos_x, player.pos_y, 0, PICKUP_COLLIDE_LAYER, PLAYER_COLLIDE_LAYER, player )
-	For pkp = EachIn result
-		'COLLISION! between {player} and {pkp}
-		
-		'give pickup to player
-		player.grant_pickup( pkp )
-		
-	Next
-	
+		'collisions between player and pickups
+		For pkp = EachIn pickup_list
+			SetRotation( 0 )
+			CollideImage( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLIDE_LAYER, pkp )
+		Next
+		SetRotation( player.ang )
+		result = CollideImage( player.img, player.pos_x, player.pos_y, 0, PICKUP_COLLIDE_LAYER, PLAYER_COLLIDE_LAYER, player )
+		For pkp = EachIn result
+			'COLLISION! between {player} and {pkp}
+			
+			'give pickup to player
+			player.grant_pickup( pkp )
+			
+			'dump out early; only the first pickup collided with will be applied this frame
+			Exit
+			
+		Next
+	End If
 End Function
 '______________________________________________________________________________
 'Drawing to Screen
 Function draw()
 	
-	SetOrigin( arena_offset, arena_offset )
-	SetViewport( arena_offset, arena_offset, arena_w + 1, arena_h + 1 )
+	If FLAG_in_menu
+		'main menu
+		draw_menu()
+	Else
 	
-	'arena & environment
-	draw_arena()
-	'background generic particles
-	For Local part:PARTICLE = EachIn particle_list_background
-		part.draw()
-	Next
+		SetOrigin( arena_offset, arena_offset )
+		SetViewport( arena_offset, arena_offset, arena_w + 1, arena_h + 1 )
+		
+		'arena & environment
+		draw_arena()
+		'background generic particles
+		For Local part:PARTICLE = EachIn particle_list_background
+			part.draw()
+		Next
+		
+		'projectiles
+		For Local proj:PROJECTILE = EachIn friendly_projectile_list
+			proj.draw()
+		Next
+		For Local proj:PROJECTILE = EachIn hostile_projectile_list
+			proj.draw()
+		Next
 	
-	'projectiles
-	For Local proj:PROJECTILE = EachIn friendly_projectile_list
-		proj.draw()
-	Next
-	For Local proj:PROJECTILE = EachIn hostile_projectile_list
-		proj.draw()
-	Next
-
-	'enemies
-	For Local nme:COMPLEX_AGENT = EachIn enemy_list
-		nme.draw()
-	Next
-	'player
-	player.draw()
+		'enemies
+		For Local nme:COMPLEX_AGENT = EachIn enemy_list
+			nme.draw()
+		Next
+		'player
+		player.draw()
+		
+		'foreground generic particles
+		For Local part:PARTICLE = EachIn particle_list_foreground
+			part.draw()
+		Next
+		'pickups
+		For Local pkp:PICKUP = EachIn pickup_list
+			pkp.draw()
+		Next
+		
+		SetOrigin( 0, 0 )
+		SetViewport( 0, 0, window_w, window_h )
+		
+		'interface
+		draw_stats_panel()
+		'paused indicator
+		If FLAG_paused Then draw_pause_indicator()
+		
+	End If
 	
-	'foreground generic particles
-	For Local part:PARTICLE = EachIn particle_list_foreground
-		part.draw()
-	Next
-	'pickups
-	For Local pkp:PICKUP = EachIn pickup_list
-		pkp.draw()
-	Next
-	
-	SetOrigin( 0, 0 )
-	SetViewport( 0, 0, window_w, window_h )
-	
-	'interface
-	draw_score()
 	'help
 	If FLAG_draw_help Then draw_help()
 	
+End Function
+'______________________________________________________________________________
+Function draw_stats_panel()
+	SetColor( 255, 255, 255 )
+	SetRotation( 0 )
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
+	
+	Local x%, y%
+	
+	'level
+	x = arena_w + (arena_offset * 2)
+	y = arena_offset
+	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
+	DrawText( "level", x, y ); y :+ 12
+	SetColor( 255, 255, 127 ); SetImageFont( consolas_bold_50 )
+	DrawText( player_level, x, y ); y :+ 50
+	
+	'player cash
+	y :+ arena_offset
+	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
+	'ToDo: put some code here to comma-separate the displayed cash value
+	DrawText( "cash", x, y ); y :+ 12
+	SetColor( 50, 220, 50 ); SetImageFont( consolas_bold_50 )
+	DrawText( "$" + player_cash, x, y ); y :+ 50
+		
+	'player health		
+	y :+ arena_offset
+	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
+	DrawText( "health", x, y ); y :+ 12
+	Local w% = 150, h% = 15
+	SetColor( 255, 255, 255 )
+	DrawRect( x, y, w, h )
+	SetColor( 16, 16, 16 )
+	DrawRect( x + 1, y + 1, w - 2, h - 2 )
+	SetColor( 255, 255, 255 )
+	DrawRect( x + 2, y + 2, (Double(w) - 4.0) * (player.cur_health / player.max_health) , h - 4 )
+	y :+ h
+	
+	'player ammo
+	y :+ arena_offset
+	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
+	DrawText( "223mm cannon", x, y ); y :+ 12
+	Local temp_x%, temp_y%
+	temp_x = x; temp_y = y
+	For Local i% = 0 To player.turrets[0].cur_ammo - 1
+		If ((i Mod 20) = 0) And (i > 0)
+			temp_x = x
+			temp_y :+ img_icon_player_cannon_ammo.height
+		End If
+		DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
+		temp_x :+ img_icon_player_cannon_ammo.width
+	Next; y :+ 12 + (player.turrets[0].max_ammo / 20)* img_icon_player_cannon_ammo.height
+	DrawText( "co-axial .50 machine gun", x, y ); y :+ 12
+	DrawImage( img_icon_infinity, x, y ); y :+ img_icon_infinity.height + 12
+	
+	'copyright stuff
+	y = window_h - arena_offset - 30
+	SetColor( 157, 157, 157 ); SetImageFont( consolas_normal_10 )
+	DrawText( "copyright 2008 Tyler W Cole", x, y ); y :+ 10
+	DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
+	DrawText( "http://www.blitzmax.com", x, y ); y :+ 10
+	
+End Function
+'______________________________________________________________________________
+'Menu and GUI
+Function draw_menu()
+	SetRotation( 0 )
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
+
+	SetColor( 255, 255, 127 ); SetImageFont( consolas_bold_50 )
+		DrawText( My.Application.AssemblyInfo, 150, 200 )
+		
+	SetImageFont( consolas_normal_24 )
+	For Local option% = 0 To menu_option_count - 1
+		If menu_enabled[ option ]
+			If option = menu_option
+				SetColor( 255, 255, 255 ) ..
+			Else
+				SetColor( 127, 127, 127 )
+			End If
+		Else
+			SetColor( 64, 64, 64 )
+		End If
+		DrawText( menu_display_string[ option ], 250, 300 + option*48 )
+	Next
+	
+'	SetColor( 255, 255, 255 )
+'	DrawImage( img_icon_colosseum_large, 150, 40 )
+		
+End Function
+'______________________________________________________________________________
+Function next_enabled_menu_option()
+	menu_option :+ 1
+	If menu_option >= menu_option_count Then menu_option = 0
+	While Not menu_enabled[ menu_option ]
+		menu_option :+ 1
+		If menu_option >= menu_option_count Then menu_option = 0
+	End While
+End Function
+Function prev_enabled_menu_option()
+	menu_option :- 1
+	If menu_option < 0 Then menu_option = menu_option_count - 1
+	While Not menu_enabled[ menu_option ]
+		menu_option :- 1
+		If menu_option < 0 Then menu_option = menu_option_count - 1
+	End While
 End Function
 '______________________________________________________________________________
 Function draw_help()
@@ -299,58 +564,17 @@ Function draw_arena()
 	Next
 End Function
 '______________________________________________________________________________
-Function draw_score()
-	SetColor( 255, 255, 255 )
+Function draw_pause_indicator()
 	SetRotation( 0 )
-	SetAlpha( 1 )
 	SetScale( 1, 1 )
 	
-	Local x%, y%
+	SetAlpha( 0.75 )
+	SetColor( 0, 0, 0 )
+	DrawRect( 0, 0, window_w, window_h )
 	
-	x = arena_w + (arena_offset * 2)
-	y = arena_offset
-	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
-		DrawText( "cash", x, y ); y :+ 12
-	SetColor( 50, 220, 50 ); SetImageFont( consolas_bold_50 )
-		DrawText( "$" + player_cash, x, y ); y :+ 50
-		
-	y :+ arena_offset
-	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
-		DrawText( "cannon", x, y ); y :+ 12
-		Local temp_x%, temp_y%
-		temp_x = x; temp_y = y
-		For Local i% = 0 To player.turrets[0].cur_ammo - 1
-			If ((i Mod 10) = 0) And (i > 0)
-				temp_x = x
-				temp_y :+ img_icon_player_cannon_ammo.height
-			End If
-			DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
-			temp_x :+ img_icon_player_cannon_ammo.width
-		Next; y :+ 12 + (player.turrets[0].max_ammo / 10)* img_icon_player_cannon_ammo.height
-		DrawText( "m.gun", x, y ); y :+ 12
-		DrawImage( img_icon_infinity, x, y )
-	
-	y = window_h - arena_offset - 30
-	SetColor( 157, 157, 157 ); SetImageFont( consolas_normal_10 )
-		DrawText( "copyright 2008 Tyler W Cole", x, y ); y :+ 10
-		DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
-		DrawText( "http://www.blitzmax.com", x, y ); y :+ 10
-	
-End Function
-'______________________________________________________________________________
-'Menu and GUI
-Const MENU_START_CONTINUE% = 0
-Const MENU_LOAD% = 1
-Const MENU_SETTINGS% = 2
-Const MENU_QUIT% = 3
-Global menu_option% = MENU_START_CONTINUE
-
-Function draw_menu()
-	SetColor( 255, 255, 255 )
-	SetRotation( 0 )
 	SetAlpha( 1 )
-	SetScale( 1, 1 )
-
+	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_24 )
+	DrawText( "- paused -", window_w/2 - 50, window_h/2 )
 	
 End Function
 '______________________________________________________________________________
@@ -361,75 +585,5 @@ Function draw_game_over()
 	SetScale( 1, 1 )
 
 	
-End Function
-'______________________________________________________________________________
-'Function draw_health( cur_health#, max_health#, pos_x_exact#, pos_y_exact# )
-'	Local pos_x% = Int(pos_x_exact), pos_y% = Int(pos_y_exact)
-'	SetRotation( 0 )
-'	DrawImage( img_health_bar, pos_x - 22/2, pos_y - 5 )
-'	Local threshold# = 0.100
-'	While threshold <= 1.000 And cur_health > threshold * max_health
-'		DrawImage( img_health_pip, Int(pos_x) - 22/2 + threshold * 20, Int(pos_y) - 5 )
-'		threshold :+ 0.100
-'	End While
-'End Function
-'______________________________________________________________________________
-'Spawning and Respawning
-Function respawn_player()
-	If player = Null
-		player = Copy_COMPLEX_AGENT( player_archetype[ 0], True )
-		player.pos_x = arena_w/2
-		player.pos_y = arena_h/2
-		player.ang = -90
-		player.turrets[0].ang = player.ang
-		player.turrets[1].ang = player.ang
-	End If
-End Function
-'______________________________________________________________________________
-Function respawn_enemies()
-	If enemy_list.IsEmpty()
-		
-		'the infamous "mr. the box"
-		For Local i% = 1 To 10
-			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 0], True )
-			
-			nme.pos_x = Rand( 10, arena_w - 10 )
-			nme.pos_y = Rand( 10, arena_h - 10 )
-			nme.ang = Rand( 0, 359 )
-			
-			nme.command_all_motivators( MOVE_FORWARD_DIRECTION, RandF( 0.2, 0.6 ))
-			nme.rear_trail_emitters[ 0].enable( MODE_ENABLED_FOREVER )
-			
-			nme.add_me( enemy_list )
-		Next
-		
-		'the brand spankin' new ROCKET TURRET
-		For Local i% = 1 To 5
-			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 1], True )
-
-			nme.pos_x = Rand( 10, arena_w - 10 )
-			nme.pos_y = Rand( 10, arena_h - 10 )
-			nme.turrets[ 0].ang = Rand( 0, 359 )
-
-			Local cb:CONTROL_BRAIN = New CONTROL_BRAIN
-			cb.avatar = nme
-			cb.target = player
-			cb.ai_type = AI_TYPE_ROCKET_TURRET
-			cb.turret_angular_velocity_max = rocket_turret_angular_velocity_max
-			cb.add_me( control_brain_list )
-			
-			nme.add_me( enemy_list )
-		Next
-		
-	End If
-End Function
-'______________________________________________________________________________
-Function spawn_pickup( x#, y# )
-	Local pkp:PICKUP
-	If Rand( 0, 10000 ) < pickup_probability
-		Local index% = Rand( 0, pickup_archetype.Length - 1 )
-		pkp = Copy_PICKUP( pickup_archetype[index] )
-		pkp.pos_x = x; pkp.pos_y = y
-	End If
 End Function
 

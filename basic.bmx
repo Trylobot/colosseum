@@ -56,7 +56,7 @@ Type MANAGED_OBJECT
 		link = ( list.AddLast( Self ))
 	End Method
 	Method remove_me()
-		link.Remove()
+		If link <> Null Then link.Remove()
 	End Method
 	
 End Type
