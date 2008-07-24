@@ -127,8 +127,8 @@ End Function
 Function respawn_player()
 	
 	If player <> Null And player.managed() Then player.remove_me()
-	'player = Copy_COMPLEX_AGENT( player_archetype[ 0], ALIGNMENT_FRIENDLY )
-	player = Copy_COMPLEX_AGENT( enemy_archetype[ 1], ALIGNMENT_FRIENDLY )
+	player = Copy_COMPLEX_AGENT( player_archetype[ 0], ALIGNMENT_FRIENDLY )
+	'player = Copy_COMPLEX_AGENT( enemy_archetype[ 1], ALIGNMENT_FRIENDLY )
 	player.pos_x = arena_w/2
 	player.pos_y = arena_h/2
 	player.ang = -90
@@ -138,27 +138,27 @@ Function respawn_player()
 End Function
 '______________________________________________________________________________
 Function respawn_enemies()
-'	If hostile_agent_list.IsEmpty()
-'		
-'		'mr. the box
-'		For Local i% = 1 To (5*player_level)
-'			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 0], ALIGNMENT_HOSTILE )
-'			nme.pos_x = Rand( 10, arena_w - 10 )
-'			nme.pos_y = Rand( 10, arena_h - 10 )
-'			nme.ang = Rand( 0, 359 )
-'			Create_and_Manage_CONTROL_BRAIN( nme, Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX )
-'		Next
-'		
-'		'rocket turret
-'		For Local i% = 1 To (2*player_level)
-'			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 1], ALIGNMENT_HOSTILE )
-'			nme.pos_x = Rand( 10, arena_w - 10 )
-'			nme.pos_y = Rand( 10, arena_h - 10 )
-'			nme.turrets[ 0].ang = Rand( 0, 359 )
-'			Create_and_Manage_CONTROL_BRAIN( nme, player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_ROCKET_TURRET )
-'		Next
-'		
-'	End If
+	If hostile_agent_list.IsEmpty()
+		
+		'mr. the box
+		For Local i% = 1 To (5*player_level)
+			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 0], ALIGNMENT_HOSTILE )
+			nme.pos_x = Rand( 10, arena_w - 10 )
+			nme.pos_y = Rand( 10, arena_h - 10 )
+			nme.ang = Rand( 0, 359 )
+			Create_and_Manage_CONTROL_BRAIN( nme, Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX )
+		Next
+		
+		'rocket turret
+		For Local i% = 1 To (2*player_level)
+			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 1], ALIGNMENT_HOSTILE )
+			nme.pos_x = Rand( 10, arena_w - 10 )
+			nme.pos_y = Rand( 10, arena_h - 10 )
+			nme.turrets[ 0].ang = Rand( 0, 359 )
+			Create_and_Manage_CONTROL_BRAIN( nme, player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_ROCKET_TURRET )
+		Next
+		
+	End If
 End Function
 '______________________________________________________________________________
 Function spawn_pickup( x#, y# )
@@ -214,7 +214,7 @@ Function update_all()
 		
 		'level
 		If hostile_agent_list.IsEmpty()
-'			load_next_level()
+			load_next_level()
 		End If
 		
 		'control brains (human + ai)
@@ -289,6 +289,8 @@ Function draw_all()
 		
 		'main menu
 		draw_menu()
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
 		
 	Else
 	

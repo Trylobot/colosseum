@@ -67,9 +67,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				EndIf
 				'turrets angular velocity
 				If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
-					avatar.turn_turrets( -1.0  )
+					avatar.turn_turrets( 1.0  )
 				ElseIf KeyDown( KEY_LEFT ) Or KeyDown( KEY_J )
-					avatar.turn_turrets( 1.0 )
+					avatar.turn_turrets( -1.0 )
 				Else
 					avatar.turn_turrets( 0.0 )
 				EndIf

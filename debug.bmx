@@ -28,7 +28,8 @@ Function debug()
 	sx = 4; sy = 4
 	h = 10
 	
-	debug_drawtext( "agents " + friendly_agent_list.Count() + hostile_agent_list.Count() )
+	debug_drawtext( "friendly agents " + friendly_agent_list.Count() )
+	debug_drawtext( "hostile agents " + hostile_agent_list.Count() )
 
 
 '	For Local c:COMPLEX_AGENT = EachIn friendly_agent_list
