@@ -85,7 +85,7 @@ Global pathing_h#[,] 'heuristic cost to goal from here
 Global pathing_g#[,] 'actual cost to get here from beginning
 '______________________________________________________________________________
 Function in_bounds%( c:CELL )
-	If c.row > 0 And c.row < pathing_grid_h And c.col > 0 And c.col < pathing_grid_w ..
+	If c <> Null And c.row > 0 And c.row < pathing_grid_h And c.col > 0 And c.col < pathing_grid_w ..
 	Then Return True Else Return False
 End Function
 Function distance#( c1:CELL, c2:CELL )
@@ -93,48 +93,57 @@ Function distance#( c1:CELL, c2:CELL )
 End Function
 
 Function get_pathing_grid%( c:CELL )
-	'If in_bounds( c ) Then ..
-	Return pathing_grid[c.row,c.col] 'Else Return PATH_BLOCKED
+	If in_bounds( c ) Then ..
+	Return pathing_grid[c.row,c.col] Else Return PATH_BLOCKED
 End Function
 Function set_pathing_grid( c:CELL, value% )
-	'If in_bounds( c ) Then ..
+	If in_bounds( c ) Then ..
 	pathing_grid[c.row,c.col] = value
 End Function
 Function get_pathing_came_from:CELL( c:CELL )
-	'If in_bounds( c ) Then ..
-	Return pathing_came_from[c.row,c.col] 'Else Return CELL.Create( -1, -1 )
+	If in_bounds( c ) Then ..
+	Return pathing_came_from[c.row,c.col] Else Return CELL.Create( -1, -1 )
 End Function
 Function set_pathing_came_from( c:CELL, value:CELL )
-	'If in_bounds( c ) Then ..
+	If in_bounds( c ) Then ..
 	pathing_came_from[c.row,c.col] = value.clone()
 End Function
 Function get_pathing_visited%( c:CELL )
-	'If in_bounds( c ) Then ..
-	Return pathing_visited[c.row,c.col] 'Else Return True
+	If in_bounds( c ) Then ..
+	Return pathing_visited[c.row,c.col] Else Return True
 End Function
 Function set_pathing_visited( c:CELL, value% )
-	'If in_bounds( c ) Then ..
+	If in_bounds( c ) Then ..
 	pathing_visited[c.row,c.col] = value
 End Function
 Function get_pathing_h#( c:CELL )
-	'If in_bounds( c ) Then ..
-	Return pathing_h[c.row,c.col] 'Else Return -1.0
+	If in_bounds( c ) Then ..
+	Return pathing_h[c.row,c.col] Else Return -1.0
 End Function
 Function set_pathing_h( c:CELL, value# )
-	'If in_bounds( c ) Then ..
+	If in_bounds( c ) Then ..
 	pathing_h[c.row,c.col] = value
 End Function
 Function get_pathing_g#( c:CELL )
-	'If in_bounds( c ) Then ..
-	Return pathing_g[c.row,c.col] 'Else Return -1.0
+	If in_bounds( c ) Then ..
+	Return pathing_g[c.row,c.col] Else Return -1.0
 End Function
 Function set_pathing_g( c:CELL, value# )
-	'If in_bounds( c ) Then ..
+	If in_bounds( c ) Then ..
 	pathing_g[c.row,c.col] = value
 End Function
 Function get_pathing_f#( c:CELL )
-	'If in_bounds( c ) Then ..
-	Return pathing_g[c.row,c.col] + pathing_h[c.row,c.col] 'Else Return -1.0
+	If in_bounds( c )
+		Local g# = pathing_g[c.row,c.col]
+		Local h# = pathing_h[c.row,c.col]
+		If h = -1.0 'h has never been calculated for this cell
+			h = distance( c, global_goal )
+			set_pathing_h( c, h )
+		End If
+		Return (g + h)
+	Else
+		Return -1.0
+	End If
 End Function
 '______________________________________________________________________________
 Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority queue in which all items are unique
@@ -163,7 +172,7 @@ Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority que
 	Method smallest_child_i%( i% )
 		Local left_c% = left_child_i( i )
 		Local right_c% = right_child_i( i )
-		If( min_f( binary_tree[left_c], binary_tree[right_c] ) = binary_tree[left_c] ) Then ..
+		If( f_less_than( binary_tree[left_c], binary_tree[right_c] )) Then ..
 		Return left_c Else Return right_c
 	End Method
 	Method swap%( i%, j% )
@@ -182,11 +191,12 @@ Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority que
 			Local item_parent_i% = parent_i( item_i ) 'pre-cache parent's index
 			binary_tree[item_i] = i.clone() 'deep-copy the argument
 			If item_i <> item_parent_i
-				While Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] ) 
-					'while the min-heap property is violated...
+				While Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] )
+					'while the min-heap property is being violated
 					swap( item_i, item_parent_i ) 'swap item with its parent
 					item_i = item_parent_i 'item's new index is its current parent's index
 					item_parent_i = parent_i( item_i ) 'calculate item's new parent's index
+					If item_i = 0 Then Exit 'root reached, done
 				End While
 				If binary_tree[item_parent_i].eq( binary_tree[item_i] )
 					'new item is not unique; no insertion should take place
@@ -203,17 +213,18 @@ Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority que
 	Method pop_root:CELL()
 		If cur_size > 0 'if not empty
 			Local root:CELL = binary_tree[0] 'save the current root; it's always at [0]
+			cur_size :- 1 'maintain size-tracking field
 			If cur_size > 1 'if the root is not the only element
 				binary_tree[0] = binary_tree[cur_size] 'set the root to the last element in the heap
 				binary_tree[cur_size] = Null 'remove the reference at end of the heap to the new root
-				cur_size :- 1 'maintain size-tracking field
 				Local item_i% = 0 'index is root index
 				Local child_i% = smallest_child_i( item_i ) 'get the smaller of two children
-				While Not f_less_than( binary_tree[item_i], binary_tree[child_i] ) 
-					'while the heap property is being violated..
+				While Not f_less_than( binary_tree[item_i], binary_tree[child_i] )
+					'while the heap property is being violated
 					swap( item_i, child_i ) 'swap item with its smallest child
 					item_i = child_i 'set item to its current smallest child
 					child_i = smallest_child_i( item_i ) 'update item's smallest child
+					If item_i = cur_size Then Exit 'there are no more children
 				End While
 			Else
 				binary_tree[0] = Null
@@ -229,10 +240,6 @@ Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority que
 End Type
 Function f_less_than%( i:CELL, j:CELL ) 'uses the f() function to determine if {i} < {j}
 	Return get_pathing_f( i ) < get_pathing_f( j )
-End Function
-Function min_f:CELL( i:CELL, j:CELL ) 'returns the CELL which has the lowest f() function
-	If get_pathing_f( i ) < get_pathing_f( j ) Then ..
-	Return i Else Return j
 End Function
 
 Global potential_paths:PRIORITY_QUEUE 'prioritized list of cells representing end-points of potential paths to be explored (open-list)
@@ -259,8 +266,8 @@ Function backtrace_path:TList( start:CELL, c:CELL )
 End Function
 '______________________________________________________________________________
 Function init_pathing_system()
-	pathing_grid_h = arena_h / cell_size
-	pathing_grid_w = arena_w / cell_size
+	pathing_grid_h = arena_h / cell_size + 1
+	pathing_grid_w = arena_w / cell_size + 1
 	init_pathing_structures()
 	'init_pathing_grid_from_obstacles()
 End Function
@@ -298,7 +305,11 @@ Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
 	Return list
 End Function
 '______________________________________________________________________________
+Global global_start:CELL, global_goal:CELL
 Function find_path_given_cells:TList( start:CELL, goal:CELL )
+	global_start = start
+	global_goal = goal
+	
 	For Local r% = 0 To pathing_grid_h - 1
 		For Local c% = 0 To pathing_grid_w - 1
 			pathing_visited[r,c] = False

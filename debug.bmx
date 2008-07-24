@@ -5,6 +5,7 @@ Rem
 EndRem
 
 Global sx%, sy%, h%, px#, py#, maus_x#, maus_y#, speed# = 1, r#, a#
+Global wait_ts%, wait_time%
 
 '______________________________________________________________________________
 'Global test_timer:TTimer = CreateTimer( 1.000/0.250 )
@@ -16,6 +17,7 @@ Function debug_drawtext( message$ )
 	sy :+ h
 End Function
 '______________________________________________________________________________
+'F4 to path from player to mouse; hold F4 to pause; hold F3 to fast-forward
 Function debug_pathing( message$ = "" )
 	SetOrigin( arena_offset, arena_offset )
 	SetColor( 255, 255, 255 )
@@ -23,12 +25,11 @@ Function debug_pathing( message$ = "" )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
+	wait_ts = now()
+	If KeyDown( KEY_F3 ) Then wait_time = 25 Else wait_time = 250
 	Repeat
+		If KeyDown( KEY_F4 ) Then wait_ts = now()
 		Cls
-		
-		'draw optional message
-		SetImageFont( consolas_normal_12 )
-		DrawText( message, 3, 3 )
 		
 		Local r%, c%
 		
@@ -41,35 +42,49 @@ Function debug_pathing( message$ = "" )
 			DrawLine( c*cell_size, 0, c*cell_size, pathing_grid_h*cell_size )
 		Next
 		
-		'draw pathing_grid contents
-		SetColor( 255, 255, 255 ); SetAlpha( 0.2 )
 		For r = 0 To pathing_grid_h - 1
 			For c = 0 To pathing_grid_w - 1
+				'draw pathing_grid contents
+				SetColor( 255, 255, 255 ); SetAlpha( 0.5 )
 				If pathing_grid[r,c] = PATH_BLOCKED Then ..
-					DrawRect( r*cell_size + 1, c*cell_size + 1, cell_size - 2, cell_size - 2 )
-			Next
-		Next
-		
-		'draw pathing_came_from contents
-		SetLineWidth( 1 ); SetColor( 255, 255, 255 ); SetAlpha( 0.75 )
-		For r = 0 To pathing_grid_h - 1
-			For c = 0 To pathing_grid_w - 1
+					DrawRect( c*cell_size + 1, r*cell_size + 1, cell_size - 2, cell_size - 2 )
+				'draw pathing_came_from contents
+				SetLineWidth( 1 ); SetColor( 255, 255, 255 ); SetAlpha( 0.5 )
 				If Not pathing_came_from[r,c].eq( CELL.Create( r, c )) Then ..
-					DrawLine( r*cell_size + cell_size/2, c*cell_size + cell_size/2, pathing_came_from[r,c].row*cell_size + cell_size/2, pathing_came_from[r,c].col*cell_size + cell_size/2 )
+					DrawLine( c*cell_size + cell_size/2, r*cell_size + cell_size/2, pathing_came_from[r,c].col*cell_size + cell_size/2, pathing_came_from[r,c].row*cell_size + cell_size/2 )
+				'draw visited
+				SetColor( 255, 212, 212 ); SetAlpha( 0.5 )
+				If pathing_visited[r,c] Then ..
+					DrawRect( c*cell_size + 1, r*cell_size + 1, cell_size - 2, cell_size - 2 )
 			Next
 		Next
-		
-		'draw visited
-		SetColor( 255, 212, 212 ); SetAlpha( 0.2 )
-		For r = 0 To pathing_grid_h - 1
-			For c = 0 To pathing_grid_w - 1
-				If pathing_visited[r,c] Then ..
-					DrawRect( r*cell_size + 1, c*cell_size + 1, cell_size - 2, cell_size - 2 )
+		If Not potential_paths.is_empty()
+			For Local i% = 0 To potential_paths.cur_size - 1
+				'draw potential paths
+				SetColor( 212, 255, 212 ); SetAlpha( 0.5 )
+				DrawRect( potential_paths.binary_tree[i].col*cell_size + 1, potential_paths.binary_tree[i].row*cell_size + 1, cell_size - 2, cell_size - 2 )
 			Next
-		Next	
+		End If
+		
+		'start and goal
+		If global_start <> Null
+			SetColor( 64, 255, 64 ); SetAlpha( 1 )
+			DrawRect( global_start.col*cell_size + 1, global_start.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+		End If
+		If global_goal <> Null
+			SetColor( 64, 64, 255 ); SetAlpha( 1 )
+			DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+		End If
+		
+		'draw optional message
+		SetColor( 255, 255, 255 ); SetAlpha( 1 )
+		SetImageFont( consolas_normal_12 )
+		DrawText( message, 3, -14 )
 		
 		Flip
-	Until KeyHit( KEY_F4 )
+		
+		If KeyHit( KEY_ESCAPE ) Then End
+	Until (now() - wait_ts) > wait_time
 	
 End Function
 '______________________________________________________________________________
