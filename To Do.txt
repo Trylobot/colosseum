@@ -1,6 +1,6 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
-	_ show a little music icon and sound volume indicator somewhere to show when music is on/off
-	_ add an "M for music" thing to the help screen
+	X show a little music icon and sound volume indicator somewhere to show when music is on/off
+	X add an "M for music" thing to the help screen
 	_ destructible armor plates of varying effectiveness and mass
 			when damaged, they show noticeable changes and look "beat up".
 			when dead, they actually fall off, allowing the player to be damaged in that area. The player does not have a lot of life.
@@ -16,14 +16,14 @@
 	_ engine sounds -- startup, idle loop (which changes based on motive force or velocity), shut-down
 	_ cheat code to allow player to spawn as any enemy
 	_ two-player networked co-op, vs, player-vs-enemies, enemies-vs-enemies
-	_ forces, mass, acceleration, velocity, frictional forces, rotational forces, torque, collision response system based on it
+	X forces, mass, acceleration, velocity, frictional forces, rotational forces, torque, collision response system based on it
 	_ Joystick controls (XBOX 360 and "others") allowing analog control of motive forces, rotational and direct
 	_ levels defined as a grid of squares, blocking or non blocking, made up of elongated rectangular walls (which can be rotated arbitrarily (optional))
 			but naturally must not cramp the level and make it impossible to get anywhere
 	_ homing missiles (player & enemy, tracks nearest enemy) simple greedy pathing
 	_ AI pathing (A*) can "malfunction" if the AI is damaged (ie, return sucky paths)
 	_ create a predictive aiming system for the AI, based on velocity of AI's avatar, its target, and the muzzle velocity/acceleration of its weapon(s).
-	O create a rudimentary AI
+	X create a rudimentary AI
 	_ "tazer caster" -- weapon with two components, fired in sequence from the main barrel.
 			when one of the components hits an enemy, it sticks.
 			if both components hit enemies, an electrified wire is enabled and starts to destroy the enemies.
@@ -47,14 +47,14 @@
 			can be reconfigured at any time to emphasize front, back, or to be evenly spread
 	_ stealth device (uses power)
 	_ UPGRADES: weapon damage (using ammunition, purchasable), max health, speed (tread type), acceleration (engine), armor (plates, bought in sets, destroyable, visible, can fall off), muzzle velocity of all weapons, turret rotation speed
-	_ machine gun overheat
+	X machine gun overheat
 	_ ammunition class/type/object for association with turrets. Turrets can store multiple types of ammo, and be pointing to an active one. Each ammunition object would keep track of units remaining.
 	_ DEPLOYABLE state for complex agents. Either switch the image entirely or have special animated gizmos that animate with a function call.
 	_ deploy-gizmos would be some kind of special particle with two states, and an image set for animation frames
 			when activated, the gizmo would animate forwards and then freeze.
 			when activated again, the gizmo would animate backwards and freeze it its original state.
 	_ ammunition loading/reloading animation, and an animation joining the ammo pickup to the ammo display when it gets granted()
-	_ for TURRETs, allow for an arbitrary number of each type of emitter.
+	X for TURRETs, allow for an arbitrary number of each type of emitter.
 	_ enemy spawner (Carson's idea)
 	_ put explosion, smoke, spark and damage scar emitters into projectiles.
 			when the projectile hits something, emit everything ("dump its load").
@@ -80,11 +80,11 @@
 	X encapsulate turret logic and make a class for it
 	_ create xml format for levels
 	_ create a level editor
-	_ implement a physics engine, using Chris Hecker's PDF's as an example
+	X implement a physics engine, using Chris Hecker's PDF's as an example
 			linear forces, center of mass, rotational physics, etc.
 			application: obviously, to make the game world seem more "real"
-	_ create gibs for enemies
-	_ make gibs spawn as particles when enemies die
+	X create gibs for enemies
+	X make gibs spawn as particles when enemies die
 	_ create scars
 	X create "shells" to be ejected from the ejector port of turret object
 	_ create blocks for static environments that can be collided with
