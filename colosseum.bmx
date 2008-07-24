@@ -84,10 +84,6 @@ Function process_input()
 End Function
 '______________________________________________________________________________
 Function update_objects()
-	'emitters
-	For Local em:EMITTER = EachIn emitter_list
-		em.emit()
-	Next
 	'projectiles
 	For Local proj:PROJECTILE = EachIn projectile_list
 		proj.update()
@@ -95,15 +91,18 @@ Function update_objects()
 	'particles
 	For Local part:PARTICLE = EachIn particle_list
 		part.update()
+		part.prune()
 	Next
-	SetAlpha( 1.000 )
-	SetScale( 1.000, 1.000 )
+	'emitters
+	For Local em:EMITTER = EachIn emitter_list
+		em.emit()
+	Next
 
 	'player
 	player.update()
 
 	'enemies
-	For Local nme:AGENT = EachIn enemy_list
+	For Local nme:COMPLEX_AGENT = EachIn enemy_list
 		nme.update()
 	Next
 
@@ -117,7 +116,7 @@ Const PROJECTILE_COLLIDE_LAYER% = 16
 Const STATIC_COLLIDE_LAYER% = 32
 
 Function collide()
-	Local nme:AGENT, proj:PROJECTILE
+	Local nme:COMPLEX_AGENT, proj:PROJECTILE
 	
 	ResetCollisions()
 	For nme = EachIn enemy_list
@@ -172,11 +171,11 @@ Function draw()
 	'player
 	player.draw()
 	'enemies
-	For Local nme:AGENT = EachIn enemy_list
+	For Local nme:COMPLEX_AGENT = EachIn enemy_list
 		nme.draw()
 	Next
 	'projectile particles
-	For Local proj:PARTICLE = EachIn projectile_list
+	For Local proj:PROJECTILE = EachIn projectile_list
 		proj.draw()
 	Next
 	'generic particles
@@ -196,26 +195,24 @@ End Function
 
 '______________________________________________________________________________
 'initialize temporary testing entities
-'enemy tanks
+'enemies
 For Local i% = 1 To 10
-	Local e:AGENT = Create_AGENT()
-	e.img = img_box
-	e.pos_x = Rand( 10, arena_w - 10 )
-	e.pos_y = Rand( 10, arena_h - 10 )
-	e.ang = Rand( 0, 359 )
-	Local vel# = 0.001 * Double( Rand( 200, 500 ))
-	e.vel_x = vel * Cos( e.ang )
-	e.vel_y = vel * Sin( e.ang )
-	e.add_me( enemy_list )
+	Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 0] ) 
+	nme.pos_x = Rand( 10, arena_w - 10 )
+	nme.pos_y = Rand( 10, arena_h - 10 )
+	nme.ang = Rand( 0, 359 )
+	Local vel# = RandF( 0.2, 0.5 )
+	nme.vel_x = vel * Cos( nme.ang )
+	nme.vel_y = vel * Sin( nme.ang )
+	nme.add_me( enemy_list )
 Next
 'player
-Global player:COMPLEX_AGENT
-player = Copy_COMPLEX_AGENT( player_archetype[ 0] )
+Global player:COMPLEX_AGENT = Copy_COMPLEX_AGENT( player_archetype[ 0] )
 player.pos_x = arena_w/2
 player.pos_y = arena_h/2
-'player.ang = -90
-'player.turrets[0].ang = player.ang
-'player.turrets[1].ang = player.ang
+player.ang = -90
+player.turrets[0].ang = player.ang
+player.turrets[1].ang = player.ang
 
 
 '______________________________________________________________________________

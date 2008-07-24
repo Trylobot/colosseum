@@ -56,9 +56,33 @@ Type AGENT Extends POINT
 
 End Type
 '______________________________________________________________________________
-Function Create_AGENT:AGENT() 'more arguments?
-	Local new_entity:AGENT = New AGENT
-	'initializers?
-	Return new_entity
+Function Archetype_AGENT:AGENT( ..
+img:TImage, ..
+max_health#, ..
+mass# )
+	Local a:AGENT = New AGENT
+	
+	'static fields
+	a.img = img
+	a.max_health = max_health
+	a.mass = mass
+	
+	'dynamic fields
+	a.cur_health = max_health
+		
+	Return a
 End Function
-
+'______________________________________________________________________________
+Function Copy_AGENT:AGENT( other:AGENT )
+	Local a:AGENT = New AGENT
+	
+	'static fields
+	a.img = other.img
+	a.max_health = other.max_health
+	a.mass = other.mass
+	
+	'dynamic fields
+	a.cur_health = other.max_health
+		
+	Return a
+End Function

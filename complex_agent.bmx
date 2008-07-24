@@ -84,6 +84,7 @@ End Type
 Function Archetype_COMPLEX_AGENT:COMPLEX_AGENT( ..
 img:TImage, ..
 max_health#, ..
+mass#, ..
 turret_count%, ..
 motivator_count% )
 	Local c:COMPLEX_AGENT = New COMPLEX_AGENT
@@ -91,6 +92,7 @@ motivator_count% )
 	'static fields
 	c.img = img
 	c.max_health = max_health
+	c.mass = mass
 	
 	'dynamic fields
 	c.cur_health = max_health
@@ -116,6 +118,7 @@ Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT )
 	'static fields
 	c.img = other.img
 	c.max_health = other.max_health
+	c.mass = other.mass
 	
 	'dynamic fields
 	c.pos_x = other.pos_x; c.pos_y = other.pos_y

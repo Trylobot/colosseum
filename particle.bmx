@@ -23,6 +23,19 @@ Type PARTICLE Extends POINT
 	Method New()
 	End Method
 	
+	Method debug()
+		Super.debug()
+		Print "PARTICLE___________"
+		Print "img " + (img <> Null)
+		Print "alpha " + alpha
+		Print "alpha_delta " + alpha_delta
+		Print "scale " + scale
+		Print "scale_delta " + scale_delta
+		Print "life_time " + life_time
+		Print "created_ts " + created_ts
+		Print "retain " + retain
+	End Method
+	
 	Method dead%()
 		If life_time < 0
 			Return False
@@ -30,6 +43,12 @@ Type PARTICLE Extends POINT
 			Return now() - created_ts >= life_time
 		End If
 	End Method
+	
+	Method prune()
+		If dead()
+			remove_me()
+		End If
+	End Method	
 	
 	Method draw()
 		SetRotation( ang )
@@ -39,11 +58,6 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Method update()
-		'prune old particles
-		If dead()
-			remove_me()
-			Return
-		End If
 		'update position
 		pos_x :+ vel_x
 		pos_y :+ vel_y

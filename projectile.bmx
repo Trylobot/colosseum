@@ -19,8 +19,18 @@ Type PROJECTILE Extends PARTICLE
 	Method New()
 	End Method
 	
-	Method add_emitter( emitter_archetype% )
-		
+	Method debug()
+		Super.debug()
+		Print "PROJECTILE_________"
+		Print "explosion_particle_index " + explosion_particle_index
+		Print "mass " + mass
+		Print "damage " + damage
+		Print "trail_emitter " + (trail_emitter <> Null)
+		Print "thrust_emitter " + (thrust_emitter <> Null)
+	End Method
+	
+	Method dead%()
+		Return False
 	End Method
 	
 End Type

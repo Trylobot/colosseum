@@ -1,25 +1,24 @@
-[COLOSSEUM - TO DO LIST] (W = work in progress, D = done, N = decided not to)
+[COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
 	_ sound emitters
-	_ emitters should have a particle_archetype_index range (min/max) so that they can emit many different particles
+	X emitters should have a particle_archetype_index range (min/max) so that they can emit many different particles
 	_ explosions can also have short-lived "spark" emitters, and sparks have such trails as mentioned above
-	_ velocity range for projectile emitters -- ties in to weapon accuracy
-	_ angular velocity for particles
-	_ angular velocity range for particle emitters
+	X velocity range for projectile emitters -- ties in to weapon accuracy
+	X angular velocity for particles
+	X angular velocity range for particle emitters
 	_ motivator class for animating "treads" and handling debris and trail emitters, attached to complex agents
-	D remove dynamic fields (usually physics-related) from CREATE functions (changed them to "Archetype_.." functions)
-	D class archetype libraries
+	X remove dynamic fields (usually physics-related) from CREATE functions (changed them to "Archetype_.." functions)
+	X class archetype libraries
 	_ put class archetype initialization into XML files
-	_ create projectile emitter type
-	_ weapon accuracy values, implemented with angle variance in the projectile emitter
-	N turret -- barrel travel time (delay from fire request until projectile actually emitted)
-	_ attach various emitters to turret class to be called logically on fire()
+	X create projectile emitter type
+	X weapon accuracy values, implemented with angle variance in the projectile emitter
+	X attach various emitters to turret class to be called logically on fire()
 	_ turret recoil
 	_ emitter's parent can be a particle (or projectile)
 			applications: missiles!
-	_ alpha values for particles, birth & death
-	_ tread emitter and manager list
-	_ damage for player and enemies
-	D encapsulate turret logic and make a class for it
+	X alpha values for particles, birth & death
+	X tread emitter and manager list
+	X damage for player and enemies
+	X encapsulate turret logic and make a class for it
 	_ create xml format for levels
 	_ create a level editor
 	_ implement a physics engine, using Chris Hecker's PDF's as an example
@@ -28,11 +27,11 @@
 	_ create gibs for enemies
 	_ make gibs spawn as particles when enemies die
 	_ create scars
-	D create "shells" to be ejected from the ejector port of turret object
+	X create "shells" to be ejected from the ejector port of turret object
 	_ create blocks for static environments that can be collided with
 	_ create example arenas
 	_ create a rudimentary AI
 	_ create a few enemies with guns
 	_ create visible damage which "sticks" to agents
-	D separate main components into files
+	X separate main components into files
 	

@@ -20,5 +20,14 @@ Type POINT Extends MANAGED_OBJECT
 	
 	Method New()
 	End Method
+	
+	Method debug()
+		Super.debug()
+		Print "POINT______________"
+		Print "pos " + pos_x + ", " + pos_y
+		Print "vel " + vel_x + ", " + vel_y
+		Print "ang " + ang
+		Print "ang_vel " + ang_vel
+	End Method
 
 End Type
