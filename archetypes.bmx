@@ -9,40 +9,40 @@ EndRem
 Global particle_emitter_archetype:EMITTER[20]
 
 'particle emitter 0 - tank cannon muzzle flash emitter
-particle_emitter_archetype[ 0] = Archetype_EMITTER( EMITS_PARTICLES,  0,  0, MODE_DISABLED, False, False, False, False, False, 0, 0, 1, 1, 50, 50 )
+particle_emitter_archetype[ 0] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  0,  0, MODE_DISABLED, False, False, False, False, False, 0, 0, 1, 1, 50, 50 )
 'particle emitter 1 - tank cannon shell casing emitter
-particle_emitter_archetype[ 1] = Archetype_EMITTER( EMITS_PARTICLES,  1,  1, MODE_DISABLED, True, True, False, False, True, 0, 0, 1, 1, 2200, 2200 )
+particle_emitter_archetype[ 1] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  1,  1, MODE_DISABLED, True, True, False, False, True, 0, 0, 1, 1, 2200, 2200 )
 'particle emitter 2 - tank cannon muzzle smoke emitter
-particle_emitter_archetype[ 2] = Archetype_EMITTER( EMITS_PARTICLES,  2,  2, MODE_DISABLED, False, False, False, False, False, 0, 0, 10, 12, 500, 1000, 0.08, 0.16, -0.002, -0.004, 0.15, 0.75, 0.0010, 0.0100 )
+particle_emitter_archetype[ 2] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  2,  2, MODE_DISABLED, False, False, False, False, False, 0, 0, 10, 12, 500, 1000, 0.08, 0.16, -0.002, -0.004, 0.15, 0.75, 0.0010, 0.0100 )
 
 'particle emitter 3 - tank cannon explosion emitter
-particle_emitter_archetype[ 3] = Archetype_EMITTER( EMITS_PARTICLES,  3,  3, MODE_DISABLED, False, False, False, False, False, 0, 0, 1, 1, 300, 350 )
+particle_emitter_archetype[ 3] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  3,  3, MODE_DISABLED, False, False, False, False, False, 0, 0, 1, 1, 300, 350 )
 
 'particle emitter 4 - machine gun muzzle flash emitter
-particle_emitter_archetype[ 4] = Archetype_EMITTER( EMITS_PARTICLES,  4,  4, MODE_DISABLED, False, False, False, False, False, 0, 0, 1, 1, 25, 25 )
+particle_emitter_archetype[ 4] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  4,  4, MODE_DISABLED, False, False, False, False, False, 0, 0, 1, 1, 25, 25 )
 'particle emitter 5 - machine gun shell casing emitter
-particle_emitter_archetype[ 5] = Archetype_EMITTER( EMITS_PARTICLES,  5,  5, MODE_DISABLED, True, True, False, False, True, 0, 0, 1, 1, 1400, 1800 )
+particle_emitter_archetype[ 5] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  5,  5, MODE_DISABLED, True, True, False, False, True, 0, 0, 1, 1, 1400, 1800 )
 'particle emitter 6 - machine gun muzzle smoke emitter
-particle_emitter_archetype[ 6] = Archetype_EMITTER( EMITS_PARTICLES,  6,  6, MODE_DISABLED, False, False, False, False, False, 0, 0, 6, 8, 300, 600, 0.06, 0.12, -0.002, -0.004, 0.15, 0.75, 0.0010, 0.0100 )
+particle_emitter_archetype[ 6] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  6,  6, MODE_DISABLED, False, False, False, False, False, 0, 0, 6, 8, 300, 600, 0.06, 0.12, -0.002, -0.004, 0.15, 0.75, 0.0010, 0.0100 )
 
 'particle emitter 7 - machine gun explosion emitter
-particle_emitter_archetype[ 7] = Archetype_EMITTER( EMITS_PARTICLES,  7,  7, MODE_DISABLED, False, False, False, False, False, 0, 0, 1, 1, 200, 300 )
+particle_emitter_archetype[ 7] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  7,  7, MODE_DISABLED, False, False, False, False, False, 0, 0, 1, 1, 200, 300 )
 
 'particle emitter 8 - tank tread debris emitter
-particle_emitter_archetype[ 8] = Archetype_EMITTER( EMITS_PARTICLES,  8, 12, MODE_DISABLED, False, False, False, False, False, 100, 150, 0, 0, 30, 70, 0.75, 1.00, -0.0025, -0.0050 )
+particle_emitter_archetype[ 8] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  8, 12, MODE_DISABLED, False, False, False, False, False, 100, 150, 0, 0, 30, 70, 0.75, 1.00, -0.0025, -0.0050 )
 'particle emitter 9 - tank tread trail emitter
-particle_emitter_archetype[ 9] = Archetype_EMITTER( EMITS_PARTICLES, 13, 17, MODE_DISABLED, False, False, False, False, False, 50, 50, 1, 1, 100, 100, 0.2, 0.4, 0, 0 )
+particle_emitter_archetype[ 9] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE, 13, 17, MODE_DISABLED, False, False, False, False, False, 50, 50, 1, 1, 100, 100, 0.2, 0.4, 0, 0 )
 
 'particle emitter 10 - "the box" autodupe emitter
-particle_emitter_archetype[10] = Archetype_EMITTER( EMITS_PARTICLES, 18, 18, MODE_ENABLED_FOREVER, False, False, False, False, False, 500, 500, 0, 0, 3000, 3000, 0.5, 0.5, -0.004, -0.004 )
+particle_emitter_archetype[10] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE, 18, 18, MODE_ENABLED_FOREVER, False, False, False, False, False, 500, 500, 0, 0, 3000, 3000, 0.5, 0.5, -0.004, -0.004 )
 
 'particle emitter 11 - rocket thrust emitter
-particle_emitter_archetype[11] = Archetype_EMITTER( EMITS_PARTICLES, 19, 19, MODE_ENABLED_FOREVER, False, False, False, False, False, 10, 15, 1, 1, 10, 15, 0.50, 0.75, 0, 0, 0.25, 1.00, 0, 0 )
+particle_emitter_archetype[11] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE, 19, 19, MODE_ENABLED_FOREVER, False, False, False, False, False, 10, 15, 1, 1, 10, 15, 0.50, 0.75, 0, 0, 0.25, 1.00, 0, 0 )
 'particle emitter 12 - rocket smoke trail emitter
-particle_emitter_archetype[12] = Archetype_EMITTER( EMITS_PARTICLES,  2,  2, MODE_ENABLED_FOREVER, False, False, False, False, False, 0, 30, 0, 0, 250, 500, 0.06, 0.12, -0.002, -0.020, 0.10, 0.70, 0.0008, 0.0300 )
+particle_emitter_archetype[12] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  2,  2, MODE_ENABLED_FOREVER, False, False, False, False, False, 0, 30, 0, 0, 250, 500, 0.06, 0.12, -0.002, -0.020, 0.10, 0.70, 0.0008, 0.0300 )
 
 'particle emitter 13 - chain gun shell casing emitter
-particle_emitter_archetype[13] = Archetype_EMITTER( EMITS_PARTICLES, 22, 22, MODE_DISABLED, True, True, False, False, True, 0, 0, 1, 1, 1300, 2400 )
+particle_emitter_archetype[13] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE, 22, 22, MODE_DISABLED, True, True, False, False, True, 0, 0, 1, 1, 1300, 2400 )
 
 '______________________________________________________________________________
 '[ PARTICLES ]
@@ -102,13 +102,13 @@ particle_archetype[23] = Archetype_PARTICLE( img_mgun_hit, LAYER_FOREGROUND )
 Global projectile_emitter_archetype:EMITTER[10]
 
 'projectile emitter 0 - tank cannon projectile emitter
-projectile_emitter_archetype[ 0] = Archetype_EMITTER( EMITS_PROJECTILES,  0,  0, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 )
+projectile_emitter_archetype[ 0] = Archetype_EMITTER( EMITTER_TYPE_PROJECTILE,  0,  0, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 )
 'projectile emitter 1 - machine gun projectile emitter
-projectile_emitter_archetype[ 1] = Archetype_EMITTER( EMITS_PROJECTILES,  1,  1, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 )
+projectile_emitter_archetype[ 1] = Archetype_EMITTER( EMITTER_TYPE_PROJECTILE,  1,  1, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 )
 'projectile emitter 2 - rocket emitter
-projectile_emitter_archetype[ 2] = Archetype_EMITTER( EMITS_PROJECTILES,  2,  2, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 )
+projectile_emitter_archetype[ 2] = Archetype_EMITTER( EMITTER_TYPE_PROJECTILE,  2,  2, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 )
 'projectile emitter 3 - chain gun projectile emitter
-projectile_emitter_archetype[ 3] = Archetype_EMITTER( EMITS_PROJECTILES,  3,  3, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 )
+projectile_emitter_archetype[ 3] = Archetype_EMITTER( EMITTER_TYPE_PROJECTILE,  3,  3, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 )
 
 '______________________________________________________________________________
 '[ PROJECTILES ]
@@ -142,29 +142,29 @@ Global turret_archetype:TURRET[ 5]
 
 'turret 0 - tank cannon
 turret_archetype[ 0] = Archetype_TURRET( img_player_tank_turret_base, img_player_tank_turret_barrel, 1.5, 450, 40, -7, 0, INFINITY, 0, 0, 0, 0 )
-	turret_archetype[ 0].add_emitter( EMITS_PROJECTILES,  0 ).attach_to( turret_archetype[ 0], 20, 0, 0, 0, 0, 0, 3.30, 3.70, 0, 0, 0, 0, 0, 0, -1.0, 1.0, 0, 0, 0, 0 )
-	turret_archetype[ 0].add_emitter( EMITS_PARTICLES,    0 ).attach_to( turret_archetype[ 0], 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	turret_archetype[ 0].add_emitter( EMITS_PARTICLES,    2 ).attach_to( turret_archetype[ 0], 20, 0, 3, 6, -45, 45, 0.05, 0.40, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	turret_archetype[ 0].add_emitter( EMITS_PARTICLES,    1 ).attach_to( turret_archetype[ 0], -3, 3, 0, 0, 0, 0, 0.4, 0.6, 80, 100, -0.005, -0.005, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
+	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PROJECTILE,  0 ).attach_to( turret_archetype[ 0], 20, 0, 0, 0, 0, 0, 3.30, 3.70, 0, 0, 0, 0, 0, 0, -1.0, 1.0, 0, 0, 0, 0 )
+	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PARTICLE,    0 ).attach_to( turret_archetype[ 0], 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PARTICLE,    2 ).attach_to( turret_archetype[ 0], 20, 0, 3, 6, -45, 45, 0.05, 0.40, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PARTICLE,    1 ).attach_to( turret_archetype[ 0], -3, 3, 0, 0, 0, 0, 0.4, 0.6, 80, 100, -0.005, -0.005, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
 
 'turret 1 - machine gun
 turret_archetype[ 1] = Archetype_TURRET( Null, img_player_mgun_turret, 1.5, 75, INFINITY, 0, 0, 25.0, 2.0, 3.0, 0.0175, 1500 )
-	turret_archetype[ 1].add_emitter( EMITS_PROJECTILES,  1 ).attach_to( turret_archetype[ 1], 14, 2, 0, 0, 0, 0, 4.30, 4.70, 0, 0, 0, 0, 0, 0, -2.2, 2.2, 0, 0, 0, 0 )
-	turret_archetype[ 1].add_emitter( EMITS_PARTICLES,    4 ).attach_to( turret_archetype[ 1], 14, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	turret_archetype[ 1].add_emitter( EMITS_PARTICLES,    6 ).attach_to( turret_archetype[ 1], 14, 2, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	turret_archetype[ 1].add_emitter( EMITS_PARTICLES,    5 ).attach_to( turret_archetype[ 1], 8, 2, 0, 0, 0, 0, 0.3, 0.4, 85, 95, -0.004, -0.004, 0, 0, -5, 5, -5, 5, 0, 0 )
+	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PROJECTILE,  1 ).attach_to( turret_archetype[ 1], 14, 2, 0, 0, 0, 0, 4.30, 4.70, 0, 0, 0, 0, 0, 0, -2.2, 2.2, 0, 0, 0, 0 )
+	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PARTICLE,    4 ).attach_to( turret_archetype[ 1], 14, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PARTICLE,    6 ).attach_to( turret_archetype[ 1], 14, 2, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PARTICLE,    5 ).attach_to( turret_archetype[ 1], 8, 2, 0, 0, 0, 0, 0.3, 0.4, 85, 95, -0.004, -0.004, 0, 0, -5, 5, -5, 5, 0, 0 )
 
 'turret 2 - rocket turret
 turret_archetype[ 2] = Archetype_TURRET( img_enemy_stationary_emplacement_1_turret_base, img_enemy_stationary_emplacement_1_turret_barrel, 0.8, 4000, INFINITY, 0, 0, INFINITY, 0, 0, 0, 0 )
-	turret_archetype[ 2].add_emitter( EMITS_PROJECTILES,  2 ).attach_to( turret_archetype[ 2], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0020, 0.0020, 0, 0, 0, 0, 0, 0, 0, 0 )
-	'turret_archetype[ 2].add_emitter( EMITS_PARTICLES,   11 ).attach_to( turret_archetype[ 2], -10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	turret_archetype[ 2].add_emitter( EMITTER_TYPE_PROJECTILE,  2 ).attach_to( turret_archetype[ 2], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0020, 0.0020, 0, 0, 0, 0, 0, 0, 0, 0 )
+	'turret_archetype[ 2].add_emitter( EMITTER_TYPE_PARTICLE,   11 ).attach_to( turret_archetype[ 2], -10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 
 'turret 3 - chain gun turret
 turret_archetype[ 3] = Archetype_TURRET( img_enemy_stationary_emplacement_2_turret_base, img_enemy_stationary_emplacement_2_turret_barrel, 0.55, 25, INFINITY, 0, 0, 25.0, 1.0, 2.0, 0.0175, 2000 )
-	turret_archetype[ 3].add_emitter( EMITS_PROJECTILES,  3 ).attach_to( turret_archetype[ 3], 25, 0, 0, 0, 0, 0, 2.50, 3.00, 0, 0, 0, 0, 0, 0, -5.0, 5.0, 0, 0, 0, 0 )
-	turret_archetype[ 3].add_emitter( EMITS_PARTICLES,    4 ).attach_to( turret_archetype[ 3], 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	turret_archetype[ 3].add_emitter( EMITS_PARTICLES,    6 ).attach_to( turret_archetype[ 3], 25, 0, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	turret_archetype[ 3].add_emitter( EMITS_PARTICLES,   13 ).attach_to( turret_archetype[ 3], 3, 3, 0, 0, 0, 0, 0.4, 0.6, 70, 110, -0.004, -0.004, 0, 0, -5, 5, -5, 5, 0, 0 )
+	turret_archetype[ 3].add_emitter( EMITTER_TYPE_PROJECTILE,  3 ).attach_to( turret_archetype[ 3], 25, 0, 0, 0, 0, 0, 2.50, 3.00, 0, 0, 0, 0, 0, 0, -5.0, 5.0, 0, 0, 0, 0 )
+	turret_archetype[ 3].add_emitter( EMITTER_TYPE_PARTICLE,    4 ).attach_to( turret_archetype[ 3], 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	turret_archetype[ 3].add_emitter( EMITTER_TYPE_PARTICLE,    6 ).attach_to( turret_archetype[ 3], 25, 0, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	turret_archetype[ 3].add_emitter( EMITTER_TYPE_PARTICLE,   13 ).attach_to( turret_archetype[ 3], 3, 3, 0, 0, 0, 0, 0.4, 0.6, 70, 110, -0.004, -0.004, 0, 0, -5, 5, -5, 5, 0, 0 )
 
 '______________________________________________________________________________
 '[ ENEMIES ]

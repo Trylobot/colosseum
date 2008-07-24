@@ -47,11 +47,11 @@ Import brl.timer
 '#Region &H04 MyNamespace
 'GUI
 Private
-TYPE z_f2aecafa_526e_4cd4_84c8_93a6c00ff326 abstract  'Resource folder
+TYPE z_5b7fd8c7_9200_43c4_8178_37b8eef87262 abstract  'Resource folder
 End Type
 
 
-TYPE z_blide_bg9f44ed7e_dca9_4310_a098_7d1869883679 Abstract
+TYPE z_blide_bg0c84901d_4833_4fbd_afc5_14f29d235df0 Abstract
     Const Name:string = "Colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
     Const MinorVersion:Int = 1  'This Const contains the minor version number of the program
@@ -61,13 +61,13 @@ TYPE z_blide_bg9f44ed7e_dca9_4310_a098_7d1869883679 Abstract
 EndType
 
 
-Type z_My_9f44ed7e_dca9_4310_a098_7d1869883679 Abstract 'This type has all the run-tima binary information of your assembly
-    Global Application:z_blide_bg9f44ed7e_dca9_4310_a098_7d1869883679  'This item has all the currently available assembly version information.
-    Global Resources:z_f2aecafa_526e_4cd4_84c8_93a6c00ff326  'This item has all the currently available incbined files names and relative location.
+Type z_My_0c84901d_4833_4fbd_afc5_14f29d235df0 Abstract 'This type has all the run-tima binary information of your assembly
+    Global Application:z_blide_bg0c84901d_4833_4fbd_afc5_14f29d235df0  'This item has all the currently available assembly version information.
+    Global Resources:z_5b7fd8c7_9200_43c4_8178_37b8eef87262  'This item has all the currently available incbined files names and relative location.
 End Type
 
 
-Global My:z_My_9f44ed7e_dca9_4310_a098_7d1869883679 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
+Global My:z_My_0c84901d_4833_4fbd_afc5_14f29d235df0 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
 Public
 '#EndRegion &H04 MyNamespace
 
@@ -76,7 +76,6 @@ Public
 '#Region &H03 Includes
 Include "load_data.bmx"
 Include "basic.bmx"
-Include "point.bmx"
 Include "particle.bmx"
 Include "pickup.bmx"
 Include "force.bmx"
@@ -86,6 +85,7 @@ Include "emitter.bmx"
 Include "turret.bmx"
 Include "agent.bmx"
 Include "complex_agent.bmx"
+Include "pathing.bmx"
 Include "control_brain.bmx"
 Include "archetypes.bmx"
 Include "debug.bmx"

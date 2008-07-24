@@ -5,8 +5,8 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const EMITS_PARTICLES% = 0
-Const EMITS_PROJECTILES% = 1
+Const EMITTER_TYPE_PARTICLE% = 0
+Const EMITTER_TYPE_PROJECTILE% = 1
 
 Const MODE_DISABLED% = 0
 Const MODE_ENABLED_WITH_COUNTER% = 1
@@ -108,9 +108,9 @@ Type EMITTER extends MANAGED_OBJECT
 			'create a new object (particle/projectile) and set it up
 			Local index% = Rand( archetype_index_min, archetype_index_max )
 			Select emitter_type
-				Case EMITS_PARTICLES
+				Case EMITTER_TYPE_PARTICLE
 					emit_particle( Copy_PARTICLE( particle_archetype[index] ))
-				Case EMITS_PROJECTILES
+				Case EMITTER_TYPE_PROJECTILE
 					emit_projectile( Copy_PROJECTILE( projectile_archetype[index], source_id ))
 			End Select
 			
