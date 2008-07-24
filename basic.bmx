@@ -88,8 +88,8 @@ End Function
 'vector & angle functions
 Function angle_sum#( a1#, a2# )
 	Local a# = (a1 + a2) Mod 360
-	If a >= 0 Then Return a ..
-	Else           Return a + 360
+	If a < 0 Then Return a + 360 ..
+	Else          Return a
 End Function
 Function vector_length#( vx#, vy# )
 	Return Sqr( Pow(vx,2) + Pow(vy,2) )
