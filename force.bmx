@@ -5,47 +5,67 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Const PHYSICS_FORCE% = 0
+Const PHYSICS_TORQUE% = 1
+
 Type FORCE Extends MANAGED_OBJECT
-	
-	Field offset# 'offset distance from center of mass for object being acted upon
-	Field offset_ang# 'offset angle from center of mass for object being acted upon
-	Field magnitude# 'strength of force
+
+	Field physics_type% '(torque/force)?
 	Field direction# 'direction force is pointing
+	Field magnitude_max# 'maximum strength of force
 	Field life_time% 'time the force should be active (can be infinite)
-	Field created_ts% '(private) timestamp of force creation
+	
+	Field control_pct# 'magnitude multiplier; force therefore yields between [-magnitude,magnitude]
+	Field magnitude_cur# 'current net magnitude
+	Field created_ts% '(private) timestamp of force creation (for auto-pruning)
 	
 	Method New()
 	End Method
 	
-	Method dead%()
-		Return ..
-			life_time = INFINITY Or ..
-			(now() - created_ts) > life_time
-	End Method
-	
-	Method prune()
+	Method update()
 		If dead()
 			remove_me()
 		End If
+		magnitude_cur = control_pct*magnitude_max
+	End Method
+	
+	Method dead%()
+		Return ..
+			life_time <> INFINITY And ..
+			(now() - created_ts) > life_time
 	End Method
 	
 End Type
 '______________________________________________________________________________
 Function Create_FORCE:FORCE( ..
-offset#, ..
-offset_ang#, ..
-magnitude#, ..
+physics_type%, ..
 direction#, ..
+magnitude_max#, ..
 life_time% = INFINITY )
 	Local f:FORCE = New FORCE
 	
-	f.offset = offset
-	f.offset_ang = offset_ang
-	f.magnitude = magnitude
+	f.physics_type = physics_type
 	f.direction = direction
+	f.magnitude_max = magnitude_max
 	f.life_time = life_time
+	
+	f.control_pct = 1.0
 	f.created_ts = now()
 	
 	Return f
 End Function
-
+'______________________________________________________________________________
+Function Copy_FORCE:FORCE( other:FORCE, managed_list:TList = Null )
+	Local f:FORCE = New FORCE
+	
+	f.physics_type = other.physics_type
+	f.direction = other.direction
+	f.magnitude_max = other.magnitude_max
+	f.life_time = other.life_time
+	
+	f.control_pct = 1.0
+	f.created_ts = now()
+	
+	If managed_list <> Null Then f.add_me( managed_list )
+	Return f
+End Function

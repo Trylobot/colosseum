@@ -7,36 +7,43 @@ EndRem
 '______________________________________________________________________________
 Type PHYSICAL_OBJECT Extends POINT
 	
-	Field mass# 'number representing the mass units of this object. center of mass assumed to be at (0,0) with respect to the object's position
-	Field forces:TList 'all the forces acting on this object
-	Field friction_coef# 'frictional coefficient
-	'Field net_force# 'magnitude of net force acting parallel to the center of mass
-	'Field net_torque# 'magnitude of net force acting perpendicular to the center of mass (rotational force, torque)
+	Field mass# 'number representing the mass units of this object
+	'this object's center of mass is assumed to be this object's position
+	Field force_list:TList 'all the forces acting on this object
+	Field frictional_coefficient# 'frictional coefficient
 	
 	Method New()
+		force_list = CreateList()
 	End Method
 	
 	Method update()
-		Local t#, friction_x#, friction_y#, ang_friction#
-		'reset acceleration and calculate net force and torque
+		
+		'reset acceleration and angular acceleration
 		acc_x = 0; acc_y = 0; ang_acc = 0
-		For Local f:FORCE = EachIn forces
-			t = f.offset_ang - f.direction
-			acc_x :+   Cos( t )*Cos( f.offset_ang ) / mass
-			acc_y :+   Cos( t )*Sin( f.offset_ang )*offset / mass
-			ang_acc :+ Sin( t )
+		
+		'update forces; calculate net force and torque
+		For Local f:FORCE = EachIn force_list
+			f.update()
+			If f.managed()
+				Select f.physics_type
+					Case PHYSICS_FORCE
+						acc_x :+ f.magnitude_cur*Cos( f.direction + ang ) / mass
+						acc_y :+ f.magnitude_cur*Sin( f.direction + ang ) / mass
+					Case PHYSICS_TORQUE
+						ang_acc :+ f.magnitude_cur / mass
+				End Select
+			End If
 		Next
-		'add in friction force
-		If vel_x <> 0 Then   acc_x :-        vel_x*friction_coef / mass
-		If vel_y <> 0 Then   acc_y :-        vel_y*friction_coef / mass
-		If ang_vel <> 0 Then ang_friction :- ang_vel*friction_coef / mass
-		'velocity
 		
-		'position
+		'friction is ever-present and calculated based on velocity
+		If vel_x <> 0 Then   acc_x :-   frictional_coefficient*vel_x / mass
+		If vel_y <> 0 Then   acc_y :-   frictional_coefficient*vel_y / mass
+		If ang_vel <> 0 Then ang_acc :- frictional_coefficient*ang_vel / mass
 		
-		'angular velocity
-		
-		'orientation
+		'update point variables
+		Super.update()
 		
 	End Method
+	
 End Type
+

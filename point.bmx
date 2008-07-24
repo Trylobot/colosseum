@@ -20,4 +20,17 @@ Type POINT Extends MANAGED_OBJECT
 	Method New()
 	End Method
 	
+	Method update()
+		'velocity
+		vel_x :+ acc_x
+		vel_y :+ acc_y
+		'position
+		pos_x :+ vel_x
+		pos_y :+ vel_y
+		'angular velocity
+		ang_vel :+ ang_acc
+		'orientation
+		ang = ( ang + ang_vel ) Mod 360
+	End Method
+	
 End Type

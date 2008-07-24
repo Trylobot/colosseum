@@ -4,7 +4,8 @@ Rem
 	author: Tyler W Cole
 EndRem
 '______________________________________________________________________________
-Global enemy_list:TList = CreateList()
+Global friendly_agent_list:TList = CreateList()
+Global hostile_agent_list:TList = CreateList()
 
 Const ALL_STOP% = 0
 Const ROTATE_CLOCKWISE_DIRECTION% = 1
@@ -12,30 +13,32 @@ Const ROTATE_COUNTER_CLOCKWISE_DIRECTION% = 2
 Const MOVE_FORWARD_DIRECTION% = 3
 Const MOVE_REVERSE_DIRECTION% = 4
 
-Const ALIGNMENT_NOT_APPLICABLE% = 0
+Const ALIGNMENT_NONE% = 0
 Const ALIGNMENT_FRIENDLY% = 1
 Const ALIGNMENT_HOSTILE% = 2
 
 Type COMPLEX_AGENT Extends AGENT
 	
-	Field political_alignment% 'friendly/hostile
 	Field turrets:TURRET[] 'turret array
 	Field turret_count% 'number of turret slots
-	'Field motivators:MOTIVATOR[] 'motivator array
+	'Field motivators:MOTIVATOR[] 'motivator force array (controls certain animations)
 	Field motivator_count% 'number of motivator slots
+	
+	Field driving_force:FORCE 'permanent force for this object; also added to the general force list
+	Field turning_force:FORCE 'permanent torque for this object; also added to the general force list
+	
+	Field emitter_list:TList
 	Field forward_debris_emitters:EMITTER[] 'forward-facing debris emitter array
 	Field rear_debris_emitters:EMITTER[] 'rear-facing debris emitter array
 	Field forward_trail_emitters:EMITTER[] 'forward-facing trail emitter array
 	Field rear_trail_emitters:EMITTER[] 'rear-facing debris trail array
 	
 	Method New()
+		force_list = CreateList()
+		emitter_list = CreateList()
 	End Method
 	
 	Method draw()
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		SetScale( 1, 1 )
-
 		SetRotation( ang )
 		If img <> Null Then DrawImage( img, pos_x, pos_y )
 		For Local t:TURRET = EachIn turrets
@@ -45,47 +48,43 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	'think of this method like a request, safe to call at any time.
 	'ie, if the player is currently reloading, this method will do nothing.
-	Method fire( turret_index% = 0 )
+	Method fire_turret( turret_index% = 0 )
 		If turret_index < turret_count And turrets[turret_index] <> Null
 			turrets[turret_index].fire()
 		End If
 	End Method
 	
 	Method update()
-		Super.update()
-		'all turrets update
+		'turrets
 		For Local t:TURRET = EachIn turrets
 			t.update()
 		Next
+		'emitters
+		For Local em:EMITTER = EachIn emitter_list
+			em.update()
+			em.emit()
+		Next
+		'update agent variables
+		Super.update()
 	End Method
 	
-	Method command_all_motivators( action%, speed# = 0 )
-'		For Local m:TURRET = EachIn motivators
-			If action = MOVE_FORWARD_DIRECTION
-				vel_x = speed * Cos( ang )
-				vel_y = speed * Sin( ang )
-				enable_only_rear_emitters()
-			Else If action = MOVE_REVERSE_DIRECTION
-				vel_x = -( speed * Cos( ang ))
-				vel_y = -( speed * Sin( ang ))
-				enable_only_forward_emitters()
-			Else If action = ALL_STOP
-				vel_x = 0
-				vel_y = 0
-				disable_all_emitters()
-			End If
-'		Next
+	Method drive( pct# )
+		driving_force.control_pct = pct
+	End Method
+	Method turn( pct# )
+		turning_force.control_pct = pct
 	End Method
 	
-	Method command_all_turrets( action%, angular_speed# = 0 )
+	Method turn_turrets( action%, angular_speed# = 0 )
 		For Local t:TURRET = EachIn turrets
-			If action = ALL_STOP
-				t.ang_vel = 0
-			Else If action = ROTATE_CLOCKWISE_DIRECTION
-				t.ang_vel = angular_speed
-			Else If action = ROTATE_COUNTER_CLOCKWISE_DIRECTION
-				t.ang_vel = -( angular_speed )
-			End If
+			Select action
+				Case ALL_STOP
+					t.ang_vel = 0
+				Case ROTATE_CLOCKWISE_DIRECTION
+					t.ang_vel = angular_speed
+				Case ROTATE_COUNTER_CLOCKWISE_DIRECTION
+					t.ang_vel = -( angular_speed )
+			End Select
 		Next
 	End Method
 	
@@ -126,34 +125,21 @@ Type COMPLEX_AGENT Extends AGENT
 		pkp.remove_me()
 	End Method
 	
-	Method remove_me()
-		Super.remove_me()
-		Local i%
-		For i = 0 To turret_count - 1
-			If turrets[i] <> Null Then turrets[i].remove_me()
-		Next
-		For i = 0 To motivator_count - 1
-			If forward_debris_emitters[i] <> Null Then forward_debris_emitters[i].remove_me()
-			If forward_trail_emitters[i] <> Null  Then forward_trail_emitters[i].remove_me()
-			If rear_debris_emitters[i] <> Null    Then rear_debris_emitters[i].remove_me()
-			If rear_trail_emitters[i] <> Null     Then rear_trail_emitters[i].remove_me()
-		Next
-	End Method
-	
 End Type
 '______________________________________________________________________________
 Function Archetype_COMPLEX_AGENT:COMPLEX_AGENT( ..
-political_alignment%, ..
 img:TImage, ..
 max_health#, ..
 mass#, ..
+frictional_coefficient#, ..
 cash_value%, ..
 turret_count%, ..
-motivator_count% )
+motivator_count%, ..
+driving_force_magnitude#, ..
+turning_force_magnitude# )
 	Local c:COMPLEX_AGENT = New COMPLEX_AGENT
 	
 	'static fields
-	c.political_alignment = political_alignment
 	c.img = img
 	c.max_health = max_health
 	c.mass = mass
@@ -173,16 +159,17 @@ motivator_count% )
 		c.forward_trail_emitters = New EMITTER[ motivator_count ]
 		c.rear_trail_emitters = New EMITTER[ motivator_count ]
 	End If
+	c.driving_force = Create_FORCE( PHYSICS_FORCE, 0, driving_force_magnitude )
+	c.turning_force = Create_FORCE( PHYSICS_TORQUE, 0, turning_force_magnitude )
 	
 	Return c
 End Function
 '______________________________________________________________________________
-Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT, emitter_management% = False )
+Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT, political_alignment% = ALIGNMENT_NONE )
 	Local c:COMPLEX_AGENT = New COMPLEX_AGENT
 	If other = Null Then Return c
 	
 	'static fields
-	c.political_alignment = other.political_alignment
 	c.img = other.img
 	c.max_health = other.max_health
 	c.mass = other.mass
@@ -196,7 +183,7 @@ Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT, emitter_manageme
 		c.turret_count = other.turret_count
 		c.turrets = New TURRET[ other.turret_count ]
 		For Local i% = 0 To other.turret_count - 1
-			If other.turrets[i] <> Null Then c.turrets[i] = Copy_TURRET( other.turrets[i], c, emitter_management )
+			If other.turrets[i] <> Null Then c.turrets[i] = Copy_TURRET( other.turrets[i], c )
 		Next
 	End If
 	If other.motivator_count > 0
@@ -208,12 +195,17 @@ Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT, emitter_manageme
 		c.rear_trail_emitters = New EMITTER[ other.rear_trail_emitters.Length ]
 		For Local i% = 0 To other.motivator_count - 1
 			'c.motivators[i] = Copy_MOTIVATOR( other.motivators[i] )
-			If other.forward_debris_emitters[i] <> Null Then c.forward_debris_emitters[i] = Copy_EMITTER( other.forward_debris_emitters[i], emitter_management, c )
-			If other.rear_debris_emitters[i] <> Null Then c.rear_debris_emitters[i] = Copy_EMITTER( other.rear_debris_emitters[i], emitter_management, c )
-			If other.forward_trail_emitters[i] <> Null Then c.forward_trail_emitters[i] = Copy_EMITTER( other.forward_trail_emitters[i], emitter_management, c )
-			If other.rear_trail_emitters[i] <> Null Then c.rear_trail_emitters[i] = Copy_EMITTER( other.rear_trail_emitters[i], emitter_management, c )
+			If other.forward_debris_emitters[i] <> Null Then c.forward_debris_emitters[i] = Copy_EMITTER( other.forward_debris_emitters[i], c.emitter_list, c )
+			If other.rear_debris_emitters[i] <> Null Then c.rear_debris_emitters[i] = Copy_EMITTER( other.rear_debris_emitters[i], c.emitter_list, c )
+			If other.forward_trail_emitters[i] <> Null Then c.forward_trail_emitters[i] = Copy_EMITTER( other.forward_trail_emitters[i], c.emitter_list, c )
+			If other.rear_trail_emitters[i] <> Null Then c.rear_trail_emitters[i] = Copy_EMITTER( other.rear_trail_emitters[i], c.emitter_list, c )
 		Next
 	End If
+	c.driving_force = Copy_FORCE( other.driving_force, c.force_list )
+	c.turning_force = Copy_FORCE( other.turning_force, c.force_list )
 	
+	If political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..
+	Else If political_alignment = ALIGNMENT_HOSTILE Then c.add_me( hostile_agent_list )
 	Return c
 End Function
+

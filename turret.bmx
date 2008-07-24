@@ -14,11 +14,14 @@ Type TURRET Extends POINT
 	Field img_barrel:TImage
 	'Reloading
 	Field reload_time% 'time required to reload
+	'Ammunition
 	Field max_ammo%
+	'Field ammo:AMMUNITION 'ammunition object that controls the fired projectiles' look, muzzle velocity, mass, and damage
 	'Recoil
 	Field recoil_offset#
 	Field recoil_offset_ang#
 	'Emitters
+	Field emitter_list:TList
 	Field projectile_emitter:EMITTER
 	Field muzzle_flash_emitter:EMITTER
 	Field muzzle_smoke_emitter:EMITTER
@@ -36,6 +39,7 @@ Type TURRET Extends POINT
 	Field cur_recoil_off_y#
 
 	Method New()
+		emitter_list = CreateList()
 	End Method
 	
 	Method draw()
@@ -52,6 +56,10 @@ Type TURRET Extends POINT
 		'position (updates by parent's current position)
 		pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang )
 		pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang )
+		'angle
+		ang :+ ang_vel + parent.ang_vel
+		If ang >= 360 Then ang :- 360
+		If ang <  0   Then ang :+ 360
 		'recoil position (relative to turret handle)
 		If ready_to_fire() Or out_of_ammo()
 			cur_recoil_off_x = 0
@@ -61,10 +69,11 @@ Type TURRET Extends POINT
 			cur_recoil_off_x = reloading_progress_inverse * recoil_offset * Cos( ang + recoil_offset_ang )
 			cur_recoil_off_y = reloading_progress_inverse * recoil_offset * Sin( ang + recoil_offset_ang )
 		End If
-		'angle
-		ang :+ ang_vel + parent.ang_vel
-		If ang >= 360 Then ang :- 360
-		If ang <  0   Then ang :+ 360
+		'emitters
+		For Local em:EMITTER = EachIn emitter_list
+			em.update()
+			em.emit()
+		Next
 	End Method
 	
 	Method ready_to_fire%()
@@ -85,28 +94,11 @@ Type TURRET Extends POINT
 		
 	Method fire()
 		If ready_to_fire()
-			
-			If projectile_emitter <> Null
-				'fire projectile from the muzzle of the barrel
-				projectile_emitter.enable( MODE_ENABLED_WITH_COUNTER )
-				projectile_emitter.emit( parent.political_alignment )
-			End If
-			If ejector_port_emitter <> Null
-				'eject shell casing from the ejector port
-				ejector_port_emitter.enable( MODE_ENABLED_WITH_COUNTER )
-			End If
-			If muzzle_flash_emitter <> Null
-				'show a flash from the muzzle of the barrel
-				muzzle_flash_emitter.enable( MODE_ENABLED_WITH_COUNTER )
-			End If
-			If muzzle_smoke_emitter <> Null
-				'show smoke from the muzzle of the barrel
-				muzzle_smoke_emitter.enable( MODE_ENABLED_WITH_COUNTER )
-			End If
-			
+			For Local em:EMITTER = EachIn emitter_list
+				em.enable( MODE_ENABLED_WITH_COUNTER )
+			Next
 			If cur_ammo > 0 Then cur_ammo :- 1
 			reload()
-			
 		End If
 	End Method
 	
@@ -115,13 +107,6 @@ Type TURRET Extends POINT
 	off_x_new#, off_y_new# )
 		parent = new_parent
 		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
-	End Method
-	
-	Method remove_me()
-		If projectile_emitter <> Null   Then projectile_emitter.remove_me()
-		If ejector_port_emitter <> Null Then ejector_port_emitter.remove_me()
-		If muzzle_flash_emitter <> Null Then muzzle_flash_emitter.remove_me()
-		If muzzle_smoke_emitter <> Null Then muzzle_smoke_emitter.remove_me()
 	End Method
 	
 End Type
@@ -152,7 +137,7 @@ recoil_off_x#, recoil_off_y# )
 	Return t
 End Function
 '______________________________________________________________________________
-Function Copy_TURRET:TURRET( other:TURRET, new_parent:COMPLEX_AGENT = Null, emitter_management% = False )
+Function Copy_TURRET:TURRET( other:TURRET, new_parent:COMPLEX_AGENT = Null )
 	Local t:TURRET = New TURRET
 	If other = Null Then Return t
 	
@@ -164,10 +149,10 @@ Function Copy_TURRET:TURRET( other:TURRET, new_parent:COMPLEX_AGENT = Null, emit
 	t.recoil_offset = other.recoil_offset
 	t.recoil_offset_ang = other.recoil_offset_ang
 	'emitters
-	If other.projectile_emitter <> Null Then t.projectile_emitter = Copy_EMITTER( other.projectile_emitter, emitter_management, t )
-	If other.muzzle_flash_emitter <> Null Then t.muzzle_flash_emitter = Copy_EMITTER( other.muzzle_flash_emitter, emitter_management, t )
-	If other.muzzle_smoke_emitter <> Null Then t.muzzle_smoke_emitter = Copy_EMITTER( other.muzzle_smoke_emitter, emitter_management, t )
-	If other.ejector_port_emitter <> Null Then t.ejector_port_emitter = Copy_EMITTER( other.ejector_port_emitter, emitter_management, t )
+	If other.projectile_emitter <> Null Then t.projectile_emitter = Copy_EMITTER( other.projectile_emitter, t.emitter_list, t )
+	If other.muzzle_flash_emitter <> Null Then t.muzzle_flash_emitter = Copy_EMITTER( other.muzzle_flash_emitter, t.emitter_list, t )
+	If other.muzzle_smoke_emitter <> Null Then t.muzzle_smoke_emitter = Copy_EMITTER( other.muzzle_smoke_emitter, t.emitter_list, t )
+	If other.ejector_port_emitter <> Null Then t.ejector_port_emitter = Copy_EMITTER( other.ejector_port_emitter, t.emitter_list, t )
 	
 	'dynamic fields
 	t.parent = new_parent

@@ -4,7 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-Global px# = 300, py# = 300, speed# = 1, r#, a#
+Global sx%, sy%, h%, px#, py#, maus_x#, maus_y#, speed# = 1, r#, a#
 
 '______________________________________________________________________________
 'Global test_timer:TTimer = CreateTimer( 1.000/0.250 )
@@ -12,36 +12,72 @@ Function debug_ts( message$ )
 	Print( String.FromInt( now() ) + ":" + message )
 End Function
 
+Function debug_drawtext( message$ )
+	DrawText( message, sx, sy )
+	sy :+ h
+End Function
+
 Function debug()
-
-	If KeyHit( KEY_F4 )
-		DebugStop
-		Return
-	End If
-
 	SetOrigin( arena_offset, arena_offset )
+	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
-	px :+ speed * KeyDown( KEY_RIGHT ) - speed * KeyDown( KEY_LEFT )
-	py :+ speed * KeyDown( KEY_DOWN ) - speed * KeyDown( KEY_UP )
-
-	a = vector_diff_angle( px, py, MouseX(), MouseY() )
-	r = vector_diff_length( px, py, MouseX(), MouseY() )
+	For Local c:COMPLEX_AGENT = EachIn friendly_agent_list
+		SetLineWidth( 1 )
+		SetColor( 255, 127, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.vel_x*20, c.pos_y + c.vel_y*20 )
+		SetColor( 127, 255, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.acc_x*20, c.pos_y + c.vel_y*20 )
+		SetColor( 127, 127, 255 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + 20*Cos(c.ang), c.pos_y + 20*Sin(c.ang) )
+		SetLineWidth( 2 )
+		SetColor( 255, 127, 127 );
+		DrawLine ..
+		( ..
+			c.pos_x, ..
+			c.pos_y, ..
+			c.pos_x + c.driving_force.magnitude_cur*Cos(c.driving_force.direction), ..
+			c.pos_y + c.driving_force.magnitude_cur*Sin(c.driving_force.direction) ..
+		)
+		SetColor( 127, 255, 127 );
+		DrawLine ..
+		( ..
+			c.pos_x, ..
+			c.pos_y, ..
+			c.pos_x + c.turning_force.magnitude_cur, ..
+			c.pos_y ..
+		)
+		
+	Next
 	
-	SetColor( 127, 255, 127 ); DrawLine( px, py, px + r*Cos(a), py + r*Sin(a) )
+	Local p:COMPLEX_AGENT = player, t:TURRET = p.turrets[0]
+	sx = 4; sy = 4
+	h = 10
+	
+	'debug_drawtext 
 
-	'SetColor( 255, 127, 127 ); DrawLine( px, py, px + 30*Cos(avatar.turrets[0].ang), avatar.pos_y + 30*Sin(avatar.turrets[0].ang) )
 
-	'SetColor( 255, 127, 127 ); DrawLine( avatar.pos_x, avatar.pos_y, avatar.pos_x + 30*Cos(avatar.turrets[0].ang), avatar.pos_y + 30*Sin(avatar.turrets[0].ang) )
-	'SetColor( 127, 255, 127 ); DrawLine( avatar.pos_x, avatar.pos_y, avatar.pos_x + dist_to_target*Cos(dist_to_target), avatar.pos_y + dist_to_target*Sin(dist_to_target) )
-
-'	Local p:COMPLEX_AGENT = player, t:TURRET = p.turrets[0], em:EMITTER = t.projectile_emitter
+'	px :+ speed * KeyDown( KEY_RIGHT ) - speed * KeyDown( KEY_LEFT )
+'	py :+ speed * KeyDown( KEY_DOWN ) - speed * KeyDown( KEY_UP )
+'	maus_x = MouseX() - arena_offset
+'	maus_y = MouseY() - arena_offset
 '	
-'	Local sx# = 4, sy# = 4
-'	Local h% = 10
+'	a = vector_diff_angle( px, py, maus_x, maus_y )
+'	r = vector_diff_length( px, py, maus_x, maus_y )
 '	
+'	SetLineWidth( 1 )
+'	SetColor( 127, 255, 127 ); DrawLine( px, py, px + r*Cos(a), py + r*Sin(a) )
+'
+'	SetColor( 255, 127, 127 ); DrawLine( px, py, px + 30*Cos(avatar.turrets[0].ang), avatar.pos_y + 30*Sin(avatar.turrets[0].ang) )
+'	SetColor( 255, 127, 127 ); DrawLine( avatar.pos_x, avatar.pos_y, avatar.pos_x + 30*Cos(avatar.turrets[0].ang), avatar.pos_y + 30*Sin(avatar.turrets[0].ang) )
+'	SetColor( 127, 255, 127 ); DrawLine( avatar.pos_x, avatar.pos_y, avatar.pos_x + dist_to_target*Cos(dist_to_target), avatar.pos_y + dist_to_target*Sin(dist_to_target) )
+'
+'	SetColor( 255, 255, 255 )
+
+	
+'	DrawText( "tur.proj_em.offset " + em.offset, sx, sy ); sy :+ h
+'	DrawText( "tur.proj_em.offset_ang " + em.offset_ang, sx, sy ); sy :+ h
+'	DrawText( "ammo (main) " + t.cur_ammo + "/" + t.max_ammo, sx, sy); sy :+ h
+'	sy :+ h
 '	SetColor( 220, 30, 30 ); SetImageFont( consolas_normal_12 )
 '	DrawText( "particles " + (particle_list_background.Count() + particle_list_foreground.Count()), sx, sy ); sy :+ h
 '	DrawText( "retained_particles " + retained_particle_list.Count(), sx, sy ); sy :+ h
@@ -50,16 +86,6 @@ Function debug()
 '	DrawText( "enemies " + enemy_list.Count(), sx, sy ); sy :+ h
 '	DrawText( "pickups " + pickup_list.Count(), sx, sy ); sy :+ h
 '	sy :+ h
-'	DrawText( "ammo (main) " + t.cur_ammo + "/" + t.max_ammo, sx, sy); sy :+ h
-'	DrawText( "pos ( " + p.pos_x + ", " + p.pos_y + " )", sx, sy ); sy :+ h
-'	DrawText( "vel ( " + p.vel_x + ", " + p.vel_y + " )", sx, sy ); sy :+ h
-'	DrawText( "ang " + p.ang, sx, sy ); sy :+ h
-'	DrawText( "ang_vel " + p.ang_vel, sx, sy ); sy :+ h
-'	DrawText( "tur.ang " + t.ang, sx, sy ); sy :+ h
-'	DrawText( "tur.proj_em.offset " + em.offset, sx, sy ); sy :+ h
-'	DrawText( "tur.proj_em.offset_ang " + em.offset_ang, sx, sy ); sy :+ h
-'	sy :+ h
-	
 	
 '	SetColor( 255, 20, 20 )
 '	SetLineWidth(2)
@@ -130,7 +156,11 @@ Function debug()
 '		DrawText( "x" + i + " = " + x[i], offset, offset + 10*line ); line :+ 1
 '		DrawText( "y" + i + " = " + y[i], offset, offset + 10*line ); line :+ 1
 '	Next
-'	
 	
+	If KeyHit( KEY_F4 )
+		DebugStop
+		Return
+	End If
+
 End Function
 

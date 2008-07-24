@@ -5,7 +5,7 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-'Clock and RNG (Random Number Generator)
+'clock and random
 SeedRnd MilliSecs()
 Global clock:TTimer = CreateTimer( 1000 )
 Function now%()
@@ -13,17 +13,6 @@ Function now%()
 End Function
 Function RandF#( lo#, hi# )
 	Return lo + (hi-lo)*RndFloat()
-End Function
-
-'______________________________________________________________________________
-'Conversion
-Function cartesian_to_polar( x#, y#, r# Var, a# Var )
-	r = Sqr( x*x + y*y )
-	a = ATan2( y, x )
-End Function
-Function polar_to_cartesian( r#, a#, x# Var, y# Var )
-	x = r*Cos( a )
-	y = r*Sin( a )
 End Function
 '______________________________________________________________________________
 'vector functions
@@ -41,6 +30,14 @@ Function vector_diff_angle#( ax#, ay#, bx#, by# )
 	Local dx# = bx - ax, dy# = by - ay
 	Return ATan2( dy, dx )
 End Function
+Function cartesian_to_polar( x#, y#, r# Var, a# Var )
+	r = Sqr( x*x + y*y )
+	a = ATan2( y, x )
+End Function
+Function polar_to_cartesian( r#, a#, x# Var, y# Var )
+	x = r*Cos( a )
+	y = r*Sin( a )
+End Function
 '______________________________________________________________________________
 Type MANAGED_OBJECT
 	
@@ -53,7 +50,14 @@ Type MANAGED_OBJECT
 		link = ( list.AddLast( Self ))
 	End Method
 	Method remove_me()
-		If link <> Null Then link.Remove()
+		If link <> Null
+			link.Remove()
+			link = Null
+		End If
+	End Method
+	
+	Method managed%()
+		Return (link <> Null)
 	End Method
 	
 End Type

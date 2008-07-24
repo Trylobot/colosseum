@@ -5,6 +5,13 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+'Fonts
+Global consolas_normal_10:TImageFont = LoadImageFont( "fonts/consolas.ttf", 10 )
+Global consolas_normal_12:TImageFont = LoadImageFont( "fonts/consolas.ttf", 12 )
+Global consolas_normal_24:TImageFont = LoadImageFont( "fonts/consolas.ttf", 24 )
+Global consolas_bold_50:TImageFont = LoadImageFont( "fonts/consolas_bold.ttf", 50 )
+
+'______________________________________________________________________________
 'Sound
 Global audio_path_prefix$ = "sound/"
 

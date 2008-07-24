@@ -46,27 +46,15 @@ Type PARTICLE Extends POINT
 	End Method	
 	
 	Method draw()
-		SetRotation( ang )
 		SetAlpha( alpha )
 		SetScale( scale, scale )
-		
+		SetRotation( ang )
 		DrawImage( img, pos_x, pos_y )
 	End Method
 	
 	Method update()
-		'update velocity
-		vel_x :+ acc_x
-		vel_y :+ acc_y
-		'update position
-		pos_x :+ vel_x
-		pos_y :+ vel_y
-		'update angular velocity
-		ang_vel :+ ang_acc
-		'update orientation
-		ang :+ ang_vel
-		'angle wrap
-		If ang >= 360 Then ang :- 360
-		If ang <  0   Then ang :+ 360
+		'update velocity, position, angular velocity and orientation
+		Super.update()
 		'update alpha
 		alpha :+ alpha_delta
 		'update scale

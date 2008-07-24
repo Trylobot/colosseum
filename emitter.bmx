@@ -5,8 +5,6 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global emitter_list:TList = CreateList()
-
 Const EMITS_PARTICLES% = 0
 Const EMITS_PROJECTILES% = 1
 
@@ -80,12 +78,6 @@ Type EMITTER extends MANAGED_OBJECT
 		End Select
 	End Method
 	
-	Method ready%()
-		Return ..
-			(Not (mode = MODE_DISABLED)) And ..
-			(now() - last_emit_ts) >= interval
-	End Method
-	
 	Method enable( new_mode% = MODE_ENABLED_FOREVER )
 		mode = new_mode
 		Select mode
@@ -100,103 +92,118 @@ Type EMITTER extends MANAGED_OBJECT
 		mode = MODE_DISABLED
 	End Method
 	
+	Method ready%()
+		Return ..
+			(Not (mode = MODE_DISABLED)) And ..
+			((now() - last_emit_ts) >= interval) And ..
+			(parent <> Null)
+	End Method
+	
 	'like the fire() method of the TANK type, this method should be treated like a request.
 	'ie, this method will only emit if it's appropriate.
-	Method emit( alignment% = ALIGNMENT_NOT_APPLICABLE )
+	Method emit( source_agent:COMPLEX_AGENT = Null ) '( alignment% = ALIGNMENT_NOT_APPLICABLE )
 		If ready()
-			
-			'reserve space for particle, and add it to the correct managed list
-			Local p:PARTICLE
+		
+			'create a new object (particle/projectile) and set it up
 			Local index% = Rand( archetype_index_min, archetype_index_max )
-			If emitter_type = EMITS_PARTICLES
-				p = Copy_PARTICLE( particle_archetype[index] )
-			Else If emitter_type = EMITS_PROJECTILES
-				Local list:TList = Null
-				If      alignment = ALIGNMENT_FRIENDLY Then list = friendly_projectile_list ..
-				Else If alignment = ALIGNMENT_HOSTILE  Then list = hostile_projectile_list
-				p = PARTICLE( Copy_PROJECTILE( projectile_archetype[index], list ))
-			End If
+			Select emitter_type
+				Case EMITS_PARTICLES
+					emit_particle( Copy_PARTICLE( particle_archetype[index] ))
+				Case EMITS_PROJECTILES
+					emit_projectile( Copy_PROJECTILE( projectile_archetype[index], source_agent:COMPLEX_AGENT ))
+			End Select
 			
-			'particle position components
-			Local dist# = RandF( dist_min, dist_max )
-			Local dist_ang# = RandF( dist_ang_min, dist_ang_max )
-			If parent <> Null
-				p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist * Cos( dist_ang + parent.ang )
-				p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist * Sin( dist_ang + parent.ang )
-			Else
-				p.pos_x = offset * Cos( offset_ang ) + dist * Cos( dist_ang )
-				p.pos_y = offset * Sin( offset_ang ) + dist * Sin( dist_ang )
-			End If
-			
-			'particle orientation
-			If inherit_ang_from_dist_ang
-				p.ang = dist_ang
-			Else
-				p.ang = RandF( ang_min, ang_max )
-			End If
-			If parent <> Null
-				p.ang :+ parent.ang
-			End If
-
-			'particle angular velocity
-			p.ang_vel = RandF( ang_vel_min, ang_vel_max )
-			
-			'particle angular acceleration
-			p.ang_acc = RandF( ang_acc_min, ang_acc_max )
-			
-			'particle velocity components
-			Local vel# = RandF( vel_min, vel_max )
-			Local vel_ang#
-			If inherit_vel_ang_from_ang
-				vel_ang = p.ang
-			Else
-				vel_ang = RandF( vel_ang_min, vel_ang_max )
-			End If
-			If parent <> Null
-				p.vel_x = vel * Cos( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_x )
-				p.vel_y = vel * Sin( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_y )
-			Else
-				p.vel_x = vel * Cos( vel_ang )
-				p.vel_y = vel * Sin( vel_ang )
-			End If
-			
-			'particle acceleration components
-			Local acc# = RandF( acc_min, acc_max )
-			Local acc_ang#
-			If inherit_acc_ang_from_vel_ang
-				acc_ang = vel_ang
-			Else
-				acc_ang = RandF( acc_ang_min, acc_ang_max )
-			End If
-			If parent <> Null
-				p.acc_x = acc * Cos( acc_ang + parent.ang )
-				p.acc_y = acc * Sin( acc_ang + parent.ang )
-			Else
-				p.acc_x = acc * Cos( acc_ang )
-				p.acc_y = acc * Sin( acc_ang )
-			End If
-			
-			'particle alpha
-			p.alpha = RandF( alpha_min, alpha_max )
-			p.alpha_delta = RandF( alpha_delta_min, alpha_delta_max )
-			
-			'particle scale
-			p.scale = RandF( scale_min, scale_max )
-			p.scale_delta = RandF( scale_delta_min, scale_delta_max )
-			
-			'particle life time
-			p.created_ts = now()
-			p.life_time = Rand( life_time_min, life_time_max )
-			
-			'emitter interval
+			'interval
 			last_emit_ts = now()
 			interval = Rand( interval_min, interval_max )
-			'emitter counter
+			'counter
 			count_cur :- 1
 			
 		End If
 	End Method
-	
+	Method emit_particle( p:PARTICLE ) '(private)
+		
+		'position
+		Local dist# = RandF( dist_min, dist_max )
+		Local dist_ang# = RandF( dist_ang_min, dist_ang_max )
+		p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist * Cos( dist_ang + parent.ang )
+		p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist * Sin( dist_ang + parent.ang )
+		
+		'orientation
+		If inherit_ang_from_dist_ang Then p.ang = dist_ang + parent.ang ..
+		Else                              p.ang = RandF( ang_min, ang_max ) + parent.ang
+
+		'velocity
+		Local vel# = RandF( vel_min, vel_max )
+		Local vel_ang#
+		If inherit_vel_ang_from_ang Then vel_ang = p.ang ..
+		Else                             vel_ang = RandF( vel_ang_min, vel_ang_max )
+		p.vel_x = vel * Cos( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_x )
+		p.vel_y = vel * Sin( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_y )
+		
+		'angular velocity
+		p.ang_vel = RandF( ang_vel_min, ang_vel_max )
+		
+		'acceleration
+		Local acc# = RandF( acc_min, acc_max )
+		Local acc_ang#
+		If inherit_acc_ang_from_vel_ang Then acc_ang = vel_ang ..
+		Else                            acc_ang = RandF( acc_ang_min, acc_ang_max )
+		p.acc_x = acc * Cos( acc_ang + parent.ang )
+		p.acc_y = acc * Sin( acc_ang + parent.ang )
+		
+		'angular acceleration
+		p.ang_acc = RandF( ang_acc_min, ang_acc_max )
+		
+		'alpha
+		p.alpha = RandF( alpha_min, alpha_max )
+		p.alpha_delta = RandF( alpha_delta_min, alpha_delta_max )
+		
+		'scale
+		p.scale = RandF( scale_min, scale_max )
+		p.scale_delta = RandF( scale_delta_min, scale_delta_max )
+		
+		'life time
+		p.created_ts = now()
+		p.life_time = Rand( life_time_min, life_time_max )
+			
+	End Method
+	Method emit_projectile( p:PROJECTILE ) '(private)
+		
+		'position
+		Local dist# = RandF( dist_min, dist_max )
+		Local dist_ang# = RandF( dist_ang_min, dist_ang_max )
+		p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist * Cos( dist_ang + parent.ang )
+		p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist * Sin( dist_ang + parent.ang )
+		
+		'orientation
+		If inherit_ang_from_dist_ang Then p.ang = dist_ang + parent.ang ..
+		Else                              p.ang = RandF( ang_min, ang_max ) + parent.ang
+
+		'velocity
+		Local vel# = RandF( vel_min, vel_max )
+		Local vel_ang#
+		If inherit_vel_ang_from_ang Then vel_ang = p.ang ..
+		Else                             vel_ang = RandF( vel_ang_min, vel_ang_max )
+		p.vel_x = vel * Cos( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_x )
+		p.vel_y = vel * Sin( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_y )
+		
+		'angular velocity
+		p.ang_vel = RandF( ang_vel_min, ang_vel_max )
+		
+		'acceleration
+		Local acc# = RandF( acc_min, acc_max )
+		Local acc_ang#
+		If inherit_acc_ang_from_vel_ang Then acc_ang = vel_ang ..
+		Else                            acc_ang = RandF( acc_ang_min, acc_ang_max )
+		p.acc_x = acc * Cos( acc_ang + parent.ang )
+		p.acc_y = acc * Sin( acc_ang + parent.ang )
+		
+		'angular acceleration
+		p.ang_acc = RandF( ang_acc_min, ang_acc_max )
+		
+	End Method
+		
 	Method attach_to( ..
 	new_parent:POINT, ..
 	off_x_new#, off_y_new#, ..
@@ -280,7 +287,7 @@ scale_delta_min# = 0.0, scale_delta_max# = 0.0 )
 	Return em
 End Function
 '______________________________________________________________________________
-Function Copy_EMITTER:EMITTER( other:EMITTER, manage% = False, new_parent:POINT = Null )
+Function Copy_EMITTER:EMITTER( other:EMITTER, managed_list:TList = Null, new_parent:POINT = Null )
 	Local em:EMITTER = New EMITTER
 	If other = Null Then Return em
 	
@@ -319,7 +326,7 @@ Function Copy_EMITTER:EMITTER( other:EMITTER, manage% = False, new_parent:POINT 
 	em.ang_vel_min = other.ang_vel_min; em.ang_vel_max = other.ang_vel_max
 	em.ang_acc_min = other.ang_acc_min; em.ang_acc_max = other.ang_acc_max
 	
-	If manage Then em.add_me( emitter_list )
+	If managed_list <> Null Then em.add_me( managed_list )
 	Return em
 End Function
 
