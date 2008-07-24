@@ -5,39 +5,28 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global particle_list:TList = CreateList()
 Global retained_particle_list:TList = CreateList()
+Global particle_lists:TList = CreateList()
+Global particle_list_background:TList = CreateList(); particle_lists.AddLast( particle_list_background )
+Global particle_list_foreground:TList = CreateList(); particle_lists.AddLast( particle_list_foreground )
+
+Const LAYER_FOREGROUND% = 0
+Const LAYER_BACKGROUND% = 1
 
 Type PARTICLE Extends POINT
-	'Images
-	Field img:TImage
-	'Manager flag
-	Field retain% 'if true, on particle's expiration it's copied to the background permanently.
-	'Alpha control
-	Field alpha#
-	Field alpha_delta#
-	'Scale control
-	Field scale#
-	Field scale_delta#
-	'Lifetime
+
+	Field img:TImage 'image to be drawn
+	Field retain% 'copy particle to background on death?
+	Field layer% 'foreground/background
+	Field alpha# 'alpha value
+	Field alpha_delta# 'alpha rate of change with respect to time
+	Field scale# 'scale coefficient
+	Field scale_delta# 'scale coefficient rate of change with respect to time
 	Field life_time% 'desired length of time (in milliseconds) until the particle is deleted (0 for infinite)
-	Field created_ts% 'timestamp of creation
+	Field created_ts% 'timestamp of object creation
 	
 	Method New()
 	End Method
-	
-'	Method debug()
-'		Super.debug()
-'		Print "PARTICLE___________"
-'		Print "img " + (img <> Null)
-'		Print "alpha " + alpha
-'		Print "alpha_delta " + alpha_delta
-'		Print "scale " + scale
-'		Print "scale_delta " + scale_delta
-'		Print "life_time " + life_time
-'		Print "created_ts " + created_ts
-'		Print "retain " + retain
-'	End Method
 	
 	Method dead%()
 		If life_time < 0
@@ -49,8 +38,10 @@ Type PARTICLE Extends POINT
 	
 	Method prune()
 		If dead()
+			'remove from managed list and free memory
 			remove_me()
 			If retain
+				'particle will be added to the background permanently as an artifact
 				add_me( retained_particle_list )
 			End If
 		End If
@@ -60,6 +51,7 @@ Type PARTICLE Extends POINT
 		SetRotation( ang )
 		SetAlpha( alpha )
 		SetScale( scale, scale )
+		
 		DrawImage( img, pos_x, pos_y )
 	End Method
 	
@@ -87,11 +79,13 @@ End Type
 '______________________________________________________________________________
 Function Archetype_PARTICLE:PARTICLE( ..
 img:TImage, ..
+layer%, ..
 retain% = False )
 	Local p:PARTICLE = New PARTICLE
 	
 	'static fields
 	p.img = img
+	p.layer = layer
 	p.retain = retain
 	p.created_ts = now()
 	
@@ -115,6 +109,7 @@ Function Copy_PARTICLE:PARTICLE( other:PARTICLE )
 	
 	'static fields
 	p.img = other.img
+	p.layer = other.layer
 	p.retain = other.retain
 	p.created_ts = now()
 	
@@ -129,7 +124,11 @@ Function Copy_PARTICLE:PARTICLE( other:PARTICLE )
 	p.scale_delta = other.scale_delta
 	p.life_time = other.life_time
 	
-	p.add_me( particle_list )
+	If p.layer = LAYER_BACKGROUND
+		p.add_me( particle_list_background )
+	Else If p.layer = LAYER_FOREGROUND
+		p.add_me( particle_list_foreground )
+	End If
 	Return p
 End Function
 

@@ -5,6 +5,7 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+'[ PARTICLE EMITTERS ]
 Global particle_emitter_archetype:EMITTER[20]
 
 'particle emitter 0 - tank cannon muzzle flash emitter
@@ -32,13 +33,57 @@ particle_emitter_archetype[ 8] = Archetype_EMITTER( EMITS_PARTICLES,  8, 12, Fal
 'particle emitter 9 - tank tread trail emitter
 particle_emitter_archetype[ 9] = Archetype_EMITTER( EMITS_PARTICLES, 13, 17, False, False, False, False, 50, 50, 1, 1, 100, 100, 0.2, 0.4, 0, 0 )
 
-'particle emitter 10 - "the box" trail-of-self emitter
-particle_emitter_archetype[10] = Archetype_EMITTER( EMITS_PARTICLES, 22, 22, False, False, False, False, 800, 800, 0, 0, 1000, 1000, 1.0, 1.0, 0.001, 0.001 )
+'particle emitter 10 - "the box" emitter
+particle_emitter_archetype[10] = Archetype_EMITTER( EMITS_PARTICLES, 22, 22, False, False, False, False, 500, 500, 0, 0, 3000, 3000, 0.5, 0.5, -0.004, -0.004 )
 
 'particle emitter 11 - rocket thrust emitter
-particle_emitter_archetype[11] = Archetype_EMITTER( EMITS_PARTICLES, 20, 20, False, False, False, False, 10, 15, 1, 1, 10, 15, 0.25, 0.50, 0, 0, 0.25, 1.00, 0, 0 )
+particle_emitter_archetype[11] = Archetype_EMITTER( EMITS_PARTICLES, 20, 20, False, False, False, False, 10, 15, 1, 1, 10, 15, 0.50, 0.75, 0, 0, 0.25, 1.00, 0, 0 )
 
 '______________________________________________________________________________
+'[ PARTICLES ]
+Global particle_archetype:PARTICLE[50]
+
+'particle 0 - tank cannon muzzle flash
+particle_archetype[ 0] = Archetype_PARTICLE( img_muzzle_flash, LAYER_FOREGROUND )
+'particle 1 - tank cannon projectile shell casing
+particle_archetype[ 1] = Archetype_PARTICLE( img_projectile_shell_casing, LAYER_FOREGROUND, True )
+'particle 2 - tank cannon muzzle smoke
+particle_archetype[ 2] = Archetype_PARTICLE( img_muzzle_smoke, LAYER_FOREGROUND )
+'particle 3 - tank cannon explosion
+particle_archetype[ 3] = Archetype_PARTICLE( img_hit, LAYER_FOREGROUND )
+
+'particle 4 - machine gun muzzle flash
+particle_archetype[ 4] = Archetype_PARTICLE( img_mgun_muzzle_flash, LAYER_FOREGROUND )
+'particle 5 - machine gun shell casing
+particle_archetype[ 5] = Archetype_PARTICLE( img_mgun_shell_casing, LAYER_FOREGROUND, True )
+'particle 6 - machine gun muzzle smoke
+particle_archetype[ 6] = Archetype_PARTICLE( img_mgun_muzzle_smoke, LAYER_FOREGROUND )
+'particle 7 - machine gun explosion
+particle_archetype[ 7] = Archetype_PARTICLE( img_mgun_hit, LAYER_FOREGROUND )
+
+'particles 8 through 12 - tank tread debris tiny
+particle_archetype[ 8] = Archetype_PARTICLE( img_debris_tiny_0, LAYER_BACKGROUND )
+particle_archetype[ 9] = Archetype_PARTICLE( img_debris_tiny_1, LAYER_BACKGROUND )
+particle_archetype[10] = Archetype_PARTICLE( img_debris_tiny_2, LAYER_BACKGROUND )
+particle_archetype[11] = Archetype_PARTICLE( img_debris_tiny_3, LAYER_BACKGROUND )
+particle_archetype[12] = Archetype_PARTICLE( img_debris_tiny_4, LAYER_BACKGROUND )
+'particles 13 through 17 - tank tread trail
+particle_archetype[13] = Archetype_PARTICLE( img_trail_0, LAYER_BACKGROUND, True )
+particle_archetype[14] = Archetype_PARTICLE( img_trail_1, LAYER_BACKGROUND, True )
+particle_archetype[15] = Archetype_PARTICLE( img_trail_2, LAYER_BACKGROUND, True )
+particle_archetype[16] = Archetype_PARTICLE( img_trail_3, LAYER_BACKGROUND, True )
+particle_archetype[17] = Archetype_PARTICLE( img_trail_4, LAYER_BACKGROUND, True )
+
+'particle 18 - rocket thrust
+particle_archetype[18] = Archetype_PARTICLE( img_rocket_thrust, LAYER_BACKGROUND )
+'particle 19 - rocket explosion
+particle_archetype[19] = Archetype_PARTICLE( img_rocket_explode, LAYER_FOREGROUND )
+
+'particle 20 - "the box" particle
+particle_archetype[22] = Archetype_PARTICLE( img_box, LAYER_BACKGROUND )
+
+'______________________________________________________________________________
+'[ PROJECTILE EMITTERS ]
 Global projectile_emitter_archetype:EMITTER[10]
 
 'projectile emitter 0 - tank cannon projectile emitter
@@ -49,48 +94,7 @@ projectile_emitter_archetype[ 1] = Archetype_EMITTER( EMITS_PROJECTILES,  1,  1,
 projectile_emitter_archetype[ 2] = Archetype_EMITTER( EMITS_PROJECTILES,  2,  2, True, False, True, True, 0, 0, 1, 1, 0, 0 )
 
 '______________________________________________________________________________
-Global particle_archetype:PARTICLE[50]
-
-'particle 0 - tank cannon muzzle flash
-particle_archetype[ 0] = Archetype_PARTICLE( img_muzzle_flash )
-'particle 1 - tank cannon projectile shell casing
-particle_archetype[ 1] = Archetype_PARTICLE( img_projectile_shell_casing, True )
-'particle 2 - tank cannon muzzle smoke
-particle_archetype[ 2] = Archetype_PARTICLE( img_muzzle_smoke )
-'particle 3 - tank cannon explosion
-particle_archetype[ 3] = Archetype_PARTICLE( img_hit )
-
-'particle 4 - machine gun muzzle flash
-particle_archetype[ 4] = Archetype_PARTICLE( img_mgun_muzzle_flash )
-'particle 5 - machine gun shell casing
-particle_archetype[ 5] = Archetype_PARTICLE( img_mgun_shell_casing, True )
-'particle 6 - machine gun muzzle smoke
-particle_archetype[ 6] = Archetype_PARTICLE( img_mgun_muzzle_smoke )
-'particle 7 - machine gun explosion
-particle_archetype[ 7] = Archetype_PARTICLE( img_mgun_hit )
-
-'particles 8 through 12 - tank tread debris tiny
-particle_archetype[ 8] = Archetype_PARTICLE( img_debris_tiny_0 )
-particle_archetype[ 9] = Archetype_PARTICLE( img_debris_tiny_1 )
-particle_archetype[10] = Archetype_PARTICLE( img_debris_tiny_2 )
-particle_archetype[11] = Archetype_PARTICLE( img_debris_tiny_3 )
-particle_archetype[12] = Archetype_PARTICLE( img_debris_tiny_4 )
-'particles 13 through 17 - tank tread trail
-particle_archetype[13] = Archetype_PARTICLE( img_trail_0, True )
-particle_archetype[14] = Archetype_PARTICLE( img_trail_1, True )
-particle_archetype[15] = Archetype_PARTICLE( img_trail_2, True )
-particle_archetype[16] = Archetype_PARTICLE( img_trail_3, True )
-particle_archetype[17] = Archetype_PARTICLE( img_trail_4, True )
-
-'particle 18 - rocket thrust
-particle_archetype[18] = Archetype_PARTICLE( img_rocket_thrust )
-'particle 19 - rocket explosion
-particle_archetype[19] = Archetype_PARTICLE( img_rocket_explode )
-
-'particle 20 - "the box" particle
-particle_archetype[22] = Archetype_PARTICLE( img_box )
-
-'______________________________________________________________________________
+'[ PROJECTILES ]
 Global projectile_archetype:PROJECTILE[10]
 
 'projectile 0 - tank cannon projectile
@@ -103,6 +107,7 @@ projectile_archetype[ 2] = Archetype_PROJECTILE( img_rocket, 21, 0.050, 100, 5 )
 	projectile_archetype[ 2].thrust_emitter.attach_to( projectile_archetype[ 2], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 180, 180, 0, 0, 0, 0 )
 
 '______________________________________________________________________________
+'[ TURRETS ]
 Global turret_archetype:TURRET[5]
 
 'turret 0 - tank cannon
@@ -130,9 +135,24 @@ turret_archetype[ 1] = Archetype_TURRET( Null, img_player_mgun_turret, 75, INFIN
 'turret 2 - rocket turret
 turret_archetype[ 2] = Archetype_TURRET( Null, img_enemy_stationary_emplacement_1_turret, 5000, INFINITY, 0, 0 )
 	turret_archetype[ 2].projectile_emitter = Copy_EMITTER( projectile_emitter_archetype[ 2] )
-	turret_archetype[ 2].projectile_emitter.attach_to( turret_archetype[ 2], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.1, 0.1, 0, 0, 0, 0, 0, 0, 0, 0 )
+	turret_archetype[ 2].projectile_emitter.attach_to( turret_archetype[ 2], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.05, 0.05, 0, 0, 0, 0, 0, 0, 0, 0 )
+	turret_archetype[ 2].muzzle_flash_emitter = Copy_EMITTER( particle_emitter_archetype[11] )
+	turret_archetype[ 2].muzzle_flash_emitter.attach_to( turret_archetype[ 2], -10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 180, 180, 0, 0, 0, 0 )
 
 '______________________________________________________________________________
+'[ ENEMIES ]
+Global enemy_archetype:COMPLEX_AGENT[10]
+
+'enemy 0 - "the box"
+enemy_archetype[ 0] = Archetype_COMPLEX_AGENT( img_box, 100, 200, 50, 0, 1 )
+
+'enemy 1 - stationary emplacement 1 (rocket launcher turret)
+enemy_archetype[ 1] = Archetype_COMPLEX_AGENT( img_enemy_stationary_emplacement_1_base, 150, 0, 100, 1, 0 )
+	enemy_archetype[ 1].turrets[ 0] = Copy_TURRET( turret_archetype[ 2] )
+	enemy_archetype[ 1].turrets[ 0].attach_to( enemy_archetype[ 1], 0, 0 )
+
+'______________________________________________________________________________
+'[ PLAYERS ]
 Global player_archetype:COMPLEX_AGENT[ 4]
 
 'player 0 - temporary testing player - tank cannon, machine gun, two tank tread motivators (substitute with eight emitters for now)
@@ -166,13 +186,6 @@ player_archetype[ 0] = Archetype_COMPLEX_AGENT( img_player_tank_chassis, 500, 80
 'player 3 - "King Bam" - dual mega cannons, machine gun, four tank tread motivators
 '...?
 	
-'______________________________________________________________________________
-Global enemy_archetype:COMPLEX_AGENT[10]
 
-'enemy 0 - "the box"
-enemy_archetype[ 0] = Archetype_COMPLEX_AGENT( img_box, 100, 200, 50, 0, 1 )
 
-'enemy 1 - stationary emplacement 1 (rocket launcher turret)
-enemy_archetype[ 1] = Archetype_COMPLEX_AGENT( img_enemy_stationary_emplacement_1_base, 150, 0, 100, 1, 0 )
-	enemy_archetype[ 1].turrets[ 0] = Copy_TURRET( turret_archetype[ 2] )
-	enemy_archetype[ 1].turrets[ 0].attach_to( enemy_archetype[ 1], 0, 0 )
+

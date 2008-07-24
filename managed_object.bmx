@@ -6,7 +6,7 @@ EndRem
 '______________________________________________________________________________
 Type MANAGED_OBJECT
 	
-	Field link:TLink 'back-reference to the TList:TLink which references this object as a value
+	Field link:TLink 'back-reference to the list which contains this object
 	
 	Method New()
 	End Method
@@ -18,9 +18,4 @@ Type MANAGED_OBJECT
 		link.Remove()
 	End Method
 	
-'	Method debug()
-'		Print "MANAGED_OBJECT_____"
-'		Print "link " + (link <> Null)
-'	End Method
-
 End Type

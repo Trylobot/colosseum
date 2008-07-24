@@ -3,7 +3,7 @@ This file was created by the BLIde solution explorer and should not be modified 
 EndRem
 '------------------------------------------------------------------------------------------------------------------------------------------------------
 '#Region &HFF Program Info
-'Program: colosseum
+'Program: Colosseum
 'Version: 0
 'Subversion: 0
 'Revision: 1
@@ -20,7 +20,15 @@ SuperStrict
 
 '------------------------------------------------------------------------------------------------------------------------------------------------------
 '#Region &H0F Framework
-
+Framework brl.d3d7max2d
+Import brl.font
+Import brl.freetypefont
+Import brl.math
+Import brl.pngloader
+Import brl.pixmap
+Import brl.ramstream
+Import brl.random
+Import brl.timer
 '#EndRegion &H0F
 
 
@@ -36,12 +44,12 @@ SuperStrict
 '#Region &H04 MyNamespace
 'GUI
 Private
-TYPE z_e9fd20f2_9a94_4d4f_8046_c8dc64dd17cf abstract  'Resource folder
+TYPE z_fb4dc2e3_d5a7_42c4_9441_73855e4b2de0 abstract  'Resource folder
 End Type
 
 
-TYPE z_blide_bg1c989950_f0c1_41c7_9e51_9a1a47acd6ae Abstract
-    Const Name:string = "colosseum" 'This string contains the name of the program
+TYPE z_blide_bgddef4ae4_ded5_47b9_ab6f_25d249a1051d Abstract
+    Const Name:string = "Colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
     Const MinorVersion:Int = 0  'This Const contains the minor version number of the program
     Const Revision:Int =  1  'This Const contains the revision number of the current program version
@@ -50,13 +58,13 @@ TYPE z_blide_bg1c989950_f0c1_41c7_9e51_9a1a47acd6ae Abstract
 EndType
 
 
-Type z_My_1c989950_f0c1_41c7_9e51_9a1a47acd6ae Abstract 'This type has all the run-tima binary information of your assembly
-    Global Application:z_blide_bg1c989950_f0c1_41c7_9e51_9a1a47acd6ae  'This item has all the currently available assembly version information.
-    Global Resources:z_e9fd20f2_9a94_4d4f_8046_c8dc64dd17cf  'This item has all the currently available incbined files names and relative location.
+Type z_My_ddef4ae4_ded5_47b9_ab6f_25d249a1051d Abstract 'This type has all the run-tima binary information of your assembly
+    Global Application:z_blide_bgddef4ae4_ded5_47b9_ab6f_25d249a1051d  'This item has all the currently available assembly version information.
+    Global Resources:z_fb4dc2e3_d5a7_42c4_9441_73855e4b2de0  'This item has all the currently available incbined files names and relative location.
 End Type
 
 
-Global My:z_My_1c989950_f0c1_41c7_9e51_9a1a47acd6ae 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
+Global My:z_My_ddef4ae4_ded5_47b9_ab6f_25d249a1051d 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
 Public
 '#EndRegion &H04 MyNamespace
 

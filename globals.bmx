@@ -5,6 +5,7 @@ Rem
 EndRem
 
 'Basics
+SetGraphicsDriver D3D7Max2DDriver()
 AppTitle = My.Application.AssemblyInfo
 
 'Clock and RNG (Random Number Generator)
@@ -15,6 +16,15 @@ Function now%()
 End Function
 Function RandF#( low#, high# )
 	Return 0.0001 * Rand( 10000*low, 10000*high ) 
+End Function
+Function cartesian_to_polar( c_x#, c_y#, p_dist# Var, p_ang# Var )
+	p_dist = Sqr( c_x*c_x + c_y*c_y )
+	If c_x <> 0
+		p_ang = ATan( c_y/c_x )
+		If c_x < 0 Then p_ang :- 180
+	Else 'x = 0
+		If c_y > 0 Then p_ang = 90 Else If c_y < 0 Then p_ang = 90 Else p_ang = 0
+	End If
 End Function
 
 'Fonts
@@ -31,9 +41,6 @@ Const arena_h% = window_h - (arena_offset * 2)
 
 'Generic
 Const INFINITY% = -1
-Const ALL_STOP% = 0
-Const CLOCKWISE_DIRECTION% = 1
-Const COUNTER_CLOCKWISE_DIRECTION% = 2
 
 'Score
 Global player_cash% = 0

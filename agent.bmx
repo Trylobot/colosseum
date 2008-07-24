@@ -7,17 +7,12 @@ EndRem
 '______________________________________________________________________________
 Type AGENT Extends POINT
 	
-	'Images
-	Field img:TImage
-	'Health
-	Field max_health#
-	'Mass
-	Field mass#
-	'Cash
-	Field cash_value%
+	Field img:TImage 'image to be drawn
+	Field max_health# 'maximum health
+	Field mass# 'mass of agent
+	Field cash_value% 'cash to be awarded player on this agent's death
 
-	'Health
-	Field cur_health#
+	Field cur_health# 'current health
 	
 	Method New()
 	End Method

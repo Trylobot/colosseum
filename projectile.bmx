@@ -8,17 +8,21 @@ EndRem
 Global projectile_list:TList = CreateList()
 
 Type PROJECTILE Extends PARTICLE
-	'Images
-	Field explosion_particle_index%
-	'Data
-	Field mass#
-	Field damage#
-	Field radius#
-	'Emitters
-	Field trail_emitter:EMITTER
-	Field thrust_emitter:EMITTER
+	
+	Field explosion_particle_index% 'archetype index of particle to be created on hit
+	Field mass# 'mass of projectile
+	Field damage# 'maximum damage dealt by projectile
+	Field radius# 'radius of damage spread
+	Field trail_emitter:EMITTER 'trail particle emitter
+	Field thrust_emitter:EMITTER 'thrust particle emitter
 	
 	Method New()
+	End Method
+	
+	Method remove_me()
+		Super.remove_me()
+		If trail_emitter <> Null Then trail_emitter.remove_me()
+		If thrust_emitter <> Null Then thrust_emitter.remove_me()
 	End Method
 	
 '	Method debug()
@@ -75,8 +79,14 @@ Function Copy_PROJECTILE:PROJECTILE( other:PROJECTILE )
 	p.radius = other.radius
 	p.created_ts = now()
 	'emitters
-	p.thrust_emitter = other.thrust_emitter
-	p.trail_emitter = other.trail_emitter
+	If other.thrust_emitter <> Null
+		p.thrust_emitter = Copy_EMITTER( other.thrust_emitter, p )
+		p.thrust_emitter.enable_timer( INFINITY )
+	End If
+	If other.trail_emitter <> Null
+		p.trail_emitter = Copy_EMITTER( other.trail_emitter, p )
+		p.trail_emitter.enable_timer( INFINITY )
+	End If
 	
 	'dynamic fields
 	p.pos_x = other.pos_x; p.pos_y = other.pos_y

@@ -7,8 +7,8 @@ EndRem
 
 '______________________________________________________________________________
 'Global test_timer:TTimer = CreateTimer( 1.000/0.250 )
-Function draw_misc_debug_info()
-	
+Function debug()
+
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
@@ -20,20 +20,20 @@ Function draw_misc_debug_info()
 	Local h% = 10
 	
 	SetColor( 220, 30, 30 ); SetImageFont( consolas_normal_12 )
-	DrawText( "particle_list.count " + particle_list.Count(), sx, sy ); sy :+ h
+	DrawText( "particle_list.count " + count_particles(), sx, sy ); sy :+ h
 	DrawText( "retained_particle_list.count " + retained_particle_list.Count(), sx, sy ); sy :+ h
 	DrawText( "emitter_list.count " + emitter_list.Count(), sx, sy ); sy :+ h
 	DrawText( "projectile_list.count " + projectile_list.Count(), sx, sy ); sy :+ h
 	DrawText( "enemy_list.count " + enemy_list.Count(), sx, sy ); sy :+ h
-
-'	DrawText( "pos ( " + p.pos_x + ", " + p.pos_y + " )", sx, sy ); sy :+ h
-'	DrawText( "vel ( " + p.vel_x + ", " + p.vel_y + " )", sx, sy ); sy :+ h
-'	DrawText( "ang " + p.ang, sx, sy ); sy :+ h
-'	DrawText( "ang_vel " + p.ang_vel, sx, sy ); sy :+ h
-'	DrawText( "tur.ang " + t.ang, sx, sy ); sy :+ h
-'	DrawText( "tur.proj_em.offset " + em.offset, sx, sy ); sy :+ h
-'	DrawText( "tur.proj_em.offset_ang " + em.offset_ang, sx, sy ); sy :+ h
-'	sy :+ h
+	sy :+ h
+	DrawText( "pos ( " + p.pos_x + ", " + p.pos_y + " )", sx, sy ); sy :+ h
+	DrawText( "vel ( " + p.vel_x + ", " + p.vel_y + " )", sx, sy ); sy :+ h
+	DrawText( "ang " + p.ang, sx, sy ); sy :+ h
+	DrawText( "ang_vel " + p.ang_vel, sx, sy ); sy :+ h
+	DrawText( "tur.ang " + t.ang, sx, sy ); sy :+ h
+	DrawText( "tur.proj_em.offset " + em.offset, sx, sy ); sy :+ h
+	DrawText( "tur.proj_em.offset_ang " + em.offset_ang, sx, sy ); sy :+ h
+	sy :+ h
 '	
 '	
 '	SetColor( 255, 20, 20 )
@@ -106,4 +106,10 @@ Function draw_misc_debug_info()
 '		DrawText( "y" + i + " = " + y[i], offset, offset + 10*line ); line :+ 1
 '	Next
 '	
+
+	If KeyHit( KEY_F4 )
+		DebugStop
+	End If
+	
 End Function
+

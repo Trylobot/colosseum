@@ -113,9 +113,7 @@ Type TURRET Extends POINT
 	new_parent:COMPLEX_AGENT, ..
 	off_x_new#, off_y_new# )
 		parent = new_parent
-		offset = Sqr( off_x_new*off_x_new + off_y_new*off_y_new )
-		offset_ang = ATan( off_y_new/off_x_new )
-		If off_x_new < 0 Then offset_ang :- 180
+		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
 	End Method
 	
 End Type
@@ -133,14 +131,13 @@ recoil_off_x#, recoil_off_y# )
 	t.img_barrel = img_barrel
 	t.reload_time = reload_time
 	t.max_ammo = max_ammo
-	t.recoil_offset = Sqr( recoil_off_x*recoil_off_x + recoil_off_y*recoil_off_y )
-	t.recoil_offset_ang = ATan( recoil_off_y/recoil_off_x )
-	If recoil_off_x < 0 Then t.recoil_offset_ang :- 180
+	cartesian_to_polar( recoil_off_x, recoil_off_y, t.recoil_offset, t.recoil_offset_ang )
 	
 	'dynamic fields
 	t.parent = Null
 	t.offset = 0
 	t.offset_ang = 0
+	t.last_reloaded_ts = now() - t.reload_time
 	t.cur_ammo = max_ammo
 	t.cur_recoil_off_x = 0; t.cur_recoil_off_y = 0
 
@@ -168,6 +165,7 @@ Function Copy_TURRET:TURRET( other:TURRET, new_parent:COMPLEX_AGENT = Null )
 	t.parent = new_parent
 	t.offset = other.offset
 	t.offset_ang = other.offset_ang
+	t.last_reloaded_ts = other.last_reloaded_ts
 	t.cur_ammo = other.cur_ammo
 	t.cur_recoil_off_x = other.cur_recoil_off_x; t.cur_recoil_off_y = other.cur_recoil_off_y
 

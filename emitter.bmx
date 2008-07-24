@@ -12,74 +12,54 @@ Const EMITS_PROJECTILES% = 1
 
 Type EMITTER extends MANAGED_OBJECT
 	
-	'Parent entity (optional, null if not applicable)
-	Field parent:POINT
-	'particle set to use for particle emission
-	Field emitter_type%
-	Field archetype_index_min%
-	Field archetype_index_max%
-	'Delay time range between particles
-	Field interval_min%
-	Field interval_max%
-	Field interval_next%
-	'Timestamp of last emitted particle
-	Field last_emit_ts%
-	'Enable-disable time interval
-	Field enable_time% 'desired length of time (in milliseconds) until the object is disabled (-1 for infinite)
-	Field last_enabled_ts% 'timestamp of last enable
-	'Enable-disable particle emission count
-	Field count_min%
-	Field count_max%
-	Field count_cur% 'desired number of particles to be emitted (-1 for infinite)
-	'Cascade Flags
-	Field inherit_vel_from_parent%
-	Field inherit_ang_from_dist_ang%
-	Field inherit_vel_ang_from_ang%
-	Field inherit_acc_ang_from_vel_ang%
+	Field parent:POINT 'parent point object (optional)
+	Field emitter_type% 'emitter type (particle/projectile)
+	Field archetype_index_min% 'particle archetype range - lower bound
+	Field archetype_index_max% 'particle archetype range - upper bound
+	Field interval_min% 'delay between particles - lower bound
+	Field interval_max% 'delay between particles - upper bound
+	Field interval_next% '(private) delay between particles - pre-calculated
+	Field last_emit_ts% '(private) timestamp of last emitted particle
+	Field enable_time% 'time until this emitter is disabled
+	Field last_enabled_ts% '(private) timestamp of the last time this emitter was enabled
+	Field count_min% 'number of particles to emit - lower bound
+	Field count_max% 'number of particles to emit - upper bound
+	Field count_cur% '(private) number of particles to emit - pre-calculated
+	Field inherit_vel_from_parent% 'setting - whether to add the parent's velocity to the emitted particle
+	Field inherit_ang_from_dist_ang% 'setting - whether to set the angle to the already-determined "dist_ang" or a new angle
+	Field inherit_vel_ang_from_ang% 'setting - whether to set the velocity angle to the already-determined "ang" or a new angle
+	Field inherit_acc_ang_from_vel_ang% 'setting - whether to set the acceleration angle to the already-determined "vel_ang" or a new angle
 	
-	'Position offset for the emitter, and a local origin for emitted particles (will try to add to parent's position)
-	Field offset#
-	Field offset_ang#
-	'Distance range for emitted particles
-	Field dist_min#
-	Field dist_max#
-	'Angle for distance range for emitted particles
-	Field dist_ang_min#
-	Field dist_ang_max#
-	'Velocity range for emitted particles (projectiles will try to inherit parent's velocity)
-	Field vel_min#
-	Field vel_max#
-	'Velocity angle range for emitted particles
-	Field vel_ang_min#
-	Field vel_ang_max#
-	'Acceleration range for emitted particles
-	Field acc_min#
-	Field acc_max#
-	'Acceleration angle range for emitted particles
-	Field acc_ang_min#
-	Field acc_ang_max#
-	'Angle range for emitted particles (will try to include parent's angle)
-	Field ang_min#
-	Field ang_max#
-	'Angular Velocity range for emitted particles
-	Field ang_vel_min#
-	Field ang_vel_max#
-	'Angular Acceleration range for emitted particles
-	Field ang_acc_min#
-	Field ang_acc_max#
-	'Life time range for emitted particles
-	Field life_time_min%
-	Field life_time_max%
-	'Alpha range for emitted particles
-	Field alpha_min#
-	Field alpha_max#
-	Field alpha_delta_min#
-	Field alpha_delta_max#
-	'Scale range for emitted particles
-	Field scale_min#
-	Field scale_max#
-	Field scale_delta_min#
-	Field scale_delta_max#
+	Field offset# 'offset vector magnitude (added to parent's position)
+	Field offset_ang# 'offset vector angle (added to parent's position)
+	Field dist_min# 'distance vector magnitude (added to offset) - lower bound
+	Field dist_max# 'distance vector magnitude (added to offset) - upper bound
+	Field dist_ang_min# 'distance vector angle (added to offset) - lower bound
+	Field dist_ang_max# 'distance vector angle (added to offset) - upper bound
+	Field vel_min# 'velocity vector magnitude - lower bound
+	Field vel_max# 'velocity vector magnitude - upper bound
+	Field vel_ang_min# 'velocity vector angle - lower bound
+	Field vel_ang_max# 'velocity vector angle - upper bound
+	Field acc_min# 'acceleration vector magnitude - lower bound
+	Field acc_max# 'acceleration vector magnitude - upper bound
+	Field acc_ang_min# 'acceleration vector angle - lower bound
+	Field acc_ang_max# 'acceleration vector angle - upper bound
+	Field ang_min# 'orientation - lower bound
+	Field ang_max# 'orientation - upper bound
+	Field ang_vel_min# 'angular velocity - lower bound
+	Field ang_vel_max# 'angular velocity - upper bound
+	Field ang_acc_min# 'angular acceleration - lower bound
+	Field ang_acc_max# 'angular acceleration - upper bound
+	Field life_time_min% 'life time - lower bound
+	Field life_time_max% 'life time - upper bound
+	Field alpha_min# 'initial alpha value - lower bound
+	Field alpha_max# 'initial alpha value - upper bound
+	Field alpha_delta_min# 'alpha rate of change - lower bound
+	Field alpha_delta_max# 'alpha rate of change - upper bound
+	Field scale_min# 'initial scale value - lower bound
+	Field scale_max# 'initial scale value - upper bound
+	Field scale_delta_min# 'scale rate of change - lower bound
+	Field scale_delta_max# 'scale rate of change - upper bound
 	
 	Method New()
 	End Method
@@ -227,9 +207,7 @@ Type EMITTER extends MANAGED_OBJECT
 	ang_vel_min_new#, ang_vel_max_new#, ..
 	ang_acc_min_new#, ang_acc_max_new# )
 		parent = new_parent
-		offset = Sqr( off_x_new*off_x_new + off_y_new*off_y_new )
-		offset_ang = ATan( off_y_new/off_x_new )
-		If off_x_new < 0 Then offset_ang :- 180
+		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
 		dist_min = dist_min_new; dist_max = dist_max_new
 		dist_ang_min = dist_ang_min_new; dist_ang_max = dist_ang_max_new
 		vel_min = vel_min_new; vel_max = vel_max_new

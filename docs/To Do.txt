@@ -1,0 +1,39 @@
+[COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ put explosion, smoke, spark and damage scar emitters into projectiles.
+			when the projectile hits something, emit everything ("dump its load").
+	_ sound emitters
+	X emitters should have a particle_archetype_index range (min/max) so that they can emit many different particles
+	_ explosions can also have short-lived "spark" emitters, and sparks have such trails as mentioned above
+	X velocity range for projectile emitters -- ties in to weapon accuracy
+	X angular velocity for particles
+	X angular velocity range for particle emitters
+	_ motivator class for animating "treads" and handling debris and trail emitters, attached to complex agents
+	X remove dynamic fields (usually physics-related) from CREATE functions (changed them to "Archetype_.." functions)
+	X class archetype libraries
+	_ put class archetype initialization into XML files
+	X create projectile emitter type
+	X weapon accuracy values, implemented with angle variance in the projectile emitter
+	X attach various emitters to turret class to be called logically on fire()
+	X turret recoil
+	X emitter's parent can be a particle (or projectile)
+			applications: missiles!
+	X alpha values for particles, birth & death
+	X tread emitter and manager list
+	X damage for player and enemies
+	X encapsulate turret logic and make a class for it
+	_ create xml format for levels
+	_ create a level editor
+	_ implement a physics engine, using Chris Hecker's PDF's as an example
+			linear forces, center of mass, rotational physics, etc.
+			application: obviously, to make the game world seem more "real"
+	_ create gibs for enemies
+	_ make gibs spawn as particles when enemies die
+	_ create scars
+	X create "shells" to be ejected from the ejector port of turret object
+	_ create blocks for static environments that can be collided with
+	_ create example arenas
+	_ create a rudimentary AI
+	X create a few enemies with guns
+	_ create visible damage which "sticks" to agents
+	X separate main components into files
+	

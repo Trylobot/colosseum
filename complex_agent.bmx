@@ -6,19 +6,22 @@ EndRem
 '______________________________________________________________________________
 Global enemy_list:TList = CreateList()
 
+Const ALL_STOP% = 0
+Const ROTATE_CLOCKWISE_DIRECTION% = 1
+Const ROTATE_COUNTER_CLOCKWISE_DIRECTION% = 2
+Const MOVE_FORWARD_DIRECTION% = 3
+Const MOVE_REVERSE_DIRECTION% = 4
+
 Type COMPLEX_AGENT Extends AGENT
 	
-	'Turrets
-	Field turrets:TURRET[]
-	Field turret_count%
-	'Motivators
-	'Field motivators:MOTIVATOR[]
-	Field motivator_count%
-	'Emitters
-	Field forward_debris_emitters:EMITTER[]
-	Field rear_debris_emitters:EMITTER[]
-	Field forward_trail_emitters:EMITTER[]
-	Field rear_trail_emitters:EMITTER[]
+	Field turrets:TURRET[] 'turret array
+	Field turret_count% 'number of turret slots
+	'Field motivators:MOTIVATOR[] 'motivator array
+	Field motivator_count% 'number of motivator slots
+	Field forward_debris_emitters:EMITTER[] 'forward-facing debris emitter array
+	Field rear_debris_emitters:EMITTER[] 'rear-facing debris emitter array
+	Field forward_trail_emitters:EMITTER[] 'forward-facing trail emitter array
+	Field rear_trail_emitters:EMITTER[] 'rear-facing debris trail array
 	
 	Method New()
 	End Method
@@ -34,7 +37,7 @@ Type COMPLEX_AGENT Extends AGENT
 	'think of this method like a request, safe to call at any time.
 	'ie, if the player is currently reloading, this method will do nothing.
 	Method fire( turret_index% = 0 )
-		If turret_index < turret_count - 1 And turrets[turret_index] <> Null
+		If turret_index < turret_count And turrets[turret_index] <> Null
 			turrets[turret_index].fire()
 		End If
 	End Method
@@ -47,14 +50,32 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 	End Method
 	
-	Method rotate_all_turrets( action% )
+	Method all_motivators( action% )
+'		For Local m:TURRET = EachIn motivators
+			If action = MOVE_FORWARD_DIRECTION
+				vel_x = player_velocity_max * Cos( ang )
+				vel_y = player_velocity_max * Sin( ang )
+				enable_only_rear_emitters()
+			Else If action = MOVE_REVERSE_DIRECTION
+				vel_x = -( player_velocity_max * Cos( ang ))
+				vel_y = -( player_velocity_max * Sin( ang ))
+				enable_only_forward_emitters()
+			Else If action = ALL_STOP
+				vel_x = 0
+				vel_y = 0
+				disable_all_emitters()
+			End If
+'		Next
+	End Method
+	
+	Method all_turrets( action% )
 		For Local t:TURRET = EachIn turrets
 			If action = ALL_STOP
 				t.ang_vel = 0
-			Else If action = CLOCKWISE_DIRECTION
-				t.ang_vel = -player_turret_angular_velocity_max
-			Else If action = COUNTER_CLOCKWISE_DIRECTION
+			Else If action = ROTATE_CLOCKWISE_DIRECTION
 				t.ang_vel = player_turret_angular_velocity_max
+			Else If action = ROTATE_COUNTER_CLOCKWISE_DIRECTION
+				t.ang_vel = -( player_turret_angular_velocity_max )
 			End If
 		Next
 	End Method
