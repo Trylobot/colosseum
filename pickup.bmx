@@ -46,8 +46,9 @@ Type PICKUP Extends MANAGED_OBJECT
 	End Method
 	
 	Method update()
-		'update alpha
-		'alpha = ?
+		'update alpha and prune if necessary
+		alpha = (life_time - (now() - created_ts)) / 3000
+		prune()
 	End Method
 	
 End Type

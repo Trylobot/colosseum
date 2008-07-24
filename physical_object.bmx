@@ -11,12 +11,14 @@ Type PHYSICAL_OBJECT Extends POINT
 	'this object's center of mass is assumed to be this object's position
 	Field force_list:TList 'all the forces acting on this object
 	Field frictional_coefficient# 'frictional coefficient
+	Field physics_disabled% 'turn off all force-based calculations?
 	
 	Method New()
 		force_list = CreateList()
 	End Method
 	
 	Method update()
+		If physics_disabled Then Return
 		'reset acceleration and angular acceleration
 		acc_x = 0; acc_y = 0; ang_acc = 0
 		'net force and torque
@@ -33,15 +35,9 @@ Type PHYSICAL_OBJECT Extends POINT
 			End If
 		Next
 		'friction
-'		If Abs( vel_x ) > global_driving_roundoff_threshold Then acc_x :+ frictional_coefficient*( -vel_x ) / mass ..
-'		Else acc_x :+ -vel_x
-'		If Abs( vel_y ) > global_driving_roundoff_threshold Then acc_y :+ frictional_coefficient*( -vel_y ) / mass ..
-'		Else acc_y :+ -vel_y
 		acc_x :+ frictional_coefficient*( -vel_x ) / mass ..
 		acc_y :+ frictional_coefficient*( -vel_y ) / mass ..
 		'angular friction
-'		If Abs( ang_vel ) > global_driving_roundoff_threshold Then ang_acc :+ frictional_coefficient*( -ang_vel ) / mass ..
-'		Else ang_acc :+ -ang_vel
 		ang_acc :+ frictional_coefficient*( -ang_vel ) / mass ..
 		'update point variables
 		Super.update()

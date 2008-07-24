@@ -17,6 +17,12 @@ Type TURRET Extends POINT
 	'Field ammo:AMMUNITION 'ammunition object that controls the fired projectiles' look, muzzle velocity, mass, and damage
 	Field recoil_offset# 'current distance from local origin due to recoil
 	Field recoil_offset_ang# 'current angle of recoil
+	Field max_heat#
+	Field heat_per_shot_min#
+	Field heat_per_shot_max#
+	Field cooling_coefficient#
+	Field overheat_delay%
+	
 	Field emitter_list:TList 'list of all emitters
 	Field projectile_emitter:EMITTER 'emits this turret's main projectile
 	Field muzzle_flash_emitter:EMITTER 'optional muzzle-flash emitter
@@ -30,6 +36,8 @@ Type TURRET Extends POINT
 	Field cur_ammo% 'remaining ammunition
 	Field cur_recoil_off_x# '(private) used in calculating recoil's effect on final position
 	Field cur_recoil_off_y# '(private) used in calculating recoil's effect on final position
+	Field cur_heat#
+	Field last_overheat_ts%
 
 	Method New()
 		emitter_list = CreateList()
@@ -51,10 +59,13 @@ Type TURRET Extends POINT
 	End Method
 	
 	Method update()
+		'velocity (updates by parent's current velocity)
+		vel_x = parent.vel_x
+		vel_y = parent.vel_y
 		'position (updates by parent's current position)
 		pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang )
 		pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang )
-		'angle
+		'angle (includes parent's)
 		ang :+ ang_vel + parent.ang_vel
 		If ang >= 360 Then ang :- 360
 		If ang <  0   Then ang :+ 360
@@ -72,12 +83,15 @@ Type TURRET Extends POINT
 			em.update()
 			em.emit()
 		Next
+		'heat/cooling
+		If (now() - last_overheat_ts) >= overheat_delay Then cur_heat :* cooling_coefficient
 	End Method
 	
 	Method ready_to_fire%()
 		Return ..
 			cur_ammo <> 0 And ..
-			(now() - last_reloaded_ts) >= reload_time
+			(now() - last_reloaded_ts) >= reload_time And ..
+			(max_heat = INFINITY Or cur_heat < max_heat)
 	End Method
 	Method reload()
 		last_reloaded_ts = now()
@@ -87,7 +101,14 @@ Type TURRET Extends POINT
 		If cur_ammo > max_ammo Then cur_ammo = max_ammo
 	End Method
 	Method out_of_ammo%()
-		Return (cur_ammo <= 0)
+		Return (cur_ammo = 0)
+	End Method
+	Method raise_temp()
+		cur_heat :+ RandF( heat_per_shot_min, heat_per_shot_max )
+		If cur_heat >= max_heat
+			last_overheat_ts = now()
+			cur_heat = max_heat
+		End If
 	End Method
 		
 	Method fire()
@@ -97,6 +118,7 @@ Type TURRET Extends POINT
 			Next
 			If cur_ammo > 0 Then cur_ammo :- 1
 			reload()
+			raise_temp()
 		End If
 	End Method
 	
@@ -114,7 +136,11 @@ img_base:TImage, img_barrel:TImage, ..
 max_ang_vel#, ..
 reload_time%, ..
 max_ammo%, ..
-recoil_off_x#, recoil_off_y# )
+recoil_off_x#, recoil_off_y#, ..
+max_heat#, ..
+heat_per_shot_min#, heat_per_shot_max#, ..
+cooling_coefficient#, ..
+overheat_delay% )
 	Local t:TURRET = New TURRET
 	
 	'static fields
@@ -123,6 +149,10 @@ recoil_off_x#, recoil_off_y# )
 	t.reload_time = reload_time
 	t.max_ammo = max_ammo
 	cartesian_to_polar( recoil_off_x, recoil_off_y, t.recoil_offset, t.recoil_offset_ang )
+	t.max_heat = max_heat
+	t.heat_per_shot_min = heat_per_shot_min; t.heat_per_shot_max = heat_per_shot_max
+	t.cooling_coefficient = cooling_coefficient
+	t.overheat_delay = overheat_delay
 	
 	'dynamic fields
 	t.parent = Null
@@ -131,6 +161,8 @@ recoil_off_x#, recoil_off_y# )
 	t.last_reloaded_ts = now() - t.reload_time
 	t.cur_ammo = max_ammo
 	t.cur_recoil_off_x = 0; t.cur_recoil_off_y = 0
+	t.cur_heat = 0
+	t.last_overheat_ts = now() - t.overheat_delay
 
 	Return t
 End Function
@@ -147,6 +179,10 @@ Function Copy_TURRET:TURRET( other:TURRET, new_parent:COMPLEX_AGENT = Null )
 	t.max_ammo = other.max_ammo
 	t.recoil_offset = other.recoil_offset
 	t.recoil_offset_ang = other.recoil_offset_ang
+	t.max_heat = other.max_heat
+	t.heat_per_shot_min = other.heat_per_shot_min; t.heat_per_shot_max = other.heat_per_shot_max
+	t.cooling_coefficient = other.cooling_coefficient
+	t.overheat_delay = other.overheat_delay
 	'emitters
 	If other.projectile_emitter <> Null
 		If t.parent <> Null Then t.projectile_emitter = Copy_EMITTER( other.projectile_emitter, t.emitter_list, t, new_parent.id ) ..

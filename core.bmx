@@ -36,14 +36,13 @@ Global FLAG_bg_music_on% = False
 
 Const MENU_RESUME% = 0
 Const MENU_NEW% = 1
-Const MENU_CONTINUE% = 2
-Const MENU_LOAD% = 3
-Const MENU_SETTINGS% = 4
-Const MENU_QUIT% = 5
-Const menu_option_count% = 6
+Const MENU_LOAD% = 2
+Const MENU_SETTINGS% = 3
+Const MENU_QUIT% = 4
+Const menu_option_count% = 5
 
-Global menu_display_string$[] = [ "resume", "new game", "continue", "load saved", "settings", "quit" ]
-Global menu_enabled%[] =        [  False,    True,       False,      False,        False,      True  ]
+Global menu_display_string$[] = [ "resume", "new game", "load saved", "settings", "quit" ]
+Global menu_enabled%[] =        [  False,    True,       False,        False,      True  ]
 Global menu_option% = MENU_NEW
 
 Const PLAYER_COLLISION_LAYER% = $0001
@@ -52,7 +51,8 @@ Const PROJECTILE_COLLISION_LAYER% = $0004
 Const PICKUP_COLLISION_LAYER% = $0008
 
 'environmental constants
-Const pickup_probability% = 3333 'chance in 10,000 of an enemy dropping a pickup (randomly selected from all pickups)
+Const PICKUP_PROBABILITY% = 5000 'chance in 10,000 of an enemy dropping a pickup (randomly selected from all pickups)
+Const PROJECTILE_ENERGY_COEFFICIENT# = 750.0 'energy multiplier for all collisions involving projectiles
 
 'global player stuff
 Global player:COMPLEX_AGENT
@@ -73,9 +73,6 @@ Function menu_command( com% )
 			initialize_game()
 			load_next_level()
 			FLAG_in_menu = False
-		
-		Case MENU_CONTINUE
-			'..?
 		
 		Case MENU_LOAD
 			'..?
@@ -106,6 +103,7 @@ Function reset_game()
 	player_cash = 0
 	player_level = 0
 	FLAG_game_in_progress = False
+	FLAG_game_over = False
 	
 End Function
 '______________________________________________________________________________
@@ -141,21 +139,21 @@ Function respawn_enemies()
 	If hostile_agent_list.IsEmpty()
 		
 		'mr. the box
-		For Local i% = 1 To (5*player_level)
+		For Local i% = 1 To (3*player_level)
 			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 0], ALIGNMENT_HOSTILE )
 			nme.pos_x = Rand( 10, arena_w - 10 )
 			nme.pos_y = Rand( 10, arena_h - 10 )
 			nme.ang = Rand( 0, 359 )
-			Create_and_Manage_CONTROL_BRAIN( nme, Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX )
+			Create_and_Manage_CONTROL_BRAIN( nme, Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 1000 )
 		Next
 		
 		'rocket turret
-		For Local i% = 1 To (2*player_level)
+		For Local i% = 1 To (1*player_level)
 			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 1], ALIGNMENT_HOSTILE )
 			nme.pos_x = Rand( 10, arena_w - 10 )
 			nme.pos_y = Rand( 10, arena_h - 10 )
 			nme.turrets[ 0].ang = Rand( 0, 359 )
-			Create_and_Manage_CONTROL_BRAIN( nme, player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_ROCKET_TURRET )
+			Create_and_Manage_CONTROL_BRAIN( nme, player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_ROCKET_TURRET, 50 )
 		Next
 		
 	End If
@@ -163,7 +161,7 @@ End Function
 '______________________________________________________________________________
 Function spawn_pickup( x#, y# )
 	Local pkp:PICKUP
-	If Rand( 0, 10000 ) < pickup_probability
+	If Rand( 0, 10000 ) < PICKUP_PROBABILITY
 		Local index% = Rand( 0, pickup_archetype.Length - 1 )
 		pkp = Copy_PICKUP( pickup_archetype[index] )
 		pkp.pos_x = x; pkp.pos_y = y
@@ -210,7 +208,12 @@ End Function
 '______________________________________________________________________________
 'Physics and Timing Update
 Function update_all()
-	If Not FLAG_in_menu
+	If Not FLAG_in_menu And Not FLAG_draw_help
+		
+		'flags
+		If FLAG_game_over
+			menu_enabled[ MENU_RESUME ] = False
+		End If
 		
 		'level
 		If hostile_agent_list.IsEmpty()
@@ -230,11 +233,6 @@ Function update_all()
 		'projectiles
 		For Local proj:PROJECTILE = EachIn projectile_list
 			proj.update()
-			'out-of-bounds kill (should be done with collisions)
-			If proj.pos_x > arena_w Then proj.remove_me()
-			If proj.pos_x < 0       Then proj.remove_me()
-			If proj.pos_y > arena_h Then proj.remove_me()
-			If proj.pos_y < 0       Then proj.remove_me()
 		Next	
 		'particles
 		For Local list:TList = EachIn particle_lists
@@ -248,30 +246,10 @@ Function update_all()
 		For Local friendly:COMPLEX_AGENT = EachIn friendly_agent_list
 			friendly.update()
 		Next
-		'player boundary enforce (should be done with collisions)
-		If player.pos_x > arena_w Then player.pos_x = arena_w
-		If player.pos_x < 0       Then player.pos_x = 0
-		If player.pos_y > arena_h Then player.pos_y = arena_h
-		If player.pos_y < 0       Then player.pos_y = 0
 
 		'hostiles
 		For Local hostile:COMPLEX_AGENT = EachIn hostile_agent_list
 			hostile.update()
-			'bounce (should be done with collisions)
-			If hostile.pos_x > arena_w
-				hostile.vel_x = -hostile.vel_x
-				hostile.ang = 180 - hostile.ang
-			Else If hostile.pos_x < 0
-				hostile.vel_x = -hostile.vel_x
-				hostile.ang = 180 - hostile.ang
-			End If
-			If hostile.pos_y > arena_h
-				hostile.vel_y = -hostile.vel_y
-				hostile.ang = 180 - hostile.ang
-			Else If hostile.pos_y < 0
-				hostile.vel_y = -hostile.vel_y
-				hostile.ang = 180 - hostile.ang
-			End If
 		Next
 		
 	End If
@@ -288,6 +266,7 @@ Function draw_all()
 	If FLAG_in_menu
 		
 		'main menu
+		SetOrigin( 0, 0 )
 		draw_menu()
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
@@ -295,7 +274,7 @@ Function draw_all()
 	Else
 	
 		SetOrigin( arena_offset, arena_offset )
-		SetViewport( arena_offset, arena_offset, arena_w + 1, arena_h + 1 )
+		SetViewport( arena_offset, arena_offset, arena_w, arena_h )
 		
 		'arena & environment
 		draw_arena()
@@ -325,23 +304,32 @@ Function draw_all()
 			part.draw()
 		Next
 		SetRotation( 0 )
-		SetAlpha( 1 )
 		SetScale( 1, 1 )
 		'pickups
 		For Local pkp:PICKUP = EachIn pickup_list
 			pkp.draw()
 		Next
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetScale( 1, 1 )
 		
+		'aiming reticle
+		draw_player_reticle()
+		SetRotation( 0 )
+
 		SetOrigin( 0, 0 )
 		SetViewport( 0, 0, window_w, window_h )
 		
 		'interface
-		draw_stats_panel()
+		draw_stats()
 		
 		'help
-		If FLAG_draw_help Then draw_help()
+		If FLAG_draw_help Then draw_help() ..
+		Else If FLAG_game_over Then draw_game_over()
+		SetRotation( 0 )
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
+		
 		
 		'######################
 		'debug() '#######
@@ -353,13 +341,46 @@ End Function
 '______________________________________________________________________________
 'Collision Detection and Resolution
 Function collide_all()
-	If Not FLAG_in_menu
+	If Not FLAG_in_menu And Not FLAG_draw_help
 	
+		Local list:TList
 		Local ag:COMPLEX_AGENT
 		Local proj:PROJECTILE
 		Local pkp:PICKUP
 		Local result:Object[]
 		
+		'boundary collisions (will be calculated with more generic WALL objects later)
+		For list = EachIn agent_lists
+			For ag = EachIn list
+				If ag.pos_x < 0
+					ag.pos_x = 0
+					Create_FORCE( PHYSICS_FORCE, 0 - ag.ang, 75.0, 100 ).add_me( ag.force_list )
+				Else If ag.pos_x > arena_w
+					ag.pos_x = arena_w
+					Create_FORCE( PHYSICS_FORCE, 180 - ag.ang, 75.0, 100 ).add_me( ag.force_list )
+				End If
+				If ag.pos_y < 0
+					ag.pos_y = 0
+					Create_FORCE( PHYSICS_FORCE, 90 - ag.ang, 75.0, 100 ).add_me( ag.force_list ) ..
+				Else If ag.pos_y > arena_w
+					ag.pos_y = arena_w
+					Create_FORCE( PHYSICS_FORCE, 270 - ag.ang, 75.0, 100 ).add_me( ag.force_list )
+				End If
+			Next
+		Next
+		For proj = EachIn projectile_list
+			If proj.pos_x < 0 Or proj.pos_x > arena_w Or proj.pos_y < 0 Or  proj.pos_y > arena_w
+				'explode
+				Local explode:PARTICLE = Copy_PARTICLE( particle_archetype[ proj.explosion_particle_index ])
+				explode.pos_x = proj.pos_x; explode.pos_y = proj.pos_y
+				explode.vel_x = 0; explode.vel_y = 0
+				explode.ang = Rand( 0, 359 )
+				explode.life_time = Rand( 300, 300 )
+				'prune
+				proj.remove_me()
+			End If
+		Next
+
 		ResetCollisions()
 		'PLAYER_COLLISION_LAYER
 		'AGENT_COLLISION_LAYER
@@ -367,15 +388,12 @@ Function collide_all()
 		'PICKUP_COLLISION_LAYER
 
 		'collisions between projectiles and complex_agents
-		For ag = EachIn hostile_agent_list
-			SetRotation( ag.ang )
-			CollideImage( ag.img, ag.pos_x, ag.pos_y, 0, 0, AGENT_COLLISION_LAYER, ag )
+		For list = EachIn agent_lists
+			For ag = EachIn list
+				SetRotation( ag.ang )
+				CollideImage( ag.img, ag.pos_x, ag.pos_y, 0, 0, AGENT_COLLISION_LAYER, ag )
+			Next
 		Next
-		For ag = EachIn friendly_agent_list
-			SetRotation( ag.ang )
-			CollideImage( ag.img, ag.pos_x, ag.pos_y, 0, 0, AGENT_COLLISION_LAYER, ag )
-		Next
-		
 		For proj = EachIn projectile_list
 			SetRotation( proj.ang )
 			result = CollideImage( proj.img, proj.pos_x, proj.pos_y, 0, AGENT_COLLISION_LAYER, PROJECTILE_COLLISION_LAYER, proj )
@@ -385,9 +403,7 @@ Function collide_all()
 					'dump out early; this {proj} was fired by {ag}
 					Continue
 				End If
-				
 				'COLLISION! between {proj} & {ag}
-				
 				'create explosion particle at position of projectile, with random angle
 				'proj.exp_img, proj.pos_x, proj.pos_y, 0, 0, Rand( 0, 359 ), 0, 0, projectile_explode_life_time )
 				Local explode:PARTICLE = Copy_PARTICLE( particle_archetype[ proj.explosion_particle_index ])
@@ -395,10 +411,12 @@ Function collide_all()
 				explode.vel_x = 0; explode.vel_y = 0
 				explode.ang = Rand( 0, 359 )
 				explode.life_time = Rand( 300, 300 )
-				
 				'activate collision response for affected entity(ies)
-				'local f:FORCE = new FORCE
-								
+				Local offset#, offset_ang#
+				cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
+				Local total_force# = proj.mass*PROJECTILE_ENERGY_COEFFICIENT*Sqr( proj.vel_x*proj.vel_x + proj.vel_y*proj.vel_y )
+				Create_FORCE( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - proj.ang ), 100 ).add_me( ag.force_list )
+				Create_FORCE( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - proj.ang ), 100 ).add_me( ag.force_list )
 				'process damage, death, cash and pickups resulting from it
 				ag.receive_damage( proj.damage )
 				If player.dead() 'did the player just die? (omgwtf)
@@ -413,10 +431,8 @@ Function collide_all()
 					'remove enemy
 					ag.remove_me()
 				End If
-				
 				'remove the original projectile no matter what
 				proj.remove_me()
-				
 			Next
 		Next
 		
@@ -429,22 +445,24 @@ Function collide_all()
 		result = CollideImage( player.img, player.pos_x, player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, player )
 		For pkp = EachIn result
 			'COLLISION! between {player} and {pkp}
-			
 			'give pickup to player
 			player.grant_pickup( pkp ) 'i can has lewts?!
-			
 			'dump out early; only the first pickup collided with will be applied this frame
 			Exit
-			
 		Next
 	End If
 End Function
 '______________________________________________________________________________
-Function draw_stats_panel()
-	SetOrigin( 0, 0 )
-	Local x%, y%
+Function draw_stats()
+	Local x%, y%, w%, h%
 	
-	'level
+	'help reminder
+	If Not FLAG_draw_help
+		SetColor( 158, 158, 158 ); SetImageFont( consolas_normal_12 )
+		DrawText( "F1 for help", arena_offset, 7 )
+	End If
+	
+	'level number
 	x = arena_w + (arena_offset * 2)
 	y = arena_offset
 	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
@@ -464,16 +482,16 @@ Function draw_stats_panel()
 	y :+ arena_offset
 	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
 	DrawText( "health", x, y ); y :+ 12
-	Local w% = 150, h% = 15
+	w = 175;h = 18
 	SetColor( 255, 255, 255 )
 	DrawRect( x, y, w, h )
-	SetColor( 16, 16, 16 )
+	SetColor( 32, 32, 32 )
 	DrawRect( x + 1, y + 1, w - 2, h - 2 )
 	SetColor( 255, 255, 255 )
-	DrawRect( x + 2, y + 2, (Double(w) - 4.0) * (player.cur_health / player.max_health) , h - 4 )
+	DrawRect( x + 2, y + 2, (Double(w) - 4.0)*(player.cur_health / player.max_health), h - 4 )
 	y :+ h
 	
-	'player ammo
+	'player ammo, overheat & charge indicators
 	y :+ arena_offset
 	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
 	DrawText( "heavy cannon", x, y ); y :+ 12
@@ -488,7 +506,14 @@ Function draw_stats_panel()
 		temp_x :+ img_icon_player_cannon_ammo.width
 	Next; y :+ 12 + (player.turrets[0].max_ammo / 20)* img_icon_player_cannon_ammo.height
 	DrawText( "co-axial machine gun", x, y ); y :+ 12
-	DrawImage( img_icon_infinity, x, y ); y :+ img_icon_infinity.height + 12
+	w = 125; h = 14
+	SetColor( 255, 255, 255 )
+	DrawRect( x, y, w, h )
+	SetColor( 32, 32, 32 )
+	DrawRect( x + 1, y + 1, w - 2, h - 2 )
+	SetColor( 255*(player.turrets[1].cur_heat / player.turrets[1].max_heat), 0, 255*(1 - (player.turrets[1].cur_heat / player.turrets[1].max_heat)) )
+	DrawRect( x + 2, y + 2, (Double(w) - 4.0)*(player.turrets[1].cur_heat / player.turrets[1].max_heat), h - 4 )
+	y :+ h
 	
 	'copyright stuff
 	y = window_h - arena_offset - 20
@@ -511,35 +536,35 @@ End Function
 Function draw_arena()
 
 	If bg_cache <> Null And retained_particle_list.IsEmpty()
-		DrawPixmap( bg_cache, 0, 0 )
-	Else 'either bg_cache has never been initialized, or there are new particles to be retained.
-		'arena
-		SetLineWidth( 2 ); SetColor( 127, 127, 127 )
-		DrawLine( 0, 0, arena_w, 0 )
-		DrawLine( arena_w, 0, arena_w, arena_h )
-		DrawLine( arena_w, arena_h, 0, arena_h )
-		DrawLine( 0, arena_h, 0, 0 )
+		DrawPixmap( bg_cache, arena_offset, arena_offset )
+	Else 'bg has never been cached or there are new particles to be added to it
+		'arena phsyical
+		SetColor( 255, 255, 255 )
+		DrawRect( 0, 0, arena_w, arena_h )
+		SetColor( 8, 8, 8 )
+		DrawRect( 2, 2, arena_w - 4, arena_h - 4 )
 	  'retained particles
+		SetColor( 255, 255, 255 )
 		For Local part:PARTICLE = EachIn retained_particle_list
 			part.draw()
 		Next
 		'update cache
-		bg_cache = GrabPixmap( 0, 0, arena_w + 1, arena_h + 1 )
+		bg_cache = GrabPixmap( arena_offset, arena_offset, arena_w, arena_h )
 	End If
 		
 End Function
 '______________________________________________________________________________
 Function draw_help()
 	SetColor( 0, 0, 0 )
-	SetAlpha( 0.333 )
+	SetAlpha( 0.550 )
 	DrawRect( 0, 0, window_w, window_h )
+	
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	DrawImage( img_help, window_w/2 - img_help.width/2, window_h/2 - img_help.height/2 )
 End Function
 '______________________________________________________________________________
 Function draw_menu()
-	SetOrigin( 0, 0 )
 	Local x%, y%
 	
 	'title
@@ -548,7 +573,7 @@ Function draw_menu()
 		DrawText( My.Application.AssemblyInfo, x, y )
 	
 	'menu options
-	x :+ 25; y :+ 75
+	x :+ 5; y :+ 70
 	For Local option% = 0 To menu_option_count - 1
 		If menu_enabled[ option ]
 			If option = menu_option
@@ -573,7 +598,7 @@ Function draw_menu()
 	'copyright stuff
 	SetColor( 157, 157, 157 )
 	SetImageFont( consolas_normal_10 )
-	x :+ 200; y :+ 3
+	x :+ 200; y :+ 7
 	DrawText( "Colosseum (c) 2008 Tyler W Cole", x, y ); y :+ 10
 	y :+ 10
 	DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
@@ -603,7 +628,25 @@ Function prev_enabled_menu_option()
 End Function
 '______________________________________________________________________________
 Function draw_game_over()
-
+	SetColor( 0, 0, 0 )
+	SetAlpha( 0.550 )
+	DrawRect( 0, 0, window_w, window_h )
 	
+	SetRotation( -30 )
+	
+	SetAlpha( 0.500 )
+	SetColor( 200, 255, 200 )
+	SetImageFont( consolas_bold_150 )
+	DrawText( "GAME OVER", 25, window_h - 150 )
+
+	SetAlpha( 1 )
+	SetColor( 255, 255, 255 )
+	SetImageFont( consolas_normal_24 )
+	DrawText( "press ESC", 300, window_h - 150 )
+End Function
+'______________________________________________________________________________
+Function draw_player_reticle()
+	SetRotation( player.turrets[0].ang )
+	DrawImage( img_reticle, player.turrets[0].pos_x, player.turrets[0].pos_y )
 End Function
 

@@ -4,8 +4,9 @@ Rem
 	author: Tyler W Cole
 EndRem
 '______________________________________________________________________________
-Global friendly_agent_list:TList = CreateList()
-Global hostile_agent_list:TList = CreateList()
+Global agent_lists:TList = CreateList()
+Global friendly_agent_list:TList = CreateList(); agent_lists.AddLast( friendly_agent_list )
+Global hostile_agent_list:TList = CreateList(); agent_lists.AddLast( hostile_agent_list )
 
 Const ALL_STOP% = 0
 Const ROTATE_CLOCKWISE_DIRECTION% = 1
@@ -62,11 +63,6 @@ Type COMPLEX_AGENT Extends AGENT
 			t.update()
 		Next
 		'emitters
-		Local diff# = angle_diff( ang, ATan2( vel_y, vel_x ))
-		If      Abs( diff ) < 90  Then enable_only_rear_emitters() ..
-		Else If Abs( diff ) > 270 Then enable_only_forward_emitters() ..
-		Else                           disable_all_emitters()
-		
 		For Local em:EMITTER = EachIn emitter_list
 			em.update()
 			em.emit()
@@ -75,6 +71,9 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	Method drive( pct# )
 		driving_force.control_pct = pct
+		If      pct > 0 Then enable_only_rear_emitters() ..
+		Else If pct < 0 Then enable_only_forward_emitters() ..
+		Else                 disable_all_emitters()
 	End Method
 	Method turn( pct# )
 		turning_force.control_pct = pct
@@ -85,7 +84,7 @@ Type COMPLEX_AGENT Extends AGENT
 			t.turn( pct )
 		Next
 	End Method
-	Method snap_turrets()
+	Method snap_turrets() '(private)
 		For Local t:TURRET = EachIn turrets
 			t.ang = ang
 		Next
@@ -139,7 +138,8 @@ frictional_coefficient#, ..
 turret_count%, ..
 motivator_count%, ..
 driving_force_magnitude#, ..
-turning_force_magnitude# )
+turning_force_magnitude#, ..
+physics_disabled% = False )
 	Local c:COMPLEX_AGENT = New COMPLEX_AGENT
 	
 	'static fields
@@ -148,6 +148,7 @@ turning_force_magnitude# )
 	c.mass = mass
 	c.frictional_coefficient = frictional_coefficient
 	c.cash_value = cash_value
+	c.physics_disabled = physics_disabled
 	
 	'dynamic fields
 	c.cur_health = max_health
@@ -179,6 +180,7 @@ Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT, political_alignm
 	c.mass = other.mass
 	c.frictional_coefficient = other.frictional_coefficient
 	c.cash_value = other.cash_value
+	c.physics_disabled = other.physics_disabled
 	
 	'dynamic fields
 	c.pos_x = other.pos_x; c.pos_y = other.pos_y

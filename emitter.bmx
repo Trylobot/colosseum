@@ -149,7 +149,7 @@ Type EMITTER extends MANAGED_OBJECT
 		Local acc# = RandF( acc_min, acc_max )
 		Local acc_ang#
 		If inherit_acc_ang_from_vel_ang Then acc_ang = vel_ang ..
-		Else                            acc_ang = RandF( acc_ang_min, acc_ang_max )
+		Else                                 acc_ang = RandF( acc_ang_min, acc_ang_max )
 		p.acc_x = acc * Cos( acc_ang + parent.ang )
 		p.acc_y = acc * Sin( acc_ang + parent.ang )
 		

@@ -13,6 +13,7 @@ Global consolas_normal_12:TImageFont = LoadImageFont( font_path_prefix + "consol
 Global consolas_normal_24:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 24 )
 Global consolas_bold_24:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 24 )
 Global consolas_bold_50:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 50 )
+Global consolas_bold_150:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 150 )
 
 '______________________________________________________________________________
 'Sound
@@ -50,11 +51,12 @@ Global img_muzzle_smoke:TImage = LoadImage_SetHandle( "muzzle_smoke.png", 15, 15
 Global img_mgun_muzzle_smoke:TImage = LoadImage_SetHandle( "mgun_muzzle_smoke.png", 8, 8 )
 Global img_enemy_stationary_emplacement_1_base:TImage = LoadImage_SetHandle( "enemy_stationary-emplacement-1_base.png", 11, 11 )
 Global img_enemy_stationary_emplacement_1_turret:TImage = LoadImage_SetHandle( "enemy_stationary-emplacement-1_turret.png", 11, 11 )
-Global img_rocket:TImage = LoadImage_SetHandle( "rocket.png", 0, 4 )
+Global img_rocket:TImage = LoadImage_SetHandle( "rocket.png", 11, 4 )
 Global img_rocket_thrust:TImage = LoadImage_SetHandle( "rocket_thrust.png", 16, 6 )
 Global img_rocket_explode:TImage = LoadImage_SetHandle( "rocket_explode.png", 14, 14 )
 Global img_box:TImage = LoadImage_SetHandle( "box.png", 8, 8 )
 Global img_pickup_ammo_main_5:TImage = LoadImage_SetHandle( "pickup_ammo_main_5.png", 16, 9 )
+Global img_pickup_health:TImage = loadimage_Sethandle( "pickup_health.png", 16, 9 )
 Global img_help:TImage = LoadImage_SetHandle( "help.png", 0, 0 )
 'Global img_arena_bg:TImage = LoadImage_SetHandle( "arena_bg.png", 0, 0 )
 'Global img_health_bar:TImage = LoadImage_SetHandle( "health_bar.png", 0, 0 )
@@ -76,3 +78,5 @@ Global img_trail_4:TImage = LoadImage( image_path_prefix + "trail-5.png" )
 AutoMidHandle( False )
 'Global img_half_circle:TImage = LoadImage_SetHandle( "half_circle.png", 49, 49 )
 'Global img_cone:TImage = LoadImage_SetHandle( "img_cone.png", 49, 49 )
+Global img_reticle:TImage = LoadImage_SetHandle( "reticle.png", -8, 7 )
+

@@ -1,4 +1,6 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ show a little music icon and sound volume indicator somewhere to show when music is on/off
+	_ add an "M for music" thing to the help screen
 	_ destructible armor plates of varying effectiveness and mass
 			when damaged, they show noticeable changes and look "beat up".
 			when dead, they actually fall off, allowing the player to be damaged in that area. The player does not have a lot of life.
