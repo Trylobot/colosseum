@@ -4,6 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 
+Global px# = 300, py# = 300, speed# = 1, r#, a#
 
 '______________________________________________________________________________
 'Global test_timer:TTimer = CreateTimer( 1.000/0.250 )
@@ -18,11 +19,24 @@ Function debug()
 		Return
 	End If
 
-'	SetRotation( 0 )
-'	SetScale( 1, 1 )
-'	SetAlpha( 1 )
-'	SetOrigin( arena_offset, arena_offset )
-'	
+	SetOrigin( arena_offset, arena_offset )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	SetAlpha( 1 )
+	
+	px :+ speed * KeyDown( KEY_RIGHT ) - speed * KeyDown( KEY_LEFT )
+	py :+ speed * KeyDown( KEY_DOWN ) - speed * KeyDown( KEY_UP )
+
+	a = vector_diff_angle( px, py, MouseX(), MouseY() )
+	r = vector_diff_length( px, py, MouseX(), MouseY() )
+	
+	SetColor( 127, 255, 127 ); DrawLine( px, py, px + r*Cos(a), py + r*Sin(a) )
+
+	'SetColor( 255, 127, 127 ); DrawLine( px, py, px + 30*Cos(avatar.turrets[0].ang), avatar.pos_y + 30*Sin(avatar.turrets[0].ang) )
+
+	'SetColor( 255, 127, 127 ); DrawLine( avatar.pos_x, avatar.pos_y, avatar.pos_x + 30*Cos(avatar.turrets[0].ang), avatar.pos_y + 30*Sin(avatar.turrets[0].ang) )
+	'SetColor( 127, 255, 127 ); DrawLine( avatar.pos_x, avatar.pos_y, avatar.pos_x + dist_to_target*Cos(dist_to_target), avatar.pos_y + dist_to_target*Sin(dist_to_target) )
+
 '	Local p:COMPLEX_AGENT = player, t:TURRET = p.turrets[0], em:EMITTER = t.projectile_emitter
 '	
 '	Local sx# = 4, sy# = 4

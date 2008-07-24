@@ -323,20 +323,6 @@ Function draw()
 			part.draw()
 		Next
 		
-'#####################################################################
-'#####################################################################
-'debugging
-debug()
-SetOrigin( arena_offset, arena_offset )
-SetRotation( 0 )
-SetAlpha( 1 )
-SetScale( 1, 1 )
-For Local cb:CONTROL_BRAIN = EachIn control_brain_list
-	cb.debug()
-Next
-'#####################################################################
-'#####################################################################
-		
 		'projectiles
 		For Local proj:PROJECTILE = EachIn friendly_projectile_list
 			proj.draw()
@@ -471,6 +457,7 @@ Function collide()
 End Function
 '______________________________________________________________________________
 Function draw_stats_panel()
+	SetOrigin( 0, 0 )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetAlpha( 1 )
@@ -543,6 +530,7 @@ End Function
 '______________________________________________________________________________
 'Menu and GUI
 Function draw_menu()
+	SetOrigin( 0, 0 )
 	SetRotation( 0 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
