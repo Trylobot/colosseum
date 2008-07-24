@@ -31,7 +31,8 @@ Type EMITTER extends MANAGED_OBJECT
 	Field count_min% 'number of particles to emit - lower bound
 	Field count_max% 'number of particles to emit - upper bound
 	Field count_cur% '(private) number of particles remaining to emit - pre-calculated and tracked
-	Field inherit_vel_from_parent% 'setting - whether to add the parent's velocity to the emitted particle
+	Field combine_vel_with_parent_vel% 'setting - whether to add the parent's velocity to the emitted particle's velocity
+	Field combine_vel_ang_with_parent_ang% 'setting - whether to add the parent's orientation to the emitted particle's direction of travel
 	Field inherit_ang_from_dist_ang% 'setting - whether to set the angle to the already-determined "dist_ang" or a new angle
 	Field inherit_vel_ang_from_ang% 'setting - whether to set the velocity angle to the already-determined "ang" or a new angle
 	Field inherit_acc_ang_from_vel_ang% 'setting - whether to set the acceleration angle to the already-determined "vel_ang" or a new angle
@@ -104,18 +105,15 @@ Type EMITTER extends MANAGED_OBJECT
 	Method emit( alignment% = ALIGNMENT_NOT_APPLICABLE )
 		If ready()
 			
-			'reserve space for particle
+			'reserve space for particle, and add it to the correct managed list
 			Local p:PARTICLE
 			Local index% = Rand( archetype_index_min, archetype_index_max )
 			If emitter_type = EMITS_PARTICLES
 				p = Copy_PARTICLE( particle_archetype[index] )
 			Else If emitter_type = EMITS_PROJECTILES
 				Local list:TList = Null
-				If alignment = ALIGNMENT_FRIENDLY
-					list = friendly_projectile_list
-				Else If alignment = ALIGNMENT_HOSTILE
-					list = hostile_projectile_list
-				End If
+				If      alignment = ALIGNMENT_FRIENDLY Then list = friendly_projectile_list ..
+				Else If alignment = ALIGNMENT_HOSTILE  Then list = hostile_projectile_list
 				p = PARTICLE( Copy_PROJECTILE( projectile_archetype[index], list ))
 			End If
 			
@@ -123,8 +121,8 @@ Type EMITTER extends MANAGED_OBJECT
 			Local dist# = RandF( dist_min, dist_max )
 			Local dist_ang# = RandF( dist_ang_min, dist_ang_max )
 			If parent <> Null
-				p.pos_x = parent.pos_x + offset * Cos( parent.ang + offset_ang ) + dist * Cos( parent.ang + dist_ang )
-				p.pos_y = parent.pos_y + offset * Sin( parent.ang + offset_ang ) + dist * Sin( parent.ang + dist_ang )
+				p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist * Cos( dist_ang + parent.ang )
+				p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist * Sin( dist_ang + parent.ang )
 			Else
 				p.pos_x = offset * Cos( offset_ang ) + dist * Cos( dist_ang )
 				p.pos_y = offset * Sin( offset_ang ) + dist * Sin( dist_ang )
@@ -151,21 +149,15 @@ Type EMITTER extends MANAGED_OBJECT
 			Local vel_ang#
 			If inherit_vel_ang_from_ang
 				vel_ang = p.ang
-				p.vel_x = vel * Cos( vel_ang )
-				p.vel_y = vel * Sin( vel_ang )
 			Else
 				vel_ang = RandF( vel_ang_min, vel_ang_max )
-				If parent <> Null
-					p.vel_x = vel * Cos( vel_ang + parent.ang )
-					p.vel_y = vel * Sin( vel_ang + parent.ang )
-				Else
-					p.vel_x = vel * Cos( vel_ang )
-					p.vel_y = vel * Sin( vel_ang )
-				End If
 			End If
-			If inherit_vel_from_parent And parent <> Null
-				p.vel_x :+ parent.vel_x
-				p.vel_y :+ parent.vel_y
+			If parent <> Null
+				p.vel_x = vel * Cos( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_x )
+				p.vel_y = vel * Sin( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_y )
+			Else
+				p.vel_x = vel * Cos( vel_ang )
+				p.vel_y = vel * Sin( vel_ang )
 			End If
 			
 			'particle acceleration components
@@ -176,8 +168,13 @@ Type EMITTER extends MANAGED_OBJECT
 			Else
 				acc_ang = RandF( acc_ang_min, acc_ang_max )
 			End If
-			p.acc_x = acc * Cos( acc_ang )
-			p.acc_y = acc * Sin( acc_ang )
+			If parent <> Null
+				p.acc_x = acc * Cos( acc_ang + parent.ang )
+				p.acc_y = acc * Sin( acc_ang + parent.ang )
+			Else
+				p.acc_x = acc * Cos( acc_ang )
+				p.acc_y = acc * Sin( acc_ang )
+			End If
 			
 			'particle alpha
 			p.alpha = RandF( alpha_min, alpha_max )
@@ -231,7 +228,8 @@ Function Archetype_EMITTER:EMITTER( ..
 emitter_type%, ..
 archetype_index_min%, archetype_index_max%, ..
 mode%, ..
-inherit_vel_from_parent%, ..
+combine_vel_with_parent_vel%, ..
+combine_vel_ang_with_parent_ang%, ..
 inherit_ang_from_dist_ang%, ..
 inherit_vel_ang_from_ang%, ..
 inherit_acc_ang_from_vel_ang%, ..
@@ -249,7 +247,8 @@ scale_delta_min# = 0.0, scale_delta_max# = 0.0 )
 	em.emitter_type = emitter_type
 	em.archetype_index_min = archetype_index_min; em.archetype_index_max = archetype_index_max
 	em.mode = mode
-	em.inherit_vel_from_parent = inherit_vel_from_parent
+	em.combine_vel_with_parent_vel = combine_vel_with_parent_vel
+	em.combine_vel_ang_with_parent_ang = combine_vel_ang_with_parent_ang
 	em.inherit_ang_from_dist_ang = inherit_ang_from_dist_ang
 	em.inherit_vel_ang_from_ang = inherit_vel_ang_from_ang
 	em.inherit_acc_ang_from_vel_ang = inherit_acc_ang_from_vel_ang
@@ -289,7 +288,8 @@ Function Copy_EMITTER:EMITTER( other:EMITTER, manage% = False, new_parent:POINT 
 	em.emitter_type = other.emitter_type
 	em.archetype_index_min = other.archetype_index_min; em.archetype_index_max = other.archetype_index_max
 	em.mode = other.mode
-	em.inherit_vel_from_parent = other.inherit_vel_from_parent
+	em.combine_vel_with_parent_vel = other.combine_vel_with_parent_vel
+	em.combine_vel_ang_with_parent_ang = other.combine_vel_ang_with_parent_ang
 	em.inherit_ang_from_dist_ang = other.inherit_ang_from_dist_ang
 	em.inherit_vel_ang_from_ang = other.inherit_vel_ang_from_ang
 	em.inherit_acc_ang_from_vel_ang = other.inherit_acc_ang_from_vel_ang
