@@ -5,10 +5,10 @@ Rem
 EndRem
 '______________________________________________________________________________
 Type COMPLEX_AGENT Extends AGENT
-	'Turret List
+	'Turrets
 	Field turrets:TURRET[]
 	Field turret_count%
-	''Motivators
+	'Motivators
 	'Field motivators:MOTIVATOR[]
 	Field motivator_count%
 	'Emitters
@@ -23,8 +23,8 @@ Type COMPLEX_AGENT Extends AGENT
 	Method draw()
 		SetRotation( ang )
 		DrawImage( img, pos_x, pos_y )
-		For Local tur:TURRET = EachIn turret_list
-			tur.draw()
+		For Local i% = 0 To turret_count - 1
+			turrets[i].draw()
 		Next
 	End Method
 	
@@ -36,40 +36,21 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 	End Method
 	
-	Method add_turret( turret_archetype% )
-		Local new_turret:TURRET = Clone_TURRET( turret_archetype_lib[ turret_archetype ])
-		new_turret.last_reloaded_ts = now()
-		new_turret.parent = Self
-		'find the next blank slot in the turret array
-		For Local i% = 0 To turret_count - 1
-			If turrets[i] = Null
-				turrets[i] = new_turret
-			End If
-		Next
-	End Method
-	
-'	Method add_motivator( new_motivator:MOTIVATOR )
-'		
-'	End Method
-'	Method get_motivator( motivator_index% )
-'		
-'	End Method
-	
 	Method update()
-		'update positions and offsets
+		'position
 		pos_x :+ vel_x
 		pos_y :+ vel_y
 		If pos_x > arena_w Then pos_x :- arena_w
 		If pos_x < 0       Then pos_x :+ arena_w
 		If pos_y > arena_h Then pos_y :- arena_h
 		If pos_y < 0       Then pos_y :+ arena_h
-		'update angles
+		'angle
 		ang :+ ang_vel
-		If ang >= 360     Then ang :- 360
-		If ang <  0       Then ang :+ 360
-		'update turrets
-		For Local tur:TURRET = EachIn turret_list
-			tur.update()
+		If ang >= 360 Then ang :- 360
+		If ang <  0   Then ang :+ 360
+		'turrets
+		For Local i% = 0 To turret_count - 1
+			turrets[i].update()
 		Next
 	End Method
 	
@@ -97,73 +78,71 @@ Type COMPLEX_AGENT Extends AGENT
 			rear_trail_emitters[i].disable()
 		Next
 	End Method
-
+	
 End Type
 '______________________________________________________________________________
-Function Create_COMPLEX_AGENT:COMPLEX_AGENT( ..
+Function Archetype_COMPLEX_AGENT:COMPLEX_AGENT( ..
 img:TImage, ..
-pos_x#, pos_y#, ..
-ang#, ..
 max_health#, ..
 turret_count%, ..
 motivator_count% )
-	Local cag:COMPLEX_AGENT = New COMPLEX_AGENT
-	cag.img = img
-	cag.pos_x = pos_x; cag.pos_y = pos_y
-	cag.ang = ang
-	cag.max_health = max_health
-	cag.cur_health = max_health
-	cag.turret_count = turret_count
-	If cag.turret_count > 0
-		cag.turrets = New TURRET[ turret_count ]
+	Local c:COMPLEX_AGENT = New COMPLEX_AGENT
+	
+	'static fields
+	c.img = img
+	c.max_health = max_health
+	
+	'dynamic fields
+	c.cur_health = max_health
+	c.turret_count = turret_count
+	If c.turret_count > 0
+		c.turrets = New TURRET[ turret_count ]
 	End If
-	cag.motivator_count = motivator_count
-	If cag.motivator_count > 0
-		'cag.motivators = New MOTIVATOR[ motivator_count ]
-		cag.forward_debris_emitters = New EMITTER[ motivator_count ]
-		cag.rear_debris_emitters = New EMITTER[ motivator_count ]
-		cag.forward_trail_emitters = New EMITTER[ motivator_count ]
-		cag.rear_trail_emitters = New EMITTER[ motivator_count ]
-		For Local i% = 0 To motivator_count - 1
-			cag.forward_debris_emitters[i].parent = cag
-			cag.forward_debris_emitters[i].add_me( emitter_list )
-			cag.rear_debris_emitters[i].parent = cag
-			cag.rear_debris_emitters[i].add_me( emitter_list )
-			cag.forward_trail_emitters[i].parent = cag
-			cag.forward_trail_emitters[i].add_me( emitter_list )
-			cag.rear_trail_emitters[i].parent = cag
-			cag.rear_trail_emitters[i].add_me( emitter_list )
-		Next
+	c.motivator_count = motivator_count
+	If c.motivator_count > 0
+		'c.motivators = New MOTIVATOR[ motivator_count ]
+		c.forward_debris_emitters = New EMITTER[ motivator_count ]
+		c.rear_debris_emitters = New EMITTER[ motivator_count ]
+		c.forward_trail_emitters = New EMITTER[ motivator_count ]
+		c.rear_trail_emitters = New EMITTER[ motivator_count ]
 	End If
-	Return cag
+	
+	Return c
 End Function
 '______________________________________________________________________________
-Function Clone_COMPLEX_AGENT:COMPLEX_AGENT( old_cag:COMPLEX_AGENT )
-	Local cag:COMPLEX_AGENT = New COMPLEX_AGENT
-	cag.img = old_cag.img
-	cag.pos_x = old_cag.pos_x; cag.pos_y = old_cag.pos_y
-	cag.ang = old_cag.ang
-	cag.max_health = old_cag.max_health
-	cag.cur_health = cag.max_health
-	If old_cag.turret_count > 0
-		cag.turrets = New TURRET[ old_cag.turret_count ]
-		For Local i% = 0 To old_cag.turret_count - 1
-			cag.turrets[i] = Clone_TURRET( old_cag.turrets[i] )
+Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT )
+	Local c:COMPLEX_AGENT = New COMPLEX_AGENT
+	
+	'static fields
+	c.img = other.img
+	c.max_health = other.max_health
+	
+	'dynamic fields
+	c.pos_x = other.pos_x; c.pos_y = other.pos_y
+	c.ang = other.ang
+	c.cur_health = c.max_health
+	If other.turret_count > 0
+		c.turret_count = other.turret_count
+		c.turrets = New TURRET[ other.turret_count ]
+		For Local i% = 0 To other.turret_count - 1
+			c.turrets[i] = Copy_TURRET( other.turrets[i], c )
 		Next
 	End If
-	If old_cag.motivator_count > 0
-		'cag.motivators = New MOTIVATOR[ old_cag.motivator_count ]
-		cag.forward_debris_emitters = New EMITTER[ old_cag.forward_debris_emitters.Length ]
-		cag.rear_debris_emitters = New EMITTER[ old_cag.rear_debris_emitters.Length ]
-		cag.forward_trail_emitters = New EMITTER[ old_cag.forward_trail_emitters.Length ]
-		cag.rear_trail_emitters = New EMITTER[ old_cag.rear_trail_emitters.Length ]
-		For Local i% = 0 To old_cag.motivator_count - 1
-			'cag.motivators[i] = Clone_MOTIVATOR( old_cag.motivators[i] )
-			cag.forward_debris_emitters[i] = Clone_EMITTER( old_cag.forward_debris_emitters[i] )
-			cag.rear_debris_emitters[i] = Clone_EMITTER( old_cag.rear_debris_emitters[i] )
-			cag.forward_trail_emitters[i] = Clone_EMITTER( old_cag.forward_trail_emitters[i] )
-			cag.rear_trail_emitters[i] = Clone_EMITTER( old_cag.rear_trail_emitters[i] )
+	If other.motivator_count > 0
+		c.motivator_count = other.motivator_count
+		'c.motivators = New MOTIVATOR[ other.motivator_count ]
+		c.forward_debris_emitters = New EMITTER[ other.forward_debris_emitters.Length ]
+		c.rear_debris_emitters = New EMITTER[ other.rear_debris_emitters.Length ]
+		c.forward_trail_emitters = New EMITTER[ other.forward_trail_emitters.Length ]
+		c.rear_trail_emitters = New EMITTER[ other.rear_trail_emitters.Length ]
+		For Local i% = 0 To other.motivator_count - 1
+			'c.motivators[i] = Copy_MOTIVATOR( other.motivators[i] )
+			c.forward_debris_emitters[i] = Copy_EMITTER( other.forward_debris_emitters[i], c )
+			c.rear_debris_emitters[i] = Copy_EMITTER( other.rear_debris_emitters[i], c )
+			c.forward_trail_emitters[i] = Copy_EMITTER( other.forward_trail_emitters[i], c )
+			c.rear_trail_emitters[i] = Copy_EMITTER( other.rear_trail_emitters[i], c )
 		Next
 	End If
-	Return cag
+	
+	Return c
 End Function

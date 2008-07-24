@@ -13,8 +13,10 @@ Type POINT Extends MANAGED_OBJECT
 	'Velocity
 	Field vel_x#
 	Field vel_y#
-	'Rotation
+	'Orientation
 	Field ang#
+	'Angular Velocity
+	Field ang_vel#
 	
 	Method New()
 	End Method

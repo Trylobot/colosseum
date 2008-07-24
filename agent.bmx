@@ -3,8 +3,17 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+
 '______________________________________________________________________________
 Type AGENT Extends POINT
+	
+	'Images
+	Field img:TImage
+	'Health
+	Field max_health#
+	'Mass
+	Field mass#
+
 	'Acceleration 
 	Field acc_x#
 	Field acc_y#
@@ -12,13 +21,7 @@ Type AGENT Extends POINT
 	Field ang_vel#
 	'Angular Acceleration
 	Field ang_acc#
-	'Images
-	Field img:TImage
-	'Health
-	Field max_health#
 	Field cur_health#
-	'Mass
-	Field mass#
 	
 	Method New()
 	End Method
@@ -43,9 +46,19 @@ Type AGENT Extends POINT
 		If ang <  0   Then ang :+ 360
 	End Method
 	
+	Method receive_damage( damage# )
+		cur_health :- damage
+		If cur_health < 0 Then cur_health = 0 'no "overkill"
+		If cur_health = 0 
+			remove_me()
+		End If
+	End Method
+
 End Type
+'______________________________________________________________________________
 Function Create_AGENT:AGENT() 'more arguments?
 	Local new_entity:AGENT = New AGENT
 	'initializers?
 	Return new_entity
 End Function
+
