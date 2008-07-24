@@ -66,16 +66,16 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Method enable_only_forward_tread_debris_emitters()
-		tread_debris_emitter[0].enable()
-		tread_debris_emitter[1].enable()
+		tread_debris_emitter[0].enable_timer( infinite_life_time )
+		tread_debris_emitter[1].enable_timer( infinite_life_time )
 		tread_debris_emitter[2].disable()
 		tread_debris_emitter[3].disable()
 	End Method
 	Method enable_only_rear_tread_debris_emitters()
 		tread_debris_emitter[0].disable()
 		tread_debris_emitter[1].disable()
-		tread_debris_emitter[2].enable()
-		tread_debris_emitter[3].enable()
+		tread_debris_emitter[2].enable_timer( infinite_life_time )
+		tread_debris_emitter[3].enable_timer( infinite_life_time )
 	End Method
 	Method disable_all_tread_debris_emitters()
 		tread_debris_emitter[0].disable()

@@ -19,10 +19,9 @@ player_turret.img = img_player_tank_turret
 player_turret.muz_img = img_muzzle_flash
 player_turret.proj_img = img_projectile
 player_turret.hit_img = img_hit
-player_turret.offset = -5
-player_turret.muz_offset = 20
-'player_turret.muz_off_x = 20
-'player_turret.muz_off_y = 0
+'player_turret.offset = -5
+player_turret.set_offset( -5, 0 )
+player_turret.set_muz_offset( 20, 0 )
 player_turret.muz_vel = player_turret_projectile_muzzle_velocity
 player_turret.reload_time = player_turret_reload_time
 player.add_turret( player_turret )
@@ -32,18 +31,17 @@ player_mgun.img = img_player_mgun_turret
 player_mgun.muz_img = img_mgun_muzzle_flash
 player_mgun.proj_img = img_mgun
 player_mgun.hit_img = img_mgun_hit
-player_mgun.offset = -5
-player_mgun.muz_offset = 14
-'player_mgun.muz_off_x = 14
-'player_mgun.muz_off_y = 2
+'player_mgun.offset = -5
+player_mgun.set_offset( -5, 0 )
+player_turret.set_muz_offset( 14, 2 )
 player_mgun.muz_vel = player_turret_mgun_muzzle_velocity
 player_mgun.reload_time = player_mgun_reload_time
 player.add_turret( player_mgun )
 'player tank's emitters
-player.tread_debris_emitter[0].set( imglib_debris_tiny, 12, -7, -90, 90, 1, 4.5, 100, 250, 20, 50, -1 )
-player.tread_debris_emitter[1].set( imglib_debris_tiny, 12, 7, -90, 90, 1, 4.5, 100, 250, 20, 50, -1 )
-player.tread_debris_emitter[2].set( imglib_debris_tiny, -12, 7, 90, 270, 1, 4.5, 100, 250, 20, 50, -1 )
-player.tread_debris_emitter[3].set( imglib_debris_tiny, -12, -7, 90, 270, 1, 4.5, 100, 250, 20, 50, -1 )
+player.tread_debris_emitter[0].set( imglib_debris_tiny, 12, -7, -90, 90, 1, 4.5, 100, 250, 20, 50 )
+player.tread_debris_emitter[1].set( imglib_debris_tiny, 12, 7, -90, 90, 1, 4.5, 100, 250, 20, 50 )
+player.tread_debris_emitter[2].set( imglib_debris_tiny, -12, 7, 90, 270, 1, 4.5, 100, 250, 20, 50 )
+player.tread_debris_emitter[3].set( imglib_debris_tiny, -12, -7, 90, 270, 1, 4.5, 100, 250, 20, 50 )
 'enemy tanks
 For Local i% = 1 To 10
 	Local e:AGENT = Create_AGENT()

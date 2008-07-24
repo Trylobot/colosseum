@@ -23,6 +23,7 @@ Const player_angular_velocity_max# = 1.500
 Const player_turret_angular_velocity_max# = 1.850
 'time (ms)
 Const infinite_life_time% = -1
+Const infinite_count% = -1
 Const player_turret_reload_time% = 450
 Const player_mgun_reload_time% = 75
 Const player_turret_recoil_time% = 450

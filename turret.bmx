@@ -17,13 +17,9 @@ Type TURRET
 	Field ang_vel#
 	Field ang_acc#
 	'Turret offset (from parent's handle)
-	Field off_x#
-	Field off_y#
 	Field offset#
 	Field offset_ang#
 	'Muzzle offset (from this turret's handle)
-	Field muz_off_x#
-	Field muz_off_y#
 	Field muz_offset#
 	Field muz_offset_ang#
 	'Other Data
@@ -36,6 +32,21 @@ Type TURRET
 	Method New()
 	End Method
 	
+	Method set_offset( off_x#, off_y# )
+		offset = Sqr( off_x*off_x + off_y*off_y )
+		offset_ang = ATan( off_y/off_x )
+		If off_x < 0
+			offset_ang :- 180
+		End If
+	End Method
+	Method set_muz_offset( muz_off_x#, muz_off_y# )
+		muz_offset = Sqr( muz_off_x*muz_off_x + muz_off_y*muz_off_y )
+		muz_offset_ang = ATan( muz_off_y/muz_off_x )
+		If muz_off_x < 0
+			muz_offset_ang :- 180
+		End If
+	End Method
+	
 '	Method set()
 '		offset = Sqr( off_x*off_x + off_y*off_y )
 '		offset_ang = ATan( off_y/off_x )
@@ -46,15 +57,10 @@ Type TURRET
 	
 	Method draw()
 		SetRotation( parent.ang + ang )
-		DrawImage( img, parent.pos_x + off_x, parent.pos_y + off_y )
+		DrawImage( img, parent.pos_x + offset * Cos( parent.ang ), parent.pos_y + offset * Sin( parent.ang ))
 	End Method
 	
 	Method update()
-		'position
-		off_x = offset * Cos( parent.ang )
-		off_y = offset * Sin( parent.ang )
-		muz_off_x = muz_offset * Cos( parent.ang + ang )
-		muz_off_y = muz_offset * Sin( parent.ang + ang )
 		'angle
 		ang :+ ang_vel
 		If ang >= 360 Then ang :- 360
@@ -74,7 +80,7 @@ Type TURRET
 			'create muzzle flash
 			Create_PARTICLE( ..
 				muz_img, ..
-				parent.pos_x + off_x + muz_off_x, parent.pos_y + off_y + muz_off_y, ..
+				parent.pos_x + offset * Cos( parent.ang ) + offset * Cos( parent.ang + ang ), parent.pos_y + offset * Sin( parent.ang ) + offset * Sin( parent.ang + ang ), ..
 				0, 0, ..
 				ang + parent.ang, ..
 				1.000, 1.000, ..
@@ -84,7 +90,7 @@ Type TURRET
 			Create_PROJECTILE( ..
 				proj_img, ..
 				hit_img, ..
-				parent.pos_x + off_x + muz_off_x, parent.pos_y + off_y + muz_off_y, ..
+				parent.pos_x + offset * Cos( parent.ang ) + offset * Cos( parent.ang + ang ), parent.pos_y + offset * Sin( parent.ang ) + offset * Sin( parent.ang + ang ), ..
 				parent.vel_x + muz_vel * Cos( parent.ang + ang ), parent.vel_y + muz_vel * Sin( parent.ang + ang ), ..
 				ang + parent.ang, ..
 				50, 10, ..
