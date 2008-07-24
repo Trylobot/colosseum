@@ -6,7 +6,7 @@ EndRem
 'Program: Colosseum
 'Version: 0
 'Subversion: 0
-'Revision: 1
+'Revision: 2
 '#EndRegion &HFF
 
 
@@ -20,14 +20,13 @@ SuperStrict
 
 '------------------------------------------------------------------------------------------------------------------------------------------------------
 '#Region &H0F Framework
-Import brl.font
-Import brl.freetypefont
-Import brl.math
-Import brl.pngloader
-Import brl.pixmap
-Import brl.ramstream
 Import brl.random
 Import brl.timer
+Import brl.freetypefont
+Import brl.freeaudioaudio
+Import brl.oggloader
+Import brl.pngloader
+Import brl.standardio
 '#EndRegion &H0F
 
 
@@ -43,27 +42,27 @@ Import brl.timer
 '#Region &H04 MyNamespace
 'GUI
 Private
-TYPE z_fb7b3481_0e5a_4061_b8f9_d1d6d8c01bf2 abstract  'Resource folder
+TYPE z_ac81217b_b8e9_4c1b_bfa8_28180570f5cf abstract  'Resource folder
 End Type
 
 
-TYPE z_blide_bg59ddba0f_928e_4d63_8cc5_d89f58de17c3 Abstract
+TYPE z_blide_bg40eb8b21_a488_4b10_872f_fcc34b931ae5 Abstract
     Const Name:string = "Colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
     Const MinorVersion:Int = 0  'This Const contains the minor version number of the program
-    Const Revision:Int =  1  'This Const contains the revision number of the current program version
+    Const Revision:Int =  2  'This Const contains the revision number of the current program version
     Const VersionString:String = MajorVersion + "." + MinorVersion + "." + Revision   'This string contains the assembly version in format (MAJOR.MINOR.REVISION)
     Const AssemblyInfo:String = Name + " " + MajorVersion + "." + MinorVersion + "." + Revision   'This string represents the available assembly info.
 EndType
 
 
-Type z_My_59ddba0f_928e_4d63_8cc5_d89f58de17c3 Abstract 'This type has all the run-tima binary information of your assembly
-    Global Application:z_blide_bg59ddba0f_928e_4d63_8cc5_d89f58de17c3  'This item has all the currently available assembly version information.
-    Global Resources:z_fb7b3481_0e5a_4061_b8f9_d1d6d8c01bf2  'This item has all the currently available incbined files names and relative location.
+Type z_My_40eb8b21_a488_4b10_872f_fcc34b931ae5 Abstract 'This type has all the run-tima binary information of your assembly
+    Global Application:z_blide_bg40eb8b21_a488_4b10_872f_fcc34b931ae5  'This item has all the currently available assembly version information.
+    Global Resources:z_ac81217b_b8e9_4c1b_bfa8_28180570f5cf  'This item has all the currently available incbined files names and relative location.
 End Type
 
 
-Global My:z_My_59ddba0f_928e_4d63_8cc5_d89f58de17c3 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
+Global My:z_My_40eb8b21_a488_4b10_872f_fcc34b931ae5 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
 Public
 '#EndRegion &H04 MyNamespace
 
@@ -71,7 +70,7 @@ Public
 '------------------------------------------------------------------------------------------------------------------------------------------------------
 '#Region &H03 Includes
 Include "globals.bmx"
-Include "load_images.bmx"
+Include "load_data.bmx"
 Include "basic.bmx"
 Include "point.bmx"
 Include "particle.bmx"

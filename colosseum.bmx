@@ -22,8 +22,9 @@ Repeat
 	Cls	
 	
 	draw()
+	play_bg_music()
 	
 	'debug()
 	Flip( 1 ) 'draw to screen with vsync enabled
-Until KeyHit( KEY_ESCAPE ) Or AppTerminate() 'kill app when ESC or close button pressed
+Until AppTerminate() 'kill app when ESC or close button pressed
 

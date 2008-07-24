@@ -37,7 +37,7 @@ Type COMPLEX_AGENT Extends AGENT
 		SetScale( 1, 1 )
 
 		SetRotation( ang )
-		DrawImage( img, pos_x, pos_y )
+		If img <> Null Then DrawImage( img, pos_x, pos_y )
 		For Local t:TURRET = EachIn turrets
 			t.draw()
 		Next

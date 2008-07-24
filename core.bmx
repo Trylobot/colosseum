@@ -6,31 +6,43 @@ EndRem
 
 'Settings flags
 Global FLAG_in_menu% = True
-Global FLAG_paused% = True
 Global FLAG_game_over% = False
 Global FLAG_draw_help% = False
+Global FLAG_bg_music_on% = False
+Global FLAG_game_in_progress% = False
 
-Const MENU_NEW% = 0
-Const MENU_CONTINUE% = 1
-Const MENU_LOAD% = 2
-Const MENU_SETTINGS% = 3
-Const MENU_QUIT% = 4
-Const menu_option_count% = 5
+Const MENU_RESUME% = 0
+Const MENU_NEW% = 1
+Const MENU_CONTINUE% = 2
+Const MENU_LOAD% = 3
+Const MENU_SETTINGS% = 4
+Const MENU_QUIT% = 5
+Const menu_option_count% = 6
 
-Global menu_display_string$[] = [ "new game", "continue", "load saved", "settings", "quit" ]
-Global menu_enabled%[] =        [  True,       False,      False,        False,      True  ]
-
+Global menu_display_string$[] = [ "resume", "new game", "continue", "load saved", "settings", "quit" ]
+Global menu_enabled%[] =        [  False,    True,       False,      False,        False,      True  ]
 Global menu_option% = MENU_NEW
+
+Const GENERAL_COLLIDE_LAYER% = $0001
+Const PLAYER_COLLIDE_LAYER% = $0002
+Const ENEMY_COLLIDE_LAYER% = $0004
+Const FRIENDLY_PROJECTILE_COLLIDE_LAYER% = $0008
+Const HOSTILE_PROJECTILE_COLLIDE_LAYER% = $0010
+Const PICKUP_COLLIDE_LAYER% = $0011
+Const SENSOR_COLLIDE_LAYER% = $0012
+
+
 
 '______________________________________________________________________________
 'Menu Commands
-Function menu_command()
-	Select menu_option
+Function menu_command( com% )
+	Select com
+		Case MENU_RESUME
+			FLAG_in_menu = False
 		Case MENU_NEW
-			initialize()
 			reset_game()
+			initialize()
 			load_next_level()
-			FLAG_paused = False
 			FLAG_in_menu = False
 		Case MENU_CONTINUE
 			'..?
@@ -44,30 +56,35 @@ Function menu_command()
 End Function
 '______________________________________________________________________________
 Function reset_game()
+	particle_list_background.Clear()
+	particle_list_foreground.Clear()
+	retained_particle_list.Clear()
+	emitter_list.Clear()
+	friendly_projectile_list.Clear()
+	hostile_projectile_list.Clear()
+	enemy_list.Clear()
+	pickup_list.Clear()
+	control_brain_list.Clear()
+	
+	player = Null
 	player_cash = 0
 	player_level = 0
+	FLAG_game_in_progress = False
 End Function
 '______________________________________________________________________________
 Function load_next_level()
-'	particle_list_background.Clear()
-'	particle_list_foreground.Clear()
-'	retained_particle_list.Clear()
-'	emitter_list.Clear()
-'	friendly_projectile_list.Clear()
-'	hostile_projectile_list.Clear()
-'	enemy_list.Clear()
-'	pickup_list.Clear()
-
 	player_level :+ 1
 	respawn_enemies()
 End Function
 '______________________________________________________________________________
 Function initialize()
 	respawn_player()
+	FLAG_game_in_progress = True
 End Function
 '______________________________________________________________________________
 'Spawning and Respawning
 Function respawn_player()
+	
 	If player <> Null Then player.remove_me()
 	player = Copy_COMPLEX_AGENT( player_archetype[ 0], True )
 	player.pos_x = arena_w/2
@@ -75,28 +92,28 @@ Function respawn_player()
 	player.ang = -90
 	player.turrets[0].ang = player.ang
 	player.turrets[1].ang = player.ang
+	
 End Function
 '______________________________________________________________________________
 Function respawn_enemies()
 	If enemy_list.IsEmpty()
 		
 		'the infamous "mr. the box"
-'		For Local i% = 1 To 10
-'			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 0], True )
-'			
-'			nme.pos_x = Rand( 10, arena_w - 10 )
-'			nme.pos_y = Rand( 10, arena_h - 10 )
-'			nme.ang = Rand( 0, 359 )
-'			
-'			nme.command_all_motivators( MOVE_FORWARD_DIRECTION, RandF( 0.2, 0.6 ))
-'			nme.rear_trail_emitters[ 0].enable( MODE_ENABLED_FOREVER )
-'			
-'			nme.add_me( enemy_list )
-'		Next
+		For Local i% = 1 To (5*player_level)
+			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 0], True )
+			
+			nme.pos_x = Rand( 10, arena_w - 10 )
+			nme.pos_y = Rand( 10, arena_h - 10 )
+			nme.ang = Rand( 0, 359 )
+			
+			nme.command_all_motivators( MOVE_FORWARD_DIRECTION, RandF( 0.2, 0.6 ))
+			nme.rear_trail_emitters[ 0].enable( MODE_ENABLED_FOREVER )
+			
+			nme.add_me( enemy_list )
+		Next
 		
 		'the brand spankin' new ROCKET TURRET
-		'For Local i% = 1 To 5
-		For Local i% = 1 To 1
+		For Local i% = 1 To (2*player_level)
 			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 1], True )
 
 			nme.pos_x = Rand( 10, arena_w - 10 )
@@ -127,16 +144,34 @@ End Function
 '______________________________________________________________________________
 'Keyboard Input
 Function process_input()
+	
+	'music
+	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
+	'pause menu
+	If KeyHit( KEY_ESCAPE )
+		If Not FLAG_in_menu
+			FLAG_in_menu = True
+			'set the currently selected option to the first enabled one
+			menu_option = MENU_RESUME
+			'enable the resume option if there's a game goin on
+			If FLAG_game_in_progress
+				menu_enabled[ MENU_RESUME ] = True
+			End If
+		Else If FLAG_game_in_progress 'And FLAG_in_menu
+			menu_command( MENU_RESUME )
+		End If
+	End If
+	
 	If FLAG_in_menu
-		
+		'navigate the menu
 		If KeyHit( KEY_DOWN )
 			next_enabled_menu_option()
 		Else If KeyHit( KEY_UP )
 			prev_enabled_menu_option()
 		End If
-		
+		'select an option
 		If KeyHit( KEY_ENTER )
-			menu_command()
+			menu_command( menu_option )
 		End If
 		
 	Else
@@ -175,20 +210,12 @@ Function process_input()
 			player.fire( 1 )
 		End If
 		
-		If KeyHit( KEY_F1 )
-			FLAG_draw_help = Not FLAG_draw_help
-		End If
-		
-		If KeyHit( KEY_P )' Or KeyHit( KEY_PAUSE ) 'why doesn't this one work? wtf? it's in the docs for chrissake
-			FLAG_paused = Not FLAG_paused
-		End If
-		
 	End If
 End Function
 '______________________________________________________________________________
 'Physics and Timing Update
 Function update_objects()
-	If Not FLAG_paused
+	If Not FLAG_in_menu
 		
 		'pickups
 		For Local pkp:PICKUP = EachIn pickup_list
@@ -266,15 +293,8 @@ Function update_objects()
 End Function
 '______________________________________________________________________________
 'Collision Detection and Resolution
-Const GENERAL_COLLIDE_LAYER% = $0001
-Const PLAYER_COLLIDE_LAYER% = $0002
-Const ENEMY_COLLIDE_LAYER% = $0004
-Const FRIENDLY_PROJECTILE_COLLIDE_LAYER% = $0008
-Const HOSTILE_PROJECTILE_COLLIDE_LAYER% = $0010
-Const PICKUP_COLLIDE_LAYER% = $0011
-
 Function collide()
-	If Not FLAG_paused
+	If Not FLAG_in_menu
 	
 		Local nme:COMPLEX_AGENT
 		Local proj:PROJECTILE
@@ -389,6 +409,20 @@ Function draw()
 			part.draw()
 		Next
 		
+'#####################################################################
+'#####################################################################
+'debugging
+debug()
+SetOrigin( arena_offset, arena_offset )
+SetRotation( 0 )
+SetAlpha( 1 )
+SetScale( 1, 1 )
+For Local cb:CONTROL_BRAIN = EachIn control_brain_list
+	cb.debug()
+Next
+'#####################################################################
+'#####################################################################
+		
 		'projectiles
 		For Local proj:PROJECTILE = EachIn friendly_projectile_list
 			proj.draw()
@@ -418,13 +452,8 @@ Function draw()
 		
 		'interface
 		draw_stats_panel()
-		'paused indicator
-		If FLAG_paused Then draw_pause_indicator()
 		
 	End If
-	
-	'help
-	If FLAG_draw_help Then draw_help()
 	
 End Function
 '______________________________________________________________________________
@@ -468,7 +497,7 @@ Function draw_stats_panel()
 	'player ammo
 	y :+ arena_offset
 	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
-	DrawText( "223mm cannon", x, y ); y :+ 12
+	DrawText( "heavy cannon", x, y ); y :+ 12
 	Local temp_x%, temp_y%
 	temp_x = x; temp_y = y
 	For Local i% = 0 To player.turrets[0].cur_ammo - 1
@@ -479,16 +508,24 @@ Function draw_stats_panel()
 		DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
 		temp_x :+ img_icon_player_cannon_ammo.width
 	Next; y :+ 12 + (player.turrets[0].max_ammo / 20)* img_icon_player_cannon_ammo.height
-	DrawText( "co-axial .50 machine gun", x, y ); y :+ 12
+	DrawText( "co-axial machine gun", x, y ); y :+ 12
 	DrawImage( img_icon_infinity, x, y ); y :+ img_icon_infinity.height + 12
 	
 	'copyright stuff
-	y = window_h - arena_offset - 30
+	y = window_h - arena_offset - 20
 	SetColor( 157, 157, 157 ); SetImageFont( consolas_normal_10 )
-	DrawText( "copyright 2008 Tyler W Cole", x, y ); y :+ 10
-	DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
-	DrawText( "http://www.blitzmax.com", x, y ); y :+ 10
+	DrawText( "programming by Tyler W Cole", x, y ); y :+ 10
+	DrawText( "music by NickPerrin", x, y ); y :+ 10
 	
+End Function
+'______________________________________________________________________________
+'Audio
+Function play_bg_music()
+	If FLAG_bg_music_on And Not ChannelPlaying( bg_music )
+		ResumeChannel( bg_music )
+	Else If Not FLAG_bg_music_on
+		PauseChannel( bg_music )
+	End If
 End Function
 '______________________________________________________________________________
 'Menu and GUI
@@ -496,10 +533,16 @@ Function draw_menu()
 	SetRotation( 0 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
-
+	Local x%, y%
+	
+	If FLAG_game_in_progress
+		SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_24 )
+		DrawText( "- game paused -", 150, 100 )
+	End If
+	
 	SetColor( 255, 255, 127 ); SetImageFont( consolas_bold_50 )
 		DrawText( My.Application.AssemblyInfo, 150, 200 )
-		
+	
 	SetImageFont( consolas_normal_24 )
 	For Local option% = 0 To menu_option_count - 1
 		If menu_enabled[ option ]
@@ -514,8 +557,20 @@ Function draw_menu()
 		DrawText( menu_display_string[ option ], 250, 300 + option*48 )
 	Next
 	
-'	SetColor( 255, 255, 255 )
-'	DrawImage( img_icon_colosseum_large, 150, 40 )
+	'copyright stuff
+	x = 500; y = 600
+	SetColor( 157, 157, 157 ); SetImageFont( consolas_normal_10 )
+	DrawText( "Colosseum (c) 2008 Tyler W Cole", x, y ); y :+ 10
+	y :+ 10
+	DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
+	DrawText( "  http://www.blitzmax.com", x, y ); y :+ 10
+	y :+ 10
+	DrawText( "music by 'NickPerrin'", x, y ); y :+ 10
+	DrawText( "  Victory! (8-bit Chiptune)", x, y ); y :+ 10
+	DrawText( "  http://www.newgrounds.com", x, y ); y :+ 10
+	
+	SetColor( 255, 255, 255 )
+	DrawImage( img_help, 500, 300 )
 		
 End Function
 '______________________________________________________________________________
@@ -536,15 +591,6 @@ Function prev_enabled_menu_option()
 	End While
 End Function
 '______________________________________________________________________________
-Function draw_help()
-	SetColor( 255, 255, 255 )
-	SetRotation( 0 )
-	SetAlpha( 1 )
-	SetScale( 1, 1 )
-
-	DrawImage( img_help, 5, 5 )
-End Function
-'______________________________________________________________________________
 Function draw_arena()
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
@@ -562,20 +608,6 @@ Function draw_arena()
 	For Local part:PARTICLE = EachIn retained_particle_list
 		part.draw()
 	Next
-End Function
-'______________________________________________________________________________
-Function draw_pause_indicator()
-	SetRotation( 0 )
-	SetScale( 1, 1 )
-	
-	SetAlpha( 0.75 )
-	SetColor( 0, 0, 0 )
-	DrawRect( 0, 0, window_w, window_h )
-	
-	SetAlpha( 1 )
-	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_24 )
-	DrawText( "- paused -", window_w/2 - 50, window_h/2 )
-	
 End Function
 '______________________________________________________________________________
 Function draw_game_over()

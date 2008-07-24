@@ -1,7 +1,9 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ for TURRETs, allow for an arbitrary number of each type of emitter.
+	_ enemy spawner (Carson's idea)
 	_ put explosion, smoke, spark and damage scar emitters into projectiles.
 			when the projectile hits something, emit everything ("dump its load").
-	_ sound emitters
+	O sound
 	X emitters should have a particle_archetype_index range (min/max) so that they can emit many different particles
 	_ explosions can also have short-lived "spark" emitters, and sparks have such trails as mentioned above
 	X velocity range for projectile emitters -- ties in to weapon accuracy
@@ -32,7 +34,7 @@
 	X create "shells" to be ejected from the ejector port of turret object
 	_ create blocks for static environments that can be collided with
 	_ create example arenas
-	_ create a rudimentary AI
+	O create a rudimentary AI
 	X create a few enemies with guns
 	_ create visible damage which "sticks" to agents
 	X separate main components into files
