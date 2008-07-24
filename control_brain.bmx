@@ -99,10 +99,12 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					'analyze current target
 					ang_to_target = vector_diff_angle( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
 					dist_to_target = vector_diff_length( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
-					Local diff# = ang_diff( avatar.turrets[0].ang, ang_to_target )
+					Local diff# = angle_diff( avatar.turrets[0].ang, ang_to_target )
 					'if not pointing at enemy, rotate
-					If      diff > 0 Then avatar.turn_turrets( -1.0 ) ..
-					Else If diff < 0 Then avatar.turn_turrets( 1.0 )
+					If Abs( diff ) >= 2.500
+						If      diff < 180 Then avatar.turn_turrets( -1.0 ) ..
+						Else                    avatar.turn_turrets( 1.0 )
+					End If
 					'if enemy in sight, fire; To Do: add code to check for friendlies in the line of fire.
 					If Abs( diff ) < 2.500 Then avatar.fire_turret( 0 )
 				Else

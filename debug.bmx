@@ -24,24 +24,27 @@ Function debug()
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
-	Local p:COMPLEX_AGENT = player, t:TURRET = p.turrets[0]
 	sx = 4; sy = 4
 	h = 10
 	
-	debug_drawtext( "friendly agents " + friendly_agent_list.Count() )
-	debug_drawtext( "hostile agents " + hostile_agent_list.Count() )
-
-
-'	For Local c:COMPLEX_AGENT = EachIn friendly_agent_list
-'		SetLineWidth( 2 )
-'		Local length# = 40
-'		SetColor( 127, 64, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.vel_x*length, c.pos_y + c.vel_y*length )
-'		SetColor( 64, 127, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.acc_x*length, c.pos_y + c.acc_y*length )
-'		SetColor( 64, 64, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + Cos(c.ang)*length, c.pos_y + Sin(c.ang)*length )
-'		SetColor( 255, 127, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.driving_force.control_pct*Cos(c.driving_force.direction + c.ang), c.pos_y + length*c.driving_force.control_pct*Sin(c.driving_force.direction + c.ang) )
-'		SetColor( 127, 255, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.turning_force.control_pct*Cos(c.ang + 90),                             c.pos_y + length*c.turning_force.control_pct*Sin(c.ang + 90) )
+'	Local length# = 30
+'	SetLineWidth( 2 )
+'	SetColor( 64, 127, 64 )
+'	For Local p:PROJECTILE = EachIn projectile_list
+'		For Local f:FORCE = EachIn p.force_list
+'			DrawLine( p.pos_x, p.pos_y, p.pos_x + length*f.magnitude_cur*Cos( p.ang + f.direction ), p.pos_y + length*f.magnitude_cur*Sin( p.ang + f.direction ) )
+'		Next
 '	Next
-'	
+
+'	debug_drawtext( "friendly agents " + friendly_agent_list.Count() )
+'	debug_drawtext( "hostile agents " + hostile_agent_list.Count() )
+
+
+'	SetColor( 127, 64, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.vel_x*length, c.pos_y + c.vel_y*length )
+'	SetColor( 64, 127, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.acc_x*length, c.pos_y + c.acc_y*length )
+'	SetColor( 64, 64, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + Cos(c.ang)*length, c.pos_y + Sin(c.ang)*length )
+'	SetColor( 255, 127, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.driving_force.control_pct*Cos(c.driving_force.direction + c.ang), c.pos_y + length*c.driving_force.control_pct*Sin(c.driving_force.direction + c.ang) )
+'	SetColor( 127, 255, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.turning_force.control_pct*Cos(c.ang + 90),                        c.pos_y + length*c.turning_force.control_pct*Sin(c.ang + 90) )
 '	px :+ speed * KeyDown( KEY_RIGHT ) - speed * KeyDown( KEY_LEFT )
 '	py :+ speed * KeyDown( KEY_DOWN ) - speed * KeyDown( KEY_UP )
 '	maus_x = MouseX() - arena_offset
@@ -60,6 +63,7 @@ Function debug()
 '	SetColor( 255, 255, 255 )
 
 	
+'	Local p:COMPLEX_AGENT = player, t:TURRET = p.turrets[0]
 '	DrawText( "tur.proj_em.offset " + em.offset, sx, sy ); sy :+ h
 '	DrawText( "tur.proj_em.offset_ang " + em.offset_ang, sx, sy ); sy :+ h
 '	DrawText( "ammo (main) " + t.cur_ammo + "/" + t.max_ammo, sx, sy); sy :+ h
@@ -143,10 +147,21 @@ Function debug()
 '		DrawText( "y" + i + " = " + y[i], offset, offset + 10*line ); line :+ 1
 '	Next
 	
-	If KeyHit( KEY_F4 )
-		DebugStop
-		Return
-	End If
+'	Print "0 Mod 360 = " + 0 Mod 360 + "; should be 0"
+'	Print "90 Mod 360 = " + 90 Mod 360 + "; should be 90"
+'	Print "180 Mod 360 = " + 180 Mod 360 + "; should be 180"
+'	Print "270 Mod 360 = " + 270 Mod 360 + "; should be 270"
+'	Print "359 Mod 360 = " + 359 Mod 360 + "; should be 359"
+'	Print "360 Mod 360 = " + 360 Mod 360 + "; should be 0"
+'	Print "540 Mod 360 = " + 540 Mod 360 + "; should be 180"
+'	Print "720 Mod 360 = " + 720 Mod 360 + "; should be 0"
+'	Print "-90 Mod 360 = " + (-90) Mod 360 + "; should be 270"
+'	Print "-180 Mod 360 = " + (-180) Mod 360 + "; should be 180"
+'	Print "-270 Mod 360 = " + (-270) Mod 360 + "; should be 90"
+'	Print "-359 Mod 360 = " + (-359) Mod 360 + "; should be 1"
+'	Print "-360 Mod 360 = " + (-360) Mod 360 + "; should be 0"
+'	Print "-540 Mod 360 = " + (-540) Mod 360 + "; should be 180"
+'	Print "-720 Mod 360 = " + (-720) Mod 360 + "; should be 0"
 
 End Function
 

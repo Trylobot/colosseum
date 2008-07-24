@@ -30,7 +30,7 @@ Type POINT Extends MANAGED_OBJECT
 		'angular velocity
 		ang_vel :+ ang_acc
 		'orientation
-		ang = ( ang + ang_vel ) Mod 360
+		ang = angle_sum( ang, ang_vel )
 	End Method
 	
 End Type

@@ -51,11 +51,12 @@ life_time% = INFINITY )
 	
 	f.control_pct = 1.0
 	f.created_ts = now()
+	f.update()
 	
 	Return f
 End Function
 '______________________________________________________________________________
-Function Copy_FORCE:FORCE( other:FORCE, managed_list:TList = Null )
+Function Copy_FORCE:FORCE( other:FORCE, managed_list:TList )
 	Local f:FORCE = New FORCE
 	
 	f.physics_type = other.physics_type
@@ -65,7 +66,8 @@ Function Copy_FORCE:FORCE( other:FORCE, managed_list:TList = Null )
 	
 	f.control_pct = 1.0
 	f.created_ts = now()
+	f.update()
 	
-	If managed_list <> Null Then f.add_me( managed_list )
+	f.add_me( managed_list )
 	Return f
 End Function

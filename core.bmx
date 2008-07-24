@@ -344,7 +344,7 @@ Function draw_all()
 		SetAlpha( 1 )
 		
 		'######################
-		debug() '#######
+		'debug() '#######
 		'############
 		
 	End If

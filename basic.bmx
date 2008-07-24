@@ -48,7 +48,12 @@ Function get_new_id%()
 	Return next_managed_object_id
 End Function
 '______________________________________________________________________________
-'vector functions
+'vector & angle functions
+Function angle_sum#( a1#, a2# )
+	Local a# = (a1 + a2) Mod 360
+	If a >= 0 Then Return a ..
+	Else           Return a + 360
+End Function
 Function vector_length#( vx#, vy# )
 	Return Sqr( vx*vx + vy*vy )
 End Function
@@ -71,10 +76,10 @@ Function polar_to_cartesian( r#, a#, x# Var, y# Var )
 	x = r*Cos( a )
 	y = r*Sin( a )
 End Function
-Function ang_diff#( a1#, a2# )
-	Local diff# = a1 - a2
-	If diff < 0 Then diff :+ 360
-	Return diff
+Function angle_diff#( a1#, a2# )
+	Local a# = (a1 - a2) Mod 360
+	If a >= 0 Then Return a ..
+	Else           Return a + 360
 End Function
 '______________________________________________________________________________
 Type cVEC 'cartesian 2D vector

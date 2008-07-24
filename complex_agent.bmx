@@ -62,7 +62,7 @@ Type COMPLEX_AGENT Extends AGENT
 			t.update()
 		Next
 		'emitters
-		Local diff# = ang_diff( ang, ATan2( vel_y, vel_x ))
+		Local diff# = angle_diff( ang, ATan2( vel_y, vel_x ))
 		If      Abs( diff ) < 90  Then enable_only_rear_emitters() ..
 		Else If Abs( diff ) > 270 Then enable_only_forward_emitters() ..
 		Else                           disable_all_emitters()

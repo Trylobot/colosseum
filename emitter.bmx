@@ -199,7 +199,7 @@ Type EMITTER extends MANAGED_OBJECT
 		'Else                            acc_ang = RandF( acc_ang_min, acc_ang_max )
 		'p.acc_x = acc * Cos( acc_ang + parent.ang )
 		'p.acc_y = acc * Sin( acc_ang + parent.ang )
-		p.force_list.AddLast( Create_FORCE( PHYSICS_FORCE, vel_ang, RandF( acc_min, acc_max ) ))
+		Create_FORCE( PHYSICS_FORCE, 0, RandF( acc_min, acc_max ) ).add_me( p.force_list )
 		
 		'angular acceleration
 		'p.ang_acc = RandF( ang_acc_min, ang_acc_max )

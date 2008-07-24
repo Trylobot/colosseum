@@ -24,13 +24,13 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	End Method
 	
 	Method update()
+		'physical object variables
+		Super.update()
 		'emitters
 		For Local em:EMITTER = EachIn emitter_list
 			em.update()
 			em.emit()
 		Next
-		'physical object variables
-		Super.update()
 	End Method
 	
 	Method draw()
@@ -44,6 +44,7 @@ Function Archetype_PROJECTILE:PROJECTILE( ..
 img:TImage,  ..
 explosion_particle_index%,  ..
 mass#, ..
+frictional_coefficient#, ..
 damage#, ..
 radius# )
 	Local p:PROJECTILE = New PROJECTILE
@@ -52,9 +53,9 @@ radius# )
 	p.img = img
 	p.explosion_particle_index = explosion_particle_index
 	p.mass = mass
+	p.frictional_coefficient = frictional_coefficient
 	p.damage = damage
 	p.radius = radius
-	p.frictional_coefficient = 0
 	
 	'dynamic fields
 	p.pos_x = 0; p.pos_y = 0
@@ -74,9 +75,9 @@ Function Copy_PROJECTILE:PROJECTILE( other:PROJECTILE, source_id% )
 	p.img = other.img
 	p.explosion_particle_index = other.explosion_particle_index
 	p.mass = other.mass
+	p.frictional_coefficient = other.frictional_coefficient
 	p.damage = other.damage
 	p.radius = other.radius
-	p.frictional_coefficient = 0
 	
 	'emitters
 	If other.thrust_emitter <> Null
