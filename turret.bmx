@@ -53,10 +53,10 @@ Type TURRET Extends POINT
 		pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang )
 		pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang )
 		'recoil position (relative to turret handle)
-		If ready_to_fire()
+		If ready_to_fire() Or out_of_ammo()
 			cur_recoil_off_x = 0
 			cur_recoil_off_y = 0
-		Else 'reloading
+		Else If Not out_of_ammo() 'reloading
 			reloading_progress_inverse = 1.0 - Double(now() - last_reloaded_ts) / Double(reload_time)
 			cur_recoil_off_x = reloading_progress_inverse * recoil_offset * Cos( ang + recoil_offset_ang )
 			cur_recoil_off_y = reloading_progress_inverse * recoil_offset * Sin( ang + recoil_offset_ang )
@@ -76,7 +76,11 @@ Type TURRET Extends POINT
 		last_reloaded_ts = now()
 	End Method
 	Method re_stock( count% )
-		cur_ammo :+ count - (max_ammo - cur_ammo)
+		cur_ammo :+ count
+		If cur_ammo > max_ammo Then cur_ammo = max_ammo
+	End Method
+	Method out_of_ammo%()
+		Return (cur_ammo <= 0)
 	End Method
 		
 	Method fire()
@@ -90,17 +94,14 @@ Type TURRET Extends POINT
 			If ejector_port_emitter <> Null
 				'eject shell casing from the ejector port
 				ejector_port_emitter.enable( MODE_ENABLED_WITH_COUNTER )
-				ejector_port_emitter.emit()
 			End If
 			If muzzle_flash_emitter <> Null
 				'show a flash from the muzzle of the barrel
 				muzzle_flash_emitter.enable( MODE_ENABLED_WITH_COUNTER )
-				muzzle_flash_emitter.emit()
 			End If
 			If muzzle_smoke_emitter <> Null
 				'show smoke from the muzzle of the barrel
 				muzzle_smoke_emitter.enable( MODE_ENABLED_WITH_COUNTER )
-				muzzle_smoke_emitter.emit()
 			End If
 			
 			If cur_ammo > 0 Then cur_ammo :- 1
@@ -114,6 +115,13 @@ Type TURRET Extends POINT
 	off_x_new#, off_y_new# )
 		parent = new_parent
 		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
+	End Method
+	
+	Method remove_me()
+		If projectile_emitter <> Null   Then projectile_emitter.remove_me()
+		If ejector_port_emitter <> Null Then ejector_port_emitter.remove_me()
+		If muzzle_flash_emitter <> Null Then muzzle_flash_emitter.remove_me()
+		If muzzle_smoke_emitter <> Null Then muzzle_smoke_emitter.remove_me()
 	End Method
 	
 End Type

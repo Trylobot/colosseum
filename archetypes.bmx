@@ -156,7 +156,8 @@ enemy_archetype[ 0] = Archetype_COMPLEX_AGENT( ALIGNMENT_HOSTILE, img_box, 100, 
 	enemy_archetype[ 0].rear_trail_emitters[ 0].attach_to( enemy_archetype[ 0], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 
 'enemy 1 - stationary emplacement 1 (rocket launcher turret)
-enemy_archetype[ 1] = Archetype_COMPLEX_AGENT( ALIGNMENT_HOSTILE, img_enemy_stationary_emplacement_1_base, 150, 0, 100, 1, 0 )
+'enemy_archetype[ 1] = Archetype_COMPLEX_AGENT( ALIGNMENT_HOSTILE, img_enemy_stationary_emplacement_1_base, 150, 0, 100, 1, 0 )
+enemy_archetype[ 1] = Archetype_COMPLEX_AGENT( ALIGNMENT_FRIENDLY, img_enemy_stationary_emplacement_1_base, 150, 0, 100, 1, 0 )
 	enemy_archetype[ 1].turrets[ 0] = Copy_TURRET( turret_archetype[ 2] )
 	enemy_archetype[ 1].turrets[ 0].attach_to( enemy_archetype[ 1], 0, 0 )
 

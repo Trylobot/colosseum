@@ -32,12 +32,12 @@ Type AGENT Extends POINT
 	End Method
 	
 	Method dead%()
-		Return (cur_health > 0)
+		Return (cur_health <= 0)
 	End Method
 	
 	Method receive_damage( damage# )
 		cur_health :- damage
-		If cur_health < 0 Then cur_health = 0 'no "overkill"
+		If cur_health < 0 Then cur_health = 0 'no overkill
 	End Method
 
 End Type

@@ -33,13 +33,11 @@ Const arena_h% = window_h - (arena_offset * 2)
 'Generic
 Const INFINITY% = -1
 
-'Score
-Global player_cash% = 0
-
 'Settings flags
 Global FLAG_draw_help% = False
 Global FLAG_paused% = False
 Global FLAG_game_over% = False
+Global FLAG_in_menu% = True
 
 'Special Player Constants
 'velocity (pixels per 1/60 second)
@@ -52,5 +50,10 @@ Const player_turret_angular_velocity_max# = 1.850
 Const rocket_turret_angular_velocity_max# = 1.100
 
 'Environment
-Const pickup_probability% = 2500 'chance out of 10,000 of an enemy dropping a pickup
+'Const pickup_probability% = 2500 'chance out of 10,000 of an enemy dropping a pickup
+Const pickup_probability% = 10000 'chance out of 10,000 of an enemy dropping a pickup
+
+'Player
+Global player:COMPLEX_AGENT
+Global player_cash% = 0
 

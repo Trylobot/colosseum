@@ -195,7 +195,7 @@ Type EMITTER extends MANAGED_OBJECT
 			last_emit_ts = now()
 			interval = Rand( interval_min, interval_max )
 			'emitter counter
-			If count_cur > 0 Then count_cur :- 1
+			count_cur :- 1
 			
 		End If
 	End Method

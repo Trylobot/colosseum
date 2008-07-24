@@ -1,4 +1,5 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ enemy spawner (Carson's idea)
 	_ put explosion, smoke, spark and damage scar emitters into projectiles.
 			when the projectile hits something, emit everything ("dump its load").
 	_ sound emitters

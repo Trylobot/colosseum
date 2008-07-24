@@ -7,18 +7,6 @@ EndRem
 '______________________________________________________________________________
 AutoImageFlags( FILTEREDIMAGE | MIPMAPPEDIMAGE )
 
-Global img_help:TImage = LoadImage( "art/help.png" )
-SetImageHandle( img_help, 0, 0 )
-
-Global img_arena_bg:TImage = LoadImage( "art/arena_bg.png" )
-SetImageHandle( img_arena_bg, 0, 0 )
-
-Global img_health_bar:TImage = LoadImage( "art/health_bar.png" )
-SetImageHandle( img_health_bar, 0, 0 )
-Global img_health_pip:TImage = LoadImage( "art/health_pip.png" )
-SetImageHandle( img_health_pip, 0, 0 )
-
-
 Global img_player_tank_chassis:TImage = LoadImage( "art/player_tank_chassis.png" )
 SetImageHandle( img_player_tank_chassis, 16, 12 )
 
@@ -87,3 +75,22 @@ SetImageHandle( img_box, 8, 8 )
 
 Global img_pickup_ammo_main_5:TImage = LoadImage( "art/pickup_ammo_main_5.png" )
 SetImageHandle( img_pickup_ammo_main_5, 16, 9 )
+
+
+Global img_help:TImage = LoadImage( "art/help.png" )
+SetImageHandle( img_help, 0, 0 )
+
+Global img_arena_bg:TImage = LoadImage( "art/arena_bg.png" )
+SetImageHandle( img_arena_bg, 0, 0 )
+
+Global img_health_bar:TImage = LoadImage( "art/health_bar.png" )
+SetImageHandle( img_health_bar, 0, 0 )
+Global img_health_pip:TImage = LoadImage( "art/health_pip.png" )
+SetImageHandle( img_health_pip, 0, 0 )
+
+Global img_icon_player_cannon_ammo:TImage = LoadImage( "art/icon_player_cannon_ammo.png" )
+SetImageHandle( img_icon_player_cannon_ammo, 0, 0 )
+Global img_icon_infinity:TImage = LoadImage( "art/icon_infinity.png" )
+SetImageHandle( img_icon_infinity, 0, 0 )
+
+

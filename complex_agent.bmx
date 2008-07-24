@@ -117,15 +117,22 @@ Type COMPLEX_AGENT Extends AGENT
 	Method grant_pickup( pkp:PICKUP )
 		Select pkp.pickup_type
 			Case AMMO_PICKUP
+				'ToDo: insert code to analyze the ammunition type of the pickup and see what turrets take that ammunition
 				turrets[0].re_stock( pkp.pickup_amount )
 			Case HEALTH_PICKUP
-				cur_health :+ pkp.pickup_amount - (max_health - cur_health)
+				cur_health :+ pkp.pickup_amount
+				If cur_health > max_health Then cur_health = max_health
 		End Select
+		pkp.remove_me()
 	End Method
 	
 	Method remove_me()
 		Super.remove_me()
-		For Local i% = 0 To motivator_count - 1
+		Local i%
+		For i = 0 To turret_count - 1
+			If turrets[i] <> Null Then turrets[i].remove_me()
+		Next
+		For i = 0 To motivator_count - 1
 			If forward_debris_emitters[i] <> Null Then forward_debris_emitters[i].remove_me()
 			If forward_trail_emitters[i] <> Null  Then forward_trail_emitters[i].remove_me()
 			If rear_debris_emitters[i] <> Null    Then rear_debris_emitters[i].remove_me()
@@ -189,7 +196,7 @@ Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT, emitter_manageme
 		c.turret_count = other.turret_count
 		c.turrets = New TURRET[ other.turret_count ]
 		For Local i% = 0 To other.turret_count - 1
-			If other.turrets[i] <> Null Then c.turrets[i] = Copy_TURRET( other.turrets[i], c )
+			If other.turrets[i] <> Null Then c.turrets[i] = Copy_TURRET( other.turrets[i], c, emitter_management )
 		Next
 	End If
 	If other.motivator_count > 0

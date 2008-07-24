@@ -37,25 +37,28 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Case AI_TYPE_ROCKET_TURRET
 					
 					point_at( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y, ang_to_target, dist_to_target )
-					'Local comp% = compare_angles( avatar.ang, ang_to_target, 1.0 )
+					Local comp% = compare_angles( avatar.ang, ang_to_target, 2.0 )
 					
-'					If comp = RESULT_LESS_THAN
-'						avatar.command_all_turrets( ROTATE_COUNTER_CLOCKWISE_DIRECTION, turret_angular_velocity_max )
-'					Else If comp = RESULT_GREATER_THAN
-'						avatar.command_all_turrets( ROTATE_CLOCKWISE_DIRECTION, turret_angular_velocity_max )
-'					Else 'comp = RESULT_EQUAL
-'						avatar.command_all_turrets( ALL_STOP )
-'						avatar.fire( 0 )
-'					End If
-					Local diff# = ang_to_target - avatar.ang
-					If Abs( diff ) < 1.000
+					If comp = RESULT_LESS_THAN
+						avatar.command_all_turrets( ROTATE_COUNTER_CLOCKWISE_DIRECTION, turret_angular_velocity_max )
+					Else If comp = RESULT_GREATER_THAN
+						avatar.command_all_turrets( ROTATE_CLOCKWISE_DIRECTION, turret_angular_velocity_max )
+					Else 'comp = RESULT_EQUAL
+						avatar.command_all_turrets( ALL_STOP )
 						avatar.fire( 0 )
 					End If
-					If diff < 0
-						avatar.command_all_turrets( ROTATE_COUNTER_CLOCKWISE_DIRECTION, turret_angular_velocity_max )
-					Else 'diff >= 0
-						avatar.command_all_turrets( ROTATE_CLOCKWISE_DIRECTION, turret_angular_velocity_max )
-					End If
+					
+'					Local diff# = ang_to_target - avatar.ang
+'					
+'					If Abs( diff ) < 1.000
+'						avatar.fire( 0 )
+'					End If
+'					
+'					If diff < 0
+'						avatar.command_all_turrets( ROTATE_COUNTER_CLOCKWISE_DIRECTION, turret_angular_velocity_max )
+'					Else 'diff >= 0
+'						avatar.command_all_turrets( ROTATE_CLOCKWISE_DIRECTION, turret_angular_velocity_max )
+'					End If
 					
 			End Select
 		End If
