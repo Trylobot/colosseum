@@ -9,11 +9,6 @@ EndRem
 Function update_all()
 	If Not FLAG_in_menu And Not FLAG_draw_help
 		
-		'flags
-		If FLAG_game_over
-			menu_enabled[ MENU_RESUME ] = False
-		End If
-		
 		'level
 		If hostile_agent_list.IsEmpty()
 			load_next_level()

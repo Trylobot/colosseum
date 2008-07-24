@@ -30,6 +30,7 @@ Global FLAG_game_in_progress% = False
 Global FLAG_game_over% = False
 Global FLAG_draw_help% = False
 Global FLAG_bg_music_on% = False
+Global FLAG_level_intro% = False
 
 Const MENU_RESUME% = 0
 Const MENU_NEW% = 1
@@ -42,19 +43,13 @@ Global menu_display_string$[] = [ "resume", "new game", "load saved", "settings"
 Global menu_enabled%[] =        [  False,    True,       False,        False,      True  ]
 Global menu_option% = MENU_NEW
 
-Const PLAYER_COLLISION_LAYER% = $0001
-Const AGENT_COLLISION_LAYER% = $0002
-Const PROJECTILE_COLLISION_LAYER% = $0004
-Const PICKUP_COLLISION_LAYER% = $0008
-
-'environmental constants
 Const PICKUP_PROBABILITY% = 5000 'chance in 10,000 of an enemy dropping a pickup (randomly selected from all pickups)
-Const PROJECTILE_ENERGY_COEFFICIENT# = 750.0 'energy multiplier for all collisions involving projectiles
 
 'global player stuff
 Global player:COMPLEX_AGENT
 Global player_cash% = 0
 Global player_level% = 0
+Global player_kills% = 0
 
 
 '______________________________________________________________________________
@@ -66,10 +61,10 @@ Function menu_command( com% )
 			FLAG_in_menu = False
 		
 		Case MENU_NEW
+			FLAG_in_menu = False
 			reset_game()
 			initialize_game()
-			load_next_level()
-			FLAG_in_menu = False
+			FLAG_game_in_progress = True
 		
 		Case MENU_LOAD
 			'..?
@@ -78,7 +73,7 @@ Function menu_command( com% )
 			'..?
 		
 		Case MENU_QUIT
-			End
+			End 'quit now
 		
 	End Select
 End Function
@@ -99,6 +94,7 @@ Function reset_game()
 	player = Null
 	player_cash = 0
 	player_level = 0
+	player_kills = 0
 	FLAG_game_in_progress = False
 	FLAG_game_over = False
 	
@@ -106,12 +102,18 @@ End Function
 '______________________________________________________________________________
 Function load_next_level()
 	player_level :+ 1
+	FLAG_level_intro = True
+	player_kills = 0
 	respawn_enemies()
+	SetOrigin( 0, 0 )
+	dim_bg_cache() 'fade the messy bg
 End Function
 '______________________________________________________________________________
 Function initialize_game()
-	FLAG_game_in_progress = True
+	player_level = 1
+	FLAG_level_intro = True
 	respawn_player()
+	respawn_enemies()
 End Function
 '______________________________________________________________________________
 Function next_enabled_menu_option()
@@ -148,25 +150,33 @@ End Function
 Function respawn_enemies()
 	If hostile_agent_list.IsEmpty()
 		
-		'mr. the box
-		For Local i% = 1 To (3*player_level)
-			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 0], ALIGNMENT_HOSTILE )
-			nme.pos_x = Rand( 10, arena_w - 10 )
-			nme.pos_y = Rand( 10, arena_h - 10 )
-			nme.ang = Rand( 0, 359 )
-			Create_and_Manage_CONTROL_BRAIN( nme, Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 1000 )
-		Next
-		
-		'rocket turret
-		For Local i% = 1 To (1*player_level)
-			Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 1], ALIGNMENT_HOSTILE )
-			nme.pos_x = Rand( 10, arena_w - 10 )
-			nme.pos_y = Rand( 10, arena_h - 10 )
-			nme.turrets[ 0].ang = Rand( 0, 359 )
-			Create_and_Manage_CONTROL_BRAIN( nme, player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_ROCKET_TURRET, 50 )
+		Local nme:COMPLEX_AGENT
+		For Local i% = 1 To 3*player_level
+			'70% chance of mr. the box, 20% chance of a rocket turret, 10% chance of a gun turret
+			Local selector# = RandF( 0.000, 1.000 )
+			If selector < 0.700
+				Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 0), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 1000 )
+			Else If selector < 0.900
+				Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 1), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 )
+			Else If selector < 1.000
+				Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 2), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 )
+			End If
 		Next
 		
 	End If
+End Function
+'______________________________________________________________________________
+Function spawn_enemy:COMPLEX_AGENT( archetype_index% )
+	Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[archetype_index], ALIGNMENT_HOSTILE )
+	
+	If Rand( 0, 1 ) = 1 Then nme.pos_x = RandF( 0, 0.25*arena_w ) ..
+	Else                     nme.pos_x = RandF( 0.75*arena_w, arena_w )
+	If Rand( 0, 1 ) = 1 Then nme.pos_y = RandF( 0, 0.25*arena_h ) ..
+	Else                     nme.pos_y = RandF( 0.75*arena_h, arena_h )
+	nme.ang = Rand( 0, 359 )
+	nme.snap_turrets()
+	
+	Return nme
 End Function
 '______________________________________________________________________________
 Function spawn_pickup( x#, y# )

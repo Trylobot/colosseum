@@ -199,7 +199,7 @@ Type EMITTER extends MANAGED_OBJECT
 		'Else                            acc_ang = RandF( acc_ang_min, acc_ang_max )
 		'p.acc_x = acc * Cos( acc_ang + parent.ang )
 		'p.acc_y = acc * Sin( acc_ang + parent.ang )
-		Create_FORCE( PHYSICS_FORCE, 0, RandF( acc_min, acc_max ) ).add_me( p.force_list )
+		Create_FORCE( PHYSICS_FORCE, 0, RandF( acc_min, acc_max )).add_me( p.force_list )
 		
 		'angular acceleration
 		'p.ang_acc = RandF( ang_acc_min, ang_acc_max )
@@ -244,7 +244,7 @@ inherit_vel_ang_from_ang%, ..
 inherit_acc_ang_from_vel_ang%, ..
 interval_min%, interval_max%, ..
 count_min%, count_max%, ..
-life_time_min%, life_time_max%, ..
+life_time_min% = INFINITY, life_time_max% = INFINITY, ..
 alpha_min# = 1.0, alpha_max# = 1.0, ..
 alpha_delta_min# = 0.0, alpha_delta_max# = 0.0, ..
 scale_min# = 1.0, scale_max# = 1.0, ..

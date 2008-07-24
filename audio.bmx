@@ -7,7 +7,7 @@ EndRem
 '______________________________________________________________________________
 'Audio
 Function play_bg_music()
-	If FLAG_bg_music_on And Not ChannelPlaying( bg_music )
+	If FLAG_bg_music_on
 		ResumeChannel( bg_music )
 	Else If Not FLAG_bg_music_on
 		PauseChannel( bg_music )

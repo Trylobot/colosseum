@@ -28,7 +28,7 @@ Type PICKUP Extends MANAGED_OBJECT
 	Method dead%()
 		Return ..
 			(Not (life_time = INFINITY)) And ..
-			(now() - created_ts) >= life_time
+			(now() - created_ts) > life_time
 	End Method
 	
 	Method prune()
@@ -46,9 +46,8 @@ Type PICKUP Extends MANAGED_OBJECT
 	End Method
 	
 	Method update()
-		'update alpha and prune if necessary
-		alpha = (life_time - (now() - created_ts)) / 3000
 		prune()
+		If managed() Then alpha = 1 - 0.5*((now() - created_ts) / life_time)
 	End Method
 	
 End Type

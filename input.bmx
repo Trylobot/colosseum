@@ -10,6 +10,7 @@ Function get_all_input()
 	
 	'music
 	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
+	
 	'pause menu
 	If KeyHit( KEY_ESCAPE )
 		If Not FLAG_in_menu

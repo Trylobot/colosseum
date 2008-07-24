@@ -23,6 +23,7 @@ Type PARTICLE Extends POINT
 	Field scale# 'scale coefficient
 	Field scale_delta# 'scale coefficient rate of change with respect to time
 	Field life_time% 'time until object is deleted
+	Field frictional_coefficient# 'fake friction
 	Field created_ts% 'timestamp of object creation
 	
 	Method New()
@@ -36,10 +37,10 @@ Type PARTICLE Extends POINT
 	
 	Method prune()
 		If dead()
-			'remove from managed list and free memory
+			'remove from normal managed list
 			remove_me()
 			If retain
-				'particle will be added to the background permanently as an artifact
+				'particle will be added to the background permanently
 				add_me( retained_particle_list )
 			End If
 		End If
@@ -53,6 +54,11 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Method update()
+		
+		'friction
+		vel_x :- vel_x*frictional_coefficient
+		vel_y :- vel_y*frictional_coefficient
+		ang_vel :- ang_vel*frictional_coefficient
 		'update velocity, position, angular velocity and orientation
 		Super.update()
 		'update alpha

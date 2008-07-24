@@ -23,11 +23,8 @@ Type TURRET Extends POINT
 	Field cooling_coefficient#
 	Field overheat_delay%
 	
-	Field emitter_list:TList 'list of all emitters
-	Field projectile_emitter:EMITTER 'emits this turret's main projectile
-	Field muzzle_flash_emitter:EMITTER 'optional muzzle-flash emitter
-	Field muzzle_smoke_emitter:EMITTER 'optional muzzle-smoke emitter
-	Field ejector_port_emitter:EMITTER 'optional shell-casing ejector port
+	Field emitter_list:TList 'list of all emitters, to be enabled (with count) when turret fires
+	'it is expected that at least one projectile emitter would be added to this object, so it can fire.
 
 	Field offset# 'static offset from parent-agent's handle
 	Field offset_ang# 'angle of static offset
@@ -84,7 +81,7 @@ Type TURRET Extends POINT
 			em.emit()
 		Next
 		'heat/cooling
-		If (now() - last_overheat_ts) >= overheat_delay Then cur_heat :* cooling_coefficient
+		If Not overheated() Then cur_heat :- cur_heat*cooling_coefficient
 	End Method
 	
 	Method ready_to_fire%()
@@ -110,6 +107,9 @@ Type TURRET Extends POINT
 			cur_heat = max_heat
 		End If
 	End Method
+	Method overheated%()
+		Return (now() - last_overheat_ts) < overheat_delay
+	End Method
 		
 	Method fire()
 		If ready_to_fire()
@@ -127,6 +127,14 @@ Type TURRET Extends POINT
 	off_x_new#, off_y_new# )
 		parent = new_parent
 		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
+	End Method
+	
+	Method add_emitter:EMITTER( emitter_type%, emitter_archetype_index% )
+		If emitter_type = EMITS_PARTICLES
+			Return Copy_EMITTER( particle_emitter_archetype[emitter_archetype_index], emitter_list )
+		Else If emitter_type = EMITS_PROJECTILES
+			Return Copy_EMITTER( projectile_emitter_archetype[emitter_archetype_index], emitter_list )
+		End If
 	End Method
 	
 End Type
@@ -184,13 +192,11 @@ Function Copy_TURRET:TURRET( other:TURRET, new_parent:COMPLEX_AGENT = Null )
 	t.cooling_coefficient = other.cooling_coefficient
 	t.overheat_delay = other.overheat_delay
 	'emitters
-	If other.projectile_emitter <> Null
-		If t.parent <> Null Then t.projectile_emitter = Copy_EMITTER( other.projectile_emitter, t.emitter_list, t, new_parent.id ) ..
-		Else                     t.projectile_emitter = Copy_EMITTER( other.projectile_emitter, t.emitter_list, t )
-	End If
-	If other.muzzle_flash_emitter <> Null Then t.muzzle_flash_emitter = Copy_EMITTER( other.muzzle_flash_emitter, t.emitter_list, t )
-	If other.muzzle_smoke_emitter <> Null Then t.muzzle_smoke_emitter = Copy_EMITTER( other.muzzle_smoke_emitter, t.emitter_list, t )
-	If other.ejector_port_emitter <> Null Then t.ejector_port_emitter = Copy_EMITTER( other.ejector_port_emitter, t.emitter_list, t )
+	Local id% = NULL_ID
+	If new_parent <> Null Then id = new_parent.id
+	For Local em:EMITTER = EachIn other.emitter_list
+		Copy_EMITTER( em, t.emitter_list, t, id )
+	Next
 	
 	'dynamic fields
 	t.offset = other.offset

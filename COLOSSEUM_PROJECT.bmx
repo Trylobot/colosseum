@@ -6,7 +6,7 @@ EndRem
 'Program: Colosseum
 'Version: 0
 'Subversion: 1
-'Revision: 0
+'Revision: 1
 '#EndRegion &HFF
 
 
@@ -47,27 +47,27 @@ Import brl.timer
 '#Region &H04 MyNamespace
 'GUI
 Private
-TYPE z_10a89ad5_2bf2_4872_8561_db7ea3202cec abstract  'Resource folder
+TYPE z_f2aecafa_526e_4cd4_84c8_93a6c00ff326 abstract  'Resource folder
 End Type
 
 
-TYPE z_blide_bg07531e8a_04b3_4809_8a5d_6629cd8c3541 Abstract
+TYPE z_blide_bg9f44ed7e_dca9_4310_a098_7d1869883679 Abstract
     Const Name:string = "Colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
     Const MinorVersion:Int = 1  'This Const contains the minor version number of the program
-    Const Revision:Int =  0  'This Const contains the revision number of the current program version
+    Const Revision:Int =  1  'This Const contains the revision number of the current program version
     Const VersionString:String = MajorVersion + "." + MinorVersion + "." + Revision   'This string contains the assembly version in format (MAJOR.MINOR.REVISION)
     Const AssemblyInfo:String = Name + " " + MajorVersion + "." + MinorVersion + "." + Revision   'This string represents the available assembly info.
 EndType
 
 
-Type z_My_07531e8a_04b3_4809_8a5d_6629cd8c3541 Abstract 'This type has all the run-tima binary information of your assembly
-    Global Application:z_blide_bg07531e8a_04b3_4809_8a5d_6629cd8c3541  'This item has all the currently available assembly version information.
-    Global Resources:z_10a89ad5_2bf2_4872_8561_db7ea3202cec  'This item has all the currently available incbined files names and relative location.
+Type z_My_9f44ed7e_dca9_4310_a098_7d1869883679 Abstract 'This type has all the run-tima binary information of your assembly
+    Global Application:z_blide_bg9f44ed7e_dca9_4310_a098_7d1869883679  'This item has all the currently available assembly version information.
+    Global Resources:z_f2aecafa_526e_4cd4_84c8_93a6c00ff326  'This item has all the currently available incbined files names and relative location.
 End Type
 
 
-Global My:z_My_07531e8a_04b3_4809_8a5d_6629cd8c3541 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
+Global My:z_My_9f44ed7e_dca9_4310_a098_7d1869883679 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
 Public
 '#EndRegion &H04 MyNamespace
 

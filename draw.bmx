@@ -6,36 +6,30 @@ EndRem
 
 'Background cached texture
 Global bg_cache:TImage
-Global redraw_bg% = False
-Const bg_redraw_delay = 10000
+Const bg_redraw_delay% = 5000
 Global last_bg_redraw_ts% = now() - bg_redraw_delay
 
 '______________________________________________________________________________
 'Drawing to Screen
 Function draw_all()
-	
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
-	
+
 	If FLAG_in_menu
-		
 		'main menu
 		SetOrigin( 0, 0 )
 		draw_menu()
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		
-	Else
 	
+	Else
 		SetOrigin( arena_offset, arena_offset )
 		SetViewport( arena_offset, arena_offset, arena_w, arena_h )
 		
-		'arena & environment
-		If (now() - last_bg_redraw_ts) > bg_redraw_delay Then redraw_bg = True
+		'arena & retained particles
 		draw_arena()
 		SetColor( 255, 255, 255 )
+
 		'background particles
 		For Local part:PARTICLE = EachIn particle_list_background
 			part.draw()
@@ -87,13 +81,62 @@ Function draw_all()
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		
-		
-		'######################
-		'debug() '#######
-		'############
+		'debug() '/////////////////////////////////////////////////////////////////
 		
 	End If
 	
+End Function
+'______________________________________________________________________________
+'Menu and GUI
+Function draw_arena()
+
+	If bg_cache = Null
+		init_bg_cache()
+	End If
+
+	DrawImage( bg_cache, 0, 0 )
+	For Local part:PARTICLE = EachIn retained_particle_list
+		part.draw()
+	Next
+	
+	If (now() - last_bg_redraw_ts) > bg_redraw_delay
+		GrabImage( bg_cache, arena_offset, arena_offset )
+		last_bg_redraw_ts = now()
+		For Local part:PARTICLE = EachIn retained_particle_list
+			part.remove_me()
+		Next
+	End If	
+End Function
+'______________________________________________________________________________
+Function init_bg_cache()
+
+	bg_cache = CreateImage( arena_w, arena_h, 1, DYNAMICIMAGE )
+	Cls
+	SetColor( 16, 16, 16 )
+	DrawRect( 0, 0, arena_w, arena_h )
+	SetColor( 255, 255, 255 )
+	SetLineWidth( 2 )
+	SetColor( 255, 255, 255 )
+	DrawLine( 1, 1, arena_w - 1, 1 )
+	DrawLine( arena_w - 1, 1, arena_w - 1, arena_h - 1 )
+	DrawLine( arena_w - 1, arena_h - 1, 1, arena_h - 1 )
+	DrawLine( 1, arena_h - 1, 1, 1 )
+	
+	GrabImage( bg_cache, arena_offset, arena_offset )
+End Function
+'______________________________________________________________________________
+Function dim_bg_cache()
+	
+	Cls
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	DrawImage( bg_cache, arena_offset, arena_offset )
+	
+	SetColor( 16, 16, 16 )
+	SetAlpha( 0.500 )
+	DrawRect( arena_offset + 2, arena_offset + 2, arena_w - 4, arena_h - 4 )
+	
+	GrabImage( bg_cache, arena_offset, arena_offset )
 End Function
 '______________________________________________________________________________
 Function draw_stats()
@@ -143,10 +186,10 @@ Function draw_stats()
 	For Local i% = 0 To player.turrets[0].cur_ammo - 1
 		If ((i Mod 20) = 0) And (i > 0)
 			temp_x = x
-			temp_y :+ img_icon_player_cannon_ammo.height
+			temp_y :+ img_icon_player_cannon_ammo.height - 1
 		End If
 		DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
-		temp_x :+ img_icon_player_cannon_ammo.width
+		temp_x :+ img_icon_player_cannon_ammo.width - 1
 	Next; y :+ 12 + (player.turrets[0].max_ammo / 20)* img_icon_player_cannon_ammo.height
 	DrawText( "co-axial machine gun", x, y ); y :+ 12
 	w = 125; h = 14
@@ -158,49 +201,14 @@ Function draw_stats()
 	DrawRect( x + 2, y + 2, (Double(w) - 4.0)*(player.turrets[1].cur_heat / player.turrets[1].max_heat), h - 4 )
 	y :+ h
 	
-'	'copyright stuff
-'	y = window_h - arena_offset - 20
-'	SetColor( 157, 157, 157 ); SetImageFont( consolas_normal_10 )
-'	DrawText( "programming by Tyler W Cole", x, y ); y :+ 10
-'	DrawText( "music by NickPerrin", x, y ); y :+ 10
-	
-End Function
-'______________________________________________________________________________
-'Menu and GUI
-Function draw_arena()
-
-	If redraw_bg
-		'timestamp
-		last_bg_redraw_ts = now()
-		redraw_bg = False
-		'arena actual
-		SetColor( 255, 255, 255 )
-		DrawRect( 0, 0, arena_w, arena_h )
-		SetColor( 8, 8, 8 )
-		DrawRect( 2, 2, arena_w - 4, arena_h - 4 )
-	  'retained particles list
-		SetColor( 255, 255, 255 )
-		For Local part:PARTICLE = EachIn retained_particle_list
-			part.draw()
-			part.remove_me()
-		Next
-		're-grab cache
-		bg_cache = CreateImage( arena_w, arena_h, 1, DYNAMICIMAGE )
-		GrabImage( bg_cache, arena_offset, arena_offset )
-	Else 'bg has never been cached or there are new particles to be added to it
-		DrawImage( bg_cache, 0, 0 )
-	End If
-		
-End Function
-'______________________________________________________________________________
-Function draw_help()
-	SetColor( 0, 0, 0 )
-	SetAlpha( 0.550 )
-	DrawRect( 0, 0, window_w, window_h )
-	
+	'music icon
+	y :+ arena_offset
 	SetColor( 255, 255, 255 )
-	SetAlpha( 1 )
-	DrawImage( img_help, window_w/2 - img_help.width/2, window_h/2 - img_help.height/2 )
+	DrawText( "music", x, y ); y :+ 12
+	DrawImage( img_icon_music_note, x, y ); x :+ img_icon_music_note.width + 10
+	If FLAG_bg_music_on Then DrawImage( img_icon_speaker_on, x, y ) ..
+	Else                     DrawImage( img_icon_speaker_off, x, y )
+	
 End Function
 '______________________________________________________________________________
 Function draw_menu()
@@ -238,7 +246,8 @@ Function draw_menu()
 	SetColor( 157, 157, 157 )
 	SetImageFont( consolas_normal_10 )
 	x :+ 200; y :+ 7
-	DrawText( "Colosseum (c) 2008 Tyler W Cole", x, y ); y :+ 10
+	DrawText( "Colosseum (c) 2008 Tylerbot", x, y ); y :+ 10
+	DrawText( "  [Tyler W.R. Cole]", x, y ); y :+ 10
 	y :+ 10
 	DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
 	DrawText( "  http://www.blitzmax.com", x, y ); y :+ 10
@@ -247,10 +256,20 @@ Function draw_menu()
 	DrawText( "  Victory! (8-bit Chiptune)", x, y ); y :+ 10
 	DrawText( "  http://www.newgrounds.com", x, y ); y :+ 10
 	y :+ 10
-	DrawText( "special thanks to:", x, y ); y :+ 10
+	DrawText( "special thanks to", x, y ); y :+ 10
 	DrawText( "  Kaze", x, y ); y :+ 10
 	DrawText( "  SniperAceX", x, y ); y :+ 10
 	
+End Function
+'______________________________________________________________________________
+Function draw_help()
+	SetColor( 0, 0, 0 )
+	SetAlpha( 0.550 )
+	DrawRect( 0, 0, window_w, window_h )
+	
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	DrawImage( img_help, window_w/2 - img_help.width/2, window_h/2 - img_help.height/2 )
 End Function
 '______________________________________________________________________________
 Function draw_game_over()

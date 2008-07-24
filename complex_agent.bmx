@@ -34,6 +34,8 @@ Type COMPLEX_AGENT Extends AGENT
 	Field forward_trail_emitters:EMITTER[] 'forward-facing trail emitter array
 	Field rear_trail_emitters:EMITTER[] 'rear-facing debris trail array
 	
+	Field gibs%[]
+	
 	Method New()
 		force_list = CreateList()
 		emitter_list = CreateList()
@@ -210,6 +212,12 @@ Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT, political_alignm
 	End If
 	c.driving_force = Copy_FORCE( other.driving_force, c.force_list )
 	c.turning_force = Copy_FORCE( other.turning_force, c.force_list )
+	If other.gibs <> Null
+		c.gibs = New Int[ other.gibs.length ]
+		For Local i% = 0 To other.gibs.length - 1
+			c.gibs[i] = other.gibs[i]
+		Next
+	End If
 	
 	If political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..
 	Else If political_alignment = ALIGNMENT_HOSTILE Then c.add_me( hostile_agent_list )

@@ -4,13 +4,23 @@ Rem
 	author: Tyler W Cole
 EndRem
 
+Const PLAYER_COLLISION_LAYER% = $0001
+Const AGENT_COLLISION_LAYER% = $0002
+Const SECONDARY_AGENT_COLLISION_LAYER% = $0004
+Const PROJECTILE_COLLISION_LAYER% = $0008
+Const PICKUP_COLLISION_LAYER% = $0010
+
+Const PROJECTILE_ENERGY_COEFFICIENT# = 750.0 'energy multiplier for all collisions involving projectiles
+Const AGENT_ENERGY_COEFFICIENT# = 0.01 'energy multiplier for agent-agent collisions
+
 '______________________________________________________________________________
 'Collision Detection and Resolution
 Function collide_all()
 	If Not FLAG_in_menu And Not FLAG_draw_help
 	
 		Local list:TList
-		Local ag:COMPLEX_AGENT
+		Local ag:COMPLEX_AGENT, other:COMPLEX_AGENT
+		Local p:PARTICLE
 		Local proj:PROJECTILE
 		Local pkp:PICKUP
 		Local result:Object[]
@@ -75,8 +85,8 @@ Function collide_all()
 				Local explode:PARTICLE = Copy_PARTICLE( particle_archetype[ proj.explosion_particle_index ])
 				explode.pos_x = proj.pos_x; explode.pos_y = proj.pos_y
 				explode.vel_x = 0; explode.vel_y = 0
-				explode.ang = Rand( 0, 359 )
-				explode.life_time = Rand( 300, 300 )
+				explode.ang = RandF( 0.0, 359.9999 )
+				explode.life_time = 300
 				'activate collision response for affected entity(ies)
 				Local offset#, offset_ang#
 				cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
@@ -94,11 +104,40 @@ Function collide_all()
 					End If
 					'perhaps! spawneth teh phat lewts?!
 					spawn_pickup( ag.pos_x, ag.pos_y )
+					'spawn gibs
+					For Local index% = EachIn ag.gibs
+						Local p:PARTICLE = Copy_PARTICLE( particle_archetype[index] )
+						p.pos_x = ag.pos_x; p.pos_y = ag.pos_y
+						p.vel_x = RandF( -1, 1 ); p.vel_y = RandF( -1, 1 )
+						p.ang = RandF( 0.0, 359.9999 )
+						p.ang_vel = RandF( -1.5, 1.5 )
+						p.frictional_coefficient = 0.0130
+						p.life_time = 1500
+					Next
 					'remove enemy
 					ag.remove_me()
 				End If
 				'remove the original projectile no matter what
 				proj.remove_me()
+			Next
+		Next
+		
+		'collisions between agents and other agents
+		For list = EachIn agent_lists
+			For ag = EachIn list
+				SetRotation( ag.ang )
+				result = CollideImage( ag.img, ag.pos_x, ag.pos_y, 0, AGENT_COLLISION_LAYER, SECONDARY_AGENT_COLLISION_LAYER, ag )
+				For other = EachIn result
+					If ag.id <> other.id 'not colliding with self
+						'COLLISION! between {ag} and {other}
+						'activate collision response for affected entity(ies)
+						Local offset#, offset_ang#
+						cartesian_to_polar( ag.pos_x - other.pos_x, ag.pos_y - other.pos_y, offset, offset_ang )
+						Local total_force# = other.mass*AGENT_ENERGY_COEFFICIENT*Sqr( other.vel_x*other.vel_x + other.vel_y*other.vel_y )
+						Create_FORCE( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - other.ang ), 100 ).add_me( ag.force_list )
+						Create_FORCE( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - other.ang ), 100 ).add_me( ag.force_list )
+					End If
+				Next
 			Next
 		Next
 		

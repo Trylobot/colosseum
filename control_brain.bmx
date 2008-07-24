@@ -13,8 +13,7 @@ Const CONTROL_TYPE_AI% = 2
 Const INPUT_KEYBOARD% = 1
 Const INPUT_XBOX_360_CONTROLLER% = 2
 Const AI_BRAIN_MR_THE_BOX% = 1
-Const AI_BRAIN_ROCKET_TURRET% = 2
-Const AI_BRAIN_TANK% = 3
+Const AI_BRAIN_TURRET% = 2
 
 Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
@@ -28,6 +27,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field ang_to_target# '(private)
 	Field dist_to_target# '(private)
 	Field last_think_ts% '(private)
+	Field FLAG_waiting% '(private)
 	
 	Method New()
 	End Method
@@ -37,6 +37,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		If control_type = CONTROL_TYPE_HUMAN
 			input_control()
 		Else If control_type = CONTROL_TYPE_AI
+			'automatic "think delay" designed for distributing CPU cycles to agents who need it
 			If (now() - last_think_ts) > think_delay
 				last_think_ts = now()
 				AI_control()
@@ -102,7 +103,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				avatar.drive( 1.0 )
 				avatar.turn( RandF( -1.0, 1.0 ))
 			
-			Case AI_BRAIN_ROCKET_TURRET
+			Case AI_BRAIN_TURRET
 				If target <> Null And Not target.dead()
 					'analyze current target
 					ang_to_target = vector_diff_angle( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
@@ -114,16 +115,17 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					End If
 					If Abs( diff ) < 2.500 'if enemy in sight, fire; To Do: add code to check for friendlies in the line of fire.
 						avatar.turn_turrets( 0 )
-						avatar.fire_turret( 0 )
+						'wait for cooldown
+						If FLAG_waiting And avatar.turrets[0].cur_heat <= 0.25*avatar.turrets[0].max_heat Then FLAG_waiting = False ..
+						Else If avatar.turrets[0].overheated() Then FLAG_waiting = True
+						
+						If Not FLAG_waiting Then avatar.fire_turret( 0 )
 					End If
 				Else
 					'no target
 					ang_to_target = avatar.turrets[0].ang
 					dist_to_target = 0
 				End If
-				
-			Case AI_BRAIN_TANK
-				'...?
 				
 		End Select
 	End Method

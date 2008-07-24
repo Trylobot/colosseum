@@ -27,6 +27,8 @@ Function debug()
 	sx = 4; sy = 4
 	h = 10
 	
+	debug_drawtext( "retained particles " + retained_particle_list.Count() )
+	
 '	Local length# = 30
 '	SetLineWidth( 2 )
 '	SetColor( 64, 127, 64 )
