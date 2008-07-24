@@ -5,7 +5,8 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global projectile_list:TList = CreateList()
+Global friendly_projectile_list:TList = CreateList()
+Global hostile_projectile_list:TList = CreateList()
 
 Type PROJECTILE Extends PARTICLE
 	
@@ -24,16 +25,6 @@ Type PROJECTILE Extends PARTICLE
 		If trail_emitter <> Null Then trail_emitter.remove_me()
 		If thrust_emitter <> Null Then thrust_emitter.remove_me()
 	End Method
-	
-'	Method debug()
-'		Super.debug()
-'		Print "PROJECTILE_________"
-'		Print "explosion_particle_index " + explosion_particle_index
-'		Print "mass " + mass
-'		Print "damage " + damage
-'		Print "trail_emitter " + (trail_emitter <> Null)
-'		Print "thrust_emitter " + (thrust_emitter <> Null)
-'	End Method
 	
 	Method dead%()
 		Return False
@@ -67,7 +58,7 @@ radius# )
 	Return p
 End Function
 '______________________________________________________________________________
-Function Copy_PROJECTILE:PROJECTILE( other:PROJECTILE )
+Function Copy_PROJECTILE:PROJECTILE( other:PROJECTILE, managed_list:TList )
 	Local p:PROJECTILE = New PROJECTILE
 	If other = Null Then Return p
 	
@@ -80,12 +71,12 @@ Function Copy_PROJECTILE:PROJECTILE( other:PROJECTILE )
 	p.created_ts = now()
 	'emitters
 	If other.thrust_emitter <> Null
-		p.thrust_emitter = Copy_EMITTER( other.thrust_emitter, p )
-		p.thrust_emitter.enable_timer( INFINITY )
+		p.thrust_emitter = Copy_EMITTER( other.thrust_emitter, True, p )
+		p.thrust_emitter.enable( MODE_ENABLED_FOREVER )
 	End If
 	If other.trail_emitter <> Null
-		p.trail_emitter = Copy_EMITTER( other.trail_emitter, p )
-		p.trail_emitter.enable_timer( INFINITY )
+		p.trail_emitter = Copy_EMITTER( other.trail_emitter, True, p )
+		p.trail_emitter.enable( MODE_ENABLED_FOREVER )
 	End If
 	
 	'dynamic fields
@@ -95,6 +86,6 @@ Function Copy_PROJECTILE:PROJECTILE( other:PROJECTILE )
 	p.ang_vel = other.ang_vel
 	p.life_time = other.life_time
 	
-	p.add_me( projectile_list )
+	If managed_list <> Null Then p.add_me( managed_list )
 	Return p
 End Function

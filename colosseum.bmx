@@ -7,19 +7,16 @@ EndRem
 '______________________________________________________________________________
 'temporary testing entities
 'player
-Global player:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[ 1] )
-'Global player:COMPLEX_AGENT = Copy_COMPLEX_AGENT( player_archetype[ 0] )
+Global player:COMPLEX_AGENT
+player = Copy_COMPLEX_AGENT( player_archetype[ 0], True )
 player.pos_x = arena_w/2
 player.pos_y = arena_h/2
 player.ang = -90
 player.turrets[0].ang = player.ang
-'player.turrets[1].ang = player.ang
+player.turrets[1].ang = player.ang
 
 
-'______________________________________________________________________________
-'         ####################################################################
-'  MAIN   ####################################################################
-'         ####################################################################
+'##############################################################################
 Graphics( window_w, window_h )
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
@@ -29,7 +26,7 @@ Repeat
 	If (now() - before) > (1000/60) '60 physics intervals a second
 		before = now()
 		
-		'respawn_enemies()
+		respawn_enemies()
 		process_input()
 		update_objects()
 		collide()

@@ -22,18 +22,16 @@ Type PARTICLE Extends POINT
 	Field alpha_delta# 'alpha rate of change with respect to time
 	Field scale# 'scale coefficient
 	Field scale_delta# 'scale coefficient rate of change with respect to time
-	Field life_time% 'desired length of time (in milliseconds) until the particle is deleted (0 for infinite)
+	Field life_time% 'time until object is deleted
 	Field created_ts% 'timestamp of object creation
 	
 	Method New()
 	End Method
 	
 	Method dead%()
-		If life_time < 0
-			Return False
-		Else
-			Return now() - created_ts >= life_time
-		End If
+		Return ..
+			(Not (life_time = INFINITY)) And ..
+			(now() - created_ts) >= life_time
 	End Method
 	
 	Method prune()

@@ -4,6 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 
+'______________________________________________________________________________
 AutoImageFlags( FILTEREDIMAGE | MIPMAPPEDIMAGE )
 
 Global img_help:TImage = LoadImage( "art/help.png" )
@@ -53,18 +54,18 @@ SetImageHandle( img_muzzle_smoke, 15, 15 )
 Global img_mgun_muzzle_smoke:TImage = LoadImage( "art/mgun_muzzle_smoke.png" )
 SetImageHandle( img_mgun_muzzle_smoke, 8, 8 )
 
-Global img_rocket:TImage = LoadImage( "art/rocket.png" )
-SetImageHandle( img_rocket, 2, 4 )
-Global img_rocket_thrust:TImage = LoadImage( "art/rocket_thrust.png" )
-SetImageHandle( img_rocket_thrust, 1, 6 )
-Global img_rocket_explode:TImage = LoadImage( "art/rocket_explode.png" )
-
 
 Global img_enemy_stationary_emplacement_1_base:TImage = LoadImage( "art/enemy_stationary-emplacement-1_base.png" )
 SetImageHandle( img_enemy_stationary_emplacement_1_base, 11, 11 )
 Global img_enemy_stationary_emplacement_1_turret:TImage = LoadImage( "art/enemy_stationary-emplacement-1_turret.png" )
 SetImageHandle( img_enemy_stationary_emplacement_1_turret, 11, 11 )
 
+Global img_rocket:TImage = LoadImage( "art/rocket.png" )
+SetImageHandle( img_rocket, 0, 4 )
+Global img_rocket_thrust:TImage = LoadImage( "art/rocket_thrust.png" )
+SetImageHandle( img_rocket_thrust, 16, 6 )
+Global img_rocket_explode:TImage = LoadImage( "art/rocket_explode.png" )
+SetImageHandle( img_rocket_explode, 14, 14 )
 
 AutoMidHandle( True )
 Global img_debris_tiny_0:TImage = LoadImage( "art/debris_tiny-1.png" )
@@ -83,3 +84,6 @@ AutoMidHandle( False )
 Global img_box:TImage = LoadImage( "art/box.png" )
 SetImageHandle( img_box, 8, 8 )
 
+
+Global img_pickup_ammo_main_5:TImage = LoadImage( "art/pickup_ammo_main_5.png" )
+SetImageHandle( img_pickup_ammo_main_5, 16, 9 )

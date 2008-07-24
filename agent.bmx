@@ -28,18 +28,16 @@ Type AGENT Extends POINT
 		pos_y :+ vel_y
 		'update angles
 		ang :+ ang_vel
-		If ang >= 360 Then ang :- 360
-		If ang <  0   Then ang :+ 360
+		ang = ang Mod 360
 	End Method
 	
-	Method receive_damage%( damage# )
+	Method dead%()
+		Return (cur_health > 0)
+	End Method
+	
+	Method receive_damage( damage# )
 		cur_health :- damage
 		If cur_health < 0 Then cur_health = 0 'no "overkill"
-		If cur_health = 0 
-			remove_me()
-			Return True
-		End If
-		Return False
 	End Method
 
 End Type

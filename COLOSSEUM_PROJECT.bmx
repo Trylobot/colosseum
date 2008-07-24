@@ -44,11 +44,11 @@ Import brl.timer
 '#Region &H04 MyNamespace
 'GUI
 Private
-TYPE z_fb4dc2e3_d5a7_42c4_9441_73855e4b2de0 abstract  'Resource folder
+TYPE z_c1a4e5c0_ba09_43ba_9828_9d40c41e62c0 abstract  'Resource folder
 End Type
 
 
-TYPE z_blide_bgddef4ae4_ded5_47b9_ab6f_25d249a1051d Abstract
+TYPE z_blide_bg286ce193_0290_4058_8fa1_39e18ac0ae46 Abstract
     Const Name:string = "Colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
     Const MinorVersion:Int = 0  'This Const contains the minor version number of the program
@@ -58,13 +58,13 @@ TYPE z_blide_bgddef4ae4_ded5_47b9_ab6f_25d249a1051d Abstract
 EndType
 
 
-Type z_My_ddef4ae4_ded5_47b9_ab6f_25d249a1051d Abstract 'This type has all the run-tima binary information of your assembly
-    Global Application:z_blide_bgddef4ae4_ded5_47b9_ab6f_25d249a1051d  'This item has all the currently available assembly version information.
-    Global Resources:z_fb4dc2e3_d5a7_42c4_9441_73855e4b2de0  'This item has all the currently available incbined files names and relative location.
+Type z_My_286ce193_0290_4058_8fa1_39e18ac0ae46 Abstract 'This type has all the run-tima binary information of your assembly
+    Global Application:z_blide_bg286ce193_0290_4058_8fa1_39e18ac0ae46  'This item has all the currently available assembly version information.
+    Global Resources:z_c1a4e5c0_ba09_43ba_9828_9d40c41e62c0  'This item has all the currently available incbined files names and relative location.
 End Type
 
 
-Global My:z_My_ddef4ae4_ded5_47b9_ab6f_25d249a1051d 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
+Global My:z_My_286ce193_0290_4058_8fa1_39e18ac0ae46 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
 Public
 '#EndRegion &H04 MyNamespace
 
@@ -73,14 +73,16 @@ Public
 '#Region &H03 Includes
 Include "globals.bmx"
 Include "load_images.bmx"
-Include "managed_object.bmx"
+Include "basic.bmx"
 Include "point.bmx"
 Include "particle.bmx"
+Include "pickup.bmx"
 Include "projectile.bmx"
-Include "agent.bmx"
-Include "turret.bmx"
 Include "emitter.bmx"
+Include "turret.bmx"
+Include "agent.bmx"
 Include "complex_agent.bmx"
+Include "control_brain.bmx"
 Include "archetypes.bmx"
 Include "core.bmx"
 Include "debug.bmx"

@@ -10,21 +10,27 @@ Global emitter_list:TList = CreateList()
 Const EMITS_PARTICLES% = 0
 Const EMITS_PROJECTILES% = 1
 
+Const MODE_DISABLED% = 0
+Const MODE_ENABLED_WITH_COUNTER% = 1
+Const MODE_ENABLED_WITH_TIMER% = 2
+Const MODE_ENABLED_FOREVER% = 3
+
 Type EMITTER extends MANAGED_OBJECT
 	
 	Field parent:POINT 'parent point object (optional)
 	Field emitter_type% 'emitter type (particle/projectile)
 	Field archetype_index_min% 'particle archetype range - lower bound
 	Field archetype_index_max% 'particle archetype range - upper bound
+	Field mode% 'emitter mode (off/counter/timer)
 	Field interval_min% 'delay between particles - lower bound
 	Field interval_max% 'delay between particles - upper bound
-	Field interval_next% '(private) delay between particles - pre-calculated
+	Field interval% '(private) delay between particles - pre-calculated
 	Field last_emit_ts% '(private) timestamp of last emitted particle
-	Field enable_time% 'time until this emitter is disabled
-	Field last_enabled_ts% '(private) timestamp of the last time this emitter was enabled
+	Field time_to_live% 'time until this emitter is disabled
+	Field last_enable_ts% '(private) timestamp of the last time this emitter was enabled
 	Field count_min% 'number of particles to emit - lower bound
 	Field count_max% 'number of particles to emit - upper bound
-	Field count_cur% '(private) number of particles to emit - pre-calculated
+	Field count_cur% '(private) number of particles remaining to emit - pre-calculated and tracked
 	Field inherit_vel_from_parent% 'setting - whether to add the parent's velocity to the emitted particle
 	Field inherit_ang_from_dist_ang% 'setting - whether to set the angle to the already-determined "dist_ang" or a new angle
 	Field inherit_vel_ang_from_ang% 'setting - whether to set the velocity angle to the already-determined "ang" or a new angle
@@ -64,40 +70,39 @@ Type EMITTER extends MANAGED_OBJECT
 	Method New()
 	End Method
 	
-	Method alive%()
-		Return ..
-			enable_time < 0 Or ..
-			(now() - last_enabled_ts) <= enable_time Or ..
-			count_cur <> 0
+	Method update()
+		Select mode
+			Case MODE_ENABLED_WITH_COUNTER
+				If count_cur <= 0 Then disable()
+			Case MODE_ENABLED_WITH_TIMER
+				If (now() - last_enable_ts) >= time_to_live Then disable()
+		End Select
 	End Method
 	
 	Method ready%()
 		Return ..
-			(now() - last_emit_ts) >= interval_next Or ..
-			count_cur <> 0
+			(Not (mode = MODE_DISABLED)) And ..
+			(now() - last_emit_ts) >= interval
 	End Method
 	
-	Method enable_timer( new_enable_time% = INFINITY )
-		enable_time = new_enable_time
-		last_enabled_ts = now()
+	Method enable( new_mode% = MODE_ENABLED_FOREVER )
+		mode = new_mode
+		Select mode
+			Case MODE_ENABLED_WITH_COUNTER
+				count_cur = Rand( count_min, count_max )
+			Case MODE_ENABLED_WITH_TIMER
+				last_enable_ts = now()
+		End Select
 	End Method
-	Method enable_counter( limit% = True )
-		If limit
-			count_cur = Rand( count_min, count_max )
-		Else
-			count_cur = INFINITY
-		End If
-	End Method
-	
+
 	Method disable()
-		enable_time = 0
-		count_cur = 0
+		mode = MODE_DISABLED
 	End Method
 	
 	'like the fire() method of the TANK type, this method should be treated like a request.
 	'ie, this method will only emit if it's appropriate.
-	Method emit()
-		If alive() And ready()
+	Method emit( alignment% = ALIGNMENT_NOT_APPLICABLE )
+		If ready()
 			
 			'reserve space for particle
 			Local p:PARTICLE
@@ -105,7 +110,13 @@ Type EMITTER extends MANAGED_OBJECT
 			If emitter_type = EMITS_PARTICLES
 				p = Copy_PARTICLE( particle_archetype[index] )
 			Else If emitter_type = EMITS_PROJECTILES
-				p = PARTICLE( Copy_PROJECTILE( projectile_archetype[index] ))
+				Local list:TList = Null
+				If alignment = ALIGNMENT_FRIENDLY
+					list = friendly_projectile_list
+				Else If alignment = ALIGNMENT_HOSTILE
+					list = hostile_projectile_list
+				End If
+				p = PARTICLE( Copy_PROJECTILE( projectile_archetype[index], list ))
 			End If
 			
 			'particle position components
@@ -165,13 +176,8 @@ Type EMITTER extends MANAGED_OBJECT
 			Else
 				acc_ang = RandF( acc_ang_min, acc_ang_max )
 			End If
-			If parent <> Null
-				p.acc_x = acc * Cos( acc_ang + parent.ang )
-				p.acc_y = acc * Sin( acc_ang + parent.ang )
-			Else
-				p.acc_x = acc * Cos( acc_ang )
-				p.acc_y = acc * Sin( acc_ang )
-			End If
+			p.acc_x = acc * Cos( acc_ang )
+			p.acc_y = acc * Sin( acc_ang )
 			
 			'particle alpha
 			p.alpha = RandF( alpha_min, alpha_max )
@@ -187,7 +193,7 @@ Type EMITTER extends MANAGED_OBJECT
 			
 			'emitter interval
 			last_emit_ts = now()
-			interval_next = Rand( interval_min, interval_max )
+			interval = Rand( interval_min, interval_max )
 			'emitter counter
 			If count_cur > 0 Then count_cur :- 1
 			
@@ -224,6 +230,7 @@ End Type
 Function Archetype_EMITTER:EMITTER( ..
 emitter_type%, ..
 archetype_index_min%, archetype_index_max%, ..
+mode%, ..
 inherit_vel_from_parent%, ..
 inherit_ang_from_dist_ang%, ..
 inherit_vel_ang_from_ang%, ..
@@ -241,13 +248,14 @@ scale_delta_min# = 0.0, scale_delta_max# = 0.0 )
 	'emitter attributes and attribute ranges
 	em.emitter_type = emitter_type
 	em.archetype_index_min = archetype_index_min; em.archetype_index_max = archetype_index_max
+	em.mode = mode
 	em.inherit_vel_from_parent = inherit_vel_from_parent
 	em.inherit_ang_from_dist_ang = inherit_ang_from_dist_ang
 	em.inherit_vel_ang_from_ang = inherit_vel_ang_from_ang
 	em.inherit_acc_ang_from_vel_ang = inherit_acc_ang_from_vel_ang
 	em.interval_min = interval_min; em.interval_max = interval_max
-	em.interval_next = Rand( em.interval_min, em.interval_max )
-	em.last_enabled_ts = now()
+	em.interval = Rand( em.interval_min, em.interval_max )
+	em.last_enable_ts = now()
 	em.count_min = count_min; em.count_max = count_max
 	'emitted particle attribute ranges
 	em.life_time_min = life_time_min; em.life_time_max = life_time_max
@@ -273,20 +281,21 @@ scale_delta_min# = 0.0, scale_delta_max# = 0.0 )
 	Return em
 End Function
 '______________________________________________________________________________
-Function Copy_EMITTER:EMITTER( other:EMITTER, new_parent:POINT = Null )
+Function Copy_EMITTER:EMITTER( other:EMITTER, manage% = False, new_parent:POINT = Null )
 	Local em:EMITTER = New EMITTER
 	If other = Null Then Return em
 	
 	'emitter-specific fields
 	em.emitter_type = other.emitter_type
-	em.archetype_index_min = other.archetype_index_min; em.archetype_index_max = other.archetype_index_max 
+	em.archetype_index_min = other.archetype_index_min; em.archetype_index_max = other.archetype_index_max
+	em.mode = other.mode
 	em.inherit_vel_from_parent = other.inherit_vel_from_parent
 	em.inherit_ang_from_dist_ang = other.inherit_ang_from_dist_ang
 	em.inherit_vel_ang_from_ang = other.inherit_vel_ang_from_ang
 	em.inherit_acc_ang_from_vel_ang = other.inherit_acc_ang_from_vel_ang
 	em.interval_min = other.interval_min; em.interval_max = other.interval_max
-	em.interval_next = Rand( em.interval_min, em.interval_max )
-	em.last_enabled_ts = now()
+	em.interval = Rand( em.interval_min, em.interval_max )
+	em.last_enable_ts = now()
 	em.count_min = other.count_min; em.count_max = other.count_max
 	
 	'emitted particle-specific fields
@@ -310,7 +319,7 @@ Function Copy_EMITTER:EMITTER( other:EMITTER, new_parent:POINT = Null )
 	em.ang_vel_min = other.ang_vel_min; em.ang_vel_max = other.ang_vel_max
 	em.ang_acc_min = other.ang_acc_min; em.ang_acc_max = other.ang_acc_max
 	
-	em.add_me( emitter_list )
+	If manage Then em.add_me( emitter_list )
 	Return em
 End Function
 

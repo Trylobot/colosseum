@@ -20,11 +20,11 @@ Function debug()
 	Local h% = 10
 	
 	SetColor( 220, 30, 30 ); SetImageFont( consolas_normal_12 )
-	DrawText( "particle_list.count " + count_particles(), sx, sy ); sy :+ h
-	DrawText( "retained_particle_list.count " + retained_particle_list.Count(), sx, sy ); sy :+ h
-	DrawText( "emitter_list.count " + emitter_list.Count(), sx, sy ); sy :+ h
-	DrawText( "projectile_list.count " + projectile_list.Count(), sx, sy ); sy :+ h
-	DrawText( "enemy_list.count " + enemy_list.Count(), sx, sy ); sy :+ h
+	DrawText( "particles " + (particle_list_background.Count() + particle_list_foreground.Count()), sx, sy ); sy :+ h
+	DrawText( "retained_particles " + retained_particle_list.Count(), sx, sy ); sy :+ h
+	DrawText( "emitters " + emitter_list.Count(), sx, sy ); sy :+ h
+	DrawText( "projectiles " + (friendly_projectile_list.Count() + hostile_projectile_list.Count()), sx, sy ); sy :+ h
+	DrawText( "enemies " + enemy_list.Count(), sx, sy ); sy :+ h
 	sy :+ h
 	DrawText( "pos ( " + p.pos_x + ", " + p.pos_y + " )", sx, sy ); sy :+ h
 	DrawText( "vel ( " + p.vel_x + ", " + p.vel_y + " )", sx, sy ); sy :+ h

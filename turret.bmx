@@ -84,22 +84,22 @@ Type TURRET Extends POINT
 			
 			If projectile_emitter <> Null
 				'fire projectile from the muzzle of the barrel
-				projectile_emitter.enable_counter()
-				projectile_emitter.emit()
+				projectile_emitter.enable( MODE_ENABLED_WITH_COUNTER )
+				projectile_emitter.emit( parent.political_alignment )
 			End If
 			If ejector_port_emitter <> Null
 				'eject shell casing from the ejector port
-				ejector_port_emitter.enable_counter()
+				ejector_port_emitter.enable( MODE_ENABLED_WITH_COUNTER )
 				ejector_port_emitter.emit()
 			End If
 			If muzzle_flash_emitter <> Null
 				'show a flash from the muzzle of the barrel
-				muzzle_flash_emitter.enable_counter()
+				muzzle_flash_emitter.enable( MODE_ENABLED_WITH_COUNTER )
 				muzzle_flash_emitter.emit()
 			End If
 			If muzzle_smoke_emitter <> Null
 				'show smoke from the muzzle of the barrel
-				muzzle_smoke_emitter.enable_counter()
+				muzzle_smoke_emitter.enable( MODE_ENABLED_WITH_COUNTER )
 				muzzle_smoke_emitter.emit()
 			End If
 			
@@ -144,7 +144,7 @@ recoil_off_x#, recoil_off_y# )
 	Return t
 End Function
 '______________________________________________________________________________
-Function Copy_TURRET:TURRET( other:TURRET, new_parent:COMPLEX_AGENT = Null )
+Function Copy_TURRET:TURRET( other:TURRET, new_parent:COMPLEX_AGENT = Null, emitter_management% = False )
 	Local t:TURRET = New TURRET
 	If other = Null Then Return t
 	
@@ -156,10 +156,10 @@ Function Copy_TURRET:TURRET( other:TURRET, new_parent:COMPLEX_AGENT = Null )
 	t.recoil_offset = other.recoil_offset
 	t.recoil_offset_ang = other.recoil_offset_ang
 	'emitters
-	If other.projectile_emitter <> Null Then t.projectile_emitter = Copy_EMITTER( other.projectile_emitter, t )
-	If other.muzzle_flash_emitter <> Null Then t.muzzle_flash_emitter = Copy_EMITTER( other.muzzle_flash_emitter, t )
-	If other.muzzle_smoke_emitter <> Null Then t.muzzle_smoke_emitter = Copy_EMITTER( other.muzzle_smoke_emitter, t )
-	If other.ejector_port_emitter <> Null Then t.ejector_port_emitter = Copy_EMITTER( other.ejector_port_emitter, t )
+	If other.projectile_emitter <> Null Then t.projectile_emitter = Copy_EMITTER( other.projectile_emitter, emitter_management, t )
+	If other.muzzle_flash_emitter <> Null Then t.muzzle_flash_emitter = Copy_EMITTER( other.muzzle_flash_emitter, emitter_management, t )
+	If other.muzzle_smoke_emitter <> Null Then t.muzzle_smoke_emitter = Copy_EMITTER( other.muzzle_smoke_emitter, emitter_management, t )
+	If other.ejector_port_emitter <> Null Then t.ejector_port_emitter = Copy_EMITTER( other.ejector_port_emitter, emitter_management, t )
 	
 	'dynamic fields
 	t.parent = new_parent
