@@ -187,10 +187,10 @@ Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority que
 	End Method
 	Method insert%( i:CELL )
 		If cur_size < max_size 'if not full
-			Local item_i% = cur_size 'new item's index is equal to the current size of the heap
-			Local item_parent_i% = parent_i( item_i ) 'pre-cache parent's index
-			binary_tree[item_i] = i.clone() 'deep-copy the argument
-			If item_i <> item_parent_i
+			binary_tree[cur_size] = i.clone() 'insert a deep-copy of the argument into the next available slot
+			If Not is_empty()
+				Local item_i% = cur_size 'new item's index is equal to the current size of the heap
+				Local item_parent_i% = parent_i( item_i ) 'pre-cache parent's index
 				While Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] )
 					'while the min-heap property is being violated
 					swap( item_i, item_parent_i ) 'swap item with its parent
@@ -213,7 +213,6 @@ Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority que
 	Method pop_root:CELL()
 		If cur_size > 0 'if not empty
 			Local root:CELL = binary_tree[0] 'save the current root; it's always at [0]
-			cur_size :- 1 'maintain size-tracking field
 			If cur_size > 1 'if the root is not the only element
 				binary_tree[0] = binary_tree[cur_size] 'set the root to the last element in the heap
 				binary_tree[cur_size] = Null 'remove the reference at end of the heap to the new root
@@ -229,6 +228,7 @@ Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority que
 			Else
 				binary_tree[0] = Null
 			End If
+			cur_size :- 1 'maintain size-tracking field
 			Return root 'return the root, secure in the knowledge that this is still a min-heap
 		Else
 			Return Null 'the min-heap is empty; it doesn't even have a root
