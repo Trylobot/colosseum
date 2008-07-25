@@ -186,6 +186,7 @@ Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority que
 		End If
 	End Method
 	Method insert%( i:CELL )
+If KeyDown( KEY_F2 ) Then DebugStop
 		If cur_size < max_size 'if not full
 			binary_tree[cur_size] = i.clone() 'insert a deep-copy of the argument into the next available slot
 			If Not is_empty()

@@ -47,11 +47,11 @@ Import brl.timer
 '#Region &H04 MyNamespace
 'GUI
 Private
-TYPE z_020759be_ea1b_4c2c_824b_7d88706f5d7b abstract  'Resource folder
+TYPE z_39d78426_907f_4909_88ef_c18c08b1880e abstract  'Resource folder
 End Type
 
 
-TYPE z_blide_bgbd5daa65_85ad_4106_95fb_26eb9af43ef1 Abstract
+TYPE z_blide_bg0eba4c53_67df_438b_896e_635e7b6ae721 Abstract
     Const Name:string = "Colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
     Const MinorVersion:Int = 1  'This Const contains the minor version number of the program
@@ -61,13 +61,13 @@ TYPE z_blide_bgbd5daa65_85ad_4106_95fb_26eb9af43ef1 Abstract
 EndType
 
 
-Type z_My_bd5daa65_85ad_4106_95fb_26eb9af43ef1 Abstract 'This type has all the run-tima binary information of your assembly
-    Global Application:z_blide_bgbd5daa65_85ad_4106_95fb_26eb9af43ef1  'This item has all the currently available assembly version information.
-    Global Resources:z_020759be_ea1b_4c2c_824b_7d88706f5d7b  'This item has all the currently available incbined files names and relative location.
+Type z_My_0eba4c53_67df_438b_896e_635e7b6ae721 Abstract 'This type has all the run-tima binary information of your assembly
+    Global Application:z_blide_bg0eba4c53_67df_438b_896e_635e7b6ae721  'This item has all the currently available assembly version information.
+    Global Resources:z_39d78426_907f_4909_88ef_c18c08b1880e  'This item has all the currently available incbined files names and relative location.
 End Type
 
 
-Global My:z_My_bd5daa65_85ad_4106_95fb_26eb9af43ef1 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
+Global My:z_My_0eba4c53_67df_438b_896e_635e7b6ae721 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
 Public
 '#EndRegion &H04 MyNamespace
 

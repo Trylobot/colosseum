@@ -26,7 +26,7 @@ Function debug_pathing( message$ = "" )
 	SetAlpha( 1 )
 	
 	wait_ts = now()
-	If KeyDown( KEY_F3 ) Then wait_time = 25 Else wait_time = 250
+	If KeyDown( KEY_F3 ) Then wait_time = 25 Else wait_time = 500
 	Repeat
 		If KeyDown( KEY_F4 ) Then wait_ts = now()
 		Cls
