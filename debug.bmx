@@ -31,7 +31,7 @@ Function debug_pathing( message$ = "", done% = False )
 	wait_ts = now()
 	If KeyDown( KEY_F3 ) Then wait_time = 0 Else wait_time = 500
 
-	While ((now() - wait_ts) <= wait_time) And (Not done) ..
+	While (((now() - wait_ts) <= wait_time) And (Not done)) ..
 	Or (done And Not KeyHit( KEY_F2 ))
 		
 		If KeyHit( KEY_ESCAPE ) Then End
@@ -57,7 +57,6 @@ Function debug_pathing( message$ = "", done% = False )
 		SetColor( 127, 127, 255 ); SetAlpha( 1 )
 		SetImageFont( consolas_normal_12 )
 		DrawText( "set_goal,find_path:F4  pause:F4/faster:F3  set_blockable:F5", 3, -26 )
-		
 		'draw pathing_grid cell border lines
 		SetLineWidth( 1 ); SetColor( 127, 127, 127 ); SetAlpha( 0.75 )
 		For r = 0 To pathing_grid_h
@@ -66,7 +65,6 @@ Function debug_pathing( message$ = "", done% = False )
 		For c = 0 To pathing_grid_w
 			DrawLine( c*cell_size, 0, c*cell_size, pathing_grid_h*cell_size )
 		Next
-		
 		Local cursor:CELL = New CELL
 		For cursor.row = 0 To pathing_grid_h - 1
 			For cursor.col = 0 To pathing_grid_w - 1
@@ -85,27 +83,35 @@ Function debug_pathing( message$ = "", done% = False )
 			SetColor( 255, 212, 212 ); SetAlpha( 0.5 )
 			DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
 		Next
-		Local f#, pf#
+		'potential paths header
+		SetAlpha( 1 ); SetImageFont( consolas_normal_10 )
+		SetColor( 127, 127, 127 )
+		DrawText( "potential paths", arena_w + 4, -9 )
+		Local f#, pf#, listing_str$
 		For Local i% = 0 To pathing.potential_paths.item_count - 1 + 1
 			If pathing.potential_paths.binary_tree[i] <> Null
 				'draw potential paths
 				SetColor( 212, 255, 212 ); SetAlpha( 0.5 )
 				DrawRect( pathing.potential_paths.binary_tree[i].col*cell_size + 1, pathing.potential_paths.binary_tree[i].row*cell_size + 1, cell_size - 2, cell_size - 2 )
-				'potential_paths min_heap binary_tree data structure graph
+				'draw came_from for potential paths
+				SetLineWidth( 1 ); SetColor( 255, 255, 255 ); SetAlpha( 0.25 )
+				If pathing.came_from( pathing.potential_paths.binary_tree[i] ) <> Null Then ..
+					DrawLine( pathing.potential_paths.binary_tree[i].col*cell_size + cell_size/2, pathing.potential_paths.binary_tree[i].row*cell_size + cell_size/2, pathing.came_from( pathing.potential_paths.binary_tree[i] ).col*cell_size + cell_size/2, pathing.came_from( pathing.potential_paths.binary_tree[i] ).row*cell_size + cell_size/2 )
+				'potential_paths min_heap binary_tree data structure content listing
 				f = pathing.f( pathing.potential_paths.binary_tree[i] )
 				pf = pathing.f( pathing.potential_paths.binary_tree[pathing.potential_paths.parent_i( i )] )
-				If pf <= f Then SetColor( 127, 127, 127 ) ..
-				Else           SetColor( 255, 127, 127 )
-				SetAlpha( 1 )
-				SetImageFont( consolas_normal_12 )
-				DrawText( "p[" + i + "] f:" + Int( f ), arena_w + 5, i*12 )
+				If pf > f Then SetColor( 255, 127, 127 ) ..
+				Else           SetColor( 127, 127, 127 )
+				listing_str = "f:" + Int( f )
 			Else
-				SetColor( 64, 64, 64 ); SetAlpha( 1 )
-				SetImageFont( consolas_normal_12 )
-				DrawText( "p[" + i + "] null", arena_w + 5, i*12 )
+				SetColor( 64, 64, 64 )
+				listing_str = "null"
 			End If
+			sx = arena_w + 4 + 76*(i/55)
+			sy = (i Mod 55 )*9
+			SetAlpha( 1 ); SetImageFont( consolas_normal_10 )
+			DrawText( "[" + i + "] " + listing_str, sx, sy )
 		Next
-		
 		'start and goal
 		If global_start <> Null
 			SetColor( 64, 255, 64 ); SetAlpha( 1 )
@@ -115,7 +121,6 @@ Function debug_pathing( message$ = "", done% = False )
 			SetColor( 64, 64, 255 ); SetAlpha( 1 )
 			DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
 		End If
-		
 		'draw optional message
 		SetColor( 255, 255, 255 ); SetAlpha( 1 )
 		SetImageFont( consolas_normal_12 )
@@ -124,7 +129,6 @@ Function debug_pathing( message$ = "", done% = False )
 		Flip
 		
 	End While
-
 End Function
 '______________________________________________________________________________
 Function debug()

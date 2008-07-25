@@ -75,6 +75,7 @@ End Type
 '______________________________________________________________________________
 Global ALL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_NORTHEAST, DIRECTION_EAST, DIRECTION_SOUTHEAST, DIRECTION_SOUTH, DIRECTION_SOUTHWEST, DIRECTION_WEST, DIRECTION_NORTHWEST ]
 Global cell_size# = 10
+'Global cell_size# = 20
 
 Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
 Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
@@ -90,12 +91,14 @@ Function distance#( c1:CELL, c2:CELL )
 	Return Sqr( Pow( cell_size*(c2.row - c1.row), 2 ) + Pow( cell_size*(c2.col - c1.col), 2 ))
 End Function
 '______________________________________________________________________________
+Const REGISTRY_NOT_PRESENT% = -1
+
 Type PATH_QUEUE
 	Field row_count%, col_count% 'dimensions
 	Field max_size% '(private) row_count * col_count
 	Field item_count% 'number of items in this data structure
 	Field binary_tree:CELL[] 'min-heap binary tree implemented as an arry
-	Field registry%[,] 'a registry to keep items unique; present in queue? {true|false}
+	Field registry%[,] 'a dual-purpose array; detects whether a given CELL ordered pair is present in the queue, and also determines the index of items the binary_tree by their location
 	Method New()
 	End Method
 	
@@ -107,8 +110,19 @@ Type PATH_QUEUE
 		pq.item_count = 0
 		pq.binary_tree = New CELL[ row_count*col_count ]
 		pq.registry = New Int[ row_count, col_count ]
+		For Local r% = 0 To row_count - 1
+			For Local c% = 0 To col_count - 1
+				pq.registry[r,c] = REGISTRY_NOT_PRESENT
+			Next
+		Next
 		Return pq
 	End Function
+	Method is_root%( i% )
+		Return ( i = 0 )
+	End Method
+	Method is_leaf%( i% )
+		Return ( left_child_i( i ) >= item_count )
+	End Method
 	Method parent_i%( i% )
 		Return ( i - 1 ) / 2
 	End Method
@@ -124,6 +138,31 @@ Type PATH_QUEUE
 		If( f_less_than( binary_tree[left_c], binary_tree[right_c] )) Then ..
 		Return left_c Else Return right_c
 	End Method
+	
+	Method is_empty%()
+		Return item_count = 0
+	End Method
+	Method in_queue%( c:CELL )
+		Return (registry[c.row,c.col] <> REGISTRY_NOT_PRESENT)
+	End Method
+	Method index_of%( c:CELL )
+		If Not in_queue( c ) Then Return REGISTRY_NOT_PRESENT Else ..
+		Return registry[c.row,c.col]
+	End Method
+	Method register( c:CELL, index% )
+		registry[c.row,c.col] = index
+	End Method
+	Method unregister( c:CELL )
+		registry[c.row,c.col] = REGISTRY_NOT_PRESENT
+	End Method
+	Method reset()
+		For Local i% = 0 To item_count - 1
+			unregister( binary_tree[i] )
+			binary_tree[i] = Null
+		Next
+		item_count = 0
+	End Method
+	
 	Method swap%( i%, j% )
 		If i <> j
 			Local swap_cell:CELL = binary_tree[i]
@@ -134,27 +173,29 @@ Type PATH_QUEUE
 			Return False
 		End If
 	End Method
+	
 	Method insert%( i:CELL )
 		If item_count < max_size And Not in_queue( i ) 'if not full and item to be inserted is not already present in the queue
+			Local item_i% = item_count 'new item's index is equal to the current size of the heap
 			binary_tree[item_count] = i.clone() 'insert a deep-copy of the argument into the next available slot
-			register( i ) 'maintain uniqueness registry array
 			If Not is_empty()
-				Local item_i% = item_count 'new item's index is equal to the current size of the heap
 				Local item_parent_i% = parent_i( item_i ) 'pre-cache parent's index
-				While Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] ) ..
-				And Not item_i = 0
+				While Not is_root( item_i ) ..
+				And Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] )
 					'while the min-heap property is being violated
 					swap( item_i, item_parent_i ) 'swap item with its parent
 					item_i = item_parent_i 'item's new index is its current parent's index
 					item_parent_i = parent_i( item_i ) 'calculate item's new parent's index
 				End While
 			End If
+			register( i, item_i ) 'maintain uniqueness registry array
 			item_count :+ 1 'maintain size-tracking field
 			Return True 'successful insert
 		Else
 			Return False 'not enough room or item to be inserted is not unique
 		End If
 	End Method
+	
 	Method pop_root:CELL()
 		If item_count > 0 'if not empty
 			Local root:CELL = binary_tree[0] 'save the current root; it's always at [0]
@@ -164,7 +205,7 @@ Type PATH_QUEUE
 				binary_tree[item_count - 1] = Null 'remove the reference at end of the heap to the new root
 				Local item_i% = 0 'index is root index
 				Local child_i% = smallest_child_i( item_i ) 'get the smaller of two children
-				While binary_tree[child_i] <> Null ..
+				While Not is_leaf( item_i ) ..
 				And Not f_less_than( binary_tree[item_i], binary_tree[child_i] )
 					'while the heap property is being violated
 					swap( item_i, child_i ) 'swap item with its smallest child
@@ -180,24 +221,36 @@ Type PATH_QUEUE
 			Return Null 'the min-heap is empty; it doesn't even have a root
 		End If
 	End Method
-	Method is_empty%()
-		Return item_count = 0
-	End Method
-	Method in_queue%( c:CELL )
-		Return registry[c.row,c.col]
-	End Method
-	Method register( c:CELL )
-		registry[c.row,c.col] = True
-	End Method
-	Method unregister( c:CELL )
-		registry[c.row,c.col] = False
-	End Method
-	Method reset()
-		For Local i% = 0 To item_count - 1
-			unregister( binary_tree[i] )
-			binary_tree[i] = Null
-		Next
-		item_count = 0
+	
+	Method update%( c:CELL )
+		Local item_i% = index_of( c )
+		If item_i <> REGISTRY_NOT_PRESENT
+			unregister( c )
+			If Not is_root( item_i )
+				'heapsort UP (towards root) if not root
+				Local item_parent_i% = parent_i( item_i ) 'pre-cache parent's index
+				While Not is_root( item_i ) ..
+				And Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] )
+					'while the min-heap property is being violated
+					swap( item_i, item_parent_i ) 'swap item with its parent
+					item_i = item_parent_i 'item's new index is its current parent's index
+					item_parent_i = parent_i( item_i ) 'calculate item's new parent's index
+				End While
+			Else If Not is_leaf( item_i )
+				'heapsort DOWN (towards leaves) if not a leaf
+				Local child_i% = smallest_child_i( item_i ) 'get the smaller of two children
+				While Not is_leaf( item_i ) ..
+				And Not f_less_than( binary_tree[item_i], binary_tree[child_i] )
+					swap( item_i, child_i ) 'swap item with its smallest child
+					item_i = child_i 'set item to its current smallest child
+					child_i = smallest_child_i( item_i ) 'update item's smallest child
+				End While
+			End If
+			register( c, item_i )
+			Return True
+		Else
+			Return False
+		End If
 	End Method
 	
 End Type
@@ -353,6 +406,7 @@ Type PATHING_STRUCTURE
 					set_came_from( neighbor, cursor )
 					set_g( neighbor, tentative_g )
 					set_f( neighbor, tentative_g + h( neighbor ))
+					potential_paths.update( neighbor )
 				End If
 			Next
 		End While
@@ -388,21 +442,20 @@ Function init_pathing_grid_from_obstacles( obstacles:TList )
 End Function
 '______________________________________________________________________________
 Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
-	pathing.reset()
-
-	If      start_x < 0       Then start_x = 0 ..
+	If      start_x < 0        Then start_x = 0 ..
 	Else If start_x >= arena_w Then start_x = arena_w - 1
-	If      start_y < 0       Then start_y = 0 ..
+	If      start_y < 0        Then start_y = 0 ..
 	Else If start_y >= arena_h Then start_y = arena_h - 1
-	If      goal_x < 0        Then goal_x = 0 ..
+	If      goal_x < 0         Then goal_x = 0 ..
 	Else If goal_x >= arena_w  Then goal_x = arena_w - 1
-	If      goal_y < 0        Then goal_y = 0 ..
+	If      goal_y < 0         Then goal_y = 0 ..
 	Else If goal_y >= arena_h  Then goal_y = arena_h - 1
 
+	pathing.reset()
 	Local cell_list:TList = pathing.find_path_cells( containing_cell( start_x, start_y ), containing_cell( goal_x, goal_y ))
-	
+
 	Local list:TList = CreateList()
-	If Not cell_list.IsEmpty()
+	If cell_list <> Null And Not cell_list.IsEmpty()
 		For Local cursor:CELL = EachIn cell_list
 			list.AddLast( cVEC.Create( cursor.col*cell_size + cell_size/2, cursor.row*cell_size + cell_size/2 ))
 		Next
