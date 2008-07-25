@@ -197,6 +197,7 @@ Type PATH_QUEUE
 			unregister( binary_tree[i] )
 			binary_tree[i] = Null
 		Next
+		item_count = 0
 	End Method
 	
 End Type
@@ -323,6 +324,7 @@ Type PATHING_STRUCTURE
 '																					debug_pathing( "If cursor.eq( goal )" )
 			If cursor.eq( goal )
 '																					debug_pathing( "Return backtrace_path( start, goal )" )
+																					debug_pathing( "path found; F2 to continue", True )
 				Return backtrace_path( goal, start )
 			End If
 '																					debug_pathing( "set_pathing_visited( cursor, True )" )

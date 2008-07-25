@@ -19,7 +19,7 @@ Function debug_drawtext( message$ )
 End Function
 '______________________________________________________________________________
 'F4 to path from player to mouse; hold F4 to pause; hold F3 to fast-forward
-Function debug_pathing( message$ = "" )
+Function debug_pathing( message$ = "", done% = False )
 	SetOrigin( arena_offset, arena_offset )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
@@ -32,7 +32,10 @@ Function debug_pathing( message$ = "" )
 	If KeyDown( KEY_F3 ) Then wait_time = 0 Else wait_time = 500
 
 	Repeat
-		If KeyDown( KEY_F4 ) Then wait_ts = now()
+		If KeyDown( KEY_F4 ) ..
+		Or done And Not KeyHit( KEY_F2 )
+			wait_ts = now()
+		End If
 		
 		mouse = containing_cell( MouseX() - arena_offset, MouseY() - arena_offset )
 		If KeyDown( KEY_F5 ) ..
