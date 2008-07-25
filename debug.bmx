@@ -26,7 +26,7 @@ Function debug_pathing( message$ = "" )
 	SetAlpha( 1 )
 	
 	wait_ts = now()
-	If KeyDown( KEY_F3 ) Then wait_time = 25 Else wait_time = 500
+	If KeyDown( KEY_F3 ) Then wait_time = 0 Else wait_time = 500
 	Repeat
 		If KeyDown( KEY_F4 ) Then wait_ts = now()
 		Cls
@@ -58,7 +58,7 @@ Function debug_pathing( message$ = "" )
 					DrawRect( c*cell_size + 1, r*cell_size + 1, cell_size - 2, cell_size - 2 )
 			Next
 		Next
-		For Local i% = 0 To potential_paths.cur_size - 1 + 4
+		For Local i% = 0 To potential_paths.item_count - 1 + 1
 			If potential_paths.binary_tree[i] <> Null
 				'draw potential paths
 				SetColor( 212, 255, 212 ); SetAlpha( 0.5 )
@@ -66,11 +66,11 @@ Function debug_pathing( message$ = "" )
 				'potential_paths min_heap binary_tree data structure graph
 				SetColor( 127, 127, 127 ); SetAlpha( 1 )
 				SetImageFont( consolas_normal_12 )
-				DrawText( "[" + i + "] " + potential_paths.binary_tree[i].row + ", " + potential_paths.binary_tree[i].col, arena_w + 5, i*12 )
+				DrawText( "p[" + i + "] g:" + get_pathing_g( potential_paths.binary_tree[i] ) + " h:" + get_pathing_h( potential_paths.binary_tree[i] ), arena_w + 5, i*12 )
 			Else
 				SetColor( 64, 64, 64 ); SetAlpha( 1 )
 				SetImageFont( consolas_normal_12 )
-				DrawText( "[" + i + "] null", arena_w + 5, i*12 )
+				DrawText( "p[" + i + "] null", arena_w + 5, i*12 )
 			End If
 		Next
 		

@@ -146,18 +146,24 @@ Function get_pathing_f#( c:CELL )
 	End If
 End Function
 '______________________________________________________________________________
-Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority queue in which all items are unique
-	Field max_size%
-	Field cur_size%
-	Field binary_tree:CELL[]
+Type PATH_QUEUE
+	Field row_count% 'number of rows in the pathing grid
+	Field col_count% 'number of columns in the pathing grid
+	Field max_size% '(private) row_count * col_count
+	Field item_count% 'number of items in this data structure
+	Field binary_tree:CELL[] 'min-heap binary tree implemented as an arry
+	Field registry%[,] 'a registry to keep items unique; present in queue? {true|false}
 	Method New()
 	End Method
 	
-	Function Create:PRIORITY_QUEUE( max_size% = 1 )
-		Local pq:PRIORITY_QUEUE = New PRIORITY_QUEUE
-		pq.max_size = max_size
-		pq.binary_tree = New CELL[ max_size ]
-		pq.cur_size = 0
+	Function Create:PATH_QUEUE( row_count% = 1, col_count% = 1 )
+		Local pq:PATH_QUEUE = New PATH_QUEUE
+		pq.row_count = row_count
+		pq.col_count = col_count
+		pq.max_size = row_count*col_count
+		pq.item_count = 0
+		pq.binary_tree = New CELL[ row_count*col_count ]
+		pq.registry = New Int[ row_count, col_count ]
 		Return pq
 	End Function
 	Method parent_i%( i% )
@@ -186,64 +192,69 @@ Type PRIORITY_QUEUE 'implements an array-based binary min-heap tree priority que
 		End If
 	End Method
 	Method insert%( i:CELL )
-If KeyDown( KEY_F2 ) Then DebugStop
-		If cur_size < max_size 'if not full
-			binary_tree[cur_size] = i.clone() 'insert a deep-copy of the argument into the next available slot
+		If item_count < max_size And Not in_queue( i ) 'if not full and item to be inserted is not already present in the queue
+			binary_tree[item_count] = i.clone() 'insert a deep-copy of the argument into the next available slot
 			If Not is_empty()
-				Local item_i% = cur_size 'new item's index is equal to the current size of the heap
+				Local item_i% = item_count 'new item's index is equal to the current size of the heap
 				Local item_parent_i% = parent_i( item_i ) 'pre-cache parent's index
-				While Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] )
+				While Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] ) ..
+				And Not item_i = 0
 					'while the min-heap property is being violated
 					swap( item_i, item_parent_i ) 'swap item with its parent
 					item_i = item_parent_i 'item's new index is its current parent's index
 					item_parent_i = parent_i( item_i ) 'calculate item's new parent's index
-					If item_i = 0 Then Exit 'root reached, done
 				End While
-				If binary_tree[item_parent_i].eq( binary_tree[item_i] )
-					'new item is not unique; no insertion should take place
-					binary_tree[item_i] = Null 'you wasted our time, user.
-					Return False; 'signal
-				End If
 			End If
-			cur_size :+ 1 'maintain size-tracking field
+			register( i ) 'maintain uniqueness registry array
+			item_count :+ 1 'maintain size-tracking field
 			Return True 'successful insert
 		Else
-			Return False 'not enough room
+			Return False 'not enough room or item to be inserted is not unique
 		End If
 	End Method
 	Method pop_root:CELL()
-		If cur_size > 0 'if not empty
+		If item_count > 0 'if not empty
 			Local root:CELL = binary_tree[0] 'save the current root; it's always at [0]
-			If cur_size > 1 'if the root is not the only element
-				binary_tree[0] = binary_tree[cur_size] 'set the root to the last element in the heap
-				binary_tree[cur_size] = Null 'remove the reference at end of the heap to the new root
+			If item_count > 1 'if the root is not the only element
+				binary_tree[0] = binary_tree[item_count - 1] 'set the root to the last element in the heap
+				binary_tree[item_count - 1] = Null 'remove the reference at end of the heap to the new root
 				Local item_i% = 0 'index is root index
 				Local child_i% = smallest_child_i( item_i ) 'get the smaller of two children
 				While Not f_less_than( binary_tree[item_i], binary_tree[child_i] )
+				And Not item_i = item_count - 1
 					'while the heap property is being violated
 					swap( item_i, child_i ) 'swap item with its smallest child
 					item_i = child_i 'set item to its current smallest child
 					child_i = smallest_child_i( item_i ) 'update item's smallest child
-					If item_i = cur_size Then Exit 'there are no more children
 				End While
 			Else
 				binary_tree[0] = Null
 			End If
-			cur_size :- 1 'maintain size-tracking field
+			unregister( root ) 'maintain uniqueness registry array
+			item_count :- 1 'maintain size-tracking field
 			Return root 'return the root, secure in the knowledge that this is still a min-heap
 		Else
 			Return Null 'the min-heap is empty; it doesn't even have a root
 		End If
 	End Method
 	Method is_empty%()
-		Return cur_size = 0
+		Return item_count = 0
+	End Method
+	Method in_queue%( c:CELL )
+		Return registry[c.row,c.col]
+	End Method
+	Method register( c:CELL )
+		registry[c.row,c.col] = True
+	End Method
+	Method unregister( c:CELL )
+		registry[c.row,c.col] = False
 	End Method
 End Type
 Function f_less_than%( i:CELL, j:CELL ) 'uses the f() function to determine if {i} < {j}
 	Return get_pathing_f( i ) < get_pathing_f( j )
 End Function
 
-Global potential_paths:PRIORITY_QUEUE 'prioritized list of cells representing end-points of potential paths to be explored (open-list)
+Global potential_paths:PATH_QUEUE 'prioritized list of cells representing end-points of potential paths to be explored (open-list)
 '______________________________________________________________________________
 Function get_passable_unvisited_neighbors:TList( c:CELL )
 	Local list:TList = CreateList()
@@ -278,7 +289,7 @@ Function init_pathing_structures()
 	pathing_visited = New Int[ pathing_grid_h, pathing_grid_w ]
 	pathing_h = New Float[ pathing_grid_h, pathing_grid_w ]
 	pathing_g = New Float[ pathing_grid_h, pathing_grid_w ]
-	potential_paths = PRIORITY_QUEUE.Create( pathing_grid_h*pathing_grid_w )
+	potential_paths = PATH_QUEUE.Create( pathing_grid_h, pathing_grid_w )
 	For Local r% = 0 To pathing_grid_h - 1
 		For Local c% = 0 To pathing_grid_w - 1
 			pathing_grid[r,c] = PATH_PASSABLE
@@ -310,53 +321,56 @@ Global global_start:CELL, global_goal:CELL
 Function find_path_given_cells:TList( start:CELL, goal:CELL )
 	global_start = start
 	global_goal = goal
-	
+																				debug_pathing( "pathing_visited[*,*] = False" )
 	For Local r% = 0 To pathing_grid_h - 1
 		For Local c% = 0 To pathing_grid_w - 1
 			pathing_visited[r,c] = False
 		Next
 	Next
-debug_pathing( "pathing_visited[*,*] = False" )
-	potential_paths.insert( start )
-debug_pathing( "potential_paths.insert( start )" )
+																				debug_pathing( "set_pathing_g( start, 0 )" )
 	set_pathing_g( start, 0 )
-debug_pathing( "set_pathing_g( start, 0 )" )
+																				debug_pathing( "set_pathing_h( start, distance( start, goal ))" )
+	set_pathing_h( start, distance( start, goal ))
+																				debug_pathing( "potential_paths.insert( start )" )
+	potential_paths.insert( start )
+																				debug_pathing( "While Not potential_paths.is_empty()" )
 	While Not potential_paths.is_empty()
-debug_pathing( "Not potential_paths.is_empty()" )
+																				debug_pathing( "cursor = potential_paths.pop_root()" )
 		Local cursor:CELL = potential_paths.pop_root()
-debug_pathing( "cursor = potential_paths.pop_root()" )
+																				debug_pathing( "If cursor.eq( goal )" )
 		If cursor.eq( goal )
-debug_pathing( "cursor.eq( goal ) 'TOUCHDOWN!" )
-			Return backtrace_path( start, cursor )
+																				debug_pathing( "Return backtrace_path( start, goal )" )
+			Return backtrace_path( start, goal )
 		End If
+																				debug_pathing( "set_pathing_visited( cursor, True )" )
 		set_pathing_visited( cursor, True )
-debug_pathing( "set_pathing_visited( cursor, True )" )
+																				debug_pathing( "For neighbor = EachIn get_passable_unvisited_neighbors( cursor )" )
 		For Local neighbor:CELL = EachIn get_passable_unvisited_neighbors( cursor )
-debug_pathing( "neighbor = *_passable_unvisited_neighbors( cursor )" )
-			Local neighbor_g# = get_pathing_g( neighbor ) + distance( cursor, neighbor )
-debug_pathing( "neighbor_g = get_pathing_g( neighbor ) + distance( cursor, neighbor )" )
+																				debug_pathing( "neighbor_g = get_pathing_g( neighbor ) + distance( cursor, neighbor )" )
+			Local neighbor_g# = get_pathing_g( cursor ) + distance( cursor, neighbor )
+																				debug_pathing( "neighbor_g_is_better = False" )
 			Local neighbor_g_is_better% = False
-debug_pathing( "neighbor_g_is_better = False" )
+																				debug_pathing( "If potential_paths.insert( neighbor )" )
 			If potential_paths.insert( neighbor )
-debug_pathing( "potential_paths.insert( neighbor ) 'success" )
+																				debug_pathing( "set_pathing_h( neighbor, distance( neighbor, goal ))" )
 				set_pathing_h( neighbor, distance( neighbor, goal ))
-debug_pathing( "set_pathing_h( neighbor, distance( neighbor, goal ))" )
-				neighbor_g_is_better = True; debug_pathing( "neighbor_g_is_better = True" )
-			Else If neighbor_g < get_pathing_g( neighbor )
-debug_pathing( "neighbor_g < get_pathing_g( neighbor )" )
+																				debug_pathing( "neighbor_g_is_better = True" )
 				neighbor_g_is_better = True
-debug_pathing( "neighbor_g_is_better = True" )
+																				debug_pathing( "Else If neighbor_g < get_pathing_g( neighbor )" )
+			Else If neighbor_g < get_pathing_g( neighbor )
+																				debug_pathing( "neighbor_g_is_better = True" )
+				neighbor_g_is_better = True
 			End If
+																				debug_pathing( "If neighbor_g_is_better" )
 			If neighbor_g_is_better
-debug_pathing( "neighbor_g_is_better" )
+																				debug_pathing( "set_pathing_came_from( neighbor, cursor )" )
 				set_pathing_came_from( neighbor, cursor )
-debug_pathing( "set_pathing_came_from( neighbor, cursor )" )
+																				debug_pathing( "set_pathing_g( neighbor, neighbor_g )" )
 				set_pathing_g( neighbor, neighbor_g )
-debug_pathing( "set_pathing_g( neighbor, neighbor_g )" )
 			End If
 		Next
 	End While
-debug_pathing( "FAILURE. OMG" )
+																				debug_pathing( "FAIL" )
 	Return Null
 End Function
 
