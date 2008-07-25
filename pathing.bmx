@@ -76,77 +76,17 @@ End Type
 Global ALL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_NORTHEAST, DIRECTION_EAST, DIRECTION_SOUTHEAST, DIRECTION_SOUTH, DIRECTION_SOUTHWEST, DIRECTION_WEST, DIRECTION_NORTHWEST ]
 Global cell_size# = 10
 
-Const PATH_PASSABLE% = 1 'indicates normal cost grid cell
-Const PATH_BLOCKED% = 0 'indicates entirely impassable grid cell
+Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
+Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
 Global pathing_grid_h% 'number of rows in pathing system
 Global pathing_grid_w% 'number of columns in pathing system
-Global pathing_grid%[,] 'I am: {passable|blocked}
-Global pathing_came_from:CELL[,] 'my parent is: [...]
-Global pathing_visited%[,] 'I am visited. {true|false}
-Global pathing_g#[,] 'actual cost to get here from start
-Global pathing_h#[,] 'estimated cost to get to goal from here
-Global pathing_f#[,] 'actual cost to get here from start + estimated cost to get to goal from here
-'______________________________________________________________________________
-Function in_bounds%( c:CELL )
-	If c <> Null And c.row > 0 And c.row < pathing_grid_h And c.col > 0 And c.col < pathing_grid_w ..
-	Then Return True Else Return False
-End Function
+
 Function distance#( c1:CELL, c2:CELL )
 	Return Sqr( Pow( cell_size*(c2.row - c1.row), 2 ) + Pow( cell_size*(c2.col - c1.col), 2 ))
 End Function
-
-Function get_pathing_grid%( c:CELL )
-	If Not in_bounds( c ) Then Return PATH_BLOCKED
-	Return pathing_grid[c.row,c.col]
-End Function
-Function set_pathing_grid( c:CELL, value% )
-	If Not in_bounds( c ) Then Return
-	pathing_grid[c.row,c.col] = value
-End Function
-Function get_pathing_came_from:CELL( c:CELL )
-	If Not in_bounds( c ) Then Return CELL.Create( -1, -1 )
-	Return pathing_came_from[c.row,c.col]
-End Function
-Function set_pathing_came_from( c:CELL, value:CELL )
-	If Not in_bounds( c ) Then Return
-	pathing_came_from[c.row,c.col] = value.clone()
-End Function
-Function get_pathing_visited%( c:CELL )
-	If Not in_bounds( c ) Then Return True
-	Return pathing_visited[c.row,c.col]
-End Function
-Function set_pathing_visited( c:CELL, value% )
-	If Not in_bounds( c ) Then Return
-	pathing_visited[c.row,c.col] = value
-End Function
-Function get_pathing_g#( c:CELL )
-	If Not in_bounds( c ) Then Return MAXIMUM_COST
-	Return pathing_g[c.row,c.col]
-End Function
-Function set_pathing_g( c:CELL, value# )
-	If Not in_bounds( c ) Then Return
-	pathing_g[c.row,c.col] = value
-End Function
-Function get_pathing_h#( c:CELL )
-	If Not in_bounds( c ) Then Return MAXIMUM_COST
-	Return pathing_h[c.row,c.col]
-End Function
-Function set_pathing_h( c:CELL, value# )
-	If Not in_bounds( c ) Then Return
-	pathing_h[c.row,c.col] = value
-End Function
-Function get_pathing_f#( c:CELL )
-	If Not in_bounds( c ) Then Return MAXIMUM_COST
-	Return pathing_f[c.row,c.col]
-End Function
-Function set_pathing_f( c:CELL, value# )
-	If Not in_bounds( c ) Then Return
-	pathing_f[c.row,c.col] = value
-End Function
 '______________________________________________________________________________
 Type PATH_QUEUE
-	Field row_count% 'number of rows in the pathing grid
-	Field col_count% 'number of columns in the pathing grid
+	Field row_count%, col_count% 'dimensions
 	Field max_size% '(private) row_count * col_count
 	Field item_count% 'number of items in this data structure
 	Field binary_tree:CELL[] 'min-heap binary tree implemented as an arry
@@ -247,12 +187,106 @@ Type PATH_QUEUE
 	Method unregister( c:CELL )
 		registry[c.row,c.col] = False
 	End Method
+	Method reset()
+		For Local i% = 0 To item_count - 1
+			unregister( binary_tree[i] )
+			binary_tree[i] = Null
+		Next
+	End Method
+	
 End Type
-Function f_less_than%( i:CELL, j:CELL ) 'uses the f() function to determine if {i} < {j}
-	Return get_pathing_f( i ) < get_pathing_f( j )
-End Function
+'______________________________________________________________________________
+Type PATHING_STRUCTURE
+	Field row_count%, col_count% 'dimensions
+	Field pathing_grid%[,] 'I am: {passable|blocked}
+	Field pathing_came_from:CELL[,] 'my parent is: [...]
+	Field pathing_visited%[,] 'I am visited. {true|false}
+	Field pathing_g#[,] 'actual cost to get here from start
+	Field pathing_h#[,] 'estimated cost to get to goal from here
+	Field pathing_f#[,] 'actual cost to get here from start + estimated cost to get to goal from here
+	Field potential_paths:PATH_QUEUE 'prioritized list of cells representing end-points of potential paths to be explored (open-list)
+	Method New()
+	End Method
+	
+	Function Create:PATHING_STRUCTURE( row_count% = 1, col_count% = 1 )
+		Local ps:PATHING_STRUCTURE = New PATHING_STRUCTURE
+		ps.row_count = row_count; ps.col_count = col_count
+		pathing_grid = New Int[ row_count, pathing_grid_w ]
+		pathing_came_from = New CELL[ row_count, col_count ]
+		pathing_visited = New Int[ row_count, col_count ]
+		pathing_g = New Float[ row_count, col_count ]
+		pathing_h = New Float[ row_count, col_count ]
+		pathing_f = New Float[ row_count, col_count ]
+		potential_paths = PATH_QUEUE.Create( row_count, col_count )
+		Return ps
+	End Function
+	
+	Method in_bounds%( c:CELL )
+		If c <> Null And c.row > 0 And c.row < pathing_grid_h And c.col > 0 And c.col < pathing_grid_w ..
+		Then Return True Else Return False
+	End Method
+	
+	Method grid%( c:CELL )
+		If Not in_bounds( c ) Then Return PATH_BLOCKED
+		Return pathing_grid[c.row,c.col]
+	End Method
+	Method set_grid( c:CELL, value% )
+		If Not in_bounds( c ) Then Return
+		pathing_grid[c.row,c.col] = value
+	End Method
+	Method came_from:CELL( c:CELL )
+		If Not in_bounds( c ) Then Return CELL.Create( -1, -1 )
+		Return pathing_came_from[c.row,c.col]
+	End Method
+	Method set_came_from( c:CELL, value:CELL )
+		If Not in_bounds( c ) Then Return
+		pathing_came_from[c.row,c.col] = value.clone()
+	End Method
+	Method visited%( c:CELL )
+		If Not in_bounds( c ) Then Return True
+		Return pathing_visited[c.row,c.col]
+	End Method
+	Method set_visited( c:CELL, value% )
+		If Not in_bounds( c ) Then Return
+		pathing_visited[c.row,c.col] = value
+	End Method
+	Method g#( c:CELL )
+		If Not in_bounds( c ) Then Return MAXIMUM_COST
+		Return pathing_g[c.row,c.col]
+	End Method
+	Method set_g( c:CELL, value# )
+		If Not in_bounds( c ) Then Return
+		pathing_g[c.row,c.col] = value
+	End Method
+	Method h#( c:CELL )
+		If Not in_bounds( c ) Then Return MAXIMUM_COST
+		Return pathing_h[c.row,c.col]
+	End Method
+	Method set_h( c:CELL, value# )
+		If Not in_bounds( c ) Then Return
+		pathing_h[c.row,c.col] = value
+	End Method
+	Method f#( c:CELL )
+		If Not in_bounds( c ) Then Return MAXIMUM_COST
+		Return pathing_f[c.row,c.col]
+	End Method
+	Method set_f( c:CELL, value# )
+		If Not in_bounds( c ) Then Return
+		pathing_f[c.row,c.col] = value
+	End Method
+	Method set_f_implicit( c:CELL )
+		If Not in_bounds( c ) Then Return
+		pathing_f[c.row,c.col] = pathing_g[c.row,c.col] + pathing_h[c.row,c.col]
+	End Method
+		
+	Method f_less_than%( i:CELL, j:CELL ) 'uses the f() function to determine if {i} < {j}
+		Return get_pathing_f( i ) < get_pathing_f( j )
+	End Method
+End Type
+'______________________________________________________________________________
 
-Global potential_paths:PATH_QUEUE 'prioritized list of cells representing end-points of potential paths to be explored (open-list)
+Global pathing:PATHING_STRUCTURE
+
 '______________________________________________________________________________
 Function get_passable_unvisited_neighbors:TList( c:CELL )
 	Local list:TList = CreateList()
@@ -278,27 +312,7 @@ End Function
 Function init_pathing_system()
 	pathing_grid_h = arena_h / cell_size
 	pathing_grid_w = arena_w / cell_size
-	init_pathing_structures()
-	'init_pathing_grid_from_obstacles()
-End Function
-Function init_pathing_structures()
-	pathing_grid = New Int[ pathing_grid_h, pathing_grid_w ]
-	pathing_came_from = New CELL[ pathing_grid_h, pathing_grid_w ]
-	pathing_visited = New Int[ pathing_grid_h, pathing_grid_w ]
-	pathing_g = New Float[ pathing_grid_h, pathing_grid_w ]
-	pathing_h = New Float[ pathing_grid_h, pathing_grid_w ]
-	pathing_f = New Float[ pathing_grid_h, pathing_grid_w ]
-	potential_paths = PATH_QUEUE.Create( pathing_grid_h, pathing_grid_w )
-	For Local r% = 0 To pathing_grid_h - 1
-		For Local c% = 0 To pathing_grid_w - 1
-			pathing_grid[r,c] = PATH_PASSABLE
-			pathing_came_from[r,c] = CELL.Create( r, c )
-			pathing_visited[r,c] = False
-			pathing_g[r,c] = 0
-			pathing_h[r,c] = 0
-			pathing_f[r,c] = 0
-		Next
-	Next
+	pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
 End Function
 Function init_pathing_grid_from_obstacles( obstacles:TList )
 	'for each obstacle
@@ -327,9 +341,10 @@ Function find_path_given_cells:TList( start:CELL, goal:CELL )
 			pathing_visited[r,c] = False
 		Next
 	Next
-																				debug_pathing( "set_pathing_g( start, 0 )" )
-	set_pathing_g( start, 0 )
 																				debug_pathing( "potential_paths.insert( start )" )
+	set_pathing_g( start, 0 )
+	set_pathing_h( start, distance( start, goal ))
+	set_pathing_f_implicit( start )
 	potential_paths.insert( start )
 																				debug_pathing( "While Not potential_paths.is_empty()" )
 	While Not potential_paths.is_empty()
@@ -349,9 +364,10 @@ Function find_path_given_cells:TList( start:CELL, goal:CELL )
 																				debug_pathing( "tentative_g_is_better = False" )
 			Local tentative_g_is_better% = False
 																				debug_pathing( "If potential_paths.insert( neighbor )" )
+			set_pathing_g( neighbor, get_pathing_g( cursor ) + distance( cursor, neighbor ))
+			set_pathing_h( neighbor, distance( neighbor, goal ))
+			set_pathing_f_implicit( neighbor )
 			If potential_paths.insert( neighbor )
-																				debug_pathing( "set_pathing_h( neighbor, distance( neighbor, goal ))" )
-				set_pathing_h( neighbor, distance( neighbor, goal ))
 																				debug_pathing( "tentative_g_is_better = True" )
 				tentative_g_is_better = True
 																				debug_pathing( "Else If tentative_g < get_pathing_g( neighbor )" )
