@@ -229,7 +229,7 @@ Type PATHING_STRUCTURE
 	End Function
 	
 	Method in_bounds%( c:CELL )
-		If c <> Null And c.row > 0 And c.row < pathing_grid_h And c.col > 0 And c.col < pathing_grid_w ..
+		If c <> Null And c.row >= 0 And c.row < pathing_grid_h And c.col >= 0 And c.col < pathing_grid_w ..
 		Then Return True Else Return False
 	End Method
 	
@@ -311,50 +311,50 @@ Type PATHING_STRUCTURE
 	Method find_path_cells:TList( start:CELL, goal:CELL )
 		global_start = start
 		global_goal = goal
-																					debug_pathing( "potential_paths.insert( start )" )
+'																					debug_pathing( "potential_paths.insert( start )" )
 		set_g( start, 0 )
 		set_h( start, distance( start, goal ))
 		set_f_implicit( start )
 		potential_paths.insert( start )
-																					debug_pathing( "While Not potential_paths.is_empty()" )
+'																					debug_pathing( "While Not potential_paths.is_empty()" )
 		While Not potential_paths.is_empty()
 																					debug_pathing( "cursor = potential_paths.pop_root()" )
 			Local cursor:CELL = potential_paths.pop_root()
-																					debug_pathing( "If cursor.eq( goal )" )
+'																					debug_pathing( "If cursor.eq( goal )" )
 			If cursor.eq( goal )
-																					debug_pathing( "Return backtrace_path( start, goal )" )
-				Return backtrace_path( start, goal )
+'																					debug_pathing( "Return backtrace_path( start, goal )" )
+				Return backtrace_path( goal, start )
 			End If
-																					debug_pathing( "set_pathing_visited( cursor, True )" )
+'																					debug_pathing( "set_pathing_visited( cursor, True )" )
 			visit( cursor )
-																					debug_pathing( "For neighbor = EachIn get_passable_unvisited_neighbors( cursor )" )
+'																					debug_pathing( "For neighbor = EachIn get_passable_unvisited_neighbors( cursor )" )
 			For Local neighbor:CELL = EachIn get_passable_unvisited_neighbors( cursor )
-																					debug_pathing( "tentative_g = get_pathing_g( neighbor ) + distance( cursor, neighbor )" )
+'																					debug_pathing( "tentative_g = get_pathing_g( neighbor ) + distance( cursor, neighbor )" )
 				Local tentative_g# = g( cursor ) + distance( cursor, neighbor )
-																					debug_pathing( "tentative_g_is_better = False" )
+'																					debug_pathing( "tentative_g_is_better = False" )
 				Local tentative_g_is_better% = False
-																					debug_pathing( "If potential_paths.insert( neighbor )" )
+'																					debug_pathing( "If potential_paths.insert( neighbor )" )
 				set_g( neighbor, g( cursor ) + distance( cursor, neighbor ))
 				set_h( neighbor, distance( neighbor, goal ))
 				set_f_implicit( neighbor )
 				If potential_paths.insert( neighbor )
-																					debug_pathing( "tentative_g_is_better = True" )
+'																					debug_pathing( "tentative_g_is_better = True" )
 					tentative_g_is_better = True
-																					debug_pathing( "Else If tentative_g < get_pathing_g( neighbor )" )
+'																					debug_pathing( "Else If tentative_g < get_pathing_g( neighbor )" )
 				Else If tentative_g < g( neighbor )
-																					debug_pathing( "tentative_g_is_better = True" )
+'																					debug_pathing( "tentative_g_is_better = True" )
 					tentative_g_is_better = True
 				End If
-																					debug_pathing( "If tentative_g_is_better" )
+'																					debug_pathing( "If tentative_g_is_better" )
 				If tentative_g_is_better
-																					debug_pathing( "set_pathing_came_from( neighbor, cursor )" )
+'																					debug_pathing( "set_pathing_came_from( neighbor, cursor )" )
 					set_came_from( neighbor, cursor )
 					set_g( neighbor, tentative_g )
 					set_f( neighbor, tentative_g + h( neighbor ))
 				End If
 			Next
 		End While
-																					debug_pathing( "FAIL" )
+'																					debug_pathing( "FAIL" )
 		Return Null
 	End Method
 	
@@ -371,7 +371,7 @@ End Type
 Global pathing:PATHING_STRUCTURE
 Global global_start:CELL, global_goal:CELL
 
-Function f_less_than%( i:CELL, j:CELL ) 'uses the f() function to determine if {i} < {j}
+Function f_less_than%( i:CELL, j:CELL ) 'f(i) < f(j)
 	Return pathing.f( i ) < pathing.f( j )
 End Function
 '______________________________________________________________________________
