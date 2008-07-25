@@ -217,14 +217,14 @@ Type PATHING_STRUCTURE
 	Function Create:PATHING_STRUCTURE( row_count% = 1, col_count% = 1 )
 		Local ps:PATHING_STRUCTURE = New PATHING_STRUCTURE
 		ps.row_count = row_count; ps.col_count = col_count
-		pathing_grid = New Int[ row_count, pathing_grid_w ]
-		pathing_came_from = New CELL[ row_count, col_count ]
-		pathing_visited = New Int[ row_count, col_count ]
-		pathing_visited_list = CreateList()
-		pathing_g = New Float[ row_count, col_count ]
-		pathing_h = New Float[ row_count, col_count ]
-		pathing_f = New Float[ row_count, col_count ]
-		potential_paths = PATH_QUEUE.Create( row_count, col_count )
+		ps.pathing_grid = New Int[ row_count, pathing_grid_w ]
+		ps.pathing_came_from = New CELL[ row_count, col_count ]
+		ps.pathing_visited = New Int[ row_count, col_count ]
+		ps.pathing_visited_list = CreateList()
+		ps.pathing_g = New Float[ row_count, col_count ]
+		ps.pathing_h = New Float[ row_count, col_count ]
+		ps.pathing_f = New Float[ row_count, col_count ]
+		ps.potential_paths = PATH_QUEUE.Create( row_count, col_count )
 		Return ps
 	End Function
 	
@@ -292,8 +292,8 @@ Type PATHING_STRUCTURE
 		For Local dir% = 0 To ALL_DIRECTIONS.Length - 1
 			Local c_dir:CELL = c.move( dir )
 			If in_bounds( c_dir ) ..
-			And get_pathing_grid( c_dir ) = PATH_PASSABLE ..
-			And Not get_pathing_visited( c_dir )
+			And grid( c_dir ) = PATH_PASSABLE ..
+			And Not visited( c_dir )
 				list.AddLast( c_dir )
 			End If
 		Next
@@ -303,7 +303,7 @@ Type PATHING_STRUCTURE
 		Local list:TList = CreateList()
 		list.AddFirst( c.clone() )
 		While Not CELL(list.First()).eq( start )
-			list.AddFirst( get_pathing_came_from( CELL(list.First()) ))
+			list.AddFirst( came_from( CELL(list.First()) ))
 		End While
 		Return list
 	End Method
@@ -330,29 +330,27 @@ Type PATHING_STRUCTURE
 																					debug_pathing( "For neighbor = EachIn get_passable_unvisited_neighbors( cursor )" )
 			For Local neighbor:CELL = EachIn get_passable_unvisited_neighbors( cursor )
 																					debug_pathing( "tentative_g = get_pathing_g( neighbor ) + distance( cursor, neighbor )" )
-				Local tentative_g# = get_pathing_g( cursor ) + distance( cursor, neighbor )
+				Local tentative_g# = g( cursor ) + distance( cursor, neighbor )
 																					debug_pathing( "tentative_g_is_better = False" )
 				Local tentative_g_is_better% = False
 																					debug_pathing( "If potential_paths.insert( neighbor )" )
-				set_pathing_g( neighbor, get_pathing_g( cursor ) + distance( cursor, neighbor ))
-				set_pathing_h( neighbor, distance( neighbor, goal ))
-				set_pathing_f_implicit( neighbor )
+				set_g( neighbor, g( cursor ) + distance( cursor, neighbor ))
+				set_h( neighbor, distance( neighbor, goal ))
+				set_f_implicit( neighbor )
 				If potential_paths.insert( neighbor )
 																					debug_pathing( "tentative_g_is_better = True" )
 					tentative_g_is_better = True
 																					debug_pathing( "Else If tentative_g < get_pathing_g( neighbor )" )
-				Else If tentative_g < get_pathing_g( neighbor )
+				Else If tentative_g < g( neighbor )
 																					debug_pathing( "tentative_g_is_better = True" )
 					tentative_g_is_better = True
 				End If
 																					debug_pathing( "If tentative_g_is_better" )
 				If tentative_g_is_better
 																					debug_pathing( "set_pathing_came_from( neighbor, cursor )" )
-					set_pathing_came_from( neighbor, cursor )
-																					debug_pathing( "set_pathing_g( neighbor, tentative_g )" )
-					set_pathing_g( neighbor, tentative_g )
-																					debug_pathing( "set_pathing_f( neighbor, tentative_g + get_pathing_h( neighbor ))" )
-					set_pathing_f( neighbor, tentative_g + get_pathing_h( neighbor ))
+					set_came_from( neighbor, cursor )
+					set_g( neighbor, tentative_g )
+					set_f( neighbor, tentative_g + h( neighbor ))
 				End If
 			Next
 		End While

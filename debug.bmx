@@ -4,7 +4,8 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-'Global sx%, sy%, h%, px#, py#, maus_x#, maus_y#, speed# = 1, r#, a#
+Global sx%, sy%, h%, px#, py#
+'Global maus_x#, maus_y#, speed# = 1, r#, a#
 Global wait_ts%, wait_time%, r%, c%, mouse:CELL
 
 '______________________________________________________________________________
@@ -51,31 +52,32 @@ Function debug_pathing( message$ = "" )
 			DrawLine( c*cell_size, 0, c*cell_size, pathing_grid_h*cell_size )
 		Next
 		
-		For r = 0 To pathing_grid_h - 1
-			For c = 0 To pathing_grid_w - 1
+		Local cursor:CELL = New CELL
+		For cursor.row = 0 To pathing_grid_h - 1
+			For cursor.col = 0 To pathing_grid_w - 1
 				'draw pathing_grid contents
 				SetColor( 255, 255, 255 ); SetAlpha( 0.5 )
-				If pathing_grid[r,c] = PATH_BLOCKED Then ..
-					DrawRect( c*cell_size + 1, r*cell_size + 1, cell_size - 2, cell_size - 2 )
+				If pathing.grid( cursor ) = PATH_BLOCKED Then ..
+					DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
 				'draw pathing_came_from contents
 				SetLineWidth( 1 ); SetColor( 255, 255, 255 ); SetAlpha( 0.5 )
-				If Not pathing_came_from[r,c].eq( CELL.Create( r, c )) Then ..
-					DrawLine( c*cell_size + cell_size/2, r*cell_size + cell_size/2, pathing_came_from[r,c].col*cell_size + cell_size/2, pathing_came_from[r,c].row*cell_size + cell_size/2 )
+				If Not pathing.came_from( cursor ).eq( cursor ) Then ..
+					DrawLine( cursor.col*cell_size + cell_size/2, cursor.row*cell_size + cell_size/2, pathing.came_from( cursor ).col*cell_size + cell_size/2, pathing.came_from( cursor ).row*cell_size + cell_size/2 )
 				'draw visited
 				SetColor( 255, 212, 212 ); SetAlpha( 0.5 )
-				If pathing_visited[r,c] Then ..
-					DrawRect( c*cell_size + 1, r*cell_size + 1, cell_size - 2, cell_size - 2 )
+				If pathing.visited( cursor ) Then ..
+					DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
 			Next
 		Next
-		For Local i% = 0 To potential_paths.item_count - 1 + 1
-			If potential_paths.binary_tree[i] <> Null
+		For Local i% = 0 To pathing.potential_paths.item_count - 1 + 1
+			If pathing.potential_paths.binary_tree[i] <> Null
 				'draw potential paths
 				SetColor( 212, 255, 212 ); SetAlpha( 0.5 )
-				DrawRect( potential_paths.binary_tree[i].col*cell_size + 1, potential_paths.binary_tree[i].row*cell_size + 1, cell_size - 2, cell_size - 2 )
+				DrawRect( pathing.potential_paths.binary_tree[i].col*cell_size + 1, pathing.potential_paths.binary_tree[i].row*cell_size + 1, cell_size - 2, cell_size - 2 )
 				'potential_paths min_heap binary_tree data structure graph
 				SetColor( 127, 127, 127 ); SetAlpha( 1 )
 				SetImageFont( consolas_normal_12 )
-				DrawText( "p[" + i + "] f:" + Int(get_pathing_f( potential_paths.binary_tree[i] )), arena_w + 5, i*12 )
+				DrawText( "p[" + i + "] f:" + Int(pathing.f( pathing.potential_paths.binary_tree[i] )), arena_w + 5, i*12 )
 			Else
 				SetColor( 64, 64, 64 ); SetAlpha( 1 )
 				SetImageFont( consolas_normal_12 )
