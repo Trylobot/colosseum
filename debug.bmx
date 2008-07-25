@@ -46,6 +46,11 @@ Function debug_pathing( message$ = "", done% = False )
 		
 		Cls
 		
+		'draw debug help
+		SetColor( 127, 127, 255 ); SetAlpha( 1 )
+		SetImageFont( consolas_normal_12 )
+		DrawText( "set_goal,find_path:F4  pause:F4/faster:F3  set_blockable:F5", 3, -26 )
+		
 		'draw pathing_grid cell border lines
 		SetLineWidth( 1 ); SetColor( 127, 127, 127 ); SetAlpha( 0.75 )
 		For r = 0 To pathing_grid_h
