@@ -5,6 +5,8 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Const MAXIMUM_COST# = 2147483647
+
 Const DIRECTION_NORTH% = 0
 Const DIRECTION_NORTHEAST% = 1
 Const DIRECTION_EAST% = 2
@@ -81,8 +83,9 @@ Global pathing_grid_w% 'number of columns in pathing system
 Global pathing_grid%[,] 'I am: {passable|blocked}
 Global pathing_came_from:CELL[,] 'my parent is: [...]
 Global pathing_visited%[,] 'I am visited. {true|false}
-Global pathing_h#[,] 'heuristic cost to goal from here
-Global pathing_g#[,] 'actual cost to get here from beginning
+Global pathing_g#[,] 'actual cost to get here from start
+Global pathing_h#[,] 'estimated cost to get to goal from here
+Global pathing_f#[,] 'actual cost to get here from start + estimated cost to get to goal from here
 '______________________________________________________________________________
 Function in_bounds%( c:CELL )
 	If c <> Null And c.row > 0 And c.row < pathing_grid_h And c.col > 0 And c.col < pathing_grid_w ..
@@ -93,57 +96,52 @@ Function distance#( c1:CELL, c2:CELL )
 End Function
 
 Function get_pathing_grid%( c:CELL )
-	If in_bounds( c ) Then ..
-	Return pathing_grid[c.row,c.col] Else Return PATH_BLOCKED
+	If Not in_bounds( c ) Then Return PATH_BLOCKED
+	Return pathing_grid[c.row,c.col]
 End Function
 Function set_pathing_grid( c:CELL, value% )
-	If in_bounds( c ) Then ..
+	If Not in_bounds( c ) Then Return
 	pathing_grid[c.row,c.col] = value
 End Function
 Function get_pathing_came_from:CELL( c:CELL )
-	If in_bounds( c ) Then ..
-	Return pathing_came_from[c.row,c.col] Else Return CELL.Create( -1, -1 )
+	If Not in_bounds( c ) Then Return CELL.Create( -1, -1 )
+	Return pathing_came_from[c.row,c.col]
 End Function
 Function set_pathing_came_from( c:CELL, value:CELL )
-	If in_bounds( c ) Then ..
+	If Not in_bounds( c ) Then Return
 	pathing_came_from[c.row,c.col] = value.clone()
 End Function
 Function get_pathing_visited%( c:CELL )
-	If in_bounds( c ) Then ..
-	Return pathing_visited[c.row,c.col] Else Return True
+	If Not in_bounds( c ) Then Return True
+	Return pathing_visited[c.row,c.col]
 End Function
 Function set_pathing_visited( c:CELL, value% )
-	If in_bounds( c ) Then ..
+	If Not in_bounds( c ) Then Return
 	pathing_visited[c.row,c.col] = value
 End Function
-Function get_pathing_h#( c:CELL )
-	If in_bounds( c ) Then ..
-	Return pathing_h[c.row,c.col] Else Return -1.0
-End Function
-Function set_pathing_h( c:CELL, value# )
-	If in_bounds( c ) Then ..
-	pathing_h[c.row,c.col] = value
-End Function
 Function get_pathing_g#( c:CELL )
-	If in_bounds( c ) Then ..
-	Return pathing_g[c.row,c.col] Else Return -1.0
+	If Not in_bounds( c ) Then Return MAXIMUM_COST
+	Return pathing_g[c.row,c.col]
 End Function
 Function set_pathing_g( c:CELL, value# )
-	If in_bounds( c ) Then ..
+	If Not in_bounds( c ) Then Return
 	pathing_g[c.row,c.col] = value
 End Function
+Function get_pathing_h#( c:CELL )
+	If Not in_bounds( c ) Then Return MAXIMUM_COST
+	Return pathing_h[c.row,c.col]
+End Function
+Function set_pathing_h( c:CELL, value# )
+	If Not in_bounds( c ) Then Return
+	pathing_h[c.row,c.col] = value
+End Function
 Function get_pathing_f#( c:CELL )
-	If in_bounds( c )
-		Local g# = pathing_g[c.row,c.col]
-		Local h# = pathing_h[c.row,c.col]
-		If h = -1.0 'h has never been calculated for this cell
-			h = distance( c, global_goal )
-			set_pathing_h( c, h )
-		End If
-		Return (g + h)
-	Else
-		Return -1.0
-	End If
+	If Not in_bounds( c ) Then Return MAXIMUM_COST
+	Return pathing_f[c.row,c.col]
+End Function
+Function set_pathing_f( c:CELL, value# )
+	If Not in_bounds( c ) Then Return
+	pathing_f[c.row,c.col] = value
 End Function
 '______________________________________________________________________________
 Type PATH_QUEUE
@@ -194,6 +192,7 @@ Type PATH_QUEUE
 	Method insert%( i:CELL )
 		If item_count < max_size And Not in_queue( i ) 'if not full and item to be inserted is not already present in the queue
 			binary_tree[item_count] = i.clone() 'insert a deep-copy of the argument into the next available slot
+			register( i ) 'maintain uniqueness registry array
 			If Not is_empty()
 				Local item_i% = item_count 'new item's index is equal to the current size of the heap
 				Local item_parent_i% = parent_i( item_i ) 'pre-cache parent's index
@@ -205,7 +204,6 @@ Type PATH_QUEUE
 					item_parent_i = parent_i( item_i ) 'calculate item's new parent's index
 				End While
 			End If
-			register( i ) 'maintain uniqueness registry array
 			item_count :+ 1 'maintain size-tracking field
 			Return True 'successful insert
 		Else
@@ -215,22 +213,22 @@ Type PATH_QUEUE
 	Method pop_root:CELL()
 		If item_count > 0 'if not empty
 			Local root:CELL = binary_tree[0] 'save the current root; it's always at [0]
-			If item_count > 1 'if the root is not the only element
+			unregister( root ) 'maintain uniqueness registry array
+			If item_count >= 2 'if the root is not the only element
 				binary_tree[0] = binary_tree[item_count - 1] 'set the root to the last element in the heap
 				binary_tree[item_count - 1] = Null 'remove the reference at end of the heap to the new root
 				Local item_i% = 0 'index is root index
 				Local child_i% = smallest_child_i( item_i ) 'get the smaller of two children
-				While Not f_less_than( binary_tree[item_i], binary_tree[child_i] )
-				And Not item_i = item_count - 1
+				While binary_tree[child_i] <> Null ..
+				And Not f_less_than( binary_tree[item_i], binary_tree[child_i] )
 					'while the heap property is being violated
 					swap( item_i, child_i ) 'swap item with its smallest child
 					item_i = child_i 'set item to its current smallest child
 					child_i = smallest_child_i( item_i ) 'update item's smallest child
 				End While
-			Else
+			Else 'item_count == 1
 				binary_tree[0] = Null
 			End If
-			unregister( root ) 'maintain uniqueness registry array
 			item_count :- 1 'maintain size-tracking field
 			Return root 'return the root, secure in the knowledge that this is still a min-heap
 		Else
@@ -287,16 +285,18 @@ Function init_pathing_structures()
 	pathing_grid = New Int[ pathing_grid_h, pathing_grid_w ]
 	pathing_came_from = New CELL[ pathing_grid_h, pathing_grid_w ]
 	pathing_visited = New Int[ pathing_grid_h, pathing_grid_w ]
-	pathing_h = New Float[ pathing_grid_h, pathing_grid_w ]
 	pathing_g = New Float[ pathing_grid_h, pathing_grid_w ]
+	pathing_h = New Float[ pathing_grid_h, pathing_grid_w ]
+	pathing_f = New Float[ pathing_grid_h, pathing_grid_w ]
 	potential_paths = PATH_QUEUE.Create( pathing_grid_h, pathing_grid_w )
 	For Local r% = 0 To pathing_grid_h - 1
 		For Local c% = 0 To pathing_grid_w - 1
 			pathing_grid[r,c] = PATH_PASSABLE
 			pathing_came_from[r,c] = CELL.Create( r, c )
 			pathing_visited[r,c] = False
-			pathing_h[r,c] = 0
 			pathing_g[r,c] = 0
+			pathing_h[r,c] = 0
+			pathing_f[r,c] = 0
 		Next
 	Next
 End Function
@@ -329,8 +329,6 @@ Function find_path_given_cells:TList( start:CELL, goal:CELL )
 	Next
 																				debug_pathing( "set_pathing_g( start, 0 )" )
 	set_pathing_g( start, 0 )
-																				debug_pathing( "set_pathing_h( start, distance( start, goal ))" )
-	set_pathing_h( start, distance( start, goal ))
 																				debug_pathing( "potential_paths.insert( start )" )
 	potential_paths.insert( start )
 																				debug_pathing( "While Not potential_paths.is_empty()" )
@@ -346,27 +344,29 @@ Function find_path_given_cells:TList( start:CELL, goal:CELL )
 		set_pathing_visited( cursor, True )
 																				debug_pathing( "For neighbor = EachIn get_passable_unvisited_neighbors( cursor )" )
 		For Local neighbor:CELL = EachIn get_passable_unvisited_neighbors( cursor )
-																				debug_pathing( "neighbor_g = get_pathing_g( neighbor ) + distance( cursor, neighbor )" )
-			Local neighbor_g# = get_pathing_g( cursor ) + distance( cursor, neighbor )
-																				debug_pathing( "neighbor_g_is_better = False" )
-			Local neighbor_g_is_better% = False
+																				debug_pathing( "tentative_g = get_pathing_g( neighbor ) + distance( cursor, neighbor )" )
+			Local tentative_g# = get_pathing_g( cursor ) + distance( cursor, neighbor )
+																				debug_pathing( "tentative_g_is_better = False" )
+			Local tentative_g_is_better% = False
 																				debug_pathing( "If potential_paths.insert( neighbor )" )
 			If potential_paths.insert( neighbor )
 																				debug_pathing( "set_pathing_h( neighbor, distance( neighbor, goal ))" )
 				set_pathing_h( neighbor, distance( neighbor, goal ))
-																				debug_pathing( "neighbor_g_is_better = True" )
-				neighbor_g_is_better = True
-																				debug_pathing( "Else If neighbor_g < get_pathing_g( neighbor )" )
-			Else If neighbor_g < get_pathing_g( neighbor )
-																				debug_pathing( "neighbor_g_is_better = True" )
-				neighbor_g_is_better = True
+																				debug_pathing( "tentative_g_is_better = True" )
+				tentative_g_is_better = True
+																				debug_pathing( "Else If tentative_g < get_pathing_g( neighbor )" )
+			Else If tentative_g < get_pathing_g( neighbor )
+																				debug_pathing( "tentative_g_is_better = True" )
+				tentative_g_is_better = True
 			End If
-																				debug_pathing( "If neighbor_g_is_better" )
-			If neighbor_g_is_better
+																				debug_pathing( "If tentative_g_is_better" )
+			If tentative_g_is_better
 																				debug_pathing( "set_pathing_came_from( neighbor, cursor )" )
 				set_pathing_came_from( neighbor, cursor )
-																				debug_pathing( "set_pathing_g( neighbor, neighbor_g )" )
-				set_pathing_g( neighbor, neighbor_g )
+																				debug_pathing( "set_pathing_g( neighbor, tentative_g )" )
+				set_pathing_g( neighbor, tentative_g )
+																				debug_pathing( "set_pathing_f( neighbor, tentative_g + get_pathing_h( neighbor ))" )
+				set_pathing_f( neighbor, tentative_g + get_pathing_h( neighbor ))
 			End If
 		Next
 	End While
