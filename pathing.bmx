@@ -389,12 +389,24 @@ End Function
 '______________________________________________________________________________
 Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
 	pathing.reset()
+
+	If      start_x < 0       Then start_x = 0 ..
+	Else If start_x >= arena_w Then start_x = arena_w - 1
+	If      start_y < 0       Then start_y = 0 ..
+	Else If start_y >= arena_h Then start_y = arena_h - 1
+	If      goal_x < 0        Then goal_x = 0 ..
+	Else If goal_x >= arena_w  Then goal_x = arena_w - 1
+	If      goal_y < 0        Then goal_y = 0 ..
+	Else If goal_y >= arena_h  Then goal_y = arena_h - 1
+
 	Local cell_list:TList = pathing.find_path_cells( containing_cell( start_x, start_y ), containing_cell( goal_x, goal_y ))
 	
 	Local list:TList = CreateList()
-	For Local cursor:CELL = EachIn cell_list
-		list.AddLast( cVEC.Create( cursor.col*cell_size + cell_size/2, cursor.row*cell_size + cell_size/2 ))
-	Next
+	If Not cell_list.IsEmpty()
+		For Local cursor:CELL = EachIn cell_list
+			list.AddLast( cVEC.Create( cursor.col*cell_size + cell_size/2, cursor.row*cell_size + cell_size/2 ))
+		Next
+	End If
 	Return list
 End Function
 '______________________________________________________________________________

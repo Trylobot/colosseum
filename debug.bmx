@@ -7,6 +7,8 @@ EndRem
 Global sx%, sy%, h%, px#, py#
 'Global maus_x#, maus_y#, speed# = 1, r#, a#
 Global wait_ts%, wait_time%, r%, c%, mouse:CELL
+Const PATH_UNSET% = 1000
+Global path_type% = PATH_UNSET, mouse_path_type%
 
 '______________________________________________________________________________
 'Global test_timer:TTimer = CreateTimer( 1.000/0.250 )
@@ -26,22 +28,27 @@ Function debug_pathing( message$ = "", done% = False )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
-	If KeyHit( KEY_ESCAPE ) Then End
-	
 	wait_ts = now()
 	If KeyDown( KEY_F3 ) Then wait_time = 0 Else wait_time = 500
 
-	Repeat
-		If KeyDown( KEY_F4 ) ..
-		Or done And Not KeyHit( KEY_F2 )
-			wait_ts = now()
-		End If
+	While ((now() - wait_ts) <= wait_time) And (Not done) ..
+	Or (done And Not KeyHit( KEY_F2 ))
+		
+		If KeyHit( KEY_ESCAPE ) Then End
+		If KeyDown( KEY_F4 ) Then wait_ts = now()
 		
 		mouse = containing_cell( MouseX() - arena_offset, MouseY() - arena_offset )
 		If KeyDown( KEY_F5 ) ..
 		And Not mouse.eq( global_start ) ..
 		And Not mouse.eq( global_goal )
-			pathing.set_grid( mouse, PATH_BLOCKED )
+			If path_type = PATH_UNSET
+				mouse_path_type = pathing.grid( mouse )
+				If      mouse_path_type = PATH_PASSABLE Then path_type = PATH_BLOCKED
+				Else If mouse_path_type = PATH_BLOCKED  Then path_type = PATH_PASSABLE
+			End If
+			pathing.set_grid( mouse, path_type )
+		Else
+			path_type = PATH_UNSET
 		End If
 		
 		Cls
@@ -64,7 +71,7 @@ Function debug_pathing( message$ = "", done% = False )
 		For cursor.row = 0 To pathing_grid_h - 1
 			For cursor.col = 0 To pathing_grid_w - 1
 				'draw pathing_grid contents
-				SetColor( 255, 255, 255 ); SetAlpha( 0.5 )
+				SetColor( 255, 255, 255 ); SetAlpha( 0.85 )
 				If pathing.grid( cursor ) = PATH_BLOCKED Then ..
 					DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
 			Next
@@ -116,8 +123,8 @@ Function debug_pathing( message$ = "", done% = False )
 		
 		Flip
 		
-	Until (now() - wait_ts) > wait_time
-	
+	End While
+
 End Function
 '______________________________________________________________________________
 Function debug()
