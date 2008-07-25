@@ -81,7 +81,12 @@ Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
 Global pathing_grid_h% 'number of rows in pathing system
 Global pathing_grid_w% 'number of columns in pathing system
 
+Function containing_cell:CELL( x#, y# )
+	If cell_size = 0 Then Return CELL.Create( -1, -1 )
+	Return CELL.Create( Floor( y/cell_size ), Floor( x/cell_size ))
+End Function
 Function distance#( c1:CELL, c2:CELL )
+	If cell_size = 0 Then Return -1.0
 	Return Sqr( Pow( cell_size*(c2.row - c1.row), 2 ) + Pow( cell_size*(c2.col - c1.col), 2 ))
 End Function
 '______________________________________________________________________________
@@ -199,8 +204,9 @@ End Type
 Type PATHING_STRUCTURE
 	Field row_count%, col_count% 'dimensions
 	Field pathing_grid%[,] 'I am: {passable|blocked}
-	Field pathing_came_from:CELL[,] 'my parent is: [...]
 	Field pathing_visited%[,] 'I am visited. {true|false}
+	Field pathing_visited_list:TList
+	Field pathing_came_from:CELL[,] 'my parent is: [...]
 	Field pathing_g#[,] 'actual cost to get here from start
 	Field pathing_h#[,] 'estimated cost to get to goal from here
 	Field pathing_f#[,] 'actual cost to get here from start + estimated cost to get to goal from here
@@ -214,6 +220,7 @@ Type PATHING_STRUCTURE
 		pathing_grid = New Int[ row_count, pathing_grid_w ]
 		pathing_came_from = New CELL[ row_count, col_count ]
 		pathing_visited = New Int[ row_count, col_count ]
+		pathing_visited_list = CreateList()
 		pathing_g = New Float[ row_count, col_count ]
 		pathing_h = New Float[ row_count, col_count ]
 		pathing_f = New Float[ row_count, col_count ]
@@ -234,6 +241,15 @@ Type PATHING_STRUCTURE
 		If Not in_bounds( c ) Then Return
 		pathing_grid[c.row,c.col] = value
 	End Method
+	Method visited%( c:CELL )
+		If Not in_bounds( c ) Then Return True
+		Return pathing_visited[c.row,c.col]
+	End Method
+	Method visit( c:CELL )
+		If Not in_bounds( c ) Then Return
+		pathing_visited[c.row,c.col] = True
+		pathing_visited_list.addlast( c.clone() )
+	End Method
 	Method came_from:CELL( c:CELL )
 		If Not in_bounds( c ) Then Return CELL.Create( -1, -1 )
 		Return pathing_came_from[c.row,c.col]
@@ -241,14 +257,6 @@ Type PATHING_STRUCTURE
 	Method set_came_from( c:CELL, value:CELL )
 		If Not in_bounds( c ) Then Return
 		pathing_came_from[c.row,c.col] = value.clone()
-	End Method
-	Method visited%( c:CELL )
-		If Not in_bounds( c ) Then Return True
-		Return pathing_visited[c.row,c.col]
-	End Method
-	Method set_visited( c:CELL, value% )
-		If Not in_bounds( c ) Then Return
-		pathing_visited[c.row,c.col] = value
 	End Method
 	Method g#( c:CELL )
 		If Not in_bounds( c ) Then Return MAXIMUM_COST
@@ -279,34 +287,94 @@ Type PATHING_STRUCTURE
 		pathing_f[c.row,c.col] = pathing_g[c.row,c.col] + pathing_h[c.row,c.col]
 	End Method
 		
-	Method f_less_than%( i:CELL, j:CELL ) 'uses the f() function to determine if {i} < {j}
-		Return get_pathing_f( i ) < get_pathing_f( j )
+	Method get_passable_unvisited_neighbors:TList( c:CELL )
+		Local list:TList = CreateList()
+		For Local dir% = 0 To ALL_DIRECTIONS.Length - 1
+			Local c_dir:CELL = c.move( dir )
+			If in_bounds( c_dir ) ..
+			And get_pathing_grid( c_dir ) = PATH_PASSABLE ..
+			And Not get_pathing_visited( c_dir )
+				list.AddLast( c_dir )
+			End If
+		Next
+		Return list
 	End Method
+	Method backtrace_path:TList( c:CELL, start:CELL )
+		Local list:TList = CreateList()
+		list.AddFirst( c.clone() )
+		While Not CELL(list.First()).eq( start )
+			list.AddFirst( get_pathing_came_from( CELL(list.First()) ))
+		End While
+		Return list
+	End Method
+	
+	Method find_path_cells:TList( start:CELL, goal:CELL )
+		global_start = start
+		global_goal = goal
+																					debug_pathing( "potential_paths.insert( start )" )
+		set_g( start, 0 )
+		set_h( start, distance( start, goal ))
+		set_f_implicit( start )
+		potential_paths.insert( start )
+																					debug_pathing( "While Not potential_paths.is_empty()" )
+		While Not potential_paths.is_empty()
+																					debug_pathing( "cursor = potential_paths.pop_root()" )
+			Local cursor:CELL = potential_paths.pop_root()
+																					debug_pathing( "If cursor.eq( goal )" )
+			If cursor.eq( goal )
+																					debug_pathing( "Return backtrace_path( start, goal )" )
+				Return backtrace_path( start, goal )
+			End If
+																					debug_pathing( "set_pathing_visited( cursor, True )" )
+			visit( cursor )
+																					debug_pathing( "For neighbor = EachIn get_passable_unvisited_neighbors( cursor )" )
+			For Local neighbor:CELL = EachIn get_passable_unvisited_neighbors( cursor )
+																					debug_pathing( "tentative_g = get_pathing_g( neighbor ) + distance( cursor, neighbor )" )
+				Local tentative_g# = get_pathing_g( cursor ) + distance( cursor, neighbor )
+																					debug_pathing( "tentative_g_is_better = False" )
+				Local tentative_g_is_better% = False
+																					debug_pathing( "If potential_paths.insert( neighbor )" )
+				set_pathing_g( neighbor, get_pathing_g( cursor ) + distance( cursor, neighbor ))
+				set_pathing_h( neighbor, distance( neighbor, goal ))
+				set_pathing_f_implicit( neighbor )
+				If potential_paths.insert( neighbor )
+																					debug_pathing( "tentative_g_is_better = True" )
+					tentative_g_is_better = True
+																					debug_pathing( "Else If tentative_g < get_pathing_g( neighbor )" )
+				Else If tentative_g < get_pathing_g( neighbor )
+																					debug_pathing( "tentative_g_is_better = True" )
+					tentative_g_is_better = True
+				End If
+																					debug_pathing( "If tentative_g_is_better" )
+				If tentative_g_is_better
+																					debug_pathing( "set_pathing_came_from( neighbor, cursor )" )
+					set_pathing_came_from( neighbor, cursor )
+																					debug_pathing( "set_pathing_g( neighbor, tentative_g )" )
+					set_pathing_g( neighbor, tentative_g )
+																					debug_pathing( "set_pathing_f( neighbor, tentative_g + get_pathing_h( neighbor ))" )
+					set_pathing_f( neighbor, tentative_g + get_pathing_h( neighbor ))
+				End If
+			Next
+		End While
+																					debug_pathing( "FAIL" )
+		Return Null
+	End Method
+	
+	Method reset()
+		For Local c:CELL = EachIn pathing_visited_list
+			pathing_visited[c.row,c.col] = False
+		Next
+		pathing_visited_list = CreateList()
+		potential_paths.reset()
+	End Method
+	
 End Type
 '______________________________________________________________________________
-
 Global pathing:PATHING_STRUCTURE
+Global global_start:CELL, global_goal:CELL
 
-'______________________________________________________________________________
-Function get_passable_unvisited_neighbors:TList( c:CELL )
-	Local list:TList = CreateList()
-	For Local dir% = 0 To ALL_DIRECTIONS.Length - 1
-		Local c_dir:CELL = c.move( dir )
-		If in_bounds( c_dir ) ..
-		And get_pathing_grid( c_dir ) = PATH_PASSABLE ..
-		And Not get_pathing_visited( c_dir )
-			list.AddLast( c_dir )
-		End If
-	Next
-	Return list
-End Function
-Function backtrace_path:TList( start:CELL, c:CELL )
-	Local list:TList = CreateList()
-	list.AddFirst( c.clone() )
-	While Not CELL(list.First()).eq( start )
-		list.AddFirst( get_pathing_came_from( CELL(list.First()) ))
-	End While
-	Return list
+Function f_less_than%( i:CELL, j:CELL ) 'uses the f() function to determine if {i} < {j}
+	Return pathing.f( i ) < pathing.f( j )
 End Function
 '______________________________________________________________________________
 Function init_pathing_system()
@@ -320,9 +388,8 @@ Function init_pathing_grid_from_obstacles( obstacles:TList )
 End Function
 '______________________________________________________________________________
 Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
-	Local cell_list:TList = find_path_given_cells( ..
-		CELL.Create( Floor( start_y/cell_size ), Floor( start_x/cell_size )), ..
-		CELL.Create( Floor( goal_y/cell_size ), Floor( goal_x/cell_size )))
+	pathing.reset()
+	Local cell_list:TList = pathing.find_path_cells( containing_cell( start_x, start_y ), containing_cell( goal_x, goal_y ))
 	
 	Local list:TList = CreateList()
 	For Local cursor:CELL = EachIn cell_list
@@ -331,64 +398,7 @@ Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
 	Return list
 End Function
 '______________________________________________________________________________
-Global global_start:CELL, global_goal:CELL
-Function find_path_given_cells:TList( start:CELL, goal:CELL )
-	global_start = start
-	global_goal = goal
-																				debug_pathing( "pathing_visited[*,*] = False" )
-	For Local r% = 0 To pathing_grid_h - 1
-		For Local c% = 0 To pathing_grid_w - 1
-			pathing_visited[r,c] = False
-		Next
-	Next
-																				debug_pathing( "potential_paths.insert( start )" )
-	set_pathing_g( start, 0 )
-	set_pathing_h( start, distance( start, goal ))
-	set_pathing_f_implicit( start )
-	potential_paths.insert( start )
-																				debug_pathing( "While Not potential_paths.is_empty()" )
-	While Not potential_paths.is_empty()
-																				debug_pathing( "cursor = potential_paths.pop_root()" )
-		Local cursor:CELL = potential_paths.pop_root()
-																				debug_pathing( "If cursor.eq( goal )" )
-		If cursor.eq( goal )
-																				debug_pathing( "Return backtrace_path( start, goal )" )
-			Return backtrace_path( start, goal )
-		End If
-																				debug_pathing( "set_pathing_visited( cursor, True )" )
-		set_pathing_visited( cursor, True )
-																				debug_pathing( "For neighbor = EachIn get_passable_unvisited_neighbors( cursor )" )
-		For Local neighbor:CELL = EachIn get_passable_unvisited_neighbors( cursor )
-																				debug_pathing( "tentative_g = get_pathing_g( neighbor ) + distance( cursor, neighbor )" )
-			Local tentative_g# = get_pathing_g( cursor ) + distance( cursor, neighbor )
-																				debug_pathing( "tentative_g_is_better = False" )
-			Local tentative_g_is_better% = False
-																				debug_pathing( "If potential_paths.insert( neighbor )" )
-			set_pathing_g( neighbor, get_pathing_g( cursor ) + distance( cursor, neighbor ))
-			set_pathing_h( neighbor, distance( neighbor, goal ))
-			set_pathing_f_implicit( neighbor )
-			If potential_paths.insert( neighbor )
-																				debug_pathing( "tentative_g_is_better = True" )
-				tentative_g_is_better = True
-																				debug_pathing( "Else If tentative_g < get_pathing_g( neighbor )" )
-			Else If tentative_g < get_pathing_g( neighbor )
-																				debug_pathing( "tentative_g_is_better = True" )
-				tentative_g_is_better = True
-			End If
-																				debug_pathing( "If tentative_g_is_better" )
-			If tentative_g_is_better
-																				debug_pathing( "set_pathing_came_from( neighbor, cursor )" )
-				set_pathing_came_from( neighbor, cursor )
-																				debug_pathing( "set_pathing_g( neighbor, tentative_g )" )
-				set_pathing_g( neighbor, tentative_g )
-																				debug_pathing( "set_pathing_f( neighbor, tentative_g + get_pathing_h( neighbor ))" )
-				set_pathing_f( neighbor, tentative_g + get_pathing_h( neighbor ))
-			End If
-		Next
-	End While
-																				debug_pathing( "FAIL" )
-	Return Null
-End Function
+
 
 
 

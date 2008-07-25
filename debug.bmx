@@ -4,8 +4,8 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-Global sx%, sy%, h%, px#, py#, maus_x#, maus_y#, speed# = 1, r#, a#
-Global wait_ts%, wait_time%
+'Global sx%, sy%, h%, px#, py#, maus_x#, maus_y#, speed# = 1, r#, a#
+Global wait_ts%, wait_time%, r%, c%, mouse:CELL
 
 '______________________________________________________________________________
 'Global test_timer:TTimer = CreateTimer( 1.000/0.250 )
@@ -25,13 +25,22 @@ Function debug_pathing( message$ = "" )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
+	If KeyHit( KEY_ESCAPE ) Then End
+	
 	wait_ts = now()
 	If KeyDown( KEY_F3 ) Then wait_time = 0 Else wait_time = 500
+
 	Repeat
 		If KeyDown( KEY_F4 ) Then wait_ts = now()
-		Cls
 		
-		Local r%, c%
+		mouse = containing_cell( MouseX() + arena_offset, MouseY() + arena_offset )
+		If KeyDown( KEY_F5 ) ..
+		And Not mouse.eq( global_start ) ..
+		And Not mouse.eq( global_goal )
+			pathing.set_grid( mouse, PATH_BLOCKED )
+		End If
+		
+		Cls
 		
 		'draw pathing_grid cell border lines
 		SetLineWidth( 1 ); SetColor( 127, 127, 127 ); SetAlpha( 0.75 )
@@ -91,7 +100,6 @@ Function debug_pathing( message$ = "" )
 		
 		Flip
 		
-		If KeyHit( KEY_ESCAPE ) Then End
 	Until (now() - wait_ts) > wait_time
 	
 End Function
