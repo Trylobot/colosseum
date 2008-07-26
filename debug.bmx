@@ -38,17 +38,10 @@ Function debug_pathing( message$ = "", done% = False )
 		If KeyDown( KEY_F4 ) Then wait_ts = now()
 		
 		mouse = containing_cell( MouseX() - arena_offset, MouseY() - arena_offset )
-		If KeyDown( KEY_F5 ) ..
-		And Not mouse.eq( global_start ) ..
-		And Not mouse.eq( global_goal )
-			If path_type = PATH_UNSET
-				mouse_path_type = pathing.grid( mouse )
-				If      mouse_path_type = PATH_PASSABLE Then path_type = PATH_BLOCKED
-				Else If mouse_path_type = PATH_BLOCKED  Then path_type = PATH_PASSABLE
-			End If
-			pathing.set_grid( mouse, path_type )
-		Else
-			path_type = PATH_UNSET
+		If KeyDown( KEY_F5 )
+			pathing.set_grid( mouse, PATH_BLOCKED )
+		Else If KeyDown( KEY_F6 )
+			pathing.set_grid( mouse, PATH_PASSABLE )
 		End If
 		
 		Cls
@@ -56,7 +49,7 @@ Function debug_pathing( message$ = "", done% = False )
 		'draw debug help
 		SetColor( 127, 127, 255 ); SetAlpha( 1 )
 		SetImageFont( consolas_normal_12 )
-		DrawText( "set_goal,find_path:F4  pause:F4/faster:F3  set_blockable:F5", 3, -26 )
+		DrawText( "set_goal,find_path:F4  pause:F4/faster:F3  block:F5  clear:F6", 3, -26 )
 		'draw pathing_grid cell border lines
 		SetLineWidth( 1 ); SetColor( 127, 127, 127 ); SetAlpha( 0.75 )
 		For r = 0 To pathing_grid_h

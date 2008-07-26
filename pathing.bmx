@@ -121,7 +121,8 @@ Type PATH_QUEUE
 		Return ( i = 0 )
 	End Method
 	Method is_leaf%( i% )
-		Return ( left_child_i( i ) >= item_count )
+		'Return ( left_child_i( i ) >= item_count )
+		Return ( left_child_i( i ) >= max_size Or binary_tree[left_child_i( i )] = Null )
 	End Method
 	Method parent_i%( i% )
 		Return ( i - 1 ) / 2
@@ -223,6 +224,7 @@ Type PATH_QUEUE
 	End Method
 	
 	Method update%( c:CELL )
+'DebugStop
 		Local item_i% = index_of( c )
 		If item_i <> REGISTRY_NOT_PRESENT
 			unregister( c )
@@ -365,52 +367,37 @@ Type PATHING_STRUCTURE
 	Method find_path_cells:TList( start:CELL, goal:CELL )
 		global_start = start
 		global_goal = goal
-'																					debug_pathing( "potential_paths.insert( start )" )
 		set_g( start, 0 )
 		set_h( start, distance( start, goal ))
 		set_f_implicit( start )
 		potential_paths.insert( start )
-'																					debug_pathing( "While Not potential_paths.is_empty()" )
 		While Not potential_paths.is_empty()
-																					debug_pathing( "cursor = potential_paths.pop_root()" )
+debug_pathing( "cursor = potential_paths.pop_root()" )
 			Local cursor:CELL = potential_paths.pop_root()
-'																					debug_pathing( "If cursor.eq( goal )" )
 			If cursor.eq( goal )
-'																					debug_pathing( "Return backtrace_path( start, goal )" )
-																					debug_pathing( "path found; F2 to continue", True )
+debug_pathing( "path found; F2 to continue", True )
 				Return backtrace_path( goal, start )
 			End If
-'																					debug_pathing( "set_pathing_visited( cursor, True )" )
 			visit( cursor )
-'																					debug_pathing( "For neighbor = EachIn get_passable_unvisited_neighbors( cursor )" )
 			For Local neighbor:CELL = EachIn get_passable_unvisited_neighbors( cursor )
-'																					debug_pathing( "tentative_g = get_pathing_g( neighbor ) + distance( cursor, neighbor )" )
 				Local tentative_g# = g( cursor ) + distance( cursor, neighbor )
-'																					debug_pathing( "tentative_g_is_better = False" )
 				Local tentative_g_is_better% = False
-'																					debug_pathing( "If potential_paths.insert( neighbor )" )
 				set_g( neighbor, g( cursor ) + distance( cursor, neighbor ))
 				set_h( neighbor, distance( neighbor, goal ))
 				set_f_implicit( neighbor )
 				If potential_paths.insert( neighbor )
-'																					debug_pathing( "tentative_g_is_better = True" )
 					tentative_g_is_better = True
-'																					debug_pathing( "Else If tentative_g < get_pathing_g( neighbor )" )
 				Else If tentative_g < g( neighbor )
-'																					debug_pathing( "tentative_g_is_better = True" )
 					tentative_g_is_better = True
 				End If
-'																					debug_pathing( "If tentative_g_is_better" )
 				If tentative_g_is_better
-'																					debug_pathing( "set_pathing_came_from( neighbor, cursor )" )
 					set_came_from( neighbor, cursor )
 					set_g( neighbor, tentative_g )
-					set_f( neighbor, tentative_g + h( neighbor ))
+					set_f_implicit( neighbor )
 					potential_paths.update( neighbor )
 				End If
 			Next
 		End While
-'																					debug_pathing( "FAIL" )
 		Return Null
 	End Method
 	
