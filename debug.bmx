@@ -27,6 +27,8 @@ Function debug_heap( message$ = "" )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
+	Return
+	
 	Local pq:PATH_QUEUE = pathing.potential_paths
 	Local tree:CELL[] = pathing.potential_paths.binary_tree
 
@@ -65,17 +67,17 @@ Function draw_heap( i% )
 		
 		If pq.left_child_i( i ) < pq.item_count + 4
 			sx :+ 8; sy :+ 9
-			If tree[pq.left_child_i( i )] = Null Then                           SetColor( 64, 64, 64 ) ..
-			Else If Not f_less_than( tree[i], tree[pq.left_child_i( i )] ) Then SetColor( 255, 127, 127 ) ..
-			Else                                                                SetColor( 255, 255, 255 )
+			If tree[pq.left_child_i( i )] = Null Then                       SetColor( 64, 64, 64 ) ..
+			Else If f_less_than( tree[i], tree[pq.left_child_i( i )] ) Then SetColor( 255, 255, 255 ) ..
+			Else                                                            SetColor( 255, 127, 127 )
 			DrawText( heap_info( pq.left_child_i( i )), sx, sy )
 			draw_heap( pq.left_child_i( i ))
 			
 			If pq.right_child_i( i ) < pq.item_count + 4
 				sy :+ 9
-				If tree[pq.right_child_i( i )] = Null Then                           SetColor( 64, 64, 64 ) ..
-				Else If Not f_less_than( tree[i], tree[pq.right_child_i( i )] ) Then SetColor( 255, 127, 127 ) ..
-				Else                                                                 SetColor( 255, 255, 255 )
+				If tree[pq.right_child_i( i )] = Null Then                       SetColor( 64, 64, 64 ) ..
+				Else If f_less_than( tree[i], tree[pq.right_child_i( i )] ) Then SetColor( 255, 255, 255 ) ..
+				Else                                                             SetColor( 255, 127, 127 )
 				DrawText( heap_info( pq.right_child_i( i )), sx, sy )
 				draw_heap( pq.right_child_i( i ))
 			End If
