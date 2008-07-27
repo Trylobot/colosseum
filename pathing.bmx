@@ -399,7 +399,8 @@ Type PATHING_STRUCTURE
 				set_g( neighbor, g( cursor ) + distance( cursor, neighbor ))
 				set_h( neighbor, distance( neighbor, goal ))
 				set_f_implicit( neighbor )
-				If potential_paths.insert( neighbor )
+				If Not potential_paths.in_queue( neighbor )
+					potential_paths.insert( neighbor )
 					tentative_g_is_better = True
 				Else If tentative_g < g( neighbor )
 					tentative_g_is_better = True
@@ -408,7 +409,7 @@ Type PATHING_STRUCTURE
 					set_came_from( neighbor, cursor )
 					set_g( neighbor, tentative_g )
 					set_f_implicit( neighbor )
-'					potential_paths.update( neighbor )
+					'potential_paths.update( neighbor )
 				End If
 			Next
 		End While
