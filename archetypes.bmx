@@ -31,7 +31,7 @@ particle_emitter_archetype[ 7] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  7,  
 'particle emitter 8 - tank tread debris emitter
 particle_emitter_archetype[ 8] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE,  8, 12, MODE_DISABLED, False, False, False, False, False, 100, 150, 0, 0, 30, 70, 0.75, 1.00, -0.0025, -0.0050 )
 'particle emitter 9 - tank tread trail emitter
-particle_emitter_archetype[ 9] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE, 13, 17, MODE_DISABLED, False, False, False, False, False, 50, 50, 1, 1, 100, 100, 0.2, 0.4, 0, 0 )
+particle_emitter_archetype[ 9] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE, 13, 17, MODE_DISABLED, False, False, False, False, False, 50, 50, 1, 1, 100, 100 )
 
 'particle emitter 10 - "the box" autodupe emitter
 particle_emitter_archetype[10] = Archetype_EMITTER( EMITTER_TYPE_PARTICLE, 18, 18, MODE_ENABLED_FOREVER, False, False, False, False, False, 500, 500, 0, 0, 3000, 3000, 0.5, 0.5, -0.004, -0.004 )

@@ -5,6 +5,14 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+'Window Initialization and Drawing device
+'SetGraphicsDriver D3D7Max2DDriver()
+SetGraphicsDriver GLGraphicsDriver()
+AppTitle = My.Application.AssemblyInfo
+Graphics( window_w, window_h )
+SetClsColor( 0, 0, 0 )
+SetBlend( ALPHABLEND )
+
 'Generic globals
 Const INFINITY% = -1
 
@@ -15,14 +23,6 @@ Const arena_h% = 500
 Const stats_panel_w% = 250
 Const window_w% = arena_w + 2*arena_offset + stats_panel_w
 Const window_h% = arena_h + 2*arena_offset
-
-'Window and Drawing device
-SetGraphicsDriver D3D7Max2DDriver()
-'SetGraphicsDriver GLGraphicsDriver()
-AppTitle = My.Application.AssemblyInfo
-Graphics( window_w, window_h )
-SetClsColor( 0, 0, 0 )
-SetBlend( ALPHABLEND )
 
 'Settings flags
 Global FLAG_in_menu% = True
@@ -50,7 +50,6 @@ Global player:COMPLEX_AGENT
 Global player_cash% = 0
 Global player_level% = 0
 Global player_kills% = 0
-
 
 '______________________________________________________________________________
 'Menu Commands
