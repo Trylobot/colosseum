@@ -19,6 +19,82 @@ Function debug_drawtext( message$ )
 	DrawText( message, sx, sy )
 	sy :+ h
 End Function
+
+Function debug_heap( message$ = "" )
+	SetOrigin( 0, 0 )
+	SetColor( 255, 255, 255 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	SetAlpha( 1 )
+	
+	Local pq:PATH_QUEUE = pathing.potential_paths
+	Local tree:CELL[] = pathing.potential_paths.binary_tree
+
+	wait_ts = now()
+	'If KeyDown( KEY_F3 ) Then wait_time = 0 Else wait_time = 500
+	wait_time = 500
+
+	While ((now() - wait_ts) <= wait_time) And Not KeyHit( KEY_F3 )
+		
+		If KeyHit( KEY_ESCAPE ) Then End
+		If KeyDown( KEY_F4 ) Then wait_ts = now()
+		
+		Cls
+		
+		sx = 3; sy = 3
+		
+		'draw optional message
+		SetColor( 127, 127, 255 ); SetAlpha( 1 )
+		SetImageFont( consolas_normal_12 )
+		DrawText( message, sx, sy ); sy :+ 11
+
+		SetImageFont( consolas_normal_10 )
+		If tree[0] = Null Then SetColor( 64, 64, 64 ) ..
+		Else                   SetColor( 255, 255, 255 )
+		DrawText( heap_info( 0 ), sx, sy )
+		draw_heap( 0 )
+		
+		Flip
+		
+	End While
+End Function
+Function draw_heap( i% )
+	Local pq:PATH_QUEUE = pathing.potential_paths
+	Local tree:CELL[] = pathing.potential_paths.binary_tree
+	If i < pq.item_count + 4
+		
+		If pq.left_child_i( i ) < pq.item_count + 4
+			sx :+ 8; sy :+ 9
+			If tree[pq.left_child_i( i )] = Null Then                           SetColor( 64, 64, 64 ) ..
+			Else If Not f_less_than( tree[i], tree[pq.left_child_i( i )] ) Then SetColor( 255, 127, 127 ) ..
+			Else                                                                SetColor( 255, 255, 255 )
+			DrawText( heap_info( pq.left_child_i( i )), sx, sy )
+			draw_heap( pq.left_child_i( i ))
+			
+			If pq.right_child_i( i ) < pq.item_count + 4
+				sy :+ 9
+				If tree[pq.right_child_i( i )] = Null Then                           SetColor( 64, 64, 64 ) ..
+				Else If Not f_less_than( tree[i], tree[pq.right_child_i( i )] ) Then SetColor( 255, 127, 127 ) ..
+				Else                                                                 SetColor( 255, 255, 255 )
+				DrawText( heap_info( pq.right_child_i( i )), sx, sy )
+				draw_heap( pq.right_child_i( i ))
+			End If
+			
+			sx :- 8
+			
+		End If
+		
+	End If
+End Function
+Function heap_info$( i% )
+	Local tree:CELL[] = pathing.potential_paths.binary_tree
+	If tree[i] <> Null
+		Return "[" + i + "]" + " (" + tree[i].row + "," + tree[i].col + ")" + " f:" + Int( pathing.f( tree[i] ))
+	Else 'tree[i] == Null
+		Return "[" + i + "]" + " null"
+	End If
+End Function
+
 '______________________________________________________________________________
 'F4 to path from player to mouse; hold F4 to pause; hold F3 to fast-forward
 Function debug_pathing( message$ = "", done% = False )
@@ -124,7 +200,7 @@ Function debug_pathing( message$ = "", done% = False )
 	End While
 End Function
 '______________________________________________________________________________
-Function debug()
+Function debug_core()
 	SetOrigin( arena_offset, arena_offset )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
