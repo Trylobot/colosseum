@@ -141,14 +141,14 @@ pickup_archetype[ 1] = Archetype_PICKUP( img_pickup_health, HEALTH_PICKUP, 50, 2
 Global turret_archetype:TURRET[ 5]
 
 'turret 0 - tank cannon
-turret_archetype[ 0] = Archetype_TURRET( img_player_tank_turret_base, img_player_tank_turret_barrel, 1.5, 450, 40, -7, 0, INFINITY, 0, 0, 0, 0 )
+turret_archetype[ 0] = Archetype_TURRET( img_player_tank_turret_base, img_player_tank_turret_barrel, 2.25, 650, 40, -7, 0, INFINITY, 0, 0, 0, 0 )
 	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PROJECTILE,  0 ).attach_to( turret_archetype[ 0], 20, 0, 0, 0, 0, 0, 3.30, 3.70, 0, 0, 0, 0, 0, 0, -1.0, 1.0, 0, 0, 0, 0 )
 	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PARTICLE,    0 ).attach_to( turret_archetype[ 0], 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PARTICLE,    2 ).attach_to( turret_archetype[ 0], 20, 0, 3, 6, -45, 45, 0.05, 0.40, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PARTICLE,    1 ).attach_to( turret_archetype[ 0], -3, 3, 0, 0, 0, 0, 0.4, 0.6, 80, 100, -0.005, -0.005, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
 
 'turret 1 - machine gun
-turret_archetype[ 1] = Archetype_TURRET( Null, img_player_mgun_turret, 1.5, 75, INFINITY, 0, 0, 25.0, 2.0, 3.0, 0.0175, 1500 )
+turret_archetype[ 1] = Archetype_TURRET( Null, img_player_mgun_turret, 2.25, 62.50, INFINITY, 0, 0, 25.0, 1.50, 2.50, 0.0210, 1500 )
 	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PROJECTILE,  1 ).attach_to( turret_archetype[ 1], 14, 2, 0, 0, 0, 0, 4.30, 4.70, 0, 0, 0, 0, 0, 0, -2.2, 2.2, 0, 0, 0, 0 )
 	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PARTICLE,    4 ).attach_to( turret_archetype[ 1], 14, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PARTICLE,    6 ).attach_to( turret_archetype[ 1], 14, 2, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -160,11 +160,11 @@ turret_archetype[ 2] = Archetype_TURRET( img_enemy_stationary_emplacement_1_turr
 	'turret_archetype[ 2].add_emitter( EMITTER_TYPE_PARTICLE,   11 ).attach_to( turret_archetype[ 2], -10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 
 'turret 3 - chain gun turret
-turret_archetype[ 3] = Archetype_TURRET( img_enemy_stationary_emplacement_2_turret_base, img_enemy_stationary_emplacement_2_turret_barrel, 0.55, 25, INFINITY, 0, 0, 25.0, 1.0, 2.0, 0.0175, 2000 )
-	turret_archetype[ 3].add_emitter( EMITTER_TYPE_PROJECTILE,  3 ).attach_to( turret_archetype[ 3], 25, 0, 0, 0, 0, 0, 2.50, 3.00, 0, 0, 0, 0, 0, 0, -5.0, 5.0, 0, 0, 0, 0 )
+turret_archetype[ 3] = Archetype_TURRET( img_enemy_stationary_emplacement_2_turret_base, img_enemy_stationary_emplacement_2_turret_barrel, 0.55, 50, INFINITY, 0, 0, 25.0, 2.0, 3.0, 0.0175, 2000 )
+	turret_archetype[ 3].add_emitter( EMITTER_TYPE_PROJECTILE,  1 ).attach_to( turret_archetype[ 3], 25, 0, 0, 0, 0, 0, 2.50, 3.00, 0, 0, 0, 0, 0, 0, -4.0, 4.0, 0, 0, 0, 0 )
 	turret_archetype[ 3].add_emitter( EMITTER_TYPE_PARTICLE,    4 ).attach_to( turret_archetype[ 3], 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[ 3].add_emitter( EMITTER_TYPE_PARTICLE,    6 ).attach_to( turret_archetype[ 3], 25, 0, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	turret_archetype[ 3].add_emitter( EMITTER_TYPE_PARTICLE,   13 ).attach_to( turret_archetype[ 3], 3, 3, 0, 0, 0, 0, 0.4, 0.6, 70, 110, -0.004, -0.004, 0, 0, -5, 5, -5, 5, 0, 0 )
+	turret_archetype[ 3].add_emitter( EMITTER_TYPE_PARTICLE,    5 ).attach_to( turret_archetype[ 3], 3, 3, 0, 0, 0, 0, 0.4, 0.6, 70, 110, -0.004, -0.004, 0, 0, -5, 5, -5, 5, 0, 0 )
 
 '______________________________________________________________________________
 '[ ENEMIES ]
@@ -191,7 +191,7 @@ enemy_archetype[ 2] = Archetype_COMPLEX_AGENT( img_enemy_stationary_emplacement_
 Global player_archetype:COMPLEX_AGENT[ 4]
 
 'player 0 - temporary testing player - tank cannon, machine gun, two tank tread motivators (substituted for with eight individual emitters for now)
-player_archetype[ 0] = Archetype_COMPLEX_AGENT( img_player_tank_chassis, 0, 500, 800.0, 44.0, 2, 2, 50.0, 75.0 )
+player_archetype[ 0] = Archetype_COMPLEX_AGENT( img_player_tank_chassis, 0, 500, 800.0, 75.0, 2, 2, 75.0, 100.0 )
 	player_archetype[ 0].turrets[ 0] = Copy_TURRET( turret_archetype[ 0] ) 'main cannon
 	player_archetype[ 0].turrets[ 0].attach_to( player_archetype[ 0], -5, 0 )
 	player_archetype[ 0].turrets[ 1] = Copy_TURRET( turret_archetype[ 1] ) 'machine gun
