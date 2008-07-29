@@ -31,7 +31,6 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Method update()
-		
 		'friction
 		vel_x :- vel_x*frictional_coefficient
 		vel_y :- vel_y*frictional_coefficient
@@ -86,6 +85,7 @@ Type PARTICLE Extends POINT
 		p.vel_x = 0; p.vel_y = 0
 		p.ang = 0
 		p.ang_vel = 0
+		p.red = 255; p.green = 255; p.blue = 255
 		p.alpha = 1.000
 		p.alpha_delta = 0
 		p.scale = 1.000
@@ -110,6 +110,7 @@ Type PARTICLE Extends POINT
 		p.vel_x = other.vel_x; p.vel_y = other.vel_y
 		p.ang = other.ang
 		p.ang_vel = other.ang_vel
+		p.red = other.red; p.green = other.green; p.blue = other.blue
 		p.alpha = other.alpha
 		p.alpha_delta = other.alpha_delta
 		p.scale = other.scale

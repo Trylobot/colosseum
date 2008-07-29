@@ -36,6 +36,7 @@ Function draw_all()
 		Next
 		SetAlpha( 1 )
 		SetScale( 1, 1 )
+		SetColor( 255, 255, 255 )
 		
 		'projectiles
 		For Local proj:PROJECTILE = EachIn projectile_list
@@ -56,6 +57,7 @@ Function draw_all()
 		Next
 		SetRotation( 0 )
 		SetScale( 1, 1 )
+		SetColor( 255, 255, 255 )
 		'pickups
 		For Local pkp:PICKUP = EachIn pickup_list
 			pkp.draw()

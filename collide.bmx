@@ -11,8 +11,9 @@ Const PROJECTILE_COLLISION_LAYER% = $0008
 Const SECONDARY_PROJECTILE_COLLISION_LAYER% = $0010
 Const PICKUP_COLLISION_LAYER% = $0011
 
-Const PROJECTILE_ENERGY_COEFFICIENT# = 750.0 'energy multiplier for all collisions involving projectiles
-Const AGENT_ENERGY_COEFFICIENT# = 0.01 'energy multiplier for agent-agent collisions
+Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 750.0 'energy multiplier for all collisions involving projectiles and agents
+Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.025 'energy multiplier for all projectile-projectile collisions
+Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.010 'energy multiplier for all agent-agent collisions
 
 '______________________________________________________________________________
 'Collision Detection and Resolution
@@ -91,7 +92,7 @@ Function collide_all()
 				'activate collision response for affected entity(ies)
 				Local offset#, offset_ang#
 				cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
-				Local total_force# = proj.mass*PROJECTILE_ENERGY_COEFFICIENT*Sqr( proj.vel_x*proj.vel_x + proj.vel_y*proj.vel_y )
+				Local total_force# = proj.mass*PROJECTILE_AGENT_ENERGY_COEFFICIENT*Sqr( proj.vel_x*proj.vel_x + proj.vel_y*proj.vel_y )
 				FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - proj.ang ), 100 )).add_me( ag.force_list )
 				FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - proj.ang ), 100 )).add_me( ag.force_list )
 				'process damage, death, cash and pickups resulting from it
@@ -134,7 +135,7 @@ Function collide_all()
 						'activate collision response for affected entity(ies)
 						Local offset#, offset_ang#
 						cartesian_to_polar( ag.pos_x - other.pos_x, ag.pos_y - other.pos_y, offset, offset_ang )
-						Local total_force# = other.mass*AGENT_ENERGY_COEFFICIENT*Sqr( other.vel_x*other.vel_x + other.vel_y*other.vel_y )
+						Local total_force# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*Sqr( other.vel_x*other.vel_x + other.vel_y*other.vel_y )
 						FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - other.ang ), 100 )).add_me( ag.force_list )
 						FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - other.ang ), 100 )).add_me( ag.force_list )
 					End If
@@ -147,12 +148,12 @@ Function collide_all()
 			SetRotation( proj.ang )
 			result = CollideImage( proj.img, proj.pos_x, proj.pos_y, 0, PROJECTILE_COLLISION_LAYER, SECONDARY_PROJECTILE_COLLISION_LAYER, proj )
 			For other_proj = EachIn result
-				If proj.id <> other_proj.id
+				If proj.id <> other_proj.id And proj.source_id <> other_proj.source_id
 					'COLLISON! between {proj} and {other_proj}
 					'activate collision response for affect entities
 					Local offset#, offset_ang#
 					cartesian_to_polar( proj.pos_x - other_proj.pos_x, proj.pos_y - other_proj.pos_y, offset, offset_ang )
-					Local total_force# = other_proj.mass*Sqr( other_proj.vel_x*other_proj.vel_x + other_proj.vel_y*other_proj.vel_y )
+					Local total_force# = other_proj.mass*PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT*Sqr( other_proj.vel_x*other_proj.vel_x + other_proj.vel_y*other_proj.vel_y )
 					FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - other_proj.ang ), 100 )).add_me( other_proj.force_list )
 					FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - other_proj.ang ), 100 )).add_me( other_proj.force_list )
 				End If

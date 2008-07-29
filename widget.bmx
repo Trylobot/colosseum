@@ -46,50 +46,71 @@ Type WIDGET Extends MANAGED_OBJECT
 	
 	Field parent:POINT 'parent object, provides local origin
 	Field off_x#, off_y# 'static positional offset from parent position
+	Field img:TImage 'image to be drawn
 	
 	Field repeat_mode% '{cyclic_wrap|loop_back}
 	Field state_list:TList 'sequence of states to be traversed over time
-	Field cur_state:TLink 'reference to list link containing current state
-	Field next_state:TLink 'reference to list link containing next state
+	Field state_link:TLink 'reference to list link containing current state
 	Field state:TRANSFORM_STATE 'current transform state, used only when in-between states
 	Field transforming% '{true|false}
 	Field transform_begin_ts% 'timestamp of beginning of current transformation, used with interpolation
 	Field transformations_remaining% '{INFINITE|integer}
 	
 	Method New()
+		state_list = CreateList()
 	End Method
 	
 	Method update()
 		If transforming
-			Local cs:TRANSFORM_STATE = TRANSFORM_STATE( cur_state.Value() )
-			Local ns:TRANSFORM_STATE = TRANSFORM_STATE( next_state.Value() )
-			Local pct# = ((now() - transform_begin_ts) / cs.transition_time)
-			
-			state.pos_x = cs.pos_x + pct * (ns.pos_x - cs.pos_x)
-			state.pos_y = cs.pos_y + pct * (ns.pos_y - cs.pos_y)
-			state.ang = cs.ang + pct * (ns.ang - cs.ang)
-			state.red = cs.red + pct * (ns.red - cs.red)
-			state.green = cs.red + pct * (ns.green - cs.green)
-			state.blue = cs.blue + pct * (ns.blue - cs.blue)
-			state.alpha = cs.alpha + pct * (ns.alpha - cs.alpha)
-			state.scale_x = cs.scale_x + pct * (ns.scale_x - cs.scale_x)
-			state.scale_y = cs.scale_y + pct * (ns.scale_y - cs.scale_y)
+			Local cs:TRANSFORM_STATE = TRANSFORM_STATE( state_link.Value() )
+			If (now() - transform_begin_ts) >= cs.transition_time
+				'finished current transformation
+				state_link = next_state_link()
+				cs = TRANSFORM_STATE( state_link.Value() )
+				transform_begin_ts = now()
+				If transformations_remaining > 0
+					'are there any left to do?
+					transformations_remaining :- 1
+					If transformations_remaining = 0 Then transforming = False
+				End If
+			End If
+			If transforming
+				'currently transforming
+				Local ns:TRANSFORM_STATE = TRANSFORM_STATE( next_state_link().Value() )
+				Local pct# = ((now() - transform_begin_ts) / cs.transition_time)
+				state.pos_x = cs.pos_x + pct * (ns.pos_x - cs.pos_x)
+				state.pos_y = cs.pos_y + pct * (ns.pos_y - cs.pos_y)
+				state.ang = cs.ang + pct * (ns.ang - cs.ang)
+				state.red = cs.red + pct * (ns.red - cs.red)
+				state.green = cs.red + pct * (ns.green - cs.green)
+				state.blue = cs.blue + pct * (ns.blue - cs.blue)
+				state.alpha = cs.alpha + pct * (ns.alpha - cs.alpha)
+				state.scale_x = cs.scale_x + pct * (ns.scale_x - cs.scale_x)
+				state.scale_y = cs.scale_y + pct * (ns.scale_y - cs.scale_y)
+			Else
+				'was transforming, until just a moment ago
+				state = TRANSFORM_STATE( state_link.Value() ).clone()
+			End If
 		End If
 	End Method
 	
 	Method draw()
-		Local 
-		If transforming
-			
-		Else
-			
-		End If
+		SetColor( state.red, state.green, state.blue )
+		SetAlpha( state.alpha )
+		SetRotation( parent.ang + state.ang )
+		SetScale( state.scale_x, state.scale_y )
+		DrawImage( img, parent.pos_x + off_x + state.pos_x, parent.pos_y + off_y + state.pos_y )
+	End Method
+	
+	Method next_state_link:TLink()
+		If state_link = Null Then Return Null
+		Return state_link.NextLink()
 	End Method
 	
 	Method begin_transformation( count% = INFINITY )
+		transformations_remaining = count
 		transform_begin_ts = now()
 		transforming = True
-		transformations_remaining = count
 	End Method
 	
 	Method add_state( s:TRANSFORM_STATE )
