@@ -107,14 +107,8 @@ Function collide_all()
 					'perhaps! spawneth teh phat lewts?!
 					spawn_pickup( ag.pos_x, ag.pos_y )
 					'spawn gibs
-					For Local index% = EachIn ag.gibs
-						Local p:PARTICLE = PARTICLE( PARTICLE.Copy( particle_archetype[index] ))
-						p.pos_x = ag.pos_x; p.pos_y = ag.pos_y
-						p.vel_x = RandF( -1, 1 ); p.vel_y = RandF( -1, 1 )
-						p.ang = RandF( 0.0, 359.9999 )
-						p.ang_vel = RandF( -1.5, 1.5 )
-						p.frictional_coefficient = 0.0130
-						p.life_time = 1500
+					For Local gib:PARTICLE = EachIn ag.gib_list
+						gib.auto_manage()
 					Next
 					'remove enemy
 					ag.remove_me()

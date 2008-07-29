@@ -30,6 +30,12 @@ Type PARTICLE Extends POINT
 	Method New()
 	End Method
 	
+	Method clone:PARTICLE()
+		Local p:PARTICLE = New PARTICLE
+		'..?
+		Return p
+	End Method
+	
 	Method update()
 		'friction
 		vel_x :- vel_x*frictional_coefficient
@@ -67,6 +73,21 @@ Type PARTICLE Extends POINT
 			End If
 		End If
 	End Method	
+	
+	Method auto_manage()
+		If layer = LAYER_BACKGROUND
+			add_me( particle_list_background )
+		Else If layer = LAYER_FOREGROUND
+			add_me( particle_list_foreground )
+		End If
+	End Method
+	
+	Function Create:Object( ..
+	)
+		Local p:PARTICLE = New PARTICLE
+		'..?
+		Return p
+	End Function
 	
 	Function Archetype:Object( ..
 	img:TImage, ..
@@ -117,11 +138,7 @@ Type PARTICLE Extends POINT
 		p.scale_delta = other.scale_delta
 		p.life_time = other.life_time
 		
-		If p.layer = LAYER_BACKGROUND
-			p.add_me( particle_list_background )
-		Else If p.layer = LAYER_FOREGROUND
-			p.add_me( particle_list_foreground )
-		End If
+		p.auto_manage()
 		Return p
 	End Function
 	

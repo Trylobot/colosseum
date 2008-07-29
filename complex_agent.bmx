@@ -34,11 +34,12 @@ Type COMPLEX_AGENT Extends AGENT
 	Field forward_trail_emitters:EMITTER[] 'forward-facing trail emitter array
 	Field rear_trail_emitters:EMITTER[] 'rear-facing debris trail array
 	
-	Field gibs%[]
+	Field gib_list:TList
 	
 	Method New()
 		force_list = CreateList()
 		emitter_list = CreateList()
+		gib_list = CreateList()
 	End Method
 	
 	Method draw()
@@ -210,10 +211,9 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		c.driving_force = FORCE( FORCE.Copy( other.driving_force, c.force_list ))
 		c.turning_force = FORCE( FORCE.Copy( other.turning_force, c.force_list ))
-		If other.gibs <> Null
-			c.gibs = New Int[ other.gibs.length ]
-			For Local i% = 0 To other.gibs.length - 1
-				c.gibs[i] = other.gibs[i]
+		If other.gib_list <> Null
+			For Local p:PARTICLE = EachIn other.gib_list
+				c.gib_list.AddLast( p.clone() )
 			Next
 		End If
 		

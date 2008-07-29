@@ -180,7 +180,15 @@ Global enemy_archetype:COMPLEX_AGENT[10]
 enemy_archetype[ 0] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_box, 50, 50, 200.0, 10.0, 0, 1, 6.0, 12.0 ))
 	enemy_archetype[ 0].rear_trail_emitters[ 0] = EMITTER( EMITTER.Copy( particle_emitter_archetype[10] ))
 	enemy_archetype[ 0].rear_trail_emitters[ 0].attach_to( enemy_archetype[ 0], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	enemy_archetype[ 0].gibs = [ 21, 21 ]
+	enemy_archetype[ 0].gib_list.AddLast( PARTICLE( PARTICLE.Create( ? )))
+	enemy_archetype[ 0].gib_list.AddLast( PARTICLE( PARTICLE.Create( ? )))
+'	Local p:PARTICLE = PARTICLE( PARTICLE.Copy( particle_archetype[index] ))
+'	p.pos_x = ag.pos_x; p.pos_y = ag.pos_y
+'	p.vel_x = RandF( -1, 1 ); p.vel_y = RandF( -1, 1 )
+'	p.ang = RandF( 0.0, 359.9999 )
+'	p.ang_vel = RandF( -1.5, 1.5 )
+'	p.frictional_coefficient = 0.0130
+'	p.life_time = 1500
 
 'enemy 1 - rocket turret emplacement
 enemy_archetype[ 1] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_enemy_stationary_emplacement_1_chassis, 100, 150, 1000.0, 0, 1, 0, 0, 0, True ))
