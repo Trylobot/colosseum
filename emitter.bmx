@@ -109,9 +109,9 @@ Type EMITTER extends MANAGED_OBJECT
 			Local index% = Rand( archetype_index_min, archetype_index_max )
 			Select emitter_type
 				Case EMITTER_TYPE_PARTICLE
-					emit_particle( Copy_PARTICLE( particle_archetype[index] ))
+					emit_particle( PARTICLE( PARTICLE.Copy( particle_archetype[index] )))
 				Case EMITTER_TYPE_PROJECTILE
-					emit_projectile( Copy_PROJECTILE( projectile_archetype[index], source_id ))
+					emit_projectile( PROJECTILE( PROJECTILE.Copy( projectile_archetype[index], source_id )))
 			End Select
 			
 			'interval
@@ -199,7 +199,7 @@ Type EMITTER extends MANAGED_OBJECT
 		'Else                            acc_ang = RandF( acc_ang_min, acc_ang_max )
 		'p.acc_x = acc * Cos( acc_ang + parent.ang )
 		'p.acc_y = acc * Sin( acc_ang + parent.ang )
-		Create_FORCE( PHYSICS_FORCE, 0, RandF( acc_min, acc_max )).add_me( p.force_list )
+		FORCE( FORCE.Create( PHYSICS_FORCE, 0, RandF( acc_min, acc_max ))).add_me( p.force_list )
 		
 		'angular acceleration
 		'p.ang_acc = RandF( ang_acc_min, ang_acc_max )
@@ -231,106 +231,106 @@ Type EMITTER extends MANAGED_OBJECT
 		ang_acc_min = ang_acc_min_new; ang_acc_max = ang_acc_max_new
 	End Method
 	
+	Function Archetype:Object( ..
+	emitter_type%, ..
+	archetype_index_min%, archetype_index_max%, ..
+	mode%, ..
+	combine_vel_with_parent_vel%, ..
+	combine_vel_ang_with_parent_ang%, ..
+	inherit_ang_from_dist_ang%, ..
+	inherit_vel_ang_from_ang%, ..
+	inherit_acc_ang_from_vel_ang%, ..
+	interval_min%, interval_max%, ..
+	count_min%, count_max%, ..
+	life_time_min% = INFINITY, life_time_max% = INFINITY, ..
+	alpha_min# = 1.0, alpha_max# = 1.0, ..
+	alpha_delta_min# = 0.0, alpha_delta_max# = 0.0, ..
+	scale_min# = 1.0, scale_max# = 1.0, ..
+	scale_delta_min# = 0.0, scale_delta_max# = 0.0 )
+		Local em:EMITTER = New EMITTER
+		
+		'static fields
+		'emitter attributes and attribute ranges
+		em.emitter_type = emitter_type
+		em.archetype_index_min = archetype_index_min; em.archetype_index_max = archetype_index_max
+		em.mode = mode
+		em.combine_vel_with_parent_vel = combine_vel_with_parent_vel
+		em.combine_vel_ang_with_parent_ang = combine_vel_ang_with_parent_ang
+		em.inherit_ang_from_dist_ang = inherit_ang_from_dist_ang
+		em.inherit_vel_ang_from_ang = inherit_vel_ang_from_ang
+		em.inherit_acc_ang_from_vel_ang = inherit_acc_ang_from_vel_ang
+		em.interval_min = interval_min; em.interval_max = interval_max
+		em.interval = Rand( em.interval_min, em.interval_max )
+		em.last_enable_ts = now()
+		em.count_min = count_min; em.count_max = count_max
+		'emitted particle attribute ranges
+		em.life_time_min = life_time_min; em.life_time_max = life_time_max
+		em.alpha_min = alpha_min; em.alpha_max = alpha_max
+		em.alpha_delta_min = alpha_delta_min; em.alpha_delta_max = alpha_delta_max
+		em.scale_min = scale_min; em.scale_max = scale_max
+		em.scale_delta_min = scale_delta_min; em.scale_delta_max = scale_delta_max
+		
+		'dynamic fields
+		em.parent = Null
+		em.offset = 0
+		em.offset_ang = 0
+		em.dist_min = 0; em.dist_max = 0
+		em.dist_ang_min = 0; em.dist_ang_max = 0
+		em.vel_min = 0; em.vel_max = 0
+		em.vel_ang_min = 0; em.vel_ang_max = 0
+		em.acc_min = 0; em.acc_max = 0
+		em.acc_ang_min = 0; em.acc_ang_max = 0
+		em.ang_min = 0; em.ang_max = 0
+		em.ang_vel_min = 0; em.ang_vel_max = 0
+		em.ang_acc_min = 0; em.ang_acc_max = 0
+	
+		Return em
+	End Function
+
+	Function Copy:Object( other:EMITTER, managed_list:TList = Null, new_parent:POINT = Null, source_id% = NULL_ID )
+		Local em:EMITTER = New EMITTER
+		If other = Null Then Return em
+		
+		'emitter-specific fields
+		em.emitter_type = other.emitter_type
+		em.archetype_index_min = other.archetype_index_min; em.archetype_index_max = other.archetype_index_max
+		em.mode = other.mode
+		em.combine_vel_with_parent_vel = other.combine_vel_with_parent_vel
+		em.combine_vel_ang_with_parent_ang = other.combine_vel_ang_with_parent_ang
+		em.inherit_ang_from_dist_ang = other.inherit_ang_from_dist_ang
+		em.inherit_vel_ang_from_ang = other.inherit_vel_ang_from_ang
+		em.inherit_acc_ang_from_vel_ang = other.inherit_acc_ang_from_vel_ang
+		em.interval_min = other.interval_min; em.interval_max = other.interval_max
+		em.interval = Rand( em.interval_min, em.interval_max )
+		em.last_enable_ts = now()
+		em.count_min = other.count_min; em.count_max = other.count_max
+		em.source_id = source_id
+		
+		'emitted particle-specific fields
+		em.life_time_min = other.life_time_min; em.life_time_max = other.life_time_max
+		em.alpha_min = other.alpha_min; em.alpha_max = other.alpha_max
+		em.alpha_delta_min = other.alpha_delta_min; em.alpha_delta_max = other.alpha_delta_max
+		em.scale_min = other.scale_min; em.scale_max = other.scale_max
+		em.scale_delta_min = other.scale_delta_min; em.scale_delta_max = other.scale_delta_max
+		
+		'dynamic fields
+		em.parent = new_parent
+		em.offset = other.offset
+		em.offset_ang = other.offset_ang
+		em.dist_min = other.dist_min; em.dist_max = other.dist_max
+		em.dist_ang_min = other.dist_ang_min; em.dist_ang_max = other.dist_ang_max
+		em.vel_min = other.vel_min; em.vel_max = other.vel_max
+		em.vel_ang_min = other.vel_ang_min; em.vel_ang_max = other.vel_ang_max
+		em.acc_min = other.acc_min; em.acc_max = other.acc_max
+		em.acc_ang_min = other.acc_ang_min; em.acc_ang_max = other.acc_ang_max
+		em.ang_min = other.ang_min; em.ang_max = other.ang_max
+		em.ang_vel_min = other.ang_vel_min; em.ang_vel_max = other.ang_vel_max
+		em.ang_acc_min = other.ang_acc_min; em.ang_acc_max = other.ang_acc_max
+		
+		If managed_list <> Null Then em.add_me( managed_list )
+		Return em
+	End Function
+	
 End Type
-'______________________________________________________________________________
-Function Archetype_EMITTER:EMITTER( ..
-emitter_type%, ..
-archetype_index_min%, archetype_index_max%, ..
-mode%, ..
-combine_vel_with_parent_vel%, ..
-combine_vel_ang_with_parent_ang%, ..
-inherit_ang_from_dist_ang%, ..
-inherit_vel_ang_from_ang%, ..
-inherit_acc_ang_from_vel_ang%, ..
-interval_min%, interval_max%, ..
-count_min%, count_max%, ..
-life_time_min% = INFINITY, life_time_max% = INFINITY, ..
-alpha_min# = 1.0, alpha_max# = 1.0, ..
-alpha_delta_min# = 0.0, alpha_delta_max# = 0.0, ..
-scale_min# = 1.0, scale_max# = 1.0, ..
-scale_delta_min# = 0.0, scale_delta_max# = 0.0 )
-	Local em:EMITTER = New EMITTER
-	
-	'static fields
-	'emitter attributes and attribute ranges
-	em.emitter_type = emitter_type
-	em.archetype_index_min = archetype_index_min; em.archetype_index_max = archetype_index_max
-	em.mode = mode
-	em.combine_vel_with_parent_vel = combine_vel_with_parent_vel
-	em.combine_vel_ang_with_parent_ang = combine_vel_ang_with_parent_ang
-	em.inherit_ang_from_dist_ang = inherit_ang_from_dist_ang
-	em.inherit_vel_ang_from_ang = inherit_vel_ang_from_ang
-	em.inherit_acc_ang_from_vel_ang = inherit_acc_ang_from_vel_ang
-	em.interval_min = interval_min; em.interval_max = interval_max
-	em.interval = Rand( em.interval_min, em.interval_max )
-	em.last_enable_ts = now()
-	em.count_min = count_min; em.count_max = count_max
-	'emitted particle attribute ranges
-	em.life_time_min = life_time_min; em.life_time_max = life_time_max
-	em.alpha_min = alpha_min; em.alpha_max = alpha_max
-	em.alpha_delta_min = alpha_delta_min; em.alpha_delta_max = alpha_delta_max
-	em.scale_min = scale_min; em.scale_max = scale_max
-	em.scale_delta_min = scale_delta_min; em.scale_delta_max = scale_delta_max
-	
-	'dynamic fields
-	em.parent = Null
-	em.offset = 0
-	em.offset_ang = 0
-	em.dist_min = 0; em.dist_max = 0
-	em.dist_ang_min = 0; em.dist_ang_max = 0
-	em.vel_min = 0; em.vel_max = 0
-	em.vel_ang_min = 0; em.vel_ang_max = 0
-	em.acc_min = 0; em.acc_max = 0
-	em.acc_ang_min = 0; em.acc_ang_max = 0
-	em.ang_min = 0; em.ang_max = 0
-	em.ang_vel_min = 0; em.ang_vel_max = 0
-	em.ang_acc_min = 0; em.ang_acc_max = 0
 
-	Return em
-End Function
-'______________________________________________________________________________
-Function Copy_EMITTER:EMITTER( other:EMITTER, managed_list:TList = Null, new_parent:POINT = Null, source_id% = NULL_ID )
-	Local em:EMITTER = New EMITTER
-	If other = Null Then Return em
 	
-	'emitter-specific fields
-	em.emitter_type = other.emitter_type
-	em.archetype_index_min = other.archetype_index_min; em.archetype_index_max = other.archetype_index_max
-	em.mode = other.mode
-	em.combine_vel_with_parent_vel = other.combine_vel_with_parent_vel
-	em.combine_vel_ang_with_parent_ang = other.combine_vel_ang_with_parent_ang
-	em.inherit_ang_from_dist_ang = other.inherit_ang_from_dist_ang
-	em.inherit_vel_ang_from_ang = other.inherit_vel_ang_from_ang
-	em.inherit_acc_ang_from_vel_ang = other.inherit_acc_ang_from_vel_ang
-	em.interval_min = other.interval_min; em.interval_max = other.interval_max
-	em.interval = Rand( em.interval_min, em.interval_max )
-	em.last_enable_ts = now()
-	em.count_min = other.count_min; em.count_max = other.count_max
-	em.source_id = source_id
-	
-	'emitted particle-specific fields
-	em.life_time_min = other.life_time_min; em.life_time_max = other.life_time_max
-	em.alpha_min = other.alpha_min; em.alpha_max = other.alpha_max
-	em.alpha_delta_min = other.alpha_delta_min; em.alpha_delta_max = other.alpha_delta_max
-	em.scale_min = other.scale_min; em.scale_max = other.scale_max
-	em.scale_delta_min = other.scale_delta_min; em.scale_delta_max = other.scale_delta_max
-	
-	'dynamic fields
-	em.parent = new_parent
-	em.offset = other.offset
-	em.offset_ang = other.offset_ang
-	em.dist_min = other.dist_min; em.dist_max = other.dist_max
-	em.dist_ang_min = other.dist_ang_min; em.dist_ang_max = other.dist_ang_max
-	em.vel_min = other.vel_min; em.vel_max = other.vel_max
-	em.vel_ang_min = other.vel_ang_min; em.vel_ang_max = other.vel_ang_max
-	em.acc_min = other.acc_min; em.acc_max = other.acc_max
-	em.acc_ang_min = other.acc_ang_min; em.acc_ang_max = other.acc_ang_max
-	em.ang_min = other.ang_min; em.ang_max = other.ang_max
-	em.ang_vel_min = other.ang_vel_min; em.ang_vel_max = other.ang_vel_max
-	em.ang_acc_min = other.ang_acc_min; em.ang_acc_max = other.ang_acc_max
-	
-	If managed_list <> Null Then em.add_me( managed_list )
-	Return em
-End Function
-
-

@@ -35,39 +35,40 @@ Type FORCE Extends MANAGED_OBJECT
 			(now() - created_ts) > life_time
 	End Method
 	
+	Function Create:Object( ..
+	physics_type%, ..
+	direction#, ..
+	magnitude_max#, ..
+	life_time% = INFINITY )
+		Local f:FORCE = New FORCE
+		
+		f.physics_type = physics_type
+		f.direction = direction
+		f.magnitude_max = magnitude_max
+		f.life_time = life_time
+		
+		f.control_pct = 1.0
+		f.created_ts = now()
+		f.update()
+		
+		Return f
+	End Function
+	
+	Function Copy:Object( other:FORCE, managed_list:TList )
+		Local f:FORCE = New FORCE
+		
+		f.physics_type = other.physics_type
+		f.direction = other.direction
+		f.magnitude_max = other.magnitude_max
+		f.life_time = other.life_time
+		
+		f.control_pct = 1.0
+		f.created_ts = now()
+		f.update()
+		
+		f.add_me( managed_list )
+		Return f
+	End Function
+
 End Type
-'______________________________________________________________________________
-Function Create_FORCE:FORCE( ..
-physics_type%, ..
-direction#, ..
-magnitude_max#, ..
-life_time% = INFINITY )
-	Local f:FORCE = New FORCE
-	
-	f.physics_type = physics_type
-	f.direction = direction
-	f.magnitude_max = magnitude_max
-	f.life_time = life_time
-	
-	f.control_pct = 1.0
-	f.created_ts = now()
-	f.update()
-	
-	Return f
-End Function
-'______________________________________________________________________________
-Function Copy_FORCE:FORCE( other:FORCE, managed_list:TList )
-	Local f:FORCE = New FORCE
-	
-	f.physics_type = other.physics_type
-	f.direction = other.direction
-	f.magnitude_max = other.magnitude_max
-	f.life_time = other.life_time
-	
-	f.control_pct = 1.0
-	f.created_ts = now()
-	f.update()
-	
-	f.add_me( managed_list )
-	Return f
-End Function
+

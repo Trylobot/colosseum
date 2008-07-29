@@ -127,12 +127,18 @@ Type cVEC 'cartesian coordinate system 2D vector
 	Method New()
 	End Method
 	
-	Function Create:cVEC( x#, y# )
+	Function Create:Object( x#, y# )
 		Local v:cVEC = New cVEC
 		v.x = x; v.y = y
 		Return v
 	End Function
 	
+	Method r#()
+		Return Sqr( Pow( x, 2 ) + Pow( y, 2 ))
+	End Method
+	Method a#()
+		Return ATan2( y, x )
+	End Method
 End Type
 '______________________________________________________________________________
 Type pVEC 'polar coordinate system 2D vector
@@ -143,4 +149,17 @@ Type pVEC 'polar coordinate system 2D vector
 	Method New()
 	End Method
 	
+	Function Create:Object( r#, a# )
+		Local v:pVEC = New pVEC
+		v.r = r; v.a = a
+		Return v
+	End Function
+	
+	Method x#()
+		Return (r * Cos( a ))
+	End Method
+	Method y#()
+		Return (r * Sin( a ))
+	End Method
 End Type
+

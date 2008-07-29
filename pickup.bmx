@@ -1,5 +1,5 @@
 Rem
-	point.bmx
+	pickup.bmx
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
@@ -50,47 +50,48 @@ Type PICKUP Extends MANAGED_OBJECT
 		If managed() Then alpha = 1 - 0.5*((now() - created_ts) / life_time)
 	End Method
 	
+	Function Archetype:Object( ..
+	img:TImage, ..
+	pickup_type%, ..
+	pickup_amount%, ..
+	life_time% )
+		Local p:PICKUP = New PICKUP
+		
+		'static fields
+		p.img = img
+		p.pickup_type = pickup_type
+		p.pickup_amount = pickup_amount
+		p.life_time = life_time
+		
+		'dynamic fields
+		p.pos_x = 0
+		p.pos_y = 0
+		p.alpha = 1
+		p.created_ts = now()
+		
+		Return p
+	End Function
+
+	Function Copy:Object( other:PICKUP )
+		If other = Null Then Return Null
+		Local p:PICKUP = New PICKUP
+		
+		'static fields
+		p.img = other.img
+		p.pickup_type = other.pickup_type
+		p.pickup_amount = other.pickup_amount
+		p.life_time = other.life_time
+		
+		'dynamic fields
+		p.pos_x = other.pos_x
+		p.pos_y = other.pos_y
+		p.alpha = other.alpha
+		p.created_ts = now()
+		
+		p.add_me( pickup_list )
+		Return p
+	End Function
+
 End Type
 '______________________________________________________________________________
-Function Archetype_PICKUP:PICKUP( ..
-img:TImage, ..
-pickup_type%, ..
-pickup_amount%, ..
-life_time% )
-	Local p:PICKUP = New PICKUP
-	
-	'static fields
-	p.img = img
-	p.pickup_type = pickup_type
-	p.pickup_amount = pickup_amount
-	p.life_time = life_time
-	
-	'dynamic fields
-	p.pos_x = 0
-	p.pos_y = 0
-	p.alpha = 1
-	p.created_ts = now()
-	
-	Return p
-End Function
-'______________________________________________________________________________
-Function Copy_PICKUP:PICKUP( other:PICKUP )
-	If other = Null Then Return Null
-	Local p:PICKUP = New PICKUP
-	
-	'static fields
-	p.img = other.img
-	p.pickup_type = other.pickup_type
-	p.pickup_amount = other.pickup_amount
-	p.life_time = other.life_time
-	
-	'dynamic fields
-	p.pos_x = other.pos_x
-	p.pos_y = other.pos_y
-	p.alpha = other.alpha
-	p.created_ts = now()
-	
-	p.add_me( pickup_list )
-	Return p
-End Function
 

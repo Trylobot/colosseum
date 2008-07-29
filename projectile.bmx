@@ -38,63 +38,65 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		DrawImage( img, pos_x, pos_y )
 	End Method
 	
+	Function Archetype:Object( ..
+	img:TImage,  ..
+	explosion_particle_index%,  ..
+	mass#, ..
+	frictional_coefficient#, ..
+	damage#, ..
+	radius# )
+		Local p:PROJECTILE = New PROJECTILE
+		
+		'static fields
+		p.img = img
+		p.explosion_particle_index = explosion_particle_index
+		p.mass = mass
+		p.frictional_coefficient = frictional_coefficient
+		p.damage = damage
+		p.radius = radius
+		
+		'dynamic fields
+		p.pos_x = 0; p.pos_y = 0
+		p.vel_x = 0; p.vel_y = 0
+		p.ang = 0
+		p.ang_vel = 0
+		
+		Return p
+	End Function
+	
+	Function Copy:Object( other:PROJECTILE, source_id% )
+		If other = Null Then Return Null
+		Local p:PROJECTILE = New PROJECTILE
+		
+		'static fields
+		p.source_id = source_id
+		p.img = other.img
+		p.explosion_particle_index = other.explosion_particle_index
+		p.mass = other.mass
+		p.frictional_coefficient = other.frictional_coefficient
+		p.damage = other.damage
+		p.radius = other.radius
+		
+		'emitters
+		If other.thrust_emitter <> Null
+			p.thrust_emitter = EMITTER( EMITTER.Copy( other.thrust_emitter, p.emitter_list, p ))
+			p.thrust_emitter.enable( MODE_ENABLED_FOREVER )
+		End If
+		If other.trail_emitter <> Null
+			p.trail_emitter = EMITTER( EMITTER.Copy( other.trail_emitter, p.emitter_list, p ))
+			p.trail_emitter.enable( MODE_ENABLED_FOREVER )
+		End If
+		
+		'dynamic fields
+		p.pos_x = other.pos_x; p.pos_y = other.pos_y
+		p.vel_x = other.vel_x; p.vel_y = other.vel_y
+		p.ang = other.ang
+		p.ang_vel = other.ang_vel
+		
+		p.add_me( projectile_list )
+		Return p
+	End Function
+
 End Type
-'______________________________________________________________________________
-Function Archetype_PROJECTILE:PROJECTILE( ..
-img:TImage,  ..
-explosion_particle_index%,  ..
-mass#, ..
-frictional_coefficient#, ..
-damage#, ..
-radius# )
-	Local p:PROJECTILE = New PROJECTILE
+
 	
-	'static fields
-	p.img = img
-	p.explosion_particle_index = explosion_particle_index
-	p.mass = mass
-	p.frictional_coefficient = frictional_coefficient
-	p.damage = damage
-	p.radius = radius
-	
-	'dynamic fields
-	p.pos_x = 0; p.pos_y = 0
-	p.vel_x = 0; p.vel_y = 0
-	p.ang = 0
-	p.ang_vel = 0
-	
-	Return p
-End Function
-'______________________________________________________________________________
-Function Copy_PROJECTILE:PROJECTILE( other:PROJECTILE, source_id% )
-	If other = Null Then Return Null
-	Local p:PROJECTILE = New PROJECTILE
-	
-	'static fields
-	p.source_id = source_id
-	p.img = other.img
-	p.explosion_particle_index = other.explosion_particle_index
-	p.mass = other.mass
-	p.frictional_coefficient = other.frictional_coefficient
-	p.damage = other.damage
-	p.radius = other.radius
-	
-	'emitters
-	If other.thrust_emitter <> Null
-		p.thrust_emitter = Copy_EMITTER( other.thrust_emitter, p.emitter_list, p )
-		p.thrust_emitter.enable( MODE_ENABLED_FOREVER )
-	End If
-	If other.trail_emitter <> Null
-		p.trail_emitter = Copy_EMITTER( other.trail_emitter, p.emitter_list, p )
-		p.trail_emitter.enable( MODE_ENABLED_FOREVER )
-	End If
-	
-	'dynamic fields
-	p.pos_x = other.pos_x; p.pos_y = other.pos_y
-	p.vel_x = other.vel_x; p.vel_y = other.vel_y
-	p.ang = other.ang
-	p.ang_vel = other.ang_vel
-	
-	p.add_me( projectile_list )
-	Return p
-End Function

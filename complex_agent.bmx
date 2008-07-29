@@ -129,98 +129,99 @@ Type COMPLEX_AGENT Extends AGENT
 		pkp.remove_me()
 	End Method
 	
-End Type
-'______________________________________________________________________________
-Function Archetype_COMPLEX_AGENT:COMPLEX_AGENT( ..
-img:TImage, ..
-cash_value%, ..
-max_health#, ..
-mass#, ..
-frictional_coefficient#, ..
-turret_count%, ..
-motivator_count%, ..
-driving_force_magnitude#, ..
-turning_force_magnitude#, ..
-physics_disabled% = False )
-	Local c:COMPLEX_AGENT = New COMPLEX_AGENT
+	Function Archetype:Object( ..
+	img:TImage, ..
+	cash_value%, ..
+	max_health#, ..
+	mass#, ..
+	frictional_coefficient#, ..
+	turret_count%, ..
+	motivator_count%, ..
+	driving_force_magnitude#, ..
+	turning_force_magnitude#, ..
+	physics_disabled% = False )
+		Local c:COMPLEX_AGENT = New COMPLEX_AGENT
+		
+		'static fields
+		c.img = img
+		c.max_health = max_health
+		c.mass = mass
+		c.frictional_coefficient = frictional_coefficient
+		c.cash_value = cash_value
+		c.physics_disabled = physics_disabled
+		
+		'dynamic fields
+		c.cur_health = max_health
+		c.turret_count = turret_count
+		If c.turret_count > 0
+			c.turrets = New TURRET[ turret_count ]
+		End If
+		c.motivator_count = motivator_count
+		If c.motivator_count > 0
+			'c.motivators = New MOTIVATOR[ motivator_count ]
+			c.forward_debris_emitters = New EMITTER[ motivator_count ]
+			c.rear_debris_emitters = New EMITTER[ motivator_count ]
+			c.forward_trail_emitters = New EMITTER[ motivator_count ]
+			c.rear_trail_emitters = New EMITTER[ motivator_count ]
+		End If
+		c.driving_force = FORCE( FORCE.Create( PHYSICS_FORCE, 0, driving_force_magnitude ))
+		c.turning_force = FORCE( FORCE.Create( PHYSICS_TORQUE, 0, turning_force_magnitude ))
+		
+		Return c
+	End Function
 	
-	'static fields
-	c.img = img
-	c.max_health = max_health
-	c.mass = mass
-	c.frictional_coefficient = frictional_coefficient
-	c.cash_value = cash_value
-	c.physics_disabled = physics_disabled
-	
-	'dynamic fields
-	c.cur_health = max_health
-	c.turret_count = turret_count
-	If c.turret_count > 0
-		c.turrets = New TURRET[ turret_count ]
-	End If
-	c.motivator_count = motivator_count
-	If c.motivator_count > 0
-		'c.motivators = New MOTIVATOR[ motivator_count ]
-		c.forward_debris_emitters = New EMITTER[ motivator_count ]
-		c.rear_debris_emitters = New EMITTER[ motivator_count ]
-		c.forward_trail_emitters = New EMITTER[ motivator_count ]
-		c.rear_trail_emitters = New EMITTER[ motivator_count ]
-	End If
-	c.driving_force = Create_FORCE( PHYSICS_FORCE, 0, driving_force_magnitude )
-	c.turning_force = Create_FORCE( PHYSICS_TORQUE, 0, turning_force_magnitude )
-	
-	Return c
-End Function
-'______________________________________________________________________________
-Function Copy_COMPLEX_AGENT:COMPLEX_AGENT( other:COMPLEX_AGENT, political_alignment% = ALIGNMENT_NONE )
-	If other = Null Then Return Null
-	Local c:COMPLEX_AGENT = New COMPLEX_AGENT
-	
-	'static fields
-	c.img = other.img
-	c.max_health = other.max_health
-	c.mass = other.mass
-	c.frictional_coefficient = other.frictional_coefficient
-	c.cash_value = other.cash_value
-	c.physics_disabled = other.physics_disabled
-	
-	'dynamic fields
-	c.pos_x = other.pos_x; c.pos_y = other.pos_y
-	c.ang = other.ang
-	c.cur_health = c.max_health
-	If other.turret_count > 0
-		c.turret_count = other.turret_count
-		c.turrets = New TURRET[ other.turret_count ]
-		For Local i% = 0 To other.turret_count - 1
-			If other.turrets[i] <> Null Then c.turrets[i] = Copy_TURRET( other.turrets[i], c )
-		Next
-	End If
-	If other.motivator_count > 0
-		c.motivator_count = other.motivator_count
-		'c.motivators = New MOTIVATOR[ other.motivator_count ]
-		c.forward_debris_emitters = New EMITTER[ other.forward_debris_emitters.Length ]
-		c.rear_debris_emitters = New EMITTER[ other.rear_debris_emitters.Length ]
-		c.forward_trail_emitters = New EMITTER[ other.forward_trail_emitters.Length ]
-		c.rear_trail_emitters = New EMITTER[ other.rear_trail_emitters.Length ]
-		For Local i% = 0 To other.motivator_count - 1
-			'c.motivators[i] = Copy_MOTIVATOR( other.motivators[i] )
-			If other.forward_debris_emitters[i] <> Null Then c.forward_debris_emitters[i] = Copy_EMITTER( other.forward_debris_emitters[i], c.emitter_list, c )
-			If other.rear_debris_emitters[i] <> Null Then c.rear_debris_emitters[i] = Copy_EMITTER( other.rear_debris_emitters[i], c.emitter_list, c )
-			If other.forward_trail_emitters[i] <> Null Then c.forward_trail_emitters[i] = Copy_EMITTER( other.forward_trail_emitters[i], c.emitter_list, c )
-			If other.rear_trail_emitters[i] <> Null Then c.rear_trail_emitters[i] = Copy_EMITTER( other.rear_trail_emitters[i], c.emitter_list, c )
-		Next
-	End If
-	c.driving_force = Copy_FORCE( other.driving_force, c.force_list )
-	c.turning_force = Copy_FORCE( other.turning_force, c.force_list )
-	If other.gibs <> Null
-		c.gibs = New Int[ other.gibs.length ]
-		For Local i% = 0 To other.gibs.length - 1
-			c.gibs[i] = other.gibs[i]
-		Next
-	End If
-	
-	If political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..
-	Else If political_alignment = ALIGNMENT_HOSTILE Then c.add_me( hostile_agent_list )
-	Return c
-End Function
+	Function Copy:Object( other:COMPLEX_AGENT, political_alignment% = ALIGNMENT_NONE )
+		If other = Null Then Return Null
+		Local c:COMPLEX_AGENT = New COMPLEX_AGENT
+		
+		'static fields
+		c.img = other.img
+		c.max_health = other.max_health
+		c.mass = other.mass
+		c.frictional_coefficient = other.frictional_coefficient
+		c.cash_value = other.cash_value
+		c.physics_disabled = other.physics_disabled
+		
+		'dynamic fields
+		c.pos_x = other.pos_x; c.pos_y = other.pos_y
+		c.ang = other.ang
+		c.cur_health = c.max_health
+		If other.turret_count > 0
+			c.turret_count = other.turret_count
+			c.turrets = New TURRET[ other.turret_count ]
+			For Local i% = 0 To other.turret_count - 1
+				If other.turrets[i] <> Null Then c.turrets[i] = TURRET( TURRET.Copy( other.turrets[i], c ))
+			Next
+		End If
+		If other.motivator_count > 0
+			c.motivator_count = other.motivator_count
+			'c.motivators = New MOTIVATOR[ other.motivator_count ]
+			c.forward_debris_emitters = New EMITTER[ other.forward_debris_emitters.Length ]
+			c.rear_debris_emitters = New EMITTER[ other.rear_debris_emitters.Length ]
+			c.forward_trail_emitters = New EMITTER[ other.forward_trail_emitters.Length ]
+			c.rear_trail_emitters = New EMITTER[ other.rear_trail_emitters.Length ]
+			For Local i% = 0 To other.motivator_count - 1
+				'c.motivators[i] = Copy_MOTIVATOR( other.motivators[i] )
+				If other.forward_debris_emitters[i] <> Null Then c.forward_debris_emitters[i] = EMITTER( EMITTER.Copy( other.forward_debris_emitters[i], c.emitter_list, c ))
+				If other.rear_debris_emitters[i] <> Null Then c.rear_debris_emitters[i] = EMITTER( EMITTER.Copy( other.rear_debris_emitters[i], c.emitter_list, c ))
+				If other.forward_trail_emitters[i] <> Null Then c.forward_trail_emitters[i] = EMITTER( EMITTER.Copy( other.forward_trail_emitters[i], c.emitter_list, c ))
+				If other.rear_trail_emitters[i] <> Null Then c.rear_trail_emitters[i] = EMITTER( EMITTER.Copy( other.rear_trail_emitters[i], c.emitter_list, c ))
+			Next
+		End If
+		c.driving_force = FORCE( FORCE.Copy( other.driving_force, c.force_list ))
+		c.turning_force = FORCE( FORCE.Copy( other.turning_force, c.force_list ))
+		If other.gibs <> Null
+			c.gibs = New Int[ other.gibs.length ]
+			For Local i% = 0 To other.gibs.length - 1
+				c.gibs[i] = other.gibs[i]
+			Next
+		End If
+		
+		If political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..
+		Else If political_alignment = ALIGNMENT_HOSTILE Then c.add_me( hostile_agent_list )
+		Return c
+	End Function
 
+End Type
+
+	

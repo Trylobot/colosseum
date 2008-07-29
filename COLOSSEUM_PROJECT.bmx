@@ -36,11 +36,11 @@ SuperStrict
 '#Region &H04 MyNamespace
 'GUI
 Private
-TYPE z_61fffa87_f6e4_470f_a131_cfec789193d2 abstract  'Resource folder
+TYPE z_a645590c_c131_4b2b_a7d3_1ec4e2400618 abstract  'Resource folder
 End Type
 
 
-TYPE z_blide_bg8676cc9c_7526_4290_a60e_f50da08154a7 Abstract
+TYPE z_blide_bg75bc3d71_56eb_406b_8a1c_ca5954b6c4c3 Abstract
     Const Name:string = "Colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
     Const MinorVersion:Int = 2  'This Const contains the minor version number of the program
@@ -50,13 +50,13 @@ TYPE z_blide_bg8676cc9c_7526_4290_a60e_f50da08154a7 Abstract
 EndType
 
 
-Type z_My_8676cc9c_7526_4290_a60e_f50da08154a7 Abstract 'This type has all the run-tima binary information of your assembly
-    Global Application:z_blide_bg8676cc9c_7526_4290_a60e_f50da08154a7  'This item has all the currently available assembly version information.
-    Global Resources:z_61fffa87_f6e4_470f_a131_cfec789193d2  'This item has all the currently available incbined files names and relative location.
+Type z_My_75bc3d71_56eb_406b_8a1c_ca5954b6c4c3 Abstract 'This type has all the run-tima binary information of your assembly
+    Global Application:z_blide_bg75bc3d71_56eb_406b_8a1c_ca5954b6c4c3  'This item has all the currently available assembly version information.
+    Global Resources:z_a645590c_c131_4b2b_a7d3_1ec4e2400618  'This item has all the currently available incbined files names and relative location.
 End Type
 
 
-Global My:z_My_8676cc9c_7526_4290_a60e_f50da08154a7 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
+Global My:z_My_75bc3d71_56eb_406b_8a1c_ca5954b6c4c3 'This GLOBAL has all the run-time binary information of your assembly, and embeded resources shortcuts.
 Public
 '#EndRegion &H04 MyNamespace
 
@@ -66,6 +66,7 @@ Public
 Include "load_data.bmx"
 Include "basic.bmx"
 Include "particle.bmx"
+Include "widget.bmx"
 Include "pickup.bmx"
 Include "force.bmx"
 Include "physical_object.bmx"

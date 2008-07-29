@@ -17,7 +17,8 @@ Type PARTICLE Extends POINT
 
 	Field img:TImage 'image to be drawn
 	Field retain% 'copy particle to background on death?
-	Field layer% 'foreground/background
+	Field layer% 'layer {foreground|background}
+	Field red%, green%, blue% 'color tint (static)
 	Field alpha# 'alpha value
 	Field alpha_delta# 'alpha rate of change with respect to time
 	Field scale# 'scale coefficient
@@ -27,6 +28,28 @@ Type PARTICLE Extends POINT
 	Field created_ts% 'timestamp of object creation
 	
 	Method New()
+	End Method
+	
+	Method update()
+		
+		'friction
+		vel_x :- vel_x*frictional_coefficient
+		vel_y :- vel_y*frictional_coefficient
+		ang_vel :- ang_vel*frictional_coefficient
+		'update velocity, position, angular velocity and orientation
+		Super.update()
+		'update alpha
+		alpha :+ alpha_delta
+		'update scale
+		scale :+ scale_delta
+	End Method
+	
+	Method draw()
+		SetColor( red, green, blue )
+		SetAlpha( alpha )
+		SetScale( scale, scale )
+		SetRotation( ang )
+		DrawImage( img, pos_x, pos_y )
 	End Method
 	
 	Method dead%()
@@ -46,81 +69,60 @@ Type PARTICLE Extends POINT
 		End If
 	End Method	
 	
-	Method draw()
-		SetAlpha( alpha )
-		SetScale( scale, scale )
-		SetRotation( ang )
-		DrawImage( img, pos_x, pos_y )
-	End Method
-	
-	Method update()
+	Function Archetype:Object( ..
+	img:TImage, ..
+	layer%, ..
+	retain% = False )
+		Local p:PARTICLE = New PARTICLE
 		
-		'friction
-		vel_x :- vel_x*frictional_coefficient
-		vel_y :- vel_y*frictional_coefficient
-		ang_vel :- ang_vel*frictional_coefficient
-		'update velocity, position, angular velocity and orientation
-		Super.update()
-		'update alpha
-		alpha :+ alpha_delta
-		'update scale
-		scale :+ scale_delta
-	End Method
+		'static fields
+		p.img = img
+		p.layer = layer
+		p.retain = retain
+		p.created_ts = now()
+		
+		'dynamic fields
+		p.pos_x = 0; p.pos_y = 0
+		p.vel_x = 0; p.vel_y = 0
+		p.ang = 0
+		p.ang_vel = 0
+		p.alpha = 1.000
+		p.alpha_delta = 0
+		p.scale = 1.000
+		p.scale_delta = 0
+		p.life_time = 0
+		
+		Return p
+	End Function
+	
+	Function Copy:Object( other:PARTICLE )
+		If other = Null Then Return Null
+		Local p:PARTICLE = New PARTICLE
+		
+		'static fields
+		p.img = other.img
+		p.layer = other.layer
+		p.retain = other.retain
+		p.created_ts = now()
+		
+		'dynamic fields
+		p.pos_x = other.pos_x; p.pos_y = other.pos_y
+		p.vel_x = other.vel_x; p.vel_y = other.vel_y
+		p.ang = other.ang
+		p.ang_vel = other.ang_vel
+		p.alpha = other.alpha
+		p.alpha_delta = other.alpha_delta
+		p.scale = other.scale
+		p.scale_delta = other.scale_delta
+		p.life_time = other.life_time
+		
+		If p.layer = LAYER_BACKGROUND
+			p.add_me( particle_list_background )
+		Else If p.layer = LAYER_FOREGROUND
+			p.add_me( particle_list_foreground )
+		End If
+		Return p
+	End Function
 	
 End Type
-'______________________________________________________________________________
-Function Archetype_PARTICLE:PARTICLE( ..
-img:TImage, ..
-layer%, ..
-retain% = False )
-	Local p:PARTICLE = New PARTICLE
-	
-	'static fields
-	p.img = img
-	p.layer = layer
-	p.retain = retain
-	p.created_ts = now()
-	
-	'dynamic fields
-	p.pos_x = 0; p.pos_y = 0
-	p.vel_x = 0; p.vel_y = 0
-	p.ang = 0
-	p.ang_vel = 0
-	p.alpha = 1.000
-	p.alpha_delta = 0
-	p.scale = 1.000
-	p.scale_delta = 0
-	p.life_time = 0
-	
-	Return p
-End Function
-'______________________________________________________________________________
-Function Copy_PARTICLE:PARTICLE( other:PARTICLE )
-	If other = Null Then Return Null
-	Local p:PARTICLE = New PARTICLE
-	
-	'static fields
-	p.img = other.img
-	p.layer = other.layer
-	p.retain = other.retain
-	p.created_ts = now()
-	
-	'dynamic fields
-	p.pos_x = other.pos_x; p.pos_y = other.pos_y
-	p.vel_x = other.vel_x; p.vel_y = other.vel_y
-	p.ang = other.ang
-	p.ang_vel = other.ang_vel
-	p.alpha = other.alpha
-	p.alpha_delta = other.alpha_delta
-	p.scale = other.scale
-	p.scale_delta = other.scale_delta
-	p.life_time = other.life_time
-	
-	If p.layer = LAYER_BACKGROUND
-		p.add_me( particle_list_background )
-	Else If p.layer = LAYER_FOREGROUND
-		p.add_me( particle_list_foreground )
-	End If
-	Return p
-End Function
 

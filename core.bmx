@@ -137,7 +137,7 @@ End Function
 Function respawn_player()
 	
 	If player <> Null And player.managed() Then player.remove_me()
-	player = Copy_COMPLEX_AGENT( player_archetype[ 0], ALIGNMENT_FRIENDLY )
+	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[ 0], ALIGNMENT_FRIENDLY ))
 	'player = Copy_COMPLEX_AGENT( enemy_archetype[ 1], ALIGNMENT_FRIENDLY )
 	player.pos_x = arena_w/2
 	player.pos_y = arena_h/2
@@ -166,15 +166,13 @@ Function respawn_enemies()
 End Function
 '______________________________________________________________________________
 Function spawn_enemy:COMPLEX_AGENT( archetype_index% )
-	Local nme:COMPLEX_AGENT = Copy_COMPLEX_AGENT( enemy_archetype[archetype_index], ALIGNMENT_HOSTILE )
-	
+	Local nme:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( enemy_archetype[archetype_index], ALIGNMENT_HOSTILE ))
 	If Rand( 0, 1 ) = 1 Then nme.pos_x = RandF( 0, 0.25*arena_w ) ..
 	Else                     nme.pos_x = RandF( 0.75*arena_w, arena_w )
 	If Rand( 0, 1 ) = 1 Then nme.pos_y = RandF( 0, 0.25*arena_h ) ..
 	Else                     nme.pos_y = RandF( 0.75*arena_h, arena_h )
 	nme.ang = Rand( 0, 359 )
 	nme.snap_turrets()
-	
 	Return nme
 End Function
 '______________________________________________________________________________
@@ -182,7 +180,7 @@ Function spawn_pickup( x#, y# )
 	Local pkp:PICKUP
 	If Rand( 0, 10000 ) < PICKUP_PROBABILITY
 		Local index% = Rand( 0, pickup_archetype.Length - 1 )
-		pkp = Copy_PICKUP( pickup_archetype[index] )
+		pkp = PICKUP( PICKUP.Copy( pickup_archetype[index] ))
 		pkp.pos_x = x; pkp.pos_y = y
 	End If
 End Function
