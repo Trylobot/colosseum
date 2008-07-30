@@ -16,8 +16,10 @@ Const LAYER_BACKGROUND% = 1
 Type PARTICLE Extends POINT
 
 	Field img:TImage 'image to be drawn
-	Field retain% 'copy particle to background on death?
 	Field layer% 'layer {foreground|background}
+	Field retain% 'copy particle to background on death?
+	Field created_ts% 'timestamp of object creation
+
 	Field red%, green%, blue% 'color tint (static)
 	Field alpha# 'alpha value
 	Field alpha_delta# 'alpha rate of change with respect to time
@@ -25,15 +27,8 @@ Type PARTICLE Extends POINT
 	Field scale_delta# 'scale coefficient rate of change with respect to time
 	Field life_time% 'time until object is deleted
 	Field frictional_coefficient# 'fake friction
-	Field created_ts% 'timestamp of object creation
 	
 	Method New()
-	End Method
-	
-	Method clone:PARTICLE()
-		Local p:PARTICLE = New PARTICLE
-		'..?
-		Return p
 	End Method
 	
 	Method update()
@@ -83,11 +78,65 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Function Create:Object( ..
-	)
+	img:TImage, ..
+	layer%, ..
+	retain%, ..
+	pos_x#, pos_y#, ..
+	vel_x#, vel_y#, ..
+	ang#, ..
+	ang_vel#, ..
+	red%, green%, blue%, ..
+	alpha#, ..
+	alpha_delta#, ..
+	scale#, ..
+	scale_delta#, ..
+	life_time% )
 		Local p:PARTICLE = New PARTICLE
-		'..?
+
+		'static fields
+		p.img = img
+		p.layer = layer
+		p.retain = retain
+		p.created_ts = now()
+		
+		'dynamic fields
+		p.pos_x = pos_x; p.pos_y = pos_y
+		p.vel_x = vel_x; p.vel_y = vel_y
+		p.ang = ang
+		p.ang_vel = ang_vel
+		p.red = red; p.green = green; p.blue = blue
+		p.alpha = alpha
+		p.alpha_delta = alpha_delta
+		p.scale = scale
+		p.scale_delta = scale_delta
+		p.life_time = life_time
+
 		Return p
 	End Function
+	
+	Method clone:PARTICLE()
+		Local p:PARTICLE = New PARTICLE
+
+		'static fields
+		p.img = img
+		p.layer = layer
+		p.retain = retain
+		p.created_ts = now()
+		
+		'dynamic fields
+		p.pos_x = pos_x; p.pos_y = pos_y
+		p.vel_x = vel_x; p.vel_y = vel_y
+		p.ang = ang
+		p.ang_vel = ang_vel
+		p.red = red; p.green = green; p.blue = blue
+		p.alpha = alpha
+		p.alpha_delta = alpha_delta
+		p.scale = scale
+		p.scale_delta = scale_delta
+		p.life_time = life_time
+
+		Return p
+	End Method
 	
 	Function Archetype:Object( ..
 	img:TImage, ..

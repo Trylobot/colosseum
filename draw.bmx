@@ -114,15 +114,19 @@ Function init_bg_cache()
 
 	bg_cache = CreateImage( arena_w, arena_h, 1, DYNAMICIMAGE )
 	Cls
-	SetColor( 16, 16, 16 )
-	DrawRect( 0, 0, arena_w, arena_h )
+	'SetColor( 16, 16, 16 )
+	'DrawRect( 0, 0, arena_w, arena_h )
+	'SetColor( 255, 255, 255 )
+	'SetLineWidth( 2 )
+	'SetColor( 255, 255, 255 )
+	'DrawLine( 1, 1, arena_w - 1, 1 )
+	'DrawLine( arena_w - 1, 1, arena_w - 1, arena_h - 1 )
+	'DrawLine( arena_w - 1, arena_h - 1, 1, arena_h - 1 )
+	'DrawLine( 1, arena_h - 1, 1, 1 )
 	SetColor( 255, 255, 255 )
-	SetLineWidth( 2 )
-	SetColor( 255, 255, 255 )
-	DrawLine( 1, 1, arena_w - 1, 1 )
-	DrawLine( arena_w - 1, 1, arena_w - 1, arena_h - 1 )
-	DrawLine( arena_w - 1, arena_h - 1, 1, arena_h - 1 )
-	DrawLine( 1, arena_h - 1, 1, 1 )
+	SetAlpha( 1 )
+	SetRotation( 0 )
+	DrawImage( img_arena_bg, 0, 0 )
 	
 	GrabImage( bg_cache, arena_offset, arena_offset )
 End Function
@@ -134,13 +138,16 @@ Function dim_bg_cache()
 	End If
 
 	Cls
+	'SetColor( 255, 255, 255 )
+	'SetAlpha( 1 )
+	'DrawImage( bg_cache, arena_offset, arena_offset )
+	'SetColor( 16, 16, 16 )
+	'SetAlpha( 0.500 )
+	'DrawRect( arena_offset + 2, arena_offset + 2, arena_w - 4, arena_h - 4 )
 	SetColor( 255, 255, 255 )
-	SetAlpha( 1 )
-	DrawImage( bg_cache, arena_offset, arena_offset )
-	
-	SetColor( 16, 16, 16 )
-	SetAlpha( 0.500 )
-	DrawRect( arena_offset + 2, arena_offset + 2, arena_w - 4, arena_h - 4 )
+	SetAlpha( 0.450 )
+	SetRotation( 0 )
+	DrawImage( img_arena_bg, 0, 0 )
 	
 	GrabImage( bg_cache, arena_offset, arena_offset )
 End Function
