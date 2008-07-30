@@ -109,9 +109,9 @@ Type EMITTER extends MANAGED_OBJECT
 			Local index% = Rand( archetype_index_min, archetype_index_max )
 			Select emitter_type
 				Case EMITTER_TYPE_PARTICLE
-					emit_particle( PARTICLE( PARTICLE.Copy( particle_archetype[index] )))
+					emit_particle( particle_archetype[index].clone() )
 				Case EMITTER_TYPE_PROJECTILE
-					emit_projectile( PROJECTILE( PROJECTILE.Copy( projectile_archetype[index], source_id )))
+					emit_projectile( projectile_archetype[index].clone( source_id ))
 			End Select
 			
 			'interval
@@ -167,6 +167,9 @@ Type EMITTER extends MANAGED_OBJECT
 		'life time
 		p.created_ts = now()
 		p.life_time = Rand( life_time_min, life_time_max )
+		
+		'management
+		p.auto_manage()
 			
 	End Method
 	Method emit_projectile( p:PROJECTILE ) '(private)
@@ -203,6 +206,9 @@ Type EMITTER extends MANAGED_OBJECT
 		
 		'angular acceleration
 		'p.ang_acc = RandF( ang_acc_min, ang_acc_max )
+		
+		'management
+		p.auto_manage()
 		
 	End Method
 		

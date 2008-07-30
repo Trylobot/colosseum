@@ -27,8 +27,6 @@ Function debug_heap( message$ = "" )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
-	Return
-	
 	Local pq:PATH_QUEUE = pathing.potential_paths
 	Local tree:CELL[] = pathing.potential_paths.binary_tree
 

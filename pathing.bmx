@@ -205,7 +205,7 @@ Type PATH_QUEUE
 	End Method
 	
 	Method pop_root:CELL()
-		debug_heap( "pop_root" )  
+		debug_heap( "pop_root" )
 		If item_count > 0 'if not empty
 			Local root:CELL = binary_tree[0].clone() 'save the current root; it's always at [0]
 			unregister( root ) 'maintain uniqueness registry array
@@ -234,6 +234,32 @@ Type PATH_QUEUE
 			Return root 'extract the root and return it
 		Else
 			debug_heap( "pop_root: failure" )  
+			Return Null 'no root to pop
+		End If
+	End Method
+	
+	'The following method is in theory functionally equivalent to pop_root(), except that it takes longer to execute (linear time), but is guaranteed to be correct.
+	Method extract_min_SLOWER:CELL()
+		If item_count > 0 'if not empty
+			Local root:CELL
+			If item_count >= 2 'if the root is not the only element
+				Local scan%, min_i% = 0
+				For scan = 1 To item_count
+					If f_less_than( binary_tree[scan], binary_tree[min_i] )
+						min_i = scan
+					End If
+				Next
+				root = binary_tree[min_i].clone() 'save the current root; it's always at [0]
+				unregister( root ) 'maintain uniqueness registry array
+				swap( min_i, item_count - 1 )
+				binary_tree[item_count - 1] = Null
+			Else
+				root = binary_tree[0].clone()
+				binary_tree[0] = Null
+			End If
+			item_count :- 1
+			Return root
+		Else
 			Return Null 'no root to pop
 		End If
 	End Method
@@ -400,7 +426,8 @@ Type PATHING_STRUCTURE
 		potential_paths.insert( start )
 		While Not potential_paths.is_empty()
 			debug_pathing( "cursor = potential_paths.pop_root()" )
-			Local cursor:CELL = potential_paths.pop_root()
+			'Local cursor:CELL = potential_paths.pop_root()
+			Local cursor:CELL = potential_paths.extract_min_SLOWER()
 			If cursor.eq( goal )
 				debug_pathing( "path found; F2 to continue", True )
 				Return backtrace_path( goal, start )

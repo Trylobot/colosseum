@@ -49,7 +49,7 @@ Function collide_all()
 		For proj = EachIn projectile_list
 			If proj.pos_x < 0 Or proj.pos_x > arena_w Or proj.pos_y < 0 Or  proj.pos_y > arena_w
 				'explode
-				Local explode:PARTICLE = PARTICLE( PARTICLE.Copy( particle_archetype[ proj.explosion_particle_index ]))
+				Local explode:PARTICLE = particle_archetype[ proj.explosion_particle_index ].clone()
 				explode.pos_x = proj.pos_x; explode.pos_y = proj.pos_y
 				explode.vel_x = 0; explode.vel_y = 0
 				explode.ang = Rand( 0, 359 )
@@ -84,7 +84,7 @@ Function collide_all()
 				'COLLISION! between {proj} & {ag}
 				'create explosion particle at position of projectile, with random angle
 				'proj.exp_img, proj.pos_x, proj.pos_y, 0, 0, Rand( 0, 359 ), 0, 0, projectile_explode_life_time )
-				Local explode:PARTICLE = PARTICLE( PARTICLE.Copy( particle_archetype[ proj.explosion_particle_index ]))
+				Local explode:PARTICLE = particle_archetype[ proj.explosion_particle_index ].clone()
 				explode.pos_x = proj.pos_x; explode.pos_y = proj.pos_y
 				explode.vel_x = 0; explode.vel_y = 0
 				explode.ang = RandF( 0.0, 359.9999 )
