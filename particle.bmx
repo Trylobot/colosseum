@@ -18,15 +18,15 @@ Type PARTICLE Extends POINT
 	Field img:TImage 'image to be drawn
 	Field layer% 'layer {foreground|background}
 	Field retain% 'copy particle to background on death?
+	Field frictional_coefficient# 'fake friction
+	Field red%, green%, blue% 'color tint (static)
+	Field life_time% 'time until object is deleted
 	Field created_ts% 'timestamp of object creation
 
-	Field red%, green%, blue% 'color tint (static)
 	Field alpha# 'alpha value
 	Field alpha_delta# 'alpha rate of change with respect to time
 	Field scale# 'scale coefficient
 	Field scale_delta# 'scale coefficient rate of change with respect to time
-	Field life_time% 'time until object is deleted
-	Field frictional_coefficient# 'fake friction
 	
 	Method New()
 	End Method
@@ -35,13 +35,13 @@ Type PARTICLE Extends POINT
 	img:TImage, ..
 	layer%, ..
 	retain% = False, ..
-	life_time% = 0, ..
 	frictional_coefficient# = 0.0, ..
+	red% = 255, green% = 255, blue% = 255, ..
+	life_time% = 0, ..
 	pos_x# = 0.0, pos_y# = 0.0, ..
 	vel_x# = 0.0, vel_y# = 0.0, ..
 	ang# = 0.0, ..
 	ang_vel# = 0.0, ..
-	red% = 255, green% = 255, blue% = 255, ..
 	alpha# = 1.0, ..
 	alpha_delta# = 0.0, ..
 	scale# = 1.0, ..
@@ -52,16 +52,16 @@ Type PARTICLE Extends POINT
 		p.img = img
 		p.layer = layer
 		p.retain = retain
-		p.created_ts = now()
-		p.life_time = life_time
 		p.frictional_coefficient = frictional_coefficient 
+		p.red = red; p.green = green; p.blue = blue
+		p.life_time = life_time
+		p.created_ts = now()
 		
 		'dynamic fields
 		p.pos_x = pos_x; p.pos_y = pos_y
 		p.vel_x = vel_x; p.vel_y = vel_y
 		p.ang = ang
 		p.ang_vel = ang_vel
-		p.red = red; p.green = green; p.blue = blue
 		p.alpha = alpha
 		p.alpha_delta = alpha_delta
 		p.scale = scale
@@ -72,7 +72,7 @@ Type PARTICLE Extends POINT
 	
 	Method clone:PARTICLE()
 		Return PARTICLE( PARTICLE.Create( ..
-			img, layer, retain, life_time, frictional_coefficient, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, red, green, blue, alpha, alpha_delta, scale, scale_delta ))
+			img, layer, retain, frictional_coefficient, red, green, blue, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
 	End Method
 	
 	Method update()

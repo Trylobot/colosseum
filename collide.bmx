@@ -54,6 +54,7 @@ Function collide_all()
 				explode.vel_x = 0; explode.vel_y = 0
 				explode.ang = Rand( 0, 359 )
 				explode.life_time = Rand( 300, 300 )
+				explode.auto_manage()
 				'prune
 				proj.remove_me()
 			End If
@@ -89,6 +90,7 @@ Function collide_all()
 				explode.vel_x = 0; explode.vel_y = 0
 				explode.ang = RandF( 0.0, 359.9999 )
 				explode.life_time = 300
+				explode.auto_manage()
 				'activate collision response for affected entity(ies)
 				Local offset#, offset_ang#
 				cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
@@ -108,12 +110,12 @@ Function collide_all()
 					spawn_pickup( ag.pos_x, ag.pos_y )
 					'spawn gibs
 					For Local gib:PARTICLE = EachIn ag.gib_list
-						gib.pos_x :+ ag.pos_x; gib.pos_y :+ ag.pos_y
-						gib.vel_x :+ ag.vel_x; gib.vel_y :+ ag.vel_y
-						gib.ang :+ ag.ang
-						gib.ang_vel :+ ag.ang_vel
 						gib.created_ts = now()
 						gib.auto_manage()
+						gib.pos_x = ag.pos_x; gib.pos_y = ag.pos_y
+						gib.vel_x :+ ag.vel_x; gib.vel_y :+ ag.vel_y
+						gib.ang = angle_sum( gib.ang, ag.ang )
+						gib.ang_vel :+ ag.ang_vel
 					Next
 					'remove enemy
 					ag.remove_me()

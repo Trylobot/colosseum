@@ -107,48 +107,30 @@ Function draw_arena()
 		For Local part:PARTICLE = EachIn retained_particle_list
 			part.remove_me()
 		Next
-	End If	
+	End If
+		
 End Function
 '______________________________________________________________________________
 Function init_bg_cache()
-
 	bg_cache = CreateImage( arena_w, arena_h, 1, DYNAMICIMAGE )
 	Cls
-	'SetColor( 16, 16, 16 )
-	'DrawRect( 0, 0, arena_w, arena_h )
-	'SetColor( 255, 255, 255 )
-	'SetLineWidth( 2 )
-	'SetColor( 255, 255, 255 )
-	'DrawLine( 1, 1, arena_w - 1, 1 )
-	'DrawLine( arena_w - 1, 1, arena_w - 1, arena_h - 1 )
-	'DrawLine( arena_w - 1, arena_h - 1, 1, arena_h - 1 )
-	'DrawLine( 1, arena_h - 1, 1, 1 )
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	SetRotation( 0 )
 	DrawImage( img_arena_bg, 0, 0 )
-	
 	GrabImage( bg_cache, arena_offset, arena_offset )
 End Function
 '______________________________________________________________________________
 Function dim_bg_cache()
-	
 	If bg_cache = Null
 		init_bg_cache()
 	End If
-
 	Cls
-	'SetColor( 255, 255, 255 )
-	'SetAlpha( 1 )
-	'DrawImage( bg_cache, arena_offset, arena_offset )
-	'SetColor( 16, 16, 16 )
-	'SetAlpha( 0.500 )
-	'DrawRect( arena_offset + 2, arena_offset + 2, arena_w - 4, arena_h - 4 )
 	SetColor( 255, 255, 255 )
-	SetAlpha( 0.450 )
-	SetRotation( 0 )
+	SetAlpha( 1 )
+	DrawImage( bg_cache, arena_offset, arena_offset )
+	SetAlpha( 0.5 )
 	DrawImage( img_arena_bg, 0, 0 )
-	
 	GrabImage( bg_cache, arena_offset, arena_offset )
 End Function
 '______________________________________________________________________________
@@ -199,7 +181,8 @@ Function draw_stats()
 	For Local i% = 0 To player.turrets[0].cur_ammo - 1
 		If ((i Mod 20) = 0) And (i > 0)
 			temp_x = x
-			temp_y :+ img_icon_player_cannon_ammo.height - 1
+			If ((i / 20) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width / 2
+			temp_y :+ img_icon_player_cannon_ammo.height / 3
 		End If
 		DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
 		temp_x :+ img_icon_player_cannon_ammo.width - 1
