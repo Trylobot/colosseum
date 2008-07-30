@@ -17,8 +17,7 @@ Type EMITTER extends MANAGED_OBJECT
 	
 	Field parent:POINT 'parent object (for position and angle offsets)
 	Field emitter_type% 'emitter type (particle/projectile)
-	Field archetype_index_min% 'particle archetype range - lower bound
-	Field archetype_index_max% 'particle archetype range - upper bound
+	Field archetype_index% 'particle archetype
 	Field mode% 'emitter mode (off/counter/timer)
 	Field interval_min% 'delay between particles - lower bound
 	Field interval_max% 'delay between particles - upper bound
@@ -106,12 +105,11 @@ Type EMITTER extends MANAGED_OBJECT
 		If ready()
 		
 			'create a new object (particle/projectile) and set it up
-			Local index% = Rand( archetype_index_min, archetype_index_max )
 			Select emitter_type
 				Case EMITTER_TYPE_PARTICLE
-					emit_particle( particle_archetype[index].clone() )
+					emit_particle( particle_archetype[archetype_index].clone( Rand( 0, particle_archetype[archetype_index].img.frames )))
 				Case EMITTER_TYPE_PROJECTILE
-					emit_projectile( projectile_archetype[index].clone( source_id ))
+					emit_projectile( projectile_archetype[archetype_index].clone( source_id ))
 			End Select
 			
 			'interval
@@ -239,7 +237,7 @@ Type EMITTER extends MANAGED_OBJECT
 	
 	Function Archetype:Object( ..
 	emitter_type%, ..
-	archetype_index_min%, archetype_index_max%, ..
+	archetype_index%, ..
 	mode%, ..
 	combine_vel_with_parent_vel%, ..
 	combine_vel_ang_with_parent_ang%, ..
@@ -258,7 +256,7 @@ Type EMITTER extends MANAGED_OBJECT
 		'static fields
 		'emitter attributes and attribute ranges
 		em.emitter_type = emitter_type
-		em.archetype_index_min = archetype_index_min; em.archetype_index_max = archetype_index_max
+		em.archetype_index = archetype_index
 		em.mode = mode
 		em.combine_vel_with_parent_vel = combine_vel_with_parent_vel
 		em.combine_vel_ang_with_parent_ang = combine_vel_ang_with_parent_ang
@@ -299,7 +297,7 @@ Type EMITTER extends MANAGED_OBJECT
 		
 		'emitter-specific fields
 		em.emitter_type = other.emitter_type
-		em.archetype_index_min = other.archetype_index_min; em.archetype_index_max = other.archetype_index_max
+		em.archetype_index = other.archetype_index
 		em.mode = other.mode
 		em.combine_vel_with_parent_vel = other.combine_vel_with_parent_vel
 		em.combine_vel_ang_with_parent_ang = other.combine_vel_ang_with_parent_ang

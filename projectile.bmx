@@ -55,10 +55,9 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		Return p
 	End Function
 	
-	Method clone:PROJECTILE( source_id% = NULL_ID )
+	Method clone:PROJECTILE( new_source_id% = NULL_ID )
 		Local p:PROJECTILE = PROJECTILE( PROJECTILE.Create( ..
-			img, explosion_particle_index, damage, radius, mass, frictional_coefficient, source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
-
+			img, explosion_particle_index, damage, radius, mass, frictional_coefficient, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
 		'emitters
 		If thrust_emitter <> Null
 			p.thrust_emitter = EMITTER( EMITTER.Copy( thrust_emitter, p.emitter_list, p ))
@@ -68,7 +67,6 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 			p.trail_emitter = EMITTER( EMITTER.Copy( trail_emitter, p.emitter_list, p ))
 			p.trail_emitter.enable( MODE_ENABLED_FOREVER )
 		End If
-		
 		Return p
 	End Method
 

@@ -15,7 +15,7 @@ Const LAYER_BACKGROUND% = 1
 
 Type PARTICLE Extends POINT
 
-	Field img:TImage 'image to be drawn
+	Field img:TImage, frame% 'image to be drawn
 	Field layer% 'layer {foreground|background}
 	Field retain% 'copy particle to background on death?
 	Field frictional_coefficient# 'fake friction
@@ -32,7 +32,7 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Function Create:Object( ..
-	img:TImage, ..
+	img:TImage, frame%, ..
 	layer%, ..
 	retain% = False, ..
 	frictional_coefficient# = 0.0, ..
@@ -49,7 +49,7 @@ Type PARTICLE Extends POINT
 		Local p:PARTICLE = New PARTICLE
 
 		'static fields
-		p.img = img
+		p.img = img; p.frame = frame
 		p.layer = layer
 		p.retain = retain
 		p.frictional_coefficient = frictional_coefficient 
@@ -70,9 +70,9 @@ Type PARTICLE Extends POINT
 		Return p
 	End Function
 	
-	Method clone:PARTICLE()
+	Method clone:PARTICLE( new_frame% = 0 )
 		Return PARTICLE( PARTICLE.Create( ..
-			img, layer, retain, frictional_coefficient, red, green, blue, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
+			img, new_frame, layer, retain, frictional_coefficient, red, green, blue, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
 	End Method
 	
 	Method update()
