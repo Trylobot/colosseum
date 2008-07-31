@@ -145,6 +145,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					avatar.drive( 0.0 )
 					avatar.turn( 0.0 )
 				End If
+				For Local w:WIDGET = EachIn avatar.widget_list
+					If Not w.transforming Then w.begin_transformation()
+				Next
 				
 		End Select
 	End Method

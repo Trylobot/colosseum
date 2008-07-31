@@ -83,7 +83,7 @@ particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] = EMITTER(
 
 '______________________________________________________________________________
 '[ PROJECTILES ]
-Global projectile_archetype:PROJECTILE[10]
+Global projectile_archetype:PROJECTILE[10]; reset_index()
 
 'projectile 0 - tank cannon projectile
 projectile_archetype[ 0] = PROJECTILE( PROJECTILE.Create( img_projectile, PARTICLE_INDEX_CANNON_EXPLOSION, 50.00, 0.0, 0.0300, 0.0 ))
@@ -100,7 +100,7 @@ projectile_archetype[ 3] = PROJECTILE( PROJECTILE.Create( img_laser, PARTICLE_IN
 	
 '______________________________________________________________________________
 '[ PROJECTILE EMITTERS ]
-Global projectile_emitter_archetype:EMITTER[10]
+Global projectile_emitter_archetype:EMITTER[10]; reset_index()
 
 'projectile emitter 0 - tank cannon projectile emitter
 projectile_emitter_archetype[ 0] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  0, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
@@ -113,7 +113,7 @@ projectile_emitter_archetype[ 3] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJ
 
 '______________________________________________________________________________
 '[ WIDGETS ]
-Global widget_archetype:WIDGET[1]
+Global widget_archetype:WIDGET[1]; reset_index()
 
 'widget 0 - glow
 widget_archetype[ 0] = WIDGET( WIDGET.Create( img_glow, REPEAT_MODE_LOOP_BACK ))
@@ -122,7 +122,7 @@ widget_archetype[ 0] = WIDGET( WIDGET.Create( img_glow, REPEAT_MODE_LOOP_BACK ))
 	
 '______________________________________________________________________________
 '[ PICKUPS ]
-Global pickup_archetype:PICKUP[ 2]
+Global pickup_archetype:PICKUP[ 2]; reset_index()
 
 'pickup 0 - main cannon ammo
 pickup_archetype[ 0] = PICKUP( PICKUP.Archetype( img_pickup_ammo_main_5, AMMO_PICKUP, 5, 20000 ))
@@ -131,7 +131,7 @@ pickup_archetype[ 1] = PICKUP( PICKUP.Archetype( img_pickup_health, HEALTH_PICKU
 
 '______________________________________________________________________________
 '[ TURRETS ]
-Global turret_archetype:TURRET[ 5]
+Global turret_archetype:TURRET[ 5]; reset_index()
 
 'turret 0 - tank main cannon
 turret_archetype[ 0] = TURRET( TURRET.Archetype( img_player_tank_turret_base, img_player_tank_turret_barrel, 2.25, 650, 40, -7, 0, INFINITY, 0, 0, 0, 0 ))
@@ -160,7 +160,7 @@ turret_archetype[ 3] = TURRET( TURRET.Archetype( img_enemy_stationary_emplacemen
 
 '______________________________________________________________________________
 '[ ENEMIES ]
-Global enemy_archetype:COMPLEX_AGENT[10]
+Global enemy_archetype:COMPLEX_AGENT[10]; reset_index()
 
 'enemy 0 - mr. the box
 enemy_archetype[ 0] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_box, 50, 50, 200.0, 10.0, 0, 1, 6.0, 12.0 ))
@@ -184,14 +184,14 @@ enemy_archetype[ 2] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_enemy_stationa
 
 'enemy 4 - mobile mini bomb
 enemy_archetype[ 4] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_nme_mobile_bomb, 150, 100, 200, 10.0, 0, 1, 7.50, 25.0 ))
-	enemy_archetype[ 4].widget_list.AddLast( widget_archetype[ 0].clone() )
+	enemy_archetype[ 4].add_widget( 0 ).attach( 0, 5 )
 
 'enemy 5 - enemy tank
 '..?
 
 '______________________________________________________________________________
 '[ PLAYERS ]
-Global player_archetype:COMPLEX_AGENT[ 4]
+Global player_archetype:COMPLEX_AGENT[ 4]; reset_index()
 
 'player 0 - temporary testing player - tank cannon, machine gun, two tank tread motivators (substituted for with eight individual emitters for now)
 player_archetype[ 0] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_player_tank_chassis, 0, 500, 800.0, 75.0, 2, 2, 75.0, 100.0 ))

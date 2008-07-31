@@ -71,8 +71,9 @@ Type WIDGET Extends MANAGED_OBJECT
 		Return w
 	End Function
 	
-	Method clone:WIDGET()	
+	Method clone:WIDGET( managed_list:TList = Null )	
 		Local w:WIDGET = WIDGET( WIDGET.Create( img, repeat_mode ))
+		If managed_list <> Null Then add_me( managed_list )
 		'list of states
 		For Local cur_state:TRANSFORM_STATE = EachIn state_list
 			w.add_state( cur_state )
@@ -80,10 +81,8 @@ Type WIDGET Extends MANAGED_OBJECT
 		Return w
 	End Method
 
-	Method attach_to( ..
-	new_parent:POINT, ..
+	Method attach( ..
 	new_off_x#, new_off_y# )
-		parent = new_parent
 		off_x = new_off_x; off_y = new_off_y
 	End Method
 	
@@ -142,6 +141,10 @@ Type WIDGET Extends MANAGED_OBJECT
 	
 	Method add_state( s:TRANSFORM_STATE )
 		state_list.AddLast( s.clone() )
+		If state_link = Null
+			state_link = state_list.FirstLink()
+			state = TRANSFORM_STATE( state_link.Value() )
+		End If
 	End Method
 	
 End Type

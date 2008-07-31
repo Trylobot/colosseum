@@ -42,11 +42,32 @@ Type COMPLEX_AGENT Extends AGENT
 		gib_list = CreateList()
 	End Method
 	
+	Method update()
+		'update agent variables
+		Super.update()
+		'turrets
+		For Local t:TURRET = EachIn turrets
+			t.update()
+		Next
+		'widgets
+		For Local w:WIDGET = EachIn widget_list
+			w.update()
+		Next
+		'emitters
+		For Local em:EMITTER = EachIn emitter_list
+			em.update()
+			em.emit()
+		Next
+	End Method
+	
 	Method draw()
 		SetRotation( ang )
 		If img <> Null Then DrawImage( img, pos_x, pos_y )
 		For Local t:TURRET = EachIn turrets
 			t.draw()
+		Next
+		For Local w:WIDGET = EachIn widget_list
+			w.draw()
 		Next
 	End Method
 	
@@ -56,20 +77,6 @@ Type COMPLEX_AGENT Extends AGENT
 		If turret_index < turret_count And turrets[turret_index] <> Null
 			turrets[turret_index].fire()
 		End If
-	End Method
-	
-	Method update()
-		'update agent variables
-		Super.update()
-		'turrets
-		For Local t:TURRET = EachIn turrets
-			t.update()
-		Next
-		'emitters
-		For Local em:EMITTER = EachIn emitter_list
-			em.update()
-			em.emit()
-		Next
 	End Method
 	
 	Method drive( pct# )
@@ -128,6 +135,19 @@ Type COMPLEX_AGENT Extends AGENT
 				If cur_health > max_health Then cur_health = max_health
 		End Select
 		pkp.remove_me()
+	End Method
+	
+	Method add_turret:TURRET( turret_archetype_index% )
+		Return TURRET( TURRET.Copy( turret_archetype[turret_archetype_index], Self ))
+	End Method
+	'Method add_motivator:MOTIVATOR( motivator_archetype_index% )
+	'	
+	'End Method
+	Method add_widget:WIDGET( widget_archetype_index% )
+		Return WIDGET( widget_archetype[widget_archetype_index].clone( widget_list ))
+	End Method
+	Method add_emitter:EMITTER(	particle_emitter_archetype_index% )
+		Return EMITTER( EMITTER.Copy( particle_emitter_archetype[particle_emitter_archetype_index], emitter_list, Self ))
 	End Method
 	
 	Function Archetype:Object( ..
@@ -213,8 +233,7 @@ Type COMPLEX_AGENT Extends AGENT
 		c.turning_force = FORCE( FORCE.Copy( other.turning_force, c.force_list ))
 		If other.widget_list <> Null
 			For Local w:WIDGET = EachIn other.widget_list
-				c.widget_list.AddLast( w.clone() )
-				WIDGET( c.widget_list.Last() ).begin_transformation()
+				c.widget_list.AddLast( w.clone( c.widget_list ))
 			Next
 		End If
 		If other.gib_list <> Null
