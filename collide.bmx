@@ -95,7 +95,8 @@ Function collide_all()
 				Local offset#, offset_ang#
 				cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
 				Local total_force# = proj.mass*PROJECTILE_AGENT_ENERGY_COEFFICIENT*Sqr( proj.vel_x*proj.vel_x + proj.vel_y*proj.vel_y )
-				FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - proj.ang ), 100 )).add_me( ag.force_list )
+				'FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - proj.ang ), 100 )).add_me( ag.force_list )
+				FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - proj.ang ), 100 )).add_me( ag.force_list )
 				FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - proj.ang ), 100 )).add_me( ag.force_list )
 				'process damage, death, cash and pickups resulting from it
 				ag.receive_damage( proj.damage )
@@ -137,7 +138,8 @@ Function collide_all()
 						Local offset#, offset_ang#
 						cartesian_to_polar( ag.pos_x - other.pos_x, ag.pos_y - other.pos_y, offset, offset_ang )
 						Local total_force# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*Sqr( other.vel_x*other.vel_x + other.vel_y*other.vel_y )
-						FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - other.ang ), 100 )).add_me( ag.force_list )
+						'FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - other.ang ), 100 )).add_me( ag.force_list )
+						FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - other.ang ), 100 )).add_me( ag.force_list )
 						FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - other.ang ), 100 )).add_me( ag.force_list )
 					End If
 				Next
@@ -155,7 +157,8 @@ Function collide_all()
 					Local offset#, offset_ang#
 					cartesian_to_polar( proj.pos_x - other_proj.pos_x, proj.pos_y - other_proj.pos_y, offset, offset_ang )
 					Local total_force# = other_proj.mass*PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT*Sqr( other_proj.vel_x*other_proj.vel_x + other_proj.vel_y*other_proj.vel_y )
-					FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - other_proj.ang ), 100 )).add_me( other_proj.force_list )
+					'FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - other_proj.ang ), 100 )).add_me( other_proj.force_list )
+					FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - other_proj.ang ), 100 )).add_me( other_proj.force_list )
 					FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - other_proj.ang ), 100 )).add_me( other_proj.force_list )
 				End If
 			Next

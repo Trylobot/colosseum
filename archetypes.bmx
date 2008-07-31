@@ -95,6 +95,8 @@ projectile_archetype[ 2] = PROJECTILE( PROJECTILE.Create( img_rocket, PARTICLE_I
 	projectile_archetype[ 2].thrust_emitter.attach_to( projectile_archetype[ 2], -11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	projectile_archetype[ 2].trail_emitter = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] ))
 	projectile_archetype[ 2].trail_emitter.attach_to( projectile_archetype[ 2], -11, 0, 0, 10, 150, 210, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+'projectile 3 - laser
+projectile_archetype[ 3] = PROJECTILE( PROJECTILE.Create( img_laser, PARTICLE_INDEX_CANNON_EXPLOSION, 20, 0.0, 0.0001, 0.0 ))
 	
 '______________________________________________________________________________
 '[ PROJECTILE EMITTERS ]
@@ -106,13 +108,18 @@ projectile_emitter_archetype[ 0] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJ
 projectile_emitter_archetype[ 1] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  1, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
 'projectile emitter 2 - rocket emitter
 projectile_emitter_archetype[ 2] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  2, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
+'projectile emitter 3 - laser emitter
+projectile_emitter_archetype[ 3] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  3, MODE_DISABLED, false, false, false, true, true, 0, 0, 1, 1 ))
 
 '______________________________________________________________________________
 '[ WIDGETS ]
 Global widget_archetype:WIDGET[1]
 
-'..?
-
+'widget 0 - glow
+widget_archetype[ 0] = WIDGET( WIDGET.Create( img_glow, REPEAT_MODE_LOOP_BACK ))
+	widget_archetype[ 0].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 0, 0, 0.0, 1, 1, 500 )))
+	widget_archetype[ 0].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 0, 0, 1.0, 1, 1, 1000 )))
+	
 '______________________________________________________________________________
 '[ PICKUPS ]
 Global pickup_archetype:PICKUP[ 2]
@@ -176,7 +183,8 @@ enemy_archetype[ 2] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_enemy_stationa
 '..?
 
 'enemy 4 - mobile mini bomb
-'..?
+enemy_archetype[ 4] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_nme_mobile_bomb, 150, 100, 200, 10.0, 0, 1, 7.50, 25.0 ))
+	enemy_archetype[ 4].widget_list.AddLast( widget_archetype[ 0].clone() )
 
 'enemy 5 - enemy tank
 '..?

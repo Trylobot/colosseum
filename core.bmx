@@ -149,6 +149,9 @@ End Function
 Function respawn_enemies()
 	If hostile_agent_list.IsEmpty()
 		
+		Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 4), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_SEEKER, 25 )
+		Return
+		
 		For Local i% = 1 To 3*player_level
 			'70% chance of mr. the box, 20% chance of a machine-gun turret, 10% chance of a rocket turret
 			Local selector# = RandF( 0.000, 1.000 )

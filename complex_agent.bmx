@@ -27,18 +27,18 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	Field driving_force:FORCE 'permanent force for this object; also added to the general force list
 	Field turning_force:FORCE 'permanent torque for this object; also added to the general force list
-	
 	Field emitter_list:TList
 	Field forward_debris_emitters:EMITTER[] 'forward-facing debris emitter array
 	Field rear_debris_emitters:EMITTER[] 'rear-facing debris emitter array
 	Field forward_trail_emitters:EMITTER[] 'forward-facing trail emitter array
 	Field rear_trail_emitters:EMITTER[] 'rear-facing debris trail array
-	
+	Field widget_list:TList
 	Field gib_list:TList
 	
 	Method New()
 		force_list = CreateList()
 		emitter_list = CreateList()
+		widget_list = CreateList()
 		gib_list = CreateList()
 	End Method
 	
@@ -211,6 +211,12 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		c.driving_force = FORCE( FORCE.Copy( other.driving_force, c.force_list ))
 		c.turning_force = FORCE( FORCE.Copy( other.turning_force, c.force_list ))
+		If other.widget_list <> Null
+			For Local w:WIDGET = EachIn other.widget_list
+				c.widget_list.AddLast( w.clone() )
+				WIDGET( c.widget_list.Last() ).begin_transformation()
+			Next
+		End If
 		If other.gib_list <> Null
 			For Local p:PARTICLE = EachIn other.gib_list
 				c.gib_list.AddLast( p.clone() )

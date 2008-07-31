@@ -14,6 +14,7 @@ Const INPUT_KEYBOARD% = 1
 Const INPUT_XBOX_360_CONTROLLER% = 2
 Const AI_BRAIN_MR_THE_BOX% = 1
 Const AI_BRAIN_TURRET% = 2
+Const AI_BRAIN_SEEKER% = 3
 
 Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
@@ -105,15 +106,13 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			
 			Case AI_BRAIN_TURRET
 				If target <> Null And Not target.dead()
-					'analyze current target
+					'if not facing target, face target; when facing target, fire
 					ang_to_target = vector_diff_angle( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
-					dist_to_target = vector_diff_length( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
 					Local diff# = angle_diff( avatar.turrets[0].ang, ang_to_target )
 					If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
 						If diff < 180 Then avatar.turn_turrets( -1.0 ) ..
 						Else               avatar.turn_turrets( 1.0 )
-					End If
-					If Abs( diff ) < 2.500 'if enemy in sight, fire; To Do: add code to check for friendlies in the line of fire.
+					Else 'if enemy in sight, fire; To Do: add code to check for friendlies in the line of fire.
 						avatar.turn_turrets( 0 )
 						'wait for cooldown
 						If FLAG_waiting And avatar.turrets[0].cur_heat <= 0.25*avatar.turrets[0].max_heat Then FLAG_waiting = False ..
@@ -125,6 +124,26 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					'no target
 					ang_to_target = avatar.turrets[0].ang
 					dist_to_target = 0
+				End If
+				
+			Case AI_BRAIN_SEEKER
+				If target <> Null And Not target.dead()
+					'chase after current target; if target in range, self-destruct
+					avatar.drive( 1.0 )
+					ang_to_target = vector_diff_angle( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
+					Local diff# = angle_diff( avatar.ang, ang_to_target )
+					If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
+						If diff < 180 Then avatar.turn( -1.0 ) ..
+						Else               avatar.turn( 1.0 )
+					Else
+						avatar.turn( 0 )
+					End If
+					dist_to_target = vector_diff_length( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
+					If dist_to_target < 40 Then avatar.self_destruct( target )
+				Else
+					'no target
+					avatar.drive( 0.0 )
+					avatar.turn( 0.0 )
 				End If
 				
 		End Select

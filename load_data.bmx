@@ -79,4 +79,7 @@ Global img_reticle:TImage = LoadImage_SetHandle( "reticle.png", -8, 7 )
 Global img_icon_music_note:TImage = LoadImage_SetHandle( "icon_music_note.png", 0, 0 )
 Global img_icon_speaker_on:TImage = LoadImage_SetHandle( "icon_speaker_on.png", 0, 0 )
 Global img_icon_speaker_off:TImage = LoadImage_SetHandle( "icon_speaker_off.png", 0, 0 )
+Global img_nme_mobile_bomb:TImage = LoadImage_SetHandle( "nme_mobile_bomb.png", 7, 7 )
+Global img_glow:TImage = LoadImage_SetHandle( "glow.png", 7, 7 )
+Global img_laser:TImage = LoadImage_SetHandle( "laser.png", 22, 2 )
 

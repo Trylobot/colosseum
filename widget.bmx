@@ -6,6 +6,7 @@ EndRem
 
 '______________________________________________________________________________
 Type TRANSFORM_STATE
+	
 	Field pos_x#, pos_y#
 	Field ang#
 	Field red%, green%, blue%
@@ -14,11 +15,6 @@ Type TRANSFORM_STATE
 	Field transition_time%
 	
 	Method New()
-	End Method
-	
-	Method clone:TRANSFORM_STATE()
-		Return TRANSFORM_STATE( TRANSFORM_STATE.Create( ..
-			pos_x, pos_y, ang, red, green, blue, alpha, scale_x, scale_y, transition_time ))
 	End Method
 	
 	Function Create:Object( ..
@@ -37,6 +33,12 @@ Type TRANSFORM_STATE
 		s.transition_time = transition_time
 		Return s
 	End Function
+
+	Method clone:TRANSFORM_STATE()
+		Return TRANSFORM_STATE( TRANSFORM_STATE.Create( ..
+			pos_x, pos_y, ang, red, green, blue, alpha, scale_x, scale_y, transition_time ))
+	End Method
+	
 End Type
 '______________________________________________________________________________
 Const REPEAT_MODE_CYCLIC_WRAP% = 0
@@ -60,6 +62,31 @@ Type WIDGET Extends MANAGED_OBJECT
 		state_list = CreateList()
 	End Method
 	
+	Function Create:Object( ..
+	img:TImage, ..
+	repeat_mode% = REPEAT_MODE_CYCLIC_WRAP )
+		Local w:WIDGET = New WIDGET
+		w.img = img
+		w.repeat_mode = repeat_mode
+		Return w
+	End Function
+	
+	Method clone:WIDGET()	
+		Local w:WIDGET = WIDGET( WIDGET.Create( img, repeat_mode ))
+		'list of states
+		For Local cur_state:TRANSFORM_STATE = EachIn state_list
+			w.add_state( cur_state )
+		Next
+		Return w
+	End Method
+
+	Method attach_to( ..
+	new_parent:POINT, ..
+	new_off_x#, new_off_y# )
+		parent = new_parent
+		off_x = new_off_x; off_y = new_off_y
+	End Method
+	
 	Method update()
 		If transforming
 			Local cs:TRANSFORM_STATE = TRANSFORM_STATE( state_link.Value() )
@@ -69,7 +96,7 @@ Type WIDGET Extends MANAGED_OBJECT
 				cs = TRANSFORM_STATE( state_link.Value() )
 				transform_begin_ts = now()
 				If transformations_remaining > 0
-					'are there any left to do?
+					'are there any transformations left to do?
 					transformations_remaining :- 1
 					If transformations_remaining = 0 Then transforming = False
 				End If
@@ -117,27 +144,6 @@ Type WIDGET Extends MANAGED_OBJECT
 		state_list.AddLast( s.clone() )
 	End Method
 	
-	Method attach_to( ..
-	new_parent:POINT, ..
-	new_off_x#, new_off_y# )
-		parent = new_parent
-		off_x = new_off_x; off_y = new_off_y
-	End Method
-	
-	Function Archetype:Object( ..
-	)
-		Local w:WIDGET = New WIDGET
-		
-		Return w
-	End Function
-	
-	Function Copy:Object( ..
-	)	
-		Local w:WIDGET = New WIDGET
-		
-		Return w
-	End Function
-
 End Type
 
 
