@@ -129,7 +129,7 @@ Function dim_bg_cache()
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	DrawImage( bg_cache, arena_offset, arena_offset )
-	SetAlpha( 0.5 )
+	SetAlpha( 0.650 )
 	DrawImage( img_arena_bg, 0, 0 )
 	GrabImage( bg_cache, arena_offset, arena_offset )
 End Function

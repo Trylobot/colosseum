@@ -31,35 +31,27 @@ Global PARTICLE_INDEX_MACHINE_GUN_MUZZLE_FLASH% = postfix_index()
 Global PARTICLE_INDEX_MACHINE_GUN_SHELL_CASING% = postfix_index()
 Global PARTICLE_INDEX_MACHINE_GUN_MUZZLE_SMOKE% = postfix_index()
 Global PARTICLE_INDEX_MACHINE_GUN_EXPLOSION% = postfix_index()
-Global PARTICLE_INDEX_TANK_TREAD_DEBRIS% = postfix_index( 5 )
-Global PARTICLE_INDEX_TANK_TREAD_TRAIL% = postfix_index( 5 )
+Global PARTICLE_INDEX_TANK_TREAD_DEBRIS% = postfix_index()
+Global PARTICLE_INDEX_TANK_TREAD_TRAIL% = postfix_index()
 Global PARTICLE_INDEX_MR_THE_BOX_TRAIL% = postfix_index()
 Global PARTICLE_INDEX_ROCKET_THRUST% = postfix_index()
 Global PARTICLE_INDEX_ROCKET_SMOKE_TRAIL% = postfix_index()
 Global PARTICLE_INDEX_MR_THE_BOX_GIB% = postfix_index()
 
-particle_archetype[PARTICLE_INDEX_CANNON_MUZZLE_FLASH] = PARTICLE( PARTICLE.Create( img_muzzle_flash, LAYER_FOREGROUND ))
-particle_archetype[PARTICLE_INDEX_CANNON_SHELL_CASING] = PARTICLE( PARTICLE.Create( img_projectile_shell_casing, LAYER_FOREGROUND, True ))
-particle_archetype[PARTICLE_INDEX_CANNON_MUZZLE_SMOKE] = PARTICLE( PARTICLE.Create( img_muzzle_smoke, LAYER_FOREGROUND ))
-particle_archetype[PARTICLE_INDEX_CANNON_EXPLOSION] = PARTICLE( PARTICLE.Create( img_hit, LAYER_FOREGROUND ))
-particle_archetype[PARTICLE_INDEX_MACHINE_GUN_MUZZLE_FLASH] = PARTICLE( PARTICLE.Create( img_mgun_muzzle_flash, LAYER_FOREGROUND ))
-particle_archetype[PARTICLE_INDEX_MACHINE_GUN_SHELL_CASING] = PARTICLE( PARTICLE.Create( img_mgun_shell_casing, LAYER_FOREGROUND, True ))
-particle_archetype[PARTICLE_INDEX_MACHINE_GUN_MUZZLE_SMOKE] = PARTICLE( PARTICLE.Create( img_mgun_muzzle_smoke, LAYER_FOREGROUND ))
-particle_archetype[PARTICLE_INDEX_MACHINE_GUN_EXPLOSION] = PARTICLE( PARTICLE.Create( img_mgun_hit, LAYER_FOREGROUND ))
-particle_archetype[PARTICLE_INDEX_TANK_TREAD_DEBRIS + 0] = PARTICLE( PARTICLE.Create( img_debris_tiny_0, LAYER_BACKGROUND, True, 0.05, 95, 85, 65 ))
-particle_archetype[PARTICLE_INDEX_TANK_TREAD_DEBRIS + 1] = PARTICLE( PARTICLE.Create( img_debris_tiny_1, LAYER_BACKGROUND, True, 0.05, 95, 85, 65 ))
-particle_archetype[PARTICLE_INDEX_TANK_TREAD_DEBRIS + 2] = PARTICLE( PARTICLE.Create( img_debris_tiny_2, LAYER_BACKGROUND, True, 0.05, 95, 85, 65 ))
-particle_archetype[PARTICLE_INDEX_TANK_TREAD_DEBRIS + 3] = PARTICLE( PARTICLE.Create( img_debris_tiny_3, LAYER_BACKGROUND, True, 0.05, 95, 85, 65 ))
-particle_archetype[PARTICLE_INDEX_TANK_TREAD_DEBRIS + 4] = PARTICLE( PARTICLE.Create( img_debris_tiny_4, LAYER_BACKGROUND, True, 0.05, 95, 85, 65 ))
-particle_archetype[PARTICLE_INDEX_TANK_TREAD_TRAIL + 0] = PARTICLE( PARTICLE.Create( img_trail_0, LAYER_BACKGROUND, True, 0.0, 95, 85, 65 ))
-particle_archetype[PARTICLE_INDEX_TANK_TREAD_TRAIL + 1] = PARTICLE( PARTICLE.Create( img_trail_1, LAYER_BACKGROUND, True, 0.0, 95, 85, 65 ))
-particle_archetype[PARTICLE_INDEX_TANK_TREAD_TRAIL + 2] = PARTICLE( PARTICLE.Create( img_trail_2, LAYER_BACKGROUND, True, 0.0, 95, 85, 65 ))
-particle_archetype[PARTICLE_INDEX_TANK_TREAD_TRAIL + 3] = PARTICLE( PARTICLE.Create( img_trail_3, LAYER_BACKGROUND, True, 0.0, 95, 85, 65 ))
-particle_archetype[PARTICLE_INDEX_TANK_TREAD_TRAIL + 4] = PARTICLE( PARTICLE.Create( img_trail_4, LAYER_BACKGROUND, True, 0.0, 95, 85, 65 ))
-particle_archetype[PARTICLE_INDEX_MR_THE_BOX_TRAIL] = PARTICLE( PARTICLE.Create( img_box, LAYER_BACKGROUND ))
-particle_archetype[PARTICLE_INDEX_ROCKET_THRUST] = PARTICLE( PARTICLE.Create( img_rocket_thrust, LAYER_BACKGROUND ))
-particle_archetype[PARTICLE_INDEX_ROCKET_SMOKE_TRAIL] = PARTICLE( PARTICLE.Create( img_rocket_explode, LAYER_FOREGROUND ))
-particle_archetype[PARTICLE_INDEX_MR_THE_BOX_GIB] = PARTICLE( PARTICLE.Create( img_box_gib, LAYER_FOREGROUND, True ))
+particle_archetype[PARTICLE_INDEX_CANNON_MUZZLE_FLASH] = PARTICLE( PARTICLE.Create( img_muzzle_flash, 0, LAYER_FOREGROUND ))
+particle_archetype[PARTICLE_INDEX_CANNON_SHELL_CASING] = PARTICLE( PARTICLE.Create( img_projectile_shell_casing, 0, LAYER_FOREGROUND, True, 0.0100 ))
+particle_archetype[PARTICLE_INDEX_CANNON_MUZZLE_SMOKE] = PARTICLE( PARTICLE.Create( img_muzzle_smoke, 0, LAYER_FOREGROUND ))
+particle_archetype[PARTICLE_INDEX_CANNON_EXPLOSION] = PARTICLE( PARTICLE.Create( img_hit, 0, LAYER_FOREGROUND ))
+particle_archetype[PARTICLE_INDEX_MACHINE_GUN_MUZZLE_FLASH] = PARTICLE( PARTICLE.Create( img_mgun_muzzle_flash, 0, LAYER_FOREGROUND ))
+particle_archetype[PARTICLE_INDEX_MACHINE_GUN_SHELL_CASING] = PARTICLE( PARTICLE.Create( img_mgun_shell_casing, 0, LAYER_FOREGROUND, True, 0.0100 ))
+particle_archetype[PARTICLE_INDEX_MACHINE_GUN_MUZZLE_SMOKE] = PARTICLE( PARTICLE.Create( img_mgun_muzzle_smoke, 0, LAYER_FOREGROUND ))
+particle_archetype[PARTICLE_INDEX_MACHINE_GUN_EXPLOSION] = PARTICLE( PARTICLE.Create( img_mgun_hit, 0, LAYER_FOREGROUND ))
+particle_archetype[PARTICLE_INDEX_TANK_TREAD_DEBRIS] = PARTICLE( PARTICLE.Create( img_debris, 0, LAYER_BACKGROUND, True, 0.05 ))
+particle_archetype[PARTICLE_INDEX_TANK_TREAD_TRAIL] = PARTICLE( PARTICLE.Create( img_trail, 0, LAYER_BACKGROUND, True ))
+particle_archetype[PARTICLE_INDEX_MR_THE_BOX_TRAIL] = PARTICLE( PARTICLE.Create( img_box, 0, LAYER_BACKGROUND ))
+particle_archetype[PARTICLE_INDEX_ROCKET_THRUST] = PARTICLE( PARTICLE.Create( img_rocket_thrust, 0, LAYER_BACKGROUND ))
+particle_archetype[PARTICLE_INDEX_ROCKET_SMOKE_TRAIL] = PARTICLE( PARTICLE.Create( img_rocket_explode, 0, LAYER_FOREGROUND ))
+particle_archetype[PARTICLE_INDEX_MR_THE_BOX_GIB] = PARTICLE( PARTICLE.Create( img_box_gib, 0, LAYER_FOREGROUND, True ))
 
 '______________________________________________________________________________
 '[ PARTICLE EMITTERS ]
@@ -94,11 +86,11 @@ particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] = EMITTER(
 Global projectile_archetype:PROJECTILE[10]
 
 'projectile 0 - tank cannon projectile
-projectile_archetype[ 0] = PROJECTILE( PROJECTILE.Create( img_projectile,  3, 50.00, 0.0, 0.0300, 0.0 ))
+projectile_archetype[ 0] = PROJECTILE( PROJECTILE.Create( img_projectile, PARTICLE_INDEX_CANNON_EXPLOSION, 50.00, 0.0, 0.0300, 0.0 ))
 'projectile 1 - machine gun projectile
-projectile_archetype[ 1] = PROJECTILE( PROJECTILE.Create( img_mgun,  7, 5.00, 0.0, 0.0050, 0.0 ))
+projectile_archetype[ 1] = PROJECTILE( PROJECTILE.Create( img_mgun, PARTICLE_INDEX_MACHINE_GUN_EXPLOSION, 5.00, 0.0, 0.0050, 0.0 ))
 'projectile 2 - rocket
-projectile_archetype[ 2] = PROJECTILE( PROJECTILE.Create( img_rocket, 20, 100.00, 5.0, 0.0400, 0.00025 ))
+projectile_archetype[ 2] = PROJECTILE( PROJECTILE.Create( img_rocket, PARTICLE_INDEX_CANNON_EXPLOSION, 100.00, 5.0, 0.0400, 0.00025 ))
 	projectile_archetype[ 2].thrust_emitter = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_THRUST] ))
 	projectile_archetype[ 2].thrust_emitter.attach_to( projectile_archetype[ 2], -11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	projectile_archetype[ 2].trail_emitter = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] ))
@@ -109,11 +101,11 @@ projectile_archetype[ 2] = PROJECTILE( PROJECTILE.Create( img_rocket, 20, 100.00
 Global projectile_emitter_archetype:EMITTER[10]
 
 'projectile emitter 0 - tank cannon projectile emitter
-projectile_emitter_archetype[ 0] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  0,  0, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
+projectile_emitter_archetype[ 0] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  0, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
 'projectile emitter 1 - machine gun projectile emitter
-projectile_emitter_archetype[ 1] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  1,  1, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
+projectile_emitter_archetype[ 1] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  1, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
 'projectile emitter 2 - rocket emitter
-projectile_emitter_archetype[ 2] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  2,  2, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
+projectile_emitter_archetype[ 2] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  2, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
 
 '______________________________________________________________________________
 '[ WIDGETS ]
@@ -139,14 +131,14 @@ turret_archetype[ 0] = TURRET( TURRET.Archetype( img_player_tank_turret_base, im
 	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PROJECTILE,  0 ).attach_to( turret_archetype[ 0], 20, 0, 0, 0, 0, 0, 3.30, 3.70, 0, 0, 0, 0, 0, 0, -1.0, 1.0, 0, 0, 0, 0 )
 	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH ).attach_to( turret_archetype[ 0], 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE ).attach_to( turret_archetype[ 0], 20, 0, 3, 6, -45, 45, 0.05, 0.40, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING ).attach_to( turret_archetype[ 0], -3, 3, 0, 0, 0, 0, 0.4, 0.6, 80, 100, -0.005, -0.005, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
+	turret_archetype[ 0].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING ).attach_to( turret_archetype[ 0], -3, 3, 0, 0, 0, 0, 0.4, 0.6, 80, 100, 0, 0, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
 
 'turret 1 - tank co-axial machine gun
 turret_archetype[ 1] = TURRET( TURRET.Archetype( Null, img_player_mgun_turret, 2.25, 62.50, INFINITY, 0, 0, 25.0, 1.50, 2.50, 0.0210, 1500 ))
 	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PROJECTILE,  1 ).attach_to( turret_archetype[ 1], 14, 2, 0, 0, 0, 0, 4.30, 4.70, 0, 0, 0, 0, 0, 0, -2.2, 2.2, 0, 0, 0, 0 )
 	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH ).attach_to( turret_archetype[ 1], 14, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE ).attach_to( turret_archetype[ 1], 14, 2, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING ).attach_to( turret_archetype[ 1], 8, 2, 0, 0, 0, 0, 0.3, 0.4, 85, 95, -0.004, -0.004, 0, 0, -5, 5, -5, 5, 0, 0 )
+	turret_archetype[ 1].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING ).attach_to( turret_archetype[ 1], 8, 2, 0, 0, 0, 0, 0.3, 0.4, 85, 95, 0, 0, 0, 0, -5, 5, -5, 5, 0, 0 )
 
 'turret 2 - rocket turret
 turret_archetype[ 2] = TURRET( TURRET.Archetype( img_enemy_stationary_emplacement_1_turret_base, img_enemy_stationary_emplacement_1_turret_barrel, 0.8, 4000, INFINITY, 0, 0, INFINITY, 0, 0, 0, 0 ))
@@ -167,8 +159,8 @@ Global enemy_archetype:COMPLEX_AGENT[10]
 enemy_archetype[ 0] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_box, 50, 50, 200.0, 10.0, 0, 1, 6.0, 12.0 ))
 	enemy_archetype[ 0].rear_trail_emitters[ 0] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MR_THE_BOX_TRAIL] ))
 	enemy_archetype[ 0].rear_trail_emitters[ 0].attach_to( enemy_archetype[ 0], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	enemy_archetype[ 0].gib_list.AddLast( PARTICLE( PARTICLE.Create( img_box_gib, LAYER_FOREGROUND, True, 0.0100, 255, 255, 255, 750, 0, 0, -1, -1, 0, 0 )))
-	enemy_archetype[ 0].gib_list.AddLast( PARTICLE( PARTICLE.Create( img_box_gib, LAYER_FOREGROUND, True, 0.0100, 255, 255, 255, 750, 0, 0, 1, 1, 180, 0 )))
+	enemy_archetype[ 0].gib_list.AddLast( PARTICLE( PARTICLE.Create( img_box_gib, 0, LAYER_FOREGROUND, True, 0.0100, 255, 255, 255, 750, 0, 0, -1, -1, 0, 0 )))
+	enemy_archetype[ 0].gib_list.AddLast( PARTICLE( PARTICLE.Create( img_box_gib, 0, LAYER_FOREGROUND, True, 0.0100, 255, 255, 255, 750, 0, 0, 1, 1, 180, 0 )))
 
 'enemy 1 - rocket turret emplacement
 enemy_archetype[ 1] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_enemy_stationary_emplacement_1_chassis, 100, 150, 1000.0, 0, 1, 0, 0, 0, True ))

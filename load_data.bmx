@@ -36,7 +36,7 @@ Function LoadImage_SetHandle:TImage( path$, x# = 0, y# = 0 )
 	Return img
 End Function
 Function LoadAnimImage_SetHandle:TImage( path$, x# = 0, y# = 0, w# = 1, h# = 1, frames% = 1 )
-	Local img:TImage = LoadAnimImage( path, w, h, 0, frames )
+	Local img:TImage = LoadAnimImage( image_path_prefix + path, w, h, 0, frames )
 	SetImageHandle( img, x, y )
 	Return img 
 End Function
@@ -73,8 +73,8 @@ Global img_pickup_health:TImage = loadimage_Sethandle( "pickup_health.png", 16, 
 Global img_help:TImage = LoadImage_SetHandle( "help.png", 0, 0 )
 Global img_arena_bg:TImage = LoadImage_SetHandle( "bg.png", 0, 0 )
 Global img_icon_player_cannon_ammo:TImage = LoadImage_SetHandle( "icon_player_cannon_ammo.png", 0, 0 )
+Global img_debris:TImage = LoadAnimImage_SetHandle( "debris.png", 2, 2, 5, 5, 5 )
 Global img_trail:TImage = LoadAnimImage_SetHandle( "trail.png", 2, 3, 4, 7, 5 )
-'Global img_debris:TImage = LoadAnimImage_SetHandle( "debris.png", ?, ?, ?, ?, 5 )
 Global img_reticle:TImage = LoadImage_SetHandle( "reticle.png", -8, 7 )
 Global img_icon_music_note:TImage = LoadImage_SetHandle( "icon_music_note.png", 0, 0 )
 Global img_icon_speaker_on:TImage = LoadImage_SetHandle( "icon_speaker_on.png", 0, 0 )
