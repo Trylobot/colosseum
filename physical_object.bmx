@@ -27,8 +27,13 @@ Type PHYSICAL_OBJECT Extends POINT
 			If f.managed()
 				Select f.physics_type
 					Case PHYSICS_FORCE
-						acc_x :+ f.magnitude_cur*Cos( f.direction + ang ) / mass
-						acc_y :+ f.magnitude_cur*Sin( f.direction + ang ) / mass
+						If f.combine_ang_with_parent_ang
+							acc_x :+ f.magnitude_cur*Cos( f.direction + ang ) / mass
+							acc_y :+ f.magnitude_cur*Sin( f.direction + ang ) / mass
+						Else
+							acc_x :+ f.magnitude_cur*Cos( f.direction ) / mass
+							acc_y :+ f.magnitude_cur*Sin( f.direction ) / mass
+						End If
 					Case PHYSICS_TORQUE
 						ang_acc :+ f.magnitude_cur / mass
 				End Select
@@ -41,6 +46,13 @@ Type PHYSICAL_OBJECT Extends POINT
 		ang_acc :+ frictional_coefficient*( -ang_vel ) / mass ..
 		'update point variables
 		Super.update()
+	End Method
+	
+	Method add_force:FORCE( other_f:FORCE, combine_ang_with_parent_ang% = False )
+		Local f:FORCE = FORCE( FORCE.Copy( other_f, force_list ))
+		f.parent = Self
+		f.combine_ang_with_parent_ang = combine_ang_with_parent_ang
+		return f
 	End Method
 	
 End Type

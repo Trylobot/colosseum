@@ -32,13 +32,15 @@ Type COMPLEX_AGENT Extends AGENT
 	Field rear_debris_emitters:EMITTER[] 'rear-facing debris emitter array
 	Field forward_trail_emitters:EMITTER[] 'forward-facing trail emitter array
 	Field rear_trail_emitters:EMITTER[] 'rear-facing debris trail array
-	Field widget_list:TList
+	Field widget_list_behind:TList
+	Field widget_list_in_front:TList
 	Field gib_list:TList
 	
 	Method New()
 		force_list = CreateList()
 		emitter_list = CreateList()
-		widget_list = CreateList()
+		widget_list_behind = CreateList()
+		widget_list_in_front = CreateList()
 		gib_list = CreateList()
 	End Method
 	
@@ -50,7 +52,10 @@ Type COMPLEX_AGENT Extends AGENT
 			t.update()
 		Next
 		'widgets
-		For Local w:WIDGET = EachIn widget_list
+		For Local w:WIDGET = EachIn widget_list_behind
+			w.update()
+		Next
+		For Local w:WIDGET = EachIn widget_list_in_front
 			w.update()
 		Next
 		'emitters
@@ -61,12 +66,20 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Method draw()
+		For Local w:WIDGET = EachIn widget_list_behind
+			w.draw()
+		Next
+		
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetScale( 1, 1 )
 		SetRotation( ang )
 		If img <> Null Then DrawImage( img, pos_x, pos_y )
+		
 		For Local t:TURRET = EachIn turrets
 			t.draw()
 		Next
-		For Local w:WIDGET = EachIn widget_list
+		For Local w:WIDGET = EachIn widget_list_in_front
 			w.draw()
 		Next
 	End Method
@@ -137,14 +150,21 @@ Type COMPLEX_AGENT Extends AGENT
 		pkp.remove_me()
 	End Method
 	
-	Method add_turret:TURRET( turret_archetype_index% )
-		Return TURRET( TURRET.Copy( turret_archetype[turret_archetype_index], Self ))
+	Method add_turret:TURRET( t:TURRET )
+		Return TURRET( TURRET.Copy( t ))
 	End Method
 	'Method add_motivator:MOTIVATOR( motivator_archetype_index% )
 	'	
 	'End Method
-	Method add_widget:WIDGET( widget_archetype_index% )
-		Return WIDGET( widget_archetype[widget_archetype_index].clone( widget_list ))
+	Method add_widget:WIDGET( other_w:WIDGET )
+		Local w:WIDGET = other_w.clone()
+		w.parent = Self
+		If w.layer = LAYER_BEHIND_PARENT
+			w.add_me( widget_list_behind )
+		Else If w.layer = LAYER_IN_FRONT_OF_PARENT
+			w.add_me( widget_list_in_front )
+		End If
+		Return w
 	End Method
 	Method add_emitter:EMITTER(	particle_emitter_archetype_index% )
 		Return EMITTER( EMITTER.Copy( particle_emitter_archetype[particle_emitter_archetype_index], emitter_list, Self ))
@@ -230,17 +250,17 @@ Type COMPLEX_AGENT Extends AGENT
 			Next
 		End If
 		c.driving_force = FORCE( FORCE.Copy( other.driving_force, c.force_list ))
+		c.driving_force.combine_ang_with_parent_ang = True
 		c.turning_force = FORCE( FORCE.Copy( other.turning_force, c.force_list ))
-		If other.widget_list <> Null
-			For Local w:WIDGET = EachIn other.widget_list
-				c.widget_list.AddLast( w.clone( c.widget_list ))
-			Next
-		End If
-		If other.gib_list <> Null
-			For Local p:PARTICLE = EachIn other.gib_list
-				c.gib_list.AddLast( p.clone() )
-			Next
-		End If
+		For Local other_w:WIDGET = EachIn other.widget_list_behind
+			c.add_widget( other_w ).attach_at( other_w.attach_x, other_w.attach_y )
+		Next
+		For Local other_w:WIDGET = EachIn other.widget_list_in_front
+			c.add_widget( other_w ).attach_at( other_w.attach_x, other_w.attach_y )
+		Next
+		For Local p:PARTICLE = EachIn other.gib_list
+			c.gib_list.AddLast( p.clone() )
+		Next
 		
 		If political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..
 		Else If political_alignment = ALIGNMENT_HOSTILE Then c.add_me( hostile_agent_list )

@@ -245,7 +245,8 @@ Type PATH_QUEUE
 			If item_count >= 2 'if the root is not the only element
 				Local scan%, min_i% = 0
 				For scan = 1 To item_count
-					If f_less_than( binary_tree[scan], binary_tree[min_i] )
+					'If f_less_than( binary_tree[scan], binary_tree[min_i] )
+					If h_less_than( binary_tree[scan], binary_tree[min_i] )
 						min_i = scan
 					End If
 				Next
@@ -469,6 +470,12 @@ End Type
 Global pathing:PATHING_STRUCTURE
 Global global_start:CELL, global_goal:CELL
 
+Function g_less_than%( i:CELL, j:CELL ) 'g(i) < g(j)
+	Return pathing.g( i ) <= pathing.g( j )
+End Function
+Function h_less_than%( i:CELL, j:CELL ) 'h(i) < h(j)
+	Return pathing.h( i ) <= pathing.h( j )
+End Function
 Function f_less_than%( i:CELL, j:CELL ) 'f(i) < f(j)
 	Return pathing.f( i ) <= pathing.f( j )
 End Function

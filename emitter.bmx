@@ -194,16 +194,7 @@ Type EMITTER extends MANAGED_OBJECT
 		p.ang_vel = RandF( ang_vel_min, ang_vel_max )
 		
 		'acceleration
-		'Local acc# = RandF( acc_min, acc_max )
-		'Local acc_ang#
-		'If inherit_acc_ang_from_vel_ang Then acc_ang = vel_ang ..
-		'Else                            acc_ang = RandF( acc_ang_min, acc_ang_max )
-		'p.acc_x = acc * Cos( acc_ang + parent.ang )
-		'p.acc_y = acc * Sin( acc_ang + parent.ang )
-		FORCE( FORCE.Create( PHYSICS_FORCE, 0, RandF( acc_min, acc_max ))).add_me( p.force_list )
-		
-		'angular acceleration
-		'p.ang_acc = RandF( ang_acc_min, ang_acc_max )
+		p.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, RandF( acc_min, acc_max ))), True )
 		
 		'management
 		p.auto_manage()

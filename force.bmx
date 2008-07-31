@@ -11,6 +11,8 @@ Const PHYSICS_TORQUE% = 1
 Type FORCE Extends MANAGED_OBJECT
 
 	Field physics_type% '(torque/force)?
+	Field parent:PHYSICAL_OBJECT 'for forces, parent object this force is attached to
+	Field combine_ang_with_parent_ang% 'for forces, indicates whether the direction of the force is absolute
 	Field direction# 'direction force is pointing
 	Field magnitude_max# 'maximum strength of force
 	Field life_time% 'time the force should be active (can be infinite)
@@ -20,19 +22,6 @@ Type FORCE Extends MANAGED_OBJECT
 	Field created_ts% '(private) timestamp of force creation (for auto-pruning)
 	
 	Method New()
-	End Method
-	
-	Method update()
-		If dead()
-			remove_me()
-		End If
-		magnitude_cur = control_pct*magnitude_max
-	End Method
-	
-	Method dead%()
-		Return ..
-			life_time <> INFINITY And ..
-			(now() - created_ts) > life_time
 	End Method
 	
 	Function Create:Object( ..
@@ -70,5 +59,18 @@ Type FORCE Extends MANAGED_OBJECT
 		Return f
 	End Function
 
+	Method update()
+		If dead()
+			remove_me()
+		End If
+		magnitude_cur = control_pct*magnitude_max
+	End Method
+	
+	Method dead%()
+		Return ..
+			life_time <> INFINITY And ..
+			(now() - created_ts) > life_time
+	End Method
+	
 End Type
 

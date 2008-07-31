@@ -44,55 +44,76 @@ End Type
 Const REPEAT_MODE_CYCLIC_WRAP% = 0
 Const REPEAT_MODE_LOOP_BACK% = 1
 
+Const TRAVERSAL_DIRECTION_INCREASING% = 0
+Const TRAVERSAL_DIRECTION_DECREASING% = 1
+
+Const LAYER_BEHIND_PARENT% = 0
+Const LAYER_IN_FRONT_OF_PARENT% = 1
+
 Type WIDGET Extends MANAGED_OBJECT
 	
 	Field parent:POINT 'parent object, provides local origin
-	Field off_x#, off_y# 'static positional offset from parent position
 	Field img:TImage 'image to be drawn
+	Field layer% 'whether to be drawn before the parent or after it
 	
+	Field attach_x# 'original attachment position (x component)
+	Field attach_y# 'original attachment position (y component)
+	Field offset# 'offset from parent
+	Field offset_ang# 'angle of offset from parent
 	Field repeat_mode% '{cyclic_wrap|loop_back}
-	Field state_list:TList 'sequence of states to be traversed over time
-	Field state_link:TLink 'reference to list link containing current state
+	Field traversal_direction% '{increasing|decreasing}
+	Field states:TRANSFORM_STATE[] 'sequence of states to be traversed over time
+	Field cur_state% 'index of current transform state
+	Field final_state% 'index of last valid state
 	Field state:TRANSFORM_STATE 'current transform state, used only when in-between states
 	Field transforming% '{true|false}
 	Field transform_begin_ts% 'timestamp of beginning of current transformation, used with interpolation
 	Field transformations_remaining% '{INFINITE|integer}
 	
 	Method New()
-		state_list = CreateList()
 	End Method
 	
 	Function Create:Object( ..
 	img:TImage, ..
-	repeat_mode% = REPEAT_MODE_CYCLIC_WRAP )
+	layer%, ..
+	repeat_mode%, ..
+	state_count%, ..
+	initially_transforming% )
 		Local w:WIDGET = New WIDGET
 		w.img = img
+		w.layer = layer
 		w.repeat_mode = repeat_mode
+		w.states = New TRANSFORM_STATE[state_count]
+		w.cur_state = -1
+		w.final_state = -1
+		w.traversal_direction = TRAVERSAL_DIRECTION_INCREASING
+		w.transforming = initially_transforming
+		w.transformations_remaining = INFINITY
 		Return w
 	End Function
 	
-	Method clone:WIDGET( managed_list:TList = Null )	
-		Local w:WIDGET = WIDGET( WIDGET.Create( img, repeat_mode ))
-		If managed_list <> Null Then add_me( managed_list )
+	Method clone:WIDGET()
+		Local w:WIDGET = WIDGET( WIDGET.Create( img, layer, repeat_mode, states.Length, transforming ))
 		'list of states
-		For Local cur_state:TRANSFORM_STATE = EachIn state_list
+		For Local cur_state:TRANSFORM_STATE = EachIn states
 			w.add_state( cur_state )
 		Next
 		Return w
 	End Method
 
-	Method attach( ..
-	new_off_x#, new_off_y# )
-		off_x = new_off_x; off_y = new_off_y
+	Method attach_at( ..
+	new_attach_x#, new_attach_y# )
+		attach_x = new_attach_x; attach_y = new_attach_y
+		cartesian_to_polar( attach_x, attach_y, offset, offset_ang )
 	End Method
 	
 	Method update()
 		If transforming
-			Local cs:TRANSFORM_STATE = TRANSFORM_STATE( state_link.Value() )
+			Local cs:TRANSFORM_STATE = states[cur_state]
 			If (now() - transform_begin_ts) >= cs.transition_time
 				'finished current transformation
-				state_link = next_state_link()
-				cs = TRANSFORM_STATE( state_link.Value() )
+				cur_state = next_state( cur_state )
+				cs = states[cur_state]
 				transform_begin_ts = now()
 				If transformations_remaining > 0
 					'are there any transformations left to do?
@@ -102,20 +123,20 @@ Type WIDGET Extends MANAGED_OBJECT
 			End If
 			If transforming
 				'currently transforming
-				Local ns:TRANSFORM_STATE = TRANSFORM_STATE( next_state_link().Value() )
-				Local pct# = ((now() - transform_begin_ts) / cs.transition_time)
+				Local ns:TRANSFORM_STATE = states[ next_state( cur_state )]
+				Local pct# = (Float(now() - transform_begin_ts) / Float(cs.transition_time))
 				state.pos_x = cs.pos_x + pct * (ns.pos_x - cs.pos_x)
 				state.pos_y = cs.pos_y + pct * (ns.pos_y - cs.pos_y)
 				state.ang = cs.ang + pct * (ns.ang - cs.ang)
 				state.red = cs.red + pct * (ns.red - cs.red)
-				state.green = cs.red + pct * (ns.green - cs.green)
+				state.green = cs.green + pct * (ns.green - cs.green)
 				state.blue = cs.blue + pct * (ns.blue - cs.blue)
 				state.alpha = cs.alpha + pct * (ns.alpha - cs.alpha)
 				state.scale_x = cs.scale_x + pct * (ns.scale_x - cs.scale_x)
 				state.scale_y = cs.scale_y + pct * (ns.scale_y - cs.scale_y)
 			Else
 				'was transforming, until just a moment ago
-				state = TRANSFORM_STATE( state_link.Value() ).clone()
+				state = cs.clone()
 			End If
 		End If
 	End Method
@@ -123,14 +144,9 @@ Type WIDGET Extends MANAGED_OBJECT
 	Method draw()
 		SetColor( state.red, state.green, state.blue )
 		SetAlpha( state.alpha )
-		SetRotation( parent.ang + state.ang )
 		SetScale( state.scale_x, state.scale_y )
-		DrawImage( img, parent.pos_x + off_x + state.pos_x, parent.pos_y + off_y + state.pos_y )
-	End Method
-	
-	Method next_state_link:TLink()
-		If state_link = Null Then Return Null
-		Return state_link.NextLink()
+		SetRotation( parent.ang + state.ang )
+		DrawImage( img, parent.pos_x + offset*Cos( offset_ang + parent.ang ) + state.pos_x, parent.pos_y + offset*Sin( offset_ang + parent.ang ) + state.pos_y )
 	End Method
 	
 	Method begin_transformation( count% = INFINITY )
@@ -140,11 +156,38 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Method
 	
 	Method add_state( s:TRANSFORM_STATE )
-		state_list.AddLast( s.clone() )
-		If state_link = Null
-			state_link = state_list.FirstLink()
-			state = TRANSFORM_STATE( state_link.Value() )
-		End If
+		final_state :+ 1
+		states[final_state] = s.clone()
+		If cur_state < 0 Then cur_state = 0
+		If state = Null Then state = states[cur_state].clone()
+	End Method
+	
+	Method next_state%( i% )
+		Select repeat_mode
+			Case REPEAT_MODE_CYCLIC_WRAP
+				If i >= final_state
+					Return 0
+				Else 'i < final_state
+					Return i + 1
+				End If
+			Case REPEAT_MODE_LOOP_BACK
+				Select traversal_direction
+					Case TRAVERSAL_DIRECTION_INCREASING
+						If i >= final_state
+							traversal_direction = TRAVERSAL_DIRECTION_DECREASING
+							Return i - 1
+						Else 'i < final_state
+							Return i + 1
+						End If
+					Case TRAVERSAL_DIRECTION_DECREASING
+						If i <= 0
+							traversal_direction = TRAVERSAL_DIRECTION_INCREASING
+							Return i + 1
+						Else 'i > 0
+							Return i - 1
+						End If
+				End Select
+		End Select
 	End Method
 	
 End Type

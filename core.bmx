@@ -149,14 +149,13 @@ End Function
 Function respawn_enemies()
 	If hostile_agent_list.IsEmpty()
 		
-		Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 4), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_SEEKER, 25 )
-		Return
-		
 		For Local i% = 1 To 3*player_level
 			'70% chance of mr. the box, 20% chance of a machine-gun turret, 10% chance of a rocket turret
 			Local selector# = RandF( 0.000, 1.000 )
-			If selector < 0.700
+			If      selector < 0.500
 				Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 0), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 1000 )
+			Else If selector < 0.700
+				Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 4), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_SEEKER, 10 )
 			Else If selector < 0.900
 				Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 2), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 )
 			Else If selector < 1.000

@@ -82,4 +82,7 @@ Global img_icon_speaker_off:TImage = LoadImage_SetHandle( "icon_speaker_off.png"
 Global img_nme_mobile_bomb:TImage = LoadImage_SetHandle( "nme_mobile_bomb.png", 7, 7 )
 Global img_glow:TImage = LoadImage_SetHandle( "glow.png", 7, 7 )
 Global img_laser:TImage = LoadImage_SetHandle( "laser.png", 22, 2 )
+Global img_laser_turret:TImage = LoadImage_SetHandle( "laser_turret_base-barrel.png", 6, 6 )
+Global img_laser_muzzle_flare:TImage = LoadImage_SetHandle( "laser_muzzle_flare.png", 1, 7 )
+
 

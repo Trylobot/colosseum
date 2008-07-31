@@ -12,7 +12,7 @@ Const SECONDARY_PROJECTILE_COLLISION_LAYER% = $0010
 Const PICKUP_COLLISION_LAYER% = $0011
 
 Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 750.0 'energy multiplier for all collisions involving projectiles and agents
-Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.025 'energy multiplier for all projectile-projectile collisions
+Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.012 'energy multiplier for all projectile-projectile collisions
 Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.010 'energy multiplier for all agent-agent collisions
 
 '______________________________________________________________________________
@@ -32,17 +32,17 @@ Function collide_all()
 			For ag = EachIn list
 				If ag.pos_x < 0
 					ag.pos_x = 0
-					FORCE( FORCE.Create( PHYSICS_FORCE, 0 - ag.ang, 75.0, 100 )).add_me( ag.force_list )
+					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, 75.0, 100 )))
 				Else If ag.pos_x > arena_w
 					ag.pos_x = arena_w
-					FORCE( FORCE.Create( PHYSICS_FORCE, 180 - ag.ang, 75.0, 100 )).add_me( ag.force_list )
+					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 180, 75.0, 100 )))
 				End If
 				If ag.pos_y < 0
 					ag.pos_y = 0
-					FORCE( FORCE.Create( PHYSICS_FORCE, 90 - ag.ang, 75.0, 100 )).add_me( ag.force_list )
+					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 90, 75.0, 100 )))
 				Else If ag.pos_y > arena_w
 					ag.pos_y = arena_w
-					FORCE( FORCE.Create( PHYSICS_FORCE, 270 - ag.ang, 75.0, 100 )).add_me( ag.force_list )
+					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 270, 75.0, 100 )))
 				End If
 			Next
 		Next
@@ -84,7 +84,6 @@ Function collide_all()
 				End If
 				'COLLISION! between {proj} & {ag}
 				'create explosion particle at position of projectile, with random angle
-				'proj.exp_img, proj.pos_x, proj.pos_y, 0, 0, Rand( 0, 359 ), 0, 0, projectile_explode_life_time )
 				Local explode:PARTICLE = particle_archetype[ proj.explosion_particle_index ].clone()
 				explode.pos_x = proj.pos_x; explode.pos_y = proj.pos_y
 				explode.vel_x = 0; explode.vel_y = 0
@@ -95,9 +94,8 @@ Function collide_all()
 				Local offset#, offset_ang#
 				cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
 				Local total_force# = proj.mass*PROJECTILE_AGENT_ENERGY_COEFFICIENT*Sqr( proj.vel_x*proj.vel_x + proj.vel_y*proj.vel_y )
-				'FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - proj.ang ), 100 )).add_me( ag.force_list )
-				FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - proj.ang ), 100 )).add_me( ag.force_list )
-				FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - proj.ang ), 100 )).add_me( ag.force_list )
+				ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - proj.ang ), 100 )))
+				ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - proj.ang ), 100 )))
 				'process damage, death, cash and pickups resulting from it
 				ag.receive_damage( proj.damage )
 				If player.dead() 'did the player just die? (omgwtf)
@@ -113,9 +111,14 @@ Function collide_all()
 					For Local gib:PARTICLE = EachIn ag.gib_list
 						gib.created_ts = now()
 						gib.auto_manage()
-						gib.pos_x = ag.pos_x; gib.pos_y = ag.pos_y
-						gib.vel_x :+ ag.vel_x; gib.vel_y :+ ag.vel_y
-						gib.ang = angle_sum( gib.ang, ag.ang )
+						Local gib_offset#, gib_offset_ang#, gib_vel#, gib_vel_ang#
+						cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
+						cartesian_to_polar( gib.vel_x, gib.vel_y, gib_vel, gib_vel_ang )
+						gib.pos_x = ag.pos_x + gib_offset*Cos( gib_offset_ang + ag.ang )
+						gib.pos_y = ag.pos_y + gib_offset*Sin( gib_offset_ang + ag.ang )
+						gib.vel_x = ag.vel_x + gib_vel*Cos( gib_vel_ang + ag.ang )
+						gib.vel_y = ag.vel_y + gib_vel*Sin( gib_vel_ang + ag.ang )
+						gib.ang :+ ag.ang
 						gib.ang_vel :+ ag.ang_vel
 					Next
 					'remove enemy
@@ -138,9 +141,8 @@ Function collide_all()
 						Local offset#, offset_ang#
 						cartesian_to_polar( ag.pos_x - other.pos_x, ag.pos_y - other.pos_y, offset, offset_ang )
 						Local total_force# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*Sqr( other.vel_x*other.vel_x + other.vel_y*other.vel_y )
-						'FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - other.ang ), 100 )).add_me( ag.force_list )
-						FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - other.ang ), 100 )).add_me( ag.force_list )
-						FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - other.ang ), 100 )).add_me( ag.force_list )
+						ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - other.ang ), 100 )))
+						ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - other.ang ), 100 )))
 					End If
 				Next
 			Next
@@ -157,9 +159,8 @@ Function collide_all()
 					Local offset#, offset_ang#
 					cartesian_to_polar( proj.pos_x - other_proj.pos_x, proj.pos_y - other_proj.pos_y, offset, offset_ang )
 					Local total_force# = other_proj.mass*PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT*Sqr( other_proj.vel_x*other_proj.vel_x + other_proj.vel_y*other_proj.vel_y )
-					'FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang + 180, total_force*Cos( offset_ang - other_proj.ang ), 100 )).add_me( other_proj.force_list )
-					FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - other_proj.ang ), 100 )).add_me( other_proj.force_list )
-					FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - other_proj.ang ), 100 )).add_me( other_proj.force_list )
+					other_proj.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - other_proj.ang ), 100 )))
+					other_proj.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - other_proj.ang ), 100 )))
 				End If
 			Next
 		Next 

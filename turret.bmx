@@ -5,9 +5,13 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Const TURRET_CLASS_ENERGY% = 0
+Const TURRET_CLASS_AMMUNITION% = 1
+
 Type TURRET Extends POINT
 	
 	Field parent:COMPLEX_AGENT 'parental complex agent this turret is attached to
+	Field class% '{ammunition|energy}
 	Field img_base:TImage 'image to be drawn for the "base" of the turret
 	Field img_barrel:TImage 'image to be drawn for the "barrel" of the turret
 	Field max_ang_vel# 'maximum rotation speed for this turret
@@ -138,18 +142,20 @@ Type TURRET Extends POINT
 	End Method
 	
 	Function Archetype:Object( ..
+	class%, ..
 	img_base:TImage, img_barrel:TImage, ..
 	max_ang_vel#, ..
 	reload_time%, ..
 	max_ammo%, ..
 	recoil_off_x#, recoil_off_y#, ..
-	max_heat#, ..
-	heat_per_shot_min#, heat_per_shot_max#, ..
-	cooling_coefficient#, ..
-	overheat_delay% )
+	max_heat# = 0.0, ..
+	heat_per_shot_min# = 0.0, heat_per_shot_max# = 0.0, ..
+	cooling_coefficient# = 0.0, ..
+	overheat_delay% = 0 )
 		Local t:TURRET = New TURRET
 		
 		'static fields
+		t.class = class
 		t.img_base = img_base; t.img_barrel = img_barrel
 		t.max_ang_vel = max_ang_vel
 		t.reload_time = reload_time
@@ -179,6 +185,7 @@ Type TURRET Extends POINT
 		
 		'static fields
 		t.parent = new_parent
+		t.class = other.class
 		t.img_base = other.img_base; t.img_barrel = other.img_barrel
 		t.max_ang_vel = other.max_ang_vel
 		t.reload_time = other.reload_time

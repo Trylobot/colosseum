@@ -30,6 +30,11 @@ Type PICKUP Extends MANAGED_OBJECT
 			(Not (life_time = INFINITY)) And ..
 			(now() - created_ts) > life_time
 	End Method
+	Method almost_dead%()
+		Return ..
+			(Not (life_time = INFINITY)) And ..
+			(Float(now() - created_ts) / Float(life_time)) <= 0.250
+	End Method
 	
 	Method prune()
 		If dead()
@@ -47,7 +52,13 @@ Type PICKUP Extends MANAGED_OBJECT
 	
 	Method update()
 		prune()
-		If managed() Then alpha = 1 - 0.5*((now() - created_ts) / life_time)
+		If managed()
+			If almost_dead()
+				alpha = 1.0 - (Float(now() - created_ts) / Float(life_time) / 4.0)
+			Else
+				alpha = 1.0
+			End If
+		End If
 	End Method
 	
 	Function Archetype:Object( ..

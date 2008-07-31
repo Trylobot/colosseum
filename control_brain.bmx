@@ -15,6 +15,7 @@ Const INPUT_XBOX_360_CONTROLLER% = 2
 Const AI_BRAIN_MR_THE_BOX% = 1
 Const AI_BRAIN_TURRET% = 2
 Const AI_BRAIN_SEEKER% = 3
+Const AI_BRAIN_TANK% = 4
 
 Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
@@ -123,7 +124,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Else
 					'no target
 					ang_to_target = avatar.turrets[0].ang
-					dist_to_target = 0
 				End If
 				
 			Case AI_BRAIN_SEEKER
@@ -139,15 +139,19 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						avatar.turn( 0 )
 					End If
 					dist_to_target = vector_diff_length( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
-					If dist_to_target < 40 Then avatar.self_destruct( target )
+					If dist_to_target <= 25 Then avatar.self_destruct( target )
 				Else
 					'no target
 					avatar.drive( 0.0 )
 					avatar.turn( 0.0 )
 				End If
-				For Local w:WIDGET = EachIn avatar.widget_list
-					If Not w.transforming Then w.begin_transformation()
-				Next
+				
+			Case AI_BRAIN_TANK
+				If target <> Null And Not target.dead()
+					
+				Else
+					
+				End If				
 				
 		End Select
 	End Method
