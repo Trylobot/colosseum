@@ -26,11 +26,12 @@ SetBlend( ALPHABLEND )
 
 'Settings flags
 Global FLAG_in_menu% = True
+Global FLAG_in_shop% = False
+Global FLAG_level_intro% = False
 Global FLAG_game_in_progress% = False
 Global FLAG_game_over% = False
-Global FLAG_draw_help% = False
 Global FLAG_bg_music_on% = False
-Global FLAG_level_intro% = False
+Global FLAG_draw_help% = False
 
 Const MENU_RESUME% = 0
 Const MENU_NEW% = 1
@@ -109,10 +110,12 @@ End Function
 '______________________________________________________________________________
 Function initialize_game()
 	player_level = 1
-	FLAG_level_intro = True
 	respawn_player()
 	respawn_enemies()
 	init_pathing_system()
+	'initial update, for graphical reasons
+	update_all()
+	FLAG_level_intro = True
 End Function
 '______________________________________________________________________________
 Function next_enabled_menu_option()
@@ -139,7 +142,7 @@ Function respawn_player()
 	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[ 0], ALIGNMENT_FRIENDLY ))
 	'player = Copy_COMPLEX_AGENT( enemy_archetype[ 1], ALIGNMENT_FRIENDLY )
 	player.pos_x = arena_w/2
-	player.pos_y = arena_h/2
+	player.pos_y = arena_h*3/4
 	player.ang = -90
 	player.snap_turrets()
 	Create_and_Manage_CONTROL_BRAIN( player, Null, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD, UNSPECIFIED )
@@ -148,21 +151,14 @@ End Function
 '______________________________________________________________________________
 Function respawn_enemies()
 	If hostile_agent_list.IsEmpty()
-		
 		For Local i% = 1 To 3*player_level
-			'70% chance of mr. the box, 20% chance of a machine-gun turret, 10% chance of a rocket turret
 			Local selector# = RandF( 0.000, 1.000 )
-			If      selector < 0.500
-				Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 0), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 1000 )
-			Else If selector < 0.700
-				Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 4), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_SEEKER, 10 )
-			Else If selector < 0.900
-				Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 2), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 )
-			Else If selector < 1.000
-				Create_and_Manage_CONTROL_BRAIN( spawn_enemy( 1), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 )
-			End If
+			If      selector < 0.400 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MR_THE_BOX), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 2000 ) ..
+			Else If selector < 0.600 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MOBILE_MINI_BOMB), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_SEEKER, 20 ) ..
+			Else If selector < 0.800 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 40 ) ..
+			Else If selector < 0.900 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 40 ) ..
+			Else If selector < 1.000 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 40 )
 		Next
-		
 	End If
 End Function
 '______________________________________________________________________________

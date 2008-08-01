@@ -8,6 +8,7 @@ EndRem
 Global bg_cache:TImage
 Const bg_redraw_delay% = 5000
 Global last_bg_redraw_ts% = now() - bg_redraw_delay
+Global str$
 
 '______________________________________________________________________________
 'Drawing to Screen
@@ -16,16 +17,19 @@ Function draw_all()
 	SetRotation( 0 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
+	SetOrigin( 0, 0 )
 
 	If FLAG_in_menu
 		'main menu
-		SetOrigin( 0, 0 )
 		draw_menu()
+	
+	Else If FLAG_in_shop
+		'buy stuff at the shop
+		draw_shop()
 	
 	Else
 		SetOrigin( arena_offset, arena_offset )
-		SetViewport( arena_offset, arena_offset, arena_w, arena_h )
-		
+
 		'arena & retained particles
 		draw_arena()
 		SetColor( 255, 255, 255 )
@@ -67,7 +71,8 @@ Function draw_all()
 		SetScale( 1, 1 )
 		
 		'aiming reticle
-		draw_player_reticle()
+		SetRotation( player.turrets[0].ang )
+		DrawImage( img_reticle, player.turrets[0].pos_x, player.turrets[0].pos_y )
 		SetRotation( 0 )
 
 		SetOrigin( 0, 0 )
@@ -77,13 +82,46 @@ Function draw_all()
 		draw_stats()
 		
 		'help
-		If FLAG_draw_help Then draw_help() ..
-		Else If FLAG_game_over Then draw_game_over()
+		If FLAG_draw_help
+			SetColor( 0, 0, 0 )
+			SetAlpha( 0.550 )
+			DrawRect( 0, 0, window_w, window_h )
+			SetColor( 255, 255, 255 )
+			SetAlpha( 1 )
+			DrawImage( img_help, window_w/2 - img_help.width/2, window_h/2 - img_help.height/2 )
+
+		Else If FLAG_game_over
+			SetColor( 0, 0, 0 )
+			SetAlpha( 0.550 )
+			DrawRect( 0, 0, window_w, window_h )
+			SetRotation( -30 )
+			SetAlpha( 0.333 )
+			SetColor( 200, 255, 200 )
+			SetImageFont( consolas_bold_150 )
+			DrawText( "GAME OVER", 25, window_h - 150 )
+			SetAlpha( 1 )
+			SetColor( 255, 255, 255 )
+			SetImageFont( consolas_normal_24 )
+			DrawText( "press ESC", 300, window_h - 150 )
+			
+		End If
 		SetRotation( 0 )
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		
-		'debug() '/////////////////////////////////////////////////////////////////
+		'level intro text
+		If FLAG_level_intro
+			SetOrigin( arena_offset, arena_offset )
+			SetColor( 255, 255, 127 )
+			SetImageFont( consolas_bold_100 )
+			str = "LEVEL " + player_level
+			DrawText( str, arena_w/2 - TextWidth( str )/2, arena_h/2 - TextHeight( str )/2 )
+			SetColor( 255, 255, 255 )
+			SetImageFont( consolas_normal_24 )
+			str = "press [enter] to continue"
+			DrawText( str, arena_w/2 - TextWidth( str )/2, arena_h/2 - TextHeight( str )/2 + 45 )
+			
+		End If
 		
 	End If
 	
@@ -92,15 +130,25 @@ End Function
 'Menu and GUI
 Function draw_arena()
 
+	SetViewport( 0, 0, window_w, window_h )
+
 	If bg_cache = Null
 		init_bg_cache()
 	End If
 
+	SetRotation( 0 ); DrawImage( img_arena_wall, -10, -10 )
+	SetRotation( 90 ); DrawImage( img_arena_wall, arena_w + 10, -10 )
+	SetRotation( 180 ); DrawImage( img_arena_wall, arena_w + 10, arena_h + 10 )
+	SetRotation( 270 ); DrawImage( img_arena_wall, -10, arena_h + 10 )
+	SetRotation( 0 )
 	DrawImage( bg_cache, 0, 0 )
+
+	SetViewport( arena_offset, arena_offset, arena_w, arena_h )
+
 	For Local part:PARTICLE = EachIn retained_particle_list
 		part.draw()
 	Next
-	
+
 	If (now() - last_bg_redraw_ts) > bg_redraw_delay
 		GrabImage( bg_cache, arena_offset, arena_offset )
 		last_bg_redraw_ts = now()
@@ -112,7 +160,7 @@ Function draw_arena()
 End Function
 '______________________________________________________________________________
 Function init_bg_cache()
-	bg_cache = CreateImage( arena_w, arena_h, 1, DYNAMICIMAGE )
+	bg_cache = CreateImage( arena_w, arena_h, DYNAMICIMAGE )
 	Cls
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
@@ -128,6 +176,7 @@ Function dim_bg_cache()
 	Cls
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
+	SetRotation( 0 )
 	DrawImage( bg_cache, arena_offset, arena_offset )
 	SetAlpha( 0.3333 )
 	DrawImage( img_arena_bg, 0, 0 )
@@ -140,7 +189,7 @@ Function draw_stats()
 	'help reminder
 	If Not FLAG_draw_help
 		SetColor( 158, 158, 158 ); SetImageFont( consolas_normal_12 )
-		DrawText( "F1 for help", arena_offset, 7 )
+		DrawText( "F1 for help", arena_offset - 10, 2 )
 	End If
 	
 	'level number
@@ -187,14 +236,16 @@ Function draw_stats()
 		DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
 		temp_x :+ img_icon_player_cannon_ammo.width - 1
 	Next; y :+ 12 + (player.turrets[0].max_ammo / 20)* img_icon_player_cannon_ammo.height
-	DrawText( "co-axial machine gun", x, y ); y :+ 12
-	w = 125; h = 14
-	SetColor( 255, 255, 255 )
-	DrawRect( x, y, w, h )
-	SetColor( 32, 32, 32 )
-	DrawRect( x + 1, y + 1, w - 2, h - 2 )
-	SetColor( 255*(player.turrets[1].cur_heat / player.turrets[1].max_heat), 0, 255*(1 - (player.turrets[1].cur_heat / player.turrets[1].max_heat)) )
-	DrawRect( x + 2, y + 2, (Double(w) - 4.0)*(player.turrets[1].cur_heat / player.turrets[1].max_heat), h - 4 )
+	If player.turrets[1] <> Null
+		DrawText( "co-axial machine gun", x, y ); y :+ 12
+		w = 125; h = 14
+		SetColor( 255, 255, 255 )
+		DrawRect( x, y, w, h )
+		SetColor( 32, 32, 32 )
+		DrawRect( x + 1, y + 1, w - 2, h - 2 )
+		SetColor( 255*(player.turrets[1].cur_heat / player.turrets[1].max_heat), 0, 255*(1 - (player.turrets[1].cur_heat / player.turrets[1].max_heat)) )
+		DrawRect( x + 2, y + 2, (Double(w) - 4.0)*(player.turrets[1].cur_heat / player.turrets[1].max_heat), h - 4 )
+	End If
 	y :+ h
 	
 	'music icon
@@ -257,40 +308,9 @@ Function draw_menu()
 	DrawText( "  SniperAceX", x, y ); y :+ 10
 	
 End Function
-'______________________________________________________________________________
-Function draw_help()
-	SetColor( 0, 0, 0 )
-	SetAlpha( 0.550 )
-	DrawRect( 0, 0, window_w, window_h )
-	
-	SetColor( 255, 255, 255 )
-	SetAlpha( 1 )
-	DrawImage( img_help, window_w/2 - img_help.width/2, window_h/2 - img_help.height/2 )
-End Function
-'______________________________________________________________________________
-Function draw_game_over()
-	SetColor( 0, 0, 0 )
-	SetAlpha( 0.550 )
-	DrawRect( 0, 0, window_w, window_h )
-	
-	SetRotation( -30 )
-	
-	SetAlpha( 0.500 )
-	SetColor( 200, 255, 200 )
-	SetImageFont( consolas_bold_150 )
-	DrawText( "GAME OVER", 25, window_h - 150 )
 
-	SetAlpha( 1 )
-	SetColor( 255, 255, 255 )
-	SetImageFont( consolas_normal_24 )
-	DrawText( "press ESC", 300, window_h - 150 )
+Function draw_shop()
+	
 End Function
-'______________________________________________________________________________
-Function draw_player_reticle()
-	SetRotation( player.turrets[0].ang )
-	DrawImage( img_reticle, player.turrets[0].pos_x, player.turrets[0].pos_y )
-End Function
-
-
 
 

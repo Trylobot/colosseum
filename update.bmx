@@ -7,7 +7,11 @@ EndRem
 '______________________________________________________________________________
 'Physics and Timing Update
 Function update_all()
-	If Not FLAG_in_menu And Not FLAG_draw_help
+	If ..
+	Not FLAG_in_menu And ..
+	Not FLAG_in_shop And ..
+	Not FLAG_level_intro And ..
+	Not FLAG_draw_help
 		
 		'level
 		If hostile_agent_list.IsEmpty()

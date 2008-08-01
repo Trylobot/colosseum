@@ -18,11 +18,14 @@ Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.010 'energy multiplier for all agent-a
 '______________________________________________________________________________
 'Collision Detection and Resolution
 Function collide_all()
-	If Not FLAG_in_menu And Not FLAG_draw_help
+	If ..
+	Not FLAG_in_menu And ..
+	Not FLAG_in_shop And ..
+	Not FLAG_level_intro And ..
+	Not FLAG_draw_help
 	
 		Local list:TList
 		Local ag:COMPLEX_AGENT, other:COMPLEX_AGENT
-		Local p:PARTICLE
 		Local proj:PROJECTILE, other_proj:PROJECTILE
 		Local pkp:PICKUP
 		Local result:Object[]
@@ -108,19 +111,23 @@ Function collide_all()
 					'perhaps! spawneth teh phat lewts?!
 					spawn_pickup( ag.pos_x, ag.pos_y )
 					'spawn gibs
-					For Local gib:PARTICLE = EachIn ag.gib_list
-						gib.created_ts = now()
-						gib.auto_manage()
-						Local gib_offset#, gib_offset_ang#, gib_vel#, gib_vel_ang#
-						cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
-						cartesian_to_polar( gib.vel_x, gib.vel_y, gib_vel, gib_vel_ang )
-						gib.pos_x = ag.pos_x + gib_offset*Cos( gib_offset_ang + ag.ang )
-						gib.pos_y = ag.pos_y + gib_offset*Sin( gib_offset_ang + ag.ang )
-						gib.vel_x = ag.vel_x + gib_vel*Cos( gib_vel_ang + ag.ang )
-						gib.vel_y = ag.vel_y + gib_vel*Sin( gib_vel_ang + ag.ang )
-						gib.ang :+ ag.ang
-						gib.ang_vel :+ ag.ang_vel
-					Next
+					If ag.gibs <> Null
+						For Local i% = 0 To ag.gibs.frames.Length - 1
+							Local gib:PARTICLE = PARTICLE( PARTICLE.Create( ag.gibs, i, LAYER_FOREGROUND, True, 0.100, 255, 255, 255, 750, 0, 0, RandF( -2.0, 2.0 ), RandF( -2.0, 2.0 ), RandF( -25, 25 ), RandF( -2.0, 2.0 ) ))
+							gib.created_ts = now()
+							gib.auto_manage()
+							Local gib_offset#, gib_offset_ang#, gib_vel#, gib_vel_ang#
+							cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
+							cartesian_to_polar( gib.vel_x, gib.vel_y, gib_vel, gib_vel_ang )
+							gib.pos_x = ag.pos_x + gib_offset*Cos( gib_offset_ang + ag.ang )
+							gib.pos_y = ag.pos_y + gib_offset*Sin( gib_offset_ang + ag.ang )
+							gib.vel_x = ag.vel_x + gib_vel*Cos( gib_vel_ang + ag.ang )
+							gib.vel_y = ag.vel_y + gib_vel*Sin( gib_vel_ang + ag.ang )
+							gib.ang :+ ag.ang
+							gib.ang_vel :+ ag.ang_vel
+							gib.update()
+						Next
+					End If
 					'remove enemy
 					ag.remove_me()
 				End If
@@ -150,9 +157,12 @@ Function collide_all()
 		
 		'collisions between projectiles and other projectiles
 		For proj = EachIn projectile_list
+			'only collide projectile if it does not ignore these types of collisions
+			If proj.ignore_other_projectiles = True Then Continue
 			SetRotation( proj.ang )
 			result = CollideImage( proj.img, proj.pos_x, proj.pos_y, 0, PROJECTILE_COLLISION_LAYER, SECONDARY_PROJECTILE_COLLISION_LAYER, proj )
 			For other_proj = EachIn result
+				If other_proj.ignore_other_projectiles = True Then Continue
 				If proj.id <> other_proj.id And proj.source_id <> other_proj.source_id
 					'COLLISON! between {proj} and {other_proj}
 					'activate collision response for affect entities

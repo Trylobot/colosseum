@@ -14,6 +14,7 @@ Global consolas_normal_12:TImageFont = LoadImageFont( font_path_prefix + "consol
 Global consolas_normal_24:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 24 )
 Global consolas_bold_24:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 24 )
 Global consolas_bold_50:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 50 )
+Global consolas_bold_100:TimageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 100 )
 Global consolas_bold_150:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 150 )
 
 '______________________________________________________________________________
@@ -43,7 +44,7 @@ End Function
 
 Global img_player_tank_chassis:TImage = LoadImage_SetHandle( "player_tank_chassis.png", 16, 12 )
 Global img_player_tank_turret_base:TImage = LoadImage_SetHandle( "player_tank_turret_base.png", 6, 6 )
-Global img_player_tank_turret_barrel:TImage = LoadImage_SetHandle( "player_tank_turret_barrel.png", 1, 3 )
+Global img_player_tank_turret_barrel:TImage = LoadImage_SetHandle( "player_tank_turret_barrel.png", 3, 3 )
 Global img_player_mgun_turret:TImage = LoadImage_SetHandle( "player_tank_mgun_turret.png", 3, 3 )
 Global img_muzzle_flash:TImage = LoadImage_SetHandle( "muzzle_flash.png", 0, 12 )
 Global img_mgun_muzzle_flash:TImage = LoadImage_SetHandle( "mgun_muzzle_flash.png", 0, 7 )
@@ -67,11 +68,12 @@ Global img_rocket:TImage = LoadImage_SetHandle( "rocket.png", 13, 5 )
 Global img_rocket_thrust:TImage = LoadImage_SetHandle( "rocket_thrust.png", 16, 6 )
 Global img_rocket_explode:TImage = LoadImage_SetHandle( "rocket_explode.png", 14, 14 )
 Global img_box:TImage = LoadImage_SetHandle( "box.png", 8, 8 )
-Global img_box_gib:TImage = LoadImage_SetHandle( "box_gib.png", 8, 8 )
+Global img_box_gib:TImage = LoadAnimImage_SetHandle( "box_gib.png", 8, 8, 17, 17, 2 )
 Global img_pickup_ammo_main_5:TImage = LoadImage_SetHandle( "pickup_ammo_main_5.png", 16, 9 )
 Global img_pickup_health:TImage = loadimage_Sethandle( "pickup_health.png", 16, 9 )
 Global img_help:TImage = LoadImage_SetHandle( "help.png", 0, 0 )
 Global img_arena_bg:TImage = LoadImage_SetHandle( "bg.png", 0, 0 )
+Global img_arena_wall:TImage = LoadImage_SetHandle( "bg_wall.png", 0, 0 )
 Global img_icon_player_cannon_ammo:TImage = LoadImage_SetHandle( "icon_player_cannon_ammo.png", 0, 0 )
 Global img_debris:TImage = LoadAnimImage_SetHandle( "debris.png", 2, 2, 5, 5, 5 )
 Global img_trail:TImage = LoadAnimImage_SetHandle( "trail.png", 2, 3, 4, 7, 5 )
@@ -81,8 +83,8 @@ Global img_icon_speaker_on:TImage = LoadImage_SetHandle( "icon_speaker_on.png", 
 Global img_icon_speaker_off:TImage = LoadImage_SetHandle( "icon_speaker_off.png", 0, 0 )
 Global img_nme_mobile_bomb:TImage = LoadImage_SetHandle( "nme_mobile_bomb.png", 7, 7 )
 Global img_glow:TImage = LoadImage_SetHandle( "glow.png", 7, 7 )
-Global img_laser:TImage = LoadImage_SetHandle( "laser.png", 22, 2 )
+Global img_laser:TImage = LoadImage_SetHandle( "laser.png", 13, 2 )
 Global img_laser_turret:TImage = LoadImage_SetHandle( "laser_turret_base-barrel.png", 6, 6 )
 Global img_laser_muzzle_flare:TImage = LoadImage_SetHandle( "laser_muzzle_flare.png", 1, 7 )
-
-
+Global img_tower_gibs:TImage = LoadAnimImage_SetHandle( "tower_gibs.png", 11, 11, 23, 23, 11 )
+Global img_bomb_gibs:TImage = LoadAnimImage_SetHandle( "bomb_gibs.png", 7, 7, 15, 15, 7 )

@@ -12,8 +12,8 @@ Repeat
 		before = now()
 		
 		get_all_input()
-		update_all()
 		collide_all()
+		update_all()
 
 	EndIf
 	Cls	

@@ -148,7 +148,7 @@ Type TURRET Extends POINT
 	reload_time%, ..
 	max_ammo%, ..
 	recoil_off_x#, recoil_off_y#, ..
-	max_heat# = 0.0, ..
+	max_heat# = INFINITY, ..
 	heat_per_shot_min# = 0.0, heat_per_shot_max# = 0.0, ..
 	cooling_coefficient# = 0.0, ..
 	overheat_delay% = 0 )

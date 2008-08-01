@@ -1,4 +1,5 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ instant cooldown pickup
 	_ feedback system (google groups?)
 	_ create a subspace-style networked multiplayer mode: duel. first to 5 by 2, rinse, repeat. two players only.
 	X show a little music icon and sound volume indicator somewhere to show when music is on/off

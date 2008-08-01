@@ -20,6 +20,7 @@ Const ALIGNMENT_HOSTILE% = 2
 
 Type COMPLEX_AGENT Extends AGENT
 	
+	Field gibs:TImage 'gib image(s)
 	Field turrets:TURRET[] 'turret array
 	Field turret_count% 'number of turret slots
 	'Field motivators:MOTIVATOR[] 'motivator force array (controls certain animations)
@@ -34,14 +35,11 @@ Type COMPLEX_AGENT Extends AGENT
 	Field rear_trail_emitters:EMITTER[] 'rear-facing debris trail array
 	Field widget_list_behind:TList
 	Field widget_list_in_front:TList
-	Field gib_list:TList
 	
 	Method New()
-		force_list = CreateList()
 		emitter_list = CreateList()
 		widget_list_behind = CreateList()
 		widget_list_in_front = CreateList()
-		gib_list = CreateList()
 	End Method
 	
 	Method update()
@@ -156,6 +154,9 @@ Type COMPLEX_AGENT Extends AGENT
 	'Method add_motivator:MOTIVATOR( motivator_archetype_index% )
 	'	
 	'End Method
+	Method add_emitter:EMITTER(	particle_emitter_archetype_index% )
+		Return EMITTER( EMITTER.Copy( particle_emitter_archetype[particle_emitter_archetype_index], emitter_list, Self ))
+	End Method
 	Method add_widget:WIDGET( other_w:WIDGET )
 		Local w:WIDGET = other_w.clone()
 		w.parent = Self
@@ -166,12 +167,10 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		Return w
 	End Method
-	Method add_emitter:EMITTER(	particle_emitter_archetype_index% )
-		Return EMITTER( EMITTER.Copy( particle_emitter_archetype[particle_emitter_archetype_index], emitter_list, Self ))
-	End Method
-	
+		
 	Function Archetype:Object( ..
 	img:TImage, ..
+	gibs:TImage, ..
 	cash_value%, ..
 	max_health#, ..
 	mass#, ..
@@ -185,6 +184,7 @@ Type COMPLEX_AGENT Extends AGENT
 		
 		'static fields
 		c.img = img
+		c.gibs = gibs
 		c.max_health = max_health
 		c.mass = mass
 		c.frictional_coefficient = frictional_coefficient
@@ -217,6 +217,7 @@ Type COMPLEX_AGENT Extends AGENT
 		
 		'static fields
 		c.img = other.img
+		c.gibs = other.gibs
 		c.max_health = other.max_health
 		c.mass = other.mass
 		c.frictional_coefficient = other.frictional_coefficient
@@ -257,9 +258,6 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 		For Local other_w:WIDGET = EachIn other.widget_list_in_front
 			c.add_widget( other_w ).attach_at( other_w.attach_x, other_w.attach_y )
-		Next
-		For Local p:PARTICLE = EachIn other.gib_list
-			c.gib_list.AddLast( p.clone() )
 		Next
 		
 		If political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..

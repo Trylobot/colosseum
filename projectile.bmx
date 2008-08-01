@@ -13,6 +13,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	Field explosion_particle_index% 'archetype index of particle to be created on hit
 	Field damage# 'maximum damage dealt by projectile
 	Field radius# 'radius of damage spread
+	Field ignore_other_projectiles% 'whether to ignore collisions with other projectiles {true|false}
 	Field source_id% '(private) reference to entity which emitted this projectile; allows for collisions with it to be ignored
 	Field emitter_list:TList 'emitter-management list
 	Field trail_emitter:EMITTER 'trail particle emitter
@@ -30,6 +31,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	radius#, ..
 	mass#, ..
 	frictional_coefficient#, ..
+	ignore_other_projectiles% = False, ..
 	source_id% = NULL_ID, ..
 	pos_x# = 0.0, pos_y# = 0.0, ..
 	vel_x# = 0.0, vel_y# = 0.0, ..
@@ -44,6 +46,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		p.radius = radius
 		p.mass = mass
 		p.frictional_coefficient = frictional_coefficient
+		p.ignore_other_projectiles = ignore_other_projectiles
 		p.source_id = source_id
 		
 		'dynamic fields
@@ -57,7 +60,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	
 	Method clone:PROJECTILE( new_source_id% = NULL_ID )
 		Local p:PROJECTILE = PROJECTILE( PROJECTILE.Create( ..
-			img, explosion_particle_index, damage, radius, mass, frictional_coefficient, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
+			img, explosion_particle_index, damage, radius, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
 		'emitters
 		If thrust_emitter <> Null
 			p.thrust_emitter = EMITTER( EMITTER.Copy( thrust_emitter, p.emitter_list, p ))

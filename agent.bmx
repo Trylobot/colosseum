@@ -32,13 +32,22 @@ Type AGENT Extends PHYSICAL_OBJECT
 	End Method
 
 	Method self_destruct( other:AGENT )
+		'damage
 		other.receive_damage( 100 )
+		'explosion effect
 		Local explode:PARTICLE = particle_archetype[PARTICLE_INDEX_CANNON_EXPLOSION].clone()
 		explode.pos_x = pos_x; explode.pos_y = pos_y
 		explode.vel_x = 0; explode.vel_y = 0
 		explode.ang = Rand( 0, 359 )
 		explode.life_time = Rand( 300, 300 )
 		explode.auto_manage()
+		'explosive forces
+		Local offset#, offset_ang#
+		cartesian_to_polar( pos_x - other.pos_x, pos_y - other.pos_y, offset, offset_ang )
+		Local total_force# = 100.0
+		other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - ang ), 100 )))
+		other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - ang ), 100 )))
+		'delete self
 		cur_health = 0
 		remove_me()
 	End Method

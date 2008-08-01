@@ -30,11 +30,6 @@ Type PICKUP Extends MANAGED_OBJECT
 			(Not (life_time = INFINITY)) And ..
 			(now() - created_ts) > life_time
 	End Method
-	Method almost_dead%()
-		Return ..
-			(Not (life_time = INFINITY)) And ..
-			(Float(now() - created_ts) / Float(life_time)) <= 0.250
-	End Method
 	
 	Method prune()
 		If dead()
@@ -53,11 +48,10 @@ Type PICKUP Extends MANAGED_OBJECT
 	Method update()
 		prune()
 		If managed()
-			If almost_dead()
-				alpha = 1.0 - (Float(now() - created_ts) / Float(life_time) / 4.0)
-			Else
-				alpha = 1.0
-			End If
+			Local age_pct# = Float(now() - created_ts) / Float(life_time)
+			If      age_pct < 0.20 Then alpha = (age_pct / 0.20) ..
+			Else If age_pct < 0.80 Then alpha = 1.0 ..
+			Else                        alpha = 1.0 - ((age_pct - 0.80) / 0.25)
 		End If
 	End Method
 	

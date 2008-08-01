@@ -107,7 +107,7 @@ Type EMITTER extends MANAGED_OBJECT
 			'create a new object (particle/projectile) and set it up
 			Select emitter_type
 				Case EMITTER_TYPE_PARTICLE
-					emit_particle( particle_archetype[archetype_index].clone( Rand( 0, particle_archetype[archetype_index].img.frames.Length )))
+					emit_particle( particle_archetype[archetype_index].clone( Rand( 0, particle_archetype[archetype_index].img.frames.Length - 1 )))
 				Case EMITTER_TYPE_PROJECTILE
 					emit_projectile( projectile_archetype[archetype_index].clone( source_id ))
 			End Select

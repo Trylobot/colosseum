@@ -36,6 +36,9 @@ Function get_all_input()
 			menu_command( menu_option )
 		End If
 		
+	Else If FLAG_level_intro
+		If KeyHit( KEY_ENTER ) Then FLAG_level_intro = Not FLAG_level_intro
+		
 	Else
 		If KeyHit( KEY_F1 )
 			FLAG_draw_help = Not FLAG_draw_help

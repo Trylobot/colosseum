@@ -70,7 +70,8 @@ Type PARTICLE Extends POINT
 		Return p
 	End Function
 	
-	Method clone:PARTICLE( new_frame% = 0 )
+	Method clone:PARTICLE( new_frame% = -1 )
+		If new_frame < 0 Then new_frame = frame
 		Return PARTICLE( PARTICLE.Create( ..
 			img, new_frame, layer, retain, frictional_coefficient, red, green, blue, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
 	End Method
@@ -93,7 +94,7 @@ Type PARTICLE Extends POINT
 		SetAlpha( alpha )
 		SetScale( scale, scale )
 		SetRotation( ang )
-		DrawImage( img, pos_x, pos_y )
+		DrawImage( img, pos_x, pos_y, frame )
 	End Method
 	
 	Method dead%()
