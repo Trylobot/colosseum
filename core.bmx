@@ -38,15 +38,19 @@ Const MENU_NEW% = 1
 Const MENU_LOAD% = 2
 Const MENU_SETTINGS% = 3
 Const MENU_QUIT% = 4
-Const menu_option_count% = 5
+'light tank = 5
+'laser tank = 6
+'medium tank = 7
+Const menu_option_count% = 8
 
-Global menu_display_string$[] = [ "resume", "new game", "load saved", "settings", "quit" ]
-Global menu_enabled%[] =        [  False,    True,       False,        False,      True  ]
+Global menu_display_string$[] = [ "resume", "new game", "load saved", "settings", "quit", "light tank", "laser tank", "medium tank" ]
+Global menu_enabled%[] =        [  False,    True,       False,        False,      True,   False,        False,        False ]
 Global menu_option% = MENU_NEW
 
 Const PICKUP_PROBABILITY% = 5000 'chance in 10,000 of an enemy dropping a pickup (randomly selected from all pickups)
 
 'global player stuff
+Global player_type% = 0
 Global player:COMPLEX_AGENT
 Global player_cash% = 0
 Global player_level% = 0
@@ -54,18 +58,19 @@ Global player_kills% = 0
 
 '______________________________________________________________________________
 'Menu Commands
-Function menu_command( com% )
-	Select com
+Function menu_command( command_index% )
+	Select command_index
 		
 		Case MENU_RESUME
 			FLAG_in_menu = False
 		
 		Case MENU_NEW
-			FLAG_in_menu = False
-			reset_game()
-			initialize_game()
-			FLAG_game_in_progress = True
-		
+			menu_enabled[MENU_NEW] = False
+			menu_enabled[5] = True
+			menu_enabled[6] = True
+			menu_enabled[7] = True
+			menu_option = 5
+			
 		Case MENU_LOAD
 			'..?
 		
@@ -74,7 +79,18 @@ Function menu_command( com% )
 		
 		Case MENU_QUIT
 			End 'quit now
-		
+			
+		Default
+			player_type = command_index - 5
+			FLAG_in_menu = False
+			reset_game()
+			initialize_game()
+			FLAG_game_in_progress = True
+			menu_enabled[MENU_NEW] = True
+			menu_enabled[5] = False
+			menu_enabled[6] = False
+			menu_enabled[7] = False
+			
 	End Select
 End Function
 '______________________________________________________________________________
@@ -139,8 +155,15 @@ End Function
 Function respawn_player()
 	
 	If player <> Null And player.managed() Then player.remove_me()
-'	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_LIGHT_TANK], ALIGNMENT_FRIENDLY ))
-	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_MED_TANK], ALIGNMENT_FRIENDLY ))
+	
+	Select player_type
+		Case 0
+			player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_LIGHT_TANK], ALIGNMENT_FRIENDLY ))
+		Case 1
+			player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_LASER_TANK], ALIGNMENT_FRIENDLY ))
+		Case 2
+			player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_MED_TANK], ALIGNMENT_FRIENDLY ))
+	End Select
 	player.pos_x = arena_w/2
 	player.pos_y = arena_h*3/4
 	player.ang = -90
@@ -151,7 +174,7 @@ End Function
 '______________________________________________________________________________
 Function respawn_enemies()
 	If hostile_agent_list.IsEmpty()
-		For Local i% = 1 To 3*player_level
+		For Local i% = 0 To (3 + (player_level - 1)) - 1
 			Local selector# = RandF( 0.000, 1.000 )
 			If      selector < 0.400 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MR_THE_BOX), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 2000 ) ..
 			Else If selector < 0.600 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MOBILE_MINI_BOMB), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_SEEKER, 20 ) ..

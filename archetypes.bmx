@@ -100,7 +100,7 @@ projectile_archetype[ 2] = PROJECTILE( PROJECTILE.Create( img_rocket, PARTICLE_I
 	projectile_archetype[ 2].trail_emitter = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] ))
 	projectile_archetype[ 2].trail_emitter.attach_to( projectile_archetype[ 2], -11, 0, 0, 10, 150, 210, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 'projectile 3 - laser
-projectile_archetype[ 3] = PROJECTILE( PROJECTILE.Create( img_laser, PARTICLE_INDEX_CANNON_EXPLOSION, 20, 0.0, 0.0001, 0.0, True ))
+projectile_archetype[ 3] = PROJECTILE( PROJECTILE.Create( img_laser, PARTICLE_INDEX_CANNON_EXPLOSION, 15.00, 0.0, 0.0001, 0.0, True ))
 	
 '______________________________________________________________________________
 '[ PROJECTILE EMITTERS ]
@@ -214,12 +214,14 @@ enemy_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_AGENT.Arc
 Global player_archetype:COMPLEX_AGENT[ 4]; reset_index()
 
 Global PLAYER_INDEX_LIGHT_TANK% = postfix_index()
+Global PLAYER_INDEX_LASER_TANK% = postfix_index()
 Global PLAYER_INDEX_MED_TANK% = postfix_index()
 
 player_archetype[PLAYER_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_player_tank_chassis, Null, 0, 500, 800.0, 75.0, 2, 2, 75.0, 100.0 ))
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON], 0 ).attach_at( -5, 0 )
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN], 1 ).attach_at( -5, 0 )
-'	player_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_LASER], 0 ).attach_at( -5, 0 ) 
+		player_archetype[PLAYER_INDEX_LIGHT_TANK].firing_sequence = [ [[0]], [[1]] ]
+		player_archetype[PLAYER_INDEX_LIGHT_TANK].firing_state = [ 0, 0 ]
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].forward_debris_emitters[ 0] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ))
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].forward_debris_emitters[ 0].attach_to( player_archetype[PLAYER_INDEX_LIGHT_TANK], 12, -7, 0, 2, -45, 45, 0.3, 0.6, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].forward_debris_emitters[ 1] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ))
@@ -236,9 +238,17 @@ player_archetype[PLAYER_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archety
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].rear_trail_emitters[ 0].attach_to( player_archetype[PLAYER_INDEX_LIGHT_TANK], -12, -7, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].rear_trail_emitters[ 1] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ))
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].rear_trail_emitters[ 1].attach_to( player_archetype[PLAYER_INDEX_LIGHT_TANK], -12, 7, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+player_archetype[PLAYER_INDEX_LASER_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_LIGHT_TANK] ))
+	player_archetype[PLAYER_INDEX_LASER_TANK].turret_count = 1
+	player_archetype[PLAYER_INDEX_LASER_TANK].turrets = New TURRET[1]
+	player_archetype[PLAYER_INDEX_LASER_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_LASER], 0 ).attach_at( -5, 0 )
+		player_archetype[PLAYER_INDEX_LASER_TANK].firing_sequence = [ [[0]] ]
+		player_archetype[PLAYER_INDEX_LASER_TANK].firing_state = [ 0 ]
 player_archetype[PLAYER_INDEX_MED_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_player_tank_chassis_med, Null, 0, 750, 1200, 125.0, 2, 2, 100.0, 125.0 ))
 	player_archetype[PLAYER_INDEX_MED_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT], 0 ).attach_at( -9, 0 )
 	player_archetype[PLAYER_INDEX_MED_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT], 1 ).attach_at( -9, 0 )
+		player_archetype[PLAYER_INDEX_MED_TANK].firing_sequence = [ [[0],[1]] ]
+		player_archetype[PLAYER_INDEX_MED_TANK].firing_state = [ 0 ]
 	player_archetype[PLAYER_INDEX_MED_TANK].forward_debris_emitters[ 0] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ))
 	player_archetype[PLAYER_INDEX_MED_TANK].forward_debris_emitters[ 0].attach_to( player_archetype[PLAYER_INDEX_MED_TANK], 15, -8, 0, 2, -45, 45, 0.3, 0.6, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	player_archetype[PLAYER_INDEX_MED_TANK].forward_debris_emitters[ 1] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ))

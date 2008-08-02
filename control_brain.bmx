@@ -86,10 +86,12 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				EndIf
 				'turrets fire
 				If KeyDown( KEY_SPACE )
-					avatar.fire_turret( 0 )
+					avatar.fire( 0 )
+					'avatar.fire_turret( 0 )
 				End If
 				If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
-					avatar.fire_turret( 1 )
+					avatar.fire( 1 )
+					'avatar.fire_turret( 1 )
 				End If
 					
 			Case INPUT_XBOX_360_CONTROLLER
@@ -122,8 +124,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						If Not FLAG_waiting Then avatar.fire_turret( 0 )
 					End If
 				Else
-					'no target
-					ang_to_target = avatar.turrets[0].ang
+					avatar.turn_turrets( 0 )
 				End If
 				
 			Case AI_BRAIN_SEEKER

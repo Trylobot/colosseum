@@ -183,6 +183,58 @@ Function dim_bg_cache()
 	GrabImage( bg_cache, arena_offset, arena_offset )
 End Function
 '______________________________________________________________________________
+Function draw_menu()
+	Local x%, y%
+	
+	'title
+	x = 25; y = 25
+	SetColor( 255, 255, 127 ); SetImageFont( consolas_bold_50 )
+		DrawText( My.Application.AssemblyInfo, x, y )
+	
+	'menu options
+	x :+ 5; Local x_indent% = 0; y :+ 70
+	For Local option% = 0 To menu_option_count - 1
+		If menu_enabled[ option ]
+			If option = menu_option
+				SetColor( 255, 255, 255 )
+				SetImageFont( consolas_bold_24 )
+				'SetAlpha( 0.5 + 0.5*Sin(Float(now())/512.0) )
+				SetAlpha( 1 )
+			Else
+				SetColor( 127, 127, 127 )
+				SetImageFont( consolas_normal_24 )
+				SetAlpha( 1 )
+			End If
+		Else
+			SetColor( 64, 64, 64 )
+			SetImageFont( consolas_normal_24 )
+			SetAlpha( 1 )
+		End If
+		If option > 4 Then x_indent = 25
+		DrawText( menu_display_string[ option ], x + x_indent, y + option*26 )
+	Next
+	SetAlpha( 1 )
+	
+	'copyright stuff
+	SetColor( 157, 157, 157 )
+	SetImageFont( consolas_normal_10 )
+	x :+ 200; y :+ 7
+	DrawText( "Colosseum (c) 2008 Tylerbot", x, y ); y :+ 10
+	DrawText( "  [Tyler W.R. Cole]", x, y ); y :+ 10
+	y :+ 10
+	DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
+	DrawText( "  http://www.blitzmax.com", x, y ); y :+ 10
+	y :+ 10
+	DrawText( "music by NickPerrin", x, y ); y :+ 10
+	DrawText( "  Victory! (8-bit Chiptune)", x, y ); y :+ 10
+	DrawText( "  http://www.newgrounds.com", x, y ); y :+ 10
+	y :+ 10
+	DrawText( "special thanks to", x, y ); y :+ 10
+	DrawText( "  Kaze", x, y ); y :+ 10
+	DrawText( "  SniperAceX", x, y ); y :+ 10
+	
+End Function
+'______________________________________________________________________________
 Function draw_stats()
 	Local x%, y%, w%, h%
 	
@@ -222,31 +274,31 @@ Function draw_stats()
 	y :+ h
 	
 	'player ammo, overheat & charge indicators
-	y :+ arena_offset
-	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
-	DrawText( "heavy cannon", x, y ); y :+ 12
-	Local temp_x%, temp_y%
-	temp_x = x; temp_y = y
-	For Local i% = 0 To player.turrets[0].cur_ammo - 1
-		If ((i Mod 20) = 0) And (i > 0)
-			temp_x = x
-			If ((i / 20) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width / 2
-			temp_y :+ img_icon_player_cannon_ammo.height / 3
-		End If
-		DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
-		temp_x :+ img_icon_player_cannon_ammo.width - 1
-	Next; y :+ 12 + (player.turrets[0].max_ammo / 20)* img_icon_player_cannon_ammo.height
-	If player.turrets[1] <> Null
-		DrawText( "co-axial machine gun", x, y ); y :+ 12
-		w = 125; h = 14
-		SetColor( 255, 255, 255 )
-		DrawRect( x, y, w, h )
-		SetColor( 32, 32, 32 )
-		DrawRect( x + 1, y + 1, w - 2, h - 2 )
-		SetColor( 255*(player.turrets[1].cur_heat / player.turrets[1].max_heat), 0, 255*(1 - (player.turrets[1].cur_heat / player.turrets[1].max_heat)) )
-		DrawRect( x + 2, y + 2, (Double(w) - 4.0)*(player.turrets[1].cur_heat / player.turrets[1].max_heat), h - 4 )
-	End If
-	y :+ h
+'	y :+ arena_offset
+'	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
+'	DrawText( "heavy cannon", x, y ); y :+ 12
+'	Local temp_x%, temp_y%
+'	temp_x = x; temp_y = y
+'	For Local i% = 0 To player.turrets[0].cur_ammo - 1
+'		If ((i Mod 20) = 0) And (i > 0)
+'			temp_x = x
+'			If ((i / 20) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width / 2
+'			temp_y :+ img_icon_player_cannon_ammo.height / 3
+'		End If
+'		DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
+'		temp_x :+ img_icon_player_cannon_ammo.width - 1
+'	Next; y :+ 12 + (player.turrets[0].max_ammo / 20)* img_icon_player_cannon_ammo.height
+'	If player.turrets[1] <> Null
+'		DrawText( "co-axial machine gun", x, y ); y :+ 12
+'		w = 125; h = 14
+'		SetColor( 255, 255, 255 )
+'		DrawRect( x, y, w, h )
+'		SetColor( 32, 32, 32 )
+'		DrawRect( x + 1, y + 1, w - 2, h - 2 )
+'		SetColor( 255*(player.turrets[1].cur_heat / player.turrets[1].max_heat), 0, 255*(1 - (player.turrets[1].cur_heat / player.turrets[1].max_heat)) )
+'		DrawRect( x + 2, y + 2, (Double(w) - 4.0)*(player.turrets[1].cur_heat / player.turrets[1].max_heat), h - 4 )
+'	End If
+'	y :+ h
 	
 	'music icon
 	y :+ arena_offset
@@ -258,57 +310,6 @@ Function draw_stats()
 	
 End Function
 '______________________________________________________________________________
-Function draw_menu()
-	Local x%, y%
-	
-	'title
-	x = 25; y = 25
-	SetColor( 255, 255, 127 ); SetImageFont( consolas_bold_50 )
-		DrawText( My.Application.AssemblyInfo, x, y )
-	
-	'menu options
-	x :+ 5; y :+ 70
-	For Local option% = 0 To menu_option_count - 1
-		If menu_enabled[ option ]
-			If option = menu_option
-				SetColor( 255, 255, 255 )
-				SetImageFont( consolas_bold_24 )
-				'SetAlpha( 0.5 + 0.5*Sin(Float(now())/512.0) )
-				SetAlpha( 1 )
-			Else
-				SetColor( 127, 127, 127 )
-				SetImageFont( consolas_normal_24 )
-				SetAlpha( 1 )
-			End If
-		Else
-			SetColor( 64, 64, 64 )
-			SetImageFont( consolas_normal_24 )
-			SetAlpha( 1 )
-		End If
-		DrawText( menu_display_string[ option ], x, y + option*26 )
-	Next
-	SetAlpha( 1 )
-	
-	'copyright stuff
-	SetColor( 157, 157, 157 )
-	SetImageFont( consolas_normal_10 )
-	x :+ 200; y :+ 7
-	DrawText( "Colosseum (c) 2008 Tylerbot", x, y ); y :+ 10
-	DrawText( "  [Tyler W.R. Cole]", x, y ); y :+ 10
-	y :+ 10
-	DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
-	DrawText( "  http://www.blitzmax.com", x, y ); y :+ 10
-	y :+ 10
-	DrawText( "music by NickPerrin", x, y ); y :+ 10
-	DrawText( "  Victory! (8-bit Chiptune)", x, y ); y :+ 10
-	DrawText( "  http://www.newgrounds.com", x, y ); y :+ 10
-	y :+ 10
-	DrawText( "special thanks to", x, y ); y :+ 10
-	DrawText( "  Kaze", x, y ); y :+ 10
-	DrawText( "  SniperAceX", x, y ); y :+ 10
-	
-End Function
-
 Function draw_shop()
 	
 End Function

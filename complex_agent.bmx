@@ -23,8 +23,8 @@ Type COMPLEX_AGENT Extends AGENT
 	Field gibs:TImage 'gib image(s)
 	Field turrets:TURRET[] 'turret array
 	Field turret_count% 'number of turret slots
-	Field primary_firing_sequence:TList
-	Field secondary_firing_sequence:TList
+	Field firing_sequence%[][][]
+	Field firing_state%[]
 	'Field motivators:MOTIVATOR[] 'motivator force array (controls certain animations)
 	Field motivator_count% 'number of motivator slots
 	
@@ -39,8 +39,6 @@ Type COMPLEX_AGENT Extends AGENT
 	Field widget_list_in_front:TList
 	
 	Method New()
-		primary_firing_sequence = CreateList()
-		secondary_firing_sequence = CreateList()
 		emitter_list = CreateList()
 		widget_list_behind = CreateList()
 		widget_list_in_front = CreateList()
@@ -115,6 +113,8 @@ Type COMPLEX_AGENT Extends AGENT
 				End If
 			Next
 		End If
+		c.firing_sequence = other.firing_sequence
+		c.firing_state = other.firing_state
 		If other.motivator_count > 0
 			c.motivator_count = other.motivator_count
 			'c.motivators = New MOTIVATOR[ other.motivator_count ]
@@ -188,8 +188,16 @@ Type COMPLEX_AGENT Extends AGENT
 	'think of this method like a request, safe to call at any time.
 	'ie, if the player is currently reloading, this method will do nothing.
 	Method fire_turret( turret_index% = 0 )
-		If turret_index < turret_count And turrets[turret_index] <> Null
-			turrets[turret_index].fire()
+		If turret_index < turret_count And turrets[turret_index] <> Null Then turrets[turret_index].fire()
+	End Method
+	'this method uses firing groups and sequences for complex turret control
+	Method fire( seq_index% )
+		If seq_index < turret_count
+			For Local t_index% = EachIn firing_sequence[seq_index][firing_state[seq_index]]
+				fire_turret( t_index )
+			Next
+			firing_state[seq_index] :+ 1
+			If firing_state[seq_index] > firing_sequence[seq_index].Length - 1 Then firing_state[seq_index] = 0
 		End If
 	End Method
 	
@@ -199,6 +207,7 @@ Type COMPLEX_AGENT Extends AGENT
 		Else If pct < 0 Then enable_only_forward_emitters() ..
 		Else                 disable_all_emitters()
 	End Method
+	
 	Method turn( pct# )
 		turning_force.control_pct = pct
 	End Method
@@ -257,12 +266,15 @@ Type COMPLEX_AGENT Extends AGENT
 		turrets[slot] = t
 		Return t
 	End Method
+	
 	'Method add_motivator:MOTIVATOR( motivator_archetype_index% )
 	'	
 	'End Method
+	
 	Method add_emitter:EMITTER(	particle_emitter_archetype_index% )
 		Return EMITTER( EMITTER.Copy( particle_emitter_archetype[particle_emitter_archetype_index], emitter_list, Self ))
 	End Method
+	
 	Method add_widget:WIDGET( other_w:WIDGET )
 		Local w:WIDGET = other_w.clone()
 		w.parent = Self
