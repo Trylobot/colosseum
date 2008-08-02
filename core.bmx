@@ -139,8 +139,8 @@ End Function
 Function respawn_player()
 	
 	If player <> Null And player.managed() Then player.remove_me()
-	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[ 0], ALIGNMENT_FRIENDLY ))
-	'player = Copy_COMPLEX_AGENT( enemy_archetype[ 1], ALIGNMENT_FRIENDLY )
+'	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_LIGHT_TANK], ALIGNMENT_FRIENDLY ))
+	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_MED_TANK], ALIGNMENT_FRIENDLY ))
 	player.pos_x = arena_w/2
 	player.pos_y = arena_h*3/4
 	player.ang = -90
@@ -177,8 +177,9 @@ Function spawn_pickup( x#, y# )
 	Local pkp:PICKUP
 	If Rand( 0, 10000 ) < PICKUP_PROBABILITY
 		Local index% = Rand( 0, pickup_archetype.Length - 1 )
-		pkp = PICKUP( PICKUP.Copy( pickup_archetype[index] ))
+		pkp = pickup_archetype[index].clone()
 		pkp.pos_x = x; pkp.pos_y = y
+		pkp.auto_manage()
 	End If
 End Function
 

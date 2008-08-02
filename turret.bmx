@@ -19,6 +19,8 @@ Type TURRET Extends POINT
 	Field reload_time% 'time required to reload
 	Field max_ammo% 'maximum number of rounds in reserve (this should be stored in individual ammo objects?)
 	'Field ammo:AMMUNITION 'ammunition object that controls the fired projectiles' look, muzzle velocity, mass, and damage
+	Field recoil_off_x#
+	Field recoil_off_y#
 	Field recoil_offset# 'current distance from local origin due to recoil
 	Field recoil_offset_ang# 'current angle of recoil
 	Field max_heat#
@@ -30,6 +32,8 @@ Type TURRET Extends POINT
 	Field emitter_list:TList 'list of all emitters, to be enabled (with count) when turret fires
 	'it is expected that at least one projectile emitter would be added to this object, so it can fire.
 
+	Field off_x#
+	Field off_y#
 	Field offset# 'static offset from parent-agent's handle
 	Field offset_ang# 'angle of static offset
 	Field last_reloaded_ts% 'timestamp of last reload
@@ -44,19 +48,63 @@ Type TURRET Extends POINT
 		emitter_list = CreateList()
 	End Method
 	
-	Method draw()
-		SetRotation( ang )
-		If img_barrel <> Null
-			DrawImage( img_barrel, pos_x + cur_recoil_off_x, pos_y + cur_recoil_off_y )
-		End If
-		If img_base <> Null
-			DrawImage( img_base, pos_x, pos_y )
-		End If
-	End Method
+	Function Create:Object( ..
+	class%, ..
+	img_base:TImage, img_barrel:TImage, ..
+	max_ang_vel#, ..
+	reload_time%, ..
+	max_ammo%, ..
+	recoil_off_x#, recoil_off_y#, ..
+	max_heat# = INFINITY, ..
+	heat_per_shot_min# = 0.0, heat_per_shot_max# = 0.0, ..
+	cooling_coefficient# = 0.0, ..
+	overheat_delay% = 0 )
+		Local t:TURRET = New TURRET
+		
+		'static fields
+		t.class = class
+		t.img_base = img_base; t.img_barrel = img_barrel
+		t.max_ang_vel = max_ang_vel
+		t.reload_time = reload_time
+		t.max_ammo = max_ammo
+		t.recoil_off_x = recoil_off_x; t.recoil_off_y = recoil_off_y
+		cartesian_to_polar( recoil_off_x, recoil_off_y, t.recoil_offset, t.recoil_offset_ang )
+		t.max_heat = max_heat
+		t.heat_per_shot_min = heat_per_shot_min; t.heat_per_shot_max = heat_per_shot_max
+		t.cooling_coefficient = cooling_coefficient
+		t.overheat_delay = overheat_delay
+		
+		'dynamic fields
+		t.offset = 0
+		t.offset_ang = 0
+		t.last_reloaded_ts = now() - t.reload_time
+		t.cur_ammo = max_ammo
+		t.cur_recoil_off_x = 0; t.cur_recoil_off_y = 0
+		t.cur_heat = 0
+		t.last_overheat_ts = now() - t.overheat_delay
 	
-	Method turn( pct# )
-		control_pct = pct
-		ang_vel = control_pct*max_ang_vel
+		Return t
+	End Function
+	
+	Method clone:TURRET()
+		Local t:TURRET = TURRET( TURRET.Create( ..
+			class, img_base, img_barrel, max_ang_vel, reload_time, max_ammo, recoil_off_x, recoil_off_y, max_heat, heat_per_shot_min, heat_per_shot_max, cooling_coefficient, overheat_delay ))
+		'copy all emitters
+		For Local em:EMITTER = EachIn emitter_list
+			EMITTER( EMITTER.Copy( em, t.emitter_list, t ))
+		Next
+		Return t
+	End Method
+
+	Method set_parent( new_parent:COMPLEX_AGENT )
+		parent = new_parent
+		For Local em:EMITTER = EachIn emitter_list
+			em.source_id = parent.id
+		Next
+	End Method
+	Method attach_at( off_x_new#, off_y_new# )
+		off_x = off_x_new; off_y = off_y_new
+		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
 	End Method
 	
 	Method update()
@@ -86,6 +134,21 @@ Type TURRET Extends POINT
 		Next
 		'heat/cooling
 		If Not overheated() Then cur_heat :- cur_heat*cooling_coefficient
+	End Method
+	
+	Method draw()
+		SetRotation( ang )
+		If img_barrel <> Null
+			DrawImage( img_barrel, pos_x + cur_recoil_off_x, pos_y + cur_recoil_off_y )
+		End If
+		If img_base <> Null
+			DrawImage( img_base, pos_x, pos_y )
+		End If
+	End Method
+	
+	Method turn( pct# )
+		control_pct = pct
+		ang_vel = control_pct*max_ang_vel
 	End Method
 	
 	Method ready_to_fire%()
@@ -126,13 +189,6 @@ Type TURRET Extends POINT
 		End If
 	End Method
 	
-	Method attach_to( ..
-	new_parent:COMPLEX_AGENT, ..
-	off_x_new#, off_y_new# )
-		parent = new_parent
-		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
-	End Method
-	
 	Method add_emitter:EMITTER( emitter_type%, emitter_archetype_index% )
 		If emitter_type = EMITTER_TYPE_PARTICLE
 			Return EMITTER( EMITTER.Copy( particle_emitter_archetype[emitter_archetype_index], emitter_list ))
@@ -141,78 +197,6 @@ Type TURRET Extends POINT
 		End If
 	End Method
 	
-	Function Archetype:Object( ..
-	class%, ..
-	img_base:TImage, img_barrel:TImage, ..
-	max_ang_vel#, ..
-	reload_time%, ..
-	max_ammo%, ..
-	recoil_off_x#, recoil_off_y#, ..
-	max_heat# = INFINITY, ..
-	heat_per_shot_min# = 0.0, heat_per_shot_max# = 0.0, ..
-	cooling_coefficient# = 0.0, ..
-	overheat_delay% = 0 )
-		Local t:TURRET = New TURRET
-		
-		'static fields
-		t.class = class
-		t.img_base = img_base; t.img_barrel = img_barrel
-		t.max_ang_vel = max_ang_vel
-		t.reload_time = reload_time
-		t.max_ammo = max_ammo
-		cartesian_to_polar( recoil_off_x, recoil_off_y, t.recoil_offset, t.recoil_offset_ang )
-		t.max_heat = max_heat
-		t.heat_per_shot_min = heat_per_shot_min; t.heat_per_shot_max = heat_per_shot_max
-		t.cooling_coefficient = cooling_coefficient
-		t.overheat_delay = overheat_delay
-		
-		'dynamic fields
-		t.parent = Null
-		t.offset = 0
-		t.offset_ang = 0
-		t.last_reloaded_ts = now() - t.reload_time
-		t.cur_ammo = max_ammo
-		t.cur_recoil_off_x = 0; t.cur_recoil_off_y = 0
-		t.cur_heat = 0
-		t.last_overheat_ts = now() - t.overheat_delay
-	
-		Return t
-	End Function
-	
-	Function Copy:Object( other:TURRET, new_parent:COMPLEX_AGENT = Null )
-		If other = Null Then Return Null
-		Local t:TURRET = New TURRET
-		
-		'static fields
-		t.parent = new_parent
-		t.class = other.class
-		t.img_base = other.img_base; t.img_barrel = other.img_barrel
-		t.max_ang_vel = other.max_ang_vel
-		t.reload_time = other.reload_time
-		t.max_ammo = other.max_ammo
-		t.recoil_offset = other.recoil_offset
-		t.recoil_offset_ang = other.recoil_offset_ang
-		t.max_heat = other.max_heat
-		t.heat_per_shot_min = other.heat_per_shot_min; t.heat_per_shot_max = other.heat_per_shot_max
-		t.cooling_coefficient = other.cooling_coefficient
-		t.overheat_delay = other.overheat_delay
-		'emitters
-		Local id% = NULL_ID
-		If new_parent <> Null Then id = new_parent.id Else id = NULL_ID
-		For Local em:EMITTER = EachIn other.emitter_list
-			EMITTER( EMITTER.Copy( em, t.emitter_list, t, id ))
-		Next
-		
-		'dynamic fields
-		t.offset = other.offset
-		t.offset_ang = other.offset_ang
-		t.last_reloaded_ts = other.last_reloaded_ts
-		t.cur_ammo = other.cur_ammo
-		t.cur_recoil_off_x = other.cur_recoil_off_x; t.cur_recoil_off_y = other.cur_recoil_off_y
-	
-		Return t
-	End Function
-
 End Type
 
 

@@ -23,6 +23,8 @@ Type COMPLEX_AGENT Extends AGENT
 	Field gibs:TImage 'gib image(s)
 	Field turrets:TURRET[] 'turret array
 	Field turret_count% 'number of turret slots
+	Field primary_firing_sequence:TList
+	Field secondary_firing_sequence:TList
 	'Field motivators:MOTIVATOR[] 'motivator force array (controls certain animations)
 	Field motivator_count% 'number of motivator slots
 	
@@ -37,137 +39,13 @@ Type COMPLEX_AGENT Extends AGENT
 	Field widget_list_in_front:TList
 	
 	Method New()
+		primary_firing_sequence = CreateList()
+		secondary_firing_sequence = CreateList()
 		emitter_list = CreateList()
 		widget_list_behind = CreateList()
 		widget_list_in_front = CreateList()
 	End Method
 	
-	Method update()
-		'update agent variables
-		Super.update()
-		'turrets
-		For Local t:TURRET = EachIn turrets
-			t.update()
-		Next
-		'widgets
-		For Local w:WIDGET = EachIn widget_list_behind
-			w.update()
-		Next
-		For Local w:WIDGET = EachIn widget_list_in_front
-			w.update()
-		Next
-		'emitters
-		For Local em:EMITTER = EachIn emitter_list
-			em.update()
-			em.emit()
-		Next
-	End Method
-	
-	Method draw()
-		For Local w:WIDGET = EachIn widget_list_behind
-			w.draw()
-		Next
-		
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		SetScale( 1, 1 )
-		SetRotation( ang )
-		If img <> Null Then DrawImage( img, pos_x, pos_y )
-		
-		For Local t:TURRET = EachIn turrets
-			t.draw()
-		Next
-		For Local w:WIDGET = EachIn widget_list_in_front
-			w.draw()
-		Next
-	End Method
-	
-	'think of this method like a request, safe to call at any time.
-	'ie, if the player is currently reloading, this method will do nothing.
-	Method fire_turret( turret_index% = 0 )
-		If turret_index < turret_count And turrets[turret_index] <> Null
-			turrets[turret_index].fire()
-		End If
-	End Method
-	
-	Method drive( pct# )
-		driving_force.control_pct = pct
-		If      pct > 0 Then enable_only_rear_emitters() ..
-		Else If pct < 0 Then enable_only_forward_emitters() ..
-		Else                 disable_all_emitters()
-	End Method
-	Method turn( pct# )
-		turning_force.control_pct = pct
-	End Method
-	
-	Method turn_turrets( pct# )
-		For Local t:TURRET = EachIn turrets
-			t.turn( pct )
-		Next
-	End Method
-	Method snap_turrets() '(private)
-		For Local t:TURRET = EachIn turrets
-			t.ang = ang
-		Next
-	End Method
-	
-	Method enable_only_forward_emitters()
-		For Local i% = 0 To motivator_count - 1
-			If forward_debris_emitters[i] <> Null Then forward_debris_emitters[i].enable( MODE_ENABLED_FOREVER )
-			If forward_trail_emitters[i] <> Null  Then forward_trail_emitters[i].enable( MODE_ENABLED_FOREVER )
-			If rear_debris_emitters[i] <> Null    Then rear_debris_emitters[i].disable()
-			If rear_trail_emitters[i] <> Null     Then rear_trail_emitters[i].disable()
-		Next
-	End Method
-	Method enable_only_rear_emitters()
-		For Local i% = 0 To motivator_count - 1
-			If forward_debris_emitters[i] <> Null Then forward_debris_emitters[i].disable()
-			If forward_trail_emitters[i] <> Null  Then forward_trail_emitters[i].disable()
-			If rear_debris_emitters[i] <> Null    Then rear_debris_emitters[i].enable( MODE_ENABLED_FOREVER )
-			If rear_trail_emitters[i] <> Null     Then rear_trail_emitters[i].enable( MODE_ENABLED_FOREVER )
-		Next
-	End Method
-	Method disable_all_emitters()
-		For Local i% = 0 To motivator_count - 1
-			If forward_debris_emitters[i] <> Null Then forward_debris_emitters[i].disable()
-			If forward_trail_emitters[i] <> Null  Then forward_trail_emitters[i].disable()
-			If rear_debris_emitters[i] <> Null    Then rear_debris_emitters[i].disable()
-			If rear_trail_emitters[i] <> Null     Then rear_trail_emitters[i].disable()
-		Next
-	End Method
-	
-	Method grant_pickup( pkp:PICKUP )
-		Select pkp.pickup_type
-			Case AMMO_PICKUP
-				'ToDo: insert code to analyze the ammunition type of the pickup and see what turrets take that ammunition
-				turrets[0].re_stock( pkp.pickup_amount )
-			Case HEALTH_PICKUP
-				cur_health :+ pkp.pickup_amount
-				If cur_health > max_health Then cur_health = max_health
-		End Select
-		pkp.remove_me()
-	End Method
-	
-	Method add_turret:TURRET( t:TURRET )
-		Return TURRET( TURRET.Copy( t ))
-	End Method
-	'Method add_motivator:MOTIVATOR( motivator_archetype_index% )
-	'	
-	'End Method
-	Method add_emitter:EMITTER(	particle_emitter_archetype_index% )
-		Return EMITTER( EMITTER.Copy( particle_emitter_archetype[particle_emitter_archetype_index], emitter_list, Self ))
-	End Method
-	Method add_widget:WIDGET( other_w:WIDGET )
-		Local w:WIDGET = other_w.clone()
-		w.parent = Self
-		If w.layer = LAYER_BEHIND_PARENT
-			w.add_me( widget_list_behind )
-		Else If w.layer = LAYER_IN_FRONT_OF_PARENT
-			w.add_me( widget_list_in_front )
-		End If
-		Return w
-	End Method
-		
 	Function Archetype:Object( ..
 	img:TImage, ..
 	gibs:TImage, ..
@@ -232,7 +110,9 @@ Type COMPLEX_AGENT Extends AGENT
 			c.turret_count = other.turret_count
 			c.turrets = New TURRET[ other.turret_count ]
 			For Local i% = 0 To other.turret_count - 1
-				If other.turrets[i] <> Null Then c.turrets[i] = TURRET( TURRET.Copy( other.turrets[i], c ))
+				If other.turrets[i] <> Null
+					c.add_turret( other.turrets[i], i ).attach_at( other.turrets[i].off_x, other.turrets[i].off_y )
+				End If
 			Next
 		End If
 		If other.motivator_count > 0
@@ -265,6 +145,135 @@ Type COMPLEX_AGENT Extends AGENT
 		Return c
 	End Function
 
+	Method update()
+		'update agent variables
+		Super.update()
+		'turrets
+		For Local t:TURRET = EachIn turrets
+			t.update()
+		Next
+		'widgets
+		For Local w:WIDGET = EachIn widget_list_behind
+			w.update()
+		Next
+		For Local w:WIDGET = EachIn widget_list_in_front
+			w.update()
+		Next
+		'emitters
+		For Local em:EMITTER = EachIn emitter_list
+			em.update()
+			em.emit()
+		Next
+	End Method
+	
+	Method draw()
+		For Local w:WIDGET = EachIn widget_list_behind
+			w.draw()
+		Next
+		
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetScale( 1, 1 )
+		SetRotation( ang )
+		If img <> Null Then DrawImage( img, pos_x, pos_y )
+		
+		For Local t:TURRET = EachIn turrets
+			t.draw()
+		Next
+		For Local w:WIDGET = EachIn widget_list_in_front
+			w.draw()
+		Next
+	End Method
+	
+	'think of this method like a request, safe to call at any time.
+	'ie, if the player is currently reloading, this method will do nothing.
+	Method fire_turret( turret_index% = 0 )
+		If turret_index < turret_count And turrets[turret_index] <> Null
+			turrets[turret_index].fire()
+		End If
+	End Method
+	
+	Method drive( pct# )
+		driving_force.control_pct = pct
+		If      pct > 0 Then enable_only_rear_emitters() ..
+		Else If pct < 0 Then enable_only_forward_emitters() ..
+		Else                 disable_all_emitters()
+	End Method
+	Method turn( pct# )
+		turning_force.control_pct = pct
+	End Method
+	
+	Method turn_turrets( pct# )
+		For Local t:TURRET = EachIn turrets
+			t.turn( pct )
+		Next
+	End Method
+	Method snap_turrets()
+		For Local t:TURRET = EachIn turrets
+			t.ang = ang
+		Next
+	End Method
+	
+	Method enable_only_forward_emitters()
+		For Local i% = 0 To motivator_count - 1
+			If forward_debris_emitters[i] <> Null Then forward_debris_emitters[i].enable( MODE_ENABLED_FOREVER )
+			If forward_trail_emitters[i] <> Null  Then forward_trail_emitters[i].enable( MODE_ENABLED_FOREVER )
+			If rear_debris_emitters[i] <> Null    Then rear_debris_emitters[i].disable()
+			If rear_trail_emitters[i] <> Null     Then rear_trail_emitters[i].disable()
+		Next
+	End Method
+	Method enable_only_rear_emitters()
+		For Local i% = 0 To motivator_count - 1
+			If forward_debris_emitters[i] <> Null Then forward_debris_emitters[i].disable()
+			If forward_trail_emitters[i] <> Null  Then forward_trail_emitters[i].disable()
+			If rear_debris_emitters[i] <> Null    Then rear_debris_emitters[i].enable( MODE_ENABLED_FOREVER )
+			If rear_trail_emitters[i] <> Null     Then rear_trail_emitters[i].enable( MODE_ENABLED_FOREVER )
+		Next
+	End Method
+	Method disable_all_emitters()
+		For Local i% = 0 To motivator_count - 1
+			If forward_debris_emitters[i] <> Null Then forward_debris_emitters[i].disable()
+			If forward_trail_emitters[i] <> Null  Then forward_trail_emitters[i].disable()
+			If rear_debris_emitters[i] <> Null    Then rear_debris_emitters[i].disable()
+			If rear_trail_emitters[i] <> Null     Then rear_trail_emitters[i].disable()
+		Next
+	End Method
+	
+	Method grant_pickup( pkp:PICKUP )
+		Select pkp.pickup_type
+			Case AMMO_PICKUP
+				'ToDo: insert code to analyze the ammunition type of the pickup and see what turrets take that ammunition
+				turrets[0].re_stock( pkp.pickup_amount )
+			Case HEALTH_PICKUP
+				cur_health :+ pkp.pickup_amount
+				If cur_health > max_health Then cur_health = max_health
+		End Select
+		pkp.remove_me()
+	End Method
+	
+	Method add_turret:TURRET( other_t:TURRET, slot% )
+		Local t:TURRET = other_t.clone()
+		t.set_parent( Self )
+		turrets[slot] = t
+		Return t
+	End Method
+	'Method add_motivator:MOTIVATOR( motivator_archetype_index% )
+	'	
+	'End Method
+	Method add_emitter:EMITTER(	particle_emitter_archetype_index% )
+		Return EMITTER( EMITTER.Copy( particle_emitter_archetype[particle_emitter_archetype_index], emitter_list, Self ))
+	End Method
+	Method add_widget:WIDGET( other_w:WIDGET )
+		Local w:WIDGET = other_w.clone()
+		w.parent = Self
+		If w.layer = LAYER_BEHIND_PARENT
+			w.add_me( widget_list_behind )
+		Else If w.layer = LAYER_IN_FRONT_OF_PARENT
+			w.add_me( widget_list_in_front )
+		End If
+		Return w
+	End Method
+		
 End Type
 
 	

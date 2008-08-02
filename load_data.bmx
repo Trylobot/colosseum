@@ -42,10 +42,15 @@ Function LoadAnimImage_SetHandle:TImage( path$, x# = 0, y# = 0, w# = 1, h# = 1, 
 	Return img 
 End Function
 
-Global img_player_tank_chassis:TImage = LoadImage_SetHandle( "player_tank_chassis.png", 16, 12 )
+Global img_player_tank_chassis:TImage = LoadImage_SetHandle( "player_tank_chassis.png", 12, 9 )
 Global img_player_tank_turret_base:TImage = LoadImage_SetHandle( "player_tank_turret_base.png", 6, 6 )
 Global img_player_tank_turret_barrel:TImage = LoadImage_SetHandle( "player_tank_turret_barrel.png", 3, 3 )
 Global img_player_mgun_turret:TImage = LoadImage_SetHandle( "player_tank_mgun_turret.png", 3, 3 )
+Global img_player_tank_chassis_med:TImage = LoadImage_SetHandle( "player_tank_chassis_med.png", 16, 11 )
+Global img_player_tank_turret_med_base_right:TImage = LoadImage_SetHandle( "player_tank_turret_med_base_right.png", 7, 11 )
+Global img_player_tank_turret_med_base_left:TImage = LoadImage_SetHandle( "player_tank_turret_med_base_left.png", 7, 11 )
+Global img_player_tank_turret_med_barrel_right:TImage = LoadImage_SetHandle( "player_tank_turret_med_barrel_right.png", 7, 11 )
+Global img_player_tank_turret_med_barrel_left:TImage = LoadImage_SetHandle( "player_tank_turret_med_barrel_left.png", 7, 11 )
 Global img_muzzle_flash:TImage = LoadImage_SetHandle( "muzzle_flash.png", 0, 12 )
 Global img_mgun_muzzle_flash:TImage = LoadImage_SetHandle( "mgun_muzzle_flash.png", 0, 7 )
 Global img_projectile:TImage = LoadImage_SetHandle( "projectile.png", 6, 3 )
@@ -88,3 +93,6 @@ Global img_laser_turret:TImage = LoadImage_SetHandle( "laser_turret_base-barrel.
 Global img_laser_muzzle_flare:TImage = LoadImage_SetHandle( "laser_muzzle_flare.png", 1, 7 )
 Global img_tower_gibs:TImage = LoadAnimImage_SetHandle( "tower_gibs.png", 11, 11, 23, 23, 11 )
 Global img_bomb_gibs:TImage = LoadAnimImage_SetHandle( "bomb_gibs.png", 7, 7, 15, 15, 7 )
+
+
+

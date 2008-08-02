@@ -1,4 +1,5 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ bonus timer for each level, set by no. of enemies
 	_ instant cooldown pickup
 	_ feedback system (google groups?)
 	_ create a subspace-style networked multiplayer mode: duel. first to 5 by 2, rinse, repeat. two players only.
