@@ -49,6 +49,7 @@ Type TURRET Extends POINT
 	End Method
 	
 	Function Create:Object( ..
+	name$, ..
 	class%, ..
 	img_base:TImage, img_barrel:TImage, ..
 	max_ang_vel#, ..
@@ -62,6 +63,7 @@ Type TURRET Extends POINT
 		Local t:TURRET = New TURRET
 		
 		'static fields
+		t.name = name
 		t.class = class
 		t.img_base = img_base; t.img_barrel = img_barrel
 		t.max_ang_vel = max_ang_vel
@@ -88,7 +90,7 @@ Type TURRET Extends POINT
 	
 	Method clone:TURRET()
 		Local t:TURRET = TURRET( TURRET.Create( ..
-			class, img_base, img_barrel, max_ang_vel, reload_time, max_ammo, recoil_off_x, recoil_off_y, max_heat, heat_per_shot_min, heat_per_shot_max, cooling_coefficient, overheat_delay ))
+			name, class, img_base, img_barrel, max_ang_vel, reload_time, max_ammo, recoil_off_x, recoil_off_y, max_heat, heat_per_shot_min, heat_per_shot_max, cooling_coefficient, overheat_delay ))
 		'copy all emitters
 		For Local em:EMITTER = EachIn emitter_list
 			EMITTER( EMITTER.Copy( em, t.emitter_list, t ))

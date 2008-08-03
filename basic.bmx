@@ -7,6 +7,7 @@ EndRem
 '______________________________________________________________________________
 Type MANAGED_OBJECT
 	
+	Field name$
 	Field link:TLink 'back-reference to the list which contains this object
 	Field id% 'unique identification number
 	

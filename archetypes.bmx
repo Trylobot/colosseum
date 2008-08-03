@@ -90,17 +90,17 @@ particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_MUZZLE_FLARE] = EMITTER(
 Global projectile_archetype:PROJECTILE[10]; reset_index()
 
 'projectile 0 - tank cannon projectile
-projectile_archetype[ 0] = PROJECTILE( PROJECTILE.Create( img_projectile, PARTICLE_INDEX_CANNON_EXPLOSION, 50.00, 0.0, 0.0300, 0.0 ))
+projectile_archetype[ 0] = PROJECTILE( PROJECTILE.Create( img_projectile, PARTICLE_INDEX_CANNON_EXPLOSION, 50.00, 0.0, -1, 0.0300, 0.0 ))
 'projectile 1 - machine gun projectile
-projectile_archetype[ 1] = PROJECTILE( PROJECTILE.Create( img_mgun, PARTICLE_INDEX_MACHINE_GUN_EXPLOSION, 5.00, 0.0, 0.0050, 0.0 ))
+projectile_archetype[ 1] = PROJECTILE( PROJECTILE.Create( img_mgun, PARTICLE_INDEX_MACHINE_GUN_EXPLOSION, 5.00, 0.0, -1, 0.0050, 0.0 ))
 'projectile 2 - rocket
-projectile_archetype[ 2] = PROJECTILE( PROJECTILE.Create( img_rocket, PARTICLE_INDEX_CANNON_EXPLOSION, 100.00, 5.0, 0.0400, 0.00025 ))
+projectile_archetype[ 2] = PROJECTILE( PROJECTILE.Create( img_rocket, PARTICLE_INDEX_CANNON_EXPLOSION, 100.00, 5.0, 4.00, 0.0400, 0.00025 ))
 	projectile_archetype[ 2].thrust_emitter = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_THRUST] ))
 	projectile_archetype[ 2].thrust_emitter.attach_to( projectile_archetype[ 2], -11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	projectile_archetype[ 2].trail_emitter = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] ))
 	projectile_archetype[ 2].trail_emitter.attach_to( projectile_archetype[ 2], -11, 0, 0, 10, 150, 210, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 'projectile 3 - laser
-projectile_archetype[ 3] = PROJECTILE( PROJECTILE.Create( img_laser, PARTICLE_INDEX_CANNON_EXPLOSION, 15.00, 0.0, 0.0001, 0.0, True ))
+projectile_archetype[ 3] = PROJECTILE( PROJECTILE.Create( img_laser, PARTICLE_INDEX_CANNON_EXPLOSION, 15.00, 0.0, -1, 0.0001, 0.0, True ))
 	
 '______________________________________________________________________________
 '[ PROJECTILE EMITTERS ]
@@ -145,41 +145,47 @@ Global TURRET_INDEX_TANK_MACHINE_GUN% = postfix_index()
 Global TURRET_INDEX_TANK_LASER% = postfix_index()
 Global TURRET_INDEX_TANK_DUAL_CANNON_LEFT% = postfix_index()
 Global TURRET_INDEX_TANK_DUAL_CANNON_RIGHT% = postfix_index()
+Global TURRET_INDEX_MED_TANK_MACHINE_GUN% = postfix_index()
 Global TURRET_INDEX_ROCKET_TURRET% = postfix_index()
 Global TURRET_INDEX_MACHINE_GUN_TURRET% = postfix_index()
 Global TURRET_INDEX_CANNON_TURRET% = postfix_index()
 
-turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON] = TURRET( TURRET.Create( TURRET_CLASS_AMMUNITION, img_player_tank_turret_base, img_player_tank_turret_barrel, 2.25, 650, 40, -7, 0 ))
+turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON] = TURRET( TURRET.Create( "105mm cannon", TURRET_CLASS_AMMUNITION, img_player_tank_turret_base, img_player_tank_turret_barrel, 2.25, 650, 40, -7, 0 ))
 	turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON].add_emitter( EMITTER_TYPE_PROJECTILE,  0 ).attach_to( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON], 20, 0, 0, 0, 0, 0, 4.00, 4.40, 0, 0, 0, 0, 0, 0, -1.0, 1.0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH ).attach_to( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON], 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE ).attach_to( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON], 20, 0, 3, 6, -45, 45, 0.05, 0.40, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING ).attach_to( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON], -3, 3, 0, 0, 0, 0, 0.4, 0.6, 80, 100, 0, 0, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
-turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN] = TURRET( TURRET.Create( TURRET_CLASS_AMMUNITION, Null, img_player_mgun_turret, 2.25, 62.50, INFINITY, 0, 0, 25.0, 1.50, 2.50, 0.0210, 1500 ))
+turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN] = TURRET( TURRET.Create( "0.50 machine gun", TURRET_CLASS_AMMUNITION, Null, img_player_mgun_turret, 2.25, 62.50, INFINITY, 0, 0, 25.0, 1.50, 2.50, 0.0210, 1500 ))
 	turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN].add_emitter( EMITTER_TYPE_PROJECTILE,  1 ).attach_to( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN], 14, 2, 0, 0, 0, 0, 4.30, 4.70, 0, 0, 0, 0, 0, 0, -2.2, 2.2, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH ).attach_to( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN], 14, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE ).attach_to( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN], 14, 2, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING ).attach_to( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN], 8, 2, 0, 0, 0, 0, 0.3, 0.4, 85, 95, 0, 0, 0, 0, -5, 5, -5, 5, 0, 0 )
-turret_archetype[TURRET_INDEX_TANK_LASER] = TURRET( TURRET.Create( TURRET_CLASS_ENERGY, img_laser_turret, Null, 2.25, 250, INFINITY, 0, 0 ))
+turret_archetype[TURRET_INDEX_TANK_LASER] = TURRET( TURRET.Create( "10 mw laser", TURRET_CLASS_ENERGY, img_laser_turret, Null, 2.25, 250, INFINITY, 0, 0, 50.0, 5.50, 5.75, 0.0090, 3000 ))
 	turret_archetype[TURRET_INDEX_TANK_LASER].add_emitter( EMITTER_TYPE_PROJECTILE,  3 ).attach_to( turret_archetype[TURRET_INDEX_TANK_LASER], 14, 0, 0, 0, 0, 0, 8.00, 8.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_LASER].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_LASER_MUZZLE_FLARE ).attach_to( turret_archetype[TURRET_INDEX_TANK_LASER], 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT] = TURRET( TURRET.Create( TURRET_CLASS_AMMUNITION, img_player_tank_turret_med_base_left, img_player_tank_turret_med_barrel_left, 2.00, 485, 20, -9, 0, INFINITY ))
+turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT] = TURRET( TURRET.Create( "105mm paired cannons", TURRET_CLASS_AMMUNITION, img_player_tank_turret_med_base_left, img_player_tank_turret_med_barrel_left, 2.00, 485, 20, -9, 0, INFINITY ))
 	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT].add_emitter( EMITTER_TYPE_PROJECTILE,  0 ).attach_to( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT], 24, -2, 0, 0, 0, 0, 4.00, 4.40, 0, 0, 0, 0, 0, 0, -1.0, 1.0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH ).attach_to( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT], 24, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE ).attach_to( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT], 24, -2, 3, 6, -45, 45, 0.05, 0.40, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
-	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING ).attach_to( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT], 11, -3, 0, 0, 0, 0, 0.4, 0.6, 80, 100, 0, 0, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
-turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT] = TURRET( TURRET.Create( TURRET_CLASS_AMMUNITION, img_player_tank_turret_med_base_right, img_player_tank_turret_med_barrel_right, 2.00, 485, 20, -9, 0, INFINITY ))
+	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING ).attach_to( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT], 11, -3, 0, 0, 0, 0, 0.4, 0.6, 260, 280, 0, 0, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
+turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT] = TURRET( TURRET.Create( "", TURRET_CLASS_AMMUNITION, img_player_tank_turret_med_base_right, img_player_tank_turret_med_barrel_right, 2.00, 485, 20, -9, 0, INFINITY ))
 	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT].add_emitter( EMITTER_TYPE_PROJECTILE,  0 ).attach_to( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT], 24, 2, 0, 0, 0, 0, 4.00, 4.40, 0, 0, 0, 0, 0, 0, -1.0, 1.0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH ).attach_to( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT], 24, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE ).attach_to( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT], 24, 2, 3, 6, -45, 45, 0.05, 0.40, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING ).attach_to( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT], 11, 3, 0, 0, 0, 0, 0.4, 0.6, 80, 100, 0, 0, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
-turret_archetype[TURRET_INDEX_ROCKET_TURRET] = TURRET( TURRET.Create( TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, img_enemy_stationary_emplacement_1_turret_barrel, 0.55, 4000, INFINITY, 0, 0 ))
+turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN] = TURRET( TURRET.Create( "0.50 machine gun", TURRET_CLASS_AMMUNITION, Null, img_player_tank_turret_med_mgun_barrel, 2.00, 62.50, INFINITY, 0, 0, 25.0, 1.50, 2.50, 0.0210, 1500 ))
+	turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN].add_emitter( EMITTER_TYPE_PROJECTILE,  1 ).attach_to( turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN], 5, 4, 0, 0, 0, 0, 4.30, 4.70, 0, 0, 0, 0, 0, 0, -2.2, 2.2, 0, 0, 0, 0 )
+	turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH ).attach_to( turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN], 5, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE ).attach_to( turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN], 5, 4, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING ).attach_to( turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN], 0, 5, 0, 0, 0, 0, 0.3, 0.4, 85, 95, 0, 0, 0, 0, -5, 5, -5, 5, 0, 0 )
+turret_archetype[TURRET_INDEX_ROCKET_TURRET] = TURRET( TURRET.Create( "", TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, img_enemy_stationary_emplacement_1_turret_barrel, 0.55, 4000, INFINITY, 0, 0 ))
 	turret_archetype[TURRET_INDEX_ROCKET_TURRET].add_emitter( EMITTER_TYPE_PROJECTILE,  2 ).attach_to( turret_archetype[TURRET_INDEX_ROCKET_TURRET], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.0020, 0.0020, 0, 0, 0, 0, 0, 0, 0, 0 )
-turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET] = TURRET( TURRET.Create( TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, img_enemy_stationary_emplacement_2_turret_barrel, 0.80, 50, INFINITY, 0, 0, 25.0, 2.0, 3.0, 0.0175, 2000 ))
+turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET] = TURRET( TURRET.Create( "", TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, img_enemy_stationary_emplacement_2_turret_barrel, 0.80, 50, INFINITY, 0, 0, 25.0, 2.0, 3.0, 0.0175, 2000 ))
 	turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET].add_emitter( EMITTER_TYPE_PROJECTILE,  1 ).attach_to( turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET], 16, 0, 0, 0, 0, 0, 2.50, 3.00, 0, 0, 0, 0, 0, 0, -4.0, 4.0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH ).attach_to( turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET], 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE ).attach_to( turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET], 16, 0, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING ).attach_to( turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET], 3, 3, 0, 0, 0, 0, 0.4, 0.6, 70, 110, -0.004, -0.004, 0, 0, -5, 5, -5, 5, 0, 0 )
-turret_archetype[TURRET_INDEX_CANNON_TURRET] = TURRET( TURRET.Create( TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, img_player_tank_turret_barrel, 0.45, 2800, INFINITY, -7, 0 ))
+turret_archetype[TURRET_INDEX_CANNON_TURRET] = TURRET( TURRET.Create( "", TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, img_player_tank_turret_barrel, 0.45, 2800, INFINITY, -7, 0 ))
 	turret_archetype[TURRET_INDEX_CANNON_TURRET].add_emitter( EMITTER_TYPE_PROJECTILE,  0 ).attach_to( turret_archetype[TURRET_INDEX_CANNON_TURRET], 20, 0, 0, 0, 0, 0, 2.80, 3.00, 0, 0, 0, 0, 0, 0, -1.5, 1.5, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_CANNON_TURRET].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH ).attach_to( turret_archetype[TURRET_INDEX_CANNON_TURRET], 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_CANNON_TURRET].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE ).attach_to( turret_archetype[TURRET_INDEX_CANNON_TURRET], 20, 0, 3, 6, -45, 45, 0.05, 0.40, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -222,6 +228,7 @@ player_archetype[PLAYER_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archety
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN], 1 ).attach_at( -5, 0 )
 		player_archetype[PLAYER_INDEX_LIGHT_TANK].firing_sequence = [ [[0]], [[1]] ]
 		player_archetype[PLAYER_INDEX_LIGHT_TANK].firing_state = [ 0, 0 ]
+		player_archetype[PLAYER_INDEX_LIGHT_TANK].FLAG_increment_firing_group = [ False, False ]
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].forward_debris_emitters[ 0] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ))
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].forward_debris_emitters[ 0].attach_to( player_archetype[PLAYER_INDEX_LIGHT_TANK], 12, -7, 0, 2, -45, 45, 0.3, 0.6, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	player_archetype[PLAYER_INDEX_LIGHT_TANK].forward_debris_emitters[ 1] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ))
@@ -244,11 +251,14 @@ player_archetype[PLAYER_INDEX_LASER_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( p
 	player_archetype[PLAYER_INDEX_LASER_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_LASER], 0 ).attach_at( -5, 0 )
 		player_archetype[PLAYER_INDEX_LASER_TANK].firing_sequence = [ [[0]] ]
 		player_archetype[PLAYER_INDEX_LASER_TANK].firing_state = [ 0 ]
-player_archetype[PLAYER_INDEX_MED_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_player_tank_chassis_med, Null, 0, 750, 1200, 125.0, 2, 2, 100.0, 125.0 ))
+		player_archetype[PLAYER_INDEX_LASER_TANK].FLAG_increment_firing_group = [ False ]
+player_archetype[PLAYER_INDEX_MED_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( img_player_tank_chassis_med, Null, 0, 750, 1200, 125.0, 3, 2, 100.0, 125.0 ))
 	player_archetype[PLAYER_INDEX_MED_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT], 0 ).attach_at( -9, 0 )
 	player_archetype[PLAYER_INDEX_MED_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT], 1 ).attach_at( -9, 0 )
-		player_archetype[PLAYER_INDEX_MED_TANK].firing_sequence = [ [[0],[1]] ]
-		player_archetype[PLAYER_INDEX_MED_TANK].firing_state = [ 0 ]
+	player_archetype[PLAYER_INDEX_MED_TANK].add_turret( turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN], 2 ).attach_at( -9, 0 )
+		player_archetype[PLAYER_INDEX_MED_TANK].firing_sequence = [ [[0],[1]], [[2]] ]
+		player_archetype[PLAYER_INDEX_MED_TANK].firing_state = [ 0, 0 ]
+		player_archetype[PLAYER_INDEX_MED_TANK].FLAG_increment_firing_group = [ False, False ]
 	player_archetype[PLAYER_INDEX_MED_TANK].forward_debris_emitters[ 0] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ))
 	player_archetype[PLAYER_INDEX_MED_TANK].forward_debris_emitters[ 0].attach_to( player_archetype[PLAYER_INDEX_MED_TANK], 15, -8, 0, 2, -45, 45, 0.3, 0.6, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	player_archetype[PLAYER_INDEX_MED_TANK].forward_debris_emitters[ 1] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ))

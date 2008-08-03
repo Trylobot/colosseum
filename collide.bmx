@@ -35,17 +35,17 @@ Function collide_all()
 			For ag = EachIn list
 				If ag.pos_x < 0
 					ag.pos_x = 0
-					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, 75.0, 100 )))
+					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, 750.0/ag.mass, 100 )))
 				Else If ag.pos_x > arena_w
 					ag.pos_x = arena_w
-					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 180, 75.0, 100 )))
+					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 180, 750.0/ag.mass, 100 )))
 				End If
 				If ag.pos_y < 0
 					ag.pos_y = 0
-					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 90, 75.0, 100 )))
+					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 90, 750.0/ag.mass, 100 )))
 				Else If ag.pos_y > arena_w
 					ag.pos_y = arena_w
-					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 270, 75.0, 100 )))
+					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 270, 750.0/ag.mass, 100 )))
 				End If
 			Next
 		Next

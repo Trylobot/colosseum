@@ -87,11 +87,16 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				'turrets fire
 				If KeyDown( KEY_SPACE )
 					avatar.fire( 0 )
-					'avatar.fire_turret( 0 )
 				End If
 				If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
 					avatar.fire( 1 )
-					'avatar.fire_turret( 1 )
+				End If
+				If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
+					avatar.fire( 2 )
+				End If
+				'disembark
+				If KeyDown( KEY_E )
+					'avatar.disembark
 				End If
 					
 			Case INPUT_XBOX_360_CONTROLLER

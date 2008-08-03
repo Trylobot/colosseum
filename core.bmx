@@ -17,10 +17,9 @@ Const window_w% = arena_w + 2*arena_offset + stats_panel_w
 Const window_h% = arena_h + 2*arena_offset
 
 'Window Initialization and Drawing device
-'SetGraphicsDriver D3D7Max2DDriver()
-'SetGraphicsDriver GLGraphicsDriver()
-AppTitle = My.Application.AssemblyInfo
+SetGraphicsDriver GLMax2DDriver()
 Graphics( window_w, window_h )
+AppTitle = My.Application.AssemblyInfo
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 

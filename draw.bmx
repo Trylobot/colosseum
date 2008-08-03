@@ -192,13 +192,13 @@ Function draw_menu()
 		DrawText( My.Application.AssemblyInfo, x, y )
 	
 	'menu options
-	x :+ 5; Local x_indent% = 0; y :+ 70
+	x :+ 5; y :+ 70
+	Local x_indent% = 0
 	For Local option% = 0 To menu_option_count - 1
 		If menu_enabled[ option ]
 			If option = menu_option
 				SetColor( 255, 255, 255 )
 				SetImageFont( consolas_bold_24 )
-				'SetAlpha( 0.5 + 0.5*Sin(Float(now())/512.0) )
 				SetAlpha( 1 )
 			Else
 				SetColor( 127, 127, 127 )
@@ -206,11 +206,17 @@ Function draw_menu()
 				SetAlpha( 1 )
 			End If
 		Else
-			SetColor( 64, 64, 64 )
-			SetImageFont( consolas_normal_24 )
-			SetAlpha( 1 )
+			If option <= 4
+				SetColor( 64, 64, 64 )
+				SetImageFont( consolas_normal_24 )
+				SetAlpha( 1 )
+			Else
+				SetColor( 64, 64, 64 )
+				SetImageFont( consolas_normal_24 )
+				SetAlpha( 0 )
+			End If
 		End If
-		If option > 4 Then x_indent = 25
+		If option > 4 Then x_indent = 20
 		DrawText( menu_display_string[ option ], x + x_indent, y + option*26 )
 	Next
 	SetAlpha( 1 )
@@ -274,31 +280,38 @@ Function draw_stats()
 	y :+ h
 	
 	'player ammo, overheat & charge indicators
-'	y :+ arena_offset
-'	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
-'	DrawText( "heavy cannon", x, y ); y :+ 12
-'	Local temp_x%, temp_y%
-'	temp_x = x; temp_y = y
-'	For Local i% = 0 To player.turrets[0].cur_ammo - 1
-'		If ((i Mod 20) = 0) And (i > 0)
-'			temp_x = x
-'			If ((i / 20) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width / 2
-'			temp_y :+ img_icon_player_cannon_ammo.height / 3
-'		End If
-'		DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
-'		temp_x :+ img_icon_player_cannon_ammo.width - 1
-'	Next; y :+ 12 + (player.turrets[0].max_ammo / 20)* img_icon_player_cannon_ammo.height
-'	If player.turrets[1] <> Null
-'		DrawText( "co-axial machine gun", x, y ); y :+ 12
-'		w = 125; h = 14
-'		SetColor( 255, 255, 255 )
-'		DrawRect( x, y, w, h )
-'		SetColor( 32, 32, 32 )
-'		DrawRect( x + 1, y + 1, w - 2, h - 2 )
-'		SetColor( 255*(player.turrets[1].cur_heat / player.turrets[1].max_heat), 0, 255*(1 - (player.turrets[1].cur_heat / player.turrets[1].max_heat)) )
-'		DrawRect( x + 2, y + 2, (Double(w) - 4.0)*(player.turrets[1].cur_heat / player.turrets[1].max_heat), h - 4 )
-'	End If
-'	y :+ h
+	y :+ arena_offset
+	Local ammo_row_len% = 10
+	Local temp_x%, temp_y%
+	For Local t:TURRET = EachIn player.turrets
+		If t.name <> Null And t.name <> ""
+			SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
+			DrawText( t.name, x, y ); y :+ 12
+		End If
+		temp_x = x; temp_y = y
+		If t.max_ammo <> INFINITY
+		For Local i% = 0 To t.cur_ammo - 1
+			If ((i Mod ammo_row_len) = 0) And (i > 0)
+				temp_x = x
+				If ((i / ammo_row_len) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width / 2
+				temp_y :+ img_icon_player_cannon_ammo.height / 3
+			End If
+			DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
+			temp_x :+ img_icon_player_cannon_ammo.width - 1
+		Next; y :+ (t.max_ammo / ammo_row_len)*img_icon_player_cannon_ammo.height - 4
+		End If
+		If t.max_heat <> INFINITY
+			w = 125; h = 14
+			Local heat_pct# = (t.cur_heat / t.max_heat)
+			SetColor( 255, 255, 255 )
+			DrawRect( x, y, w, h )
+			SetColor( 32, 32, 32 )
+			DrawRect( x + 1, y + 1, w - 2, h - 2 )
+			SetColor( 255*heat_pct, 0, 255*(1 - heat_pct) )
+			DrawRect( x + 2, y + 2, (Double(w) - 4.0)*heat_pct, h - 4 )
+		End If
+	Next
+	y :+ h
 	
 	'music icon
 	y :+ arena_offset

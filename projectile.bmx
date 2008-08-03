@@ -13,6 +13,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	Field explosion_particle_index% 'archetype index of particle to be created on hit
 	Field damage# 'maximum damage dealt by projectile
 	Field radius# 'radius of damage spread
+	Field max_vel# 'absolute maximum speed (enforced)
 	Field ignore_other_projectiles% 'whether to ignore collisions with other projectiles {true|false}
 	Field source_id% '(private) reference to entity which emitted this projectile; allows for collisions with it to be ignored
 	Field emitter_list:TList 'emitter-management list
@@ -29,6 +30,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	explosion_particle_index%, ..
 	damage#, ..
 	radius#, ..
+	max_vel#, ..
 	mass#, ..
 	frictional_coefficient#, ..
 	ignore_other_projectiles% = False, ..
@@ -44,6 +46,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		p.explosion_particle_index = explosion_particle_index
 		p.damage = damage
 		p.radius = radius
+		p.max_vel = max_vel
 		p.mass = mass
 		p.frictional_coefficient = frictional_coefficient
 		p.ignore_other_projectiles = ignore_other_projectiles
@@ -60,7 +63,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	
 	Method clone:PROJECTILE( new_source_id% = NULL_ID )
 		Local p:PROJECTILE = PROJECTILE( PROJECTILE.Create( ..
-			img, explosion_particle_index, damage, radius, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
+			img, explosion_particle_index, damage, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
 		'emitters
 		If thrust_emitter <> Null
 			p.thrust_emitter = EMITTER( EMITTER.Copy( thrust_emitter, p.emitter_list, p ))
@@ -81,6 +84,14 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 			em.update()
 			em.emit()
 		Next
+		'maximum velocity
+		If max_vel > 0
+			Local vel_mag#, vel_dir#
+			cartesian_to_polar( vel_x, vel_y, vel_mag, vel_dir )
+			If vel_mag > max_vel
+				polar_to_cartesian( max_vel, vel_dir, vel_x, vel_y )
+			End If
+		End If
 	End Method
 	
 	Method draw()

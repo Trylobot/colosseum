@@ -25,6 +25,7 @@ Type COMPLEX_AGENT Extends AGENT
 	Field turret_count% 'number of turret slots
 	Field firing_sequence%[][][]
 	Field firing_state%[]
+	Field FLAG_increment_firing_group%[]
 	'Field motivators:MOTIVATOR[] 'motivator force array (controls certain animations)
 	Field motivator_count% 'number of motivator slots
 	
@@ -113,8 +114,9 @@ Type COMPLEX_AGENT Extends AGENT
 				End If
 			Next
 		End If
-		c.firing_sequence = other.firing_sequence
-		c.firing_state = other.firing_state
+		c.firing_sequence = other.firing_sequence[..]
+		c.firing_state = other.firing_state[..]
+		c.FLAG_increment_firing_group = other.FLAG_increment_firing_group[..]
 		If other.motivator_count > 0
 			c.motivator_count = other.motivator_count
 			'c.motivators = New MOTIVATOR[ other.motivator_count ]
@@ -152,6 +154,23 @@ Type COMPLEX_AGENT Extends AGENT
 		For Local t:TURRET = EachIn turrets
 			t.update()
 		Next
+		'firing groups
+		For Local i% = 0 To FLAG_increment_firing_group.Length - 1
+			If FLAG_increment_firing_group[i]
+				Local all_ready% = True
+				For Local t_index% = EachIn firing_sequence[i][firing_state[i]]
+					If Not turrets[t_index].ready_to_fire()
+						all_ready = False
+						Exit
+					End If
+				Next
+				If all_ready
+					firing_state[i] :+ 1
+					If firing_state[i] > firing_sequence[i].Length - 1 Then firing_state[i] = 0
+					FLAG_increment_firing_group[i] = False
+				End If
+			End If
+		Next
 		'widgets
 		For Local w:WIDGET = EachIn widget_list_behind
 			w.update()
@@ -188,16 +207,15 @@ Type COMPLEX_AGENT Extends AGENT
 	'think of this method like a request, safe to call at any time.
 	'ie, if the player is currently reloading, this method will do nothing.
 	Method fire_turret( turret_index% = 0 )
-		If turret_index < turret_count And turrets[turret_index] <> Null Then turrets[turret_index].fire()
+		If turret_index < turrets.Length And turrets[turret_index] <> Null Then turrets[turret_index].fire()
 	End Method
 	'this method uses firing groups and sequences for complex turret control
 	Method fire( seq_index% )
-		If seq_index < turret_count
+		If seq_index < firing_sequence.Length And Not FLAG_increment_firing_group[seq_index]
 			For Local t_index% = EachIn firing_sequence[seq_index][firing_state[seq_index]]
 				fire_turret( t_index )
 			Next
-			firing_state[seq_index] :+ 1
-			If firing_state[seq_index] > firing_sequence[seq_index].Length - 1 Then firing_state[seq_index] = 0
+			FLAG_increment_firing_group[seq_index] = True
 		End If
 	End Method
 	
@@ -251,8 +269,18 @@ Type COMPLEX_AGENT Extends AGENT
 	Method grant_pickup( pkp:PICKUP )
 		Select pkp.pickup_type
 			Case AMMO_PICKUP
-				'ToDo: insert code to analyze the ammunition type of the pickup and see what turrets take that ammunition
-				turrets[0].re_stock( pkp.pickup_amount )
+				Local tur_list:TList = CreateList()
+				For Local t:TURRET = EachIn turrets
+					If t.class = TURRET_CLASS_AMMUNITION And t.max_ammo <> INFINITY Then tur_list.AddLast( t )
+				Next
+				Local lowest_cur_ammo% = -1, lowest_cur_ammo_turret:TURRET
+				For Local t:TURRET = EachIn tur_list
+					If t.cur_ammo < lowest_cur_ammo Or lowest_cur_ammo < 0
+						lowest_cur_ammo = t.cur_ammo
+						lowest_cur_ammo_turret = t
+					End If
+				Next
+				If lowest_cur_ammo_turret <> Null Then lowest_cur_ammo_turret.re_stock( pkp.pickup_amount )
 			Case HEALTH_PICKUP
 				cur_health :+ pkp.pickup_amount
 				If cur_health > max_health Then cur_health = max_health
