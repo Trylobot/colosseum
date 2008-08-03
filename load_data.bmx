@@ -94,6 +94,6 @@ Global img_laser_turret:TImage = LoadImage_SetHandle( "laser_turret_base-barrel.
 Global img_laser_muzzle_flare:TImage = LoadImage_SetHandle( "laser_muzzle_flare.png", 1, 7 )
 Global img_tower_gibs:TImage = LoadAnimImage_SetHandle( "tower_gibs.png", 11, 11, 23, 23, 11 )
 Global img_bomb_gibs:TImage = LoadAnimImage_SetHandle( "bomb_gibs.png", 7, 7, 15, 15, 7 )
-
+Global img_stickies:TImage = LoadAnimImage_SetHandle( "stickies.png", 7, 7, 16, 16, 5 )
 
 

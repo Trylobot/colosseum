@@ -28,6 +28,9 @@ Type PARTICLE Extends POINT
 	Field scale# 'scale coefficient
 	Field scale_delta# 'scale coefficient rate of change with respect to time
 	
+	Field parent:POINT
+	Field offset#, offset_ang#
+	
 	Method New()
 	End Method
 	
@@ -93,8 +96,13 @@ Type PARTICLE Extends POINT
 		SetColor( red, green, blue )
 		SetAlpha( alpha )
 		SetScale( scale, scale )
-		SetRotation( ang )
-		DrawImage( img, pos_x, pos_y, frame )
+		If parent <> Null
+			SetRotation( ang + parent.ang )
+			DrawImage( img, parent.pos_x + offset*Cos( offset_ang + parent.ang ), parent.pos_y + offset*Sin( offset_ang + parent.ang ), frame )
+		Else
+			SetRotation( ang )
+			DrawImage( img, pos_x, pos_y, frame )
+		End If
 	End Method
 	
 	Method dead%()
@@ -120,6 +128,10 @@ Type PARTICLE Extends POINT
 		Else If layer = LAYER_FOREGROUND
 			add_me( particle_list_foreground )
 		End If
+	End Method
+	
+	Method attach_at( off_x#, off_y# )
+		cartesian_to_polar( off_x, off_y, offset, offset_ang )
 	End Method
 	
 End Type

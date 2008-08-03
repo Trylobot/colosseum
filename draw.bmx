@@ -28,10 +28,10 @@ Function draw_all()
 		draw_shop()
 	
 	Else
-		SetOrigin( arena_offset, arena_offset )
 
 		'arena & retained particles
 		draw_arena()
+		SetOrigin( arena_offset, arena_offset )
 		SetColor( 255, 255, 255 )
 
 		'background particles
@@ -80,6 +80,7 @@ Function draw_all()
 		
 		'interface
 		draw_stats()
+		debug_core()
 		
 		'help
 		If FLAG_draw_help
@@ -130,6 +131,7 @@ End Function
 'Menu and GUI
 Function draw_arena()
 
+	SetOrigin( arena_offset, arena_offset )
 	SetViewport( 0, 0, window_w, window_h )
 
 	If bg_cache = Null
@@ -160,7 +162,9 @@ Function draw_arena()
 End Function
 '______________________________________________________________________________
 Function init_bg_cache()
+	SetOrigin( arena_offset, arena_offset )
 	bg_cache = CreateImage( arena_w, arena_h, DYNAMICIMAGE )
+
 	Cls
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
@@ -170,14 +174,16 @@ Function init_bg_cache()
 End Function
 '______________________________________________________________________________
 Function dim_bg_cache()
+	SetOrigin( arena_offset, arena_offset )
 	If bg_cache = Null
 		init_bg_cache()
 	End If
+
 	Cls
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	SetRotation( 0 )
-	DrawImage( bg_cache, arena_offset, arena_offset )
+	DrawImage( bg_cache, 0, 0 )
 	SetAlpha( 0.3333 )
 	DrawImage( img_arena_bg, 0, 0 )
 	GrabImage( bg_cache, arena_offset, arena_offset )

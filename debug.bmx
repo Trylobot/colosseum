@@ -4,8 +4,6 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-Rem
-
 Global sx%, sy%, h%, px#, py#
 'Global maus_x#, maus_y#, speed# = 1, r#, a#
 Global wait_ts%, wait_time%, r%, c%, mouse:CELL
@@ -214,7 +212,8 @@ Function debug_core()
 	sx = 4; sy = 4
 	h = 10
 	
-	debug_drawtext( "retained particles " + retained_particle_list.Count() )
+	SetImageFont( consolas_normal_12 )
+	debug_drawtext( "player.stickies " + player.stickies.Count() )
 	
 '	Local length# = 30
 '	SetLineWidth( 2 )
@@ -353,5 +352,3 @@ Function debug_core()
 '	Print "-720 Mod 360 = " + (-720) Mod 360 + "; should be 0"
 
 End Function
-
-EndRem

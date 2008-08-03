@@ -38,11 +38,13 @@ Type COMPLEX_AGENT Extends AGENT
 	Field rear_trail_emitters:EMITTER[] 'rear-facing debris trail array
 	Field widget_list_behind:TList
 	Field widget_list_in_front:TList
+	Field stickies:TList
 	
 	Method New()
 		emitter_list = CreateList()
 		widget_list_behind = CreateList()
 		widget_list_in_front = CreateList()
+		stickies = CreateList()
 	End Method
 	
 	Function Archetype:Object( ..
@@ -202,6 +204,9 @@ Type COMPLEX_AGENT Extends AGENT
 		For Local w:WIDGET = EachIn widget_list_in_front
 			w.draw()
 		Next
+		For Local s:PARTICLE = EachIn stickies
+			s.draw()
+		Next
 	End Method
 	
 	'think of this method like a request, safe to call at any time.
@@ -312,6 +317,13 @@ Type COMPLEX_AGENT Extends AGENT
 			w.add_me( widget_list_in_front )
 		End If
 		Return w
+	End Method
+	
+	Method add_sticky:PARTICLE( other_p:PARTICLE )
+		Local p:PARTICLE = other_p.clone()
+		p.add_me( stickies )
+		p.parent = Self
+		Return p
 	End Method
 		
 End Type
