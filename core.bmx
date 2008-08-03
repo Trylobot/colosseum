@@ -31,6 +31,7 @@ Global FLAG_game_in_progress% = False
 Global FLAG_game_over% = False
 Global FLAG_bg_music_on% = False
 Global FLAG_draw_help% = False
+Global FLAG_player_engine_started% = False
 
 Const MENU_RESUME% = 0
 Const MENU_NEW% = 1

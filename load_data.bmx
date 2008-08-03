@@ -24,7 +24,16 @@ Global audio_path_prefix$ = "sound/"
 Global bg_music_victory_8_bit:TSound = LoadSound( audio_path_prefix + "victory_8-bit.ogg", SOUND_LOOP )
 Global bg_music:TChannel = AllocChannel()
 CueSound( bg_music_victory_8_bit, bg_music )
-SetChannelVolume( bg_music, 0.5000 )
+SetChannelVolume( bg_music, 0.2500 )
+Global snd_engine_start:TSound = LoadSound( audio_path_prefix + "engine_start.ogg" )
+Global engine_start:TChannel = AllocChannel()
+CueSound( snd_engine_start, engine_start )
+SetChannelVolume( engine_start, 0.5000 )
+SetChannelRate( engine_start, 0.7500 )
+Global snd_engine_idle_loop:TSound = LoadSound( audio_path_prefix + "engine_idle_loop.ogg", SOUND_LOOP )
+Global engine_idle_loop:TChannel = AllocChannel()
+CueSound( snd_engine_idle_loop, engine_idle_loop )
+SetChannelVolume( engine_idle_loop, 0.5000 )
 
 '______________________________________________________________________________
 'Images

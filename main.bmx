@@ -14,12 +14,13 @@ Repeat
 		get_all_input()
 		collide_all()
 		update_all()
+		
 
 	EndIf
 	Cls	
 	
 	draw_all()
-	play_bg_music()
+	play_all()
 	
 ''debugger
 'If KeyHit( KEY_F4 )
