@@ -60,22 +60,27 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		Select input_type
 			
 			Case INPUT_KEYBOARD
-				'velocity
-				If KeyDown( KEY_W ) Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
-					avatar.drive( 1.0 )
-				ElseIf KeyDown( KEY_S ) Or KeyDown( KEY_K ) Or KeyDown( KEY_DOWN )
-					avatar.drive( -1.0 )
+				If FLAG_player_engine_idling 'wait for engine to be ready :)
+					'velocity
+					If KeyDown( KEY_W ) Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
+						avatar.drive( 1.0 )
+					ElseIf KeyDown( KEY_S ) Or KeyDown( KEY_K ) Or KeyDown( KEY_DOWN )
+						avatar.drive( -1.0 )
+					Else
+						avatar.drive( 0.0 )
+					EndIf
+					'angular velocity
+					If KeyDown( KEY_D )
+						avatar.turn( 1.0 )
+					ElseIf KeyDown( KEY_A )
+						avatar.turn( -1.0 )
+					Else
+						avatar.turn( 0.0 )
+					EndIf
 				Else
 					avatar.drive( 0.0 )
-				EndIf
-				'angular velocity
-				If KeyDown( KEY_D )
-					avatar.turn( 1.0 )
-				ElseIf KeyDown( KEY_A )
-					avatar.turn( -1.0 )
-				Else
 					avatar.turn( 0.0 )
-				EndIf
+				End If
 				'turrets angular velocity
 				If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
 					avatar.turn_turrets( 1.0  )

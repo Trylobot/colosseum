@@ -16,21 +16,23 @@ End Function
 
 Function play_diesel_engine()
 	'start/stop sounds as necessary
-	If Not FLAG_game_in_progress
+	If (Not FLAG_game_in_progress) Or FLAG_in_menu
 		FLAG_player_engine_started = False
+		FLAG_player_engine_idling = False
 		If ChannelPlaying( engine_idle_loop )
 			StopChannel( engine_idle_loop )
 			engine_idle_loop = AllocChannel()
 			CueSound( snd_engine_idle_loop, engine_idle_loop )
 			SetChannelVolume( engine_idle_loop, 0.5000 )
 		End If
-	Else 'FLAG_game_in_progress
+	Else 'FLAG_game_in_progress Or (Not Flag_in_menu)
 		If Not FLAG_player_engine_started
 			ResumeChannel( engine_start )
 			FLAG_player_engine_started = True
 		Else 'FLAG_player_engine_started
 			If Not ChannelPlaying( engine_start ) ..
 			And Not ChannelPlaying( engine_idle_loop )
+				FLAG_player_engine_idling = True
 				ResumeChannel( engine_idle_loop )
 			End If
 		End If
@@ -39,7 +41,7 @@ Function play_diesel_engine()
 	If ChannelPlaying( engine_idle_loop )
 		Local p_speed# = Sqr( Pow(player.vel_x,2) + Pow(player.vel_y,2) )
 		SetChannelVolume( engine_idle_loop, 0.5000 + ( 0.5000 * p_speed ) )
-		SetChannelRate( engine_idle_loop, 0.7500 + (p_speed / 2.0) )
+		SetChannelRate( engine_idle_loop, 0.7500 + (p_speed / 1.5) )
 	End If
 End Function
 
