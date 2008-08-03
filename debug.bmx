@@ -4,6 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 
+?Debug
 Global sx%, sy%, h%, px#, py#
 'Global maus_x#, maus_y#, speed# = 1, r#, a#
 Global wait_ts%, wait_time%, r%, c%, mouse:CELL
@@ -352,3 +353,4 @@ Function debug_core()
 '	Print "-720 Mod 360 = " + (-720) Mod 360 + "; should be 0"
 
 End Function
+?

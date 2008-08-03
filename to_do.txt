@@ -1,4 +1,5 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ sounds: turret firing (cannon/laser), projectile hitting (ding!), turret turning (servomotor)
 	_ pick apart the collide_all() method for ways to put that code into the objects rather than in the giant, monolithic function.
 	_ bonus timer for each level, set by no. of enemies
 	O instant cooldown pickup

@@ -80,8 +80,7 @@ Function draw_all()
 		
 		'interface
 		draw_stats()
-		debug_core()
-		
+
 		'help
 		If FLAG_draw_help
 			SetColor( 0, 0, 0 )
