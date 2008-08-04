@@ -17,7 +17,7 @@ Repeat
 		
 
 	EndIf
-	Cls	
+	Cls
 	
 	draw_all()
 	play_all()
