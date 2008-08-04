@@ -94,13 +94,9 @@ Global PROJECTILE_INDEX_MACHINE_GUN% = postfix_index()
 Global PROJECTILE_INDEX_LASER% = postfix_index()
 Global PROJECTILE_INDEX_ROCKET% = postfix_index()
 
-'projectile 0 - tank cannon projectile
 projectile_archetype[PROJECTILE_INDEX_TANK_CANNON] = PROJECTILE( PROJECTILE.Create( img_projectile, PARTICLE_INDEX_CANNON_EXPLOSION, 50.00, 0.0, -1, 0.0300, 0.0 ))
-'projectile 1 - machine gun projectile
 projectile_archetype[PROJECTILE_INDEX_MACHINE_GUN] = PROJECTILE( PROJECTILE.Create( img_mgun, PARTICLE_INDEX_MACHINE_GUN_EXPLOSION, 5.00, 0.0, -1, 0.0050, 0.0 ))
-'projectile 3 - laser
 projectile_archetype[PROJECTILE_INDEX_LASER] = PROJECTILE( PROJECTILE.Create( img_laser, PARTICLE_INDEX_CANNON_EXPLOSION, 15.00, 0.0, -1, 0.0001, 0.0, True ))
-'projectile 2 - rocket
 projectile_archetype[PROJECTILE_INDEX_ROCKET] = PROJECTILE( PROJECTILE.Create( img_rocket, PARTICLE_INDEX_CANNON_EXPLOSION, 100.00, 5.0, 4.00, 0.0400, 0.00025 ))
 	projectile_archetype[PROJECTILE_INDEX_ROCKET].thrust_emitter = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_THRUST] ))
 	projectile_archetype[PROJECTILE_INDEX_ROCKET].thrust_emitter.attach_to( projectile_archetype[PROJECTILE_INDEX_ROCKET], -11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -116,14 +112,10 @@ Global PROJECTILE_EMITTER_INDEX_MACHINE_GUN% = postfix_index()
 Global PROJECTILE_EMITTER_INDEX_LASER% = postfix_index()
 Global PROJECTILE_EMITTER_INDEX_ROCKET% = postfix_index()
 
-'projectile emitter 0 - tank cannon projectile emitter
-projectile_emitter_archetype[PROJECTILE_EMITTER_INDEX_TANK_CANNON] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  0, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
-'projectile emitter 1 - machine gun projectile emitter
-projectile_emitter_archetype[PROJECTILE_EMITTER_INDEX_MACHINE_GUN] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  1, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
-'projectile emitter 3 - laser emitter
-projectile_emitter_archetype[PROJECTILE_EMITTER_INDEX_LASER] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  3, MODE_DISABLED, False, False, False, True, True, 0, 0, 1, 1 ))
-'projectile emitter 2 - rocket emitter
-projectile_emitter_archetype[PROJECTILE_EMITTER_INDEX_ROCKET] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE,  2, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
+projectile_emitter_archetype[PROJECTILE_EMITTER_INDEX_TANK_CANNON] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_TANK_CANNON, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
+projectile_emitter_archetype[PROJECTILE_EMITTER_INDEX_MACHINE_GUN] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_MACHINE_GUN, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
+projectile_emitter_archetype[PROJECTILE_EMITTER_INDEX_LASER] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_LASER, MODE_DISABLED, False, False, False, True, True, 0, 0, 1, 1 ))
+projectile_emitter_archetype[PROJECTILE_EMITTER_INDEX_ROCKET] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_ROCKET, MODE_DISABLED, True, False, False, True, True, 0, 0, 1, 1 ))
 
 '______________________________________________________________________________
 '[ WIDGETS ]
@@ -131,7 +123,6 @@ Global widget_archetype:WIDGET[1]; reset_index()
 
 Global WIDGET_INDEX_GLOW% = postfix_index()
 
-'widget 0 - glow
 widget_archetype[WIDGET_INDEX_GLOW] = WIDGET( WIDGET.Create( img_glow, LAYER_IN_FRONT_OF_PARENT, REPEAT_MODE_LOOP_BACK, 2, True ))
 	widget_archetype[WIDGET_INDEX_GLOW].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.000, 1, 1, 333 )))
 	widget_archetype[WIDGET_INDEX_GLOW].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.750, 1, 1, 333 )))
