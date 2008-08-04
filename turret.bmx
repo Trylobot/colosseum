@@ -200,6 +200,7 @@ Type TURRET Extends POINT
 		If snd_fire <> Null
 			Local ch:TChannel = AllocChannel()
 			CueSound( snd_fire, ch )
+			SetChannelVolume( ch, 0.5000 )
 			ResumeChannel( ch )
 		End If
 	End Method
