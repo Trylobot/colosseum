@@ -34,6 +34,9 @@ Global snd_engine_idle_loop:TSound = LoadSound( audio_path_prefix + "engine_idle
 Global engine_idle_loop:TChannel = AllocChannel()
 CueSound( snd_engine_idle_loop, engine_idle_loop )
 SetChannelVolume( engine_idle_loop, 0.5000 )
+Global snd_mgun_turret_fire:TSound = LoadSound( audio_path_prefix + "mgun.ogg" )
+Global mgun_turret_fire:TChannel = AllocChannel()
+
 
 '______________________________________________________________________________
 'Images
