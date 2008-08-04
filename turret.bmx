@@ -14,6 +14,7 @@ Type TURRET Extends POINT
 	Field class% '{ammunition|energy}
 	Field img_base:TImage 'image to be drawn for the "base" of the turret
 	Field img_barrel:TImage 'image to be drawn for the "barrel" of the turret
+	Field snd_fire:TSound 'sound to be played when the turret is fired
 	Field max_ang_vel# 'maximum rotation speed for this turret
 	Field control_pct# '[-1, 1] percent of angular velocity that is being used
 	Field reload_time% 'time required to reload
@@ -52,6 +53,7 @@ Type TURRET Extends POINT
 	name$, ..
 	class%, ..
 	img_base:TImage, img_barrel:TImage, ..
+	snd_fire:TSound, ..
 	max_ang_vel#, ..
 	reload_time%, ..
 	max_ammo%, ..
@@ -66,6 +68,7 @@ Type TURRET Extends POINT
 		t.name = name
 		t.class = class
 		t.img_base = img_base; t.img_barrel = img_barrel
+		t.snd_fire = snd_fire
 		t.max_ang_vel = max_ang_vel
 		t.reload_time = reload_time
 		t.max_ammo = max_ammo
@@ -90,7 +93,7 @@ Type TURRET Extends POINT
 	
 	Method clone:TURRET()
 		Local t:TURRET = TURRET( TURRET.Create( ..
-			name, class, img_base, img_barrel, max_ang_vel, reload_time, max_ammo, recoil_off_x, recoil_off_y, max_heat, heat_per_shot_min, heat_per_shot_max, cooling_coefficient, overheat_delay ))
+			name, class, img_base, img_barrel, snd_fire, max_ang_vel, reload_time, max_ammo, recoil_off_x, recoil_off_y, max_heat, heat_per_shot_min, heat_per_shot_max, cooling_coefficient, overheat_delay ))
 		'copy all emitters
 		For Local em:EMITTER = EachIn emitter_list
 			EMITTER( EMITTER.Copy( em, t.emitter_list, t ))
@@ -104,6 +107,7 @@ Type TURRET Extends POINT
 			em.source_id = parent.id
 		Next
 	End Method
+	
 	Method attach_at( off_x_new#, off_y_new# )
 		off_x = off_x_new; off_y = off_y_new
 		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
@@ -188,6 +192,15 @@ Type TURRET Extends POINT
 			If cur_ammo > 0 Then cur_ammo :- 1
 			reload()
 			raise_temp()
+			play_sound()
+		End If
+	End Method
+	
+	Method play_sound()
+		If snd_fire <> Null
+			Local ch:TChannel = AllocChannel()
+			CueSound( snd_fire, ch )
+			ResumeChannel( ch )
 		End If
 	End Method
 	

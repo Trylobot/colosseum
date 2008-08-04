@@ -1,8 +1,10 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
-	_ sounds: turret firing (cannon/laser), projectile hitting (ding!), turret turning (servomotor)
+	_ rocket turret -- this turret needs more emitters.
+			it needs two shell casing emitters in the front, to show the rocket being launched, and in the rear, a large smoke emitter and a large 'muzzle flash'
+	O sounds: turret firing (cannon/laser), projectile hitting (ding!), turret turning (servomotor)
 	_ pick apart the collide_all() method for ways to put that code into the objects rather than in the giant, monolithic function.
 	_ bonus timer for each level, set by no. of enemies
-	O instant cooldown pickup
+	_ instant cooldown pickup
 	_ feedback system (google groups?)
 	_ create a subspace-style networked multiplayer mode: duel. first to 5 by 2, rinse, repeat. two players only.
 	X show a little music icon and sound volume indicator somewhere to show when music is on/off
@@ -19,7 +21,7 @@
 			then the player is brought to the in-between-levels menu, with a store for upgrades and so forth.
 			when the next level is begun, the player once again starts in the locker room.
 	_ gates to spawn enemies
-	_ engine sounds -- startup, idle loop (which changes based on motive force or velocity), shut-down
+	X engine sounds -- startup, idle loop (which changes based on motive force or velocity), shut-down
 	_ cheat code to allow player to spawn as any enemy
 	_ two-player networked co-op, vs, player-vs-enemies, enemies-vs-enemies
 	X forces, mass, acceleration, velocity, frictional forces, rotational forces, torque, collision response system based on it
@@ -27,7 +29,8 @@
 	_ levels defined as a grid of squares, blocking or non blocking, made up of elongated rectangular walls (which can be rotated arbitrarily (optional))
 			but naturally must not cramp the level and make it impossible to get anywhere
 	_ homing missiles (player & enemy, tracks nearest enemy) simple greedy pathing
-	_ AI pathing (A*) can "malfunction" if the AI is damaged (ie, return sucky paths)
+	X AI pathing (A*)
+	_ allow pathing to "malfunction" if the AI is damaged (ie, return sucky paths)
 	_ create a predictive aiming system for the AI, based on velocity of AI's avatar, its target, and the muzzle velocity/acceleration of its weapon(s).
 	X create a rudimentary AI
 	_ "tazer caster" -- weapon with two components, fired in sequence from the main barrel.
@@ -56,7 +59,8 @@
 	X machine gun overheat
 	_ ammunition class/type/object for association with turrets. Turrets can store multiple types of ammo, and be pointing to an active one. Each ammunition object would keep track of units remaining.
 	_ DEPLOYABLE state for complex agents. Either switch the image entirely or have special animated gizmos that animate with a function call.
-	_ deploy-gizmos would be some kind of special particle with two states, and an image set for animation frames
+	X WIDGETS have been implemented to satisfy requirements for all special particles with animation states
+			deploy-gizmos would be some kind of special particle with two states, and an image set for animation frames
 			when activated, the gizmo would animate forwards and then freeze.
 			when activated again, the gizmo would animate backwards and freeze it its original state.
 	_ ammunition loading/reloading animation, and an animation joining the ammo pickup to the ammo display when it gets granted()
