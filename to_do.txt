@@ -1,4 +1,6 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ shadows for agents (and possibly other objects)
+	_ screen shake -- when an enemy explodes, shake the screen by an amount proportional to the explosive force.
 	_ rocket turret -- this turret needs more emitters.
 			it needs two shell casing emitters in the front, to show the rocket being launched, and in the rear, a large smoke emitter and a large 'muzzle flash'
 	O sounds: turret firing (cannon/laser), projectile hitting (ding!), turret turning (servomotor)
