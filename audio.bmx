@@ -6,6 +6,15 @@ EndRem
 
 '______________________________________________________________________________
 'Audio
+Function play_all()
+	play_bg_music()
+	
+	If FLAG_player_engine_ignition
+		start_player_engine()
+	End If
+	tweak_engine_idle()
+End Function
+'______________________________________________________________________________
 Function play_bg_music()
 	If FLAG_bg_music_on
 		ResumeChannel( bg_music )
@@ -14,39 +23,53 @@ Function play_bg_music()
 	End If
 End Function
 
-Function play_diesel_engine()
-	'start/stop sounds as necessary
-	If (Not FLAG_game_in_progress) Or FLAG_in_menu
-		FLAG_player_engine_started = False
-		FLAG_player_engine_idling = False
-		If ChannelPlaying( engine_idle_loop )
-			StopChannel( engine_idle_loop )
-			engine_idle_loop = AllocChannel()
-			CueSound( snd_engine_idle_loop, engine_idle_loop )
-			SetChannelVolume( engine_idle_loop, 0.5000 )
-		End If
-	Else 'FLAG_game_in_progress Or (Not Flag_in_menu)
-		If Not FLAG_player_engine_started
-			ResumeChannel( engine_start )
-			FLAG_player_engine_started = True
-		Else 'FLAG_player_engine_started
-			If Not ChannelPlaying( engine_start ) ..
-			And Not ChannelPlaying( engine_idle_loop )
-				FLAG_player_engine_idling = True
-				ResumeChannel( engine_idle_loop )
-			End If
-		End If
+'______________________________________________________________________________
+Global engine_start:TChannel
+Global engine_idle:TChannel
+
+Function start_player_engine()
+	If engine_start <> Null
+		StopChannel( engine_start )
+		engine_start = Null
 	End If
-	'tweak engine idle volume and frequency by player input
-	If ChannelPlaying( engine_idle_loop )
-		Local p_speed# = Sqr( Pow(player.vel_x,2) + Pow(player.vel_y,2) )
-		SetChannelVolume( engine_idle_loop, 0.5000 + ( 0.5000 * p_speed ) )
-		SetChannelRate( engine_idle_loop, 0.7500 + (p_speed / 1.5) )
+	engine_start = AllocChannel()
+	CueSound( snd_engine_start, engine_start )
+	SetChannelVolume( engine_start, 0.5 )
+	ResumeChannel( engine_start )
+	FLAG_player_engine_ignition = False
+	FLAG_player_engine_running = True
+End Function
+'______________________________________________________________________________
+Function tweak_engine_idle()
+	If FLAG_player_engine_running	
+		If engine_start <> Null
+			If Not ChannelPlaying( engine_start )
+				'stop engine_start
+				StopChannel( engine_start )
+				engine_start = Null
+				'start engine_idle
+				engine_idle = AllocChannel()
+				CueSound( snd_engine_idle_loop, engine_idle )
+				SetChannelVolume( engine_idle, 0.5 )
+				ResumeChannel( engine_idle )
+			End If
+		Else 'engine_start == Null
+			If engine_idle = Null
+				'start engine_idle
+				engine_idle = AllocChannel()
+				CueSound( snd_engine_idle_loop, engine_idle )
+				ResumeChannel( engine_idle )
+			End If
+			Local p_speed# = Sqr( Pow(player.vel_x,2) + Pow(player.vel_y,2) )
+			SetChannelVolume( engine_idle, 0.5 + ( 0.5 * (p_speed / 2.0) ))
+			SetChannelRate( engine_idle, 1.0 + (p_speed / 2.0) )
+		End If
+	Else 'Not FLAG_playing_engine_running
+		If engine_idle <> Null
+			StopChannel( engine_idle )
+			engine_idle = Null
+		End If
 	End If
 End Function
 
-Function play_all()
-	play_bg_music()
-	play_diesel_engine()
-End Function
 

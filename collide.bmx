@@ -115,18 +115,19 @@ Function collide_all()
 					'spawn gibs
 					If ag.gibs <> Null
 						For Local i% = 0 To ag.gibs.frames.Length - 1
-							Local gib:PARTICLE = PARTICLE( PARTICLE.Create( ag.gibs, i, LAYER_FOREGROUND, True, 0.100, 255, 255, 255, 750, 0, 0, RandF( -2.0, 2.0 ), RandF( -2.0, 2.0 ), RandF( -25, 25 ), RandF( -2.0, 2.0 ) ))
+							Local gib:PARTICLE = PARTICLE( PARTICLE.Create( ag.gibs, i, LAYER_FOREGROUND, True, 0.100, 255, 255, 255, 750 ))
 							gib.created_ts = now()
 							gib.auto_manage()
-							Local gib_offset#, gib_offset_ang#, gib_vel#, gib_vel_ang#
+							Local gib_offset#, gib_offset_ang#
 							cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
-							cartesian_to_polar( gib.vel_x, gib.vel_y, gib_vel, gib_vel_ang )
 							gib.pos_x = ag.pos_x + gib_offset*Cos( gib_offset_ang + ag.ang )
 							gib.pos_y = ag.pos_y + gib_offset*Sin( gib_offset_ang + ag.ang )
+							Local gib_vel#, gib_vel_ang#
+							gib_vel = RandF( -2.0, 2.0 )
+							gib_vel_ang = RandF( 0.0, 359.9999 )
 							gib.vel_x = ag.vel_x + gib_vel*Cos( gib_vel_ang + ag.ang )
 							gib.vel_y = ag.vel_y + gib_vel*Sin( gib_vel_ang + ag.ang )
-							gib.ang :+ ag.ang
-							gib.ang_vel :+ ag.ang_vel
+							gib.ang = ag.ang
 							gib.update()
 						Next
 					End If
@@ -157,7 +158,8 @@ Function collide_all()
 			Next
 		Next
 		
-		'collisions between projectiles and other projectiles
+		'collisions between projectiles and other projectiles (disabled)
+		Rem
 		For proj = EachIn projectile_list
 			'only collide projectile if it does not ignore these types of collisions
 			If proj.ignore_other_projectiles = True Then Continue
@@ -176,6 +178,7 @@ Function collide_all()
 				End If
 			Next
 		Next 
+		EndRem
 		
 		'collisions between player and pickups
 		For pkp = EachIn pickup_list

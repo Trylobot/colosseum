@@ -27,12 +27,14 @@ SetBlend( ALPHABLEND )
 Global FLAG_in_menu% = True
 Global FLAG_in_shop% = False
 Global FLAG_level_intro% = False
+Global level_intro_freeze_time% = 1000
+Global level_passed_ts%
 Global FLAG_game_in_progress% = False
 Global FLAG_game_over% = False
 Global FLAG_bg_music_on% = False
 Global FLAG_draw_help% = False
-Global FLAG_player_engine_started% = False
-Global FLAG_player_engine_idling% = False
+Global FLAG_player_engine_ignition% = False
+Global FLAG_player_engine_running% = False
 
 Const MENU_RESUME% = 0
 Const MENU_NEW% = 1
@@ -64,6 +66,7 @@ Function menu_command( command_index% )
 		
 		Case MENU_RESUME
 			FLAG_in_menu = False
+			FLAG_player_engine_running = True
 		
 		Case MENU_NEW
 			menu_enabled[MENU_NEW] = False
@@ -91,14 +94,13 @@ Function menu_command( command_index% )
 			menu_enabled[5] = False
 			menu_enabled[6] = False
 			menu_enabled[7] = False
+			FLAG_player_engine_ignition = True
 			
 	End Select
 End Function
 '______________________________________________________________________________
 Function reset_game()
-	
 	bg_cache = Null
-	
 	particle_list_background.Clear()
 	particle_list_foreground.Clear()
 	retained_particle_list.Clear()
@@ -107,32 +109,29 @@ Function reset_game()
 	hostile_agent_list.Clear()
 	pickup_list.Clear()
 	control_brain_list.Clear()
-	
 	player = Null
 	player_cash = 0
 	player_level = 0
 	player_kills = 0
 	FLAG_game_in_progress = False
 	FLAG_game_over = False
-	
-End Function
-'______________________________________________________________________________
-Function load_next_level()
-	player_level :+ 1
-	FLAG_level_intro = True
-	player_kills = 0
-	respawn_enemies()
-	dim_bg_cache() 'fade the messy bg
 End Function
 '______________________________________________________________________________
 Function initialize_game()
-	player_level = 1
-	respawn_player()
-	respawn_enemies()
 	init_pathing_system()
-	'initial update, for graphical reasons
+	player_level = 0
+	respawn_player()
+	load_next_level()
+End Function
+'______________________________________________________________________________
+Function load_next_level()
+	dim_bg_cache()
+	player_level :+ 1
+	respawn_enemies()
 	update_all()
 	FLAG_level_intro = True
+	level_passed_ts% = now()
+	player_kills = 0
 End Function
 '______________________________________________________________________________
 Function next_enabled_menu_option()
@@ -154,9 +153,7 @@ End Function
 '______________________________________________________________________________
 'Spawning and Respawning
 Function respawn_player()
-	
 	If player <> Null And player.managed() Then player.remove_me()
-	
 	Select player_type
 		Case 0
 			player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_LIGHT_TANK], ALIGNMENT_FRIENDLY ))
@@ -170,7 +167,6 @@ Function respawn_player()
 	player.ang = -90
 	player.snap_turrets()
 	Create_and_Manage_CONTROL_BRAIN( player, Null, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD, UNSPECIFIED )
-
 End Function
 '______________________________________________________________________________
 Function respawn_enemies()

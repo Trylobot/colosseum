@@ -116,11 +116,12 @@ Function draw_all()
 			SetImageFont( consolas_bold_100 )
 			str = "LEVEL " + player_level
 			DrawText( str, arena_w/2 - TextWidth( str )/2, arena_h/2 - TextHeight( str )/2 )
-			SetColor( 255, 255, 255 )
-			SetImageFont( consolas_normal_24 )
-			str = "press [enter] to continue"
-			DrawText( str, arena_w/2 - TextWidth( str )/2, arena_h/2 - TextHeight( str )/2 + 45 )
-			
+			If (now() - level_passed_ts) >= level_intro_freeze_time
+				SetColor( 255, 255, 255 )
+				SetImageFont( consolas_normal_24 )
+				str = "press [enter] to continue"
+				DrawText( str, arena_w/2 - TextWidth( str )/2, arena_h/2 - TextHeight( str )/2 + 45 )
+			End If
 		End If
 		
 	End If
