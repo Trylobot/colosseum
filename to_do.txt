@@ -1,10 +1,13 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
 	_ shadows for agents (and possibly other objects)
 	_ screen shake -- when an enemy explodes, shake the screen by an amount proportional to the explosive force.
-	_ rocket turret -- this turret needs more emitters.
+	_ rocket turret -- this turret needs more effect emitters.
 			it needs two shell casing emitters in the front, to show the rocket being launched, and in the rear, a large smoke emitter and a large 'muzzle flash'
-	O sounds: turret firing (cannon/laser), projectile hitting (ding!), turret turning (servomotor)
-	_ pick apart the collide_all() method for ways to put that code into the objects rather than in the giant, monolithic function.
+	O sounds:
+		X turret firing (cannon/laser)
+		_ projectile hitting (ding!)
+		_ turret turning (servomotor)
+	X pick apart the collide_all() method for ways to put that code into the objects rather than in the giant, monolithic function.
 	_ bonus timer for each level, set by no. of enemies
 	_ instant cooldown pickup
 	_ feedback system (google groups?)

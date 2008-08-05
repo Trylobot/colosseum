@@ -51,23 +51,14 @@ Function collide_all()
 		Next
 		For proj = EachIn projectile_list
 			If proj.pos_x < 0 Or proj.pos_x > arena_w Or proj.pos_y < 0 Or  proj.pos_y > arena_w
-				'explode
-				Local explode:PARTICLE = particle_archetype[ proj.explosion_particle_index ].clone()
-				explode.pos_x = proj.pos_x; explode.pos_y = proj.pos_y
-				explode.vel_x = 0; explode.vel_y = 0
-				explode.ang = Rand( 0, 359 )
-				explode.life_time = Rand( 300, 300 )
-				explode.auto_manage()
-				'prune
+				'impact with outer wall
+				proj.impact()
+				'remove projectile
 				proj.remove_me()
 			End If
 		Next
 
 		ResetCollisions()
-		'PLAYER_COLLISION_LAYER
-		'AGENT_COLLISION_LAYER
-		'PROJECTILE_COLLISION_LAYER
-		'PICKUP_COLLISION_LAYER
 
 		'collisions between projectiles and complex_agents
 		For list = EachIn agent_lists
@@ -81,64 +72,36 @@ Function collide_all()
 			result = CollideImage( proj.img, proj.pos_x, proj.pos_y, 0, AGENT_COLLISION_LAYER, PROJECTILE_COLLISION_LAYER, proj )
 			For ag = EachIn result
 				'examine id's; projectiles will never collide with their owners
-				If proj.source_id = ag.id
-					'dump out early; this {proj} was fired by {ag}
-					Continue
-				End If
-				'COLLISION! between {proj} & {ag}
-				'create explosion particle at position of projectile, with random angle
-				Local explode:PARTICLE = particle_archetype[ proj.explosion_particle_index ].clone()
-				explode.pos_x = proj.pos_x; explode.pos_y = proj.pos_y
-				explode.vel_x = 0; explode.vel_y = 0
-				explode.ang = RandF( 0.0, 359.9999 )
-				explode.life_time = 300
-				explode.auto_manage()
-				'activate collision response for affected entity(ies)
-				Local offset#, offset_ang#
-				cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
-				Local total_force# = proj.mass*PROJECTILE_AGENT_ENERGY_COEFFICIENT*Sqr( proj.vel_x*proj.vel_x + proj.vel_y*proj.vel_y )
-				ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - proj.ang ), 100 )))
-				ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - proj.ang ), 100 )))
-				'add damage sticky to agent
-				'ag.add_sticky( PARTICLE( PARTICLE.Create( img_stickies, Rand( 0, img_stickies.frames.Length - 1 ), LAYER_FOREGROUND, False, 0.0, 255, 255, 255, INFINITY, 0.0, 0.0, 0.0, 0.0, proj.ang, 0.0, 0.5, 0.0, 1.0, 0.0 ))).attach_at( proj.pos_x - ag.pos_x, proj.pos_y - ag.pos_y )
-				'process damage, death, cash and pickups resulting from it
-				ag.receive_damage( proj.damage )
-				If player.dead() 'did the player just die? (omgwtf)
-					FLAG_game_over = True
-				Else If ag.dead() 'non player agent killed
-					'show the player how much cash they got for killing this enemy, if they killed it
-					If proj.source_id = player.id
-						player_cash :+ ag.cash_value
+				If proj.source_id <> ag.id
+					'COLLISION! between {proj} & {ag}
+					'activate impact emitter
+					proj.impact()
+					'activate collision response for affected entity(ies)
+					Local offset#, offset_ang#
+					cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
+					Local total_force# = proj.mass*PROJECTILE_AGENT_ENERGY_COEFFICIENT*Sqr( proj.vel_x*proj.vel_x + proj.vel_y*proj.vel_y )
+					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - proj.ang ), 100 )))
+					ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - proj.ang ), 100 )))
+					'add damage sticky to agent
+					'ag.add_sticky( PARTICLE( PARTICLE.Create( img_stickies, Rand( 0, img_stickies.frames.Length - 1 ), LAYER_FOREGROUND, False, 0.0, 255, 255, 255, INFINITY, 0.0, 0.0, 0.0, 0.0, proj.ang, 0.0, 0.5, 0.0, 1.0, 0.0 ))).attach_at( proj.pos_x - ag.pos_x, proj.pos_y - ag.pos_y )
+					'process damage, death, cash and pickups resulting from it
+					ag.receive_damage( proj.damage )
+					If ag.dead() 'some agent was killed
+						'show the player how much cash they got for killing this enemy, if they killed it
+						If proj.source_id = player.id
+							player_cash :+ ag.cash_value
+						End If
+						'perhaps! spawneth teh phat lewts?!
+						spawn_pickup( ag.pos_x, ag.pos_y )
+						'agent death
+						ag.die()
+						If player = ag 'player just died? (omgwtf)
+							FLAG_game_over = True
+						End If
 					End If
-					'perhaps! spawneth teh phat lewts?!
-					spawn_pickup( ag.pos_x, ag.pos_y )
-					If ag.gibs <> Null
-						For Local i% = 0 To ag.gibs.frames.Length - 1
-							'spawn halo particle
-							Local halo:PARTICLE = PARTICLE( PARTICLE.Create( img_halo, 0, LAYER_BACKGROUND, False, 0.0, 255, 255, 255, 200, ag.pos_x, ag.pos_y, 0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 1.0, -0.1000 ))
-							halo.auto_manage()
-							'spawn gibs
-							Local gib:PARTICLE = PARTICLE( PARTICLE.Create( ag.gibs, i, LAYER_FOREGROUND, True, 0.100, 255, 255, 255, 750 ))
-							gib.created_ts = now()
-							gib.auto_manage()
-							Local gib_offset#, gib_offset_ang#
-							cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
-							gib.pos_x = ag.pos_x + gib_offset*Cos( gib_offset_ang + ag.ang )
-							gib.pos_y = ag.pos_y + gib_offset*Sin( gib_offset_ang + ag.ang )
-							Local gib_vel#, gib_vel_ang#
-							gib_vel = RandF( -2.0, 2.0 )
-							gib_vel_ang = RandF( 0.0, 359.9999 )
-							gib.vel_x = ag.vel_x + gib_vel*Cos( gib_vel_ang + ag.ang )
-							gib.vel_y = ag.vel_y + gib_vel*Sin( gib_vel_ang + ag.ang )
-							gib.ang = ag.ang
-							gib.update()
-						Next
-					End If
-					'remove enemy
-					ag.remove_me()
+					'remove projectile
+					proj.remove_me()
 				End If
-				'remove the original projectile no matter what
-				proj.remove_me()
 			Next
 		Next
 		

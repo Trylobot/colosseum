@@ -10,7 +10,6 @@ Global projectile_list:TList = CreateList()
 Type PROJECTILE Extends PHYSICAL_OBJECT
 	
 	Field img:TImage 'image to be drawn
-	Field explosion_particle_index% 'archetype index of particle to be created on hit
 	Field damage# 'maximum damage dealt by projectile
 	Field radius# 'radius of damage spread
 	Field max_vel# 'absolute maximum speed (enforced)
@@ -19,7 +18,8 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	Field emitter_list:TList 'emitter-management list
 	Field trail_emitter:EMITTER 'trail particle emitter
 	Field thrust_emitter:EMITTER 'thrust particle emitter
-
+	Field impact_emitter:EMITTER 'impact (hit) emitter
+	
 	Method New()
 		force_list = CreateList()
 		emitter_list = CreateList()
@@ -27,7 +27,6 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	
 	Function Create:Object( ..
 	img:TImage, ..
-	explosion_particle_index%, ..
 	damage#, ..
 	radius#, ..
 	max_vel#, ..
@@ -43,7 +42,6 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		
 		'static fields
 		p.img = img
-		p.explosion_particle_index = explosion_particle_index
 		p.damage = damage
 		p.radius = radius
 		p.max_vel = max_vel
@@ -63,7 +61,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	
 	Method clone:PROJECTILE( new_source_id% = NULL_ID )
 		Local p:PROJECTILE = PROJECTILE( PROJECTILE.Create( ..
-			img, explosion_particle_index, damage, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
+			img, damage, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
 		'emitters
 		If thrust_emitter <> Null
 			p.thrust_emitter = EMITTER( EMITTER.Copy( thrust_emitter, p.emitter_list, p ))
@@ -72,6 +70,10 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		If trail_emitter <> Null
 			p.trail_emitter = EMITTER( EMITTER.Copy( trail_emitter, p.emitter_list, p ))
 			p.trail_emitter.enable( MODE_ENABLED_FOREVER )
+		End If
+		If impact_emitter <> Null
+			p.impact_emitter = EMITTER( EMITTER.Copy( impact_emitter, p.emitter_list, p ))
+			p.impact_emitter.disable()
 		End If
 		Return p
 	End Method
@@ -101,6 +103,16 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	
 	Method auto_manage()
 		add_me( projectile_list )
+	End Method
+	
+	Method impact()
+		If impact_emitter <> Null
+			impact_emitter.enable( MODE_ENABLED_WITH_COUNTER )
+			While impact_emitter.ready()
+				impact_emitter.emit()
+				impact_emitter.update()
+			End While
+		End If
 	End Method
 	
 End Type

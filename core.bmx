@@ -175,9 +175,9 @@ Function respawn_enemies()
 			Local selector# = RandF( 0.000, 1.000 )
 			If      selector < 0.400 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MR_THE_BOX), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 2000 ) ..
 			Else If selector < 0.600 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MOBILE_MINI_BOMB), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_SEEKER, 20 ) ..
-			Else If selector < 0.800 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 40 ) ..
-			Else If selector < 0.900 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 40 ) ..
-			Else If selector < 1.000 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 40 )
+			Else If selector < 0.800 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 ) ..
+			Else If selector < 0.900 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 ) ..
+			Else If selector < 1.000 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 )
 		Next
 	End If
 End Function

@@ -102,4 +102,6 @@ Global img_tower_gibs:TImage = LoadAnimImage_SetHandle( "tower_gibs.png", 11, 11
 Global img_bomb_gibs:TImage = LoadAnimImage_SetHandle( "bomb_gibs.png", 7, 7, 15, 15, 7 )
 Global img_stickies:TImage = LoadAnimImage_SetHandle( "stickies.png", 7, 7, 16, 16, 5 )
 Global img_halo:TImage = LoadImage_SetHandle( "halo.png", 100, 100 )
+Global img_spark:TImage = LoadImage_SetHandle( "spark.png", 0, 2 )
+
 

@@ -20,7 +20,6 @@ Const ALIGNMENT_HOSTILE% = 2
 
 Type COMPLEX_AGENT Extends AGENT
 	
-	Field gibs:TImage 'gib image(s)
 	Field turrets:TURRET[] 'turret array
 	Field turret_count% 'number of turret slots
 	Field firing_sequence%[][][]
