@@ -39,7 +39,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		If control_type = CONTROL_TYPE_HUMAN
 			input_control()
 		Else If control_type = CONTROL_TYPE_AI
-			'automatic "think delay" designed for distributing CPU cycles to agents who need it
+			'how often this brain gets processing time
 			If (now() - last_think_ts) > think_delay
 				last_think_ts = now()
 				AI_control()
@@ -115,7 +115,12 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 
 			Case AI_BRAIN_MR_THE_BOX
 				avatar.drive( 1.0 )
-				avatar.turn( RandF( -1.0, 1.0 ))
+				If avatar.pos_x > 50 And avatar.pos_x < arena_w - 50 ..
+				And avatar.pos_y > 50 And avatar.pos_y < arena_h - 50
+					avatar.turn( RandF( -1.0, 1.0 ))
+				Else
+					avatar.turn( 1.0 )
+				End If
 			
 			Case AI_BRAIN_TURRET
 				If target <> Null And Not target.dead()

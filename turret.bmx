@@ -204,6 +204,7 @@ Type TURRET Extends POINT
 				SetChannelVolume( ch, 0.1200 )
 			End If
 			ResumeChannel( ch )
+			audio_channels.AddLast( ch )
 		End If
 	End Method
 	

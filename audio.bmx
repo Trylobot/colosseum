@@ -6,6 +6,8 @@ EndRem
 
 '______________________________________________________________________________
 'Audio
+Global audio_channels:TList = CreateList()
+
 Function play_all()
 	play_bg_music()
 	
@@ -13,6 +15,20 @@ Function play_all()
 		start_player_engine()
 	End If
 	tweak_engine_idle()
+	
+	Local ch:TChannel
+	Local ch_link:TLink = audio_channels.FirstLink(), next_ch_link:TLink
+	If ch_link <> Null
+		While ch_link <> Null
+			ch = TChannel( ch_link.Value() )
+			If Not ChannelPlaying( ch )
+				StopChannel( ch )
+			End If
+			next_ch_link = ch_link.NextLink()
+			ch_link.Remove()
+			ch_link = next_ch_link
+		End While
+	End If
 End Function
 '______________________________________________________________________________
 Function play_bg_music()

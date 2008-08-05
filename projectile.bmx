@@ -7,6 +7,9 @@ EndRem
 '______________________________________________________________________________
 Global projectile_list:TList = CreateList()
 
+Const PROJECTILE_MEMBER_EMITTER_CONSTANT% = 0
+Const PROJECTILE_MEMBER_EMITTER_PAYLOAD% = 1
+
 Type PROJECTILE Extends PHYSICAL_OBJECT
 	
 	Field img:TImage 'image to be drawn
@@ -15,14 +18,12 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	Field max_vel# 'absolute maximum speed (enforced)
 	Field ignore_other_projectiles% 'whether to ignore collisions with other projectiles {true|false}
 	Field source_id% '(private) reference to entity which emitted this projectile; allows for collisions with it to be ignored
-	Field emitter_list:TList 'emitter-management list
-	Field trail_emitter:EMITTER 'trail particle emitter
-	Field thrust_emitter:EMITTER 'thrust particle emitter
-	Field impact_emitter:EMITTER 'impact (hit) emitter
+	Field emitter_list_constant:TList
+	Field emitter_list_payload:TList
 	
 	Method New()
-		force_list = CreateList()
-		emitter_list = CreateList()
+		emitter_list_constant = CreateList()
+		emitter_list_payload = CreateList()
 	End Method
 	
 	Function Create:Object( ..
@@ -62,27 +63,21 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	Method clone:PROJECTILE( new_source_id% = NULL_ID )
 		Local p:PROJECTILE = PROJECTILE( PROJECTILE.Create( ..
 			img, damage, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
-		'emitters
-		If thrust_emitter <> Null
-			p.thrust_emitter = EMITTER( EMITTER.Copy( thrust_emitter, p.emitter_list, p ))
-			p.thrust_emitter.enable( MODE_ENABLED_FOREVER )
-		End If
-		If trail_emitter <> Null
-			p.trail_emitter = EMITTER( EMITTER.Copy( trail_emitter, p.emitter_list, p ))
-			p.trail_emitter.enable( MODE_ENABLED_FOREVER )
-		End If
-		If impact_emitter <> Null
-			p.impact_emitter = EMITTER( EMITTER.Copy( impact_emitter, p.emitter_list, p ))
-			p.impact_emitter.disable()
-		End If
+		'emitter lists
+		For Local em:EMITTER = EachIn emitter_list_constant
+			p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_CONSTANT )
+		Next
+		For Local em:EMITTER = EachIn emitter_list_payload
+			p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_PAYLOAD )
+		Next
 		Return p
 	End Method
 
 	Method update()
 		'physical object variables
 		Super.update()
-		'emitters
-		For Local em:EMITTER = EachIn emitter_list
+		'constant-on emitters
+		For Local em:EMITTER = EachIn emitter_list_constant
 			em.update()
 			em.emit()
 		Next
@@ -106,13 +101,30 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	End Method
 	
 	Method impact()
-		If impact_emitter <> Null
-			impact_emitter.enable( MODE_ENABLED_WITH_COUNTER )
-			While impact_emitter.ready()
-				impact_emitter.emit()
-				impact_emitter.update()
+		'payload emitters
+		For Local em:EMITTER = EachIn emitter_list_payload
+			em.enable( MODE_ENABLED_WITH_COUNTER )
+			While em.ready()
+				em.update()
+				em.emit()
 			End While
-		End If
+		Next
+	End Method
+	
+	Method add_emitter:EMITTER( other_em:EMITTER, category% )
+		Local em:EMITTER
+		Select category
+			Case PROJECTILE_MEMBER_EMITTER_CONSTANT
+				em = EMITTER( EMITTER.Copy( other_em, emitter_list_constant, Self, source_id ))
+				em.enable()
+				Return em
+			Case PROJECTILE_MEMBER_EMITTER_PAYLOAD
+				em = EMITTER( EMITTER.Copy( other_em, emitter_list_payload, Self, source_id ))
+				em.disable()
+				Return em
+			Default
+				Return Null
+		End Select
 	End Method
 	
 End Type

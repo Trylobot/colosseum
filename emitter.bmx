@@ -226,6 +226,29 @@ Type EMITTER extends MANAGED_OBJECT
 		ang_acc_min = ang_acc_min_new; ang_acc_max = ang_acc_max_new
 	End Method
 	
+	Method attach_at( ..
+	off_x_new#, off_y_new#, ..
+	dist_min_new#, dist_max_new#, ..
+	dist_ang_min_new#, dist_ang_max_new#, ..
+	vel_min_new#, vel_max_new#, ..
+	vel_ang_min_new#, vel_ang_max_new#, ..
+	acc_min_new#, acc_max_new#, ..
+	acc_ang_min_new#, acc_ang_max_new#, ..
+	ang_min_new#, ang_max_new#, ..
+	ang_vel_min_new#, ang_vel_max_new#, ..
+	ang_acc_min_new#, ang_acc_max_new# )
+		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
+		dist_min = dist_min_new; dist_max = dist_max_new
+		dist_ang_min = dist_ang_min_new; dist_ang_max = dist_ang_max_new
+		vel_min = vel_min_new; vel_max = vel_max_new
+		vel_ang_min = vel_ang_min_new; vel_ang_max = vel_ang_max_new
+		acc_min = acc_min_new; acc_max = acc_max_new
+		acc_ang_min = acc_ang_min_new; acc_ang_max = acc_ang_max_new
+		ang_min = ang_min_new; ang_max = ang_max_new
+		ang_vel_min = ang_vel_min_new; ang_vel_max = ang_vel_max_new
+		ang_acc_min = ang_acc_min_new; ang_acc_max = ang_acc_max_new
+	End Method
+	
 	Function Archetype:Object( ..
 	emitter_type%, ..
 	archetype_index%, ..
