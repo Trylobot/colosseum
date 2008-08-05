@@ -112,9 +112,12 @@ Function collide_all()
 					End If
 					'perhaps! spawneth teh phat lewts?!
 					spawn_pickup( ag.pos_x, ag.pos_y )
-					'spawn gibs
 					If ag.gibs <> Null
 						For Local i% = 0 To ag.gibs.frames.Length - 1
+							'spawn halo particle
+							Local halo:PARTICLE = PARTICLE( PARTICLE.Create( img_halo, 0, LAYER_BACKGROUND, False, 0.0, 255, 255, 255, 200, ag.pos_x, ag.pos_y, 0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 1.0, -0.1000 ))
+							halo.auto_manage()
+							'spawn gibs
 							Local gib:PARTICLE = PARTICLE( PARTICLE.Create( ag.gibs, i, LAYER_FOREGROUND, True, 0.100, 255, 255, 255, 750 ))
 							gib.created_ts = now()
 							gib.auto_manage()
