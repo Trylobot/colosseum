@@ -33,6 +33,11 @@ Global enemy_spawn_points:cVEC[] = [ ..
 	cVEC( cVEC.Create( arena_offset + arena_w/2, arena_offset/2 )), ..
 	cVEC( cVEC.Create( 1.5*arena_offset + arena_w, arena_offset + arena_h/2 )) ]
 
+Global friendly_door_list:TList 'TList:WIDGET
+	
+Global hostile_door_list:TList 'TList:WIDGET
+
+'______________________________________________________________________________
 Global level_walls:TList[] = New TList[3]
 For Local i% = 0 To level_walls.Length - 1
 	level_walls[i] = CreateList()
@@ -42,4 +47,9 @@ level_walls[0].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300,50 ])
 
 level_walls[1].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50,100 ])
 level_walls[1].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50,100 ])
+
+'______________________________________________________________________________
+Function open_doors( political_alignment% )
+	
+End Function
 

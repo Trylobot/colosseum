@@ -125,10 +125,13 @@ projectile_emitter_archetype[PROJECTILE_EMITTER_INDEX_ROCKET] = EMITTER( EMITTER
 Global widget_archetype:WIDGET[1]; reset_index()
 
 Global WIDGET_INDEX_GLOW% = postfix_index()
+Global WIDGET_ARENA_DOOR% = postfix_index()
 
-widget_archetype[WIDGET_INDEX_GLOW] = WIDGET( WIDGET.Create( img_glow, LAYER_IN_FRONT_OF_PARENT, REPEAT_MODE_LOOP_BACK, 2, True ))
+widget_archetype[WIDGET_INDEX_GLOW] = WIDGET( WIDGET.Create( img_glow, LAYER_IN_FRONT_OF_PARENT, REPEAT_MODE_CYCLIC_WRAP, 2, True ))
 	widget_archetype[WIDGET_INDEX_GLOW].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.000, 1, 1, 333 )))
 	widget_archetype[WIDGET_INDEX_GLOW].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.750, 1, 1, 333 )))
+widget_archetype[WIDGET_ARENA_DOOR] = WIDGET( WIDGET.Create( img_door, LAYER_IN_FRONT_OF_PARENT, REPEAT_MODE_CYCLIC_WRAP, 2, False ))
+	widget_archetype[WIDGET_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( )))
 	
 '______________________________________________________________________________
 '[ PICKUPS ]

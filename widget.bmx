@@ -60,6 +60,7 @@ Type WIDGET Extends MANAGED_OBJECT
 	Field attach_y# 'original attachment position (y component)
 	Field offset# 'offset from parent
 	Field offset_ang# 'angle of offset from parent
+	Field ang_offset# 'angle to be combined with all transform state angles
 	Field repeat_mode% '{cyclic_wrap|loop_back}
 	Field traversal_direction% '{increasing|decreasing}
 	Field states:TRANSFORM_STATE[] 'sequence of states to be traversed over time
@@ -102,9 +103,11 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Method
 
 	Method attach_at( ..
-	new_attach_x#, new_attach_y# )
+	new_attach_x# = 0.0, new_attach_y# = 0.0, ..
+	new_ang_offset# = 0.0 )
 		attach_x = new_attach_x; attach_y = new_attach_y
 		cartesian_to_polar( attach_x, attach_y, offset, offset_ang )
+		ang_offset = new_ang_offset
 	End Method
 	
 	Method update()
@@ -145,7 +148,7 @@ Type WIDGET Extends MANAGED_OBJECT
 		SetColor( state.red, state.green, state.blue )
 		SetAlpha( state.alpha )
 		SetScale( state.scale_x, state.scale_y )
-		SetRotation( parent.ang + state.ang )
+		SetRotation( parent.ang + ang_offset + state.ang )
 		DrawImage( img, parent.pos_x + offset*Cos( offset_ang + parent.ang ) + state.pos_x, parent.pos_y + offset*Sin( offset_ang + parent.ang ) + state.pos_y )
 	End Method
 	
