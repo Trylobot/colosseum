@@ -146,12 +146,16 @@ Function draw_arena()
 		Next
 	End If
 		
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
 	'draw walls on top of whatever has been cached
 	'SetRotation( 0 ); DrawImage( img_arena_wall, -10, -10 )
 	'SetRotation( 90 ); DrawImage( img_arena_wall, arena_w + 10, -10 )
 	'SetRotation( 180 ); DrawImage( img_arena_wall, arena_w + 10, arena_h + 10 )
 	'SetRotation( 270 ); DrawImage( img_arena_wall, -10, arena_h + 10 )
-	'SetRotation( 0 )
+	SetRotation( 0 )
+	
 	draw_walls( common_walls )
 	If player_level < level_walls.Length Then draw_walls( level_walls[player_level] )
 

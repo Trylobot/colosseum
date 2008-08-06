@@ -466,8 +466,10 @@ Type PATHING_STRUCTURE
 	End Method
 	
 	Method reset()
-		For Local c:CELL = EachIn pathing_visited_list
-			pathing_visited[c.row,c.col] = False
+		For Local row% = 0 To row_count - 1
+			For Local col% = 0 To col_count - 1
+				'all arrays clear
+			Next
 		Next
 		pathing_visited_list = CreateList()
 		potential_paths.reset()
@@ -501,14 +503,14 @@ Function init_pathing_grid_from_walls( level_walls:TList )
 End Function
 '______________________________________________________________________________
 Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
-	If      start_x < 0        Then start_x = 0 ..
-	Else If start_x >= arena_w Then start_x = arena_w - 1
-	If      start_y < 0        Then start_y = 0 ..
-	Else If start_y >= arena_h Then start_y = arena_h - 1
-	If      goal_x < 0         Then goal_x = 0 ..
-	Else If goal_x >= arena_w  Then goal_x = arena_w - 1
-	If      goal_y < 0         Then goal_y = 0 ..
-	Else If goal_y >= arena_h  Then goal_y = arena_h - 1
+	If      start_x < 0                         Then start_x = 0 ..
+	Else If start_x >= 2*arena_offset + arena_w Then start_x = 2*arena_offset + arena_w - 1
+	If      start_y < 0                         Then start_y = 0 ..
+	Else If start_y >= 2*arena_offset + arena_h Then start_y = 2*arena_offset + arena_h - 1
+	If      goal_x < 0                          Then goal_x = 0 ..
+	Else If goal_x >= 2*arena_offset + arena_w  Then goal_x = 2*arena_offset + arena_w - 1
+	If      goal_y < 0                          Then goal_y = 0 ..
+	Else If goal_y >= 2*arena_offset + arena_h  Then goal_y = 2*arena_offset + arena_h - 1
 
 	pathing.reset()
 	Local cell_list:TList = pathing.find_path_cells( containing_cell( start_x, start_y ), containing_cell( goal_x, goal_y ))

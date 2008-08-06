@@ -14,14 +14,15 @@ Global db_path:TList
 
 '______________________________________________________________________________
 Function show_db_path()
-	'pathing_grid cell border lines
-	SetLineWidth( 1 ); SetColor( 127, 127, 127 ); SetAlpha( 0.75 )
-	For r = 0 To pathing_grid_h
-		DrawLine( 0, r*cell_size, pathing_grid_w*cell_size, r*cell_size )
-	Next
-	For c = 0 To pathing_grid_w
-		DrawLine( c*cell_size, 0, c*cell_size, pathing_grid_h*cell_size )
-	Next
+	If db_path = Null Or db_path.IsEmpty() Then Return
+'	'pathing_grid cell border lines
+'	SetLineWidth( 1 ); SetColor( 127, 127, 127 ); SetAlpha( 0.75 )
+'	For r = 0 To pathing_grid_h
+'		DrawLine( 0, r*cell_size, pathing_grid_w*cell_size, r*cell_size )
+'	Next
+'	For c = 0 To pathing_grid_w
+'		DrawLine( c*cell_size, 0, c*cell_size, pathing_grid_h*cell_size )
+'	Next
 	Local cursor:CELL = New CELL
 	For cursor.row = 0 To pathing_grid_h - 1
 		For cursor.col = 0 To pathing_grid_w - 1
@@ -32,25 +33,23 @@ Function show_db_path()
 		Next
 	Next
 	'path
-	If db_path <> Null
-		Local v0:cVEC = Null, v1:cVEC = Null
-		For Local v1:cVEC = EachIn db_path
-			If v0 <> Null
-				DrawLine( v0.x+arena_offset,v0.y+arena_offset, v1.x+arena_offset,v1.y+arena_offset )
-			Else
-				v0 = New cVEC
-			End If
-			v0.x = v1.x; v0.y = v1.y
-		Next
-	End If
+	Local v0:cVEC = Null, v1:cVEC = Null
+	For Local v1:cVEC = EachIn db_path
+		If v0 <> Null
+			DrawLine( v0.x,v0.y, v1.x,v1.y )
+		Else
+			v0 = New cVEC
+		End If
+		v0.x = v1.x; v0.y = v1.y
+	Next
 	'start and goal
 	If global_start <> Null
 		SetColor( 64, 255, 64 ); SetAlpha( 1 )
-		DrawRect( global_start.col*cell_size + 1+arena_offset, global_start.row*cell_size + 1+arena_offset, cell_size - 2, cell_size - 2 )
+		DrawRect( global_start.col*cell_size + 1, global_start.row*cell_size + 1, cell_size - 2, cell_size - 2 )
 	End If
 	If global_goal <> Null
 		SetColor( 64, 64, 255 ); SetAlpha( 1 )
-		DrawRect( global_goal.col*cell_size + 1+arena_offset, global_goal.row*cell_size + 1+arena_offset, cell_size - 2, cell_size - 2 )
+		DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
 	End If
 End Function
 
