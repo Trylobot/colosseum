@@ -29,7 +29,7 @@ Function draw_all()
 	Else
 
 		'arena & retained particles
-		draw_arena()
+		draw_arena_bg()
 		SetColor( 255, 255, 255 )
 
 		'background particles
@@ -67,6 +67,9 @@ Function draw_all()
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		SetScale( 1, 1 )
+		
+		'arena foreground
+		draw_arena_fg()
 		
 		'aiming reticle
 		SetRotation( player.turrets[0].ang )
@@ -124,7 +127,7 @@ Function draw_all()
 End Function
 '______________________________________________________________________________
 'Menu and GUI
-Function draw_arena()
+Function draw_arena_bg()
 
 	If bg_cache = Null
 		init_bg_cache()
@@ -133,17 +136,6 @@ Function draw_arena()
 	'draw arena background cache image
 	SetRotation( 0 )
 	DrawImage( bg_cache, 0,0 )
-
-	'draw walls
-	SetColor( 255, 255, 255 )
-	SetAlpha( 1 )
-	SetScale( 1, 1 )
-	SetRotation( 0 ); DrawImage( img_arena_wall, arena_offset - 10, arena_offset - 10 )
-	SetRotation( 90 ); DrawImage( img_arena_wall, arena_offset + arena_w + 10, arena_offset - 10 )
-	SetRotation( 180 ); DrawImage( img_arena_wall, arena_offset + arena_w + 10, arena_offset + arena_h + 10 )
-	SetRotation( 270 ); DrawImage( img_arena_wall, arena_offset - 10, arena_offset + arena_h + 10 )
-	SetRotation( 0 )
-	'draw_walls( common_walls )
 
 	'incorporate retained particles into bg_cache and remove them from the managed list
 	For Local part:PARTICLE = EachIn retained_particle_list
@@ -157,12 +149,16 @@ Function draw_arena()
 		Next
 	End If
 		
+End Function
+'______________________________________________________________________________
+Function draw_arena_fg()
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 	SetRotation( 0 )
+	
+	DrawImage( img_arena_fg, 0,0 )
 	If player_level < level_walls.Length Then draw_walls( level_walls[player_level] )
-
 End Function
 '______________________________________________________________________________
 Function draw_walls( walls:TList )
@@ -174,12 +170,14 @@ Function draw_walls( walls:TList )
 				DrawRect( wall[1],wall[2], wall[3],wall[4] )
 			Case WALL_SUB
 				SetViewport( wall[1],wall[2], wall[3],wall[4] )
+				SetColor( 255, 255, 255 )
 				DrawImage( bg_cache, arena_offset,arena_offset )
 				'SetColor( 64, 64, 64 )
 				'DrawRect( wall[1],wall[2], wall[3],wall[4] )
 		End Select
 	Next
 	SetViewport( 0,0, window_w,window_h )
+	SetColor( 255, 255, 255 )
 End Function
 '______________________________________________________________________________
 Function init_bg_cache()

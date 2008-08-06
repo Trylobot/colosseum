@@ -1,4 +1,9 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ Create global POINT objects to represent the gates, and have widgets attached to them.
+			when the spawning step begins, open all the gates until all agents are in the arena; then close all the gates.
+			when the level has concluded:
+				if the player has defeated all the enemies, open the player's gate and allow the player to travel to the spawn point.
+				if the player is dead, open all the enemies' gates, and have the enemies travel into a random gate, then delete them behind the scenes. When all enemies have left the arena, close all the gates.
 	_ Remove the static Create() functions from the object definitions, and instead write global "factory" functions to auto-cast {Type}.Create:Object calls to the desired types
 			(e.g. Create_COMPLEX_AGENT:COMPLEX_AGENT( .. ))
 			so that callers do not have to typecast the returned object to the desired type. IT'S ANNOYING.
