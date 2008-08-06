@@ -119,15 +119,8 @@ End Function
 '______________________________________________________________________________
 Function initialize_game()
 	player_level = -1
-	respawn_player()
-	init_pathing_system()
+	respawn_player( player_type )
 	load_next_level()
-End Function
-'______________________________________________________________________________
-Function init_pathing_system()
-	pathing_grid_h = (arena_h + 2*arena_offset) / cell_size
-	pathing_grid_w = (arena_w + 2*arena_offset) / cell_size
-	pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
 End Function
 '______________________________________________________________________________
 Function load_next_level()
@@ -138,8 +131,15 @@ Function load_next_level()
 	FLAG_level_intro = True
 	level_passed_ts% = now()
 	player_kills = 0
+	init_pathing_system()
 	init_pathing_grid_from_walls( common_walls )
 	If player_level < level_walls.Length Then init_pathing_grid_from_walls( level_walls[player_level] )
+End Function
+'______________________________________________________________________________
+Function init_pathing_system()
+	pathing_grid_h = (arena_h + 2*arena_offset) / cell_size
+	pathing_grid_w = (arena_w + 2*arena_offset) / cell_size
+	pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
 End Function
 '______________________________________________________________________________
 Function next_enabled_menu_option()
@@ -163,8 +163,8 @@ End Function
 Function respawn_player( archetype_index% )
 	If player <> Null And player.managed() Then player.remove_me()
 	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
-	player.pos_x = player_spawn.x
-	player.pos_y = player_spawn.y
+	player.pos_x = player_spawn_point.x
+	player.pos_y = player_spawn_point.y
 	player.ang = -90
 	player.snap_turrets()
 	Create_and_Manage_CONTROL_BRAIN( player, Null, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD, UNSPECIFIED )
@@ -189,16 +189,15 @@ Function spawn_enemy:COMPLEX_AGENT( archetype_index% )
 End Function
 '______________________________________________________________________________
 Function respawn_enemies()
-	If hostile_agent_list.IsEmpty()
-		For Local i% = 1 To (3 + player_level)
-			Local selector# = RandF( 0.000, 1.000 )
-			If      selector < 0.400 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MR_THE_BOX), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 2000 ) ..
-			Else If selector < 0.600 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MOBILE_MINI_BOMB), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_SEEKER, 20 ) ..
-			Else If selector < 0.800 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 ) ..
-			Else If selector < 0.900 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 ) ..
-			Else If selector < 1.000 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 )
-		Next
-	End If
+	For Local i% = 1 To (3 + player_level)
+'		Local selector# = RandF( 0.000, 1.000 )
+'		If      selector < 0.400 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MR_THE_BOX), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 2000 ) ..
+'		Else If selector < 0.600 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MOBILE_MINI_BOMB), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_SEEKER, 20 ) ..
+'		Else If selector < 0.800 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 ) ..
+'		Else If selector < 0.900 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 ) ..
+'		Else If selector < 1.000 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 )
+		Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MR_THE_BOX), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 2000 )
+	Next
 End Function
 '______________________________________________________________________________
 Function spawn_pickup( x#, y# )

@@ -134,10 +134,21 @@ Function draw_arena()
 	SetRotation( 0 )
 	DrawImage( bg_cache, 0,0 )
 
+	'draw walls
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
+	SetRotation( 0 ); DrawImage( img_arena_wall, arena_offset - 10, arena_offset - 10 )
+	SetRotation( 90 ); DrawImage( img_arena_wall, arena_offset + arena_w + 10, arena_offset - 10 )
+	SetRotation( 180 ); DrawImage( img_arena_wall, arena_offset + arena_w + 10, arena_offset + arena_h + 10 )
+	SetRotation( 270 ); DrawImage( img_arena_wall, arena_offset - 10, arena_offset + arena_h + 10 )
+	SetRotation( 0 )
+	'draw_walls( common_walls )
+
+	'incorporate retained particles into bg_cache and remove them from the managed list
 	For Local part:PARTICLE = EachIn retained_particle_list
 		part.draw()
 	Next
-
 	If (now() - last_bg_redraw_ts) > bg_redraw_delay
 		GrabImage( bg_cache, 0,0 )
 		last_bg_redraw_ts = now()
@@ -149,14 +160,7 @@ Function draw_arena()
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
-	'draw walls on top of whatever has been cached
-	'SetRotation( 0 ); DrawImage( img_arena_wall, -10, -10 )
-	'SetRotation( 90 ); DrawImage( img_arena_wall, arena_w + 10, -10 )
-	'SetRotation( 180 ); DrawImage( img_arena_wall, arena_w + 10, arena_h + 10 )
-	'SetRotation( 270 ); DrawImage( img_arena_wall, -10, arena_h + 10 )
 	SetRotation( 0 )
-	
-	draw_walls( common_walls )
 	If player_level < level_walls.Length Then draw_walls( level_walls[player_level] )
 
 End Function
@@ -179,7 +183,7 @@ Function draw_walls( walls:TList )
 End Function
 '______________________________________________________________________________
 Function init_bg_cache()
-	bg_cache = CreateImage( arena_w+2*arena_offset,arena_h+2*arena_offset, DYNAMICIMAGE )
+	bg_cache = CreateImage( arena_w + 2*arena_offset,arena_h + 2*arena_offset, DYNAMICIMAGE )
 
 	Cls
 	SetColor( 255, 255, 255 )
