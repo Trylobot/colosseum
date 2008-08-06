@@ -114,7 +114,7 @@ Function draw_all()
 			SetOrigin( arena_offset, arena_offset )
 			SetColor( 255, 255, 127 )
 			SetImageFont( consolas_bold_100 )
-			str = "LEVEL " + player_level
+			str = "LEVEL " + (player_level + 1)
 			DrawText( str, arena_w/2 - TextWidth( str )/2, arena_h/2 - TextHeight( str )/2 )
 			If (now() - level_passed_ts) >= level_intro_freeze_time
 				SetColor( 255, 255, 255 )
@@ -138,12 +138,21 @@ Function draw_arena()
 		init_bg_cache()
 	End If
 
-	SetRotation( 0 ); DrawImage( img_arena_wall, -10, -10 )
-	SetRotation( 90 ); DrawImage( img_arena_wall, arena_w + 10, -10 )
-	SetRotation( 180 ); DrawImage( img_arena_wall, arena_w + 10, arena_h + 10 )
-	SetRotation( 270 ); DrawImage( img_arena_wall, -10, arena_h + 10 )
+	'draw sand
 	SetRotation( 0 )
 	DrawImage( bg_cache, 0, 0 )
+	'draw walls
+	'SetRotation( 0 ); DrawImage( img_arena_wall, -10, -10 )
+	'SetRotation( 90 ); DrawImage( img_arena_wall, arena_w + 10, -10 )
+	'SetRotation( 180 ); DrawImage( img_arena_wall, arena_w + 10, arena_h + 10 )
+	'SetRotation( 270 ); DrawImage( img_arena_wall, -10, arena_h + 10 )
+	'SetRotation( 0 )
+	SetOrigin( 0, 0 )
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
+	draw_walls( common_walls )
+	draw_walls( level_walls[player_level] )
+	SetOrigin( arena_offset, arena_offset )
 
 	SetViewport( arena_offset, arena_offset, arena_w, arena_h )
 
@@ -161,8 +170,20 @@ Function draw_arena()
 		
 End Function
 '______________________________________________________________________________
+Function draw_walls( wall_list:TList )
+	For Local wall%[] = EachIn wall_list
+		Select wall[0]
+			Case WALL_ADD
+				SetColor( 127, 127, 127 )
+				DrawRect( wall[1],wall[2], wall[3],wall[4] )
+			Case WALL_SUB
+				SetViewport( wall[1]+arena_offset,wall[2]+arena_offset, wall[3],wall[4] )
+				DrawImage( bg_cache, arena_offset,arena_offset )
+		End Select
+	Next
+End Function
+'______________________________________________________________________________
 Function init_bg_cache()
-	SetOrigin( arena_offset, arena_offset )
 	bg_cache = CreateImage( arena_w, arena_h, DYNAMICIMAGE )
 
 	Cls
@@ -262,7 +283,7 @@ Function draw_stats()
 	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
 	DrawText( "level", x, y ); y :+ 12
 	SetColor( 255, 255, 127 ); SetImageFont( consolas_bold_50 )
-	DrawText( player_level, x, y ); y :+ 50
+	DrawText( player_level + 1, x, y ); y :+ 50
 	
 	'player cash
 	y :+ arena_offset

@@ -55,8 +55,8 @@ Const PICKUP_PROBABILITY% = 5000 'chance in 10,000 of an enemy dropping a pickup
 'global player stuff
 Global player_type% = 0
 Global player:COMPLEX_AGENT
-Global player_cash% = 0
 Global player_level% = 0
+Global player_cash% = 0
 Global player_kills% = 0
 
 '______________________________________________________________________________
@@ -110,8 +110,8 @@ Function reset_game()
 	pickup_list.Clear()
 	control_brain_list.Clear()
 	player = Null
+	player_level = -1
 	player_cash = 0
-	player_level = 0
 	player_kills = 0
 	FLAG_game_in_progress = False
 	FLAG_game_over = False
@@ -119,7 +119,7 @@ End Function
 '______________________________________________________________________________
 Function initialize_game()
 	init_pathing_system()
-	player_level = 0
+	player_level = -1
 	respawn_player()
 	load_next_level()
 End Function
@@ -132,6 +132,9 @@ Function load_next_level()
 	FLAG_level_intro = True
 	level_passed_ts% = now()
 	player_kills = 0
+	pathing.reset()
+	init_pathing_grid_from_walls( common_walls )
+	init_pathing_grid_from_walls( level_walls[player_level] )
 End Function
 '______________________________________________________________________________
 Function next_enabled_menu_option()

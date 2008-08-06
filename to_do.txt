@@ -1,4 +1,5 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ OPTIMIZATION: Initial checks using CollideRect() to save computing time
 	_ shadows for agents (and possibly other objects)
 	_ screen shake -- when an enemy explodes, shake the screen by an amount proportional to the explosive force.
 	_ rocket turret -- this turret needs more effect emitters.

@@ -75,7 +75,6 @@ End Type
 '______________________________________________________________________________
 Global ALL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_NORTHEAST, DIRECTION_EAST, DIRECTION_SOUTHEAST, DIRECTION_SOUTH, DIRECTION_SOUTHWEST, DIRECTION_WEST, DIRECTION_NORTHWEST ]
 Global cell_size# = 10
-'Global cell_size# = 20
 
 Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
 Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
@@ -245,8 +244,8 @@ Type PATH_QUEUE
 			If item_count >= 2 'if the root is not the only element
 				Local scan%, min_i% = 0
 				For scan = 1 To item_count
-					'If f_less_than( binary_tree[scan], binary_tree[min_i] )
-					If h_less_than( binary_tree[scan], binary_tree[min_i] )
+					If f_less_than( binary_tree[scan], binary_tree[min_i] )
+					'If h_less_than( binary_tree[scan], binary_tree[min_i] )
 						min_i = scan
 					End If
 				Next
@@ -457,6 +456,15 @@ Type PATHING_STRUCTURE
 		Return Null
 	End Method
 	
+	Method set_area( top_left:CELL, bottom_right:CELL, value% )
+		Local cursor:CELL = New CELL
+		For cursor.row = top_left.row To bottom_right.row
+			For cursor.col = top_left.col To bottom_right.col
+				set_grid( cursor, value% )
+			Next
+		Next
+	End Method
+	
 	Method reset()
 		For Local c:CELL = EachIn pathing_visited_list
 			pathing_visited[c.row,c.col] = False
@@ -485,9 +493,11 @@ Function init_pathing_system()
 	pathing_grid_w = arena_w / cell_size
 	pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
 End Function
-Function init_pathing_grid_from_obstacles( obstacles:TList )
-	'for each obstacle
-	'  using collide, somehow change correct pathing_grid[,] entries to PATH_BLOCKED
+'______________________________________________________________________________
+Function init_pathing_grid_from_walls( level_walls:TList )
+	For Local wall%[] = EachIn level_walls
+		pathing.set_area( containing_cell( wall[1], wall[2] ), containing_cell( wall[1]+wall[3], wall[2]+wall[4] ), wall[0] )
+	Next
 End Function
 '______________________________________________________________________________
 Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )

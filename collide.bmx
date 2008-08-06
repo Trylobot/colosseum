@@ -4,6 +4,9 @@ Rem
 	author: Tyler W Cole
 EndRem
 
+'______________________________________________________________________________
+'Collision Detection and Resolution
+
 Const PLAYER_COLLISION_LAYER% = $0001
 Const AGENT_COLLISION_LAYER% = $0002
 Const SECONDARY_AGENT_COLLISION_LAYER% = $0004
@@ -15,8 +18,6 @@ Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 500.0 'energy multiplier for all co
 Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.012 'energy multiplier for all projectile-projectile collisions
 Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.010 'energy multiplier for all agent-agent collisions
 
-'______________________________________________________________________________
-'Collision Detection and Resolution
 Function collide_all()
 	If ..
 	Not FLAG_in_menu And ..
@@ -30,7 +31,8 @@ Function collide_all()
 		Local pkp:PICKUP
 		Local result:Object[]
 		
-		'boundary collisions (will be calculated with more generic WALL objects later)
+		'boundary collisions (disabled)
+		Rem
 		For list = EachIn agent_lists
 			For ag = EachIn list
 				If ag.pos_x < 0
@@ -57,8 +59,15 @@ Function collide_all()
 				proj.remove_me()
 			End If
 		Next
+		EndRem
 
 		ResetCollisions()
+		
+		'collisions between agents and walls
+		
+		
+		'collisions between projectiles and walls
+		
 
 		'collisions between projectiles and complex_agents
 		For list = EachIn agent_lists
