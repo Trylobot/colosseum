@@ -9,7 +9,7 @@ EndRem
 Const INFINITY% = -1
 
 'Window / Arena size
-Const arena_offset% = 25
+Const arena_offset% = 50
 Const arena_w% = 500
 Const arena_h% = 500
 Const stats_panel_w% = 250
@@ -164,8 +164,8 @@ Function respawn_player()
 		Case 2
 			player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_MED_TANK], ALIGNMENT_FRIENDLY ))
 	End Select
-	player.pos_x = arena_w/2
-	player.pos_y = arena_h*3/4
+	player.pos_x = arena_offset + arena_w/2
+	player.pos_y = arena_offset + arena_h*3/4
 	player.ang = -90
 	player.snap_turrets()
 	Create_and_Manage_CONTROL_BRAIN( player, Null, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD, UNSPECIFIED )
@@ -173,7 +173,7 @@ End Function
 '______________________________________________________________________________
 Function respawn_enemies()
 	If hostile_agent_list.IsEmpty()
-		For Local i% = 0 To (3 + (player_level - 1)) - 1
+		For Local i% = 1 To (3 + player_level)
 			Local selector# = RandF( 0.000, 1.000 )
 			If      selector < 0.400 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MR_THE_BOX), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 2000 ) ..
 			Else If selector < 0.600 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MOBILE_MINI_BOMB), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_SEEKER, 20 ) ..
@@ -186,10 +186,10 @@ End Function
 '______________________________________________________________________________
 Function spawn_enemy:COMPLEX_AGENT( archetype_index% )
 	Local nme:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( enemy_archetype[archetype_index], ALIGNMENT_HOSTILE ))
-	If Rand( 0, 1 ) = 1 Then nme.pos_x = RandF( 0, 0.25*arena_w ) ..
-	Else                     nme.pos_x = RandF( 0.75*arena_w, arena_w )
-	If Rand( 0, 1 ) = 1 Then nme.pos_y = RandF( 0, 0.25*arena_h ) ..
-	Else                     nme.pos_y = RandF( 0.75*arena_h, arena_h )
+	If Rand( 0, 1 ) = 1 Then nme.pos_x = arena_offset + RandF( 0, 0.25*arena_w ) ..
+	Else                     nme.pos_x = arena_offset + RandF( 0.75*arena_w, arena_w )
+	If Rand( 0, 1 ) = 1 Then nme.pos_y = arena_offset + RandF( 0, 0.25*arena_h ) ..
+	Else                     nme.pos_y = arena_offset + RandF( 0.75*arena_h, arena_h )
 	nme.ang = Rand( 0, 359 )
 	nme.snap_turrets()
 	Return nme

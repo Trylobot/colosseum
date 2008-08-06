@@ -1,4 +1,6 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ for intro, make the player push a button (like "E") to start the vehicle, and then drive out of the locker.
+	_ arena background: increase size to 600x600 for locker rooms
 	_ OPTIMIZATION: Initial checks using CollideRect() to save computing time
 	_ shadows for agents (and possibly other objects)
 	_ screen shake -- when an enemy explodes, shake the screen by an amount proportional to the explosive force.

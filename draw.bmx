@@ -17,7 +17,6 @@ Function draw_all()
 	SetRotation( 0 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
-	SetOrigin( 0, 0 )
 
 	If FLAG_in_menu
 		'main menu
@@ -74,9 +73,6 @@ Function draw_all()
 		DrawImage( img_reticle, player.turrets[0].pos_x, player.turrets[0].pos_y )
 		SetRotation( 0 )
 
-		SetOrigin( 0, 0 )
-		SetViewport( 0, 0, window_w, window_h )
-		
 		'interface
 		draw_stats()
 
@@ -111,16 +107,15 @@ Function draw_all()
 		
 		'level intro
 		If FLAG_level_intro
-			SetOrigin( arena_offset, arena_offset )
 			SetColor( 255, 255, 127 )
 			SetImageFont( consolas_bold_100 )
 			str = "LEVEL " + (player_level + 1)
-			DrawText( str, arena_w/2 - TextWidth( str )/2, arena_h/2 - TextHeight( str )/2 )
+			DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 )
 			If (now() - level_passed_ts) >= level_intro_freeze_time
 				SetColor( 255, 255, 255 )
 				SetImageFont( consolas_normal_24 )
 				str = "press [enter] to continue"
-				DrawText( str, arena_w/2 - TextWidth( str )/2, arena_h/2 - TextHeight( str )/2 + 45 )
+				DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 + 45 )
 			End If
 		End If
 		
@@ -131,17 +126,27 @@ End Function
 'Menu and GUI
 Function draw_arena()
 
-	SetOrigin( arena_offset, arena_offset )
-	'SetViewport( 0, 0, window_w, window_h )
-
 	If bg_cache = Null
 		init_bg_cache()
 	End If
 
-	'draw sand
+	'draw arena background cache image
 	SetRotation( 0 )
-	DrawImage( bg_cache, 0, 0 )
-	'draw walls
+	DrawImage( bg_cache, 0,0 )
+
+	For Local part:PARTICLE = EachIn retained_particle_list
+		part.draw()
+	Next
+
+	If (now() - last_bg_redraw_ts) > bg_redraw_delay
+		GrabImage( bg_cache, 0,0 )
+		last_bg_redraw_ts = now()
+		For Local part:PARTICLE = EachIn retained_particle_list
+			part.remove_me()
+		Next
+	End If
+		
+	'draw walls on top of whatever has been cached
 	'SetRotation( 0 ); DrawImage( img_arena_wall, -10, -10 )
 	'SetRotation( 90 ); DrawImage( img_arena_wall, arena_w + 10, -10 )
 	'SetRotation( 180 ); DrawImage( img_arena_wall, arena_w + 10, arena_h + 10 )
@@ -150,27 +155,13 @@ Function draw_arena()
 	draw_walls( common_walls )
 	If player_level < level_walls.Length Then draw_walls( level_walls[player_level] )
 
-	'SetViewport( arena_offset, arena_offset, arena_w, arena_h )
-
-	For Local part:PARTICLE = EachIn retained_particle_list
-		part.draw()
-	Next
-
-	If (now() - last_bg_redraw_ts) > bg_redraw_delay
-		GrabImage( bg_cache, arena_offset, arena_offset )
-		last_bg_redraw_ts = now()
-		For Local part:PARTICLE = EachIn retained_particle_list
-			part.remove_me()
-		Next
-	End If
-		
 End Function
 '______________________________________________________________________________
 Function draw_walls( walls:TList )
 	For Local wall%[] = EachIn walls
 		Select wall[0]
 			Case WALL_ADD
-				'SetViewport( -arena_offset, -arena_offset, (2*arena_offset)+arena_w, (2*arena_offset)+arena_h )
+				'SetViewport( 0,0, window_w,window_h )
 				SetColor( 127, 127, 127 )
 				DrawRect( wall[1],wall[2], wall[3],wall[4] )
 			Case WALL_SUB
@@ -180,21 +171,21 @@ Function draw_walls( walls:TList )
 				DrawRect( wall[1],wall[2], wall[3],wall[4] )
 		End Select
 	Next
+	'SetViewport( 0,0, window_w,window_h )
 End Function
 '______________________________________________________________________________
 Function init_bg_cache()
-	bg_cache = CreateImage( arena_w, arena_h, DYNAMICIMAGE )
+	bg_cache = CreateImage( arena_w+2*arena_offset,arena_h+2*arena_offset, DYNAMICIMAGE )
 
 	Cls
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	SetRotation( 0 )
-	DrawImage( img_arena_bg, 0, 0 )
-	GrabImage( bg_cache, arena_offset, arena_offset )
+	DrawImage( img_arena_bg, 0,0 )
+	GrabImage( bg_cache, 0,0 )
 End Function
 '______________________________________________________________________________
 Function dim_bg_cache()
-	SetOrigin( arena_offset, arena_offset )
 	If bg_cache = Null
 		init_bg_cache()
 	End If
@@ -203,10 +194,10 @@ Function dim_bg_cache()
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	SetRotation( 0 )
-	DrawImage( bg_cache, 0, 0 )
+	DrawImage( bg_cache, 0,0 )
 	SetAlpha( 0.3333 )
-	DrawImage( img_arena_bg, 0, 0 )
-	GrabImage( bg_cache, arena_offset, arena_offset )
+	DrawImage( img_arena_bg, 0,0 )
+	GrabImage( bg_cache, 0,0 )
 End Function
 '______________________________________________________________________________
 Function draw_menu()

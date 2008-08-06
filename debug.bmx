@@ -14,6 +14,24 @@ Global db_path:TList
 
 '______________________________________________________________________________
 Function show_db_path()
+	'pathing_grid cell border lines
+	SetLineWidth( 1 ); SetColor( 127, 127, 127 ); SetAlpha( 0.75 )
+	For r = 0 To pathing_grid_h
+		DrawLine( 0, r*cell_size, pathing_grid_w*cell_size, r*cell_size )
+	Next
+	For c = 0 To pathing_grid_w
+		DrawLine( c*cell_size, 0, c*cell_size, pathing_grid_h*cell_size )
+	Next
+	Local cursor:CELL = New CELL
+	For cursor.row = 0 To pathing_grid_h - 1
+		For cursor.col = 0 To pathing_grid_w - 1
+			'blockable/passing grid
+			SetColor( 255, 255, 255 ); SetAlpha( 0.85 )
+			If pathing.grid( cursor ) = PATH_BLOCKED Then ..
+				DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+		Next
+	Next
+	'path
 	If db_path <> Null
 		Local v0:cVEC = Null, v1:cVEC = Null
 		For Local v1:cVEC = EachIn db_path
@@ -45,7 +63,6 @@ Function debug_drawtext( message$ )
 End Function
 
 Function debug_heap( message$ = "" )
-	SetOrigin( 0, 0 )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
@@ -124,7 +141,6 @@ End Function
 '______________________________________________________________________________
 'F4 to path from player to mouse; hold F4 to pause; hold F3 to fast-forward
 Function debug_pathing( message$ = "", done% = False )
-	SetOrigin( arena_offset, arena_offset )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
@@ -227,7 +243,6 @@ Function debug_pathing( message$ = "", done% = False )
 End Function
 '______________________________________________________________________________
 Function debug_core()
-	SetOrigin( arena_offset, arena_offset )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )

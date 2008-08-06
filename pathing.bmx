@@ -489,8 +489,8 @@ Function f_less_than%( i:CELL, j:CELL ) 'f(i) < f(j)
 End Function
 '______________________________________________________________________________
 Function init_pathing_system()
-	pathing_grid_h = arena_h / cell_size
-	pathing_grid_w = arena_w / cell_size
+	pathing_grid_h = (arena_h + 2*arena_offset) / cell_size
+	pathing_grid_w = (arena_w + 2*arena_offset) / cell_size
 	pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
 End Function
 '______________________________________________________________________________
