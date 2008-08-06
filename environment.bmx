@@ -29,7 +29,7 @@ For Local i% = 0 To level_walls.Length - 1
 	level_walls[i] = CreateList()
 Next
 
-level_walls[0].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 300,100 ])
+level_walls[0].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300,50 ])
 
 level_walls[1].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50,100 ])
 level_walls[1].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50,100 ])

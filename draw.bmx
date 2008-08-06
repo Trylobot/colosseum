@@ -165,17 +165,17 @@ Function draw_walls( walls:TList )
 	For Local wall%[] = EachIn walls
 		Select wall[0]
 			Case WALL_ADD
-				'SetViewport( 0,0, window_w,window_h )
+				SetViewport( 0,0, window_w,window_h )
 				SetColor( 127, 127, 127 )
 				DrawRect( wall[1],wall[2], wall[3],wall[4] )
 			Case WALL_SUB
-				'SetViewport( wall[1],wall[2], wall[3],wall[4] )
-				SetColor( 64, 64, 64 )
-				'DrawImage( bg_cache, arena_offset,arena_offset )
-				DrawRect( wall[1],wall[2], wall[3],wall[4] )
+				SetViewport( wall[1],wall[2], wall[3],wall[4] )
+				DrawImage( bg_cache, arena_offset,arena_offset )
+				'SetColor( 64, 64, 64 )
+				'DrawRect( wall[1],wall[2], wall[3],wall[4] )
 		End Select
 	Next
-	'SetViewport( 0,0, window_w,window_h )
+	SetViewport( 0,0, window_w,window_h )
 End Function
 '______________________________________________________________________________
 Function init_bg_cache()
