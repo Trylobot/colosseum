@@ -11,7 +11,7 @@ Const PROJECTILE_COLLISION_LAYER% = $0008
 Const SECONDARY_PROJECTILE_COLLISION_LAYER% = $0010
 Const PICKUP_COLLISION_LAYER% = $0011
 
-Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 750.0 'energy multiplier for all collisions involving projectiles and agents
+Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 500.0 'energy multiplier for all collisions involving projectiles and agents
 Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.012 'energy multiplier for all projectile-projectile collisions
 Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.010 'energy multiplier for all agent-agent collisions
 

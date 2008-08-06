@@ -31,7 +31,7 @@ Type TURRET Extends POINT
 	Field overheat_delay%
 	
 	Field emitter_list:TList 'list of all emitters, to be enabled (with count) when turret fires
-	'it is expected that at least one projectile emitter would be added to this object, so it can fire.
+	'it is expected that at least one projectile emitter would be added to this object, so it can fire, but it's not necessary.
 
 	Field off_x#
 	Field off_y#
@@ -203,6 +203,7 @@ Type TURRET Extends POINT
 			If parent.id <> player.id
 				SetChannelVolume( ch, 0.1200 )
 			End If
+			SetChannelRate( ch, RandF( 0.90, 1.15 ))
 			ResumeChannel( ch )
 			audio_channels.AddLast( ch )
 		End If
