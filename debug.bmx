@@ -10,9 +10,32 @@ Global sx%, sy%, h%, px#, py#
 Global wait_ts%, wait_time%, r%, c%, mouse:CELL
 Const PATH_UNSET% = 1000
 Global path_type% = PATH_UNSET, mouse_path_type%
+Global db_path:TList
 
 '______________________________________________________________________________
-'Global test_timer:TTimer = CreateTimer( 1.000/0.250 )
+Function show_db_path()
+	If db_path <> Null
+		Local v0:cVEC = Null, v1:cVEC = Null
+		For Local v1:cVEC = EachIn db_path
+			If v0 <> Null
+				DrawLine( v0.x+arena_offset,v0.y+arena_offset, v1.x+arena_offset,v1.y+arena_offset )
+			Else
+				v0 = New cVEC
+			End If
+			v0.x = v1.x; v0.y = v1.y
+		Next
+	End If
+	'start and goal
+	If global_start <> Null
+		SetColor( 64, 255, 64 ); SetAlpha( 1 )
+		DrawRect( global_start.col*cell_size + 1+arena_offset, global_start.row*cell_size + 1+arena_offset, cell_size - 2, cell_size - 2 )
+	End If
+	If global_goal <> Null
+		SetColor( 64, 64, 255 ); SetAlpha( 1 )
+		DrawRect( global_goal.col*cell_size + 1+arena_offset, global_goal.row*cell_size + 1+arena_offset, cell_size - 2, cell_size - 2 )
+	End If
+End Function
+
 Function debug_ts( message$ )
 	Print( String.FromInt( now() ) + ":" + message )
 End Function

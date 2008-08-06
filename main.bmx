@@ -8,14 +8,13 @@ EndRem
 'MAIN
 Local before% = 0
 Repeat
-	If (now() - before) > (1000/60) '60 physics intervals a second
+	If (now() - before) > (1000/60) '60 hertz
 		before = now()
 		
 		get_all_input()
 		collide_all()
 		update_all()
 		
-
 	EndIf
 	Cls
 	
@@ -25,8 +24,9 @@ Repeat
 ?Debug
 	'debugger
 	If KeyHit( KEY_F4 )
-		find_path( player.pos_x, player.pos_y, MouseX() - arena_offset, MouseY() - arena_offset )
+		db_path = find_path( player.pos_x, player.pos_y, (MouseX()-arena_offset), (MouseY()-arena_offset) )
 	End If
+	show_db_path()
 ?
 	
 	Flip( 1 ) 'draw to screen with vsync enabled

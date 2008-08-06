@@ -115,13 +115,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 
 			Case AI_BRAIN_MR_THE_BOX
 				avatar.drive( 1.0 )
-				If avatar.pos_x > 50 And avatar.pos_x < arena_w - 50 ..
-				And avatar.pos_y > 50 And avatar.pos_y < arena_h - 50
-					avatar.turn( RandF( -1.0, 1.0 ))
-				Else
-					avatar.turn( 1.0 )
-				End If
-			
+				avatar.turn( RandF( -1.0, 1.0 ))
+				
 			Case AI_BRAIN_TURRET
 				If target <> Null And Not target.dead()
 					'if not facing target, face target; when facing target, fire

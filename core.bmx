@@ -27,7 +27,7 @@ SetBlend( ALPHABLEND )
 Global FLAG_in_menu% = True
 Global FLAG_in_shop% = False
 Global FLAG_level_intro% = False
-Global level_intro_freeze_time% = 1000
+Global level_intro_freeze_time% = 500
 Global level_passed_ts%
 Global FLAG_game_in_progress% = False
 Global FLAG_game_over% = False
@@ -118,7 +118,6 @@ Function reset_game()
 End Function
 '______________________________________________________________________________
 Function initialize_game()
-	init_pathing_system()
 	player_level = -1
 	respawn_player()
 	load_next_level()
@@ -132,9 +131,9 @@ Function load_next_level()
 	FLAG_level_intro = True
 	level_passed_ts% = now()
 	player_kills = 0
-	pathing.reset()
+	init_pathing_system()
 	init_pathing_grid_from_walls( common_walls )
-	init_pathing_grid_from_walls( level_walls[player_level] )
+	If player_level < level_walls.Length Then init_pathing_grid_from_walls( level_walls[player_level] )
 End Function
 '______________________________________________________________________________
 Function next_enabled_menu_option()

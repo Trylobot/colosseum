@@ -31,7 +31,6 @@ Function draw_all()
 
 		'arena & retained particles
 		draw_arena()
-		SetOrigin( arena_offset, arena_offset )
 		SetColor( 255, 255, 255 )
 
 		'background particles
@@ -89,7 +88,8 @@ Function draw_all()
 			SetColor( 255, 255, 255 )
 			SetAlpha( 1 )
 			DrawImage( img_help, window_w/2 - img_help.width/2, window_h/2 - img_help.height/2 )
-
+		
+		'game over
 		Else If FLAG_game_over
 			SetColor( 0, 0, 0 )
 			SetAlpha( 0.550 )
@@ -109,7 +109,7 @@ Function draw_all()
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		
-		'level intro text
+		'level intro
 		If FLAG_level_intro
 			SetOrigin( arena_offset, arena_offset )
 			SetColor( 255, 255, 127 )
@@ -132,7 +132,7 @@ End Function
 Function draw_arena()
 
 	SetOrigin( arena_offset, arena_offset )
-	SetViewport( 0, 0, window_w, window_h )
+	'SetViewport( 0, 0, window_w, window_h )
 
 	If bg_cache = Null
 		init_bg_cache()
@@ -147,14 +147,10 @@ Function draw_arena()
 	'SetRotation( 180 ); DrawImage( img_arena_wall, arena_w + 10, arena_h + 10 )
 	'SetRotation( 270 ); DrawImage( img_arena_wall, -10, arena_h + 10 )
 	'SetRotation( 0 )
-	SetOrigin( 0, 0 )
-	SetAlpha( 1 )
-	SetScale( 1, 1 )
 	draw_walls( common_walls )
-	draw_walls( level_walls[player_level] )
-	SetOrigin( arena_offset, arena_offset )
+	If player_level < level_walls.Length Then draw_walls( level_walls[player_level] )
 
-	SetViewport( arena_offset, arena_offset, arena_w, arena_h )
+	'SetViewport( arena_offset, arena_offset, arena_w, arena_h )
 
 	For Local part:PARTICLE = EachIn retained_particle_list
 		part.draw()
@@ -170,15 +166,18 @@ Function draw_arena()
 		
 End Function
 '______________________________________________________________________________
-Function draw_walls( wall_list:TList )
-	For Local wall%[] = EachIn wall_list
+Function draw_walls( walls:TList )
+	For Local wall%[] = EachIn walls
 		Select wall[0]
 			Case WALL_ADD
+				'SetViewport( -arena_offset, -arena_offset, (2*arena_offset)+arena_w, (2*arena_offset)+arena_h )
 				SetColor( 127, 127, 127 )
 				DrawRect( wall[1],wall[2], wall[3],wall[4] )
 			Case WALL_SUB
-				SetViewport( wall[1]+arena_offset,wall[2]+arena_offset, wall[3],wall[4] )
-				DrawImage( bg_cache, arena_offset,arena_offset )
+				'SetViewport( wall[1],wall[2], wall[3],wall[4] )
+				SetColor( 64, 64, 64 )
+				'DrawImage( bg_cache, arena_offset,arena_offset )
+				DrawRect( wall[1],wall[2], wall[3],wall[4] )
 		End Select
 	Next
 End Function
