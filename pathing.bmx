@@ -325,15 +325,27 @@ Type PATHING_STRUCTURE
 	
 	Function Create:PATHING_STRUCTURE( row_count% = 1, col_count% = 1 )
 		Local ps:PATHING_STRUCTURE = New PATHING_STRUCTURE
+
 		ps.row_count = row_count; ps.col_count = col_count
+
 		ps.pathing_grid = New Int[ row_count, pathing_grid_w ]
+
 		ps.pathing_came_from = New CELL[ row_count, col_count ]
+		For Local row% = 0 To row_count - 1
+			For Local col% = 0 To col_count - 1
+				ps.pathing_came_from[ row, col ] = CELL.Create( row, col )
+			Next
+		Next
+
 		ps.pathing_visited = New Int[ row_count, col_count ]
 		ps.pathing_visited_list = CreateList()
+
 		ps.pathing_g = New Float[ row_count, col_count ]
 		ps.pathing_h = New Float[ row_count, col_count ]
 		ps.pathing_f = New Float[ row_count, col_count ]
+
 		ps.potential_paths = PATH_QUEUE.Create( row_count, col_count )
+
 		Return ps
 	End Function
 	
@@ -468,7 +480,11 @@ Type PATHING_STRUCTURE
 	Method reset()
 		For Local row% = 0 To row_count - 1
 			For Local col% = 0 To col_count - 1
-				'all arrays clear
+				pathing_came_from[ row, col ].set( row, col )
+				pathing_visited[ row, col ] = False
+				pathing_g[ row, col ] = INFINITY
+				pathing_h[ row, col ] = INFINITY
+				pathing_f[ row, col ] = INFINITY
 			Next
 		Next
 		pathing_visited_list = CreateList()
@@ -488,12 +504,6 @@ Function h_less_than%( i:CELL, j:CELL ) 'h(i) < h(j)
 End Function
 Function f_less_than%( i:CELL, j:CELL ) 'f(i) < f(j)
 	Return pathing.f( i ) <= pathing.f( j )
-End Function
-'______________________________________________________________________________
-Function init_pathing_system()
-	pathing_grid_h = (arena_h + 2*arena_offset) / cell_size
-	pathing_grid_w = (arena_w + 2*arena_offset) / cell_size
-	pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
 End Function
 '______________________________________________________________________________
 Function init_pathing_grid_from_walls( level_walls:TList )

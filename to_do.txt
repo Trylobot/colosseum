@@ -1,4 +1,10 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ Remove the static Create() functions from the object definitions, and instead write global "factory" functions to auto-cast {Type}.Create:Object calls to the desired types
+			(e.g. Create_COMPLEX_AGENT:COMPLEX_AGENT( .. ))
+			so that callers do not have to typecast the returned object to the desired type. IT'S ANNOYING.
+	_ create a specialized emitter mode for gibs (EMITTER_TYPE_GIBS)
+			in this mode, the emitter is disabled until the parent explicitly triggers it.
+			On agent death, the emitter is triggered; it then iterates through a list of particles and emits them without changing their positions or velocities (except to add them to the parents').
 	_ for intro, make the player push a button (like "E") to start the vehicle, and then drive out of the locker.
 	_ arena background: increase size to 600x600 for locker rooms
 	_ OPTIMIZATION: Initial checks using CollideRect() to save computing time

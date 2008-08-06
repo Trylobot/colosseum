@@ -120,7 +120,14 @@ End Function
 Function initialize_game()
 	player_level = -1
 	respawn_player()
+	init_pathing_system()
 	load_next_level()
+End Function
+'______________________________________________________________________________
+Function init_pathing_system()
+	pathing_grid_h = (arena_h + 2*arena_offset) / cell_size
+	pathing_grid_w = (arena_w + 2*arena_offset) / cell_size
+	pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
 End Function
 '______________________________________________________________________________
 Function load_next_level()
@@ -131,7 +138,6 @@ Function load_next_level()
 	FLAG_level_intro = True
 	level_passed_ts% = now()
 	player_kills = 0
-	init_pathing_system()
 	init_pathing_grid_from_walls( common_walls )
 	If player_level < level_walls.Length Then init_pathing_grid_from_walls( level_walls[player_level] )
 End Function
@@ -154,21 +160,32 @@ Function prev_enabled_menu_option()
 End Function
 '______________________________________________________________________________
 'Spawning and Respawning
-Function respawn_player()
+Function respawn_player( archetype_index% )
 	If player <> Null And player.managed() Then player.remove_me()
-	Select player_type
-		Case 0
-			player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_LIGHT_TANK], ALIGNMENT_FRIENDLY ))
-		Case 1
-			player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_LASER_TANK], ALIGNMENT_FRIENDLY ))
-		Case 2
-			player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[PLAYER_INDEX_MED_TANK], ALIGNMENT_FRIENDLY ))
-	End Select
-	player.pos_x = arena_offset + arena_w/2
-	player.pos_y = arena_offset + arena_h*3/4
+	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
+	player.pos_x = player_spawn.x
+	player.pos_y = player_spawn.y
 	player.ang = -90
 	player.snap_turrets()
 	Create_and_Manage_CONTROL_BRAIN( player, Null, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD, UNSPECIFIED )
+End Function
+'______________________________________________________________________________
+Function spawn_enemy:COMPLEX_AGENT( archetype_index% )
+	Local nme:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( enemy_archetype[archetype_index], ALIGNMENT_HOSTILE ))
+	If nme.motivator_count = 0 'turret
+		If Rand( 0, 1 ) = 1 Then nme.pos_x = arena_offset + RandF( 0, 0.25*arena_w ) ..
+		Else                     nme.pos_x = arena_offset + RandF( 0.75*arena_w, arena_w )
+		If Rand( 0, 1 ) = 1 Then nme.pos_y = arena_offset + RandF( 0, 0.25*arena_h ) ..
+		Else                     nme.pos_y = arena_offset + RandF( 0.75*arena_h, arena_h )
+		nme.ang = Rand( 0, 359 )
+	Else
+		Local spawn_i% = Rand( 0, enemy_spawn_points.Length - 1 )
+		nme.pos_x = enemy_spawn_points[spawn_i].x
+		nme.pos_y = enemy_spawn_points[spawn_i].y
+		nme.ang = spawn_i * 90
+	End If
+	nme.snap_turrets()
+	Return nme
 End Function
 '______________________________________________________________________________
 Function respawn_enemies()
@@ -182,17 +199,6 @@ Function respawn_enemies()
 			Else If selector < 1.000 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 )
 		Next
 	End If
-End Function
-'______________________________________________________________________________
-Function spawn_enemy:COMPLEX_AGENT( archetype_index% )
-	Local nme:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( enemy_archetype[archetype_index], ALIGNMENT_HOSTILE ))
-	If Rand( 0, 1 ) = 1 Then nme.pos_x = arena_offset + RandF( 0, 0.25*arena_w ) ..
-	Else                     nme.pos_x = arena_offset + RandF( 0.75*arena_w, arena_w )
-	If Rand( 0, 1 ) = 1 Then nme.pos_y = arena_offset + RandF( 0, 0.25*arena_h ) ..
-	Else                     nme.pos_y = arena_offset + RandF( 0.75*arena_h, arena_h )
-	nme.ang = Rand( 0, 359 )
-	nme.snap_turrets()
-	Return nme
 End Function
 '______________________________________________________________________________
 Function spawn_pickup( x#, y# )

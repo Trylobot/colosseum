@@ -133,6 +133,9 @@ Type cVEC 'cartesian coordinate system 2D vector
 		v.x = x; v.y = y
 		Return v
 	End Function
+	Method clone:cVEC()
+		Return cVEC( cVEC.Create( x, y ))
+	End Method
 	
 	Method r#()
 		Return Sqr( Pow( x, 2 ) + Pow( y, 2 ))
@@ -155,6 +158,9 @@ Type pVEC 'polar coordinate system 2D vector
 		v.r = r; v.a = a
 		Return v
 	End Function
+	Method clone:pVEC()
+		Return pVEC( pVEC.Create( r, a ))
+	End Method
 	
 	Method x#()
 		Return (r * Cos( a ))
