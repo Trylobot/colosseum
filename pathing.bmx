@@ -96,8 +96,9 @@ Type PATH_QUEUE
 	Field row_count%, col_count% 'dimensions
 	Field max_size% '(private) row_count*col_count
 	Field item_count% 'number of items in this data structure
-	Field binary_tree:CELL[] 'min-heap binary tree implemented as an arry
+	Field binary_tree:CELL[] 'min-heap binary tree implemented as an array
 	Field registry%[,] 'a dual-purpose array; detects whether a given CELL ordered pair is present in the queue, and also determines the index of items the binary_tree by their location
+	
 	Method New()
 	End Method
 	
@@ -154,14 +155,7 @@ Type PATH_QUEUE
 	Method unregister( c:CELL )
 		registry[c.row,c.col] = REGISTRY_NOT_PRESENT
 	End Method
-	Method reset()
-		For Local i% = 0 To item_count - 1
-			unregister( binary_tree[i] )
-			binary_tree[i] = Null
-		Next
-		item_count = 0
-	End Method
-	
+
 	Method swap%( i%, j% )
 		If i <> j
 			Local swap_cell:CELL = binary_tree[i]
@@ -306,6 +300,14 @@ Type PATH_QUEUE
 '			debug_heap( "update: failure" )
 			Return False
 		End If
+	End Method
+	
+	Method reset()
+		For Local i% = 0 To item_count - 1
+			unregister( binary_tree[i] )
+			binary_tree[i] = Null
+		Next
+		item_count = 0
 	End Method
 	
 End Type
@@ -488,6 +490,11 @@ Type PATHING_STRUCTURE
 			Next
 		Next
 		pathing_visited_list = CreateList()
+		For Local row% = 0 To row_count - 1
+			For Local col% = 0 To col_count - 1
+				potential_paths.registry[ row, col ] = REGISTRY_NOT_PRESENT
+			Next
+		Next
 		potential_paths.reset()
 	End Method
 	

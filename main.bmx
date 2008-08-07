@@ -24,6 +24,7 @@ Repeat
 ?Debug
 	'debugger
 	If KeyHit( KEY_F4 )
+		db_path = Null
 		db_path = find_path( player.pos_x, player.pos_y, MouseX(), MouseY() )
 	End If
 	show_db_path()
