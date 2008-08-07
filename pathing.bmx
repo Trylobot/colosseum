@@ -74,7 +74,7 @@ Type CELL
 End Type
 '______________________________________________________________________________
 Global ALL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_NORTHEAST, DIRECTION_EAST, DIRECTION_SOUTHEAST, DIRECTION_SOUTH, DIRECTION_SOUTHWEST, DIRECTION_WEST, DIRECTION_NORTHWEST ]
-Global cell_size# = 10
+Const cell_size# = 8
 
 Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
 Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
@@ -480,22 +480,32 @@ Type PATHING_STRUCTURE
 	End Method
 	
 	Method reset()
-		For Local row% = 0 To row_count - 1
-			For Local col% = 0 To col_count - 1
-				pathing_came_from[ row, col ].set( row, col )
-				pathing_visited[ row, col ] = False
-				pathing_g[ row, col ] = INFINITY
-				pathing_h[ row, col ] = INFINITY
-				pathing_f[ row, col ] = INFINITY
-			Next
+'		For Local row% = 0 To row_count - 1
+'			For Local col% = 0 To col_count - 1
+'				pathing_came_from[ row, col ].set( row, col )
+'				pathing_visited[ row, col ] = False
+'				pathing_g[ row, col ] = INFINITY
+'				pathing_h[ row, col ] = INFINITY
+'				pathing_f[ row, col ] = INFINITY
+'			Next
+'		Next
+'		pathing_visited_list = CreateList()
+
+		For Local c:CELL = EachIn pathing_visited_list
+			pathing_visited[c.row,c.col] = False
 		Next
 		pathing_visited_list = CreateList()
+		potential_paths.reset()
+		
 		For Local row% = 0 To row_count - 1
 			For Local col% = 0 To col_count - 1
 				potential_paths.registry[ row, col ] = REGISTRY_NOT_PRESENT
 			Next
 		Next
-		potential_paths.reset()
+		For Local i% = 0 To potential_paths.item_count - 1
+			potential_paths.binary_tree[i] = Null
+		Next
+		potential_paths.item_count = 0
 	End Method
 	
 End Type
