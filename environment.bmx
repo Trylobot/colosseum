@@ -25,17 +25,27 @@ common_walls.AddLast([ WALL_SUB, arena_offset+(arena_w/2)-(arena_offset/2),arena
 common_walls.AddLast([ WALL_SUB, 0,arena_offset+(arena_h/2)-(arena_offset/2), arena_offset,arena_offset ])
 
 'South
-Global player_spawn_point:cVEC = ..
-	cVEC( cVEC.Create( arena_offset + arena_w/2, 1.5*arena_offset + arena_h ))
+Global player_spawn_point:POINT = ..
+	Create_POINT( arena_offset + arena_w/2, 1.5*arena_offset + arena_h, -90 )
 'West, North, East
-Global enemy_spawn_points:cVEC[] = [ ..
-	cVEC( cVEC.Create( arena_offset/2, arena_offset + arena_h/2 )), ..
-	cVEC( cVEC.Create( arena_offset + arena_w/2, arena_offset/2 )), ..
-	cVEC( cVEC.Create( 1.5*arena_offset + arena_w, arena_offset + arena_h/2 )) ]
+Global enemy_spawn_points:POINT[] = [ ..
+	Create_POINT( arena_offset/2, arena_offset + arena_h/2, 0 ), ..
+	Create_POINT( arena_offset + arena_w/2, arena_offset/2, 90 ), ..
+	Create_POINT( 1.5*arena_offset + arena_w, arena_offset + arena_h/2, 180 ) ]
 
-Global friendly_door_list:TList 'TList:WIDGET
-	
-Global hostile_door_list:TList 'TList:WIDGET
+Local door:WIDGET
+Global friendly_door_list:TList = CreateList() 'TList:WIDGET
+	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
+		door.parent = player_spawn_point
+		door.attach_at( -25, -25, -90 )
+		door.auto_manage()
+		friendly_door_list.AddLast( door )
+	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
+		door.parent = player_spawn_point
+		door.attach_at( -25, 25, 90 )
+		door.auto_manage()
+		friendly_door_list.AddLast( door )
+Global hostile_door_list:TList = CreateList() 'TList:WIDGET
 
 '______________________________________________________________________________
 Global level_walls:TList[] = New TList[3]
@@ -49,7 +59,17 @@ level_walls[1].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50,100 ])
 level_walls[1].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50,100 ])
 
 '______________________________________________________________________________
-Function open_doors( political_alignment% )
-	
+Function toggle_doors( political_alignment% )
+	Local door:WIDGET
+	Select political_alignment
+		Case ALIGNMENT_FRIENDLY
+			For door = EachIn friendly_door_list
+				door.begin_transformation( 1 )
+			Next
+		Case ALIGNMENT_HOSTILE
+			For door = EachIn hostile_door_list
+				door.begin_transformation( 1 )
+			Next
+	End Select
 End Function
 

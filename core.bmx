@@ -26,8 +26,7 @@ SetBlend( ALPHABLEND )
 'Settings flags
 Global FLAG_in_menu% = True
 Global FLAG_in_shop% = False
-Global FLAG_level_intro% = False
-Global level_intro_freeze_time% = 500
+Global level_intro_time% = 2000
 Global level_passed_ts%
 Global FLAG_game_in_progress% = False
 Global FLAG_game_over% = False
@@ -95,6 +94,7 @@ Function menu_command( command_index% )
 			menu_enabled[6] = False
 			menu_enabled[7] = False
 			FLAG_player_engine_ignition = True
+			toggle_doors( ALIGNMENT_FRIENDLY )
 			
 	End Select
 End Function
@@ -104,6 +104,7 @@ Function reset_game()
 	particle_list_background.Clear()
 	particle_list_foreground.Clear()
 	retained_particle_list.Clear()
+	retained_particle_list_count = 0
 	projectile_list.Clear()
 	friendly_agent_list.Clear()
 	hostile_agent_list.Clear()
@@ -128,7 +129,6 @@ Function load_next_level()
 	player_level :+ 1
 	respawn_enemies()
 	update_all()
-	FLAG_level_intro = True
 	level_passed_ts% = now()
 	player_kills = 0
 	init_pathing_system()
@@ -163,8 +163,8 @@ End Function
 Function respawn_player( archetype_index% )
 	If player <> Null And player.managed() Then player.remove_me()
 	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
-	player.pos_x = player_spawn_point.x
-	player.pos_y = player_spawn_point.y
+	player.pos_x = player_spawn_point.pos_x
+	player.pos_y = player_spawn_point.pos_y
 	player.ang = -90
 	player.snap_turrets()
 	Create_and_Manage_CONTROL_BRAIN( player, Null, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD, UNSPECIFIED )
@@ -180,8 +180,8 @@ Function spawn_enemy:COMPLEX_AGENT( archetype_index% )
 		nme.ang = Rand( 0, 359 )
 	Else
 		Local spawn_i% = Rand( 0, enemy_spawn_points.Length - 1 )
-		nme.pos_x = enemy_spawn_points[spawn_i].x
-		nme.pos_y = enemy_spawn_points[spawn_i].y
+		nme.pos_x = enemy_spawn_points[spawn_i].pos_x
+		nme.pos_y = enemy_spawn_points[spawn_i].pos_y
 		nme.ang = spawn_i * 90
 	End If
 	nme.snap_turrets()

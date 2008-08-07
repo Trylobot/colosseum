@@ -10,13 +10,15 @@ Function update_all()
 	If ..
 	Not FLAG_in_menu And ..
 	Not FLAG_in_shop And ..
-	Not FLAG_level_intro And ..
 	Not FLAG_draw_help
 		
 		'level
 		If hostile_agent_list.IsEmpty()
 			load_next_level()
 		End If
+		For Local w:WIDGET = EachIn environmental_widget_list
+			w.update() 
+		Next
 		
 		'control brains (human + ai)
 		For Local cb:CONTROL_BRAIN = EachIn control_brain_list

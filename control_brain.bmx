@@ -60,7 +60,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		Select input_type
 			
 			Case INPUT_KEYBOARD
-				If (now() - level_passed_ts) >= level_intro_freeze_time
+				If FLAG_player_engine_running
 					'velocity
 					If KeyDown( KEY_W ) Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
 						avatar.drive( 1.0 )

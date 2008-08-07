@@ -37,9 +37,6 @@ Function get_all_input()
 			menu_command( menu_option )
 		End If
 		
-	Else If FLAG_level_intro And (now() - level_passed_ts) >= level_intro_freeze_time
-		If KeyHit( KEY_ENTER ) Then FLAG_level_intro = Not FLAG_level_intro
-		
 	'show in-game help
 	Else
 		If KeyHit( KEY_F1 )

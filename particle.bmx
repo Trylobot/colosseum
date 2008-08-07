@@ -6,6 +6,7 @@ EndRem
 
 '______________________________________________________________________________
 Global retained_particle_list:TList = CreateList()
+Global retained_particle_list_count% = 0
 Global particle_lists:TList = CreateList()
 Global particle_list_background:TList = CreateList(); particle_lists.AddLast( particle_list_background )
 Global particle_list_foreground:TList = CreateList(); particle_lists.AddLast( particle_list_foreground )
@@ -118,6 +119,7 @@ Type PARTICLE Extends POINT
 			If retain
 				'particle will be added to the background permanently
 				add_me( retained_particle_list )
+				retained_particle_list_count :+ 1
 			End If
 		End If
 	End Method	

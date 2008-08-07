@@ -8,6 +8,7 @@ EndRem
 Type TRANSFORM_STATE
 	
 	Field pos_x#, pos_y#
+	Field pos_length#, pos_ang#
 	Field ang#
 	Field red%, green%, blue%
 	Field alpha#
@@ -26,6 +27,7 @@ Type TRANSFORM_STATE
 	transition_time% )
 		Local s:TRANSFORM_STATE = New TRANSFORM_STATE
 		s.pos_x = pos_x; s.pos_y = pos_y
+		cartesian_to_polar( pos_x, pos_y, s.pos_length, s.pos_ang )
 		s.ang = ang
 		s.red = red; s.green = green; s.blue = blue
 		s.alpha = alpha
@@ -41,6 +43,8 @@ Type TRANSFORM_STATE
 	
 End Type
 '______________________________________________________________________________
+Global environmental_widget_list:TList = CreateList()
+
 Const REPEAT_MODE_CYCLIC_WRAP% = 0
 Const REPEAT_MODE_LOOP_BACK% = 1
 
@@ -128,8 +132,10 @@ Type WIDGET Extends MANAGED_OBJECT
 				'currently transforming
 				Local ns:TRANSFORM_STATE = states[ next_state( cur_state )]
 				Local pct# = (Float(now() - transform_begin_ts) / Float(cs.transition_time))
-				state.pos_x = cs.pos_x + pct * (ns.pos_x - cs.pos_x)
-				state.pos_y = cs.pos_y + pct * (ns.pos_y - cs.pos_y)
+				'state.pos_x = cs.pos_x + pct * (ns.pos_x - cs.pos_x)
+				'state.pos_y = cs.pos_y + pct * (ns.pos_y - cs.pos_y)
+				state.pos_length = cs.pos_length + pct * (ns.pos_length - cs.pos_length)
+				state.pos_ang = cs.pos_ang + pct * (ns.pos_ang - cs.pos_ang)
 				state.ang = cs.ang + pct * (ns.ang - cs.ang)
 				state.red = cs.red + pct * (ns.red - cs.red)
 				state.green = cs.green + pct * (ns.green - cs.green)
@@ -149,7 +155,7 @@ Type WIDGET Extends MANAGED_OBJECT
 		SetAlpha( state.alpha )
 		SetScale( state.scale_x, state.scale_y )
 		SetRotation( parent.ang + ang_offset + state.ang )
-		DrawImage( img, parent.pos_x + offset*Cos( offset_ang + parent.ang ) + state.pos_x, parent.pos_y + offset*Sin( offset_ang + parent.ang ) + state.pos_y )
+		DrawImage( img, parent.pos_x + offset*Cos( offset_ang + parent.ang ) + state.pos_length*Cos( ang_offset + state.pos_ang ), parent.pos_y + offset*Sin( offset_ang + parent.ang ) + state.pos_length*Sin( ang_offset + state.pos_ang ))
 	End Method
 	
 	Method begin_transformation( count% = INFINITY )
@@ -191,6 +197,10 @@ Type WIDGET Extends MANAGED_OBJECT
 						End If
 				End Select
 		End Select
+	End Method
+	
+	Method auto_manage()
+		add_me( environmental_widget_list )
 	End Method
 	
 End Type

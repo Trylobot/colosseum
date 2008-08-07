@@ -22,7 +22,6 @@ Function collide_all()
 	If ..
 	Not FLAG_in_menu And ..
 	Not FLAG_in_shop And ..
-	Not FLAG_level_intro And ..
 	Not FLAG_draw_help
 	
 		Local list:TList

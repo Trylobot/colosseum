@@ -43,16 +43,20 @@ Type POINT Extends MANAGED_OBJECT
 	
 	Field pos_x# 'position (x-axis), pixels
 	Field pos_y# 'position (y-axis), pixels
+	Field ang# 'orientation angle, degrees
 	Field vel_x# 'velocity (x-component), pixels per second
 	Field vel_y# 'velocity (y-component), pixels per second
+	Field ang_vel# 'angular velocity, degrees per second
 	Field acc_x# 'acceleration (x-component), pixels per second per second
 	Field acc_y# 'acceleration (y-component), pixels per second per second
-	Field ang# 'orientation angle, degrees
-	Field ang_vel# 'angular velocity, degrees per second
 	Field ang_acc# 'angular acceleration, degrees per second per second
 	
 	Method New()
 	End Method
+	
+'	Method clone:POINT()
+'		Return Create_POINT( pos_x, pos_y, ang, vel_x, vel_y, ang_vel, acc_x, acc_y, ang_acc )
+'	End Method
 	
 	Method update()
 		'velocity
@@ -69,6 +73,22 @@ Type POINT Extends MANAGED_OBJECT
 	
 End Type
 
+Function Create_POINT:POINT( ..
+pos_x# = 0.0, pos_y# = 0.0, ..
+ang# = 0.0, ..
+vel_x# = 0.0, vel_y# = 0.0, ..
+ang_vel# = 0.0, ..
+acc_x# = 0.0, acc_y# = 0.0, ..
+ang_acc# = 0.0 )
+	Local p:POINT = New POINT
+	p.pos_x = pos_x; p.pos_y = pos_y
+	p.ang = ang
+	p.vel_x = vel_x; p.vel_y = vel_y
+	p.ang_vel = ang_vel
+	p.acc_x = acc_x; p.acc_y = acc_y
+	p.ang_acc = ang_acc
+	Return p
+End Function
 '______________________________________________________________________________
 'clock and random
 SeedRnd MilliSecs()

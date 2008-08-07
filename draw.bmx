@@ -6,8 +6,7 @@ EndRem
 
 'Background cached texture
 Global bg_cache:TImage
-Const bg_redraw_delay% = 5000
-Global last_bg_redraw_ts% = now() - bg_redraw_delay
+Const retained_particle_limit% = 1000
 Global str$
 
 '______________________________________________________________________________
@@ -109,17 +108,19 @@ Function draw_all()
 		SetAlpha( 1 )
 		
 		'level intro
-		If FLAG_level_intro
-			SetColor( 255, 255, 127 )
+		If (now() - level_passed_ts) < level_intro_time
 			SetImageFont( consolas_bold_100 )
+			SetColor( 255, 255, 127 )
+			Local pct# = Float(now() - level_passed_ts)/Float(level_intro_time)
+			If pct < 0.25 'fade in
+				SetAlpha( pct / 0.25 )
+			Else If pct < 0.75 'hold
+				SetAlpha( 1 )
+			Else 'fade out
+				SetAlpha( 1 - (( pct - 0.75) / 0.25 ))
+			End If
 			str = "LEVEL " + (player_level + 1)
 			DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 )
-			If (now() - level_passed_ts) >= level_intro_freeze_time
-				SetColor( 255, 255, 255 )
-				SetImageFont( consolas_normal_24 )
-				str = "press [enter] to continue"
-				DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 + 45 )
-			End If
 		End If
 		
 	End If
@@ -141,12 +142,10 @@ Function draw_arena_bg()
 	For Local part:PARTICLE = EachIn retained_particle_list
 		part.draw()
 	Next
-	If (now() - last_bg_redraw_ts) > bg_redraw_delay
+	If retained_particle_list_count > retained_particle_limit
 		GrabImage( bg_cache, 0,0 )
-		last_bg_redraw_ts = now()
-		For Local part:PARTICLE = EachIn retained_particle_list
-			part.remove_me()
-		Next
+		retained_particle_list.Clear()
+		retained_particle_list_count = 0
 	End If
 		
 End Function
@@ -159,6 +158,10 @@ Function draw_arena_fg()
 	
 	DrawImage( img_arena_fg, 0,0 )
 	If player_level < level_walls.Length Then draw_walls( level_walls[player_level] )
+
+	For Local w:WIDGET = EachIn environmental_widget_list
+		w.draw()
+	Next
 End Function
 '______________________________________________________________________________
 Function draw_walls( walls:TList )

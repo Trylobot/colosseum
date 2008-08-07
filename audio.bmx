@@ -53,7 +53,7 @@ Function start_player_engine()
 	SetChannelVolume( engine_start, 0.5 )
 	ResumeChannel( engine_start )
 	FLAG_player_engine_ignition = False
-	FLAG_player_engine_running = True
+	FLAG_player_engine_running = False
 End Function
 '______________________________________________________________________________
 Function tweak_engine_idle()
@@ -81,6 +81,11 @@ Function tweak_engine_idle()
 			SetChannelRate( engine_idle, 1.0 + (p_speed / 2.0) )
 		End If
 	Else 'Not FLAG_playing_engine_running
+		If engine_start <> Null
+			If Not ChannelPlaying( engine_start )
+				FLAG_player_engine_running = True
+			End If
+		End If
 		If engine_idle <> Null
 			StopChannel( engine_idle )
 			engine_idle = Null
