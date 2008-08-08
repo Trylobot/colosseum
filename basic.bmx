@@ -5,6 +5,22 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+'clock and random
+SeedRnd MilliSecs()
+Global clock:TTimer = CreateTimer( 1000 )
+Function now%()
+	Return clock.Ticks()
+End Function
+Function RandF#( lo#, hi# )
+	Return lo + (hi-lo)*RndFloat()
+End Function
+Function Pow#( x#, p% )
+	For Local i% = 1 To p - 1
+		x :* x
+	Next
+	Return x
+End Function
+'______________________________________________________________________________
 Type MANAGED_OBJECT
 	
 	Field name$
@@ -90,22 +106,6 @@ ang_acc# = 0.0 )
 	Return p
 End Function
 '______________________________________________________________________________
-'clock and random
-SeedRnd MilliSecs()
-Global clock:TTimer = CreateTimer( 1000 )
-Function now%()
-	Return clock.Ticks()
-End Function
-Function RandF#( lo#, hi# )
-	Return lo + (hi-lo)*RndFloat()
-End Function
-Function Pow#( x#, p% )
-	For Local i% = 1 To p - 1
-		x :* x
-	Next
-	Return x
-End Function
-'______________________________________________________________________________
 'vector & angle functions
 Function angle_sum#( a1#, a2# )
 	Local a# = (a1 + a2) Mod 360
@@ -118,11 +118,11 @@ End Function
 Function vector_angle#( vx#, vy# )
 	Return ATan2( vy, vx )
 End Function
-Function vector_diff_length#( ax#, ay#, bx#, by# )
+Function vector_diff_length#( ax#, ay#, bx#, by# ) 'distance /a/ and /b/
 	Local dx# = bx - ax, dy# = by - ay
 	Return Sqr( Pow(dx,2) + Pow(dy,2) )
 End Function
-Function vector_diff_angle#( ax#, ay#, bx#, by# )
+Function vector_diff_angle#( ax#, ay#, bx#, by# ) 'angle of line connecting /a/ to /b/
 	Local dx# = bx - ax, dy# = by - ay
 	Return ATan2( dy, dx )
 End Function
@@ -138,6 +138,42 @@ Function angle_diff#( a1#, a2# )
 	Local a# = (a1 - a2) Mod 360
 	If a >= 0 Then Return a ..
 	Else           Return a + 360
+End Function
+'______________________________________________________________________________
+Function line_intersects_line( v1:cVEC, v2:cVEC, v3:cVEC, v4:cVEC )
+	Local denom# = ((v4.y-v3.y)*(v2.x-v1.x))-((v4.x-v3.x)*(v2.y-v1.y))
+	Local num# =   ((v4.x-v3.x)*(v1.y-v3.y))-((v4.y-v3.y)*(v1.x-v3.x))
+	Local num2# =  ((v2.x-v1.x)*(v1.y-v3.y))-((v2.y-v1.y)*(v1.x-v3.x))
+	If denom = 0.0
+		Return False 'coincident or parallel (no intersection possible)
+	End If
+	
+	Local ua# = num/denom
+	Local ub# = num2/denom
+	Return (ua >= 0.0 And ua <= 1.0) And (ub >= 0.0 And ub <= 1.0)
+End Function
+'______________________________________________________________________________
+Function line_intersects_rect( v1:cVEC, v2:cVEC, r:cVEC, r_dim:cVEC )
+	Local lower_left:cVEC = cVEC.Create( r.x, r.y+r_dim.y )
+	Local upper_right:cVEC = cVEC.Create( r.x+r_dim.x, r.y )
+	Local upper_left:cVEC = cVEC.Create( r.x, r.y )
+	Local lower_right:cVEC = cVEC.Create( r.x+r_dim.x, r.y+r_dim.y )
+	
+	'line is completely inside of rect (will never happen in my game, as this line is longer than any rect that will be tested
+'	If  (v1.x > lower_left.x And v1.x < upper_right.x) And (v1.y < lower_left.y And v1.y > upper_right.y) ..
+'	And (v2.x > lower_left.x And v2.x < upper_right.x) And (v2.y < lower_left.y And v2.y > upper_right.y)
+'		Return True
+'	End If
+	
+	'line intersects one of the lines making up the rectangle's borders
+	If line_intersect_line( v1,v2, upper_left,lower_left ) ..
+	Or line_intersect_line( v1,v2, lower_left,lower_right ) ..
+	Or line_intersect_line( v1,v2, upper_left,upper_right ) ..
+	Or line_intersect_line( v1,v2, upper_right,lower_right )
+		Return True
+	Else
+		Return False
+	End If
 End Function
 '______________________________________________________________________________
 Type cVEC 'cartesian coordinate system 2D vector

@@ -56,6 +56,33 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
+	Method acquire_target:AGENT()
+		Local ag:AGENT = Null, dist#
+		Local closest_rival_agent:AGENT = Null, dist_to_ag# = -1
+		Select avatar.political_alignment
+			Case ALIGNMENT_NONE
+				Return Null
+			Case ALIGNMENT_FRIENDLY
+				For ag = EachIn hostile_agent_list
+					dist = vector_diff_length( avatar.pos_x, avatar.pos_y, ag.pos_x, ag.pos_y )
+					If dist_to_ag = -1 Or dist < dist_to_ag
+						dist_to_ag = dist
+						closest_rival_agent = ag
+					End If
+				Next
+				Return closest_rival_agent
+			Case ALIGNMENT_HOSTILE
+				For ag = EachIn friendly_agent_list
+					dist = vector_diff_length( avatar.pos_x, avatar.pos_y, ag.pos_x, ag.pos_y )
+					If dist_to_ag = -1 Or dist < dist_to_ag
+						dist_to_ag = dist
+						closest_rival_agent = ag
+					End If
+				Next
+				Return closest_rival_agent
+		End Select
+	End Method
+	
 	Method input_control()
 		Select input_type
 			
@@ -134,7 +161,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						If Not FLAG_waiting Then avatar.fire_turret( 0 )
 					End If
 				Else
+					'no target
 					avatar.turn_turrets( 0 )
+					target = acquire_target()
 				End If
 				
 			Case AI_BRAIN_SEEKER
@@ -155,13 +184,30 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					'no target
 					avatar.drive( 0.0 )
 					avatar.turn( 0.0 )
+					target = acquire_target()
 				End If
 				
 			Case AI_BRAIN_TANK
 				If target <> Null And Not target.dead()
-					
+					'if it can see the target, then..
+						'if its turret is pointing at the target, then..
+							'fire turret
+						'else (not pointing at target)..
+							'aim the turret at the target
+					'else (can't see the target) -- if it has a path to the target, then..
+						'if it is pointed toward the path's next waypoint, then..
+							'drive forward
+						'else (not pointed toward next waypoint)..
+							'turn towards the next waypoint
+					'else (can't see the target, no path to the target)
+						'attempt to get a path to the target (which will not be used until the next "think cycle"
+						'stop driving
+						'return the turret to its default position
 				Else
-					
+					'attempt to acquire a new target
+					avatar.drive( 0.0 )
+					avatar.turn( 0.0 )
+					target = acquire_target()
 				End If				
 				
 		End Select

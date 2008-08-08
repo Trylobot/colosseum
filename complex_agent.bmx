@@ -20,6 +20,8 @@ Const ALIGNMENT_HOSTILE% = 2
 
 Type COMPLEX_AGENT Extends AGENT
 	
+	Field political_alignment% '{friendly|hostile}
+	
 	Field turrets:TURRET[] 'turret array
 	Field turret_count% 'number of turret slots
 	Field firing_sequence%[][][]
@@ -94,6 +96,11 @@ Type COMPLEX_AGENT Extends AGENT
 		Local c:COMPLEX_AGENT = New COMPLEX_AGENT
 		
 		'static fields
+		If political_alignment <> ALIGNMENT_NONE
+			c.political_alignment = political_alignment
+		Else 'political_alignment == ALIGNMENT_NONE
+			c.political_alignment = other.political_alignment
+		End If
 		c.img = other.img
 		c.gibs = other.gibs
 		c.max_health = other.max_health
