@@ -37,7 +37,17 @@ Function debug_brain_under_mouse()
 			If cb.target <> Null
 				debug_drawtext( "target -> " + cb.target.name )
 			Else 'cb.target == Null
-				debug_drawtext( "target -> null" )
+				debug_drawtext( "no target" )
+			End If
+			If cb.see_target( True )
+				debug_drawtext( "can see target" )
+			Else
+				debug_drawtext( "no line of sight" )
+			End If
+			If cb.get_path_to_target( True ) <> Null
+				debug_drawtext( "path to target -> " + cb.path.Count() + " waypoints" )
+			Else
+				debug_drawtext( "no path" )
 			End If
 			
 			'manipulate by keyboard

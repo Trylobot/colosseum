@@ -116,7 +116,7 @@ Function collide_all()
 		Next
 		
 		'collisions between walls and {agents|projectiles}
-		Local all_walls:TList = get_level_walls( player_level ) 'combine_lists( common_walls, get_level_walls( player_level ))
+		Local all_walls:TList = combine_lists( common_walls, get_level_walls( player_level ))
 		For Local wall%[] = EachIn all_walls
 			SetRotation( 0 )
 			result = CollideRect( wall[1],wall[2], wall[3],wall[4], AGENT_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )

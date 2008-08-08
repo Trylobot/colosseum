@@ -1,4 +1,6 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ definitely need a cool animated spawn particle for turrets, as they cannot move.
+			thinking something like a metal hatch with teeth and two doors that opens up or something, and then explodes/gibs
 	_ animated "spawn" particle for temporary use, when enemies spawn in.
 	_ animated particles (for frame-by-frame explosions, it really is necessary.)
 	_ Create global POINT objects to represent the gates, and have widgets attached to them.

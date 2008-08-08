@@ -90,7 +90,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Case ALIGNMENT_FRIENDLY
 				For ag = EachIn hostile_agent_list
 					dist = avatar.dist_to( ag )
-					If dist_to_ag = -1 Or dist < dist_to_ag
+					If dist_to_ag < 0 Or dist < dist_to_ag
 						dist_to_ag = dist
 						closest_rival_agent = ag
 					End If
@@ -99,7 +99,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Case ALIGNMENT_HOSTILE
 				For ag = EachIn friendly_agent_list
 					dist = avatar.dist_to( ag )
-					If dist_to_ag = -1 Or dist < dist_to_ag
+					If dist_to_ag < 0 Or dist < dist_to_ag
 						dist_to_ag = dist
 						closest_rival_agent = ag
 					End If
@@ -108,8 +108,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
-	Method see_target%()
-		If target <> Null And (now() - last_look_target_ts < look_target_delay)
+	Method see_target%( delay_override% = False )
+		If target <> Null And (delay_override Or (now() - last_look_target_ts < look_target_delay))
 			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
 			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
 			'for each wall in the level
@@ -128,8 +128,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method get_path_to_target%()
-		If (now() - last_find_path_ts < find_path_delay)
+	Method get_path_to_target%( delay_override% = False )
+		If target <> Null And (delay_override Or (now() - last_find_path_ts < find_path_delay))
 			path = find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y )
 			If path <> Null And Not path.IsEmpty()
 				Return True
@@ -226,18 +226,24 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				
 			Case AI_BRAIN_SEEKER
 				If target <> Null And Not target.dead()
-					'chase after current target; if target in range, self-destruct
-					avatar.drive( 1.0 )
-					ang_to_target = avatar.ang_to( target )
-					Local diff# = angle_diff( avatar.ang, ang_to_target )
-					If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
-						If diff < 180 Then avatar.turn( -1.0 ) ..
-						Else               avatar.turn( 1.0 )
+					'if it can see the target, chase it.
+					If see_target()
+						'chase after current target; if target in range, self-destruct
+						avatar.drive( 1.0 )
+						ang_to_target = avatar.ang_to( target )
+						Local diff# = angle_diff( avatar.ang, ang_to_target )
+						If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
+							If diff < 180 Then avatar.turn( -1.0 ) ..
+							Else               avatar.turn( 1.0 )
+						Else
+							avatar.turn( 0 )
+						End If
+						dist_to_target = avatar.dist_to( target )
+						If dist_to_target <= 20 Then avatar.self_destruct( target )
 					Else
-						avatar.turn( 0 )
+						avatar.drive( 0.0 )
+						avatar.turn( 0.0 )
 					End If
-					dist_to_target = avatar.dist_to( target )
-					If dist_to_target <= 25 Then avatar.self_destruct( target )
 				Else
 					'no target
 					avatar.drive( 0.0 )

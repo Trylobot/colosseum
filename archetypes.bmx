@@ -220,8 +220,6 @@ Global PLAYER_INDEX_LASER_TANK% = postfix_index()
 Global PLAYER_INDEX_MED_TANK% = postfix_index()
 
 complex_agent_archetype[ENEMY_INDEX_MR_THE_BOX] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mr. the box", img_box, img_box_gib, AI_BRAIN_MR_THE_BOX, 50, 35, 200.0, 10.0, 0, 1, 6.0, 12.0 ))
-	complex_agent_archetype[ENEMY_INDEX_MR_THE_BOX].rear_trail_emitters[ 0] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ))
-	complex_agent_archetype[ENEMY_INDEX_MR_THE_BOX].rear_trail_emitters[ 0].attach_to( complex_agent_archetype[ENEMY_INDEX_MR_THE_BOX], -8, 0, 0, 3, -90, 90, 2, 4, -90, 90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 complex_agent_archetype[ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun emplacement", img_enemy_stationary_emplacement_1_chassis, img_tower_gibs, AI_BRAIN_TURRET, 100, 100, 1000.0, 0, 1, 0, 0, 0, True ))
 	complex_agent_archetype[ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET], 0 ).attach_at( 0, 0 )
 complex_agent_archetype[ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "cannon emplacement", img_enemy_stationary_emplacement_1_chassis, img_tower_gibs, AI_BRAIN_TURRET, 100, 100, 1000.0, 0, 1, 0, 0, 0, True ))

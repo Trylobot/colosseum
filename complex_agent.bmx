@@ -318,14 +318,14 @@ Type COMPLEX_AGENT Extends AGENT
 				For Local t:TURRET = EachIn turrets
 					If t.max_heat <> INFINITY Then tur_list.AddLast( t )
 				Next
-				Local lowest_cur_heat% = -1, lowest_cur_heat_turret:TURRET
+				Local highest_cur_heat% = -1, highest_cur_heat_turret:TURRET
 				For Local t:TURRET = EachIn tur_list
-					If t.cur_heat < lowest_cur_heat Or lowest_cur_heat < 0
-						lowest_cur_heat = t.cur_heat
-						lowest_cur_heat_turret = t
+					If t.cur_heat > highest_cur_heat
+						highest_cur_heat = t.cur_heat
+						highest_cur_heat_turret = t
 					End If
 				Next
-				If lowest_cur_heat_turret <> Null Then lowest_cur_heat_turret.re_stock( pkp.pickup_amount )
+				If highest_cur_heat_turret <> Null Then highest_cur_heat_turret.cur_heat = 0
 			
 		End Select
 		pkp.remove_me()

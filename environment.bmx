@@ -8,15 +8,15 @@ EndRem
 'All Spawnpoints
 'South
 Global player_spawn_point:POINT = ..
-	Create_POINT( arena_offset + arena_w/2, 1.5*arena_offset + arena_h, -90 )
+	Create_POINT( Floor(arena_offset + arena_w/2), Floor(1.5*arena_offset + arena_h), -90 )
 'West, North, East
 Global enemy_spawn_points:POINT[] = [ ..
-	Create_POINT( arena_offset/2, arena_offset + arena_h/2, 0 ), ..
-	Create_POINT( arena_offset + arena_w/2, arena_offset/2, 90 ), ..
-	Create_POINT( 1.5*arena_offset + arena_w, arena_offset + arena_h/2, 180 ) ]
+	Create_POINT( Floor(arena_offset/2), Floor(arena_offset + arena_h/2), 0 ), ..
+	Create_POINT( Floor(arena_offset + arena_w/2), Floor(arena_offset/2), 90 ), ..
+	Create_POINT( Floor(1.5*arena_offset + arena_w), Floor(arena_offset + arena_h/2), 180 ) ]
 
 'Serial Enemy Spawning by Squad
-Const SPAWN_CLEAR_DIST# = 25.0
+Const SPAWN_CLEAR_DIST# = 12.50
 
 Global enemy_spawn_queue:TList = CreateList()
 Global cur_squad:TList = Null
@@ -40,7 +40,9 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 			cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
 		End If
 		'if there is no last spawned enemy, or the last spawned enemy is clear of the spawn, or the last spawned enemy has died (yeah it can happen.. CAMPER!)
-		If last_spawned_enemy = Null Or cur_spawn_point.dist_to( last_spawned_enemy ) >= SPAWN_CLEAR_DIST Or last_spawned_enemy.dead()
+		If last_spawned_enemy = Null ..
+		Or cur_spawn_point.dist_to( last_spawned_enemy ) >= SPAWN_CLEAR_DIST ..
+		Or (last_spawned_enemy <> Null And last_spawned_enemy.dead())
 			last_spawned_enemy = COMPLEX_AGENT( cur_squad.First() )
 			cur_squad.RemoveFirst()
 			last_spawned_enemy.auto_manage( ALIGNMENT_HOSTILE )
@@ -58,6 +60,7 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 		If Not enemy_spawn_queue.IsEmpty()
 			cur_squad = TList( enemy_spawn_queue.First() )
 			enemy_spawn_queue.RemoveFirst()
+			cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
 			Return False
 		Else 'enemy_spawn_queue.IsEmpty()
 			cur_squad = Null
@@ -82,20 +85,15 @@ End Function
 Global level_squads%[][][] = ..
 [ ..
 	[	..
-		[ ..
-			ENEMY_INDEX_MR_THE_BOX, ..
-			ENEMY_INDEX_MR_THE_BOX, ..
-			ENEMY_INDEX_MR_THE_BOX, ..
-			ENEMY_INDEX_MR_THE_BOX ..
-		], ..
-		[ ..
-			ENEMY_INDEX_MOBILE_MINI_BOMB, ..
-			ENEMY_INDEX_MOBILE_MINI_BOMB ..
-		], ..
-		[ ..
-			ENEMY_INDEX_MOBILE_MINI_BOMB, ..
-			ENEMY_INDEX_MOBILE_MINI_BOMB ..
-		] ..
+		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
+		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
+		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
+		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ] ..
+	], ..
+	[ ..
+		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
+		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
+		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ] ..
 	] ..
 ]
 
@@ -104,24 +102,27 @@ Global level_squads%[][][] = ..
 'assumes origin of (arena_offset,arena_offset)
 'TList:[ WALL_TYPE%, X%, Y%, W%, H% ]
 Const WALL_ADD% = PATH_BLOCKED
-Const WALL_SUB% = PATH_PASSABLE
+'Const WALL_SUB% = PATH_PASSABLE (no longer used)
 
 Global common_walls:TList = CreateList()
-'outer walls: N, E, S, W
-common_walls.AddLast([ WALL_ADD, 0,0, arena_offset+arena_w,arena_offset ])
-common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,0, arena_offset,arena_offset+arena_h ])
-common_walls.AddLast([ WALL_ADD, arena_offset,arena_offset+arena_h, arena_offset+arena_w,arena_offset ])
-common_walls.AddLast([ WALL_ADD, 0,arena_offset, arena_offset,arena_offset+arena_h ])
-'locker rooms: N, E, S, W
-common_walls.AddLast([ WALL_SUB, arena_offset+(arena_w/2)-(arena_offset/2),0, arena_offset,arena_offset ])
-common_walls.AddLast([ WALL_SUB, arena_offset+arena_w,arena_offset+(arena_h/2)-(arena_offset/2), arena_offset,arena_offset ])
-common_walls.AddLast([ WALL_SUB, arena_offset+(arena_w/2)-(arena_offset/2),arena_offset+arena_h, arena_offset,arena_offset ])
-common_walls.AddLast([ WALL_SUB, 0,arena_offset+(arena_h/2)-(arena_offset/2), arena_offset,arena_offset ])
+'outer walls: N,N, E,E, S,S, W,W
+common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset+(arena_w/2)-(arena_offset/2),arena_offset ])
+common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),0,                    arena_offset+(arena_w/2)-(arena_offset/2),arena_offset ])
+common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,0,                                         arena_offset,arena_offset+(arena_h/2)-(arena_offset/2) ])
+common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,arena_offset+(arena_h/2)+(arena_offset/2), arena_offset,arena_offset+(arena_h/2)-(arena_offset/2) ])
+common_walls.AddLast([ WALL_ADD, 0,arena_offset+arena_h,                                         arena_offset+(arena_w/2)-(arena_offset/2),arena_offset ])
+common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),arena_offset+arena_h, arena_offset+(arena_w/2)-(arena_offset/2),arena_offset ])
+common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset,arena_offset+(arena_h/2)-(arena_offset/2) ])
+common_walls.AddLast([ WALL_ADD, 0,arena_offset+(arena_h/2)+(arena_offset/2),                    arena_offset,arena_offset+(arena_h/2)-(arena_offset/2) ])
 
 Global level_walls:TList[] = New TList[4]
 For Local i% = 0 To level_walls.Length - 1
 	level_walls[i] = CreateList()
 Next
+
+'level_walls[0] 'empty
+
+'level_walls[1] 'empty
 
 level_walls[2].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300,50 ])
 
