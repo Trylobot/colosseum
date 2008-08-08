@@ -12,11 +12,30 @@ Const AGENT_COLLISION_LAYER% = $0002
 Const SECONDARY_AGENT_COLLISION_LAYER% = $0004
 Const PROJECTILE_COLLISION_LAYER% = $0008
 Const SECONDARY_PROJECTILE_COLLISION_LAYER% = $0010
-Const PICKUP_COLLISION_LAYER% = $0011
+Const WALL_COLLISION_LAYER% = $0020
+Const PICKUP_COLLISION_LAYER% = $0040
 
 Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 500.0 'energy multiplier for all collisions involving projectiles and agents
 Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.012 'energy multiplier for all projectile-projectile collisions
 Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.010 'energy multiplier for all agent-agent collisions
+
+Function clamp_ang_to_bifurcate_wall_diagonals( ang#, wall%[] )
+	Local wx# = wall_mid_x( wall ), wy# = wall_mid_y(wall)
+	'wall_angle[4] = angle from mid to [ top_left, top_right, bottom_right, bottom_left ].
+	Local wall_angle#[] = ..
+	[	vector_diff_angle( wx,wy, wall[1],        wall[2] ), ..
+		vector_diff_angle( wx,wy, wall[1]+wall[3],wall[2] ), ..
+		vector_diff_angle( wx,wy, wall[1]+wall[3],wall[2]+wall[4] ), ..
+		vector_diff_angle( wx,wy, wall[1],        wall[2]+wall[4] ) ]
+	
+	For Local i% = 0 To 3
+		If      ang < wall_angle[0] Then Return 180 ..
+		Else If ang < wall_angle[1] Then Return 270 ..
+		Else If ang < wall_angle[2] Then Return 0 ..
+		Else If ang < wall_angle[3] Then Return 90 ..
+		Else                             Return 180
+	Next
+End Function
 
 Function collide_all()
 	If ..
@@ -28,46 +47,10 @@ Function collide_all()
 		Local ag:COMPLEX_AGENT, other:COMPLEX_AGENT
 		Local proj:PROJECTILE, other_proj:PROJECTILE
 		Local pkp:PICKUP
-		Local result:Object[]
+		Local result:Object[], result_obj:Object
 		
-		'boundary collisions (disabled)
-		Rem
-		For list = EachIn agent_lists
-			For ag = EachIn list
-				If ag.pos_x < 0
-					ag.pos_x = 0
-					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, 750.0/ag.mass, 100 )))
-				Else If ag.pos_x > arena_w
-					ag.pos_x = arena_w
-					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 180, 750.0/ag.mass, 100 )))
-				End If
-				If ag.pos_y < 0
-					ag.pos_y = 0
-					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 90, 750.0/ag.mass, 100 )))
-				Else If ag.pos_y > arena_w
-					ag.pos_y = arena_w
-					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 270, 750.0/ag.mass, 100 )))
-				End If
-			Next
-		Next
-		For proj = EachIn projectile_list
-			If proj.pos_x < 0 Or proj.pos_x > arena_w Or proj.pos_y < 0 Or  proj.pos_y > arena_w
-				'impact with outer wall
-				proj.impact()
-				'remove projectile
-				proj.remove_me()
-			End If
-		Next
-		EndRem
-
 		ResetCollisions()
 		
-		'collisions between agents and walls
-		
-		
-		'collisions between projectiles and walls
-		
-
 		'collisions between projectiles and complex_agents
 		For list = EachIn agent_lists
 			For ag = EachIn list
@@ -132,6 +115,43 @@ Function collide_all()
 			Next
 		Next
 		
+		'collisions between walls and agents or projectiles
+		Local all_walls:TList = get_level_walls( player_level ) 'combine_lists( common_walls, get_level_walls( player_level ))
+		For Local wall%[] = EachIn all_walls
+			SetRotation( 0 )
+			result = CollideRect( wall[1],wall[2], wall[3],wall[4], AGENT_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
+			For ag = EachIn result
+				'COLLISION! between {ag} and {wall}
+				Local offset#, offset_ang#
+				cartesian_to_polar( ag.pos_x - wall_mid_x(wall), ag.pos_y - wall_mid_y(wall), offset, offset_ang )
+				ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall ), ag.mass/75.0, 100 )))
+			Next
+		Next
+		For Local wall%[] = EachIn all_walls
+			SetRotation( 0 )
+			result = CollideRect( wall[1],wall[2], wall[3],wall[4], PROJECTILE_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
+			For proj = EachIn result
+				'COLLISION! between {proj} and {wall}
+				proj.impact()
+				proj.remove_me()
+			Next
+		Next
+
+		'collisions between player and pickups
+		For pkp = EachIn pickup_list
+			SetRotation( 0 )
+			CollideImage( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
+		Next
+		SetRotation( player.ang )
+		result = CollideImage( player.img, player.pos_x, player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, player )
+		For pkp = EachIn result
+			'COLLISION! between {player} and {pkp}
+			'give pickup to player
+			player.grant_pickup( pkp ) 'i can has lewts?!
+			'dump out early; only the first pickup collided with will be applied this frame
+			Exit
+		Next
+
 		'collisions between projectiles and other projectiles (disabled)
 		Rem
 		For proj = EachIn projectile_list
@@ -154,20 +174,6 @@ Function collide_all()
 		Next 
 		EndRem
 		
-		'collisions between player and pickups
-		For pkp = EachIn pickup_list
-			SetRotation( 0 )
-			CollideImage( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
-		Next
-		SetRotation( player.ang )
-		result = CollideImage( player.img, player.pos_x, player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, player )
-		For pkp = EachIn result
-			'COLLISION! between {player} and {pkp}
-			'give pickup to player
-			player.grant_pickup( pkp ) 'i can has lewts?!
-			'dump out early; only the first pickup collided with will be applied this frame
-			Exit
-		Next
 	End If
 End Function
 

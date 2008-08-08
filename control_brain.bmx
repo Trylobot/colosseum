@@ -60,7 +60,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method waypoint_reached%()
 		If waypoint <> Null
-			dist_to_target = vector_diff_length( avatar.pos_x,avatar.pos_y, waypoint.x,waypoint.y )
+			dist_to_target = avatar.dist_to_cVEC( waypoint )
 			If dist_to_target <= WAYPOINT_RADIUS
 				Return True
 			Else
@@ -89,7 +89,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Return Null
 			Case ALIGNMENT_FRIENDLY
 				For ag = EachIn hostile_agent_list
-					dist = vector_diff_length( avatar.pos_x, avatar.pos_y, ag.pos_x, ag.pos_y )
+					dist = avatar.dist_to( ag )
 					If dist_to_ag = -1 Or dist < dist_to_ag
 						dist_to_ag = dist
 						closest_rival_agent = ag
@@ -98,7 +98,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Return closest_rival_agent 'TARGET ACQUIRED!
 			Case ALIGNMENT_HOSTILE
 				For ag = EachIn friendly_agent_list
-					dist = vector_diff_length( avatar.pos_x, avatar.pos_y, ag.pos_x, ag.pos_y )
+					dist = avatar.dist_to( ag )
 					If dist_to_ag = -1 Or dist < dist_to_ag
 						dist_to_ag = dist
 						closest_rival_agent = ag
@@ -205,7 +205,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Case AI_BRAIN_TURRET
 				If target <> Null And Not target.dead()
 					'if not facing target, face target; when facing target, fire
-					ang_to_target = vector_diff_angle( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
+					ang_to_target = avatar.ang_to( target )
 					Local diff# = angle_diff( avatar.turrets[0].ang, ang_to_target )
 					If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
 						If diff < 180 Then avatar.turn_turrets( -1.0 ) ..
@@ -228,7 +228,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				If target <> Null And Not target.dead()
 					'chase after current target; if target in range, self-destruct
 					avatar.drive( 1.0 )
-					ang_to_target = vector_diff_angle( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
+					ang_to_target = avatar.ang_to( target )
 					Local diff# = angle_diff( avatar.ang, ang_to_target )
 					If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
 						If diff < 180 Then avatar.turn( -1.0 ) ..
@@ -236,7 +236,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					Else
 						avatar.turn( 0 )
 					End If
-					dist_to_target = vector_diff_length( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
+					dist_to_target = avatar.dist_to( target )
 					If dist_to_target <= 25 Then avatar.self_destruct( target )
 				Else
 					'no target
@@ -249,7 +249,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				If target <> Null And Not target.dead()
 					'if it can see the target, then..
 					If see_target()
-						ang_to_target = vector_diff_angle( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
+						ang_to_target = avatar.ang_to( target )
 						Local diff# = angle_diff( avatar.turrets[0].ang, ang_to_target )
 						'if its turret is pointing at the target, then..
 						If Abs(diff) <= 2.500
@@ -263,7 +263,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						End If
 					'else (can't see the target) -- if it has a path to the target, then..
 					Else If path <> Null And Not path.IsEmpty() And waypoint <> Null
-						ang_to_target = vector_diff_angle( avatar.pos_x, avatar.pos_y, waypoint.x, waypoint.y )
+						ang_to_target = avatar.ang_to_cVEC( waypoint )
 						Local diff# = angle_diff( avatar.ang, ang_to_target )
 						'if it is pointed toward the path's next waypoint, then..
 						If Abs(diff) <= 2.500

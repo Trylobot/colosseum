@@ -55,6 +55,14 @@ Function get_new_id%()
 	Return next_managed_object_id
 End Function
 '______________________________________________________________________________
+Function combine_lists:TList( list1:TList, list2:TList )
+	Local newlist:TList = list1.Copy()
+	For Local obj:Object = EachIn list2
+		list1.AddLast( obj )
+	Next
+	Return newlist
+End Function
+'______________________________________________________________________________
 Type POINT Extends MANAGED_OBJECT
 	
 	Field pos_x# 'position (x-axis), pixels
@@ -85,6 +93,20 @@ Type POINT Extends MANAGED_OBJECT
 		ang_vel :+ ang_acc
 		'orientation
 		ang = angle_sum( ang, ang_vel )
+	End Method
+	
+	Method dist_to#( other:POINT )
+		Return Sqr( Pow(other.pos_x-pos_x,2) + Pow(other.pos_y-pos_y,2) )
+	End Method
+	Method dist_to_cVEC#( other:cVEC )
+		Return Sqr( Pow(other.x-pos_x,2) + Pow(other.y-pos_y,2) )
+	End Method
+	
+	Method ang_to#( other:POINT )
+		Return ATan2( other.pos_y-pos_y, other.pos_x-pos_x )
+	End Method
+	Method ang_to_cVEC#( other:cVEC )
+		Return ATan2( other.y-pos_y, other.x-pos_x )
 	End Method
 	
 End Type
@@ -118,14 +140,14 @@ End Function
 Function vector_angle#( vx#, vy# )
 	Return ATan2( vy, vx )
 End Function
-Function vector_diff_length#( ax#, ay#, bx#, by# ) 'distance /a/ and /b/
-	Local dx# = bx - ax, dy# = by - ay
-	Return Sqr( Pow(dx,2) + Pow(dy,2) )
-End Function
-Function vector_diff_angle#( ax#, ay#, bx#, by# ) 'angle of line connecting /a/ to /b/
-	Local dx# = bx - ax, dy# = by - ay
-	Return ATan2( dy, dx )
-End Function
+'Function vector_diff_length#( ax#, ay#, bx#, by# ) 'distance /a/ and /b/
+'	Local dx# = bx - ax, dy# = by - ay
+'	Return Sqr( Pow(dx,2) + Pow(dy,2) )
+'End Function
+'Function vector_diff_angle#( ax#, ay#, bx#, by# ) 'angle of line connecting /a/ to /b/
+'	Local dx# = bx - ax, dy# = by - ay
+'	Return ATan2( dy, dx )
+'End Function
 Function cartesian_to_polar( x#, y#, r# Var, a# Var )
 	r = Sqr( Pow(x,2) + Pow(y,2) )
 	a = ATan2( y, x )
@@ -138,6 +160,14 @@ Function angle_diff#( a1#, a2# )
 	Local a# = (a1 - a2) Mod 360
 	If a >= 0 Then Return a ..
 	Else           Return a + 360
+End Function
+'______________________________________________________________________________
+Function round_to_nearest#( x#, interval# )
+	If (x Mod interval) < (interval / 2.0)
+		Return (Int(x / interval) * interval)
+	Else
+		Return (Int(1 + x / interval) * interval)
+	End If
 End Function
 '______________________________________________________________________________
 Function line_intersects_line%( v1:cVEC, v2:cVEC, v3:cVEC, v4:cVEC )

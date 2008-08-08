@@ -52,15 +52,7 @@ Function show_db_path()
 		DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
 	End If
 End Function
-
-Function debug_ts( message$ )
-	Print( String.FromInt( now() ) + ":" + message )
-End Function
-Function debug_drawtext( message$ )
-	DrawText( message, sx, sy )
-	sy :+ h
-End Function
-
+'______________________________________________________________________________
 Function debug_heap( message$ = "" )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
@@ -136,7 +128,6 @@ Function heap_info$( i% )
 		Return "[" + i + "]" + " null"
 	End If
 End Function
-
 '______________________________________________________________________________
 'F4 to path from player to mouse; hold F4 to pause; hold F3 to fast-forward
 Function debug_pathing( message$ = "", done% = False )
@@ -241,17 +232,31 @@ Function debug_pathing( message$ = "", done% = False )
 	End While
 End Function
 '______________________________________________________________________________
-Function debug_core()
+Function debug_ts( message$ )
+	Print( String.FromInt( now() ) + ":" + message )
+End Function
+Function debug_drawtext( message$ )
+	DrawText( message, sx, sy )
+	sy :+ h
+End Function
+'______________________________________________________________________________
+Function console_debug()
+	For Local i% = 0 To 360 Step 5
+		Print "round_to_nearest( " + i + ", 90 ) = " + round_to_nearest( i, 90 )
+	Next
+End Function
+'______________________________________________________________________________
+Function visual_debug()
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
-	sx = 4; sy = 4
-	h = 10
-	
-	SetImageFont( consolas_normal_12 )
-	debug_drawtext( "player.stickies " + player.stickies.Count() )
+'	sx = 4; sy = 4
+'	h = 10
+'	
+'	SetImageFont( consolas_normal_12 )
+'	debug_drawtext( "player.stickies " + player.stickies.Count() )
 	
 '	Local length# = 30
 '	SetLineWidth( 2 )

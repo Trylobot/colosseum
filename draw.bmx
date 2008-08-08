@@ -6,7 +6,7 @@ EndRem
 
 'Background cached texture
 Global bg_cache:TImage
-Const retained_particle_limit% = 1000
+Const retained_particle_limit% = 5000
 Global str$
 
 '______________________________________________________________________________
