@@ -111,9 +111,9 @@ Include "update.bmx"
 Include "draw.bmx"
 Include "collide.bmx"
 Include "input.bmx"
-Include "menu.bmx"
 Include "core.bmx"
 Include "debug.bmx"
+Include "menu.bmx"
 Include "main.bmx"
  
 '#EndRegion &H03

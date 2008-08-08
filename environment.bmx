@@ -71,7 +71,7 @@ End Function
 '______________________________________________________________________________
 'Level Squads
 Function get_level_squads%[][]( i% )
-	If i < level_squads.Length - 1
+	If i < level_squads.Length
 		Return level_squads[i]
 	Else
 		Return Null
