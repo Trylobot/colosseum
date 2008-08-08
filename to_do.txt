@@ -1,4 +1,6 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ since sequenced/grouped turrets can be fired together, it only makes sense that they can be "turned" together as well.
+			I want to be able to say turn_turret_group( sequence_index% ) and have it turn that whole group.
 	_ definitely need a cool animated spawn particle for turrets, as they cannot move.
 			thinking something like a metal hatch with teeth and two doors that opens up or something, and then explodes/gibs
 	_ animated "spawn" particle for temporary use, when enemies spawn in.

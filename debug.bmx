@@ -41,7 +41,7 @@ Function debug_brain_under_mouse()
 			Else 'cb.target == Null
 				debug_drawtext( "no target" )
 			End If
-			If cb.clear_shot_to_target
+			If cb.sighted_target
 				debug_drawtext( "can see target" )
 				SetColor( 255, 255, 255 )
 			Else

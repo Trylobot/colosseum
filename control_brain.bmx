@@ -34,7 +34,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field waypoint:cVEC 'next waypoint
 	Field ang_to_target# '(private)
 	Field dist_to_target# '(private)
-	Field clear_shot_to_target% '(private) {true|false}
+	Field sighted_target% '(private)
 	Field last_think_ts% '(private)
 	Field last_look_target_ts% '(private)
 	Field last_find_path_ts% '(private)
@@ -114,19 +114,17 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
 			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
 			'for each wall in the level
-			For Local wall%[] = EachIn get_level_walls( player_level )
+			For Local wall%[] = EachIn combine_lists( common_walls, get_level_walls( player_level ))
 				'if the line connecting this brain's avatar with its target intersects the wall
 				If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall[1],wall[2])), cVEC( cVEC.Create(wall[3],wall[4])) )
 					'then the avatar cannot see its target
-					Return False
+					sighted_target = False
 				End If
 			Next
 			'after checking all the walls, still haven't returned; avatar can therefore see its target
-			Return True
-		Else
-			'target is null or it is too soon to look again
-			Return clear_shot_to_target
+			sighted_target = True
 		End If
+		Return sighted_target
 	End Method
 	
 	Method get_path_to_target:TList( delay_override% = False )
@@ -251,8 +249,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Case AI_BRAIN_TANK
 				If target <> Null And Not target.dead()
 					'if it can see the target, then..
-					clear_shot_to_target = see_target()
-					If clear_shot_to_target
+					If see_target()
 						path = Null
 						ang_to_target = avatar.ang_to( target )
 						Local diff# = angle_diff( avatar.turrets[0].ang, ang_to_target )
@@ -262,7 +259,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						'if its turret is pointing at the target, then..
 						If Abs(diff) <= 3.000
 							'fire turret(s)
-							avatar.fire( TURRETS_ALL )
+							avatar.fire( 0 )
+							avatar.fire( 1 )
 							'stop aiming
 							avatar.turn_turrets( 0.0 )
 						'else (not pointing at target)..
@@ -272,32 +270,35 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 							Else               avatar.turn_turrets( 1.0 )
 						End If
 					'else (can't see the target) -- if it has a path to the target, then..
-					Else If path <> Null And Not path.IsEmpty() And waypoint <> Null
-						ang_to_target = avatar.ang_to_cVEC( waypoint )
-						Local diff# = angle_diff( avatar.ang, ang_to_target )
-						'if it is pointed toward the path's next waypoint, then..
-						If Abs(diff) <= 8.000
-							'drive forward
-							avatar.drive( 1.0 )
-							avatar.turn( 0.0 )
-						'else (not pointed toward next waypoint)..
-						Else
-							'turn towards the next waypoint
-							avatar.drive( 0.0 )
-							If diff < 180 Then avatar.turn( -1.0 ) ..
-							Else               avatar.turn( 1.0 )
-						End If
-					'else (can't see the target, no path to the target)
 					Else
-						'attempt to get a path to the target (which will not be used until the next "think cycle"
-						path = get_path_to_target()
-						'stop driving
-						avatar.drive( 0.0 )
-						avatar.turn( 0.0 )
 						'return the turret to its resting position
 						Local diff# = angle_diff( avatar.ang, avatar.turrets[0].ang )
 						If diff < 180 Then avatar.turn_turrets( -1.0 ) ..
 						Else               avatar.turn_turrets( 1.0 )
+
+						If path <> Null And Not path.IsEmpty() And waypoint <> Null
+							ang_to_target = avatar.ang_to_cVEC( waypoint )
+							Local diff# = angle_diff( avatar.ang, ang_to_target )
+							'if it is pointed toward the path's next waypoint, then..
+							If Abs(diff) <= 8.000
+								'drive forward
+								avatar.drive( 1.0 )
+								avatar.turn( 0.0 )
+							'else (not pointed toward next waypoint)..
+							Else
+								'turn towards the next waypoint
+								avatar.drive( 0.0 )
+								If diff < 180 Then avatar.turn( -1.0 ) ..
+								Else               avatar.turn( 1.0 )
+							End If
+						'else (can't see the target, no path to the target)
+						Else
+							'attempt to get a path to the target (which will not be used until the next "think cycle"
+							path = get_path_to_target()
+							'stop driving
+							avatar.drive( 0.0 )
+							avatar.turn( 0.0 )
+						End If
 					End If
 				Else
 					'attempt to acquire a new target
