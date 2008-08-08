@@ -271,10 +271,14 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						End If
 					'else (can't see the target) -- if it has a path to the target, then..
 					Else
-						'return the turret to its resting position
+						'return the turret to its resting angle
 						Local diff# = angle_diff( avatar.ang, avatar.turrets[0].ang )
-						If diff < 180 Then avatar.turn_turrets( -1.0 ) ..
-						Else               avatar.turn_turrets( 1.0 )
+						If Abs(diff) <= 3.000
+							avatar.turn_turrets( 0.0 )
+						Else
+							If diff < 180 Then avatar.turn_turrets( 1.0 ) ..
+							Else               avatar.turn_turrets( -1.0 )
+						End If
 
 						If path <> Null And Not path.IsEmpty() And waypoint <> Null
 							ang_to_target = avatar.ang_to_cVEC( waypoint )
@@ -342,6 +346,11 @@ find_path_delay% = 0 )
 	cb.look_target_delay = look_target_delay
 	cb.find_path_delay = find_path_delay
 	
+	cb.sighted_target = False
+	cb.last_think_ts = now()
+	cb.last_look_target_ts = now()
+	cb.last_find_path_ts = now()
+
 	cb.add_me( control_brain_list )
 	Return cb
 End Function

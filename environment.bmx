@@ -78,18 +78,21 @@ End Function
 '______________________________________________________________________________
 'Level Squads
 Function get_level_squads%[][]( i% )
-	If i < level_squads.Length
-		Return level_squads[i]
-	Else
-		Return Null
-	End If
+'	If i < level_squads.Length
+'		Return level_squads[i]
+'	Else
+'		Return Null
+'	End If
+	Return level_squads[0]
 End Function
 
 'level_squads[player_level][squad_index][enemy_archetype_index]
 Global level_squads%[][][] = ..
 [ ..
 	[	..
-		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ] ..
+		[ ENEMY_INDEX_MR_THE_BOX ], ..
+		[ ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
+		[ ENEMY_INDEX_LIGHT_QUAD ] ..
 	] ..
 ]
 '[ ..
@@ -102,7 +105,8 @@ Global level_squads%[][][] = ..
 '	[ ..
 '		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
 '		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
-'		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ] ..
+'		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
+'		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ] ..
 '	] ..
 ']
 

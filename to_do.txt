@@ -1,4 +1,5 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ flaming gibs w/ sparks & flaming heaps/wrecks
 	_ since sequenced/grouped turrets can be fired together, it only makes sense that they can be "turned" together as well.
 			I want to be able to say turn_turret_group( sequence_index% ) and have it turn that whole group.
 	_ definitely need a cool animated spawn particle for turrets, as they cannot move.
@@ -25,11 +26,11 @@
 			it needs two shell casing emitters in the front, to show the rocket being launched, and in the rear, a large smoke emitter and a large 'muzzle flash'
 	O sounds:
 		X turret firing (cannon/laser)
-		_ projectile hitting (ding!)
+		X projectile hitting (ding!)
 		_ turret turning (servomotor)
 	X pick apart the collide_all() method for ways to put that code into the objects rather than in the giant, monolithic function.
 	_ bonus timer for each level, set by no. of enemies
-	_ instant cooldown pickup
+	X instant cooldown pickup
 	_ feedback system (google groups?)
 	_ create a subspace-style networked multiplayer mode: duel. first to 5 by 2, rinse, repeat. two players only.
 	X show a little music icon and sound volume indicator somewhere to show when music is on/off
@@ -38,20 +39,20 @@
 			when damaged, they show noticeable changes and look "beat up".
 			when dead, they actually fall off, allowing the player to be damaged in that area. The player does not have a lot of life.
 	_ futuristic, painted art theme for all environments and units.
-	_ player intro/outro sequence
+	O player intro/outro sequence
 			player starts in a darkish "locker room" with a gate leading out. The gate opens, the room is lit, and the player's engine starts up.
 			then the player is given control of the vehicle and must drive out into the arena
 			then the gate closes and the first level starts.
 			at the end of each level, a kill/cash sheet is displayed with sound effects
 			then the player is brought to the in-between-levels menu, with a store for upgrades and so forth.
 			when the next level is begun, the player once again starts in the locker room.
-	_ gates to spawn enemies
+	X gates to spawn enemies
 	X engine sounds -- startup, idle loop (which changes based on motive force or velocity), shut-down
 	_ cheat code to allow player to spawn as any enemy
 	_ two-player networked co-op, vs, player-vs-enemies, enemies-vs-enemies
 	X forces, mass, acceleration, velocity, frictional forces, rotational forces, torque, collision response system based on it
 	_ Joystick controls (XBOX 360 and "others") allowing analog control of motive forces, rotational and direct
-	_ levels defined as a grid of squares, blocking or non blocking, made up of elongated rectangular walls (which can be rotated arbitrarily (optional))
+	X levels defined as a grid of squares, blocking or non blocking, made up of elongated rectangular walls (which can be rotated arbitrarily (optional))
 			but naturally must not cramp the level and make it impossible to get anywhere
 	_ homing missiles (player & enemy, tracks nearest enemy) simple greedy pathing
 	X AI pathing (A*)
@@ -70,7 +71,7 @@
 			has own AI, and would automatically seek out and destroy enemies until killed.
 			can be purchased like ammunition, and can be configured like the player's tank.
 	_ "air strikes" -- level-based superweapons, can be picked up. Only one at a time can be equipped/held in reserve
-	_ laser-based weapons which use a "POWER" meter.
+	O laser-based weapons which use a "POWER" meter.
 	_ "batteries" for storing POWER.
 	_ "generators" which determine power regen rate.
 	_ RAIL-based weapons
@@ -91,9 +92,9 @@
 	_ ammunition loading/reloading animation, and an animation joining the ammo pickup to the ammo display when it gets granted()
 	X for TURRETs, allow for an arbitrary number of each type of emitter.
 	_ enemy spawner (Carson's idea)
-	_ put explosion, smoke, spark and damage scar emitters into projectiles.
+	X put explosion, smoke, spark and damage scar emitters into projectiles.
 			when the projectile hits something, emit everything ("dump its load").
-	O sound
+	X sound
 	X emitters should have a particle_archetype_index range (min/max) so that they can emit many different particles
 	_ explosions can also have short-lived "spark" emitters, and sparks have such trails as mentioned above
 	X velocity range for projectile emitters -- ties in to weapon accuracy
@@ -120,11 +121,11 @@
 			application: obviously, to make the game world seem more "real"
 	X create gibs for enemies
 	X make gibs spawn as particles when enemies die
-	_ create scars
+	O create scars
 	X create "shells" to be ejected from the ejector port of turret object
-	_ create blocks for static environments that can be collided with
-	_ create example arenas
+	X create blocks for static environments that can be collided with
+	X create example arenas
 	X create a few enemies with guns
-	_ create visible damage which "sticks" to agents
+	O create visible damage which "sticks" to agents
 	X separate main components into files
 	

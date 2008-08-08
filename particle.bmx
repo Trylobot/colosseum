@@ -14,9 +14,14 @@ Global particle_list_foreground:TList = CreateList(); particle_lists.AddLast( pa
 Const LAYER_FOREGROUND% = 0
 Const LAYER_BACKGROUND% = 1
 
+Const PARTICLE_TYPE_IMG% = 0
+Const PARTICLE_TYPE_ANIM% = 1
+Const PARTICLE_TYPE_STR% = 2
+
 Type PARTICLE Extends POINT
 
-	Field img:TImage, frame% 'image to be drawn
+	Field particle_type% '{single_image|animated|string}
+	Field img:TImage, frame%, str$ 'image to be drawn
 	Field layer% 'layer {foreground|background}
 	Field retain% 'copy particle to background on death?
 	Field frictional_coefficient# 'fake friction
@@ -36,7 +41,8 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Function Create:Object( ..
-	img:TImage, frame%, ..
+	particle_type%, ..
+	img:TImage, frame%, str$, ..
 	layer%, ..
 	retain% = False, ..
 	frictional_coefficient# = 0.0, ..
@@ -53,7 +59,8 @@ Type PARTICLE Extends POINT
 		Local p:PARTICLE = New PARTICLE
 
 		'static fields
-		p.img = img; p.frame = frame
+		p.particle_type = particle_type
+		p.img = img; p.frame = frame; p.str = str
 		p.layer = layer
 		p.retain = retain
 		p.frictional_coefficient = frictional_coefficient 
@@ -77,7 +84,7 @@ Type PARTICLE Extends POINT
 	Method clone:PARTICLE( new_frame% = -1 )
 		If new_frame < 0 Then new_frame = frame
 		Return PARTICLE( PARTICLE.Create( ..
-			img, new_frame, layer, retain, frictional_coefficient, red, green, blue, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
+			particle_type, img, new_frame, str, layer, retain, frictional_coefficient, red, green, blue, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
 	End Method
 	
 	Method update()
@@ -97,13 +104,22 @@ Type PARTICLE Extends POINT
 		SetColor( red, green, blue )
 		SetAlpha( alpha )
 		SetScale( scale, scale )
-		If parent <> Null
-			SetRotation( ang + parent.ang )
-			DrawImage( img, parent.pos_x + offset*Cos( offset_ang + parent.ang ), parent.pos_y + offset*Sin( offset_ang + parent.ang ), frame )
-		Else
-			SetRotation( ang )
-			DrawImage( img, pos_x, pos_y, frame )
-		End If
+		Select particle_type
+			
+			Case PARTICLE_TYPE_IMG
+			Case PARTICLE_TYPE_ANIM
+				If parent <> Null
+					SetRotation( ang + parent.ang )
+					DrawImage( img, parent.pos_x + offset*Cos( offset_ang + parent.ang ), parent.pos_y + offset*Sin( offset_ang + parent.ang ), frame )
+				Else
+					SetRotation( ang )
+					DrawImage( img, pos_x, pos_y, frame )
+				End If
+			
+			Case PARTICLE_TYPE_STR
+				
+				
+		End Select
 	End Method
 	
 	Method dead%()
@@ -137,4 +153,7 @@ Type PARTICLE Extends POINT
 	End Method
 	
 End Type
+
+
+
 
