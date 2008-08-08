@@ -9,6 +9,7 @@ Global pickup_list:TList = CreateList()
 
 Const AMMO_PICKUP% = 0
 Const HEALTH_PICKUP% = 1
+Const COOLDOWN_PICKUP% = 2
 
 Type PICKUP Extends MANAGED_OBJECT
 	

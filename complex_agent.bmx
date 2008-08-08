@@ -287,6 +287,7 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	Method grant_pickup( pkp:PICKUP )
 		Select pkp.pickup_type
+			
 			Case AMMO_PICKUP
 				Local tur_list:TList = CreateList()
 				For Local t:TURRET = EachIn turrets
@@ -300,9 +301,25 @@ Type COMPLEX_AGENT Extends AGENT
 					End If
 				Next
 				If lowest_cur_ammo_turret <> Null Then lowest_cur_ammo_turret.re_stock( pkp.pickup_amount )
+			
 			Case HEALTH_PICKUP
 				cur_health :+ pkp.pickup_amount
 				If cur_health > max_health Then cur_health = max_health
+			
+			Case PICKUP_INDEX_COOLDOWN
+				Local tur_list:TList = CreateList()
+				For Local t:TURRET = EachIn turrets
+					If t.max_heat <> INFINITY Then tur_list.AddLast( t )
+				Next
+				Local lowest_cur_heat% = -1, lowest_cur_heat_turret:TURRET
+				For Local t:TURRET = EachIn tur_list
+					If t.cur_heat < lowest_cur_heat Or lowest_cur_heat < 0
+						lowest_cur_heat = t.cur_heat
+						lowest_cur_heat_turret = t
+					End If
+				Next
+				If lowest_cur_heat_turret <> Null Then lowest_cur_heat_turret.re_stock( pkp.pickup_amount )
+			
 		End Select
 		pkp.remove_me()
 	End Method

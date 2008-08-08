@@ -77,7 +77,8 @@ Global img_rocket_explode:TImage = LoadImage_SetHandle( "rocket_explode.png", 14
 Global img_box:TImage = LoadImage_SetHandle( "box.png", 8.5, 8.5 )
 Global img_box_gib:TImage = LoadAnimImage_SetHandle( "box_gib.png", 8.5, 8.5, 17, 17, 6 )
 Global img_pickup_ammo_main_5:TImage = LoadImage_SetHandle( "pickup_ammo_main_5.png", 16, 9 )
-Global img_pickup_health:TImage = loadimage_Sethandle( "pickup_health.png", 16, 9 )
+Global img_pickup_health:TImage = LoadImage_SetHandle( "pickup_health.png", 16, 9 )
+Global img_pickup_cooldown:TImage = LoadImage_SetHandle( "pickup_cooldown.png", 16, 9 )
 Global img_help:TImage = LoadImage_SetHandle( "help.png", 0, 0 )
 Global img_arena_bg:TImage = LoadImage_SetHandle( "bg.png", 0, 0 )
 Global img_arena_fg:TImage = LoadImage_SetHandle( "fg.png", 0, 0 )
@@ -99,5 +100,11 @@ Global img_bomb_gibs:TImage = LoadAnimImage_SetHandle( "bomb_gibs.png", 7.5, 7.5
 Global img_stickies:TImage = LoadAnimImage_SetHandle( "stickies.png", 7.5, 7.5, 16, 16, 5 )
 Global img_halo:TImage = LoadImage_SetHandle( "halo.png", 100, 100 )
 Global img_spark:TImage = LoadImage_SetHandle( "spark.png", 0.5, 2.5 )
+
+Global img_enemy_quad_chassis:TImage = LoadImage_SetHandle( "enemy_quad_chassis.png", 4, 7 )
+Global img_enemy_light_mgun_turret_base:TImage = LoadImage_SetHandle( "enemy_light_mgun_turret_base.png", 3, 2 )
+Global img_enemy_light_mgun_turret_barrel:TImage = LoadImage_SetHandle( "enemy_light_mgun_turret_base.png", 3, 2 )
+
+
 
 

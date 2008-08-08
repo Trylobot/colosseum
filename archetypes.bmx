@@ -136,13 +136,15 @@ widget_archetype[WIDGET_ARENA_DOOR] = WIDGET( WIDGET.Create( img_door, LAYER_IN_
 	
 '______________________________________________________________________________
 '[ PICKUPS ]
-Global pickup_archetype:PICKUP[ 2]; reset_index()
+Global pickup_archetype:PICKUP[3]; reset_index()
 
 Global PICKUP_INDEX_HEALTH% = postfix_index()
 Global PICKUP_INDEX_CANNON_AMMO% = postfix_index()
+Global PICKUP_INDEX_COOLDOWN% = postfix_index()
 
-pickup_archetype[PICKUP_INDEX_HEALTH] = PICKUP( PICKUP.Create( img_pickup_health, HEALTH_PICKUP, 50, 20000 ))
+pickup_archetype[PICKUP_INDEX_HEALTH] = PICKUP( PICKUP.Create( img_pickup_health, HEALTH_PICKUP, 100, 20000 ))
 pickup_archetype[PICKUP_INDEX_CANNON_AMMO] = PICKUP( PICKUP.Create( img_pickup_ammo_main_5, AMMO_PICKUP, 5, 20000 ))
+pickup_archetype[PICKUP_INDEX_COOLDOWN] = PICKUP( PICKUP.Create( img_pickup_cooldown, COOLDOWN_PICKUP, INFINITY, 20000 ))
 
 '______________________________________________________________________________
 '[ TURRETS ]
@@ -225,7 +227,7 @@ enemy_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_AGENT.Arc
 
 '______________________________________________________________________________
 '[ PLAYERS ]
-Global player_archetype:COMPLEX_AGENT[ 4]; reset_index()
+Global player_archetype:COMPLEX_AGENT[4]; reset_index()
 
 Global PLAYER_INDEX_LIGHT_TANK% = postfix_index()
 Global PLAYER_INDEX_LASER_TANK% = postfix_index()
