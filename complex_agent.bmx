@@ -23,6 +23,7 @@ Const ALIGNMENT_HOSTILE% = 2
 Type COMPLEX_AGENT Extends AGENT
 	
 	Field political_alignment% '{friendly|hostile}
+	Field ai_type% 'artificial intelligence subroutine index (only used for AI-controlled agents)
 	
 	Field turrets:TURRET[] 'turret array
 	Field turret_count% 'number of turret slots
@@ -53,6 +54,7 @@ Type COMPLEX_AGENT Extends AGENT
 	Function Archetype:Object( ..
 	img:TImage, ..
 	gibs:TImage, ..
+	ai_type%, ..
 	cash_value%, ..
 	max_health#, ..
 	mass#, ..
@@ -67,6 +69,7 @@ Type COMPLEX_AGENT Extends AGENT
 		'static fields
 		c.img = img
 		c.gibs = gibs
+		c.ai_type = ai_type
 		c.max_health = max_health
 		c.mass = mass
 		c.frictional_coefficient = frictional_coefficient
@@ -105,6 +108,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		c.img = other.img
 		c.gibs = other.gibs
+		c.ai_type = other.ai_type
 		c.max_health = other.max_health
 		c.mass = other.mass
 		c.frictional_coefficient = other.frictional_coefficient
@@ -152,8 +156,8 @@ Type COMPLEX_AGENT Extends AGENT
 			c.add_widget( other_w ).attach_at( other_w.attach_x, other_w.attach_y )
 		Next
 		
-		If political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..
-		Else If political_alignment = ALIGNMENT_HOSTILE Then c.add_me( hostile_agent_list )
+		If      political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..
+		Else If political_alignment = ALIGNMENT_HOSTILE  Then c.add_me( hostile_agent_list )
 		Return c
 	End Function
 
@@ -358,8 +362,8 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Method auto_manage( political_alignment% = ALIGNMENT_NONE )
-		If political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..
-		Else If political_alignment = ALIGNMENT_HOSTILE Then c.add_me( hostile_agent_list )
+		If      political_alignment = ALIGNMENT_FRIENDLY Then add_me( friendly_agent_list ) ..
+		Else If political_alignment = ALIGNMENT_HOSTILE  Then add_me( hostile_agent_list )
 	End Method
 		
 End Type

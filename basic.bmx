@@ -140,14 +140,14 @@ End Function
 Function vector_angle#( vx#, vy# )
 	Return ATan2( vy, vx )
 End Function
-'Function vector_diff_length#( ax#, ay#, bx#, by# ) 'distance /a/ and /b/
-'	Local dx# = bx - ax, dy# = by - ay
-'	Return Sqr( Pow(dx,2) + Pow(dy,2) )
-'End Function
-'Function vector_diff_angle#( ax#, ay#, bx#, by# ) 'angle of line connecting /a/ to /b/
-'	Local dx# = bx - ax, dy# = by - ay
-'	Return ATan2( dy, dx )
-'End Function
+Function vector_diff_length#( ax#, ay#, bx#, by# ) 'distance /a/ and /b/
+	Local dx# = bx - ax, dy# = by - ay
+	Return Sqr( Pow(dx,2) + Pow(dy,2) )
+End Function
+Function vector_diff_angle#( ax#, ay#, bx#, by# ) 'angle of line connecting /a/ to /b/
+	Local dx# = bx - ax, dy# = by - ay
+	Return ATan2( dy, dx )
+End Function
 Function cartesian_to_polar( x#, y#, r# Var, a# Var )
 	r = Sqr( Pow(x,2) + Pow(y,2) )
 	a = ATan2( y, x )

@@ -24,9 +24,9 @@ Global cur_spawn_point:POINT
 Global last_spawned_enemy:COMPLEX_AGENT
 
 Function queue_squad( archetypes%[] )
-	Local squad:TList
+	Local squad:TList = CreateList()
 	For Local i% = EachIn archetypes
-		squad.AddLast( COMPLEX_AGENT( COMPLEX_AGENT.Copy( enemy_archetype[i] )))
+		squad.AddLast( COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[i] )))
 	Next
 	enemy_spawn_queue.AddLast( squad )
 	If cur_squad = Null Then cur_squad = squad
@@ -44,6 +44,10 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 			last_spawned_enemy = COMPLEX_AGENT( cur_squad.First() )
 			cur_squad.RemoveFirst()
 			last_spawned_enemy.auto_manage( ALIGNMENT_HOSTILE )
+			last_spawned_enemy.pos_x = cur_spawn_point.pos_x
+			last_spawned_enemy.pos_y = cur_spawn_point.pos_y
+			last_spawned_enemy.ang = cur_spawn_point.ang
+			Create_and_Manage_CONTROL_BRAIN( last_spawned_enemy, CONTROL_TYPE_AI, UNSPECIFIED, 32, 1000, 1000 )
 		'else, last_spawned_enemy <> Null And enemy not clear of spawn
 		Else
 			'do nothing, have to wait :/
@@ -54,7 +58,7 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 		If Not enemy_spawn_queue.IsEmpty()
 			cur_squad = TList( enemy_spawn_queue.First() )
 			enemy_spawn_queue.RemoveFirst()
-			Return spawn_next_enemy()
+			Return False
 		Else 'enemy_spawn_queue.IsEmpty()
 			cur_squad = Null
 			cur_spawn_point = Null
@@ -63,7 +67,38 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 		End If
 	End If
 End Function
-	
+
+'______________________________________________________________________________
+'Level Squads
+Function get_level_squads%[][]( i% )
+	If i < level_squads.Length - 1
+		Return level_squads[i]
+	Else
+		Return Null
+	End If
+End Function
+
+'level_squads[player_level][squad_index][enemy_archetype_index]
+Global level_squads%[][][] = ..
+[ ..
+	[	..
+		[ ..
+			ENEMY_INDEX_MR_THE_BOX, ..
+			ENEMY_INDEX_MR_THE_BOX, ..
+			ENEMY_INDEX_MR_THE_BOX, ..
+			ENEMY_INDEX_MR_THE_BOX ..
+		], ..
+		[ ..
+			ENEMY_INDEX_MOBILE_MINI_BOMB, ..
+			ENEMY_INDEX_MOBILE_MINI_BOMB ..
+		], ..
+		[ ..
+			ENEMY_INDEX_MOBILE_MINI_BOMB, ..
+			ENEMY_INDEX_MOBILE_MINI_BOMB ..
+		] ..
+	] ..
+]
+
 '______________________________________________________________________________
 'Level Walls
 'assumes origin of (arena_offset,arena_offset)

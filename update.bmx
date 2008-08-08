@@ -20,6 +20,9 @@ Function update_all()
 			w.update() 
 		Next
 		
+		'spawning (safe to use any time)
+		spawn_next_enemy()
+		
 		'control brains (human + ai)
 		For Local cb:CONTROL_BRAIN = EachIn control_brain_list
 			cb.update()

@@ -26,9 +26,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field control_type% 'control type indicator
 	Field input_type% 'for human-based controllers, the input device
 	Field ai_type% 'for AI-based controllers, the specific AI "style"
-	Field think_delay# 'mandatory delay between think cycles
-	Field look_target_delay# 'mandatory delay between "see_target" calls
-	Field find_path_delay# 'mandatory delay between "find_path" calls
+	Field think_delay% 'mandatory delay between think cycles
+	Field look_target_delay% 'mandatory delay between "see_target" calls
+	Field find_path_delay% 'mandatory delay between "find_path" calls
 	
 	Field path:TList 'path to some destination
 	Field waypoint:cVEC 'next waypoint
@@ -309,19 +309,24 @@ End Type
 '______________________________________________________________________________
 Function Create_and_Manage_CONTROL_BRAIN:CONTROL_BRAIN( ..
 avatar:COMPLEX_AGENT, ..
-target:AGENT, ..
 control_type%, ..
 input_type%, ..
-ai_type%, ..
-think_delay# = 0 )
+think_delay% = 0, ..
+look_target_delay% = 0, ..
+find_path_delay% = 0 )
 	Local cb:CONTROL_BRAIN = New CONTROL_BRAIN
 	
 	cb.avatar = avatar
-	cb.target = target
 	cb.control_type = control_type
 	cb.input_type = input_type
-	cb.ai_type = ai_type
+	If control_type = CONTROL_TYPE_AI
+		cb.ai_type = avatar.ai_type
+	Else
+		cb.ai_type = UNSPECIFIED
+	End If
 	cb.think_delay = think_delay
+	cb.look_target_delay = look_target_delay
+	cb.find_path_delay = find_path_delay
 	
 	cb.add_me( control_brain_list )
 	Return cb

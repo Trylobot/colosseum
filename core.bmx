@@ -135,7 +135,7 @@ End Function
 Function load_next_level()
 	dim_bg_cache()
 	player_level :+ 1
-	respawn_enemies()
+	prep_enemy_spawn_queue()
 	update_all()
 	level_passed_ts% = now()
 	player_kills = 0
@@ -170,42 +170,21 @@ End Function
 'Spawning and Respawning
 Function respawn_player( archetype_index% )
 	If player <> Null And player.managed() Then player.remove_me()
-	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( player_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
+	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
 	player.pos_x = player_spawn_point.pos_x
 	player.pos_y = player_spawn_point.pos_y
 	player.ang = -90
 	player.snap_turrets()
-	Create_and_Manage_CONTROL_BRAIN( player, Null, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD, UNSPECIFIED )
+	Create_and_Manage_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD )
 End Function
 '______________________________________________________________________________
-Function spawn_enemy:COMPLEX_AGENT( archetype_index% )
-	Local nme:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( enemy_archetype[archetype_index], ALIGNMENT_HOSTILE ))
-	If nme.motivator_count = 0 'turret
-		If Rand( 0, 1 ) = 1 Then nme.pos_x = arena_offset + RandF( 0, 0.25*arena_w ) ..
-		Else                     nme.pos_x = arena_offset + RandF( 0.75*arena_w, arena_w )
-		If Rand( 0, 1 ) = 1 Then nme.pos_y = arena_offset + RandF( 0, 0.25*arena_h ) ..
-		Else                     nme.pos_y = arena_offset + RandF( 0.75*arena_h, arena_h )
-		nme.ang = Rand( 0, 359 )
-	Else
-		Local spawn_i% = Rand( 0, enemy_spawn_points.Length - 1 )
-		nme.pos_x = enemy_spawn_points[spawn_i].pos_x
-		nme.pos_y = enemy_spawn_points[spawn_i].pos_y
-		nme.ang = spawn_i * 90
+Function prep_enemy_spawn_queue()
+	Local squads%[][] = get_level_squads( player_level )
+	If squads <> Null
+		For Local squad_i%[] = EachIn squads
+			queue_squad( squad_i )
+		Next
 	End If
-	nme.snap_turrets()
-	Return nme
-End Function
-'______________________________________________________________________________
-Function respawn_enemies()
-	For Local i% = 1 To (3 + player_level)
-'		Local selector# = RandF( 0.000, 1.000 )
-'		If      selector < 0.400 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MR_THE_BOX), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 2000 ) ..
-'		Else If selector < 0.600 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MOBILE_MINI_BOMB), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_SEEKER, 20 ) ..
-'		Else If selector < 0.800 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 ) ..
-'		Else If selector < 0.900 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 ) ..
-'		Else If selector < 1.000 Then Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT), player, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_TURRET, 50 )
-		Create_and_Manage_CONTROL_BRAIN( spawn_enemy(ENEMY_INDEX_MR_THE_BOX), Null, CONTROL_TYPE_AI, UNSPECIFIED, AI_BRAIN_MR_THE_BOX, 2000 )
-	Next
 End Function
 '______________________________________________________________________________
 Function spawn_pickup( x#, y# )

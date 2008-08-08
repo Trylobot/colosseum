@@ -19,7 +19,7 @@ Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 500.0 'energy multiplier for all co
 Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.012 'energy multiplier for all projectile-projectile collisions
 Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.010 'energy multiplier for all agent-agent collisions
 
-Function clamp_ang_to_bifurcate_wall_diagonals( ang#, wall%[] )
+Function clamp_ang_to_bifurcate_wall_diagonals#( ang#, wall%[] )
 	Local wx# = wall_mid_x( wall ), wy# = wall_mid_y(wall)
 	'wall_angle[4] = angle from mid to [ top_left, top_right, bottom_right, bottom_left ].
 	Local wall_angle#[] = ..
@@ -115,7 +115,7 @@ Function collide_all()
 			Next
 		Next
 		
-		'collisions between walls and agents or projectiles
+		'collisions between walls and {agents|projectiles}
 		Local all_walls:TList = get_level_walls( player_level ) 'combine_lists( common_walls, get_level_walls( player_level ))
 		For Local wall%[] = EachIn all_walls
 			SetRotation( 0 )
@@ -124,7 +124,8 @@ Function collide_all()
 				'COLLISION! between {ag} and {wall}
 				Local offset#, offset_ang#
 				cartesian_to_polar( ag.pos_x - wall_mid_x(wall), ag.pos_y - wall_mid_y(wall), offset, offset_ang )
-				ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall ), ag.mass/75.0, 100 )))
+				Local clamped_ang# = clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )
+				ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, clamped_ang, ag.mass/40.0, 85 )))
 			Next
 		Next
 		For Local wall%[] = EachIn all_walls
