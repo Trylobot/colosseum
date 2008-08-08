@@ -7,7 +7,7 @@ EndRem
 '______________________________________________________________________________
 Global control_brain_list:TList = CreateList()
 
-Const WAYPOINT_RADIUS% = 10
+Const WAYPOINT_RADIUS% = cell_size
 
 Const UNSPECIFIED% = 0
 Const CONTROL_TYPE_HUMAN% = 1
@@ -34,6 +34,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field waypoint:cVEC 'next waypoint
 	Field ang_to_target# '(private)
 	Field dist_to_target# '(private)
+	Field clear_shot_to_target% '(private) {true|false}
 	Field last_think_ts% '(private)
 	Field last_look_target_ts% '(private)
 	Field last_find_path_ts% '(private)
@@ -124,7 +125,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Return True
 		Else
 			'target is null or it is too soon to look again
-			Return False
+			Return clear_shot_to_target
 		End If
 	End Method
 	
@@ -250,7 +251,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Case AI_BRAIN_TANK
 				If target <> Null And Not target.dead()
 					'if it can see the target, then..
-					If see_target()
+					clear_shot_to_target = see_target()
+					If clear_shot_to_target
+						path = Null
 						ang_to_target = avatar.ang_to( target )
 						Local diff# = angle_diff( avatar.turrets[0].ang, ang_to_target )
 						'stop moving

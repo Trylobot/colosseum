@@ -16,12 +16,14 @@ Global enemy_spawn_points:POINT[] = [ ..
 	Create_POINT( Floor(1.5*arena_offset + arena_w), Floor(arena_offset + arena_h/2), 180 ) ]
 
 'Serial Enemy Spawning by Squad
-Const SPAWN_CLEAR_DIST# = 12.50
+Const SPAWN_CLEAR_DIST# = 16.0
 
 Global enemy_spawn_queue:TList = CreateList()
 Global cur_squad:TList = Null
 Global cur_spawn_point:POINT
 Global last_spawned_enemy:COMPLEX_AGENT
+Const squad_spawn_delay% = 3000
+Global squad_begin_spawning_ts% = now()
 
 Function queue_squad( archetypes%[] )
 	Local squad:TList = CreateList()
@@ -40,9 +42,10 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 			cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
 		End If
 		'if there is no last spawned enemy, or the last spawned enemy is clear of the spawn, or the last spawned enemy has died (yeah it can happen.. CAMPER!)
-		If last_spawned_enemy = Null ..
+		If (last_spawned_enemy = Null ..
 		Or cur_spawn_point.dist_to( last_spawned_enemy ) >= SPAWN_CLEAR_DIST ..
-		Or (last_spawned_enemy <> Null And last_spawned_enemy.dead())
+		Or (last_spawned_enemy <> Null And last_spawned_enemy.dead())) ..
+		And (now() - squad_begin_spawning_ts >= squad_spawn_delay)
 			last_spawned_enemy = COMPLEX_AGENT( cur_squad.First() )
 			cur_squad.RemoveFirst()
 			last_spawned_enemy.auto_manage( ALIGNMENT_HOSTILE )
@@ -61,6 +64,7 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 			cur_squad = TList( enemy_spawn_queue.First() )
 			enemy_spawn_queue.RemoveFirst()
 			cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
+			squad_begin_spawning_ts = now()
 			Return False
 		Else 'enemy_spawn_queue.IsEmpty()
 			cur_squad = Null
@@ -111,14 +115,14 @@ Const WALL_ADD% = PATH_BLOCKED
 
 Global common_walls:TList = CreateList()
 'outer walls: N,N, E,E, S,S, W,W
-common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset+(arena_w/2)-(arena_offset/2),arena_offset ])
-common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),0,                    arena_offset+(arena_w/2)-(arena_offset/2),arena_offset ])
-common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,0,                                         arena_offset,arena_offset+(arena_h/2)-(arena_offset/2) ])
-common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,arena_offset+(arena_h/2)+(arena_offset/2), arena_offset,arena_offset+(arena_h/2)-(arena_offset/2) ])
-common_walls.AddLast([ WALL_ADD, 0,arena_offset+arena_h,                                         arena_offset+(arena_w/2)-(arena_offset/2),arena_offset ])
-common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),arena_offset+arena_h, arena_offset+(arena_w/2)-(arena_offset/2),arena_offset ])
-common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset,arena_offset+(arena_h/2)-(arena_offset/2) ])
-common_walls.AddLast([ WALL_ADD, 0,arena_offset+(arena_h/2)+(arena_offset/2),                    arena_offset,arena_offset+(arena_h/2)-(arena_offset/2) ])
+common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
+common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),0,                    arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
+common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,0,                                         arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
+common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,arena_offset+(arena_h/2)+(arena_offset/2), arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
+common_walls.AddLast([ WALL_ADD, 0,arena_offset+arena_h,                                         arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
+common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),arena_offset+arena_h, arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
+common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
+common_walls.AddLast([ WALL_ADD, 0,arena_offset+(arena_h/2)+(arena_offset/2),                    arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
 
 Global level_walls:TList[] = New TList[4]
 For Local i% = 0 To level_walls.Length - 1
@@ -129,10 +133,10 @@ Next
 
 'level_walls[1] 'empty
 
-level_walls[2].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300,50 ])
+level_walls[2].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300-1,50-1 ])
 
-level_walls[3].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50,100 ])
-level_walls[3].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50,100 ])
+level_walls[3].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
+level_walls[3].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
 
 Function get_level_walls:TList( i% )
 	If i < level_walls.Length

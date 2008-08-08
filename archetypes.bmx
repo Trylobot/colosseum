@@ -234,8 +234,9 @@ complex_agent_archetype[ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT] = COMPLEX_AGENT( 
 	complex_agent_archetype[ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_ROCKET_TURRET], 0 ).attach_at( 0, 0 )
 complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mini bomb", img_nme_mobile_bomb, img_bomb_gibs, AI_BRAIN_SEEKER, 75, 50, 200, 10.0, 0, 1, 7.50, 25.0 ))
 	complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_widget( widget_archetype[WIDGET_INDEX_GLOW] ).attach_at( -6, 0 )
-complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun quad", img_enemy_quad_chassis, Null, AI_BRAIN_TANK, 250, 200, 400, 75.0, 1, 0, 25.0, 50.0 ))
-	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 0 ).attach_at( 4, 7 )
+complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun quad", img_enemy_quad_chassis, Null, AI_BRAIN_TANK, 150, 100, 400, 50.0, 1, 0, 42.5, 75.0 ))
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 0 ).attach_at( -6, 0 )
+
 complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "light tank", img_player_tank_chassis, Null, AI_BRAIN_TANK, 0, 500, 800.0, 75.0, 2, 2, 75.0, 100.0 ))
 	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON], 0 ).attach_at( -5, 0 )
 	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN], 1 ).attach_at( -5, 0 )

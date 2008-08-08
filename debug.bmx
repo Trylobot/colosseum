@@ -29,25 +29,36 @@ End Function
 '______________________________________________________________________________
 Function debug_brain_under_mouse()
 	Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
+	SetColor( 255, 255, 255 )
 	For Local cb:CONTROL_BRAIN = EachIn control_brain_list
 		If cb.avatar.dist_to( mouse ) <= 20
 			
 			'draw info
 			sx = mouse.pos_x + 16; sy = mouse.pos_y
+			debug_drawtext( cb.avatar.name )
 			If cb.target <> Null
 				debug_drawtext( "target -> " + cb.target.name )
 			Else 'cb.target == Null
 				debug_drawtext( "no target" )
 			End If
-			If cb.see_target( True )
+			If cb.clear_shot_to_target
 				debug_drawtext( "can see target" )
+				SetColor( 255, 255, 255 )
 			Else
-				debug_drawtext( "no line of sight" )
+				debug_drawtext( "target blocked" )
+				SetColor( 255, 32, 32 )
 			End If
-			db_path = cb.get_path_to_target()
+			If cb.target <> Null
+				SetLineWidth( 1 )
+				SetAlpha( 0.5 )
+				DrawLine( cb.avatar.pos_x,cb.avatar.pos_y, cb.target.pos_x,cb.target.pos_y )
+				SetColor( 255, 255, 255 )
+				SetAlpha( 1 )
+			End If
+			db_path = cb.path
 			show_db_path()
 			If db_path <> Null
-				debug_drawtext( "path to target -> " + db_path.Count() + " waypoints" )
+				debug_drawtext( "path to target displayed" )
 			Else
 				debug_drawtext( "no path" )
 			End If

@@ -103,7 +103,7 @@ Global img_spark:TImage = LoadImage_SetHandle( "spark.png", 0.5, 2.5 )
 
 Global img_enemy_quad_chassis:TImage = LoadImage_SetHandle( "enemy_quad_chassis.png", 9.5, 7.5 )
 Global img_enemy_light_mgun_turret_base:TImage = LoadImage_SetHandle( "enemy_light_mgun_turret_base.png", 3.5, 2.5 )
-Global img_enemy_light_mgun_turret_barrel:TImage = LoadImage_SetHandle( "enemy_light_mgun_turret_base.png", 3.5, 2.5 )
+Global img_enemy_light_mgun_turret_barrel:TImage = LoadImage_SetHandle( "enemy_light_mgun_turret_barrel.png", 3.5, 2.5 )
 
 
 

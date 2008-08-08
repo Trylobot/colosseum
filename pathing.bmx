@@ -74,10 +74,11 @@ Type CELL
 End Type
 '______________________________________________________________________________
 Global ALL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_NORTHEAST, DIRECTION_EAST, DIRECTION_SOUTHEAST, DIRECTION_SOUTH, DIRECTION_SOUTHWEST, DIRECTION_WEST, DIRECTION_NORTHWEST ]
-Const cell_size# = 6
+'Const cell_size# = 6
 'Const cell_size# = 8
 'Const cell_size# = 10
 'Const cell_size# = 20
+Const cell_size# = 25
 
 Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
 Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
@@ -542,8 +543,14 @@ Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
 	If      goal_y < 0                          Then goal_y = 0 ..
 	Else If goal_y >= 2*arena_offset + arena_h  Then goal_y = 2*arena_offset + arena_h - 1
 
+	Local start_cell:CELL = containing_cell( start_x, start_y )
+	Local goal_cell:CELL = containing_cell( goal_x, goal_y )
+	If pathing.grid( start_cell ) = PATH_BLOCKED Or pathing.grid( goal_cell ) = PATH_BLOCKED
+		Return Null 'no path possible
+	End If
+	
 	pathing.reset()
-	Local cell_list:TList = pathing.find_path_cells( containing_cell( start_x, start_y ), containing_cell( goal_x, goal_y ))
+	Local cell_list:TList = pathing.find_path_cells( start_cell, goal_cell )
 
 	Local list:TList = CreateList()
 	If cell_list <> Null And Not cell_list.IsEmpty()

@@ -364,9 +364,10 @@ Type COMPLEX_AGENT Extends AGENT
 		Return p
 	End Method
 	
-	Method auto_manage( political_alignment% = ALIGNMENT_NONE )
-		If      political_alignment = ALIGNMENT_FRIENDLY Then add_me( friendly_agent_list ) ..
-		Else If political_alignment = ALIGNMENT_HOSTILE  Then add_me( hostile_agent_list )
+	Method auto_manage( new_political_alignment% = ALIGNMENT_NONE )
+		political_alignment = new_political_alignment
+		If      new_political_alignment = ALIGNMENT_FRIENDLY Then add_me( friendly_agent_list ) ..
+		Else If new_political_alignment = ALIGNMENT_HOSTILE  Then add_me( hostile_agent_list )
 	End Method
 		
 End Type
