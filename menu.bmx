@@ -70,8 +70,7 @@ Function menu_command( command_index% )
 			End 'quit now
 			
 		Default
-			DebugStop
-			player_type = command_index - 5
+			player_type = PLAYER_INDEX_START + (command_index - 5)
 			FLAG_in_menu = False
 			reset_game()
 			initialize_game()

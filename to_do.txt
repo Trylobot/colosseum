@@ -1,4 +1,6 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ animated "spawn" particle for temporary use, when enemies spawn in.
+	_ animated particles (for frame-by-frame explosions, it really is necessary.)
 	_ Create global POINT objects to represent the gates, and have widgets attached to them.
 			when the spawning step begins, open all the gates until all agents are in the arena; then close all the gates.
 			when the level has concluded:

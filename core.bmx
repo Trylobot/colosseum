@@ -79,7 +79,6 @@ Function initialize_game()
 End Function
 '______________________________________________________________________________
 Function load_next_level()
-	DebugStop
 	dim_bg_cache()
 	player_level :+ 1
 	prep_enemy_spawn_queue()
@@ -99,7 +98,6 @@ End Function
 '______________________________________________________________________________
 'Spawning and Respawning
 Function respawn_player( archetype_index% )
-	DebugStop
 	If player <> Null And player.managed() Then player.remove_me()
 	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
 	player.pos_x = player_spawn_point.pos_x
@@ -118,7 +116,7 @@ Function prep_enemy_spawn_queue()
 	End If
 End Function
 '______________________________________________________________________________
-Function spawn_pickup( x#, y# )
+Function spawn_pickup( x%, y% )
 	Local pkp:PICKUP
 	If Rand( 0, 10000 ) < PICKUP_PROBABILITY
 		Local index% = Rand( 0, pickup_archetype.Length - 1 )

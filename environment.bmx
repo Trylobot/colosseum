@@ -39,8 +39,8 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 		If cur_spawn_point = Null
 			cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
 		End If
-		'if there is no last spawned enemy or the last spawned enemy is clear of the spawn
-		If last_spawned_enemy = Null Or cur_spawn_point.dist_to( last_spawned_enemy ) >= SPAWN_CLEAR_DIST
+		'if there is no last spawned enemy, or the last spawned enemy is clear of the spawn, or the last spawned enemy has died (yeah it can happen.. CAMPER!)
+		If last_spawned_enemy = Null Or cur_spawn_point.dist_to( last_spawned_enemy ) >= SPAWN_CLEAR_DIST Or last_spawned_enemy.dead()
 			last_spawned_enemy = COMPLEX_AGENT( cur_squad.First() )
 			cur_squad.RemoveFirst()
 			last_spawned_enemy.auto_manage( ALIGNMENT_HOSTILE )
@@ -118,15 +118,15 @@ common_walls.AddLast([ WALL_SUB, arena_offset+arena_w,arena_offset+(arena_h/2)-(
 common_walls.AddLast([ WALL_SUB, arena_offset+(arena_w/2)-(arena_offset/2),arena_offset+arena_h, arena_offset,arena_offset ])
 common_walls.AddLast([ WALL_SUB, 0,arena_offset+(arena_h/2)-(arena_offset/2), arena_offset,arena_offset ])
 
-Global level_walls:TList[] = New TList[2]
+Global level_walls:TList[] = New TList[4]
 For Local i% = 0 To level_walls.Length - 1
 	level_walls[i] = CreateList()
 Next
 
-level_walls[0].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300,50 ])
+level_walls[2].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300,50 ])
 
-level_walls[1].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50,100 ])
-level_walls[1].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50,100 ])
+level_walls[3].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50,100 ])
+level_walls[3].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50,100 ])
 
 Function get_level_walls:TList( i% )
 	If i < level_walls.Length

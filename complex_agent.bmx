@@ -52,6 +52,7 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Function Archetype:Object( ..
+	name$, ..
 	img:TImage, ..
 	gibs:TImage, ..
 	ai_type%, ..
@@ -67,6 +68,7 @@ Type COMPLEX_AGENT Extends AGENT
 		Local c:COMPLEX_AGENT = New COMPLEX_AGENT
 		
 		'static fields
+		c.name = name
 		c.img = img
 		c.gibs = gibs
 		c.ai_type = ai_type
@@ -101,6 +103,7 @@ Type COMPLEX_AGENT Extends AGENT
 		Local c:COMPLEX_AGENT = New COMPLEX_AGENT
 		
 		'static fields
+		c.name = other.name
 		If political_alignment <> ALIGNMENT_NONE
 			c.political_alignment = political_alignment
 		Else 'political_alignment == ALIGNMENT_NONE

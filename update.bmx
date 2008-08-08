@@ -13,9 +13,10 @@ Function update_all()
 	Not FLAG_draw_help
 		
 		'level
-		If hostile_agent_list.IsEmpty()
-			load_next_level()
-		End If
+'		If hostile_agent_list.IsEmpty()
+'			load_next_level()
+'		End If
+		
 		For Local w:WIDGET = EachIn environmental_widget_list
 			w.update() 
 		Next
