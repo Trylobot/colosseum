@@ -42,7 +42,7 @@ Type PARTICLE Extends POINT
 	
 	Function Create:Object( ..
 	particle_type%, ..
-	img:TImage, frame%, str$, ..
+	img:TImage = Null, frame% = 0, str$ = Null, ..
 	layer%, ..
 	retain% = False, ..
 	frictional_coefficient# = 0.0, ..
@@ -104,6 +104,7 @@ Type PARTICLE Extends POINT
 		SetColor( red, green, blue )
 		SetAlpha( alpha )
 		SetScale( scale, scale )
+		
 		Select particle_type
 			
 			Case PARTICLE_TYPE_IMG

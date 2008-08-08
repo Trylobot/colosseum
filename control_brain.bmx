@@ -110,7 +110,26 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method see_target%( delay_override% = False )
+'		If target <> Null And (delay_override Or (now() - last_look_target_ts < look_target_delay))
+'			last_look_target_ts = now()
+'			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
+'			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
+'			'for each wall in the level
+'			For Local wall%[] = EachIn combine_lists( common_walls, get_level_walls( player_level ))
+'				'if the line connecting this brain's avatar with its target intersects the wall
+'				If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall[1],wall[2])), cVEC( cVEC.Create(wall[3],wall[4])) )
+'					'then the avatar cannot see its target
+'					sighted_target = False
+'				End If
+'			Next
+'			'after checking all the walls, still haven't returned; avatar can therefore see its target
+'			sighted_target = True
+'		Else 'target == Null Or (not delay_override And not (now() - last_look_target_ts < look_target_delay))
+'			'do nothing
+'		End If
+'		Return sighted_target
 		If target <> Null And (delay_override Or (now() - last_look_target_ts < look_target_delay))
+			last_look_target_ts = now()
 			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
 			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
 			'for each wall in the level
@@ -118,13 +137,16 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				'if the line connecting this brain's avatar with its target intersects the wall
 				If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall[1],wall[2])), cVEC( cVEC.Create(wall[3],wall[4])) )
 					'then the avatar cannot see its target
-					sighted_target = False
+					Return False
 				End If
 			Next
 			'after checking all the walls, still haven't returned; avatar can therefore see its target
-			sighted_target = True
+			Return True
+		Else 'target == Null Or (not delay_override And not (now() - last_look_target_ts < look_target_delay))
+			'do nothing
 		End If
-		Return sighted_target
+		
+		Return False
 	End Method
 	
 	Method get_path_to_target:TList( delay_override% = False )
@@ -259,8 +281,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						'if its turret is pointing at the target, then..
 						If Abs(diff) <= 3.000
 							'fire turret(s)
-							avatar.fire( 0 )
-							avatar.fire( 1 )
+							avatar.fire_turret( 0 )
 							'stop aiming
 							avatar.turn_turrets( 0.0 )
 						'else (not pointing at target)..
@@ -328,7 +349,7 @@ End Type
 Function Create_and_Manage_CONTROL_BRAIN:CONTROL_BRAIN( ..
 avatar:COMPLEX_AGENT, ..
 control_type%, ..
-input_type%, ..
+input_type% = UNSPECIFIED, ..
 think_delay% = 0, ..
 look_target_delay% = 0, ..
 find_path_delay% = 0 )

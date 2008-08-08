@@ -52,7 +52,7 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 			last_spawned_enemy.pos_x = cur_spawn_point.pos_x
 			last_spawned_enemy.pos_y = cur_spawn_point.pos_y
 			last_spawned_enemy.ang = cur_spawn_point.ang
-			Create_and_Manage_CONTROL_BRAIN( last_spawned_enemy, CONTROL_TYPE_AI, UNSPECIFIED, 32, 1000, 1000 )
+			Create_and_Manage_CONTROL_BRAIN( last_spawned_enemy, CONTROL_TYPE_AI,, 32, 1000, 1000 )
 		'else, last_spawned_enemy <> Null And enemy not clear of spawn
 		Else
 			'do nothing, have to wait :/

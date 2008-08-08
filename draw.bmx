@@ -78,7 +78,7 @@ Function draw_all()
 		'interface
 		draw_stats()
 
-		'help
+		'help actual
 		If FLAG_draw_help
 			SetColor( 0, 0, 0 )
 			SetAlpha( 0.550 )
@@ -86,9 +86,17 @@ Function draw_all()
 			SetColor( 255, 255, 255 )
 			SetAlpha( 1 )
 			DrawImage( img_help, window_w/2 - img_help.width/2, window_h/2 - img_help.height/2 )
+		'help reminder
+		Else
+			SetImageFont( consolas_normal_12 )
+			SetColor( 0, 0, 0 )
+			DrawText( "F1 for help", arena_offset - 10+1, 2+1 )
+			SetColor( 255, 255, 255 )
+			DrawText( "F1 for help", arena_offset - 10, 2 )
+		End If
 		
 		'game over
-		Else If FLAG_game_over
+		If FLAG_game_over
 			SetColor( 0, 0, 0 )
 			SetAlpha( 0.550 )
 			DrawRect( 0, 0, window_w, window_h )
@@ -258,12 +266,6 @@ End Function
 '______________________________________________________________________________
 Function draw_stats()
 	Local x%, y%, w%, h%
-	
-	'help reminder
-	If Not FLAG_draw_help
-		SetColor( 158, 158, 158 ); SetImageFont( consolas_normal_12 )
-		DrawText( "F1 for help", arena_offset - 10, 2 )
-	End If
 	
 	'level number
 	x = arena_w + (arena_offset * 2)

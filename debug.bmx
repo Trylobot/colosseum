@@ -45,7 +45,7 @@ Function debug_brain_under_mouse()
 				debug_drawtext( "can see target" )
 				SetColor( 255, 255, 255 )
 			Else
-				debug_drawtext( "target blocked" )
+				debug_drawtext( "no line-of-sight to target" )
 				SetColor( 255, 32, 32 )
 			End If
 			If cb.target <> Null
@@ -55,9 +55,8 @@ Function debug_brain_under_mouse()
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
 			End If
-			db_path = cb.path
-			show_db_path()
-			If db_path <> Null
+			show_db_path( cb.path )
+			If cb.path <> Null
 				debug_drawtext( "path to target displayed" )
 			Else
 				debug_drawtext( "no path" )
@@ -67,6 +66,12 @@ Function debug_brain_under_mouse()
 			If KeyDown( KEY_T )
 				cb.target = player
 			End If
+			If KeyDown( KEY_H )
+				cb.path = cb.get_path_to_target( True )
+			End If
+			If KeyDown( KEY_P )
+				cb.see_target( True )
+			End If
 			
 			Return
 		End If
@@ -74,20 +79,23 @@ Function debug_brain_under_mouse()
 End Function
 '______________________________________________________________________________
 Function debug_general()
-	If KeyHit( KEY_Q ) Then load_next_level()
-End Function
-'______________________________________________________________________________
-Function show_db_path()
-	If db_path = Null Or db_path.IsEmpty() Then Return
+	'show pathing grid
 	Local cursor:CELL = New CELL
 	For cursor.row = 0 To pathing_grid_h - 1
 		For cursor.col = 0 To pathing_grid_w - 1
 			'blockable/passing grid
-			SetColor( 255, 255, 255 ); SetAlpha( 0.85 )
+			SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
 			If pathing.grid( cursor ) = PATH_BLOCKED Then ..
 				DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
 		Next
 	Next
+	
+	'manipulate by keyboard
+	If KeyHit( KEY_Q ) Then load_next_level()
+End Function
+'______________________________________________________________________________
+Function show_db_path( db_path:TList )
+	If db_path = Null Or db_path.IsEmpty() Then Return
 	'path
 	Local v0:cVEC = Null, v1:cVEC = Null
 	For Local v1:cVEC = EachIn db_path

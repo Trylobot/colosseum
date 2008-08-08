@@ -125,7 +125,12 @@ Function collide_all()
 				Local offset#, offset_ang#
 				cartesian_to_polar( ag.pos_x - wall_mid_x(wall), ag.pos_y - wall_mid_y(wall), offset, offset_ang )
 				Local clamped_ang# = clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )
-				ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, clamped_ang, ag.mass/40.0, 85 )))
+				'use physics to push the agent out of the wall
+				'ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, clamped_ang, ag.mass/40.0, 85 )))
+				'nudge the agent away from the wall
+If KeyDown( KEY_R ) Then DebugStop
+				ag.pos_x :+ 0.5*Cos( clamped_ang )
+				ag.pos_y :+ 0.5*Sin( clamped_ang )
 			Next
 		Next
 		For Local wall%[] = EachIn all_walls

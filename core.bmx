@@ -34,8 +34,9 @@ Global FLAG_bg_music_on% = False
 Global FLAG_draw_help% = False
 Global FLAG_player_engine_ignition% = False
 Global FLAG_player_engine_running% = False
+Global FLAG_console% = False
 
-Const PICKUP_PROBABILITY% = 5000 'chance in 10,000 of an enemy dropping a pickup (randomly selected from all pickups)
+Const PICKUP_PROBABILITY# = 0.50 'chance of an enemy dropping a pickup (randomly selected from all pickups)
 
 'global player stuff
 Global player_type% = 0
@@ -68,6 +69,7 @@ Function reset_game()
 	player_level = -1
 	player_cash = 0
 	player_kills = 0
+	pathing = Null
 	FLAG_game_in_progress = False
 	FLAG_game_over = False
 End Function
@@ -118,7 +120,7 @@ End Function
 '______________________________________________________________________________
 Function spawn_pickup( x%, y% )
 	Local pkp:PICKUP
-	If Rand( 0, 10000 ) < PICKUP_PROBABILITY
+	If RandF( 0.0, 1.0 ) < PICKUP_PROBABILITY
 		Local index% = Rand( 0, pickup_archetype.Length - 1 )
 		pkp = pickup_archetype[index].clone()
 		pkp.pos_x = x; pkp.pos_y = y

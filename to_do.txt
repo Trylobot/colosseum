@@ -1,4 +1,5 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ reload-meter
 	_ flaming gibs w/ sparks & flaming heaps/wrecks
 	_ since sequenced/grouped turrets can be fired together, it only makes sense that they can be "turned" together as well.
 			I want to be able to say turn_turret_group( sequence_index% ) and have it turn that whole group.
@@ -28,6 +29,7 @@
 		X turret firing (cannon/laser)
 		X projectile hitting (ding!)
 		_ turret turning (servomotor)
+		_ pickups
 	X pick apart the collide_all() method for ways to put that code into the objects rather than in the giant, monolithic function.
 	_ bonus timer for each level, set by no. of enemies
 	X instant cooldown pickup
