@@ -128,16 +128,12 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method get_path_to_target%( delay_override% = False )
+	Method get_path_to_target:TList( delay_override% = False )
+		last_find_path_ts = now()
 		If target <> Null And (delay_override Or (now() - last_find_path_ts < find_path_delay))
-			path = find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y )
-			If path <> Null And Not path.IsEmpty()
-				Return True
-			Else
-				Return False
-			End If
+			Return find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y )
 		Else
-			Return False
+			Return Null
 		End If
 	End Method
 	
@@ -257,10 +253,15 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					If see_target()
 						ang_to_target = avatar.ang_to( target )
 						Local diff# = angle_diff( avatar.turrets[0].ang, ang_to_target )
+						'stop moving
+						avatar.drive( 0.0 )
+						avatar.turn( 0.0 )
 						'if its turret is pointing at the target, then..
-						If Abs(diff) <= 2.500
+						If Abs(diff) <= 3.000
 							'fire turret(s)
 							avatar.fire( TURRETS_ALL )
+							'stop aiming
+							avatar.turn_turrets( 0.0 )
 						'else (not pointing at target)..
 						Else
 							'aim the turret at the target
@@ -272,21 +273,24 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						ang_to_target = avatar.ang_to_cVEC( waypoint )
 						Local diff# = angle_diff( avatar.ang, ang_to_target )
 						'if it is pointed toward the path's next waypoint, then..
-						If Abs(diff) <= 2.500
+						If Abs(diff) <= 8.000
 							'drive forward
 							avatar.drive( 1.0 )
+							avatar.turn( 0.0 )
 						'else (not pointed toward next waypoint)..
 						Else
 							'turn towards the next waypoint
+							avatar.drive( 0.0 )
 							If diff < 180 Then avatar.turn( -1.0 ) ..
 							Else               avatar.turn( 1.0 )
 						End If
 					'else (can't see the target, no path to the target)
 					Else
 						'attempt to get a path to the target (which will not be used until the next "think cycle"
-						get_path_to_target()
+						path = get_path_to_target()
 						'stop driving
 						avatar.drive( 0.0 )
+						avatar.turn( 0.0 )
 						'return the turret to its resting position
 						Local diff# = angle_diff( avatar.ang, avatar.turrets[0].ang )
 						If diff < 180 Then avatar.turn_turrets( -1.0 ) ..

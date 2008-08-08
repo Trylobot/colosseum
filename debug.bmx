@@ -10,7 +10,7 @@ EndRem
 'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
 'Const PATH_UNSET% = 1000
 'Global path_type% = PATH_UNSET, mouse_path_type%
-'Global db_path:TList
+Global db_path:TList
 
 '______________________________________________________________________________
 Function debug_ts( message$ )
@@ -44,8 +44,10 @@ Function debug_brain_under_mouse()
 			Else
 				debug_drawtext( "no line of sight" )
 			End If
-			If cb.get_path_to_target( True ) <> Null
-				debug_drawtext( "path to target -> " + cb.path.Count() + " waypoints" )
+			db_path = cb.get_path_to_target()
+			show_db_path()
+			If db_path <> Null
+				debug_drawtext( "path to target -> " + db_path.Count() + " waypoints" )
 			Else
 				debug_drawtext( "no path" )
 			End If
@@ -64,45 +66,37 @@ Function debug_general()
 	If KeyHit( KEY_Q ) Then load_next_level()
 End Function
 '______________________________________________________________________________
-'Function show_db_path()
-'	If db_path = Null Or db_path.IsEmpty() Then Return
-''	'pathing_grid cell border lines
-''	SetLineWidth( 1 ); SetColor( 127, 127, 127 ); SetAlpha( 0.75 )
-''	For r = 0 To pathing_grid_h
-''		DrawLine( 0, r*cell_size, pathing_grid_w*cell_size, r*cell_size )
-''	Next
-''	For c = 0 To pathing_grid_w
-''		DrawLine( c*cell_size, 0, c*cell_size, pathing_grid_h*cell_size )
-''	Next
-'	Local cursor:CELL = New CELL
-'	For cursor.row = 0 To pathing_grid_h - 1
-'		For cursor.col = 0 To pathing_grid_w - 1
-'			'blockable/passing grid
-'			SetColor( 255, 255, 255 ); SetAlpha( 0.85 )
-'			If pathing.grid( cursor ) = PATH_BLOCKED Then ..
-'				DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-'		Next
-'	Next
-'	'path
-'	Local v0:cVEC = Null, v1:cVEC = Null
-'	For Local v1:cVEC = EachIn db_path
-'		If v0 <> Null
-'			DrawLine( v0.x,v0.y, v1.x,v1.y )
-'		Else
-'			v0 = New cVEC
-'		End If
-'		v0.x = v1.x; v0.y = v1.y
-'	Next
-'	'start and goal
-'	If global_start <> Null
-'		SetColor( 64, 255, 64 ); SetAlpha( 1 )
-'		DrawRect( global_start.col*cell_size + 1, global_start.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-'	End If
-'	If global_goal <> Null
-'		SetColor( 64, 64, 255 ); SetAlpha( 1 )
-'		DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-'	End If
-'End Function
+Function show_db_path()
+	If db_path = Null Or db_path.IsEmpty() Then Return
+	Local cursor:CELL = New CELL
+	For cursor.row = 0 To pathing_grid_h - 1
+		For cursor.col = 0 To pathing_grid_w - 1
+			'blockable/passing grid
+			SetColor( 255, 255, 255 ); SetAlpha( 0.85 )
+			If pathing.grid( cursor ) = PATH_BLOCKED Then ..
+				DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+		Next
+	Next
+	'path
+	Local v0:cVEC = Null, v1:cVEC = Null
+	For Local v1:cVEC = EachIn db_path
+		If v0 <> Null
+			DrawLine( v0.x,v0.y, v1.x,v1.y )
+		Else
+			v0 = New cVEC
+		End If
+		v0.x = v1.x; v0.y = v1.y
+	Next
+	'start and goal
+	If global_start <> Null
+		SetColor( 64, 255, 64 ); SetAlpha( 1 )
+		DrawRect( global_start.col*cell_size + 1, global_start.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+	End If
+	If global_goal <> Null
+		SetColor( 64, 64, 255 ); SetAlpha( 1 )
+		DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+	End If
+End Function
 ''______________________________________________________________________________
 'Function debug_heap( message$ = "" )
 '	SetColor( 255, 255, 255 )
