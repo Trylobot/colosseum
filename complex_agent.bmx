@@ -14,6 +14,8 @@ Const ROTATE_COUNTER_CLOCKWISE_DIRECTION% = 2
 Const MOVE_FORWARD_DIRECTION% = 3
 Const MOVE_REVERSE_DIRECTION% = 4
 
+Const TURRETS_ALL% = -1
+
 Const ALIGNMENT_NONE% = 0
 Const ALIGNMENT_FRIENDLY% = 1
 Const ALIGNMENT_HOSTILE% = 2
@@ -222,6 +224,12 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	'this method uses firing groups and sequences for complex turret control
 	Method fire( seq_index% )
+		If seq_index = TURRETS_ALL
+			For Local i% = 0 To firing_sequence.Length - 1
+				fire( i )
+			Next
+			Return
+		End If
 		If seq_index < firing_sequence.Length And Not FLAG_increment_firing_group[seq_index]
 			For Local t_index% = EachIn firing_sequence[seq_index][firing_state[seq_index]]
 				fire_turret( t_index )

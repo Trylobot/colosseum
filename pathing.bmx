@@ -74,7 +74,10 @@ Type CELL
 End Type
 '______________________________________________________________________________
 Global ALL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_NORTHEAST, DIRECTION_EAST, DIRECTION_SOUTHEAST, DIRECTION_SOUTH, DIRECTION_SOUTHWEST, DIRECTION_WEST, DIRECTION_NORTHWEST ]
-Const cell_size# = 8
+Const cell_size# = 6
+'Const cell_size# = 8
+'Const cell_size# = 10
+'Const cell_size# = 20
 
 Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
 Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell

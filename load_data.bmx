@@ -30,6 +30,7 @@ Global snd_engine_idle_loop:TSound = LoadSound( audio_path_prefix + "engine_idle
 
 Global snd_tank_cannon_fire:TSound = LoadSound( audio_path_prefix + "cannon.ogg" )
 Global snd_mgun_turret_fire:TSound = LoadSound( audio_path_prefix + "mgun.ogg" )
+Global snd_bullet_hit:TSound = LoadSound( audio_path_prefix + "hit.ogg" )
 Global snd_laser_fire:TSound = LoadSound( audio_path_prefix + "laser.ogg" )
 
 '______________________________________________________________________________

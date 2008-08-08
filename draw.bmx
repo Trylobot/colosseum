@@ -157,7 +157,7 @@ Function draw_arena_fg()
 	SetRotation( 0 )
 	
 	DrawImage( img_arena_fg, 0,0 )
-	If player_level < level_walls.Length Then draw_walls( level_walls[player_level] )
+	draw_walls( get_level_walls( player_level ))
 
 	For Local w:WIDGET = EachIn environmental_widget_list
 		w.draw()

@@ -48,7 +48,7 @@ Global friendly_door_list:TList = CreateList() 'TList:WIDGET
 Global hostile_door_list:TList = CreateList() 'TList:WIDGET
 
 '______________________________________________________________________________
-Global level_walls:TList[] = New TList[3]
+Global level_walls:TList[] = New TList[2]
 For Local i% = 0 To level_walls.Length - 1
 	level_walls[i] = CreateList()
 Next
@@ -57,6 +57,14 @@ level_walls[0].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300,50 ])
 
 level_walls[1].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50,100 ])
 level_walls[1].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50,100 ])
+
+Function get_level_walls:TList( i% )
+	If i < level_walls.Length
+		Return level_walls[i]
+	Else
+		Return CreateList()
+	End If
+End Function
 
 '______________________________________________________________________________
 Function toggle_doors( political_alignment% )

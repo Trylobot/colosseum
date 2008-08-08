@@ -58,6 +58,14 @@ Global player_level% = 0
 Global player_cash% = 0
 Global player_kills% = 0
 
+Function get_player_id%()
+	If player <> Null
+		Return player.id
+	Else
+		Return -1
+	End If
+End Function
+
 '______________________________________________________________________________
 'Menu Commands
 Function menu_command( command_index% )

@@ -140,7 +140,7 @@ Function angle_diff#( a1#, a2# )
 	Else           Return a + 360
 End Function
 '______________________________________________________________________________
-Function line_intersects_line( v1:cVEC, v2:cVEC, v3:cVEC, v4:cVEC )
+Function line_intersects_line%( v1:cVEC, v2:cVEC, v3:cVEC, v4:cVEC )
 	Local denom# = ((v4.y-v3.y)*(v2.x-v1.x))-((v4.x-v3.x)*(v2.y-v1.y))
 	Local num# =   ((v4.x-v3.x)*(v1.y-v3.y))-((v4.y-v3.y)*(v1.x-v3.x))
 	Local num2# =  ((v2.x-v1.x)*(v1.y-v3.y))-((v2.y-v1.y)*(v1.x-v3.x))
@@ -153,23 +153,25 @@ Function line_intersects_line( v1:cVEC, v2:cVEC, v3:cVEC, v4:cVEC )
 	Return (ua >= 0.0 And ua <= 1.0) And (ub >= 0.0 And ub <= 1.0)
 End Function
 '______________________________________________________________________________
-Function line_intersects_rect( v1:cVEC, v2:cVEC, r:cVEC, r_dim:cVEC )
-	Local lower_left:cVEC = cVEC.Create( r.x, r.y+r_dim.y )
-	Local upper_right:cVEC = cVEC.Create( r.x+r_dim.x, r.y )
-	Local upper_left:cVEC = cVEC.Create( r.x, r.y )
-	Local lower_right:cVEC = cVEC.Create( r.x+r_dim.x, r.y+r_dim.y )
+Function line_intersects_rect%( v1:cVEC, v2:cVEC, r:cVEC, r_dim:cVEC )
+	Local lower_left:cVEC = cVEC( cVEC.Create( r.x, r.y+r_dim.y ))
+	Local upper_right:cVEC = cVEC( cVEC.Create( r.x+r_dim.x, r.y ))
+	Local upper_left:cVEC = cVEC( cVEC.Create( r.x, r.y ))
+	Local lower_right:cVEC = cVEC( cVEC.Create( r.x+r_dim.x, r.y+r_dim.y ))
 	
-	'line is completely inside of rect (will never happen in my game, as this line is longer than any rect that will be tested
-'	If  (v1.x > lower_left.x And v1.x < upper_right.x) And (v1.y < lower_left.y And v1.y > upper_right.y) ..
-'	And (v2.x > lower_left.x And v2.x < upper_right.x) And (v2.y < lower_left.y And v2.y > upper_right.y)
-'		Return True
-'	End If
+	'is line completely encased by rect? 
+	Rem (will never happen in my game)
+	If  (v1.x > lower_left.x And v1.x < upper_right.x) And (v1.y < lower_left.y And v1.y > upper_right.y) ..
+	And (v2.x > lower_left.x And v2.x < upper_right.x) And (v2.y < lower_left.y And v2.y > upper_right.y)
+		Return True
+	End If
+	EndRem
 	
 	'line intersects one of the lines making up the rectangle's borders
-	If line_intersect_line( v1,v2, upper_left,lower_left ) ..
-	Or line_intersect_line( v1,v2, lower_left,lower_right ) ..
-	Or line_intersect_line( v1,v2, upper_left,upper_right ) ..
-	Or line_intersect_line( v1,v2, upper_right,lower_right )
+	If line_intersects_line( v1,v2, upper_left,lower_left ) ..
+	Or line_intersects_line( v1,v2, lower_left,lower_right ) ..
+	Or line_intersects_line( v1,v2, upper_left,upper_right ) ..
+	Or line_intersects_line( v1,v2, upper_right,lower_right )
 		Return True
 	Else
 		Return False

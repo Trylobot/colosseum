@@ -7,6 +7,8 @@ EndRem
 '______________________________________________________________________________
 Global control_brain_list:TList = CreateList()
 
+Const WAYPOINT_RADIUS% = 10
+
 Const UNSPECIFIED% = 0
 Const CONTROL_TYPE_HUMAN% = 1
 Const CONTROL_TYPE_AI% = 2
@@ -24,11 +26,17 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field control_type% 'control type indicator
 	Field input_type% 'for human-based controllers, the input device
 	Field ai_type% 'for AI-based controllers, the specific AI "style"
-	Field think_delay# 'for AI-based controllers, a mandatory delay before it's allowed to think
+	Field think_delay# 'mandatory delay between think cycles
+	Field look_target_delay# 'mandatory delay between "see_target" calls
+	Field find_path_delay# 'mandatory delay between "find_path" calls
 	
+	Field path:TList 'path to some destination
+	Field waypoint:cVEC 'next waypoint
 	Field ang_to_target# '(private)
 	Field dist_to_target# '(private)
 	Field last_think_ts% '(private)
+	Field last_look_target_ts% '(private)
+	Field last_find_path_ts% '(private)
 	Field FLAG_waiting% '(private)
 	
 	Method New()
@@ -42,17 +50,34 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			'how often this brain gets processing time
 			If (now() - last_think_ts) > think_delay
 				last_think_ts = now()
+				If waypoint = Null Or waypoint_reached()
+					get_next_waypoint()
+				End If
 				AI_control()
 			End If
 		End If
 	End Method
 	
-	Method prune()
-		If avatar = Null
-			remove_me()
-		Else If avatar.dead()
-			avatar.remove_me()
-			remove_me()
+	Method waypoint_reached%()
+		If waypoint <> Null
+			dist_to_target = vector_diff_length( avatar.pos_x,avatar.pos_y, waypoint.x,waypoint.y )
+			If dist_to_target <= WAYPOINT_RADIUS
+				Return True
+			Else
+				Return False
+			End If
+		Else
+			Return False 'sir, where are we going? LOL :D
+		End If
+	End Method
+	
+	Method get_next_waypoint%()
+		If path <> Null And Not path.IsEmpty()
+			waypoint = cVEC( path.First())
+			path.RemoveFirst()
+			Return True 'course locked!
+		Else
+			Return False 'no seriously.. like, where the hell are we... ;_;
 		End If
 	End Method
 	
@@ -70,7 +95,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						closest_rival_agent = ag
 					End If
 				Next
-				Return closest_rival_agent
+				Return closest_rival_agent 'TARGET ACQUIRED!
 			Case ALIGNMENT_HOSTILE
 				For ag = EachIn friendly_agent_list
 					dist = vector_diff_length( avatar.pos_x, avatar.pos_y, ag.pos_x, ag.pos_y )
@@ -79,8 +104,41 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						closest_rival_agent = ag
 					End If
 				Next
-				Return closest_rival_agent
+				Return closest_rival_agent 'TARGET ACQUIRED!
 		End Select
+	End Method
+	
+	Method see_target%()
+		If target <> Null And (now() - last_look_target_ts < look_target_delay)
+			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
+			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
+			'for each wall in the level
+			For Local wall%[] = EachIn get_level_walls( player_level )
+				'if the line connecting this brain's avatar with its target intersects the wall
+				If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall[1],wall[2])), cVEC( cVEC.Create(wall[3],wall[4])) )
+					'then the avatar cannot see its target
+					Return False
+				End If
+			Next
+			'after checking all the walls, still haven't returned; avatar can therefore see its target
+			Return True
+		Else
+			'target is null or it is too soon to look again
+			Return False
+		End If
+	End Method
+	
+	Method get_path_to_target%()
+		If (now() - last_find_path_ts < find_path_delay)
+			path = find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y )
+			If path <> Null And Not path.IsEmpty()
+				Return True
+			Else
+				Return False
+			End If
+		Else
+			Return False
+		End If
 	End Method
 	
 	Method input_control()
@@ -190,19 +248,44 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Case AI_BRAIN_TANK
 				If target <> Null And Not target.dead()
 					'if it can see the target, then..
+					If see_target()
+						ang_to_target = vector_diff_angle( avatar.pos_x, avatar.pos_y, target.pos_x, target.pos_y )
+						Local diff# = angle_diff( avatar.turrets[0].ang, ang_to_target )
 						'if its turret is pointing at the target, then..
-							'fire turret
+						If Abs(diff) <= 2.500
+							'fire turret(s)
+							avatar.fire( TURRETS_ALL )
 						'else (not pointing at target)..
+						Else
 							'aim the turret at the target
+							If diff < 180 Then avatar.turn_turrets( -1.0 ) ..
+							Else               avatar.turn_turrets( 1.0 )
+						End If
 					'else (can't see the target) -- if it has a path to the target, then..
+					Else If path <> Null And Not path.IsEmpty() And waypoint <> Null
+						ang_to_target = vector_diff_angle( avatar.pos_x, avatar.pos_y, waypoint.x, waypoint.y )
+						Local diff# = angle_diff( avatar.ang, ang_to_target )
 						'if it is pointed toward the path's next waypoint, then..
+						If Abs(diff) <= 2.500
 							'drive forward
+							avatar.drive( 1.0 )
 						'else (not pointed toward next waypoint)..
+						Else
 							'turn towards the next waypoint
+							If diff < 180 Then avatar.turn( -1.0 ) ..
+							Else               avatar.turn( 1.0 )
+						End If
 					'else (can't see the target, no path to the target)
+					Else
 						'attempt to get a path to the target (which will not be used until the next "think cycle"
+						get_path_to_target()
 						'stop driving
-						'return the turret to its default position
+						avatar.drive( 0.0 )
+						'return the turret to its resting position
+						Local diff# = angle_diff( avatar.ang, avatar.turrets[0].ang )
+						If diff < 180 Then avatar.turn_turrets( -1.0 ) ..
+						Else               avatar.turn_turrets( 1.0 )
+					End If
 				Else
 					'attempt to acquire a new target
 					avatar.drive( 0.0 )
@@ -211,6 +294,15 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				End If				
 				
 		End Select
+	End Method
+	
+	Method prune()
+		If avatar = Null
+			remove_me()
+		Else If avatar.dead()
+			avatar.remove_me()
+			remove_me()
+		End If
 	End Method
 	
 End Type

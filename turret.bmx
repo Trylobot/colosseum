@@ -192,15 +192,15 @@ Type TURRET Extends POINT
 			If cur_ammo > 0 Then cur_ammo :- 1
 			reload()
 			raise_temp()
-			play_sound()
+			play_firing_sound()
 		End If
 	End Method
 	
-	Method play_sound()
+	Method play_firing_sound()
 		If snd_fire <> Null
 			Local ch:TChannel = AllocChannel()
 			CueSound( snd_fire, ch )
-			If parent.id <> player.id
+			If parent.id <> get_player_id()
 				SetChannelVolume( ch, 0.1200 )
 			End If
 			SetChannelRate( ch, RandF( 0.90, 1.15 ))
