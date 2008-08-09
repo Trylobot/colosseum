@@ -100,11 +100,10 @@ Global img_bomb_gibs:TImage = LoadAnimImage_SetHandle( "bomb_gibs.png", 7.5, 7.5
 Global img_stickies:TImage = LoadAnimImage_SetHandle( "stickies.png", 7.5, 7.5, 16, 16, 5 )
 Global img_halo:TImage = LoadImage_SetHandle( "halo.png", 100, 100 )
 Global img_spark:TImage = LoadImage_SetHandle( "spark.png", 0.5, 2.5 )
-
 Global img_enemy_quad_chassis:TImage = LoadImage_SetHandle( "enemy_quad_chassis.png", 9.5, 7.5 )
 Global img_enemy_light_mgun_turret_base:TImage = LoadImage_SetHandle( "enemy_light_mgun_turret_base.png", 3.5, 2.5 )
 Global img_enemy_light_mgun_turret_barrel:TImage = LoadImage_SetHandle( "enemy_light_mgun_turret_barrel.png", 3.5, 2.5 )
-
+Global img_quad_gibs:TImage = LoadAnimImage_SetHandle( "quad_gibs.png", 9.5, 7.5, 19, 15, 9 )
 
 
 

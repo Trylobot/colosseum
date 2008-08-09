@@ -114,6 +114,13 @@ Function load_next_level()
 End Function
 Function load_level( index% )
 	
+	FLAG_player_engine_ignition = False
+	FLAG_player_engine_running = False
+	FLAG_player_in_locker = True
+	FLAG_waiting_for_player_to_enter_arena = True
+	FLAG_battle_in_progress = False
+	FLAG_waiting_for_player_to_exit_arena = False
+	
 	dim_bg_cache()
 	prep_spawner()
 	update_all()

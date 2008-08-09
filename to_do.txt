@@ -1,4 +1,6 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ take mini-snapshots of kills, and display them in an album at the end of the level.
+			(experimental!)
 	_ create a "turret_system" object or group of variables, so that I can talk about the angle and turning velocity of the whole system.
 			turrets that are conceptually attached to each other really ought to be modelled that way.
 	_ reload-meter

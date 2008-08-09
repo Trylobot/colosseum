@@ -20,9 +20,9 @@ Global enemy_turret_anchors:POINT[] = [ ..
 	Create_POINT( Floor(arena_offset+arena_offset*1), Floor(arena_offset+arena_offset*1), 45 ), ..
 	Create_POINT( Floor(arena_offset+arena_offset*2), Floor(arena_offset+arena_offset*1), 45 ), ..
 	Create_POINT( Floor(arena_offset+arena_offset*1), Floor(arena_offset+arena_offset*2), 45 ), ..
-	Create_POINT( Floor((arena_offset*2+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*1), 135 ), ..
-	Create_POINT( Floor((arena_offset*2+arena_w)-arena_offset*2), Floor(arena_offset+arena_offset*1), 135 ), ..
-	Create_POINT( Floor((arena_offset*2+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*2), 135 ) ]
+	Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*1), 135 ), ..
+	Create_POINT( Floor((arena_offset+arena_w)-arena_offset*2), Floor(arena_offset+arena_offset*1), 135 ), ..
+	Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*2), 135 ) ]
 Global anchor_deck%[] = New Int[ enemy_turret_anchors.Length ]
 Function shuffle_anchor_deck()
 	Local i%, j%, swap%
@@ -221,12 +221,12 @@ Local door:WIDGET
 Global friendly_door_list:TList = CreateList() 'TList:WIDGET
 	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
 		door.parent = player_spawn_point
-		door.attach_at( -25, -25, -90 )
+		door.attach_at( -25, -25, 0 )
 		door.auto_manage()
 		friendly_door_list.AddLast( door )
 	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
 		door.parent = player_spawn_point
-		door.attach_at( 25, -25, 90 )
+		door.attach_at( 25, -25, 180 )
 		door.auto_manage()
 		friendly_door_list.AddLast( door )
 Global hostile_door_list:TList = CreateList() 'TList:WIDGET

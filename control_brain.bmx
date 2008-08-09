@@ -217,7 +217,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						'wait for cooldown
 						If FLAG_waiting And avatar.turrets[0].cur_heat <= 0.25*avatar.turrets[0].max_heat Then FLAG_waiting = False ..
 						Else If avatar.turrets[0].overheated() Then FLAG_waiting = True
-						
 						If Not FLAG_waiting Then avatar.fire_turret( 0 )
 					End If
 				Else
@@ -272,7 +271,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						'if its turret is pointing at the target, then..
 						If Abs(diff) <= 3.000
 							'fire turret(s)
-							avatar.fire_turret( 0 )
+							'wait for cooldown
+							If FLAG_waiting And avatar.turrets[0].cur_heat <= 0.25*avatar.turrets[0].max_heat Then FLAG_waiting = False ..
+							Else If avatar.turrets[0].overheated() Then FLAG_waiting = True
+							If Not FLAG_waiting Then avatar.fire_turret( 0 )
 							'stop aiming
 							avatar.turn_turrets( 0.0 )
 						'else (not pointing at target)..

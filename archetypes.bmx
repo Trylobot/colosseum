@@ -68,6 +68,8 @@ Global PARTICLE_EMITTER_INDEX_MR_THE_BOX_TRAIL% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_ROCKET_THRUST% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_LASER_MUZZLE_FLARE% = postfix_index()
+Global PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS% = postfix_index()
+Global PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL% = postfix_index()
 
 particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_CANNON_MUZZLE_FLASH, MODE_DISABLED, False, False, False, False, False, 0, 0, 1, 1, 50, 50 ))
 particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_CANNON_SHELL_CASING, MODE_DISABLED, True, True, False, False, True, 0, 0, 1, 1, 2200, 2200 ))
@@ -85,6 +87,8 @@ particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MR_THE_BOX_TRAIL] = EMITTER( E
 particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_THRUST] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_ROCKET_THRUST, MODE_ENABLED_FOREVER, False, False, False, False, False, 10, 15, 1, 1, 10, 15, 0.50, 0.75, 0, 0, 0.25, 1.00, 0, 0 ))
 particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_ROCKET_SMOKE_TRAIL, MODE_ENABLED_FOREVER, False, False, False, False, False, 0, 30, 0, 0, 250, 500, 0.06, 0.12, -0.002, -0.020, 0.10, 0.70, 0.0008, 0.0300 ))
 particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_MUZZLE_FLARE] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_LASER_MUZZLE_FLARE, MODE_DISABLED, False, False, False, False, False, 0, 0, 1, 1, 50, 50 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_DEBRIS, MODE_DISABLED, False, True, False, False, False, 100, 150, 0, 0, 200, 350, 0.75, 0.75, -0.0012, -0.0025 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_TRAIL, MODE_DISABLED, False, False, False, False, False, 100, 100, 1, 1, 50, 50,,,,, 0.60, 0.60, 0.0, 0.0 ))
 
 '______________________________________________________________________________
 '[ PROJECTILES ]
@@ -201,7 +205,7 @@ turret_archetype[TURRET_INDEX_CANNON_TURRET] = TURRET( TURRET.Create( "", TURRET
 	turret_archetype[TURRET_INDEX_CANNON_TURRET].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH ).attach_to( turret_archetype[TURRET_INDEX_CANNON_TURRET], 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_CANNON_TURRET].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE ).attach_to( turret_archetype[TURRET_INDEX_CANNON_TURRET], 20, 0, 3, 6, -45, 45, 0.05, 0.40, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_CANNON_TURRET].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING ).attach_to( turret_archetype[TURRET_INDEX_CANNON_TURRET], 5, 1, 0, 0, 0, 0, 0.4, 0.6, 80, 100, 0, 0, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
-turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN] = TURRET( TURRET.Create( "", TURRET_CLASS_AMMUNITION, img_enemy_light_mgun_turret_base, img_enemy_light_mgun_turret_barrel, snd_mgun_turret_fire, 2.00, 85, INFINITY, 0, 0, 25.0, 3.0, 3.5, 0.0175, 2000 ))
+turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN] = TURRET( TURRET.Create( "", TURRET_CLASS_AMMUNITION, img_enemy_light_mgun_turret_base, img_enemy_light_mgun_turret_barrel, snd_mgun_turret_fire, 2.00, 100, INFINITY, 0, 0, 25.0, 5.0, 5.5, 0.0175, 2000 ))
 	turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN].add_emitter( EMITTER_TYPE_PROJECTILE, PROJECTILE_EMITTER_INDEX_MACHINE_GUN ).attach_to( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 8, 0, 0, 0, 0, 0, 3.0, 3.4, 0, 0, 0, 0, 0, 0, -2.2, 2.2, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH ).attach_to( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 	turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE ).attach_to( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 8, 0, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -209,33 +213,13 @@ turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN] = TURRET( TURRET.Create( "", TU
 		
 '______________________________________________________________________________
 '[ COMPLEX_AGENTS ]
-Global complex_agent_archetype:COMPLEX_AGENT[15]; reset_index()
+Global complex_agent_archetype:COMPLEX_AGENT[20]; reset_index()
 
-'[ ENEMIES ]
-Global ENEMY_INDEX_START% = array_index
-Global ENEMY_INDEX_MR_THE_BOX% = postfix_index()
-Global ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT% = postfix_index()
-Global ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT% = postfix_index()
-Global ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT% = postfix_index()
-Global ENEMY_INDEX_MOBILE_MINI_BOMB% = postfix_index()
-Global ENEMY_INDEX_LIGHT_QUAD% = postfix_index()
 '[ PLAYERS ]
 Global PLAYER_INDEX_START% = array_index
 Global PLAYER_INDEX_LIGHT_TANK% = postfix_index()
 Global PLAYER_INDEX_LASER_TANK% = postfix_index()
 Global PLAYER_INDEX_MED_TANK% = postfix_index()
-
-complex_agent_archetype[ENEMY_INDEX_MR_THE_BOX] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mr. the box", img_box, img_box_gib, AI_BRAIN_MR_THE_BOX, 50, 35, 200.0, 10.0, 0, 1, 6.0, 12.0 ))
-complex_agent_archetype[ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun emplacement", img_enemy_stationary_emplacement_1_chassis, img_tower_gibs, AI_BRAIN_TURRET, 100, 100, 1000.0, 0, 1, 0, 0, 0, True ))
-	complex_agent_archetype[ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET], 0 ).attach_at( 0, 0 )
-complex_agent_archetype[ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "cannon emplacement", img_enemy_stationary_emplacement_1_chassis, img_tower_gibs, AI_BRAIN_TURRET, 100, 100, 1000.0, 0, 1, 0, 0, 0, True ))
-	complex_agent_archetype[ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_CANNON_TURRET], 0 ).attach_at( 0, 0 )
-complex_agent_archetype[ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "rocket emplacement", img_enemy_stationary_emplacement_1_chassis, img_tower_gibs, AI_BRAIN_TURRET, 150, 100, 1000.0, 0, 1, 0, 0, 0, True ))
-	complex_agent_archetype[ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_ROCKET_TURRET], 0 ).attach_at( 0, 0 )
-complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mini bomb", img_nme_mobile_bomb, img_bomb_gibs, AI_BRAIN_SEEKER, 75, 50, 200, 10.0, 0, 1, 7.50, 25.0 ))
-	complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_widget( widget_archetype[WIDGET_INDEX_GLOW] ).attach_at( -6, 0 )
-complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun quad", img_enemy_quad_chassis, Null, AI_BRAIN_TANK, 150, 100, 400, 25.0, 1, 0, 35.0, 55.0 ))
-	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 0 ).attach_at( -6, 0 )
 
 complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "light tank", img_player_tank_chassis, Null, AI_BRAIN_TANK, 0, 500, 800.0, 75.0, 2, 2, 75.0, 100.0 ))
 	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON], 0 ).attach_at( -5, 0 )
@@ -291,6 +275,42 @@ complex_agent_archetype[PLAYER_INDEX_MED_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Ar
 	complex_agent_archetype[PLAYER_INDEX_MED_TANK].rear_trail_emitters[ 1] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ))
 	complex_agent_archetype[PLAYER_INDEX_MED_TANK].rear_trail_emitters[ 1].attach_to( complex_agent_archetype[PLAYER_INDEX_MED_TANK], -15, 8, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 
+'[ ENEMIES ]
+Global ENEMY_INDEX_START% = array_index
+Global ENEMY_INDEX_MR_THE_BOX% = postfix_index()
+Global ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT% = postfix_index()
+Global ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT% = postfix_index()
+Global ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT% = postfix_index()
+Global ENEMY_INDEX_MOBILE_MINI_BOMB% = postfix_index()
+Global ENEMY_INDEX_LIGHT_QUAD% = postfix_index()
+
+complex_agent_archetype[ENEMY_INDEX_MR_THE_BOX] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mr. the box", img_box, img_box_gib, AI_BRAIN_MR_THE_BOX, 50, 35, 200.0, 10.0, 0, 1, 6.0, 12.0 ))
+complex_agent_archetype[ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun emplacement", img_enemy_stationary_emplacement_1_chassis, img_tower_gibs, AI_BRAIN_TURRET, 100, 100, 1000.0, 0, 1, 0, 0, 0, True ))
+	complex_agent_archetype[ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET], 0 ).attach_at( 0, 0 )
+complex_agent_archetype[ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "cannon emplacement", img_enemy_stationary_emplacement_1_chassis, img_tower_gibs, AI_BRAIN_TURRET, 100, 100, 1000.0, 0, 1, 0, 0, 0, True ))
+	complex_agent_archetype[ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_CANNON_TURRET], 0 ).attach_at( 0, 0 )
+complex_agent_archetype[ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "rocket emplacement", img_enemy_stationary_emplacement_1_chassis, img_tower_gibs, AI_BRAIN_TURRET, 150, 100, 1000.0, 0, 1, 0, 0, 0, True ))
+	complex_agent_archetype[ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_ROCKET_TURRET], 0 ).attach_at( 0, 0 )
+complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mini bomb", img_nme_mobile_bomb, img_bomb_gibs, AI_BRAIN_SEEKER, 75, 50, 200, 10.0, 0, 1, 7.50, 25.0 ))
+	complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_widget( widget_archetype[WIDGET_INDEX_GLOW] ).attach_at( -6, 0 )
+complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun quad", img_enemy_quad_chassis, img_quad_gibs, AI_BRAIN_TANK, 150, 100, 400, 25.0, 1, 2, 35.0, 55.0 ))
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 0 ).attach_at( -6, 0 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].forward_debris_emitters[ 0] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS] ))
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].forward_debris_emitters[ 0].attach_to( complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD], -3, -4, 0, 2, -45, 45, 0.3, 0.6, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].forward_debris_emitters[ 1] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS] ))
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].forward_debris_emitters[ 1].attach_to( complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD], -3, 4, 0, 2, -45, 45, 0.3, 0.6, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].rear_debris_emitters[ 0] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS] ))
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].rear_debris_emitters[ 0].attach_to( complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD], -8, -4, 0, 2, 135, 225, 0.3, 0.6, 135, 225, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].rear_debris_emitters[ 1] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS] ))
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].rear_debris_emitters[ 1].attach_to( complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD], -8, 4, 0, 2, 135, 225, 0.3, 0.6, 135, 225, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].forward_trail_emitters[ 0] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL] ))
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].forward_trail_emitters[ 0].attach_to( complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD], -3, -4, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].forward_trail_emitters[ 1] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL] ))
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].forward_trail_emitters[ 1].attach_to( complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD], -3, 4, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].rear_trail_emitters[ 0] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL] ))
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].rear_trail_emitters[ 0].attach_to( complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD], -8, -4, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].rear_trail_emitters[ 1] = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL] ))
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].rear_trail_emitters[ 1].attach_to( complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD], -8, 4, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 
 
 

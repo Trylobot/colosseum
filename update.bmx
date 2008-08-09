@@ -16,14 +16,16 @@ Function update_all()
 		If FLAG_waiting_for_player_to_enter_arena And player.pos_y <= player_spawn_point.pos_y - (arena_offset/2.0)
 			FLAG_waiting_for_player_to_enter_arena = False
 			FLAG_battle_in_progress = True
+			FLAG_waiting_for_player_to_exit_arena = True
 		End If
 		If level_enemies_remaining = 0
-			FLAG_waiting_for_player_to_exit_arena = True
 			FLAG_battle_in_progress = False
 		End If
-		If FLAG_waiting_for_player_to_exit_arena And player.pos_y >= player_spawn_point.pos_y
+		If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And player.pos_y >= player_spawn_point.pos_y
 			FLAG_waiting_for_player_to_exit_arena = False
 			FLAG_player_in_locker = True
+			
+			load_next_level()
 		End If
 		
 		For Local w:WIDGET = EachIn environmental_widget_list
