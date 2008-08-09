@@ -28,13 +28,13 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	End Method
 	
 	Function Create:Object( ..
-	img:TImage, ..
-	snd_impact:TSound, ..
+	img:TImage = Null, ..
+	snd_impact:TSound = Null, ..
 	damage#, ..
-	radius#, ..
-	max_vel#, ..
-	mass#, ..
-	frictional_coefficient#, ..
+	radius# = 0.0, ..
+	max_vel# = INFINITY, ..
+	mass# = 1.0, ..
+	frictional_coefficient# = 0.0, ..
 	ignore_other_projectiles% = False, ..
 	source_id% = NULL_ID, ..
 	pos_x# = 0.0, pos_y# = 0.0, ..
@@ -85,7 +85,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 			em.emit()
 		Next
 		'maximum velocity
-		If max_vel > 0
+		If max_vel <> INFINITY
 			Local vel_mag#, vel_dir#
 			cartesian_to_polar( vel_x, vel_y, vel_mag, vel_dir )
 			If vel_mag > max_vel

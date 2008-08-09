@@ -5,80 +5,6 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const RANGE_DISTRIBUTION_FLAT% = 0
-Const RANGE_DISTRIBUTION_LINEAR% = 1
-Const RANGE_DISTRIBUTION_QUADRATIC% = 2
-Const RANGE_DISTRIBUTION_ROOT% = 3
-Const RANGE_DISTRIBUTION_EXPONENTIAL% = 4
-Const RANGE_DISTRIBUTION_LOGARITHMIC% = 5
-Const RANGE_DISTRIBUTION_INVERSE% = 6
-
-Type RANGE
-	Field low#, high# 'absolute min and max of any returned value
-	Field low_eq_high% '{true|false}
-	'Field distribution_type% '{flat|linear|quadratic|root|exponential|logarithmic|inverse}
-	'Field coefficients#[] 'distribution function coefficients
-	
-	Method New()
-		'coefficients = new Float[5]
-	End Method
-	
-	Function Create:RANGE( low#, high# )
-		Local r:RANGE = New RANGE
-		r.low = low; r.high = high
-		If low = high Then r.low_eq_high = True
-		Return r
-	End Function
-	Method clone:RANGE()
-		Return RANGE.Create( low, high )
-	End Method
-
-	Method set( new_low#, new_high# )
-		low = new_low; high = new_high
-		If low = high Then low_eq_high = True
-	End Method
-
-	Method get#()
-		If low_eq_high
-			Return low
-		Else
-			Return RandF( low, high )
-		End If
-	End Method
-End Type
-'______________________________________________________________________________
-Type RANGE_Int
-	Field low%, high%
-	Field low_eq_high% '{true|false}
-	
-	Method New()
-	End Method
-
-	Function Create:RANGE_Int( low%, high% )
-		Local r:RANGE_Int = New RANGE_Int
-		r.low = low; r.high = high
-		If low = high Then r.low_eq_high = True
-		Return r
-	End Function
-	Method clone:RANGE_Int()
-		Return RANGE_Int.Create( low, high )
-	End Method
-
-	Method set( new_low%, new_high% )
-		low = new_low; high = new_high
-		If low = high Then low_eq_high = True ..
-		Else               low_eq_high = False
-	End Method
-
-	Method get%()
-		If low_eq_high
-			Return low
-		Else
-			Return Rand( low, high )
-		End If
-	End Method
-End Type
-'______________________________________________________________________________
 Const EMITTER_TYPE_PARTICLE% = 0
 Const EMITTER_TYPE_PROJECTILE% = 1
 
@@ -244,7 +170,6 @@ Type EMITTER extends MANAGED_OBJECT
 		p.scale = scale.get()
 		p.scale_delta = scale_delta.get()
 		
-If KeyDown( KEY_E ) Then DebugStop
 		'color
 		p.red = red.get(); p.green = green.get(); p.blue = blue.get()
 		p.red_delta = red_delta.get(); p.green_delta = green_delta.get(); p.blue_delta = blue_delta.get()
@@ -339,14 +264,14 @@ If KeyDown( KEY_E ) Then DebugStop
 	Function Archetype:Object( ..
 	emitter_type%, ..
 	archetype_index%, ..
-	mode%, ..
+	mode% = MODE_DISABLED, ..
 	combine_vel_with_parent_vel%, ..
 	combine_vel_ang_with_parent_ang%, ..
 	inherit_ang_from_dist_ang%, ..
 	inherit_vel_ang_from_ang%, ..
 	inherit_acc_ang_from_vel_ang%, ..
 	interval_min% = 0, interval_max% = 0, ..
-	count_min% = 0, count_max% = 0, ..
+	count_min% = 1, count_max% = 1, ..
 	life_time_min% = INFINITY, life_time_max% = INFINITY, ..
 	alpha_min# = 1.0, alpha_max# = 1.0, ..
 	alpha_delta_min# = 0.0, alpha_delta_max# = 0.0, ..

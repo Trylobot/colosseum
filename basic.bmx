@@ -258,3 +258,77 @@ Type pVEC 'polar coordinate system 2D vector
 	End Method
 End Type
 
+'______________________________________________________________________________
+Const RANGE_DISTRIBUTION_FLAT% = 0
+Const RANGE_DISTRIBUTION_LINEAR% = 1
+Const RANGE_DISTRIBUTION_QUADRATIC% = 2
+Const RANGE_DISTRIBUTION_ROOT% = 3
+Const RANGE_DISTRIBUTION_EXPONENTIAL% = 4
+Const RANGE_DISTRIBUTION_LOGARITHMIC% = 5
+Const RANGE_DISTRIBUTION_INVERSE% = 6
+
+Type RANGE
+	Field low#, high# 'absolute min and max of any returned value
+	Field low_eq_high% '{true|false}
+	'Field distribution_type% '{flat|linear|quadratic|root|exponential|logarithmic|inverse}
+	'Field coefficients#[] 'distribution function coefficients
+	
+	Method New()
+		'coefficients = new Float[5]
+	End Method
+	
+	Function Create:RANGE( low#, high# )
+		Local r:RANGE = New RANGE
+		r.low = low; r.high = high
+		If low = high Then r.low_eq_high = True
+		Return r
+	End Function
+	Method clone:RANGE()
+		Return RANGE.Create( low, high )
+	End Method
+
+	Method set( new_low#, new_high# )
+		low = new_low; high = new_high
+		If low = high Then low_eq_high = True
+	End Method
+
+	Method get#()
+		If low_eq_high
+			Return low
+		Else
+			Return RandF( low, high )
+		End If
+	End Method
+End Type
+'______________________________________________________________________________
+Type RANGE_Int
+	Field low%, high%
+	Field low_eq_high% '{true|false}
+	
+	Method New()
+	End Method
+
+	Function Create:RANGE_Int( low%, high% )
+		Local r:RANGE_Int = New RANGE_Int
+		r.low = low; r.high = high
+		If low = high Then r.low_eq_high = True
+		Return r
+	End Function
+	Method clone:RANGE_Int()
+		Return RANGE_Int.Create( low, high )
+	End Method
+
+	Method set( new_low%, new_high% )
+		low = new_low; high = new_high
+		If low = high Then low_eq_high = True ..
+		Else               low_eq_high = False
+	End Method
+
+	Method get%()
+		If low_eq_high
+			Return low
+		Else
+			Return Rand( low, high )
+		End If
+	End Method
+End Type
