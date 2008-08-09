@@ -15,11 +15,34 @@ Global global_goal:CELL
 Global db_path:TList
 
 '______________________________________________________________________________
+Function debug_range()
+	Local r:RANGE_Int = New RANGE_Int
+	Local str$ = ""
+	
+	Print "( " + r.low + ", " + r.high + " )"
+	str = ""
+	For Local i% = 0 To 10
+		str :+ r.get() + " "
+	Next
+	Print str
+	
+	r.set( 1, 5 )
+	
+	Print "( " + r.low + ", " + r.high + " )"
+	str = ""
+	For Local i% = 0 To 10
+		str :+ r.get() + " "
+	Next
+	Print str
+	
+End Function
+
+'______________________________________________________________________________
 Function debug_ts( message$ )
 	Print( String.FromInt( now() ) + ":" + message )
 End Function
 Global sx%, sy%, h% = 10
-'______________________________________________________________________________
+
 Function debug_drawtext( message$ )
 	SetImageFont( consolas_normal_10 )
 	SetColor( 0, 0, 0 )

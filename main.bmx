@@ -4,6 +4,11 @@ Rem
 	author: Tyler W Cole
 EndRem
 
+?Debug
+'	debug_range()
+'	End
+?
+
 '______________________________________________________________________________
 'MAIN
 Local before% = 0

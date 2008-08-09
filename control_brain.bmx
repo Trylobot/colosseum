@@ -110,7 +110,14 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method see_target%()
-		If target <> Null
+		If avatar.pos_x < arena_offset ..
+		Or avatar.pos_x > arena_offset+arena_w ..
+		Or avatar.pos_y < arena_offset ..
+		Or avatar.pos_y > arena_offset+arena_h
+			'avatar is not the arena; blind it
+			Return False
+			
+		Else If target <> Null
 			last_look_target_ts = now()
 			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
 			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
@@ -245,8 +252,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						dist_to_target = avatar.dist_to( target )
 						If dist_to_target <= 20 Then avatar.self_destruct( target )
 					Else
-						avatar.drive( 0.0 )
-						avatar.turn( 0.0 )
+						avatar.drive( 0.333 )
+						avatar.turn( RandF( -0.5, 0.5 ))
 					End If
 				Else
 					'no target

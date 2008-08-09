@@ -5,6 +5,80 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Const RANGE_DISTRIBUTION_FLAT% = 0
+Const RANGE_DISTRIBUTION_LINEAR% = 1
+Const RANGE_DISTRIBUTION_QUADRATIC% = 2
+Const RANGE_DISTRIBUTION_ROOT% = 3
+Const RANGE_DISTRIBUTION_EXPONENTIAL% = 4
+Const RANGE_DISTRIBUTION_LOGARITHMIC% = 5
+Const RANGE_DISTRIBUTION_INVERSE% = 6
+
+Type RANGE
+	Field low#, high# 'absolute min and max of any returned value
+	Field low_eq_high% '{true|false}
+	'Field distribution_type% '{flat|linear|quadratic|root|exponential|logarithmic|inverse}
+	'Field coefficients#[] 'distribution function coefficients
+	
+	Method New()
+		'coefficients = new Float[5]
+	End Method
+	
+	Function Create:RANGE( low#, high# )
+		Local r:RANGE = New RANGE
+		r.low = low; r.high = high
+		If low = high Then r.low_eq_high = True
+		Return r
+	End Function
+	Method clone:RANGE()
+		Return RANGE.Create( low, high )
+	End Method
+
+	Method set( new_low#, new_high# )
+		low = new_low; high = new_high
+		If low = high Then low_eq_high = True
+	End Method
+
+	Method get#()
+		If low_eq_high
+			Return low
+		Else
+			Return RandF( low, high )
+		End If
+	End Method
+End Type
+'______________________________________________________________________________
+Type RANGE_Int
+	Field low%, high%
+	Field low_eq_high% '{true|false}
+	
+	Method New()
+	End Method
+
+	Function Create:RANGE_Int( low%, high% )
+		Local r:RANGE_Int = New RANGE_Int
+		r.low = low; r.high = high
+		If low = high Then r.low_eq_high = True
+		Return r
+	End Function
+	Method clone:RANGE_Int()
+		Return RANGE_Int.Create( low, high )
+	End Method
+
+	Method set( new_low%, new_high% )
+		low = new_low; high = new_high
+		If low = high Then low_eq_high = True ..
+		Else               low_eq_high = False
+	End Method
+
+	Method get%()
+		If low_eq_high
+			Return low
+		Else
+			Return Rand( low, high )
+		End If
+	End Method
+End Type
+'______________________________________________________________________________
 Const EMITTER_TYPE_PARTICLE% = 0
 Const EMITTER_TYPE_PROJECTILE% = 1
 
@@ -19,60 +93,60 @@ Type EMITTER extends MANAGED_OBJECT
 	Field emitter_type% 'emitter type (particle/projectile)
 	Field archetype_index% 'particle archetype
 	Field mode% 'emitter mode (off/counter/timer)
-	Field interval_min% 'delay between particles - lower bound
-	Field interval_max% 'delay between particles - upper bound
-	Field interval% '(private) delay between particles - pre-calculated
+	Field interval:RANGE_Int 'delay between particles
+	Field interval_next% '(private) delay between particles - pre-calculated
 	Field last_emit_ts% '(private) timestamp of last emitted particle
 	Field time_to_live% 'time until this emitter is disabled
 	Field last_enable_ts% '(private) timestamp of the last time this emitter was enabled
-	Field count_min% 'number of particles to emit - lower bound
-	Field count_max% 'number of particles to emit - upper bound
-	Field count_cur% '(private) number of particles remaining to emit - pre-calculated and tracked
+	Field count:RANGE_Int 'number of particles to emit - upper bound
+	Field count_next% '(private) number of particles remaining to emit - pre-calculated and tracked
 	Field combine_vel_with_parent_vel% 'setting - whether to add the parent's velocity to the emitted particle's velocity
 	Field combine_vel_ang_with_parent_ang% 'setting - whether to add the parent's orientation to the emitted particle's direction of travel
 	Field inherit_ang_from_dist_ang% 'setting - whether to set the angle to the already-determined "dist_ang" or a new angle
 	Field inherit_vel_ang_from_ang% 'setting - whether to set the velocity angle to the already-determined "ang" or a new angle
 	Field inherit_acc_ang_from_vel_ang% 'setting - whether to set the acceleration angle to the already-determined "vel_ang" or a new angle
 	Field source_id% '(optional) emitter source (for projectile no_collides)
-	
 	Field offset# 'offset vector magnitude (added to parent's position)
 	Field offset_ang# 'offset vector angle (added to parent's position)
-	Field dist_min# 'distance vector magnitude (added to offset) - lower bound
-	Field dist_max# 'distance vector magnitude (added to offset) - upper bound
-	Field dist_ang_min# 'distance vector angle (added to offset) - lower bound
-	Field dist_ang_max# 'distance vector angle (added to offset) - upper bound
-	Field vel_min# 'velocity vector magnitude - lower bound
-	Field vel_max# 'velocity vector magnitude - upper bound
-	Field vel_ang_min# 'velocity vector angle - lower bound
-	Field vel_ang_max# 'velocity vector angle - upper bound
-	Field acc_min# 'acceleration vector magnitude - lower bound
-	Field acc_max# 'acceleration vector magnitude - upper bound
-	Field acc_ang_min# 'acceleration vector angle - lower bound
-	Field acc_ang_max# 'acceleration vector angle - upper bound
-	Field ang_min# 'orientation - lower bound
-	Field ang_max# 'orientation - upper bound
-	Field ang_vel_min# 'angular velocity - lower bound
-	Field ang_vel_max# 'angular velocity - upper bound
-	Field ang_acc_min# 'angular acceleration - lower bound
-	Field ang_acc_max# 'angular acceleration - upper bound
-	Field life_time_min% 'life time - lower bound
-	Field life_time_max% 'life time - upper bound
-	Field alpha_min# 'initial alpha value - lower bound
-	Field alpha_max# 'initial alpha value - upper bound
-	Field alpha_delta_min# 'alpha rate of change - lower bound
-	Field alpha_delta_max# 'alpha rate of change - upper bound
-	Field scale_min# 'initial scale value - lower bound
-	Field scale_max# 'initial scale value - upper bound
-	Field scale_delta_min# 'scale rate of change - lower bound
-	Field scale_delta_max# 'scale rate of change - upper bound
+	
+	Field dist:RANGE 'additional emitted particle offset magnitude
+	Field dist_ang:RANGE 'direction of additional emitted particle  offset
+	Field vel:RANGE 'velocity of emitted particle
+	Field vel_ang:RANGE 'direction of velocity of emitted particle 
+	Field acc:RANGE 'acceleration of emitted particle 
+	Field acc_ang:RANGE 'direction of acceleration emitted particle 
+	Field ang:RANGE 'orientation of emitted particle 
+	Field ang_vel:RANGE 'angular velocity of emitted particle 
+	Field ang_acc:RANGE 'angular acceleration of emitted particle 
+	Field life_time:RANGE_Int 'life time of emitted particle 
+	Field alpha:RANGE 'initial alpha value of emitted particle 
+	Field alpha_delta:RANGE 'alpha rate of change of emitted particle 
+	Field scale:RANGE 'initial scale value of emitted particle 
+	Field scale_delta:RANGE 'scale rate of change of emitted particle 
+	Field red:RANGE_Int, green:RANGE_Int, blue:RANGE_Int 'color of emitted particle
+	Field red_delta:RANGE, green_delta:RANGE, blue_delta:RANGE 'emitted particle's change in color over time
 	
 	Method New()
+		interval = New RANGE_Int
+		count = New RANGE_Int
+		
+		dist = New RANGE; dist_ang = New RANGE
+		vel = New RANGE; vel_ang = New RANGE
+		acc = New RANGE; acc_ang = New RANGE
+		ang = New RANGE
+		ang_vel = New RANGE
+		ang_acc = New RANGE
+		life_time = New RANGE_Int
+		alpha = New RANGE; alpha_delta = New RANGE
+		scale = New RANGE; scale_delta = New RANGE
+		red = New RANGE_Int; green = New RANGE_Int; blue = New RANGE_Int 
+		red_delta = New RANGE; green_delta = New RANGE; blue_delta = New RANGE 
 	End Method
 	
 	Method update()
 		Select mode
 			Case MODE_ENABLED_WITH_COUNTER
-				If count_cur <= 0 Then disable()
+				If count_next <= 0 Then disable()
 			Case MODE_ENABLED_WITH_TIMER
 				If (now() - last_enable_ts) >= time_to_live Then disable()
 		End Select
@@ -82,7 +156,7 @@ Type EMITTER extends MANAGED_OBJECT
 		mode = new_mode
 		Select mode
 			Case MODE_ENABLED_WITH_COUNTER
-				count_cur = Rand( count_min, count_max )
+				count_next = count.get()
 			Case MODE_ENABLED_WITH_TIMER
 				last_enable_ts = now()
 		End Select
@@ -95,7 +169,7 @@ Type EMITTER extends MANAGED_OBJECT
 	Method ready%()
 		Return ..
 			(Not (mode = MODE_DISABLED)) And ..
-			((now() - last_emit_ts) >= interval) And ..
+			((now() - last_emit_ts) >= interval_next) And ..
 			(parent <> Null)
 	End Method
 	
@@ -103,7 +177,6 @@ Type EMITTER extends MANAGED_OBJECT
 	'ie, this method will only emit if it's appropriate.
 	Method emit() '( alignment% = ALIGNMENT_NOT_APPLICABLE )
 		If ready()
-		
 			'create a new object (particle/projectile) and set it up
 			Select emitter_type
 				Case EMITTER_TYPE_PARTICLE
@@ -114,57 +187,71 @@ Type EMITTER extends MANAGED_OBJECT
 			
 			'interval
 			last_emit_ts = now()
-			interval = Rand( interval_min, interval_max )
+			interval_next = interval.get()
 			'counter
-			count_cur :- 1
+			count_next :- 1
 			
 		End If
 	End Method
 	Method emit_particle( p:PARTICLE ) '(private)
 		
 		'position
-		Local dist# = RandF( dist_min, dist_max )
-		Local dist_ang# = RandF( dist_ang_min, dist_ang_max )
-		p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist * Cos( dist_ang + parent.ang )
-		p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist * Sin( dist_ang + parent.ang )
+		Local dist_actual# = dist.get()
+		Local dist_ang_actual# = dist_ang.get()
+		p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist_actual * Cos( dist_ang_actual + parent.ang )
+		p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist_actual * Sin( dist_ang_actual + parent.ang )
 		
 		'orientation
-		If inherit_ang_from_dist_ang Then p.ang = dist_ang + parent.ang ..
-		Else                              p.ang = RandF( ang_min, ang_max ) + parent.ang
+		If inherit_ang_from_dist_ang
+			p.ang = dist_ang_actual + parent.ang
+		Else
+			p.ang = ang.get() + parent.ang
+		End If
 
 		'velocity
-		Local vel# = RandF( vel_min, vel_max )
-		Local vel_ang#
-		If inherit_vel_ang_from_ang Then vel_ang = p.ang ..
-		Else                             vel_ang = RandF( vel_ang_min, vel_ang_max )
-		p.vel_x = vel * Cos( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_x )
-		p.vel_y = vel * Sin( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_y )
+		Local vel_actual# = vel.get()
+		Local vel_ang_actual#
+		If inherit_vel_ang_from_ang
+			vel_ang_actual = p.ang
+		Else
+			vel_ang_actual = vel_ang.get()
+		End If
+		p.vel_x = vel_actual * Cos( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_x )
+		p.vel_y = vel_actual * Sin( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_y )
 		
 		'angular velocity
-		p.ang_vel = RandF( ang_vel_min, ang_vel_max )
+		p.ang_vel = ang_vel.get()
 		
 		'acceleration
-		Local acc# = RandF( acc_min, acc_max )
-		Local acc_ang#
-		If inherit_acc_ang_from_vel_ang Then acc_ang = vel_ang ..
-		Else                                 acc_ang = RandF( acc_ang_min, acc_ang_max )
-		p.acc_x = acc * Cos( acc_ang + parent.ang )
-		p.acc_y = acc * Sin( acc_ang + parent.ang )
+		Local acc_actual# = acc.get()
+		Local acc_ang_actual#
+		If inherit_acc_ang_from_vel_ang
+			acc_ang_actual = vel_ang_actual
+		Else
+			acc_ang_actual = acc_ang.get()
+		End If
+		p.acc_x = acc_actual * Cos( acc_ang_actual + parent.ang )
+		p.acc_y = acc_actual * Sin( acc_ang_actual + parent.ang )
 		
 		'angular acceleration
-		p.ang_acc = RandF( ang_acc_min, ang_acc_max )
+		p.ang_acc = ang_acc.get()
 		
 		'alpha
-		p.alpha = RandF( alpha_min, alpha_max )
-		p.alpha_delta = RandF( alpha_delta_min, alpha_delta_max )
+		p.alpha = alpha.get()
+		p.alpha_delta = alpha_delta.get()
 		
 		'scale
-		p.scale = RandF( scale_min, scale_max )
-		p.scale_delta = RandF( scale_delta_min, scale_delta_max )
+		p.scale = scale.get()
+		p.scale_delta = scale_delta.get()
+		
+If KeyDown( KEY_E ) Then DebugStop
+		'color
+		p.red = red.get(); p.green = green.get(); p.blue = blue.get()
+		p.red_delta = red_delta.get(); p.green_delta = green_delta.get(); p.blue_delta = blue_delta.get()
 		
 		'life time
 		p.created_ts = now()
-		p.life_time = Rand( life_time_min, life_time_max )
+		p.life_time = life_time.get()
 		
 		'management
 		p.auto_manage()
@@ -173,34 +260,63 @@ Type EMITTER extends MANAGED_OBJECT
 	Method emit_projectile( p:PROJECTILE ) '(private)
 		
 		'position
-		Local dist# = RandF( dist_min, dist_max )
-		Local dist_ang# = RandF( dist_ang_min, dist_ang_max )
-		p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist * Cos( dist_ang + parent.ang )
-		p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist * Sin( dist_ang + parent.ang )
+		Local dist_actual# = dist.get()
+		Local dist_ang_actual# = dist_ang.get()
+		p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist_actual * Cos( dist_ang_actual + parent.ang )
+		p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist_actual * Sin( dist_ang_actual + parent.ang )
 		
 		'orientation
-		If inherit_ang_from_dist_ang Then p.ang = dist_ang + parent.ang ..
-		Else                              p.ang = RandF( ang_min, ang_max ) + parent.ang
+		If inherit_ang_from_dist_ang
+			p.ang = dist_ang_actual + parent.ang
+		Else
+			p.ang = ang.get() + parent.ang
+		End If
 
 		'velocity
-		Local vel# = RandF( vel_min, vel_max )
-		Local vel_ang#
-		If inherit_vel_ang_from_ang Then vel_ang = p.ang ..
-		Else                             vel_ang = RandF( vel_ang_min, vel_ang_max )
-		p.vel_x = vel * Cos( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_x )
-		p.vel_y = vel * Sin( vel_ang + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_y )
+		Local vel_actual# = vel.get()
+		Local vel_ang_actual#
+		If inherit_vel_ang_from_ang
+			vel_ang_actual = p.ang
+		Else
+			vel_ang_actual = vel_ang.get()
+		End If
+		p.vel_x = vel_actual * Cos( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_x )
+		p.vel_y = vel_actual * Sin( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_y )
 		
 		'angular velocity
-		p.ang_vel = RandF( ang_vel_min, ang_vel_max )
+		p.ang_vel = ang_vel.get()
 		
-		'acceleration
-		p.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, RandF( acc_min, acc_max ))), True )
+		'forces
+		p.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, acc.get())), True )
 		
 		'management
 		p.auto_manage()
 		
 	End Method
 		
+	Method attach_at( ..
+	off_x_new# = 0.0, off_y_new# = 0.0, ..
+	dist_min_new# = 0.0, dist_max_new# = 0.0, ..
+	dist_ang_min_new# = 0.0, dist_ang_max_new# = 0.0, ..
+	vel_min_new# = 0.0, vel_max_new# = 0.0, ..
+	vel_ang_min_new# = 0.0, vel_ang_max_new# = 0.0, ..
+	acc_min_new# = 0.0, acc_max_new# = 0.0, ..
+	acc_ang_min_new# = 0.0, acc_ang_max_new# = 0.0, ..
+	ang_min_new# = 0.0, ang_max_new# = 0.0, ..
+	ang_vel_min_new# = 0.0, ang_vel_max_new# = 0.0, ..
+	ang_acc_min_new# = 0.0, ang_acc_max_new# = 0.0 )
+		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
+		dist.set( dist_min_new, dist_max_new )
+		dist_ang.set( dist_ang_min_new, dist_ang_max_new )
+		vel.set( vel_min_new, vel_max_new )
+		vel_ang.set( vel_ang_min_new, vel_ang_max_new )
+		acc.set( acc_min_new, acc_max_new )
+		acc_ang.set( acc_ang_min_new, acc_ang_max_new )
+		ang.set( ang_min_new, ang_max_new )
+		ang_vel.set( ang_vel_min_new, ang_vel_max_new )
+		ang_acc.set( ang_acc_min_new, ang_acc_max_new )
+	End Method
+	
 	Method attach_to( ..
 	new_parent:POINT, ..
 	off_x_new#, off_y_new#, ..
@@ -214,39 +330,10 @@ Type EMITTER extends MANAGED_OBJECT
 	ang_vel_min_new#, ang_vel_max_new#, ..
 	ang_acc_min_new#, ang_acc_max_new# )
 		parent = new_parent
-		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
-		dist_min = dist_min_new; dist_max = dist_max_new
-		dist_ang_min = dist_ang_min_new; dist_ang_max = dist_ang_max_new
-		vel_min = vel_min_new; vel_max = vel_max_new
-		vel_ang_min = vel_ang_min_new; vel_ang_max = vel_ang_max_new
-		acc_min = acc_min_new; acc_max = acc_max_new
-		acc_ang_min = acc_ang_min_new; acc_ang_max = acc_ang_max_new
-		ang_min = ang_min_new; ang_max = ang_max_new
-		ang_vel_min = ang_vel_min_new; ang_vel_max = ang_vel_max_new
-		ang_acc_min = ang_acc_min_new; ang_acc_max = ang_acc_max_new
-	End Method
-	
-	Method attach_at( ..
-	off_x_new#, off_y_new#, ..
-	dist_min_new#, dist_max_new#, ..
-	dist_ang_min_new#, dist_ang_max_new#, ..
-	vel_min_new#, vel_max_new#, ..
-	vel_ang_min_new#, vel_ang_max_new#, ..
-	acc_min_new#, acc_max_new#, ..
-	acc_ang_min_new#, acc_ang_max_new#, ..
-	ang_min_new#, ang_max_new#, ..
-	ang_vel_min_new#, ang_vel_max_new#, ..
-	ang_acc_min_new#, ang_acc_max_new# )
-		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
-		dist_min = dist_min_new; dist_max = dist_max_new
-		dist_ang_min = dist_ang_min_new; dist_ang_max = dist_ang_max_new
-		vel_min = vel_min_new; vel_max = vel_max_new
-		vel_ang_min = vel_ang_min_new; vel_ang_max = vel_ang_max_new
-		acc_min = acc_min_new; acc_max = acc_max_new
-		acc_ang_min = acc_ang_min_new; acc_ang_max = acc_ang_max_new
-		ang_min = ang_min_new; ang_max = ang_max_new
-		ang_vel_min = ang_vel_min_new; ang_vel_max = ang_vel_max_new
-		ang_acc_min = ang_acc_min_new; ang_acc_max = ang_acc_max_new
+		attach_at( off_x_new, off_y_new, dist_min_new, dist_ang_max_new, ..
+			vel_min_new, vel_max_new, vel_ang_min_new, vel_ang_max_new, ..
+			acc_min_new, acc_max_new, ang_min_new, ang_max_new, ..
+			ang_vel_min_new, ang_vel_max_new, ang_acc_min_new, ang_acc_max_new )
 	End Method
 	
 	Function Archetype:Object( ..
@@ -258,17 +345,18 @@ Type EMITTER extends MANAGED_OBJECT
 	inherit_ang_from_dist_ang%, ..
 	inherit_vel_ang_from_ang%, ..
 	inherit_acc_ang_from_vel_ang%, ..
-	interval_min%, interval_max%, ..
-	count_min%, count_max%, ..
+	interval_min% = 0, interval_max% = 0, ..
+	count_min% = 0, count_max% = 0, ..
 	life_time_min% = INFINITY, life_time_max% = INFINITY, ..
 	alpha_min# = 1.0, alpha_max# = 1.0, ..
 	alpha_delta_min# = 0.0, alpha_delta_max# = 0.0, ..
 	scale_min# = 1.0, scale_max# = 1.0, ..
-	scale_delta_min# = 0.0, scale_delta_max# = 0.0 )
+	scale_delta_min# = 0.0, scale_delta_max# = 0.0, ..
+	red_min% = 255, red_max% = 255, green_min% = 255, green_max% = 255, blue_min% = 255, blue_max% = 255, ..
+	red_delta_min# = 0.0, red_delta_max# = 0.0, green_delta_min# = 0.0, green_delta_max# = 0.0, blue_delta_min# = 0.0, blue_delta_max# = 0.0 )
 		Local em:EMITTER = New EMITTER
 		
 		'static fields
-		'emitter attributes and attribute ranges
 		em.emitter_type = emitter_type
 		em.archetype_index = archetype_index
 		em.mode = mode
@@ -277,31 +365,22 @@ Type EMITTER extends MANAGED_OBJECT
 		em.inherit_ang_from_dist_ang = inherit_ang_from_dist_ang
 		em.inherit_vel_ang_from_ang = inherit_vel_ang_from_ang
 		em.inherit_acc_ang_from_vel_ang = inherit_acc_ang_from_vel_ang
-		em.interval_min = interval_min; em.interval_max = interval_max
-		em.interval = Rand( em.interval_min, em.interval_max )
-		em.last_enable_ts = now()
-		em.count_min = count_min; em.count_max = count_max
-		'emitted particle attribute ranges
-		em.life_time_min = life_time_min; em.life_time_max = life_time_max
-		em.alpha_min = alpha_min; em.alpha_max = alpha_max
-		em.alpha_delta_min = alpha_delta_min; em.alpha_delta_max = alpha_delta_max
-		em.scale_min = scale_min; em.scale_max = scale_max
-		em.scale_delta_min = scale_delta_min; em.scale_delta_max = scale_delta_max
+		em.interval.set( interval_min, interval_max )
+		em.count.set( count_min, count_max )
 		
-		'dynamic fields
+		'emitter attributes and attribute ranges
 		em.parent = Null
-		em.offset = 0
-		em.offset_ang = 0
-		em.dist_min = 0; em.dist_max = 0
-		em.dist_ang_min = 0; em.dist_ang_max = 0
-		em.vel_min = 0; em.vel_max = 0
-		em.vel_ang_min = 0; em.vel_ang_max = 0
-		em.acc_min = 0; em.acc_max = 0
-		em.acc_ang_min = 0; em.acc_ang_max = 0
-		em.ang_min = 0; em.ang_max = 0
-		em.ang_vel_min = 0; em.ang_vel_max = 0
-		em.ang_acc_min = 0; em.ang_acc_max = 0
-	
+		em.interval_next = em.interval.get()
+		em.count_next = em.count.get()
+		em.life_time.set( life_time_min, life_time_max )
+		em.alpha.set( alpha_min, alpha_max )
+		em.alpha_delta.set( alpha_delta_min, alpha_delta_max )
+		em.scale.set( scale_min, scale_max )
+		em.scale_delta.set( scale_delta_min, scale_delta_max )
+		em.red.set( red_min, red_max ); em.green.set( green_min, green_max); em.blue.set( blue_min, blue_max )
+		em.red_delta.set( red_delta_min, red_delta_max ); em.green_delta.set( green_delta_min, green_delta_max ); em.blue_delta.set( blue_delta_min, blue_delta_max )
+		em.last_enable_ts = now()
+		
 		Return em
 	End Function
 
@@ -309,6 +388,10 @@ Type EMITTER extends MANAGED_OBJECT
 		Local em:EMITTER = New EMITTER
 		If other = Null Then Return em
 		
+		'argument fields
+		em.parent = new_parent
+		em.source_id = source_id
+
 		'emitter-specific fields
 		em.emitter_type = other.emitter_type
 		em.archetype_index = other.archetype_index
@@ -318,32 +401,33 @@ Type EMITTER extends MANAGED_OBJECT
 		em.inherit_ang_from_dist_ang = other.inherit_ang_from_dist_ang
 		em.inherit_vel_ang_from_ang = other.inherit_vel_ang_from_ang
 		em.inherit_acc_ang_from_vel_ang = other.inherit_acc_ang_from_vel_ang
-		em.interval_min = other.interval_min; em.interval_max = other.interval_max
-		em.interval = Rand( em.interval_min, em.interval_max )
+		em.interval = other.interval.clone()
+		em.interval_next = em.interval.get()
+		em.count = other.count.clone()
+		em.count_next = em.count.get()
 		em.last_enable_ts = now()
-		em.count_min = other.count_min; em.count_max = other.count_max
-		em.source_id = source_id
 		
 		'emitted particle-specific fields
-		em.life_time_min = other.life_time_min; em.life_time_max = other.life_time_max
-		em.alpha_min = other.alpha_min; em.alpha_max = other.alpha_max
-		em.alpha_delta_min = other.alpha_delta_min; em.alpha_delta_max = other.alpha_delta_max
-		em.scale_min = other.scale_min; em.scale_max = other.scale_max
-		em.scale_delta_min = other.scale_delta_min; em.scale_delta_max = other.scale_delta_max
+		em.life_time = other.life_time.clone()
+		em.alpha = other.alpha.clone()
+		em.alpha_delta = other.alpha_delta.clone()
+		em.scale = other.scale.clone()
+		em.scale_delta = other.scale_delta.clone()
 		
 		'dynamic fields
-		em.parent = new_parent
 		em.offset = other.offset
 		em.offset_ang = other.offset_ang
-		em.dist_min = other.dist_min; em.dist_max = other.dist_max
-		em.dist_ang_min = other.dist_ang_min; em.dist_ang_max = other.dist_ang_max
-		em.vel_min = other.vel_min; em.vel_max = other.vel_max
-		em.vel_ang_min = other.vel_ang_min; em.vel_ang_max = other.vel_ang_max
-		em.acc_min = other.acc_min; em.acc_max = other.acc_max
-		em.acc_ang_min = other.acc_ang_min; em.acc_ang_max = other.acc_ang_max
-		em.ang_min = other.ang_min; em.ang_max = other.ang_max
-		em.ang_vel_min = other.ang_vel_min; em.ang_vel_max = other.ang_vel_max
-		em.ang_acc_min = other.ang_acc_min; em.ang_acc_max = other.ang_acc_max
+		em.dist = other.dist.clone(); em.dist_ang = other.dist_ang.clone()
+		em.vel = other.vel.clone(); em.vel_ang = other.vel_ang.clone()
+		em.acc = other.acc.clone(); em.acc_ang = other.acc_ang.clone()
+		em.ang = other.ang.clone()
+		em.ang_vel = other.ang_vel.clone()
+		em.ang_acc = other.ang_acc.clone()
+		em.life_time = other.life_time.clone()
+		em.alpha = other.alpha.clone(); em.alpha_delta = other.alpha_delta.clone()
+		em.scale = other.scale.clone(); em.scale_delta = other.scale_delta.clone()
+		em.red = other.red.clone(); em.green = other.green.clone(); em.blue = other.blue.clone()
+		em.red_delta = other.red_delta.clone(); em.green_delta = other.green_delta.clone(); em.blue_delta = other.blue_delta.clone()
 		
 		If managed_list <> Null Then em.add_me( managed_list )
 		Return em

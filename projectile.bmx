@@ -120,7 +120,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 			Local ch:TChannel = AllocChannel()
 			CueSound( snd_impact, ch )
 			If source_id <> get_player_id()
-				SetChannelVolume( ch, 0.1200 )
+				SetChannelVolume( ch, 0.1500 )
 			End If
 			SetChannelRate( ch, RandF( 0.75, 1.25 ))
 			ResumeChannel( ch )

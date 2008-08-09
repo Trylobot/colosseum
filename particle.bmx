@@ -27,7 +27,8 @@ Type PARTICLE Extends POINT
 	Field layer% 'layer {foreground|background}
 	Field retain% 'copy particle to background on death?
 	Field frictional_coefficient# 'fake friction for slowing particles down
-	Field red%, green%, blue% 'color tint (static)
+	Field red%, green%, blue% 'color
+	Field red_delta#, green_delta#, blue_delta# 'change in color over time
 	Field life_time% 'time until object is deleted
 	Field created_ts% 'timestamp of object creation
 
@@ -54,6 +55,7 @@ Type PARTICLE Extends POINT
 	retain% = False, ..
 	frictional_coefficient# = 0.0, ..
 	red% = 255, green% = 255, blue% = 255, ..
+	red_delta# = 0.0, green_delta# = 0.0, blue_delta# = 0.0, ..
 	life_time% = 0, ..
 	pos_x# = 0.0, pos_y# = 0.0, ..
 	vel_x# = 0.0, vel_y# = 0.0, ..
@@ -79,6 +81,7 @@ Type PARTICLE Extends POINT
 		p.retain = retain
 		p.frictional_coefficient = frictional_coefficient 
 		p.red = red; p.green = green; p.blue = blue
+		p.red_delta = red_delta; p.green_delta = green_delta; p.blue_delta = blue_delta
 		p.life_time = life_time
 		p.created_ts = now()
 		
@@ -98,7 +101,7 @@ Type PARTICLE Extends POINT
 	Method clone:PARTICLE( new_frame% = -1 )
 		If new_frame < 0 Then new_frame = frame
 		Return PARTICLE( PARTICLE.Create( ..
-			particle_type, img, new_frame, max_frame_delay, str, font, layer, retain, frictional_coefficient, red, green, blue, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
+			particle_type, img, new_frame, max_frame_delay, str, font, layer, retain, frictional_coefficient, red, green, blue, red_delta, green_delta, blue_delta, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
 	End Method
 	
 	Method update()
@@ -112,6 +115,8 @@ Type PARTICLE Extends POINT
 		alpha :+ alpha_delta
 		'update scale
 		scale :+ scale_delta
+		'color
+		red :+ red_delta; green :+ green_delta; blue :+ blue_delta
 		'animation
 		If particle_type = PARTICLE_TYPE_ANIM And frame_delay_pct <> 0 And (now() - last_frame_advance_ts >= (Abs(frame_delay_pct)*max_frame_delay))
 			advance_frame()

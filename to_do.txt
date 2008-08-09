@@ -1,4 +1,5 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ allow RANGE objects to have mathematical equations to calculate the distribution of returned values
 	_ take mini-snapshots of kills, and display them in an album at the end of the level.
 			(experimental!)
 	_ create a "turret_system" object or group of variables, so that I can talk about the angle and turning velocity of the whole system.

@@ -201,7 +201,7 @@ Type TURRET Extends POINT
 			Local ch:TChannel = AllocChannel()
 			CueSound( snd_fire, ch )
 			If parent.id <> get_player_id()
-				SetChannelVolume( ch, 0.1200 )
+				SetChannelVolume( ch, 0.1500 )
 			End If
 			SetChannelRate( ch, RandF( 0.90, 1.15 ))
 			ResumeChannel( ch )
