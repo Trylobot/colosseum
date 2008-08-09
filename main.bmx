@@ -35,17 +35,21 @@ Repeat
 	
 	If (now() - before) > (1000/60) '60 hertz
 		before = now()
-		
 		get_all_input()
 		collide_all()
 		update_all()
-		
 	EndIf
-	Cls
 	
+	Cls
 	draw_all()
 	play_all()
-
 	Flip( 1 ) 'draw to screen with vsync enabled
+	
 Until AppTerminate() 'kill app when ESC or close button pressed
+
+
+
+
+
+
 

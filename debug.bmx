@@ -4,7 +4,10 @@ Rem
 	author: Tyler W Cole
 EndRem
 
+'This entire file is ignored if not in debug mode
 ?Debug
+
+'______________________________________________________________________________
 'Global sx%, sy%, h%, px#, py#
 'Global maus_x#, maus_y#, speed# = 1, r#, a#
 'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
@@ -14,30 +17,61 @@ Global global_start:CELL
 Global global_goal:CELL
 Global db_path:TList
 
+Global p:POINT = Create_POINT( arena_offset+arena_w/2, arena_offset+arena_h/2, -90 )
+Global w:WIDGET = widget_archetype[WIDGET_ARENA_DOOR].clone()
+w.parent = p
+
+
 '______________________________________________________________________________
 Function debug_main()
-	
-	
 	
 	Local before% = 0
 	Repeat
 		
 		If (now() - before) > (1000/60) '60 hertz
 			before = now()
-			
+		
+			Rem
 			get_all_input()
 			collide_all()
 			update_all()
+			EndRem
+			
+			w.update()
 			
 		EndIf
+		
 		Cls
 		
+		Rem
 		draw_all()
 		play_all()
+		EndRem
+		
+		w.draw()
+		draw_widget_debug()
 	
 		Flip( 1 ) 'draw to screen with vsync enabled
-	Until AppTerminate() 'kill app when ESC or close button pressed
+	Until AppTerminate() Or KeyHit( KEY_ESCAPE ) 'kill app when ESC or close button pressed
 
+End Function
+'______________________________________________________________________________
+Function draw_widget_debug()
+	
+	SetColor( 64,64,64 )
+	DrawOval( p.pos_x-5,p.pos_y+5, 10,10 )
+	
+	SetLineWidth( 2 )
+	SetColor( 127,127,127 )
+	DrawLine( p.pos_x,p.pos_y, p.pos_x+w.offset*Cos(w.offset_ang),p.pos_y+w.offset*Sin(w.offset_ang) )
+	DrawOval( p.pos_x+w.offset*Cos(w.offset_ang)-5,p.pos_y+w.offset*Sin(w.offset_ang)-5, 10,10 )
+	
+	SetColor( 196,196,196 )
+	DrawLine( p.pos_x+w.offset*Cos(w.offset_ang), p.pos_y+w.offset*Sin(w.offset_ang), ..
+		p.pos_x+w.offset*Cos(p.ang+w.offset_ang)+w.state.pos_length*Cos(p.ang+w.offset_ang+w.state.ang), ..
+		p.pos_y+w.offset*Sin(p.ang+w.offset_ang)+w.state.pos_length*Sin(p.ang+w.offset_ang+w.state.ang) )
+	
+	
 End Function
 '______________________________________________________________________________
 Function debug_range()
@@ -61,7 +95,6 @@ Function debug_range()
 	Print str
 	
 End Function
-
 '______________________________________________________________________________
 Function debug_ts( message$ )
 	Print( String.FromInt( now() ) + ":" + message )

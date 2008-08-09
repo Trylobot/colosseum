@@ -7,7 +7,7 @@ EndRem
 '______________________________________________________________________________
 Global control_brain_list:TList = CreateList()
 
-Const WAYPOINT_RADIUS% = cell_size
+Const WAYPOINT_RADIUS% = 0.75*cell_size
 
 Const UNSPECIFIED% = 0
 Const CONTROL_TYPE_HUMAN% = 1
@@ -305,14 +305,14 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 							ang_to_target = avatar.ang_to_cVEC( waypoint )
 							Local diff# = angle_diff( avatar.ang, ang_to_target )
 							'if it is pointed toward the path's next waypoint, then..
-							If Abs(diff) <= 8.000
+							If Abs(diff) <= 15.000
 								'drive forward
 								avatar.drive( 1.0 )
 								avatar.turn( 0.0 )
 							'else (not pointed toward next waypoint)..
 							Else
 								'turn towards the next waypoint
-								avatar.drive( 0.0 )
+								avatar.drive( 0.5 )
 								If diff < 180 Then avatar.turn( -1.0 ) ..
 								Else               avatar.turn( 1.0 )
 							End If
