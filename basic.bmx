@@ -55,13 +55,13 @@ Function get_new_id%()
 	Return next_managed_object_id
 End Function
 '______________________________________________________________________________
-Function combine_lists:TList( list1:TList, list2:TList )
-	Local newlist:TList = list1.Copy()
-	For Local obj:Object = EachIn list2
-		list1.AddLast( obj )
-	Next
-	Return newlist
-End Function
+'Function combine_lists:TList( list1:TList, list2:TList )
+'	Local newlist:TList = list1.Copy()
+'	For Local obj:Object = EachIn list2
+'		list1.AddLast( obj )
+'	Next
+'	Return newlist
+'End Function
 '______________________________________________________________________________
 Type POINT Extends MANAGED_OBJECT
 	

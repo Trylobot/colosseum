@@ -19,6 +19,8 @@ Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 500.0 'energy multiplier for all co
 Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.012 'energy multiplier for all projectile-projectile collisions
 Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.010 'energy multiplier for all agent-agent collisions
 
+Const WALL_NUDGE_DIST# = 0.20
+
 Function clamp_ang_to_bifurcate_wall_diagonals#( ang#, wall%[] )
 	Local wx# = wall_mid_x( wall ), wy# = wall_mid_y(wall)
 	'wall_angle[4] = angle from mid to [ top_left, top_right, bottom_right, bottom_left ].
@@ -116,30 +118,42 @@ Function collide_all()
 		Next
 		
 		'collisions between walls and {agents|projectiles}
-		Local all_walls:TList = combine_lists( common_walls, get_level_walls( player_level ))
-		For Local wall%[] = EachIn all_walls
-			SetRotation( 0 )
-			result = CollideRect( wall[1],wall[2], wall[3],wall[4], AGENT_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
-			For ag = EachIn result
-				'COLLISION! between {ag} and {wall}
-				Local offset#, offset_ang#
-				cartesian_to_polar( ag.pos_x - wall_mid_x(wall), ag.pos_y - wall_mid_y(wall), offset, offset_ang )
-				Local clamped_ang# = clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )
-				'use physics to push the agent out of the wall
-				'ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, clamped_ang, ag.mass/40.0, 85 )))
-				'nudge the agent away from the wall
-If KeyDown( KEY_R ) Then DebugStop
-				ag.pos_x :+ 0.5*Cos( clamped_ang )
-				ag.pos_y :+ 0.5*Sin( clamped_ang )
+		For Local cur_wall_list:TList = EachIn all_walls
+			For Local wall%[] = EachIn cur_wall_list
+				SetRotation( 0 )
+				result = CollideRect( wall[1],wall[2], wall[3],wall[4], AGENT_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
+				For ag = EachIn result
+					'COLLISION! between {ag} and {wall}
+					Local offset#, offset_ang#
+					cartesian_to_polar( ag.pos_x - wall_mid_x(wall), ag.pos_y - wall_mid_y(wall), offset, offset_ang )
+					Select clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )
+						Case 0
+							ag.pos_x :+ WALL_NUDGE_DIST
+							ag.vel_x = 0.0
+							ag.acc_x = 0.0
+						Case 180
+							ag.pos_x :- WALL_NUDGE_DIST
+							ag.vel_x = 0.0
+							ag.acc_x = 0.0
+						Case 90
+							ag.pos_y :+ WALL_NUDGE_DIST
+							ag.vel_y = 0.0
+							ag.acc_y = 0.0
+						Case 270
+							ag.pos_y :- WALL_NUDGE_DIST
+							ag.vel_y = 0.0
+							ag.acc_y = 0.0
+					End Select
+				Next
 			Next
-		Next
-		For Local wall%[] = EachIn all_walls
-			SetRotation( 0 )
-			result = CollideRect( wall[1],wall[2], wall[3],wall[4], PROJECTILE_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
-			For proj = EachIn result
-				'COLLISION! between {proj} and {wall}
-				proj.impact()
-				proj.remove_me()
+			For Local wall%[] = EachIn cur_wall_list
+				SetRotation( 0 )
+				result = CollideRect( wall[1],wall[2], wall[3],wall[4], PROJECTILE_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
+				For proj = EachIn result
+					'COLLISION! between {proj} and {wall}
+					proj.impact()
+					proj.remove_me()
+				Next
 			Next
 		Next
 

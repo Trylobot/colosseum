@@ -165,6 +165,7 @@ Function draw_arena_fg()
 	SetRotation( 0 )
 	
 	DrawImage( img_arena_fg, 0,0 )
+	SetColor( 64, 64, 64 )
 	draw_walls( get_level_walls( player_level ))
 
 	For Local w:WIDGET = EachIn environmental_widget_list

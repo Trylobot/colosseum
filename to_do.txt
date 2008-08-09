@@ -1,4 +1,6 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ create a "turret_system" object or group of variables, so that I can talk about the angle and turning velocity of the whole system.
+			turrets that are conceptually attached to each other really ought to be modelled that way.
 	_ reload-meter
 	_ flaming gibs w/ sparks & flaming heaps/wrecks
 	_ since sequenced/grouped turrets can be fired together, it only makes sense that they can be "turned" together as well.

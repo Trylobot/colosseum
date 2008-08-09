@@ -144,9 +144,11 @@ Type WIDGET Extends MANAGED_OBJECT
 				state.scale_x = cs.scale_x + pct * (ns.scale_x - cs.scale_x)
 				state.scale_y = cs.scale_y + pct * (ns.scale_y - cs.scale_y)
 			Else
-				'was transforming, until just a moment ago
+				'widget just stopped transforming during this update() call
 				state = cs.clone()
 			End If
+		Else
+			'not transforming, nothing to update.
 		End If
 	End Method
 	
@@ -154,8 +156,11 @@ Type WIDGET Extends MANAGED_OBJECT
 		SetColor( state.red, state.green, state.blue )
 		SetAlpha( state.alpha )
 		SetScale( state.scale_x, state.scale_y )
+		
 		SetRotation( parent.ang + ang_offset + state.ang )
-		DrawImage( img, parent.pos_x + offset*Cos( offset_ang + parent.ang ) + state.pos_length*Cos( ang_offset + state.pos_ang ), parent.pos_y + offset*Sin( offset_ang + parent.ang ) + state.pos_length*Sin( ang_offset + state.pos_ang ))
+		DrawImage( img, ..
+			parent.pos_x + offset*Cos( parent.ang + offset_ang ) + state.pos_length*Cos( parent.ang + offset_ang + ang_offset + state.ang ), ..
+			parent.pos_y + offset*Sin( parent.ang + offset_ang ) + state.pos_length*Sin( parent.ang + offset_ang + ang_offset + state.ang ) )
 	End Method
 	
 	Method begin_transformation( count% = INFINITY )

@@ -21,10 +21,12 @@ Const PARTICLE_TYPE_STR% = 2
 Type PARTICLE Extends POINT
 
 	Field particle_type% '{single_image|animated|string}
-	Field img:TImage, frame%, str$ 'image to be drawn
+	Field img:TImage, frame% 'image to be drawn, and the current frame index for animation and randomly varied particle sets
+	Field max_frame_delay% 'maximum delay between frames (animated only)
+	Field str$, font:TImageFont 'text string and font for STR particles
 	Field layer% 'layer {foreground|background}
 	Field retain% 'copy particle to background on death?
-	Field frictional_coefficient# 'fake friction
+	Field frictional_coefficient# 'fake friction for slowing particles down
 	Field red%, green%, blue% 'color tint (static)
 	Field life_time% 'time until object is deleted
 	Field created_ts% 'timestamp of object creation
@@ -33,6 +35,9 @@ Type PARTICLE Extends POINT
 	Field alpha_delta# 'alpha rate of change with respect to time
 	Field scale# 'scale coefficient
 	Field scale_delta# 'scale coefficient rate of change with respect to time
+	Field frame_delay_pct# 'percentage from 0.0 to 1.0 of the frame delay to be using (animated_only, default 1.0)
+	Field last_frame_advance_ts% 'timestamp of last frame advance
+	Field text_width#, text_height# 'dimensions of text (STR particles only)
 	
 	Field parent:POINT
 	Field offset#, offset_ang#
@@ -42,7 +47,9 @@ Type PARTICLE Extends POINT
 	
 	Function Create:Object( ..
 	particle_type%, ..
-	img:TImage = Null, frame% = 0, str$ = Null, ..
+	img:TImage = Null, frame% = 0, ..
+	max_frame_delay% = 250, ..
+	str$ = Null, font:TImageFont = Null, ..
 	layer%, ..
 	retain% = False, ..
 	frictional_coefficient# = 0.0, ..
@@ -60,7 +67,14 @@ Type PARTICLE Extends POINT
 
 		'static fields
 		p.particle_type = particle_type
-		p.img = img; p.frame = frame; p.str = str
+		p.img = img; p.frame = frame
+		p.max_frame_delay = max_frame_delay
+		p.str = str; p.font = font
+		If str <> Null And font <> Null
+			SetImageFont( font )
+			p.text_width = TextWidth( str )/2.0
+			p.text_height = TextHeight( str )/2.0
+		End If
 		p.layer = layer
 		p.retain = retain
 		p.frictional_coefficient = frictional_coefficient 
@@ -84,7 +98,7 @@ Type PARTICLE Extends POINT
 	Method clone:PARTICLE( new_frame% = -1 )
 		If new_frame < 0 Then new_frame = frame
 		Return PARTICLE( PARTICLE.Create( ..
-			particle_type, img, new_frame, str, layer, retain, frictional_coefficient, red, green, blue, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
+			particle_type, img, new_frame, max_frame_delay, str, font, layer, retain, frictional_coefficient, red, green, blue, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
 	End Method
 	
 	Method update()
@@ -98,6 +112,10 @@ Type PARTICLE Extends POINT
 		alpha :+ alpha_delta
 		'update scale
 		scale :+ scale_delta
+		'animation
+		If particle_type = PARTICLE_TYPE_ANIM And frame_delay_pct <> 0 And (now() - last_frame_advance_ts >= (Abs(frame_delay_pct)*max_frame_delay))
+			advance_frame()
+		End If
 	End Method
 	
 	Method draw()
@@ -106,21 +124,42 @@ Type PARTICLE Extends POINT
 		SetScale( scale, scale )
 		
 		Select particle_type
-			
-			Case PARTICLE_TYPE_IMG
-			Case PARTICLE_TYPE_ANIM
-				If parent <> Null
-					SetRotation( ang + parent.ang )
-					DrawImage( img, parent.pos_x + offset*Cos( offset_ang + parent.ang ), parent.pos_y + offset*Sin( offset_ang + parent.ang ), frame )
-				Else
-					SetRotation( ang )
-					DrawImage( img, pos_x, pos_y, frame )
+			Case PARTICLE_TYPE_IMG, PARTICLE_TYPE_ANIM
+				If img <> Null
+					If parent <> Null
+						SetRotation( ang + parent.ang )
+						DrawImage( img, parent.pos_x + offset*Cos( offset_ang + parent.ang ), parent.pos_y + offset*Sin( offset_ang + parent.ang ), frame )
+					Else
+						SetRotation( ang )
+						DrawImage( img, pos_x, pos_y, frame )
+					End If
 				End If
-			
 			Case PARTICLE_TYPE_STR
-				
-				
+				If font <> Null And str <> Null
+					If parent <> Null
+						SetRotation( ang + parent.ang )
+						DrawText( str, parent.pos_x + offset*Cos( offset_ang + parent.ang ) - text_width, parent.pos_y + offset*Sin( offset_ang + parent.ang ) - text_height )
+					Else
+						SetRotation( ang )
+						DrawText( str, pos_x - text_width, pos_y - text_height )
+					End If
+				End If
 		End Select
+	End Method
+	
+	Method advance_frame()
+		last_frame_advance_ts = now()
+		If frame_delay_pct > 0 'animate forwards
+			frame :+ 1
+			If frame >= img.frames.Length - 1 Then frame = 0
+		Else If frame_delay_pct < 0 'animate backwards
+			frame :- 1
+			If frame < 0 Then frame = img.frames.Length - 1
+		End If
+	End Method
+	
+	Method control_animation( control# )
+		frame_delay_pct = 1.0 - control
 	End Method
 	
 	Method dead%()

@@ -22,8 +22,8 @@ Repeat
 	play_all()
 
 ?Debug
-	debug_brain_under_mouse()
-	debug_general()
+'	debug_brain_under_mouse()
+'	debug_general()
 ?
 	
 	Flip( 1 ) 'draw to screen with vsync enabled

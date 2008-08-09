@@ -109,49 +109,31 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
-	Method see_target%( delay_override% = False )
-'		If target <> Null And (delay_override Or (now() - last_look_target_ts < look_target_delay))
-'			last_look_target_ts = now()
-'			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
-'			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
-'			'for each wall in the level
-'			For Local wall%[] = EachIn combine_lists( common_walls, get_level_walls( player_level ))
-'				'if the line connecting this brain's avatar with its target intersects the wall
-'				If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall[1],wall[2])), cVEC( cVEC.Create(wall[3],wall[4])) )
-'					'then the avatar cannot see its target
-'					sighted_target = False
-'				End If
-'			Next
-'			'after checking all the walls, still haven't returned; avatar can therefore see its target
-'			sighted_target = True
-'		Else 'target == Null Or (not delay_override And not (now() - last_look_target_ts < look_target_delay))
-'			'do nothing
-'		End If
-'		Return sighted_target
-		If target <> Null And (delay_override Or (now() - last_look_target_ts < look_target_delay))
+	Method see_target%()
+		If target <> Null
 			last_look_target_ts = now()
 			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
 			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
 			'for each wall in the level
-			For Local wall%[] = EachIn combine_lists( common_walls, get_level_walls( player_level ))
-				'if the line connecting this brain's avatar with its target intersects the wall
-				If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall[1],wall[2])), cVEC( cVEC.Create(wall[3],wall[4])) )
-					'then the avatar cannot see its target
-					Return False
-				End If
+			For Local cur_wall_list:TList = EachIn all_walls
+				For Local wall%[] = EachIn cur_wall_list
+					'if the line connecting this brain's avatar with its target intersects the wall
+					If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall[1],wall[2])), cVEC( cVEC.Create(wall[3],wall[4])) )
+						'then the avatar cannot see its target
+						Return False
+					End If
+				Next
 			Next
 			'after checking all the walls, still haven't returned; avatar can therefore see its target
 			Return True
-		Else 'target == Null Or (not delay_override And not (now() - last_look_target_ts < look_target_delay))
-			'do nothing
+		Else 'target == Null
+			Return False
 		End If
-		
-		Return False
 	End Method
 	
-	Method get_path_to_target:TList( delay_override% = False )
-		last_find_path_ts = now()
-		If target <> Null And (delay_override Or (now() - last_find_path_ts < find_path_delay))
+	Method get_path_to_target:TList()
+		If target <> Null
+			last_find_path_ts = now()
 			Return find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y )
 		Else
 			Return Null
@@ -162,6 +144,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		Select input_type
 			
 			Case INPUT_KEYBOARD
+				'If engine is running
 				If FLAG_player_engine_running
 					'velocity
 					If KeyDown( KEY_W ) Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
@@ -182,8 +165,13 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Else
 					avatar.drive( 0.0 )
 					avatar.turn( 0.0 )
+					'start engine
+					If KeyHit( KEY_E ) And Not FLAG_player_engine_ignition
+						FLAG_player_engine_ignition = True
+					End If
 				End If
-				'turrets angular velocity
+				
+				'turret(s) angular velocity
 				If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
 					avatar.turn_turrets( 1.0  )
 				ElseIf KeyDown( KEY_LEFT ) Or KeyDown( KEY_J )
@@ -191,7 +179,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Else
 					avatar.turn_turrets( 0.0 )
 				EndIf
-				'turrets fire
+				
+				'turret(s) fire
 				If KeyDown( KEY_SPACE )
 					avatar.fire( 0 )
 				End If
@@ -200,10 +189,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				End If
 				If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
 					avatar.fire( 2 )
-				End If
-				'disembark
-				If KeyDown( KEY_E )
-					'avatar.disembark
 				End If
 					
 			Case INPUT_XBOX_360_CONTROLLER
@@ -244,7 +229,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Case AI_BRAIN_SEEKER
 				If target <> Null And Not target.dead()
 					'if it can see the target, chase it.
-					If see_target()
+					If (now() - last_look_target_ts < look_target_delay)
+						sighted_target = see_target()
+					End If
+					If sighted_target
 						'chase after current target; if target in range, self-destruct
 						avatar.drive( 1.0 )
 						ang_to_target = avatar.ang_to( target )
@@ -271,7 +259,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Case AI_BRAIN_TANK
 				If target <> Null And Not target.dead()
 					'if it can see the target, then..
-					If see_target()
+					If (now() - last_look_target_ts >= look_target_delay)
+						sighted_target = see_target()
+					End If
+					If sighted_target
 						path = Null
 						ang_to_target = avatar.ang_to( target )
 						Local diff# = angle_diff( avatar.turrets[0].ang, ang_to_target )
@@ -319,7 +310,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						'else (can't see the target, no path to the target)
 						Else
 							'attempt to get a path to the target (which will not be used until the next "think cycle"
-							path = get_path_to_target()
+							If (now() - last_find_path_ts >= find_path_delay)
+								path = get_path_to_target()
+							End If
 							'stop driving
 							avatar.drive( 0.0 )
 							avatar.turn( 0.0 )

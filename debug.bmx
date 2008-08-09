@@ -10,6 +10,8 @@ EndRem
 'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
 'Const PATH_UNSET% = 1000
 'Global path_type% = PATH_UNSET, mouse_path_type%
+Global global_start:CELL
+Global global_goal:CELL
 Global db_path:TList
 
 '______________________________________________________________________________
@@ -67,10 +69,10 @@ Function debug_brain_under_mouse()
 				cb.target = player
 			End If
 			If KeyDown( KEY_H )
-				cb.path = cb.get_path_to_target( True )
+				cb.path = cb.get_path_to_target()
 			End If
 			If KeyDown( KEY_P )
-				cb.see_target( True )
+				cb.see_target()
 			End If
 			
 			Return

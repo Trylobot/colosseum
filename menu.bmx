@@ -23,6 +23,9 @@ Const MENU_QUIT% = 4
 'laser tank = 6
 'medium tank = 7
 
+'AI_DEMO
+'LEVEL_EDITOR
+
 Global menu_display_string$[] = [ "resume", "new game", "load saved", "settings", "quit", "light tank", "laser tank", "medium tank" ]
 Global menu_enabled%[] =        [  False,    True,       False,        False,      True,   False,        False,        False ]
 Global menu_option% = MENU_NEW
@@ -73,13 +76,12 @@ Function menu_command( command_index% )
 			player_type = PLAYER_INDEX_START + (command_index - 5)
 			FLAG_in_menu = False
 			reset_game()
-			initialize_game()
+			init_game()
 			FLAG_game_in_progress = True
 			menu_enabled[MENU_NEW] = True
 			menu_enabled[5] = False
 			menu_enabled[6] = False
 			menu_enabled[7] = False
-			FLAG_player_engine_ignition = True
 			toggle_doors( ALIGNMENT_FRIENDLY )
 			
 	End Select

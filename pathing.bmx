@@ -436,8 +436,10 @@ Type PATHING_STRUCTURE
 	End Method
 	
 	Method find_path_cells:TList( start:CELL, goal:CELL )
+?Debug
 		global_start = start
 		global_goal = goal
+?
 		set_g( start, 0 )
 		set_h( start, distance( start, goal ))
 		set_f_implicit( start )
@@ -515,7 +517,6 @@ Type PATHING_STRUCTURE
 End Type
 '______________________________________________________________________________
 Global pathing:PATHING_STRUCTURE
-Global global_start:CELL, global_goal:CELL
 
 Function g_less_than%( i:CELL, j:CELL ) 'g(i) < g(j)
 	Return pathing.g( i ) <= pathing.g( j )
@@ -528,25 +529,23 @@ Function f_less_than%( i:CELL, j:CELL ) 'f(i) < f(j)
 End Function
 '______________________________________________________________________________
 Function init_pathing_grid_from_walls( level_walls:TList )
-	For Local wall%[] = EachIn level_walls
-		pathing.set_area( containing_cell( wall[1], wall[2] ), containing_cell( wall[1]+wall[3], wall[2]+wall[4] ), wall[0] )
-	Next
+	If pathing <> Null
+		For Local wall%[] = EachIn level_walls
+			pathing.set_area( containing_cell( wall[1], wall[2] ), containing_cell( wall[1]+wall[3], wall[2]+wall[4] ), wall[0] )
+		Next
+	End If
+End Function
+Function clear_pathing_grid_center_walls()
+	If pathing <> Null
+		pathing.set_area( containing_cell( arena_offset, arena_offset ), containing_cell( arena_offset+arena_w-1, arena_offset+arena_h-1 ), PATH_PASSABLE )
+	End If
 End Function
 '______________________________________________________________________________
 Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
-	If      start_x < 0                         Then start_x = 0 ..
-	Else If start_x >= 2*arena_offset + arena_w Then start_x = 2*arena_offset + arena_w - 1
-	If      start_y < 0                         Then start_y = 0 ..
-	Else If start_y >= 2*arena_offset + arena_h Then start_y = 2*arena_offset + arena_h - 1
-	If      goal_x < 0                          Then goal_x = 0 ..
-	Else If goal_x >= 2*arena_offset + arena_w  Then goal_x = 2*arena_offset + arena_w - 1
-	If      goal_y < 0                          Then goal_y = 0 ..
-	Else If goal_y >= 2*arena_offset + arena_h  Then goal_y = 2*arena_offset + arena_h - 1
-
 	Local start_cell:CELL = containing_cell( start_x, start_y )
 	Local goal_cell:CELL = containing_cell( goal_x, goal_y )
 	If pathing.grid( start_cell ) = PATH_BLOCKED Or pathing.grid( goal_cell ) = PATH_BLOCKED
-		Return Null 'no path possible
+		Return Null 'no path possible to or from
 	End If
 	
 	pathing.reset()

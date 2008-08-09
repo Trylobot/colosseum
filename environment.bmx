@@ -6,20 +6,44 @@ EndRem
 
 '______________________________________________________________________________
 'All Spawnpoints
-'South
+'Locker south (player)
 Global player_spawn_point:POINT = ..
 	Create_POINT( Floor(arena_offset + arena_w/2), Floor(1.5*arena_offset + arena_h), -90 )
-'West, North, East
+'Lockers west, north, east (hostile)
 Global enemy_spawn_points:POINT[] = [ ..
 	Create_POINT( Floor(arena_offset/2), Floor(arena_offset + arena_h/2), 0 ), ..
 	Create_POINT( Floor(arena_offset + arena_w/2), Floor(arena_offset/2), 90 ), ..
 	Create_POINT( Floor(1.5*arena_offset + arena_w), Floor(arena_offset + arena_h/2), 180 ) ]
 
-'Serial Enemy Spawning by Squad
-Const SPAWN_CLEAR_DIST# = 16.0
+'Turret anchor points (6x)
+Global enemy_turret_anchors:POINT[] = [ ..
+	Create_POINT( Floor(arena_offset+arena_offset*1), Floor(arena_offset+arena_offset*1), 45 ), ..
+	Create_POINT( Floor(arena_offset+arena_offset*2), Floor(arena_offset+arena_offset*1), 45 ), ..
+	Create_POINT( Floor(arena_offset+arena_offset*1), Floor(arena_offset+arena_offset*2), 45 ), ..
+	Create_POINT( Floor((arena_offset*2+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*1), 135 ), ..
+	Create_POINT( Floor((arena_offset*2+arena_w)-arena_offset*2), Floor(arena_offset+arena_offset*1), 135 ), ..
+	Create_POINT( Floor((arena_offset*2+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*2), 135 ) ]
+Global anchor_deck%[]
+Function shuffle_anchor_deck()
+	Local i%, j%, swap%
+	For i = 0 To (enemy_turret_anchors.Length - 1)
+		anchor_deck[i] = i
+	Next
+	For i = (enemy_turret_anchors.Length - 1) To 1 Step -1
+		j = Rand( 0, i )
+		swap = anchor_deck[i]
+		anchor_deck[i] = anchor_deck[j]
+		anchor_deck[j] = swap
+	Next
+End Function
+Global anchor_i%
+	
+'Serialized Enemy Spawning system, by Squad and Level
+Const SPAWN_CLEAR_DIST# = 18.0
 
 Global enemy_spawn_queue:TList = CreateList()
 Global cur_squad:TList = Null
+Global cur_turret_anchor:POINT
 Global cur_spawn_point:POINT
 Global last_spawned_enemy:COMPLEX_AGENT
 Const squad_spawn_delay% = 3000
@@ -37,6 +61,11 @@ End Function
 Function spawn_next_enemy%() 'this function should be treated as a request, and might not do anything if conditions are not met.
 	'is there a squad ready
 	If cur_squad <> Null And Not cur_squad.IsEmpty()
+		'find a turret anchor
+		If cur_turret_anchor = Null
+			cur_turret_anchor = enemy_turret_anchors[anchor_deck[anchor_i]]
+			anchor_i :+ 1
+		End If
 		'find a spawn point
 		If cur_spawn_point = Null
 			cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
@@ -49,9 +78,18 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 			last_spawned_enemy = COMPLEX_AGENT( cur_squad.First() )
 			cur_squad.RemoveFirst()
 			last_spawned_enemy.auto_manage( ALIGNMENT_HOSTILE )
-			last_spawned_enemy.pos_x = cur_spawn_point.pos_x
-			last_spawned_enemy.pos_y = cur_spawn_point.pos_y
-			last_spawned_enemy.ang = cur_spawn_point.ang
+			'is this agent a turret
+			If last_spawned_enemy.ai_type = AI_BRAIN_TURRET
+				last_spawned_enemy.pos_x = cur_turret_anchor.pos_x
+				last_spawned_enemy.pos_y = cur_turret_anchor.pos_y
+				last_spawned_enemy.ang = cur_turret_anchor.ang
+				cur_turret_anchor = Null
+			'not a turret
+			Else 'last_spawned_enemy.ai_type <> AI_BRAIN_TURRET
+				last_spawned_enemy.pos_x = cur_spawn_point.pos_x
+				last_spawned_enemy.pos_y = cur_spawn_point.pos_y
+				last_spawned_enemy.ang = cur_spawn_point.ang
+			End If
 			Create_and_Manage_CONTROL_BRAIN( last_spawned_enemy, CONTROL_TYPE_AI,, 32, 1000, 1000 )
 		'else, last_spawned_enemy <> Null And enemy not clear of spawn
 		Else
@@ -70,6 +108,8 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 			cur_squad = Null
 			cur_spawn_point = Null
 			last_spawned_enemy = Null
+			shuffle_anchor_deck()
+			anchor_i = 0
 			Return False
 		End If
 	End If
@@ -78,47 +118,60 @@ End Function
 '______________________________________________________________________________
 'Level Squads
 Function get_level_squads%[][]( i% )
-'	If i < level_squads.Length
-'		Return level_squads[i]
-'	Else
-'		Return Null
-'	End If
-	Return level_squads[0]
+	If i < level_squads.Length
+		Return level_squads[i]
+	Else
+		Return random_squads()
+	End If
 End Function
 
-'level_squads[player_level][squad_index][enemy_archetype_index]
+'level_squads[level_i][squad_i][enemy_i]
+' note: turrets must come first in the level index (for now)
 Global level_squads%[][][] = ..
 [ ..
 	[	..
-		[ ENEMY_INDEX_MR_THE_BOX ], ..
-		[ ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
-		[ ENEMY_INDEX_LIGHT_QUAD ] ..
+		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
+		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
+		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
+		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ] ..
+	], ..
+	[ ..
+		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
+		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ], ..
+		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ] ..
 	] ..
 ]
-'[ ..
-'	[	..
-'		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
-'		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
-'		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
-'		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ] ..
-'	], ..
-'	[ ..
-'		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
-'		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
-'		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
-'		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ] ..
-'	] ..
-']
+
+Function random_squads%[][]()
+	Return ..
+	[	..
+		[ ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT, ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT ], ..
+		[ ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT ], ..
+		[ ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT ], ..
+		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
+		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
+		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
+		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
+		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ], ..
+		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ], ..
+		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ] ..
+	]
+End Function
 
 '______________________________________________________________________________
 'Level Walls
+
+Global all_walls:TList = CreateList()
+
 'assumes origin of (arena_offset,arena_offset)
 'TList:[ WALL_TYPE%, X%, Y%, W%, H% ]
 Const WALL_ADD% = PATH_BLOCKED
 'Const WALL_SUB% = PATH_PASSABLE (no longer used)
 
 Global common_walls:TList = CreateList()
-'outer walls: N,N, E,E, S,S, W,W
+'common outermost walls: N, E, S, W
+
+'common inner walls: N,N, E,E, S,S, W,W
 common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
 common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),0,                    arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
 common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,0,                                         arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
@@ -128,19 +181,15 @@ common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),arena
 common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
 common_walls.AddLast([ WALL_ADD, 0,arena_offset+(arena_h/2)+(arena_offset/2),                    arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
 
-Global level_walls:TList[] = New TList[4]
+Global level_walls:TList[] = New TList[10]
 For Local i% = 0 To level_walls.Length - 1
 	level_walls[i] = CreateList()
 Next
 
-'level_walls[0] 'empty
+level_walls[0].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300-1,50-1 ])
 
-'level_walls[1] 'empty
-
-level_walls[2].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300-1,50-1 ])
-
-level_walls[3].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
-level_walls[3].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
+level_walls[1].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
+level_walls[1].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
 
 Function get_level_walls:TList( i% )
 	If i < level_walls.Length
@@ -167,7 +216,7 @@ Global friendly_door_list:TList = CreateList() 'TList:WIDGET
 		friendly_door_list.AddLast( door )
 	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
 		door.parent = player_spawn_point
-		door.attach_at( -25, 25, 90 )
+		door.attach_at( 25, -25, 90 )
 		door.auto_manage()
 		friendly_door_list.AddLast( door )
 Global hostile_door_list:TList = CreateList() 'TList:WIDGET
