@@ -77,7 +77,7 @@ Global PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL% = postfix_index()
 particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_CANNON_MUZZLE_FLASH,, False, False, False, False, False,,,,, 50, 50 ))
 particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_CANNON_SHELL_CASING,, True, True, False, False, True,,,,, 2200, 2200 ))
 particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_CANNON_MUZZLE_SMOKE,, False, True, False, False, False,,, 10, 12, 500, 1000, 0.08, 0.16, -0.002, -0.004, 0.15, 0.75, 0.0010, 0.0100 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_EXPLOSION,, False, False, False, False, False,,,,, 300, 350,,,,, 0.24, 0.28, -0.0006, -0.0009, 255,255, 255,255, 225,225, -0.010,-0.010, -0.010,-0.010, -0.008,-0.008 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_EXPLOSION,, False, False, False, False, False,,,,, 300,350, 1.0,1.0, -0.100,-0.100, 0.350, 0.400, -0.0075, -0.0075, 1.0,1.0, 1.0,1.0, 0.8,0.8, -0.002,-0.002, -0.035,-0.035, -0.030,-0.030 ))
 particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_RICOCHET_SPARK] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_RICOCHET_SPARK,, False, True, True, False, False,,,,, 50, 50, 1, 1,,, 0.75, 0.75 ))
 particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_IMPACT_HALO] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_IMPACT_HALO,, False, False, False, False, False,,,,, 100, 100, 0.5, 0.5, 0, 0, 0.35, 0.35, -0.0100, -0.0100 ))
 particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_MACHINE_GUN_MUZZLE_FLASH,, False, False, False, False, False,,,,, 25, 25 ))
@@ -140,8 +140,8 @@ widget_archetype[WIDGET_INDEX_GLOW] = WIDGET( WIDGET.Create( img_glow, LAYER_IN_
 	widget_archetype[WIDGET_INDEX_GLOW].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.000, 1, 1, 333 )))
 	widget_archetype[WIDGET_INDEX_GLOW].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.750, 1, 1, 333 )))
 widget_archetype[WIDGET_ARENA_DOOR] = WIDGET( WIDGET.Create( img_door, LAYER_IN_FRONT_OF_PARENT, REPEAT_MODE_CYCLIC_WRAP, 2, False ))
-	widget_archetype[WIDGET_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -50, 0, 0, 255, 255, 255, 1, 1, 1, 1750 )))
 	widget_archetype[WIDGET_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25, 0, 0, 255, 255, 255, 1, 1, 1, 1750 )))
+	widget_archetype[WIDGET_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1, 1, 1, 1750 )))
 	
 '______________________________________________________________________________
 '[ PICKUPS ]

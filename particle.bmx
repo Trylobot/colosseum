@@ -27,7 +27,7 @@ Type PARTICLE Extends POINT
 	Field layer% 'layer {foreground|background}
 	Field retain% 'copy particle to background on death?
 	Field frictional_coefficient# 'fake friction for slowing particles down
-	Field red%, green%, blue% 'color
+	Field red#, green#, blue# 'color
 	Field red_delta#, green_delta#, blue_delta# 'change in color over time
 	Field life_time% 'time until object is deleted
 	Field created_ts% 'timestamp of object creation
@@ -54,7 +54,7 @@ Type PARTICLE Extends POINT
 	layer%, ..
 	retain% = False, ..
 	frictional_coefficient# = 0.0, ..
-	red% = 255, green% = 255, blue% = 255, ..
+	red# = 255, green# = 255, blue# = 255, ..
 	red_delta# = 0.0, green_delta# = 0.0, blue_delta# = 0.0, ..
 	life_time% = 0, ..
 	pos_x# = 0.0, pos_y# = 0.0, ..
@@ -124,7 +124,7 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Method draw()
-		SetColor( red, green, blue )
+		SetColor( red*255, green*255, blue*255 )
 		SetAlpha( alpha )
 		SetScale( scale, scale )
 		

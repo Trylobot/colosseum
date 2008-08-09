@@ -20,12 +20,12 @@ Type EMITTER extends MANAGED_OBJECT
 	Field archetype_index% 'particle archetype
 	Field mode% 'emitter mode (off/counter/timer)
 	Field interval:RANGE_Int 'delay between particles
-	Field interval_next% '(private) delay between particles - pre-calculated
+	Field interval_cur% '(private) delay between particles - pre-calculated
 	Field last_emit_ts% '(private) timestamp of last emitted particle
 	Field time_to_live% 'time until this emitter is disabled
 	Field last_enable_ts% '(private) timestamp of the last time this emitter was enabled
 	Field count:RANGE_Int 'number of particles to emit - upper bound
-	Field count_next% '(private) number of particles remaining to emit - pre-calculated and tracked
+	Field count_cur% '(private) number of particles remaining to emit - pre-calculated and tracked
 	Field combine_vel_with_parent_vel% 'setting - whether to add the parent's velocity to the emitted particle's velocity
 	Field combine_vel_ang_with_parent_ang% 'setting - whether to add the parent's orientation to the emitted particle's direction of travel
 	Field inherit_ang_from_dist_ang% 'setting - whether to set the angle to the already-determined "dist_ang" or a new angle
@@ -49,7 +49,7 @@ Type EMITTER extends MANAGED_OBJECT
 	Field alpha_delta:RANGE 'alpha rate of change of emitted particle 
 	Field scale:RANGE 'initial scale value of emitted particle 
 	Field scale_delta:RANGE 'scale rate of change of emitted particle 
-	Field red:RANGE_Int, green:RANGE_Int, blue:RANGE_Int 'color of emitted particle
+	Field red:RANGE, green:RANGE, blue:RANGE 'color of emitted particle
 	Field red_delta:RANGE, green_delta:RANGE, blue_delta:RANGE 'emitted particle's change in color over time
 	
 	Method New()
@@ -65,14 +65,14 @@ Type EMITTER extends MANAGED_OBJECT
 		life_time = New RANGE_Int
 		alpha = New RANGE; alpha_delta = New RANGE
 		scale = New RANGE; scale_delta = New RANGE
-		red = New RANGE_Int; green = New RANGE_Int; blue = New RANGE_Int 
+		red = New RANGE; green = New RANGE; blue = New RANGE 
 		red_delta = New RANGE; green_delta = New RANGE; blue_delta = New RANGE 
 	End Method
 	
 	Method update()
 		Select mode
 			Case MODE_ENABLED_WITH_COUNTER
-				If count_next <= 0 Then disable()
+				If (count_cur <= 0) Then disable()
 			Case MODE_ENABLED_WITH_TIMER
 				If (now() - last_enable_ts) >= time_to_live Then disable()
 		End Select
@@ -82,7 +82,7 @@ Type EMITTER extends MANAGED_OBJECT
 		mode = new_mode
 		Select mode
 			Case MODE_ENABLED_WITH_COUNTER
-				count_next = count.get()
+				count_cur = count.get()
 			Case MODE_ENABLED_WITH_TIMER
 				last_enable_ts = now()
 		End Select
@@ -92,17 +92,18 @@ Type EMITTER extends MANAGED_OBJECT
 		mode = MODE_DISABLED
 	End Method
 	
+	Method is_enabled%()
+		Return (parent <> Null) And (Not (mode = MODE_DISABLED))
+	End Method
+	
 	Method ready%()
-		Return ..
-			(Not (mode = MODE_DISABLED)) And ..
-			((now() - last_emit_ts) >= interval_next) And ..
-			(parent <> Null)
+		Return (now() - last_emit_ts > interval_cur)
 	End Method
 	
 	'like the fire() method of the TANK type, this method should be treated like a request.
 	'ie, this method will only emit if it's appropriate.
 	Method emit() '( alignment% = ALIGNMENT_NOT_APPLICABLE )
-		If ready()
+		If is_enabled() And ready()
 			'create a new object (particle/projectile) and set it up
 			Select emitter_type
 				Case EMITTER_TYPE_PARTICLE
@@ -113,9 +114,9 @@ Type EMITTER extends MANAGED_OBJECT
 			
 			'interval
 			last_emit_ts = now()
-			interval_next = interval.get()
+			interval_cur = interval.get()
 			'counter
-			count_next :- 1
+			count_cur :- 1
 			
 		End If
 	End Method
@@ -258,7 +259,7 @@ Type EMITTER extends MANAGED_OBJECT
 	alpha_delta_min# = 0.0, alpha_delta_max# = 0.0, ..
 	scale_min# = 1.0, scale_max# = 1.0, ..
 	scale_delta_min# = 0.0, scale_delta_max# = 0.0, ..
-	red_min% = 255, red_max% = 255, green_min% = 255, green_max% = 255, blue_min% = 255, blue_max% = 255, ..
+	red_min# = 255, red_max# = 255, green_min# = 255, green_max# = 255, blue_min# = 255, blue_max# = 255, ..
 	red_delta_min# = 0.0, red_delta_max# = 0.0, green_delta_min# = 0.0, green_delta_max# = 0.0, blue_delta_min# = 0.0, blue_delta_max# = 0.0 )
 		Local em:EMITTER = New EMITTER
 		
@@ -276,8 +277,8 @@ Type EMITTER extends MANAGED_OBJECT
 		
 		'emitter attributes and attribute ranges
 		em.parent = Null
-		em.interval_next = em.interval.get()
-		em.count_next = em.count.get()
+		em.interval_cur = em.interval.get()
+		em.count_cur = em.count.get()
 		em.life_time.set( life_time_min, life_time_max )
 		em.alpha.set( alpha_min, alpha_max )
 		em.alpha_delta.set( alpha_delta_min, alpha_delta_max )
@@ -308,9 +309,9 @@ Type EMITTER extends MANAGED_OBJECT
 		em.inherit_vel_ang_from_ang = other.inherit_vel_ang_from_ang
 		em.inherit_acc_ang_from_vel_ang = other.inherit_acc_ang_from_vel_ang
 		em.interval = other.interval.clone()
-		em.interval_next = em.interval.get()
+		em.interval_cur = em.interval.get()
 		em.count = other.count.clone()
-		em.count_next = em.count.get()
+		em.count_cur = em.count.get()
 		em.last_enable_ts = now()
 		
 		'emitted particle-specific fields

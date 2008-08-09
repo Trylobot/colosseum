@@ -22,7 +22,6 @@ Const MENU_QUIT% = 4
 'light tank = 5
 'laser tank = 6
 'medium tank = 7
-
 'AI_DEMO
 'LEVEL_EDITOR
 
@@ -72,7 +71,7 @@ Function menu_command( command_index% )
 		Case MENU_QUIT
 			End 'quit now
 			
-		Default
+		Case 5, 6, 7 'tank selection (part of NEW)
 			player_type = PLAYER_INDEX_START + (command_index - 5)
 			FLAG_in_menu = False
 			reset_game()

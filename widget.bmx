@@ -157,7 +157,7 @@ Type WIDGET Extends MANAGED_OBJECT
 		SetAlpha( state.alpha )
 		SetScale( state.scale_x, state.scale_y )
 		
-		SetRotation( parent.ang + ang_offset + state.ang )
+		SetRotation( parent.ang + offset_ang + ang_offset + state.ang )
 		DrawImage( img, ..
 			parent.pos_x + offset*Cos( parent.ang + offset_ang ) + state.pos_length*Cos( parent.ang + offset_ang + ang_offset + state.ang ), ..
 			parent.pos_y + offset*Sin( parent.ang + offset_ang ) + state.pos_length*Sin( parent.ang + offset_ang + ang_offset + state.ang ) )

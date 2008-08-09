@@ -40,14 +40,20 @@ Global anchor_i%
 	
 'Serialized Enemy Spawning system, by Squad and Level
 Const SPAWN_CLEAR_DIST# = 18.0
+Const squad_spawn_delay% = 3000
 
-Global enemy_spawn_queue:TList = CreateList()
-Global cur_squad:TList = Null
+Global enemy_spawn_queue:TList
+Global cur_squad:TList
 Global cur_turret_anchor:POINT
 Global cur_spawn_point:POINT
 Global last_spawned_enemy:COMPLEX_AGENT
-Const squad_spawn_delay% = 3000
 Global squad_begin_spawning_ts% = now()
+
+Function init_spawning_system()
+	enemy_spawn_queue = CreateList()
+	cur_squad = Null
+	squad_begin_spawning_ts = now()
+End Function
 
 Function queue_squad( archetypes%[] )
 	Local squad:TList = CreateList()
@@ -217,19 +223,25 @@ Function wall_mid_y#( wall%[] )
 End Function
 '______________________________________________________________________________
 'Doors
-Local door:WIDGET
+Const DOOR_STATUS_OPEN% = 0
+Const DOOR_STATUS_CLOSED% = 1
+
 Global friendly_door_list:TList = CreateList() 'TList:WIDGET
-	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
-		door.parent = player_spawn_point
-		door.attach_at( -25, -25, 0 )
-		door.auto_manage()
-		friendly_door_list.AddLast( door )
-	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
-		door.parent = player_spawn_point
-		door.attach_at( 25, -25, 180 )
-		door.auto_manage()
-		friendly_door_list.AddLast( door )
+Global friendly_doors_status%
 Global hostile_door_list:TList = CreateList() 'TList:WIDGET
+Global hostile_doors_status%
+
+Local door:WIDGET
+door = widget_archetype[WIDGET_ARENA_DOOR].clone()
+	door.parent = player_spawn_point
+	door.attach_at( 0, arena_offset/2, -90 )
+	door.auto_manage()
+	friendly_door_list.AddLast( door )
+door = widget_archetype[WIDGET_ARENA_DOOR].clone()
+	door.parent = player_spawn_point
+	door.attach_at( 0, arena_offset/2, 90 )
+	door.auto_manage()
+	friendly_door_list.AddLast( door )
 
 Function toggle_doors( political_alignment% )
 	Local door:WIDGET
@@ -238,10 +250,12 @@ Function toggle_doors( political_alignment% )
 			For door = EachIn friendly_door_list
 				door.begin_transformation( 1 )
 			Next
+			friendly_doors_status = Not friendly_doors_status
 		Case ALIGNMENT_HOSTILE
 			For door = EachIn hostile_door_list
 				door.begin_transformation( 1 )
 			Next
+			hostile_doors_status = Not hostile_doors_status
 	End Select
 End Function
 

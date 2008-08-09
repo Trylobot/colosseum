@@ -67,8 +67,6 @@ Function collide_all()
 				'examine id's; projectiles will never collide with their owners
 				If proj.source_id <> ag.id
 					'COLLISION! between {proj} & {ag}
-					'activate impact emitter
-					proj.impact()
 					'activate collision response for affected entity(ies)
 					Local offset#, offset_ang#
 					cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
@@ -92,6 +90,8 @@ Function collide_all()
 							FLAG_game_over = True
 						End If
 					End If
+					'activate projectile impact emitter
+					proj.impact()
 					'remove projectile
 					proj.remove_me()
 				End If

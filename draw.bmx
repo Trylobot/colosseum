@@ -282,7 +282,7 @@ Function draw_stats()
 	Local x%, y%, w%, h%
 	
 	'level number
-	x = arena_w + (arena_offset * 2)
+	x = arena_w + (arena_offset * 2) + arena_offset
 	y = arena_offset
 	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
 	DrawText( "level", x, y ); y :+ 12

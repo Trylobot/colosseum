@@ -75,6 +75,7 @@ End Function
 Function init_game()
 	
 	init_pathing_system()
+	init_spawning_system()
 	player_level = -1
 	respawn_player( player_type )
 	load_next_level()
