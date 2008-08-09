@@ -89,10 +89,7 @@ Function draw_all()
 		'help reminder
 		Else
 			SetImageFont( consolas_normal_12 )
-			SetColor( 0, 0, 0 )
-			DrawText( "F1 for help", arena_offset - 10+1, 2+1 )
-			SetColor( 255, 255, 255 )
-			DrawText( "F1 for help", arena_offset - 10, 2 )
+			DrawText_with_shadow( "F1 for help", arena_offset - 10, 2 )
 		End If
 		
 		'game over
@@ -131,17 +128,16 @@ Function draw_all()
 			DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 )
 		End If
 		
-		SetImageFont( consolas_normal_24 )
-		SetColor( 127, 255, 255 )
+		SetImageFont( consolas_normal_12 )
 		SetAlpha( 0.75 )
 		Local x# = player_spawn_point.pos_x + arena_offset, y# = player_spawn_point.pos_y
 		'commands to player
 		If Not FLAG_player_engine_running
-			DrawText( "[E] start your engine.", x, y )
+			DrawText_with_shadow( "[E] start your engine.", x, y )
 		Else If FLAG_player_in_locker And FLAG_waiting_for_player_to_enter_arena
-			DrawText( "Please enter the arena.", x, y )
+			DrawText_with_shadow( "Please enter the arena.", x, y )
 		Else If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena
-			DrawText( "To proceed, return to your gate.", x, y )
+			DrawText_with_shadow( "To proceed, return to your gate.", x, y )
 		End If
 		
 	End If
@@ -282,8 +278,8 @@ Function draw_stats()
 	Local x%, y%, w%, h%
 	
 	'level number
-	x = arena_w + (arena_offset * 2) + arena_offset
-	y = arena_offset
+	x = arena_w + (arena_offset*2) + arena_offset/2
+	y = arena_offset/2
 	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
 	DrawText( "level", x, y ); y :+ 12
 	SetColor( 255, 255, 127 ); SetImageFont( consolas_bold_50 )
@@ -357,5 +353,13 @@ End Function
 Function draw_shop()
 	
 End Function
+
+Function DrawText_with_shadow( str$, pos_x%, pos_y% )
+	SetColor( 0, 0, 0 )
+	DrawText( str, pos_x + 1, pos_y + 1 )
+	SetColor( 255, 255, 255 )
+	DrawText( str, pos_x, pos_y )
+End Function
+
 
 

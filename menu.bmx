@@ -81,7 +81,6 @@ Function menu_command( command_index% )
 			menu_enabled[5] = False
 			menu_enabled[6] = False
 			menu_enabled[7] = False
-			toggle_doors( ALIGNMENT_FRIENDLY )
 			
 	End Select
 End Function

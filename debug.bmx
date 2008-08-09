@@ -15,6 +15,31 @@ Global global_goal:CELL
 Global db_path:TList
 
 '______________________________________________________________________________
+Function debug_main()
+	
+	
+	
+	Local before% = 0
+	Repeat
+		
+		If (now() - before) > (1000/60) '60 hertz
+			before = now()
+			
+			get_all_input()
+			collide_all()
+			update_all()
+			
+		EndIf
+		Cls
+		
+		draw_all()
+		play_all()
+	
+		Flip( 1 ) 'draw to screen with vsync enabled
+	Until AppTerminate() 'kill app when ESC or close button pressed
+
+End Function
+'______________________________________________________________________________
 Function debug_range()
 	Local r:RANGE_Int = New RANGE_Int
 	Local str$ = ""

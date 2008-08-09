@@ -7,8 +7,8 @@ EndRem
 '______________________________________________________________________________
 'All Spawnpoints
 'Locker south (player)
-Global player_spawn_point:POINT = ..
-	Create_POINT( Floor(arena_offset + arena_w/2), Floor(1.5*arena_offset + arena_h), -90 )
+Global friendly_spawn_points:POINT[] = [ ..
+	Create_POINT( Floor(arena_offset + arena_w/2), Floor(1.5*arena_offset + arena_h), 270 ) ]
 'Lockers west, north, east (hostile)
 Global enemy_spawn_points:POINT[] = [ ..
 	Create_POINT( Floor(arena_offset/2), Floor(arena_offset + arena_h/2), 0 ), ..
@@ -23,7 +23,9 @@ Global enemy_turret_anchors:POINT[] = [ ..
 	Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*1), 135 ), ..
 	Create_POINT( Floor((arena_offset+arena_w)-arena_offset*2), Floor(arena_offset+arena_offset*1), 135 ), ..
 	Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*2), 135 ) ]
+
 Global anchor_deck%[] = New Int[ enemy_turret_anchors.Length ]
+Global anchor_i%
 Function shuffle_anchor_deck()
 	Local i%, j%, swap%
 	For i = 0 To (enemy_turret_anchors.Length - 1)
@@ -35,25 +37,19 @@ Function shuffle_anchor_deck()
 		anchor_deck[i] = anchor_deck[j]
 		anchor_deck[j] = swap
 	Next
+	anchor_i = 0
 End Function
-Global anchor_i%
 	
 'Serialized Enemy Spawning system, by Squad and Level
 Const SPAWN_CLEAR_DIST# = 18.0
 Const squad_spawn_delay% = 3000
 
-Global enemy_spawn_queue:TList
-Global cur_squad:TList
+Global enemy_spawn_queue:TList = CreateList()
+Global cur_squad:TList = Null
 Global cur_turret_anchor:POINT
 Global cur_spawn_point:POINT
 Global last_spawned_enemy:COMPLEX_AGENT
 Global squad_begin_spawning_ts% = now()
-
-Function init_spawning_system()
-	enemy_spawn_queue = CreateList()
-	cur_squad = Null
-	squad_begin_spawning_ts = now()
-End Function
 
 Function queue_squad( archetypes%[] )
 	Local squad:TList = CreateList()
@@ -64,7 +60,7 @@ Function queue_squad( archetypes%[] )
 	If cur_squad = Null Then cur_squad = squad
 End Function
 
-Function spawn_next_enemy%() 'this function should be treated as a request, and might not do anything if conditions are not met.
+Function spawning_system_update()
 	'is there a squad ready
 	If cur_squad <> Null And Not cur_squad.IsEmpty()
 		'find a turret anchor
@@ -81,26 +77,8 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 		Or cur_spawn_point.dist_to( last_spawned_enemy ) >= SPAWN_CLEAR_DIST ..
 		Or (last_spawned_enemy <> Null And last_spawned_enemy.dead())) ..
 		And (now() - squad_begin_spawning_ts >= squad_spawn_delay)
-			last_spawned_enemy = COMPLEX_AGENT( cur_squad.First() )
-			cur_squad.RemoveFirst()
-			last_spawned_enemy.auto_manage( ALIGNMENT_HOSTILE )
-			'is this agent a turret
-			If last_spawned_enemy.ai_type = AI_BRAIN_TURRET
-				last_spawned_enemy.pos_x = cur_turret_anchor.pos_x
-				last_spawned_enemy.pos_y = cur_turret_anchor.pos_y
-				last_spawned_enemy.ang = cur_turret_anchor.ang
-				cur_turret_anchor = Null
-			'not a turret
-			Else 'last_spawned_enemy.ai_type <> AI_BRAIN_TURRET
-				last_spawned_enemy.pos_x = cur_spawn_point.pos_x
-				last_spawned_enemy.pos_y = cur_spawn_point.pos_y
-				last_spawned_enemy.ang = cur_spawn_point.ang
-			End If
-			Create_and_Manage_CONTROL_BRAIN( last_spawned_enemy, CONTROL_TYPE_AI,, 32, 1000, 1000 )
+			spawn_from_squad( cur_squad )
 		'else, last_spawned_enemy <> Null And enemy not clear of spawn
-		Else
-			'do nothing, have to wait :/
-			Return False
 		End If
 	Else 'cur_squad == Null Or cur_squad.IsEmpty()
 		'prepare a squad from the list, if there are any
@@ -109,14 +87,31 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 			enemy_spawn_queue.RemoveFirst()
 			cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
 			squad_begin_spawning_ts = now()
-			Return False
 		Else 'enemy_spawn_queue.IsEmpty()
 			cur_squad = Null
 			cur_spawn_point = Null
 			last_spawned_enemy = Null
-			Return False
 		End If
 	End If
+End Function
+
+Function spawn_from_squad( squad:TList ) 'this function should be treated as a request, and might not do anything if conditions are not met.
+	last_spawned_enemy = COMPLEX_AGENT( squad.First() )
+	squad.RemoveFirst()
+	last_spawned_enemy.auto_manage( ALIGNMENT_HOSTILE )
+	'is this agent a turret
+	If last_spawned_enemy.ai_type = AI_BRAIN_TURRET
+		last_spawned_enemy.pos_x = cur_turret_anchor.pos_x
+		last_spawned_enemy.pos_y = cur_turret_anchor.pos_y
+		last_spawned_enemy.ang = cur_turret_anchor.ang
+		cur_turret_anchor = Null
+	'not a turret
+	Else 'last_spawned_enemy.ai_type <> AI_BRAIN_TURRET
+		last_spawned_enemy.pos_x = cur_spawn_point.pos_x
+		last_spawned_enemy.pos_y = cur_spawn_point.pos_y
+		last_spawned_enemy.ang = cur_spawn_point.ang
+	End If
+	Create_and_Manage_CONTROL_BRAIN( last_spawned_enemy, CONTROL_TYPE_AI,, 32, 1000, 1000 )
 End Function
 
 '______________________________________________________________________________
@@ -157,9 +152,7 @@ Global level_squads%[][][] = ..
 Function random_squads%[][]()
 	Return ..
 	[	..
-		[ ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT, ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT ], ..
-		[ ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT ], ..
-		[ ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT ], ..
+		[ ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT, ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT, ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT, ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT, ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT ], ..
 		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
 		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
 		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
@@ -180,6 +173,14 @@ Global all_walls:TList = CreateList()
 Const WALL_ADD% = PATH_BLOCKED
 'Const WALL_SUB% = PATH_PASSABLE (no longer used)
 
+Function wall_mid_x#( wall%[] )
+	Return (2.0*wall[1]+wall[3])/2.0
+End Function
+Function wall_mid_y#( wall%[] )
+	Return (2.0*wall[2]+wall[4])/2.0
+End Function
+
+'[ WALL_TYPE%, X%, Y%, W%, H% ]
 Global common_walls:TList = CreateList()
 'common outermost walls: N, E, S, W
 common_walls.AddLast([ WALL_ADD, -50,-50,                    (arena_offset*2+arena_w+100),50 ])
@@ -200,10 +201,11 @@ Global level_walls:TList[] = New TList[10]
 For Local i% = 0 To level_walls.Length - 1
 	level_walls[i] = CreateList()
 Next
-
+'[ WALL_TYPE%, X%, Y%, W%, H% ]
+'level 0
 level_walls[0].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300-1,50-1 ])
-level_walls[0].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300-1,50-1 ])
-
+level_walls[0].AddLast([ WALL_ADD, arena_offset+225,arena_offset+100, 50-1,300-1 ])
+'level 1
 level_walls[1].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
 level_walls[1].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
 
@@ -215,35 +217,45 @@ Function get_level_walls:TList( i% )
 	End If
 End Function
 
-Function wall_mid_x#( wall%[] )
-	Return (2.0*wall[1]+wall[3])/2.0
-End Function
-Function wall_mid_y#( wall%[] )
-	Return (2.0*wall[2]+wall[4])/2.0
-End Function
 '______________________________________________________________________________
 'Doors
 Const DOOR_STATUS_OPEN% = 0
 Const DOOR_STATUS_CLOSED% = 1
 
 Global friendly_door_list:TList = CreateList() 'TList:WIDGET
-Global friendly_doors_status%
+Global friendly_doors_status% = DOOR_STATUS_CLOSED
 Global hostile_door_list:TList = CreateList() 'TList:WIDGET
-Global hostile_doors_status%
+Global hostile_doors_status% = DOOR_STATUS_CLOSED
 
-Local door:WIDGET
-door = widget_archetype[WIDGET_ARENA_DOOR].clone()
-	door.parent = player_spawn_point
-	door.attach_at( 0, arena_offset/2, -90 )
-	door.auto_manage()
-	friendly_door_list.AddLast( door )
-door = widget_archetype[WIDGET_ARENA_DOOR].clone()
-	door.parent = player_spawn_point
-	door.attach_at( 0, arena_offset/2, 90 )
-	door.auto_manage()
-	friendly_door_list.AddLast( door )
+'attach door widgets To every spawn POINT
+For Local spawn:POINT = EachIn friendly_spawn_points
+	attach_door( spawn, friendly_door_list )
+Next
+For Local spawn:POINT = EachIn enemy_spawn_points
+	attach_door( spawn, hostile_door_list )
+Next
 
-Function toggle_doors( political_alignment% )
+Function attach_door( p:POINT, political_door_list:TList )
+	Local door:WIDGET
+	'Left door slider
+	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
+	door.parent = p
+	door.attach_at( arena_offset/2, -arena_offset/2, -90 )
+	'the auto-manage list keeps track of all widgets, for updating and drawing
+	door.auto_manage()
+	'this managed list simply differentiates "friendly" doors from "hostile" doors
+	political_door_list.AddLast( door )
+	'Right door slider
+	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
+	door.parent = p
+	door.attach_at( arena_offset/2, arena_offset/2, 90 )
+	'the auto-manage list keeps track of all widgets, for updating and drawing
+	door.auto_manage()
+	'this managed list simply differentiates "friendly" doors from "hostile" doors
+	political_door_list.AddLast( door )
+End Function
+
+Function activate_doors( political_alignment% )
 	Local door:WIDGET
 	Select political_alignment
 		Case ALIGNMENT_FRIENDLY
@@ -258,4 +270,23 @@ Function toggle_doors( political_alignment% )
 			hostile_doors_status = Not hostile_doors_status
 	End Select
 End Function
+
+Function reset_all_doors()
+	For Local door:WIDGET = EachIn friendly_door_list
+		door.reset()
+	Next
+	For Local door:WIDGET = EachIn hostile_door_list
+		door.reset()
+	Next
+End Function
+
+
+
+
+
+
+
+
+
+
 

@@ -8,14 +8,14 @@ EndRem
 'Generic globals
 Const INFINITY% = -1
 
-'settings flags
+'game settings flags
 Global FLAG_in_menu% = True
 Global FLAG_in_shop% = False
-Global level_intro_time% = 2000
-Global level_passed_ts%
 Global FLAG_bg_music_on% = False
 Global FLAG_draw_help% = False
 Global FLAG_console% = False
+Global level_intro_time% = 2000
+Global level_passed_ts%
 'game state flags
 Global FLAG_game_in_progress% = False
 Global FLAG_game_over% = False
@@ -25,17 +25,20 @@ Global FLAG_player_in_locker% = False
 Global FLAG_waiting_for_player_to_enter_arena% = False
 Global FLAG_battle_in_progress% = False
 Global FLAG_waiting_for_player_to_exit_arena% = False
-
-Const PICKUP_PROBABILITY# = 0.50 'chance of an enemy dropping a pickup (randomly selected from all pickups)
+Global FLAG_spawn_enemies% = False
 
 'global player stuff
 Global player_type% = 0
 Global player:COMPLEX_AGENT
+Global player_spawn_point:POINT
 Global player_level% = 0
 Global player_cash% = 0
 Global player_level_kills%
 Global level_enemies_remaining%
 
+Const PICKUP_PROBABILITY# = 0.50 'chance of an enemy dropping a pickup (randomly selected from all pickups)
+
+'______________________________________________________________________________
 Function get_player_id%()
 	If player <> Null
 		Return player.id
@@ -70,12 +73,13 @@ Function reset_game()
 	FLAG_game_in_progress = False
 	FLAG_game_over = False
 	
+	reset_all_doors()
+	
 End Function
 '______________________________________________________________________________
 Function init_game()
 	
 	init_pathing_system()
-	init_spawning_system()
 	player_level = -1
 	respawn_player( player_type )
 	load_next_level()
@@ -97,8 +101,6 @@ Function load_next_level()
 End Function
 Function load_level( index% )
 	
-	FLAG_player_engine_ignition = False
-	FLAG_player_engine_running = False
 	FLAG_player_in_locker = True
 	FLAG_waiting_for_player_to_enter_arena = True
 	FLAG_battle_in_progress = False
@@ -116,12 +118,10 @@ Function load_level( index% )
 	clear_pathing_grid_center_walls()
 	init_pathing_grid_from_walls( get_level_walls( player_level ))
 	
-	shuffle_anchor_deck()
-	anchor_i = 0
-
 End Function
 '______________________________________________________________________________
 Function prep_spawner()
+
 	Local squads%[][] = get_level_squads( player_level )
 	If squads <> Null
 		For Local squad_i%[] = EachIn squads
@@ -129,6 +129,9 @@ Function prep_spawner()
 		Next
 		level_enemies_remaining = enemy_count( squads )
 	End If
+
+	shuffle_anchor_deck()
+
 End Function
 '______________________________________________________________________________
 Function enemy_died()
@@ -141,12 +144,16 @@ Function respawn_player( archetype_index% )
 	If player <> Null And player.managed() Then player.remove_me()
 	
 	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
+	player_spawn_point = friendly_spawn_points[ Rand( 0, friendly_spawn_points.Length - 1 )]
 	player.pos_x = player_spawn_point.pos_x
 	player.pos_y = player_spawn_point.pos_y
 	player.ang = -90
 	player.snap_turrets()
 	
 	Create_and_Manage_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD )
+	
+	FLAG_player_engine_ignition = False
+	FLAG_player_engine_running = False
 	
 End Function
 '______________________________________________________________________________

@@ -12,34 +12,46 @@ Function update_all()
 	Not FLAG_in_shop And ..
 	Not FLAG_draw_help
 		
-		'level/game logic
-		If FLAG_waiting_for_player_to_enter_arena And player.pos_y <= player_spawn_point.pos_y - (arena_offset/2.0)
-			FLAG_waiting_for_player_to_enter_arena = False
-			FLAG_battle_in_progress = True
-			FLAG_waiting_for_player_to_exit_arena = True
+		'_______________________________________
+		'game logic
+		'if waiting for player to enter arena
+		If FLAG_waiting_for_player_to_enter_arena
+			'if player has not entered the arena
+			If player_spawn_point.dist_to(player) < (arena_offset/2.0)
+				'if the player has started the engine
+				If FLAG_player_engine_running
+					'open the friendly doors
+					If friendly_doors_status = DOOR_STATUS_CLOSED Then activate_doors( ALIGNMENT_FRIENDLY )
+				End If
+			'else, player has entered the arena
+			Else 'player_spawn_point.dist_to(player) > (arena_offset/2.0)
+				FLAG_waiting_for_player_to_enter_arena = False
+				If hostile_doors_status = DOOR_STATUS_CLOSED Then activate_doors( ALIGNMENT_HOSTILE )
+				FLAG_battle_in_progress = True
+				FLAG_waiting_for_player_to_exit_arena = True
+				FLAG_spawn_enemies = True
+			End If
 		End If
+		'if there are no more enemies this level
 		If level_enemies_remaining = 0
 			FLAG_battle_in_progress = False
+			If hostile_doors_status = DOOR_STATUS_OPEN Then activate_doors( ALIGNMENT_HOSTILE )
+			level_passed_ts = now()
+			FLAG_spawn_enemies = False
 		End If
-		If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And player.pos_y >= player_spawn_point.pos_y
+		'if the battle is over, and waiting for player to exit arena, and player has exited the arena
+		If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And player_spawn_point.dist_to(player) < (arena_offset/5.0)
 			FLAG_waiting_for_player_to_exit_arena = False
 			FLAG_player_in_locker = True
-			
+			If friendly_doors_status = DOOR_STATUS_OPEN Then activate_doors( ALIGNMENT_FRIENDLY )
+			'FLAG_player_engine_running = False
 			load_next_level()
 		End If
 		
-		For Local w:WIDGET = EachIn environmental_widget_list
-			w.update() 
-		Next
-		
-		'spawning (safe to use any time)
-		spawn_next_enemy()
-		
-		'control brains (human + ai)
-		For Local cb:CONTROL_BRAIN = EachIn control_brain_list
-			cb.update()
-			cb.prune()
-		Next
+		'spawning
+		If FLAG_spawn_enemies
+			spawning_system_update()
+		End If
 		
 		'pickups
 		For Local pkp:PICKUP = EachIn pickup_list
@@ -57,14 +69,20 @@ Function update_all()
 			Next
 		Next
 
-		'friendlies
-		For Local friendly:COMPLEX_AGENT = EachIn friendly_agent_list
-			friendly.update()
+		'control brains
+		For Local cb:CONTROL_BRAIN = EachIn control_brain_list
+			cb.update()
 		Next
-
-		'hostiles
-		For Local hostile:COMPLEX_AGENT = EachIn hostile_agent_list
-			hostile.update()
+		'complex agents
+		For Local list:TList = EachIn agent_lists
+			For Local ag:COMPLEX_AGENT = EachIn list
+				ag.update()
+			Next
+		Next
+		
+		'environment
+		For Local w:WIDGET = EachIn environmental_widget_list
+			w.update()
 		Next
 		
 	End If

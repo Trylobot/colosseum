@@ -204,6 +204,12 @@ Type WIDGET Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
+	Method reset()
+		transforming = False
+		cur_state = 0
+		state = states[cur_state].clone()
+	End Method
+	
 	Method auto_manage()
 		add_me( environmental_widget_list )
 	End Method

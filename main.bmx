@@ -23,10 +23,16 @@ Graphics( window_w, window_h )
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
+?Debug
+	debug_main()
+	End
+?
+
 '______________________________________________________________________________
 'MAIN
 Local before% = 0
 Repeat
+	
 	If (now() - before) > (1000/60) '60 hertz
 		before = now()
 		
@@ -40,11 +46,6 @@ Repeat
 	draw_all()
 	play_all()
 
-?Debug
-	'debug_brain_under_mouse()
-	'debug_general()
-?
-	
 	Flip( 1 ) 'draw to screen with vsync enabled
 Until AppTerminate() 'kill app when ESC or close button pressed
 
