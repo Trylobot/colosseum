@@ -211,9 +211,9 @@ Type TURRET Extends POINT
 	
 	Method add_emitter:EMITTER( emitter_type%, emitter_archetype_index% )
 		If emitter_type = EMITTER_TYPE_PARTICLE
-			Return EMITTER( EMITTER.Copy( particle_emitter_archetype[emitter_archetype_index], emitter_list ))
+			Return EMITTER( EMITTER.Copy( particle_emitter_archetype[emitter_archetype_index], emitter_list, Self ))
 		Else If emitter_type = EMITTER_TYPE_PROJECTILE
-			Return EMITTER( EMITTER.Copy( projectile_emitter_archetype[emitter_archetype_index], emitter_list ))
+			Return EMITTER( EMITTER.Copy( projectile_emitter_archetype[emitter_archetype_index], emitter_list, Self ))
 		End If
 	End Method
 	

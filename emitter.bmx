@@ -124,8 +124,8 @@ Type EMITTER extends MANAGED_OBJECT
 		'position
 		Local dist_actual# = dist.get()
 		Local dist_ang_actual# = dist_ang.get()
-		p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist_actual * Cos( dist_ang_actual + parent.ang )
-		p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist_actual * Sin( dist_ang_actual + parent.ang )
+		p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist_actual * Cos( dist_ang_actual + offset_ang + parent.ang )
+		p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist_actual * Sin( dist_ang_actual + offset_ang + parent.ang )
 		
 		'orientation
 		If inherit_ang_from_dist_ang
@@ -142,8 +142,8 @@ Type EMITTER extends MANAGED_OBJECT
 		Else
 			vel_ang_actual = vel_ang.get()
 		End If
-		p.vel_x = vel_actual * Cos( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_x )
-		p.vel_y = vel_actual * Sin( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_y )
+		p.vel_x = ( combine_vel_with_parent_vel*parent.vel_x ) + vel_actual*Cos( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang ))
+		p.vel_y = ( combine_vel_with_parent_vel*parent.vel_y ) + vel_actual*Sin( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang ))
 		
 		'angular velocity
 		p.ang_vel = ang_vel.get()
@@ -216,7 +216,7 @@ Type EMITTER extends MANAGED_OBJECT
 		
 		'management
 		p.auto_manage()
-		
+	
 	End Method
 		
 	Method attach_at( ..
@@ -240,25 +240,6 @@ Type EMITTER extends MANAGED_OBJECT
 		ang.set( ang_min_new, ang_max_new )
 		ang_vel.set( ang_vel_min_new, ang_vel_max_new )
 		ang_acc.set( ang_acc_min_new, ang_acc_max_new )
-	End Method
-	
-	Method attach_to( ..
-	new_parent:POINT, ..
-	off_x_new#, off_y_new#, ..
-	dist_min_new#, dist_max_new#, ..
-	dist_ang_min_new#, dist_ang_max_new#, ..
-	vel_min_new#, vel_max_new#, ..
-	vel_ang_min_new#, vel_ang_max_new#, ..
-	acc_min_new#, acc_max_new#, ..
-	acc_ang_min_new#, acc_ang_max_new#, ..
-	ang_min_new#, ang_max_new#, ..
-	ang_vel_min_new#, ang_vel_max_new#, ..
-	ang_acc_min_new#, ang_acc_max_new# )
-		parent = new_parent
-		attach_at( off_x_new, off_y_new, dist_min_new, dist_ang_max_new, ..
-			vel_min_new, vel_max_new, vel_ang_min_new, vel_ang_max_new, ..
-			acc_min_new, acc_max_new, ang_min_new, ang_max_new, ..
-			ang_vel_min_new, ang_vel_max_new, ang_acc_min_new, ang_acc_max_new )
 	End Method
 	
 	Function Archetype:Object( ..
