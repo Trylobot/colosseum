@@ -23,7 +23,7 @@ Global enemy_turret_anchors:POINT[] = [ ..
 	Create_POINT( Floor((arena_offset*2+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*1), 135 ), ..
 	Create_POINT( Floor((arena_offset*2+arena_w)-arena_offset*2), Floor(arena_offset+arena_offset*1), 135 ), ..
 	Create_POINT( Floor((arena_offset*2+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*2), 135 ) ]
-Global anchor_deck%[]
+Global anchor_deck%[] = New Int[ enemy_turret_anchors.Length ]
 Function shuffle_anchor_deck()
 	Local i%, j%, swap%
 	For i = 0 To (enemy_turret_anchors.Length - 1)
@@ -108,8 +108,6 @@ Function spawn_next_enemy%() 'this function should be treated as a request, and 
 			cur_squad = Null
 			cur_spawn_point = Null
 			last_spawned_enemy = Null
-			shuffle_anchor_deck()
-			anchor_i = 0
 			Return False
 		End If
 	End If
@@ -123,6 +121,14 @@ Function get_level_squads%[][]( i% )
 	Else
 		Return random_squads()
 	End If
+End Function
+'______________________________________________________________________________
+Function enemy_count%( squads%[][] )
+	Local count% = 0
+	For Local squad%[] = EachIn squads
+		count :+ squad.Length
+	Next
+	Return count
 End Function
 
 'level_squads[level_i][squad_i][enemy_i]
@@ -170,7 +176,10 @@ Const WALL_ADD% = PATH_BLOCKED
 
 Global common_walls:TList = CreateList()
 'common outermost walls: N, E, S, W
-
+common_walls.AddLast([ WALL_ADD, -50,-50,                    (arena_offset*2+arena_w+100),50 ])
+common_walls.AddLast([ WALL_ADD, arena_offset*2+arena_w,-50, 50,(arena_offset*2+arena_h+100) ])
+common_walls.AddLast([ WALL_ADD, -50,arena_offset*2+arena_h, (arena_offset*2+arena_w+100),50 ])
+common_walls.AddLast([ WALL_ADD, -50,-50,                    50,(arena_offset*2+arena_h+100) ])
 'common inner walls: N,N, E,E, S,S, W,W
 common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
 common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),0,                    arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
@@ -186,6 +195,7 @@ For Local i% = 0 To level_walls.Length - 1
 	level_walls[i] = CreateList()
 Next
 
+level_walls[0].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300-1,50-1 ])
 level_walls[0].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300-1,50-1 ])
 
 level_walls[1].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])

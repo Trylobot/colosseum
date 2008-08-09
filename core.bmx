@@ -18,6 +18,9 @@ Const window_h% = arena_h + 2*arena_offset
 
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo
+?Debug
+	AppTitle :+ " "+My.Application.Platform + " Debug"
+?
 SetGraphicsDriver GLMax2DDriver()
 Graphics( window_w, window_h )
 SetClsColor( 0, 0, 0 )
@@ -43,7 +46,8 @@ Global player_type% = 0
 Global player:COMPLEX_AGENT
 Global player_level% = 0
 Global player_cash% = 0
-Global player_kills% = 0
+Global player_level_kills%
+Global level_enemies_remaining%
 
 Function get_player_id%()
 	If player <> Null
@@ -71,7 +75,8 @@ Function reset_game()
 	player = Null
 	player_level = -1
 	player_cash = 0
-	player_kills = 0
+	player_level_kills = 0
+	level_enemies_remaining = -1
 	
 	pathing = Null
 	
@@ -105,17 +110,34 @@ End Function
 Function load_level( index% )
 	
 	dim_bg_cache()
-	prep_enemy_spawn_queue()
+	prep_spawner()
 	update_all()
 	level_passed_ts% = now()
-	player_kills = 0
 	
 	all_walls.Clear()
 	all_walls.AddLast( common_walls )
 	all_walls.AddLast( get_level_walls( player_level ))
+	
 	clear_pathing_grid_center_walls()
 	init_pathing_grid_from_walls( get_level_walls( player_level ))
 	
+	shuffle_anchor_deck()
+	anchor_i = 0
+
+End Function
+'______________________________________________________________________________
+Function prep_spawner()
+	Local squads%[][] = get_level_squads( player_level )
+	If squads <> Null
+		For Local squad_i%[] = EachIn squads
+			queue_squad( squad_i )
+		Next
+		level_enemies_remaining = enemy_count( squads )
+	End If
+End Function
+'______________________________________________________________________________
+Function enemy_died()
+	level_enemies_remaining :- 1
 End Function
 '______________________________________________________________________________
 'Spawning and Respawning
@@ -131,15 +153,6 @@ Function respawn_player( archetype_index% )
 	
 	Create_and_Manage_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD )
 	
-End Function
-'______________________________________________________________________________
-Function prep_enemy_spawn_queue()
-	Local squads%[][] = get_level_squads( player_level )
-	If squads <> Null
-		For Local squad_i%[] = EachIn squads
-			queue_squad( squad_i )
-		Next
-	End If
 End Function
 '______________________________________________________________________________
 Function spawn_pickup( x%, y% ) 'request; depends on probability

@@ -369,6 +369,13 @@ Type COMPLEX_AGENT Extends AGENT
 		If      new_political_alignment = ALIGNMENT_FRIENDLY Then add_me( friendly_agent_list ) ..
 		Else If new_political_alignment = ALIGNMENT_HOSTILE  Then add_me( hostile_agent_list )
 	End Method
+	
+	Method die()
+		Super.die()
+		If political_alignment = ALIGNMENT_HOSTILE
+			enemy_died()
+		End If
+	End Method
 		
 End Type
 
