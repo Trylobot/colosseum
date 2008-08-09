@@ -26,18 +26,23 @@ Graphics( window_w, window_h )
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
-'Settings flags
+'settings flags
 Global FLAG_in_menu% = True
 Global FLAG_in_shop% = False
 Global level_intro_time% = 2000
 Global level_passed_ts%
-Global FLAG_game_in_progress% = False
-Global FLAG_game_over% = False
 Global FLAG_bg_music_on% = False
 Global FLAG_draw_help% = False
+Global FLAG_console% = False
+'game state flags
+Global FLAG_game_in_progress% = False
+Global FLAG_game_over% = False
 Global FLAG_player_engine_ignition% = False
 Global FLAG_player_engine_running% = False
-Global FLAG_console% = False
+Global FLAG_player_in_locker% = False
+Global FLAG_waiting_for_player_to_enter_arena% = False
+Global FLAG_battle_in_progress% = False
+Global FLAG_waiting_for_player_to_exit_arena% = False
 
 Const PICKUP_PROBABILITY# = 0.50 'chance of an enemy dropping a pickup (randomly selected from all pickups)
 

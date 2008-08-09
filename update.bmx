@@ -12,9 +12,18 @@ Function update_all()
 	Not FLAG_in_shop And ..
 	Not FLAG_draw_help
 		
-		'level
+		'level/game logic
+		If FLAG_waiting_for_player_to_enter_arena And player.pos_y <= player_spawn_point.pos_y - (arena_offset/2.0)
+			FLAG_waiting_for_player_to_enter_arena = False
+			FLAG_battle_in_progress = True
+		End If
 		If level_enemies_remaining = 0
-			load_next_level()
+			FLAG_waiting_for_player_to_exit_arena = True
+			FLAG_battle_in_progress = False
+		End If
+		If FLAG_waiting_for_player_to_exit_arena And player.pos_y >= player_spawn_point.pos_y
+			FLAG_waiting_for_player_to_exit_arena = False
+			FLAG_player_in_locker = True
 		End If
 		
 		For Local w:WIDGET = EachIn environmental_widget_list
