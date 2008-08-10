@@ -22,8 +22,8 @@ SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
 '?Debug
-'	debug_atan2()
-'	End
+'debug_atan2()
+'End
 '?
 
 '______________________________________________________________________________
@@ -41,6 +41,9 @@ Repeat
 	Cls
 	draw_all()
 	play_all()
+?Debug
+debug_control_brain()
+?
 	Flip( 1 )
 	
 Until AppTerminate()

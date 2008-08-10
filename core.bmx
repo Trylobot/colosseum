@@ -75,6 +75,8 @@ Function reset_game()
 	
 	reset_all_doors()
 	
+	FLAG_spawn_enemies = False
+	
 End Function
 '______________________________________________________________________________
 Function init_game()
@@ -121,6 +123,11 @@ Function load_level( index% )
 End Function
 '______________________________________________________________________________
 Function prep_spawner()
+
+	cur_squad = Null
+	cur_spawn_point = Null
+	last_spawned_enemy = Null
+	enemy_spawn_queue.Clear()
 
 	Local squads%[][] = get_level_squads( player_level )
 	If squads <> Null

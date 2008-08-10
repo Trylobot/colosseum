@@ -130,19 +130,11 @@ Type COMPLEX_AGENT Extends AGENT
 		c.firing_state = other.firing_state[..]
 		c.FLAG_increment_firing_group = other.FLAG_increment_firing_group[..]
 		
-DebugLog "COMPLEX_AGENT::Copy( other{"+other.name+"}, "+political_alignment+" )"
-DebugLog "copying emitters/start"
-DebugLog "   c.all_emitters.Count() -> "+c.all_emitters.Count()
-DebugLog "   For Local list:TList = EachIn c.all_emitters"
-		For Local list:TList = EachIn c.all_emitters
-DebugLog "     list.Count() -> "+list.Count()
-DebugLog "     For Local other_em:EMITTER = EachIn list"
+		For Local list:TList = EachIn other.all_emitters
 			For Local other_em:EMITTER = EachIn list
-DebugLog "       c.add_emitter( other_em{"+other_em.name+"}, other_em.trigger_event )"
 				c.add_emitter( other_em, other_em.trigger_event )
 			Next
 		Next
-DebugLog "copying emitters/finish"
 		
 		c.driving_force = FORCE( FORCE.Copy( other.driving_force, c.force_list ))
 		c.driving_force.combine_ang_with_parent_ang = True

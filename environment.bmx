@@ -16,19 +16,20 @@ Global enemy_spawn_points:POINT[] = [ ..
 	Create_POINT( Floor(1.5*arena_offset + arena_w + arena_offset/3), Floor(arena_offset + arena_h/2), 180 ) ]
 
 'Turret anchor points (6x)
-Global enemy_turret_anchors:POINT[] = New POINT[12]
+Global enemy_turret_anchors:POINT[] = New POINT[4]
+'Global enemy_turret_anchors:POINT[] = New POINT[12]
 	enemy_turret_anchors[ 0] = Create_POINT( Floor(arena_offset+arena_offset*1), Floor(arena_offset+arena_offset*1), 45 )
 	enemy_turret_anchors[ 1] = Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*1), 135 )
 	enemy_turret_anchors[ 2] = Create_POINT( Floor(arena_offset+arena_offset*1), Floor((arena_offset+arena_h)-arena_offset*1), -45 )
 	enemy_turret_anchors[ 3] = Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor((arena_offset+arena_h)-arena_offset*1), -135 )
-	enemy_turret_anchors[ 4] = enemy_turret_anchors[0].add_pos( arena_offset, 0 )
-	enemy_turret_anchors[ 5] = enemy_turret_anchors[0].add_pos( 0, arena_offset )
-	enemy_turret_anchors[ 6] = enemy_turret_anchors[0].add_pos( -arena_offset, 0 )
-	enemy_turret_anchors[ 7] = enemy_turret_anchors[0].add_pos( 0, arena_offset )
-	enemy_turret_anchors[ 8] = enemy_turret_anchors[0].add_pos( arena_offset, 0 )
-	enemy_turret_anchors[ 9] = enemy_turret_anchors[0].add_pos( 0, -arena_offset )
-	enemy_turret_anchors[10] = enemy_turret_anchors[0].add_pos( -arena_offset, 0 )
-	enemy_turret_anchors[11] = enemy_turret_anchors[0].add_pos( 0, -arena_offset )
+'	enemy_turret_anchors[ 4] = enemy_turret_anchors[0].add_pos( arena_offset, 0 )
+'	enemy_turret_anchors[ 5] = enemy_turret_anchors[0].add_pos( 0, arena_offset )
+'	enemy_turret_anchors[ 6] = enemy_turret_anchors[0].add_pos( -arena_offset, 0 )
+'	enemy_turret_anchors[ 7] = enemy_turret_anchors[0].add_pos( 0, arena_offset )
+'	enemy_turret_anchors[ 8] = enemy_turret_anchors[0].add_pos( arena_offset, 0 )
+'	enemy_turret_anchors[ 9] = enemy_turret_anchors[0].add_pos( 0, -arena_offset )
+'	enemy_turret_anchors[10] = enemy_turret_anchors[0].add_pos( -arena_offset, 0 )
+'	enemy_turret_anchors[11] = enemy_turret_anchors[0].add_pos( 0, -arena_offset )
 
 Global anchor_deck%[] = New Int[ enemy_turret_anchors.Length ]
 Global anchor_i%
@@ -70,7 +71,7 @@ Function spawning_system_update()
 	'is there a squad ready
 	If cur_squad <> Null And Not cur_squad.IsEmpty()
 		'find a turret anchor
-		If cur_turret_anchor = Null
+		If cur_turret_anchor = Null And anchor_i < anchor_deck.Length
 			cur_turret_anchor = enemy_turret_anchors[anchor_deck[anchor_i]]
 			anchor_i :+ 1
 		End If
@@ -106,7 +107,7 @@ Function spawn_from_squad( squad:TList ) 'this function should be treated as a r
 	squad.RemoveFirst()
 	last_spawned_enemy.auto_manage( ALIGNMENT_HOSTILE )
 	'is this agent a turret
-	If last_spawned_enemy.ai_type = AI_BRAIN_TURRET
+	If last_spawned_enemy.ai_type = AI_BRAIN_TURRET And cur_turret_anchor <> Null
 		last_spawned_enemy.pos_x = cur_turret_anchor.pos_x
 		last_spawned_enemy.pos_y = cur_turret_anchor.pos_y
 		last_spawned_enemy.ang = cur_turret_anchor.ang

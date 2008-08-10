@@ -242,6 +242,21 @@ End Function
 Function clamp_ang_to_bifurcate_wall_diagonals#( ang#, wall%[] )
 	Local wx# = wall_mid_x( wall ), wy# = wall_mid_y(wall)
 	'wall_angle[4] = angle from mid to [ top_left, top_right, bottom_right, bottom_left ].
+	Local wall_angle#[] = ..
+	[	vector_diff_angle( wx,wy, wall[1],        wall[2] ), ..
+		vector_diff_angle( wx,wy, wall[1]+wall[3],wall[2] ), ..
+		vector_diff_angle( wx,wy, wall[1]+wall[3],wall[2]+wall[4] ), ..
+		vector_diff_angle( wx,wy, wall[1],        wall[2]+wall[4] ) ]
+	If      ang < wall_angle[0] Then Return 180 ..
+	Else If ang < wall_angle[1] Then Return 270 ..
+	Else If ang < wall_angle[2] Then Return 0 ..
+	Else If ang < wall_angle[3] Then Return 90 ..
+	Else                             Return 180
+End Function
+
+Function clamp_ang_to_bifurcate_door_diagonals#( ang#, wall%[] )
+	Local wx# = wall_mid_x( wall ), wy# = wall_mid_y(wall)
+	'wall_angle[4] = angle from mid to [ top_left, top_right, bottom_right, bottom_left ].
 	Local angles#[] = ..
 	[	vector_diff_angle( wx,wy, wall[1],        wall[2] ), ..
 		vector_diff_angle( wx,wy, wall[1]+wall[3],wall[2] ), ..

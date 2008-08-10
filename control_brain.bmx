@@ -217,9 +217,11 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				
 			Case AI_BRAIN_TURRET
 				If target <> Null And Not target.dead()
-					If (now() - last_look_target_ts < look_target_delay)
+					'if it's okay to try and see the target..
+					If (now() - last_look_target_ts >= look_target_delay)
 						sighted_target = see_target()
 					End If
+					'if it can see the target, chase it.
 					If sighted_target
 						'if not facing target, face target; when facing target, fire
 						ang_to_target = avatar.ang_to( target )
@@ -235,18 +237,22 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 							If Not FLAG_waiting Then avatar.fire_turret( 0 )
 						End If
 					Else
-						'no target
+						'no line of sight to target
 						avatar.turn_turrets( 0 )
-						target = acquire_target()
 					End If
+				Else
+					'no target
+					avatar.turn_turrets( 0 )
+					target = acquire_target()
 				End If
 				
 			Case AI_BRAIN_SEEKER
 				If target <> Null And Not target.dead()
-					'if it can see the target, chase it.
-					If (now() - last_look_target_ts < look_target_delay)
+					'if it's okay to try and see the target..
+					If (now() - last_look_target_ts >= look_target_delay)
 						sighted_target = see_target()
 					End If
+					'if it can see the target, chase it.
 					If sighted_target
 						'chase after current target; if target in range, self-destruct
 						avatar.drive( 1.0 )
@@ -276,10 +282,11 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					avatar.drive( 1.0 )
 					Return
 				Else If target <> Null And Not target.dead()
-					'if it can see the target, then..
+					'if it's okay to try and see the target..
 					If (now() - last_look_target_ts >= look_target_delay)
 						sighted_target = see_target()
 					End If
+					'if it can see the target, then..
 					If sighted_target
 						path = Null
 						ang_to_target = avatar.ang_to( target )
