@@ -36,6 +36,107 @@ Function debug_drawtext( message$ )
 	DrawText( message, sx, sy )
 	sy :+ 10
 End Function
+'______________________________________________________________________________
+Function show_level_info()
+	debug_drawtext "level_enemies_remaining -> "+level_enemies_remaining
+	debug_drawtext "hostile_agent_list.Count() -> "+hostile_agent_list.Count()
+End Function
+'______________________________________________________________________________
+Function debug_control_brain()
+	If KeyHit( KEY_O ) Then FLAG_debug_overlay = Not FLAG_debug_overlay 
+	If FLAG_debug_overlay
+		show_db_pathing_grid()
+		Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
+		SetColor( 255, 255, 255 )
+		For Local cb:CONTROL_BRAIN = EachIn control_brain_list
+			If cb.avatar.dist_to( mouse ) <= 20
+				
+				'draw info
+				sx = mouse.pos_x + 16; sy = mouse.pos_y
+				debug_drawtext( cb.avatar.name )
+				If cb.target <> Null
+					debug_drawtext( "target -> " + cb.target.name )
+				Else 'cb.target == Null
+					debug_drawtext( "no target" )
+				End If
+				If cb.sighted_target
+					debug_drawtext( "can see target" )
+					SetColor( 255, 255, 255 )
+				Else
+					debug_drawtext( "no line-of-sight to target" )
+					SetColor( 255, 32, 32 )
+				End If
+				If cb.target <> Null
+					SetLineWidth( 1 )
+					SetAlpha( 0.5 )
+					DrawLine( cb.avatar.pos_x,cb.avatar.pos_y, cb.target.pos_x,cb.target.pos_y )
+					SetColor( 255, 255, 255 )
+					SetAlpha( 1 )
+				End If
+				show_db_path( cb.path )
+				If cb.path <> Null
+					debug_drawtext( "path to target displayed" )
+				Else
+					debug_drawtext( "no path" )
+				End If
+				
+				'manipulate by keyboard
+				If KeyDown( KEY_T )
+					cb.target = player
+				End If
+				If KeyDown( KEY_H )
+					cb.path = cb.get_path_to_target()
+				End If
+				If KeyDown( KEY_P )
+					cb.see_target()
+				End If
+				
+				Return
+			End If
+		Next
+		sx = arena_offset+3; sy = arena_offset+3
+		show_level_info()
+	End If
+End Function
+'______________________________________________________________________________
+Function show_db_pathing_grid()
+	'show pathing grid
+	Local cursor:CELL = New CELL
+	For cursor.row = 0 To pathing_grid_h - 1
+		For cursor.col = 0 To pathing_grid_w - 1
+			'blockable/passing grid
+			SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
+			If pathing.grid( cursor ) = PATH_BLOCKED Then ..
+				DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+		Next
+	Next
+	
+	'manipulate by keyboard
+	If KeyHit( KEY_Q ) Then load_next_level()
+End Function
+'______________________________________________________________________________
+Function show_db_path( db_path:TList )
+	If db_path = Null Or db_path.IsEmpty() Then Return
+	'path
+	Local v0:cVEC = Null, v1:cVEC = Null
+	For Local v1:cVEC = EachIn db_path
+		If v0 <> Null
+			DrawLine( v0.x,v0.y, v1.x,v1.y )
+		Else
+			v0 = New cVEC
+		End If
+		v0.x = v1.x; v0.y = v1.y
+	Next
+	'start and goal
+	If global_start <> Null
+		SetColor( 64, 255, 64 ); SetAlpha( 1 )
+		DrawRect( global_start.col*cell_size + 1, global_start.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+	End If
+	If global_goal <> Null
+		SetColor( 64, 64, 255 ); SetAlpha( 1 )
+		DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+	End If
+End Function
 ''______________________________________________________________________________
 'Function debug_atan2()
 '	For Local i% = 0 To 360
@@ -137,100 +238,6 @@ End Function
 '	Print str
 '	
 'End Function
-'______________________________________________________________________________
-Function debug_control_brain()
-	If KeyHit( KEY_O ) Then FLAG_debug_overlay = Not FLAG_debug_overlay 
-	If FLAG_debug_overlay
-		show_db_pathing_grid()
-		Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
-		SetColor( 255, 255, 255 )
-		For Local cb:CONTROL_BRAIN = EachIn control_brain_list
-			If cb.avatar.dist_to( mouse ) <= 20
-				
-				'draw info
-				sx = mouse.pos_x + 16; sy = mouse.pos_y
-				debug_drawtext( cb.avatar.name )
-				If cb.target <> Null
-					debug_drawtext( "target -> " + cb.target.name )
-				Else 'cb.target == Null
-					debug_drawtext( "no target" )
-				End If
-				If cb.sighted_target
-					debug_drawtext( "can see target" )
-					SetColor( 255, 255, 255 )
-				Else
-					debug_drawtext( "no line-of-sight to target" )
-					SetColor( 255, 32, 32 )
-				End If
-				If cb.target <> Null
-					SetLineWidth( 1 )
-					SetAlpha( 0.5 )
-					DrawLine( cb.avatar.pos_x,cb.avatar.pos_y, cb.target.pos_x,cb.target.pos_y )
-					SetColor( 255, 255, 255 )
-					SetAlpha( 1 )
-				End If
-				show_db_path( cb.path )
-				If cb.path <> Null
-					debug_drawtext( "path to target displayed" )
-				Else
-					debug_drawtext( "no path" )
-				End If
-				
-				'manipulate by keyboard
-				If KeyDown( KEY_T )
-					cb.target = player
-				End If
-				If KeyDown( KEY_H )
-					cb.path = cb.get_path_to_target()
-				End If
-				If KeyDown( KEY_P )
-					cb.see_target()
-				End If
-				
-				Return
-			End If
-		Next
-	End If
-End Function
-'______________________________________________________________________________
-Function show_db_pathing_grid()
-	'show pathing grid
-	Local cursor:CELL = New CELL
-	For cursor.row = 0 To pathing_grid_h - 1
-		For cursor.col = 0 To pathing_grid_w - 1
-			'blockable/passing grid
-			SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
-			If pathing.grid( cursor ) = PATH_BLOCKED Then ..
-				DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-		Next
-	Next
-	
-	'manipulate by keyboard
-	If KeyHit( KEY_Q ) Then load_next_level()
-End Function
-'______________________________________________________________________________
-Function show_db_path( db_path:TList )
-	If db_path = Null Or db_path.IsEmpty() Then Return
-	'path
-	Local v0:cVEC = Null, v1:cVEC = Null
-	For Local v1:cVEC = EachIn db_path
-		If v0 <> Null
-			DrawLine( v0.x,v0.y, v1.x,v1.y )
-		Else
-			v0 = New cVEC
-		End If
-		v0.x = v1.x; v0.y = v1.y
-	Next
-	'start and goal
-	If global_start <> Null
-		SetColor( 64, 255, 64 ); SetAlpha( 1 )
-		DrawRect( global_start.col*cell_size + 1, global_start.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-	End If
-	If global_goal <> Null
-		SetColor( 64, 64, 255 ); SetAlpha( 1 )
-		DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-	End If
-End Function
 ''______________________________________________________________________________
 'Function debug_heap( message$ = "" )
 '	SetColor( 255, 255, 255 )

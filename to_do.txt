@@ -4,7 +4,6 @@
 			rocket turret is having trouble shooting dunno why
 			turret spawn points are somewhat messed
 			agent/door collisions not working
-			doors are not resetting when I go to new game
 			
 			mouse turret control, mouse-click tank control
 			when returning to locker, put a spotlight on it, and darken the rest of the arena.

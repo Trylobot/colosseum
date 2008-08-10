@@ -144,18 +144,16 @@ End Function
 Global level_squads%[][][] = ..
 [ ..
 	[	..
-		[ ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT ], ..
 		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
 		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
-		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
-		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ] ..
+		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ] ..
 	], ..
 	[ ..
-		[ ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT, ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT ], ..
-		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
-		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ], ..
+		[ ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT ], ..
+		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
+		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
 		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ] ..
-	] ..
+	], ..
 ]
 
 Function random_squads%[][]()
@@ -221,15 +219,43 @@ level_walls[2] = level_walls[0]
 'level 3
 level_walls[3].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
 level_walls[3].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
-level_walls[3].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
-level_walls[3].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
+level_walls[3].AddLast([ WALL_ADD, arena_offset+200,arena_offset+100, 100-1,50-1 ])
+level_walls[3].AddLast([ WALL_ADD, arena_offset+200,arena_offset+350, 100-1,50-1 ])
+'level 4
+level_walls[4] = level_walls[3]
+'level 5
+level_walls[5] = level_walls[3]
+'level 6
+level_walls[6].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300-1,50-1 ])
+level_walls[6].AddLast([ WALL_ADD, arena_offset+225,arena_offset+100, 50-1,300-1 ])
+level_walls[6].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
+level_walls[6].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
+level_walls[6].AddLast([ WALL_ADD, arena_offset+200,arena_offset+100, 100-1,50-1 ])
+level_walls[6].AddLast([ WALL_ADD, arena_offset+200,arena_offset+350, 100-1,50-1 ])
+'level 7
+level_walls[7] = level_walls[6]
+'level 8
+level_walls[8] = level_walls[6]
+'level 9
+level_walls[9] = level_walls[6]
 
 Function get_level_walls:TList( i% )
 	If i < level_walls.Length
 		Return level_walls[i]
 	Else
-		Return CreateList()
+		Return random_level_walls()
 	End If
+End Function
+
+Function random_level_walls:TList()
+	Local walls:TList = CreateList()
+	walls.AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300-1,50-1 ])
+	walls.AddLast([ WALL_ADD, arena_offset+225,arena_offset+100, 50-1,300-1 ])
+	walls.AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
+	walls.AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
+	walls.AddLast([ WALL_ADD, arena_offset+200,arena_offset+100, 100-1,50-1 ])
+	walls.AddLast([ WALL_ADD, arena_offset+200,arena_offset+350, 100-1,50-1 ])
+	Return walls
 End Function
 
 '______________________________________________________________________________

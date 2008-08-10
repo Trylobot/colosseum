@@ -30,6 +30,7 @@ Global FLAG_spawn_enemies% = False
 'global player stuff
 Global player_type% = 0
 Global player:COMPLEX_AGENT
+Global player_brain:CONTROL_BRAIN
 Global player_spawn_point:POINT
 Global player_level% = 0
 Global player_cash% = 0
@@ -75,6 +76,8 @@ Function reset_game()
 	
 	reset_all_doors()
 	
+	FLAG_waiting_for_player_to_exit_arena = False
+	FLAG_player_in_locker = True
 	FLAG_spawn_enemies = False
 	
 End Function
@@ -146,13 +149,13 @@ Function respawn_player( archetype_index% )
 	
 	If player <> Null And player.managed() Then player.remove_me()
 	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
+	player_brain = Create_and_Manage_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD )
+	
 	player_spawn_point = friendly_spawn_points[ Rand( 0, friendly_spawn_points.Length - 1 )]
 	player.pos_x = player_spawn_point.pos_x - 0.5
 	player.pos_y = player_spawn_point.pos_y - 0.5
 	player.ang = -90
 	player.snap_turrets()
-	
-	Create_and_Manage_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD )
 	
 	FLAG_player_engine_ignition = False
 	FLAG_player_engine_running = False
