@@ -6,14 +6,14 @@ EndRem
 
 '______________________________________________________________________________
 'All Spawnpoints
-'Locker south (player)
+'south
 Global friendly_spawn_points:POINT[] = [ ..
-	Create_POINT( Floor(arena_offset + arena_w/2), Floor(1.5*arena_offset + arena_h), 270 ) ]
-'Lockers west, north, east (hostile)
+	Create_POINT( Floor(arena_offset + arena_w/2), Floor(1.5*arena_offset + arena_h + arena_offset/3), 270 ) ]
+'west, north, east
 Global enemy_spawn_points:POINT[] = [ ..
-	Create_POINT( Floor(arena_offset/2), Floor(arena_offset + arena_h/2), 0 ), ..
-	Create_POINT( Floor(arena_offset + arena_w/2), Floor(arena_offset/2), 90 ), ..
-	Create_POINT( Floor(1.5*arena_offset + arena_w), Floor(arena_offset + arena_h/2), 180 ) ]
+	Create_POINT( Floor(arena_offset/2 - arena_offset/3), Floor(arena_offset + arena_h/2), 0 ), ..
+	Create_POINT( Floor(arena_offset + arena_w/2), Floor(arena_offset/2 - arena_offset/3), 90 ), ..
+	Create_POINT( Floor(1.5*arena_offset + arena_w + arena_offset/3), Floor(arena_offset + arena_h/2), 180 ) ]
 
 'Turret anchor points (6x)
 Global enemy_turret_anchors:POINT[] = [ ..
@@ -246,7 +246,7 @@ Function attach_door( p:POINT, political_door_list:TList )
 	'Right door
 	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
 	door.parent = p
-	door.attach_at( arena_offset/2, -arena_offset/2 - door.img.height/2, -90, True )
+	door.attach_at( arena_offset/2 + arena_offset/3 - door.img.height/2 + 1, 0, 90, True )
 	'the auto-manage list keeps track of all widgets, for updating and drawing
 	door.auto_manage()
 	'this managed list simply differentiates "friendly" doors from "hostile" doors
@@ -254,7 +254,7 @@ Function attach_door( p:POINT, political_door_list:TList )
 	'Left door
 	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
 	door.parent = p
-	door.attach_at( arena_offset/2, arena_offset/2 - door.img.height/2, 90, True )
+	door.attach_at( arena_offset/2 + arena_offset/3 - door.img.height/2 + 1, 0, -90, True )
 	'the auto-manage list keeps track of all widgets, for updating and drawing
 	door.auto_manage()
 	'this managed list simply differentiates "friendly" doors from "hostile" doors

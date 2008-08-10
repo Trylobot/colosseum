@@ -4,15 +4,18 @@ Rem
 	author: Tyler W Cole
 EndRem
 '______________________________________________________________________________
+Global friendly_agent_list:TList = CreateList()
+Global hostile_agent_list:TList = CreateList()
 Global agent_lists:TList = CreateList()
-Global friendly_agent_list:TList = CreateList(); agent_lists.AddLast( friendly_agent_list )
-Global hostile_agent_list:TList = CreateList(); agent_lists.AddLast( hostile_agent_list )
+	agent_lists.AddLast( friendly_agent_list )
+	agent_lists.AddLast( hostile_agent_list )
 
-Const ALL_STOP% = 0
-Const ROTATE_CLOCKWISE_DIRECTION% = 1
-Const ROTATE_COUNTER_CLOCKWISE_DIRECTION% = 2
-Const MOVE_FORWARD_DIRECTION% = 3
-Const MOVE_REVERSE_DIRECTION% = 4
+Const EVENT_ALL_STOP% = 0
+Const EVENT_TURN_RIGHT% = 1
+Const EVENT_TURN_LEFT% = 2
+Const EVENT_DRIVE_FORWARD% = 3
+Const EVENT_DRIVE_BACKWARD% = 4
+Const EVENT_DEATH% = 5
 
 Const TURRETS_ALL% = -1
 
@@ -30,24 +33,25 @@ Type COMPLEX_AGENT Extends AGENT
 	Field firing_sequence%[][][]
 	Field firing_state%[]
 	Field FLAG_increment_firing_group%[]
-	'Field motivators:MOTIVATOR[] 'motivator force array (controls certain animations)
-	Field motivator_count% 'number of motivator slots
 	
 	Field driving_force:FORCE 'permanent force for this object; also added to the general force list
 	Field turning_force:FORCE 'permanent torque for this object; also added to the general force list
-	Field emitter_list:TList
-	Field forward_debris_emitters:EMITTER[] 'forward-facing debris emitter array
-	Field rear_debris_emitters:EMITTER[] 'rear-facing debris emitter array
-	Field forward_trail_emitters:EMITTER[] 'forward-facing trail emitter array
-	Field rear_trail_emitters:EMITTER[] 'rear-facing debris trail array
-	Field widget_list_behind:TList
-	Field widget_list_in_front:TList
+	Field drive_forward_emitters:TList
+	Field drive_backward_emitters:TList
+	Field all_emitters:TList
+	Field widget_list_below:TList
+	Field widget_list_above:TList
 	Field stickies:TList
 	
 	Method New()
-		emitter_list = CreateList()
-		widget_list_behind = CreateList()
-		widget_list_in_front = CreateList()
+		drive_forward_emitters = CreateList()
+		drive_backward_emitters = CreateList()
+		all_emitters = CreateList()
+			all_emitters.AddLast( drive_forward_emitters )
+			all_emitters.AddLast( drive_backward_emitters )
+			all_emitters.AddLast( death_emitters )
+		widget_list_below = CreateList()
+		widget_list_above = CreateList()
 		stickies = CreateList()
 	End Method
 	
@@ -84,14 +88,6 @@ Type COMPLEX_AGENT Extends AGENT
 		If c.turret_count > 0
 			c.turrets = New TURRET[ turret_count ]
 		End If
-		c.motivator_count = motivator_count
-		If c.motivator_count > 0
-			'c.motivators = New MOTIVATOR[ motivator_count ]
-			c.forward_debris_emitters = New EMITTER[ motivator_count ]
-			c.rear_debris_emitters = New EMITTER[ motivator_count ]
-			c.forward_trail_emitters = New EMITTER[ motivator_count ]
-			c.rear_trail_emitters = New EMITTER[ motivator_count ]
-		End If
 		c.driving_force = FORCE( FORCE.Create( PHYSICS_FORCE, 0, driving_force_magnitude ))
 		c.turning_force = FORCE( FORCE.Create( PHYSICS_TORQUE, 0, turning_force_magnitude ))
 		
@@ -102,7 +98,6 @@ Type COMPLEX_AGENT Extends AGENT
 		If other = Null Then Return Null
 		Local c:COMPLEX_AGENT = New COMPLEX_AGENT
 		
-		'static fields
 		c.name = other.name
 		If political_alignment <> ALIGNMENT_NONE
 			c.political_alignment = political_alignment
@@ -118,10 +113,10 @@ Type COMPLEX_AGENT Extends AGENT
 		c.cash_value = other.cash_value
 		c.physics_disabled = other.physics_disabled
 		
-		'dynamic fields
 		c.pos_x = other.pos_x; c.pos_y = other.pos_y
 		c.ang = other.ang
 		c.cur_health = c.max_health
+		
 		If other.turret_count > 0
 			c.turret_count = other.turret_count
 			c.turrets = New TURRET[ other.turret_count ]
@@ -134,28 +129,21 @@ Type COMPLEX_AGENT Extends AGENT
 		c.firing_sequence = other.firing_sequence[..]
 		c.firing_state = other.firing_state[..]
 		c.FLAG_increment_firing_group = other.FLAG_increment_firing_group[..]
-		If other.motivator_count > 0
-			c.motivator_count = other.motivator_count
-			'c.motivators = New MOTIVATOR[ other.motivator_count ]
-			c.forward_debris_emitters = New EMITTER[ other.forward_debris_emitters.Length ]
-			c.rear_debris_emitters = New EMITTER[ other.rear_debris_emitters.Length ]
-			c.forward_trail_emitters = New EMITTER[ other.forward_trail_emitters.Length ]
-			c.rear_trail_emitters = New EMITTER[ other.rear_trail_emitters.Length ]
-			For Local i% = 0 To other.motivator_count - 1
-				'c.motivators[i] = Copy_MOTIVATOR( other.motivators[i] )
-				If other.forward_debris_emitters[i] <> Null Then c.forward_debris_emitters[i] = EMITTER( EMITTER.Copy( other.forward_debris_emitters[i], c.emitter_list, c ))
-				If other.rear_debris_emitters[i] <> Null Then c.rear_debris_emitters[i] = EMITTER( EMITTER.Copy( other.rear_debris_emitters[i], c.emitter_list, c ))
-				If other.forward_trail_emitters[i] <> Null Then c.forward_trail_emitters[i] = EMITTER( EMITTER.Copy( other.forward_trail_emitters[i], c.emitter_list, c ))
-				If other.rear_trail_emitters[i] <> Null Then c.rear_trail_emitters[i] = EMITTER( EMITTER.Copy( other.rear_trail_emitters[i], c.emitter_list, c ))
+		
+		For Local list:TList = EachIn c.all_emitters
+			For Local other_em:EMITTER = EachIn list
+				c.add_emitter( other_em, other_em.trigger_event )
 			Next
-		End If
+		Next
+		
 		c.driving_force = FORCE( FORCE.Copy( other.driving_force, c.force_list ))
 		c.driving_force.combine_ang_with_parent_ang = True
 		c.turning_force = FORCE( FORCE.Copy( other.turning_force, c.force_list ))
-		For Local other_w:WIDGET = EachIn other.widget_list_behind
+		
+		For Local other_w:WIDGET = EachIn other.widget_list_below
 			c.add_widget( other_w ).attach_at( other_w.attach_x, other_w.attach_y )
 		Next
-		For Local other_w:WIDGET = EachIn other.widget_list_in_front
+		For Local other_w:WIDGET = EachIn other.widget_list_above
 			c.add_widget( other_w ).attach_at( other_w.attach_x, other_w.attach_y )
 		Next
 		
@@ -189,21 +177,23 @@ Type COMPLEX_AGENT Extends AGENT
 			End If
 		Next
 		'widgets
-		For Local w:WIDGET = EachIn widget_list_behind
+		For Local w:WIDGET = EachIn widget_list_below
 			w.update()
 		Next
-		For Local w:WIDGET = EachIn widget_list_in_front
+		For Local w:WIDGET = EachIn widget_list_above
 			w.update()
 		Next
 		'emitters
-		For Local em:EMITTER = EachIn emitter_list
-			em.update()
-			em.emit()
+		For Local list:TList = EachIn all_emitters
+			For Local em:EMITTER = EachIn list
+				em.update()
+				em.emit()
+			Next
 		Next
 	End Method
 	
 	Method draw()
-		For Local w:WIDGET = EachIn widget_list_behind
+		For Local w:WIDGET = EachIn widget_list_below
 			w.draw()
 		Next
 		
@@ -216,7 +206,7 @@ Type COMPLEX_AGENT Extends AGENT
 		For Local t:TURRET = EachIn turrets
 			t.draw()
 		Next
-		For Local w:WIDGET = EachIn widget_list_in_front
+		For Local w:WIDGET = EachIn widget_list_above
 			w.draw()
 		Next
 		For Local s:PARTICLE = EachIn stickies
@@ -268,27 +258,27 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Method enable_only_forward_emitters()
-		For Local i% = 0 To motivator_count - 1
-			If forward_debris_emitters[i] <> Null Then forward_debris_emitters[i].enable( MODE_ENABLED_FOREVER )
-			If forward_trail_emitters[i] <> Null  Then forward_trail_emitters[i].enable( MODE_ENABLED_FOREVER )
-			If rear_debris_emitters[i] <> Null    Then rear_debris_emitters[i].disable()
-			If rear_trail_emitters[i] <> Null     Then rear_trail_emitters[i].disable()
+		For Local em:EMITTER = EachIn drive_forward_emitters
+			em.enable( MODE_ENABLED_FOREVER )
+		Next
+		For Local em:EMITTER = EachIn drive_backward_emitters
+			em.disable()
 		Next
 	End Method
 	Method enable_only_rear_emitters()
-		For Local i% = 0 To motivator_count - 1
-			If forward_debris_emitters[i] <> Null Then forward_debris_emitters[i].disable()
-			If forward_trail_emitters[i] <> Null  Then forward_trail_emitters[i].disable()
-			If rear_debris_emitters[i] <> Null    Then rear_debris_emitters[i].enable( MODE_ENABLED_FOREVER )
-			If rear_trail_emitters[i] <> Null     Then rear_trail_emitters[i].enable( MODE_ENABLED_FOREVER )
+		For Local em:EMITTER = EachIn drive_forward_emitters
+			em.disable()
+		Next
+		For Local em:EMITTER = EachIn drive_backward_emitters
+			em.enable( MODE_ENABLED_FOREVER )
 		Next
 	End Method
 	Method disable_all_emitters()
-		For Local i% = 0 To motivator_count - 1
-			If forward_debris_emitters[i] <> Null Then forward_debris_emitters[i].disable()
-			If forward_trail_emitters[i] <> Null  Then forward_trail_emitters[i].disable()
-			If rear_debris_emitters[i] <> Null    Then rear_debris_emitters[i].disable()
-			If rear_trail_emitters[i] <> Null     Then rear_trail_emitters[i].disable()
+		For Local em:EMITTER = EachIn drive_forward_emitters
+			em.disable()
+		Next
+		For Local em:EMITTER = EachIn drive_backward_emitters
+			em.disable()
 		Next
 	End Method
 	
@@ -338,21 +328,27 @@ Type COMPLEX_AGENT Extends AGENT
 		Return t
 	End Method
 	
-	'Method add_motivator:MOTIVATOR( motivator_archetype_index% )
-	'	
-	'End Method
-	
-	Method add_emitter:EMITTER(	particle_emitter_archetype_index% )
-		Return EMITTER( EMITTER.Copy( particle_emitter_archetype[particle_emitter_archetype_index], emitter_list, Self ))
+	Method add_emitter:EMITTER(	other_em:EMITTER, event% )
+		Local em:EMITTER = Copy_EMITTER( other_em,, Self )
+		em.trigger_event = event
+		Select event
+			Case EVENT_DRIVE_FORWARD
+				em.add_me( drive_forward_emitters )
+			Case EVENT_DRIVE_BACKWARD
+				em.add_me( drive_backward_emitters )
+			Case EVENT_DEATH
+				em.add_me( death_emitters )
+		End Select
+		Return em
 	End Method
 	
 	Method add_widget:WIDGET( other_w:WIDGET )
 		Local w:WIDGET = other_w.clone()
 		w.parent = Self
 		If w.layer = LAYER_BEHIND_PARENT
-			w.add_me( widget_list_behind )
+			w.add_me( widget_list_below )
 		Else If w.layer = LAYER_IN_FRONT_OF_PARENT
-			w.add_me( widget_list_in_front )
+			w.add_me( widget_list_above )
 		End If
 		Return w
 	End Method
@@ -375,6 +371,7 @@ Type COMPLEX_AGENT Extends AGENT
 		If political_alignment = ALIGNMENT_HOSTILE
 			enemy_died()
 		End If
+		
 	End Method
 		
 End Type

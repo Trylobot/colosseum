@@ -311,8 +311,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 								avatar.turn( 0.0 )
 							'else (not pointed toward next waypoint)..
 							Else
-								'turn towards the next waypoint
-								avatar.drive( 0.5 )
+								'turn towards the next waypoint and drive at 1/3 speed
+								avatar.drive( 0.3333 )
 								If diff < 180 Then avatar.turn( -1.0 ) ..
 								Else               avatar.turn( 1.0 )
 							End If

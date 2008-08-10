@@ -28,9 +28,10 @@ CueSound( bg_music_victory_8_bit, bg_music )
 Global snd_engine_start:TSound = LoadSound( audio_path_prefix + "engine_start.ogg" )
 Global snd_engine_idle_loop:TSound = LoadSound( audio_path_prefix + "engine_idle_loop.ogg", SOUND_LOOP )
 
-Global snd_tank_cannon_fire:TSound = LoadSound( audio_path_prefix + "cannon.ogg" )
+Global snd_cannon_fire:TSound = LoadSound( audio_path_prefix + "cannon.ogg" )
 Global snd_mgun_turret_fire:TSound = LoadSound( audio_path_prefix + "mgun.ogg" )
 Global snd_laser_fire:TSound = LoadSound( audio_path_prefix + "laser.ogg" )
+Global snd_cannon_hit:TSound = LoadSound( audio_path_prefix + "cannon_hit.ogg" )
 Global snd_mgun_hit:TSound = LoadSound( audio_path_prefix + "mgun_hit.ogg" )
 Global snd_laser_hit:TSound = LoadSound( audio_path_prefix + "laser_hit.ogg" )
 
@@ -110,7 +111,7 @@ Global img_icon_speaker_on:TImage = LoadImage_SetHandle( "icon_speaker_on.png", 
 Global img_icon_speaker_off:TImage = LoadImage_SetHandle( "icon_speaker_off.png", 0, 0 )
 Global img_icon_player_cannon_ammo:TImage = LoadImage_SetHandle( "icon_player_cannon_ammo.png", 0, 0 )
 
-Global img_door:TImage = LoadImage_SetHandle( "door.png", 1, 1 )
+Global img_door:TImage = LoadImage_SetHandle( "door.png", 1, 7 )
 Global img_reticle:TImage = LoadImage_SetHandle( "reticle.png", -8.5, 7.5 )
 
 

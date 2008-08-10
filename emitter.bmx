@@ -16,6 +16,7 @@ Const MODE_ENABLED_FOREVER% = 3
 Type EMITTER extends MANAGED_OBJECT
 	
 	Field parent:POINT 'parent object (for position and angle offsets)
+	Field trigger_event% 'optional parent field to indicate the event that triggers this emitter
 	Field emitter_type% 'emitter type (particle/projectile)
 	Field archetype_index% 'particle archetype
 	Field mode% 'emitter mode (off/counter/timer)
@@ -32,6 +33,8 @@ Type EMITTER extends MANAGED_OBJECT
 	Field inherit_vel_ang_from_ang% 'setting - whether to set the velocity angle to the already-determined "ang" or a new angle
 	Field inherit_acc_ang_from_vel_ang% 'setting - whether to set the acceleration angle to the already-determined "vel_ang" or a new angle
 	Field source_id% '(optional) emitter source (for projectile no_collides)
+	Field attach_x# 'original attachment position (when parent.ang = 0)
+	Field attach_y# 'original attachment position (when parent.ang = 0)
 	Field offset# 'offset vector magnitude (added to parent's position)
 	Field offset_ang# 'offset vector angle (added to parent's position)
 	
@@ -220,29 +223,6 @@ Type EMITTER extends MANAGED_OBJECT
 	
 	End Method
 		
-	Method attach_at( ..
-	off_x_new# = 0.0, off_y_new# = 0.0, ..
-	dist_min_new# = 0.0, dist_max_new# = 0.0, ..
-	dist_ang_min_new# = 0.0, dist_ang_max_new# = 0.0, ..
-	vel_min_new# = 0.0, vel_max_new# = 0.0, ..
-	vel_ang_min_new# = 0.0, vel_ang_max_new# = 0.0, ..
-	acc_min_new# = 0.0, acc_max_new# = 0.0, ..
-	acc_ang_min_new# = 0.0, acc_ang_max_new# = 0.0, ..
-	ang_min_new# = 0.0, ang_max_new# = 0.0, ..
-	ang_vel_min_new# = 0.0, ang_vel_max_new# = 0.0, ..
-	ang_acc_min_new# = 0.0, ang_acc_max_new# = 0.0 )
-		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
-		dist.set( dist_min_new, dist_max_new )
-		dist_ang.set( dist_ang_min_new, dist_ang_max_new )
-		vel.set( vel_min_new, vel_max_new )
-		vel_ang.set( vel_ang_min_new, vel_ang_max_new )
-		acc.set( acc_min_new, acc_max_new )
-		acc_ang.set( acc_ang_min_new, acc_ang_max_new )
-		ang.set( ang_min_new, ang_max_new )
-		ang_vel.set( ang_vel_min_new, ang_vel_max_new )
-		ang_acc.set( ang_acc_min_new, ang_acc_max_new )
-	End Method
-	
 	Function Archetype:Object( ..
 	emitter_type%, ..
 	archetype_index%, ..
@@ -340,6 +320,34 @@ Type EMITTER extends MANAGED_OBJECT
 		Return em
 	End Function
 	
+	Method attach_at( ..
+	off_x_new# = 0.0, off_y_new# = 0.0, ..
+	dist_min_new# = 0.0, dist_max_new# = 0.0, ..
+	dist_ang_min_new# = 0.0, dist_ang_max_new# = 0.0, ..
+	vel_min_new# = 0.0, vel_max_new# = 0.0, ..
+	vel_ang_min_new# = 0.0, vel_ang_max_new# = 0.0, ..
+	acc_min_new# = 0.0, acc_max_new# = 0.0, ..
+	acc_ang_min_new# = 0.0, acc_ang_max_new# = 0.0, ..
+	ang_min_new# = 0.0, ang_max_new# = 0.0, ..
+	ang_vel_min_new# = 0.0, ang_vel_max_new# = 0.0, ..
+	ang_acc_min_new# = 0.0, ang_acc_max_new# = 0.0 )
+		attach_x = off_x_new; attach_y = off_y_new
+		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
+		dist.set( dist_min_new, dist_max_new )
+		dist_ang.set( dist_ang_min_new, dist_ang_max_new )
+		vel.set( vel_min_new, vel_max_new )
+		vel_ang.set( vel_ang_min_new, vel_ang_max_new )
+		acc.set( acc_min_new, acc_max_new )
+		acc_ang.set( acc_ang_min_new, acc_ang_max_new )
+		ang.set( ang_min_new, ang_max_new )
+		ang_vel.set( ang_vel_min_new, ang_vel_max_new )
+		ang_acc.set( ang_acc_min_new, ang_acc_max_new )
+	End Method
+	
 End Type
 
-	
+Function Copy_EMITTER:EMITTER( other_em:EMITTER, managed_list:TList = Null, new_parent:POINT = Null, source_id% = NULL_ID )
+	Return EMITTER( EMITTER.Copy( other_em, managed_list, new_parent, source_id ))
+End Function
+
+

@@ -130,7 +130,7 @@ Function draw_all()
 		
 		SetImageFont( consolas_normal_12 )
 		SetAlpha( 0.75 )
-		Local x# = player_spawn_point.pos_x + arena_offset, y# = player_spawn_point.pos_y
+		Local x# = player_spawn_point.pos_x + arena_offset, y# = player_spawn_point.pos_y-10
 		'commands to player
 		If Not FLAG_player_engine_running
 			DrawText_with_shadow( "[E] start your engine.", x, y )

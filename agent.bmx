@@ -11,11 +11,13 @@ Type AGENT Extends PHYSICAL_OBJECT
 	Field gibs:TImage 'gib image(s)
 	Field max_health# 'maximum health
 	Field cash_value% 'cash to be awarded player on this agent's death
+	Field death_emitters:TList
 
 	Field cur_health# 'current health
 	
 	Method New()
 		force_list = CreateList()
+		death_emitters = CreateList()
 	End Method
 	
 	Method draw()
@@ -55,12 +57,13 @@ Type AGENT Extends PHYSICAL_OBJECT
 				gib.auto_manage()
 			Next
 		End If
-		'spawn explosion
-		'..?
-		'spawn scar
-		'..?
-		'spawn misc flaming debris
-		'..?
+		For Local em:EMITTER = EachIn death_emitters
+			em.enable( MODE_ENABLED_WITH_COUNTER )
+			While em.ready()
+				em.update()
+				em.emit()
+			End While
+		Next
 		'delete self
 		cur_health = 0
 		remove_me()
