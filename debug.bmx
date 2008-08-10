@@ -23,7 +23,7 @@ Global sx%, sy%, h%
 '
 '______________________________________________________________________________
 Function debug_ts( message$ )
-	Print( String.FromInt( now() ) + ":" + message )
+	DebugLog "" + now() + " :: " + message
 End Function
 
 Function debug_drawtext( message$ )
@@ -34,22 +34,27 @@ Function debug_drawtext( message$ )
 	DrawText( message, sx, sy )
 	sy :+ h
 End Function
-'______________________________________________________________________________
-Function debug_complex_agent_emitters()
-	sx = arena_offset + 3; sy = arena_offset + 3; h = 10
-	If player <> Null And Not FLAG_in_menu
-		debug_drawtext( player.drive_forward_emitters.Count() )
-		debug_drawtext( player.drive_backward_emitters.Count() )
-		debug_drawtext( player.death_emitters.Count() )
-	End If
-End Function
+''______________________________________________________________________________
+'Function debug_atan2()
+'	For Local i% = 0 To 360
+'		DebugLog "  ATan2( Sin("+i+"), Cos("+i+") ) -> "+ATan2( Sin(i), Cos(i) )
+'	Next
+'End Function
+''______________________________________________________________________________
+'Function debug_complex_agent_emitters()
+'	sx = arena_offset + 3; sy = arena_offset + 3; h = 10
+'	If player <> Null And Not FLAG_in_menu
+'		debug_drawtext( player.drive_forward_emitters.Count() )
+'		debug_drawtext( player.drive_backward_emitters.Count() )
+'		debug_drawtext( player.death_emitters.Count() )
+'	End If
+'End Function
 ''______________________________________________________________________________
 'Function debug_main()
 '	Repeat
 '		For Local w:WIDGET = EachIn w
 '			w.update()
 '		Next
-'		
 '		Cls
 '		draw_widget_debug()
 '		For Local w:WIDGET = EachIn w

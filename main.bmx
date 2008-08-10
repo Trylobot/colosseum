@@ -22,7 +22,7 @@ SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
 '?Debug
-'	debug_main()
+'	debug_atan2()
 '	End
 '?
 

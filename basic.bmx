@@ -20,6 +20,9 @@ Function Pow#( x#, p% )
 	Next
 	Return x
 End Function
+Function avg#( a#, b# )
+	Return (a + b)/2.0
+End Function
 '______________________________________________________________________________
 Type MANAGED_OBJECT
 	

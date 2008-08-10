@@ -73,6 +73,7 @@ Function collide_all()
 		'collisions between {walls|doors} and {agents|projectiles}
 		For Local cur_wall_list:TList = EachIn all_walls
 			For Local wall%[] = EachIn cur_wall_list
+				SetRotation( 0 )
 				result = CollideRect( wall[1],wall[2], wall[3],wall[4], AGENT_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
 				For ag = EachIn result
 					'COLLISION! between {ag} and {wall}
@@ -87,7 +88,7 @@ Function collide_all()
 		Next
 		For Local cur_door_list:TList = EachIn all_door_lists
 			For Local door:WIDGET = EachIn cur_door_list
-				SetRotation( parent.ang + offset_ang + state.ang + ang_offset )
+				SetRotation( door.parent.ang + door.offset_ang + door.state.ang + door.ang_offset )
 				Local x#, y#, w#, h#
 				x = door.parent.pos_x + door.offset*Cos( door.parent.ang + door.offset_ang ) + door.state.pos_length*Cos( door.parent.ang + door.offset_ang + door.state.ang + door.ang_offset )
 				y = door.parent.pos_y + door.offset*Sin( door.parent.ang + door.offset_ang ) + door.state.pos_length*Sin( door.parent.ang + door.offset_ang + door.state.ang + door.ang_offset )
@@ -124,7 +125,7 @@ Function collide_all()
 	End If
 End Function
 
-Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
+Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 	'activate collision response for affected entity(ies)
 	Local offset#, offset_ang#
 	cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
@@ -134,8 +135,8 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 	'add damage sticky to agent
 	'ag.add_sticky( PARTICLE( PARTICLE.Create( img_stickies, Rand( 0, img_stickies.frames.Length - 1 ), LAYER_FOREGROUND, False, 0.0, 255, 255, 255, INFINITY, 0.0, 0.0, 0.0, 0.0, proj.ang, 0.0, 0.5, 0.0, 1.0, 0.0 ))).attach_at( proj.pos_x - ag.pos_x, proj.pos_y - ag.pos_y )
 	'add explosive force to nearby agents
-	For list = EachIn agent_lists
-		For other = EachIn list
+	For Local list:TList = EachIn agent_lists
+		For Local other:AGENT = EachIn list
 			'if this agent is a different agent than the one hit by the projectile
 			If ag.id <> other.id
 				Local dist# = proj.dist_to( other )
@@ -172,7 +173,7 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 	proj.remove_me()
 End Function
 
-Function collision_agent_agent( ag:AGENT, other:AGENT )
+Function collision_agent_agent( ag:AGENT, other:COMPLEX_AGENT )
 	'activate collision response for affected entity(ies)
 	Local offset#, offset_ang#
 	cartesian_to_polar( ag.pos_x - other.pos_x, ag.pos_y - other.pos_y, offset, offset_ang )
@@ -213,14 +214,18 @@ Function collision_agent_wall( ag:AGENT, wall%[] )
 	End Select
 End Function
 
-Function collision_agent_door( ag:AGENT, door:WIDGET )
+Function collision_agent_door( ag:COMPLEX_AGENT, door:WIDGET )
+	
+End Function
+
+Function collision_projectile_door( proj:PROJECTILE, door:WIDGET )
 	
 End Function
 
 Function collision_projectile_wall( proj:PROJECTILE, wall%[] )
 	'add explosive force to nearby agents
-	For list = EachIn agent_lists
-		For other = EachIn list
+	For Local list:TList = EachIn agent_lists
+		For Local other:AGENT = EachIn list
 			Local dist# = proj.dist_to( other )
 			If dist < proj.radius
 				Local ang# = proj.ang_to( other )
@@ -237,19 +242,15 @@ End Function
 Function clamp_ang_to_bifurcate_wall_diagonals#( ang#, wall%[] )
 	Local wx# = wall_mid_x( wall ), wy# = wall_mid_y(wall)
 	'wall_angle[4] = angle from mid to [ top_left, top_right, bottom_right, bottom_left ].
-	Local wall_angle#[] = ..
+	Local angles#[] = ..
 	[	vector_diff_angle( wx,wy, wall[1],        wall[2] ), ..
 		vector_diff_angle( wx,wy, wall[1]+wall[3],wall[2] ), ..
 		vector_diff_angle( wx,wy, wall[1]+wall[3],wall[2]+wall[4] ), ..
 		vector_diff_angle( wx,wy, wall[1],        wall[2]+wall[4] ) ]
-	
-	For Local i% = 0 To 3
-		If      ang < wall_angle[0] Then Return 180 ..
-		Else If ang < wall_angle[1] Then Return 270 ..
-		Else If ang < wall_angle[2] Then Return 0 ..
-		Else If ang < wall_angle[3] Then Return 90 ..
-		Else                             Return 180
+	For Local i% = 1 To angles.Length - 1
+		If ang < angles[i-1] Then Return avg( angles[i-1], angles[i] )
 	Next
+	Return avg( angles[3], angles[0] )
 End Function
 
 
