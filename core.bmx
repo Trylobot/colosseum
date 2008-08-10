@@ -134,10 +134,6 @@ Function prep_spawner()
 
 End Function
 '______________________________________________________________________________
-Function enemy_died()
-	level_enemies_remaining :- 1
-End Function
-'______________________________________________________________________________
 'Spawning and Respawning
 Function respawn_player( archetype_index% )
 	

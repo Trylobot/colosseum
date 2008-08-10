@@ -130,6 +130,7 @@ Type COMPLEX_AGENT Extends AGENT
 		c.firing_state = other.firing_state[..]
 		c.FLAG_increment_firing_group = other.FLAG_increment_firing_group[..]
 		
+If KeyDown( KEY_ENTER ) Then DebugStop
 		For Local list:TList = EachIn c.all_emitters
 			For Local other_em:EMITTER = EachIn list
 				c.add_emitter( other_em, other_em.trigger_event )
@@ -367,14 +368,6 @@ Type COMPLEX_AGENT Extends AGENT
 		Else If new_political_alignment = ALIGNMENT_HOSTILE  Then add_me( hostile_agent_list )
 	End Method
 	
-	Method die()
-		Super.die()
-		If political_alignment = ALIGNMENT_HOSTILE
-			enemy_died()
-		End If
-		
-	End Method
-		
 End Type
 
 	

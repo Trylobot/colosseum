@@ -15,6 +15,7 @@ Const SECONDARY_PROJECTILE_COLLISION_LAYER% = $0010
 Const WALL_COLLISION_LAYER% = $0020
 Const PICKUP_COLLISION_LAYER% = $0040
 
+Const PROJECTILE_EXPLOSIVE_FORCE_COEFFICIENT# = 1000.0 'energy multiplier for all explosive forces generated
 Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 500.0 'energy multiplier for all collisions involving projectiles and agents
 Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.012 'energy multiplier for all projectile-projectile collisions
 Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.010 'energy multiplier for all agent-agent collisions
@@ -83,7 +84,7 @@ Function collide_all()
 								Local dist# = proj.dist_to( other )
 								If dist < proj.radius
 									Local ang# = proj.ang_to( other )
-									Local total_force# = proj.explosive_force_magnitude / Pow( dist, 2 )
+									Local total_force# = PROJECTILE_EXPLOSIVE_FORCE_COEFFICIENT*proj.explosive_force_magnitude / Pow( dist, 2 )
 									other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, total_force*Cos( ang ), 100 )))
 									other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, dist*total_force*Sin( ang ), 100 )))
 								End If
@@ -103,6 +104,9 @@ Function collide_all()
 						ag.die()
 						If player = ag 'player just died? (omgwtf)
 							FLAG_game_over = True
+						End If
+						If ag.political_alignment = ALIGNMENT_HOSTILE
+							level_enemies_remaining :- 1
 						End If
 					End If
 					'activate projectile impact emitter
@@ -178,11 +182,10 @@ Function collide_all()
 					'add explosive force to nearby agents
 					For list = EachIn agent_lists
 						For other = EachIn list
-							DebugStop
 							Local dist# = proj.dist_to( other )
 							If dist < proj.radius
 								Local ang# = proj.ang_to( other )
-								Local total_force# = proj.explosive_force_magnitude / Pow( dist, 2 )
+								Local total_force# = PROJECTILE_EXPLOSIVE_FORCE_COEFFICIENT*proj.explosive_force_magnitude / Pow( dist, 2 )
 								other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, total_force*Cos( ang ), 100 )))
 								other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, dist*total_force*Sin( ang ), 100 )))
 							End If
