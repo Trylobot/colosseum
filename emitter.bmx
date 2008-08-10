@@ -224,15 +224,15 @@ Type EMITTER extends MANAGED_OBJECT
 	End Method
 		
 	Function Archetype:Object( ..
-	name$, ..
+	name$ = Null, ..
 	emitter_type%, ..
 	archetype_index%, ..
 	mode% = MODE_DISABLED, ..
-	combine_vel_with_parent_vel%, ..
-	combine_vel_ang_with_parent_ang%, ..
-	inherit_ang_from_dist_ang%, ..
-	inherit_vel_ang_from_ang%, ..
-	inherit_acc_ang_from_vel_ang%, ..
+	combine_vel_with_parent_vel% = False, ..
+	combine_vel_ang_with_parent_ang% = False, ..
+	inherit_ang_from_dist_ang% = False, ..
+	inherit_vel_ang_from_ang% = False, ..
+	inherit_acc_ang_from_vel_ang% = False, ..
 	interval_min% = 0, interval_max% = 0, ..
 	count_min% = 1, count_max% = 1, ..
 	life_time_min% = INFINITY, life_time_max% = INFINITY, ..
@@ -240,7 +240,7 @@ Type EMITTER extends MANAGED_OBJECT
 	alpha_delta_min# = 0.0, alpha_delta_max# = 0.0, ..
 	scale_min# = 1.0, scale_max# = 1.0, ..
 	scale_delta_min# = 0.0, scale_delta_max# = 0.0, ..
-	red_min# = 255, red_max# = 255, green_min# = 255, green_max# = 255, blue_min# = 255, blue_max# = 255, ..
+	red_min# = 1.0, red_max# = 1.0, green_min# = 1.0, green_max# = 1.0, blue_min# = 1.0, blue_max# = 1.0, ..
 	red_delta_min# = 0.0, red_delta_max# = 0.0, green_delta_min# = 0.0, green_delta_max# = 0.0, blue_delta_min# = 0.0, blue_delta_max# = 0.0 )
 		Local em:EMITTER = New EMITTER
 		
