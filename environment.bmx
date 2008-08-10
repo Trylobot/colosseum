@@ -210,10 +210,10 @@ level_walls[1] = level_walls[0]
 'level 2
 level_walls[2] = level_walls[0]
 'level 3
-level_walls[1].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
-level_walls[1].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
-level_walls[1].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
-level_walls[1].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
+level_walls[3].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
+level_walls[3].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
+level_walls[3].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
+level_walls[3].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
 
 Function get_level_walls:TList( i% )
 	If i < level_walls.Length
@@ -243,18 +243,18 @@ Next
 
 Function attach_door( p:POINT, political_door_list:TList )
 	Local door:WIDGET
-	'Left door slider
+	'Right door
 	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
 	door.parent = p
-	door.attach_at( arena_offset/2, -arena_offset/2, 0 )
+	door.attach_at( arena_offset/2, -arena_offset/2 - door.img.height/2, -90, True )
 	'the auto-manage list keeps track of all widgets, for updating and drawing
 	door.auto_manage()
 	'this managed list simply differentiates "friendly" doors from "hostile" doors
 	political_door_list.AddLast( door )
-	'Right door slider
+	'Left door
 	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
 	door.parent = p
-	door.attach_at( arena_offset/2, arena_offset/2, 0 )
+	door.attach_at( arena_offset/2, arena_offset/2 - door.img.height/2, 90, True )
 	'the auto-manage list keeps track of all widgets, for updating and drawing
 	door.auto_manage()
 	'this managed list simply differentiates "friendly" doors from "hostile" doors

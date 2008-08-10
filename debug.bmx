@@ -13,192 +13,207 @@ EndRem
 'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
 'Const PATH_UNSET% = 1000
 'Global path_type% = PATH_UNSET, mouse_path_type%
-Global global_start:CELL
-Global global_goal:CELL
-Global db_path:TList
-
-Global p:POINT = Create_POINT( arena_offset+arena_w/2, arena_offset+arena_h/2, -90 )
-Global w:WIDGET = widget_archetype[WIDGET_ARENA_DOOR].clone()
-w.parent = p
-
-
-'______________________________________________________________________________
-Function debug_main()
-	
-	Local before% = 0
-	Repeat
-		
-		If (now() - before) > (1000/60) '60 hertz
-			before = now()
-		
-			Rem
-			get_all_input()
-			collide_all()
-			update_all()
-			EndRem
-			
-			w.update()
-			
-		EndIf
-		
-		Cls
-		
-		Rem
-		draw_all()
-		play_all()
-		EndRem
-		
-		w.draw()
-		draw_widget_debug()
-	
-		Flip( 1 ) 'draw to screen with vsync enabled
-	Until AppTerminate() Or KeyHit( KEY_ESCAPE ) 'kill app when ESC or close button pressed
-
-End Function
-'______________________________________________________________________________
-Function draw_widget_debug()
-	
-	SetColor( 64,64,64 )
-	DrawOval( p.pos_x-5,p.pos_y+5, 10,10 )
-	
-	SetLineWidth( 2 )
-	SetColor( 127,127,127 )
-	DrawLine( p.pos_x,p.pos_y, p.pos_x+w.offset*Cos(w.offset_ang),p.pos_y+w.offset*Sin(w.offset_ang) )
-	DrawOval( p.pos_x+w.offset*Cos(w.offset_ang)-5,p.pos_y+w.offset*Sin(w.offset_ang)-5, 10,10 )
-	
-	SetColor( 196,196,196 )
-	DrawLine( p.pos_x+w.offset*Cos(w.offset_ang), p.pos_y+w.offset*Sin(w.offset_ang), ..
-		p.pos_x+w.offset*Cos(p.ang+w.offset_ang)+w.state.pos_length*Cos(p.ang+w.offset_ang+w.state.ang), ..
-		p.pos_y+w.offset*Sin(p.ang+w.offset_ang)+w.state.pos_length*Sin(p.ang+w.offset_ang+w.state.ang) )
-	
-	
-End Function
-'______________________________________________________________________________
-Function debug_range()
-	Local r:RANGE_Int = New RANGE_Int
-	Local str$ = ""
-	
-	Print "( " + r.low + ", " + r.high + " )"
-	str = ""
-	For Local i% = 0 To 10
-		str :+ r.get() + " "
-	Next
-	Print str
-	
-	r.set( 1, 5 )
-	
-	Print "( " + r.low + ", " + r.high + " )"
-	str = ""
-	For Local i% = 0 To 10
-		str :+ r.get() + " "
-	Next
-	Print str
-	
-End Function
-'______________________________________________________________________________
-Function debug_ts( message$ )
-	Print( String.FromInt( now() ) + ":" + message )
-End Function
-Global sx%, sy%, h% = 10
-
-Function debug_drawtext( message$ )
-	SetImageFont( consolas_normal_10 )
-	SetColor( 0, 0, 0 )
-	DrawText( message, sx+1, sy+1 )
-	SetColor( 255, 255, 255 )
-	DrawText( message, sx, sy )
-	sy :+ h
-End Function
-'______________________________________________________________________________
-Function debug_brain_under_mouse()
-	Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
-	SetColor( 255, 255, 255 )
-	For Local cb:CONTROL_BRAIN = EachIn control_brain_list
-		If cb.avatar.dist_to( mouse ) <= 20
-			
-			'draw info
-			sx = mouse.pos_x + 16; sy = mouse.pos_y
-			debug_drawtext( cb.avatar.name )
-			If cb.target <> Null
-				debug_drawtext( "target -> " + cb.target.name )
-			Else 'cb.target == Null
-				debug_drawtext( "no target" )
-			End If
-			If cb.sighted_target
-				debug_drawtext( "can see target" )
-				SetColor( 255, 255, 255 )
-			Else
-				debug_drawtext( "no line-of-sight to target" )
-				SetColor( 255, 32, 32 )
-			End If
-			If cb.target <> Null
-				SetLineWidth( 1 )
-				SetAlpha( 0.5 )
-				DrawLine( cb.avatar.pos_x,cb.avatar.pos_y, cb.target.pos_x,cb.target.pos_y )
-				SetColor( 255, 255, 255 )
-				SetAlpha( 1 )
-			End If
-			show_db_path( cb.path )
-			If cb.path <> Null
-				debug_drawtext( "path to target displayed" )
-			Else
-				debug_drawtext( "no path" )
-			End If
-			
-			'manipulate by keyboard
-			If KeyDown( KEY_T )
-				cb.target = player
-			End If
-			If KeyDown( KEY_H )
-				cb.path = cb.get_path_to_target()
-			End If
-			If KeyDown( KEY_P )
-				cb.see_target()
-			End If
-			
-			Return
-		End If
-	Next
-End Function
-'______________________________________________________________________________
-Function debug_general()
-	'show pathing grid
-	Local cursor:CELL = New CELL
-	For cursor.row = 0 To pathing_grid_h - 1
-		For cursor.col = 0 To pathing_grid_w - 1
-			'blockable/passing grid
-			SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
-			If pathing.grid( cursor ) = PATH_BLOCKED Then ..
-				DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-		Next
-	Next
-	
-	'manipulate by keyboard
-	If KeyHit( KEY_Q ) Then load_next_level()
-End Function
-'______________________________________________________________________________
-Function show_db_path( db_path:TList )
-	If db_path = Null Or db_path.IsEmpty() Then Return
-	'path
-	Local v0:cVEC = Null, v1:cVEC = Null
-	For Local v1:cVEC = EachIn db_path
-		If v0 <> Null
-			DrawLine( v0.x,v0.y, v1.x,v1.y )
-		Else
-			v0 = New cVEC
-		End If
-		v0.x = v1.x; v0.y = v1.y
-	Next
-	'start and goal
-	If global_start <> Null
-		SetColor( 64, 255, 64 ); SetAlpha( 1 )
-		DrawRect( global_start.col*cell_size + 1, global_start.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-	End If
-	If global_goal <> Null
-		SetColor( 64, 64, 255 ); SetAlpha( 1 )
-		DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-	End If
-End Function
+'Global global_start:CELL
+'Global global_goal:CELL
+'Global db_path:TList
+'
+'Global p:POINT = Create_POINT( arena_offset+arena_w/2, arena_offset+arena_h/2, -90 )
+'Global w:WIDGET[] = New WIDGET[2]
+'w[0] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[0].parent = p; w[0].attach_at( arena_offset/2, -arena_offset/2, 180 - 45 )
+'w[1] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[1].parent = p; w[1].attach_at( arena_offset/2, arena_offset/2, 180 + 45 )
+'
+'
+''______________________________________________________________________________
+'Function debug_main()
+'	Repeat
+'		For Local w:WIDGET = EachIn w
+'			w.update()
+'		Next
+'		
+'		Cls
+'		draw_widget_debug()
+'		For Local w:WIDGET = EachIn w
+'			w.draw()
+'		Next
+'		Flip( 1 )
+'	Until AppTerminate() Or KeyHit( KEY_ESCAPE )
+'End Function
+''______________________________________________________________________________
+'Function draw_widget_debug()
+'	
+'	SetRotation( 0 )
+'	SetLineWidth( 2 )
+'	For Local w:WIDGET = EachIn w
+'		
+'		Local w_off:pVEC = w.widget_offset()
+'		Local w_st:pVEC = w.state_offset()
+'		
+'		Local v:cVEC[] = New cVEC[20]
+'		v[0] = cVEC( cVEC.Create( p.pos_x, p.pos_y ))
+'		v[1] = cVEC( cVEC.Create( v[0].x + w_off.x(), v[0].y + w_off.y() ))
+'		v[2] = cVEC( cVEC.Create( v[1].x + w_st.x(), v[1].y + w_st.y() ))
+'		
+'		Local color%[] = [ ..
+'		127, ..
+'		196, ..
+'		255 ]
+'		
+'		For Local i% = 1 To v.Length - 1
+'			If v[i] = Null Then Exit
+'			DrawOval( v[i-1].x-4,v[i-1].y-4, 8,8 )
+'			SetColor( color[i-1], color[i-1], color[i-1] )
+'			DrawLine( v[i-1].x,v[i-1].y, v[i].x,v[i].y )
+'			DrawOval( v[i].x-4,v[i].y-4, 8,8 )
+'		Next
+'	Next
+'	
+'	If KeyDown( KEY_P )
+'		If MouseDown( 1 )
+'			w[0].attach_at( MouseX()-p.pos_x, MouseY()-p.pos_y, w[0].ang_offset )
+'		Else If MouseDown( 2 )
+'			w[1].attach_at( MouseX()-p.pos_x, MouseY()-p.pos_y, w[1].ang_offset )
+'		End If
+'	Else If KeyDown( KEY_A )
+'		If MouseDown( 1 )
+'			w[0].ang_offset = MouseX()
+'		Else If MouseDown( 2 )
+'			w[1].ang_offset = MouseX()
+'		End If
+'	End If
+'	
+'	If KeyHit( KEY_W )
+'		For Local w:WIDGET = EachIn w
+'			w.begin_transformation( 1 )
+'		Next
+'	End If
+'	
+'End Function
+''______________________________________________________________________________
+'Function debug_range()
+'	Local r:RANGE_Int = New RANGE_Int
+'	Local str$ = ""
+'	
+'	Print "( " + r.low + ", " + r.high + " )"
+'	str = ""
+'	For Local i% = 0 To 10
+'		str :+ r.get() + " "
+'	Next
+'	Print str
+'	
+'	r.set( 1, 5 )
+'	
+'	Print "( " + r.low + ", " + r.high + " )"
+'	str = ""
+'	For Local i% = 0 To 10
+'		str :+ r.get() + " "
+'	Next
+'	Print str
+'	
+'End Function
+''______________________________________________________________________________
+'Function debug_ts( message$ )
+'	Print( String.FromInt( now() ) + ":" + message )
+'End Function
+'Global sx%, sy%, h% = 10
+'
+'Function debug_drawtext( message$ )
+'	SetImageFont( consolas_normal_10 )
+'	SetColor( 0, 0, 0 )
+'	DrawText( message, sx+1, sy+1 )
+'	SetColor( 255, 255, 255 )
+'	DrawText( message, sx, sy )
+'	sy :+ h
+'End Function
+''______________________________________________________________________________
+'Function debug_brain_under_mouse()
+'	Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
+'	SetColor( 255, 255, 255 )
+'	For Local cb:CONTROL_BRAIN = EachIn control_brain_list
+'		If cb.avatar.dist_to( mouse ) <= 20
+'			
+'			'draw info
+'			sx = mouse.pos_x + 16; sy = mouse.pos_y
+'			debug_drawtext( cb.avatar.name )
+'			If cb.target <> Null
+'				debug_drawtext( "target -> " + cb.target.name )
+'			Else 'cb.target == Null
+'				debug_drawtext( "no target" )
+'			End If
+'			If cb.sighted_target
+'				debug_drawtext( "can see target" )
+'				SetColor( 255, 255, 255 )
+'			Else
+'				debug_drawtext( "no line-of-sight to target" )
+'				SetColor( 255, 32, 32 )
+'			End If
+'			If cb.target <> Null
+'				SetLineWidth( 1 )
+'				SetAlpha( 0.5 )
+'				DrawLine( cb.avatar.pos_x,cb.avatar.pos_y, cb.target.pos_x,cb.target.pos_y )
+'				SetColor( 255, 255, 255 )
+'				SetAlpha( 1 )
+'			End If
+'			show_db_path( cb.path )
+'			If cb.path <> Null
+'				debug_drawtext( "path to target displayed" )
+'			Else
+'				debug_drawtext( "no path" )
+'			End If
+'			
+'			'manipulate by keyboard
+'			If KeyDown( KEY_T )
+'				cb.target = player
+'			End If
+'			If KeyDown( KEY_H )
+'				cb.path = cb.get_path_to_target()
+'			End If
+'			If KeyDown( KEY_P )
+'				cb.see_target()
+'			End If
+'			
+'			Return
+'		End If
+'	Next
+'End Function
+''______________________________________________________________________________
+'Function debug_general()
+'	'show pathing grid
+'	Local cursor:CELL = New CELL
+'	For cursor.row = 0 To pathing_grid_h - 1
+'		For cursor.col = 0 To pathing_grid_w - 1
+'			'blockable/passing grid
+'			SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
+'			If pathing.grid( cursor ) = PATH_BLOCKED Then ..
+'				DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+'		Next
+'	Next
+'	
+'	'manipulate by keyboard
+'	If KeyHit( KEY_Q ) Then load_next_level()
+'End Function
+''______________________________________________________________________________
+'Function show_db_path( db_path:TList )
+'	If db_path = Null Or db_path.IsEmpty() Then Return
+'	'path
+'	Local v0:cVEC = Null, v1:cVEC = Null
+'	For Local v1:cVEC = EachIn db_path
+'		If v0 <> Null
+'			DrawLine( v0.x,v0.y, v1.x,v1.y )
+'		Else
+'			v0 = New cVEC
+'		End If
+'		v0.x = v1.x; v0.y = v1.y
+'	Next
+'	'start and goal
+'	If global_start <> Null
+'		SetColor( 64, 255, 64 ); SetAlpha( 1 )
+'		DrawRect( global_start.col*cell_size + 1, global_start.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+'	End If
+'	If global_goal <> Null
+'		SetColor( 64, 64, 255 ); SetAlpha( 1 )
+'		DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+'	End If
+'End Function
 ''______________________________________________________________________________
 'Function debug_heap( message$ = "" )
 '	SetColor( 255, 255, 255 )

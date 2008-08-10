@@ -14,26 +14,24 @@ Const window_h% = arena_h + (2*arena_offset)
 
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo
-?Debug
-	AppTitle :+ " " + My.Application.Platform + " (Debug)"
-?
+If My.Application.DebugOn Then AppTitle :+ " " + My.Application.Platform + " (Debug)"
 SetGraphicsDriver GLMax2DDriver()
 
 Graphics( window_w, window_h )
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
-?Debug
-	debug_main()
-	End
-?
+'?Debug
+'	debug_main()
+'	End
+'?
 
 '______________________________________________________________________________
 'MAIN
 Local before% = 0
 Repeat
 	
-	If (now() - before) > (1000/60) '60 hertz
+	If (now() - before) > (1000/60) ' = 60 hertz
 		before = now()
 		get_all_input()
 		collide_all()
@@ -43,9 +41,9 @@ Repeat
 	Cls
 	draw_all()
 	play_all()
-	Flip( 1 ) 'draw to screen with vsync enabled
+	Flip( 1 )
 	
-Until AppTerminate() 'kill app when ESC or close button pressed
+Until AppTerminate()
 
 
 

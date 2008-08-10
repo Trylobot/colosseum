@@ -108,10 +108,14 @@ Type WIDGET Extends MANAGED_OBJECT
 
 	Method attach_at( ..
 	new_attach_x# = 0.0, new_attach_y# = 0.0, ..
-	new_ang_offset# = 0.0 )
+	new_ang_offset# = 0.0, ..
+	FLAG_mute_offset_ang% = False )
 		attach_x = new_attach_x; attach_y = new_attach_y
 		cartesian_to_polar( attach_x, attach_y, offset, offset_ang )
 		ang_offset = new_ang_offset
+		If FLAG_mute_offset_ang
+			ang_offset :- offset_ang
+		End If
 	End Method
 	
 	Method update()
@@ -119,7 +123,7 @@ Type WIDGET Extends MANAGED_OBJECT
 			Local cs:TRANSFORM_STATE = states[cur_state]
 			If (now() - transform_begin_ts) >= cs.transition_time
 				'finished current transformation
-				cur_state = next_state( cur_state )
+				cur_state = state_successor( cur_state )
 				cs = states[cur_state]
 				transform_begin_ts = now()
 				If transformations_remaining > 0
@@ -130,7 +134,7 @@ Type WIDGET Extends MANAGED_OBJECT
 			End If
 			If transforming
 				'currently transforming
-				Local ns:TRANSFORM_STATE = states[ next_state( cur_state )]
+				Local ns:TRANSFORM_STATE = states[ state_successor( cur_state )]
 				Local pct# = (Float(now() - transform_begin_ts) / Float(cs.transition_time))
 				'state.pos_x = cs.pos_x + pct * (ns.pos_x - cs.pos_x)
 				'state.pos_y = cs.pos_y + pct * (ns.pos_y - cs.pos_y)
@@ -157,13 +161,23 @@ Type WIDGET Extends MANAGED_OBJECT
 		SetAlpha( state.alpha )
 		SetScale( state.scale_x, state.scale_y )
 		
-		SetRotation( parent.ang + ang_offset + ang_offset + state.ang )
+		SetRotation( parent.ang + offset_ang + state.ang + ang_offset )
 		DrawImage( img, ..
-			parent.pos_x + offset*Cos( parent.ang + offset_ang + ang_offset ) + state.pos_length*Cos( parent.ang + offset_ang + ang_offset + state.ang ), ..
-			parent.pos_y + offset*Sin( parent.ang + offset_ang + ang_offset ) + state.pos_length*Sin( parent.ang + offset_ang + ang_offset + state.ang ) )
+			parent.pos_x + offset*Cos( parent.ang + offset_ang ) + state.pos_length*Cos( parent.ang + offset_ang + state.ang + ang_offset ), ..
+			parent.pos_y + offset*Sin( parent.ang + offset_ang ) + state.pos_length*Sin( parent.ang + offset_ang + state.ang + ang_offset ) )
 	End Method
 	
+'	Method widget_offset:pVEC()
+'		Return pVEC( pVEC.Create( offset, parent.ang + offset_ang ))
+'	End Method
+'	Method state_offset:pVEC()
+'		Return pVEC( pVEC.Create( state.pos_length, parent.ang + offset_ang + state.ang + ang_offset ))
+'	End Method
+		
 	Method begin_transformation( count% = INFINITY )
+		If transforming
+			cur_state = state_successor( cur_state )
+		End If
 		transformations_remaining = count
 		transform_begin_ts = now()
 		transforming = True
@@ -176,7 +190,7 @@ Type WIDGET Extends MANAGED_OBJECT
 		If state = Null Then state = states[cur_state].clone()
 	End Method
 	
-	Method next_state%( i% )
+	Method state_successor%( i% )
 		Select repeat_mode
 			Case REPEAT_MODE_CYCLIC_WRAP
 				If i >= final_state
