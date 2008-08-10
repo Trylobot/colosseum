@@ -240,6 +240,9 @@ Global friendly_door_list:TList = CreateList() 'TList:WIDGET
 Global friendly_doors_status% = DOOR_STATUS_CLOSED
 Global hostile_door_list:TList = CreateList() 'TList:WIDGET
 Global hostile_doors_status% = DOOR_STATUS_CLOSED
+Global all_door_lists:TList = CreateList()
+	all_door_lists.addlast( friendly_door_list )
+	all_door_lists.addlast( hostile_door_list )
 
 'attach door widgets To every spawn
 For Local spawn:POINT = EachIn friendly_spawn_points

@@ -32,7 +32,6 @@ Global PARTICLE_INDEX_ROCKET_THRUST% = postfix_index()
 Global PARTICLE_INDEX_ROCKET_SMOKE_TRAIL% = postfix_index()
 Global PARTICLE_INDEX_TANK_TREAD_DEBRIS% = postfix_index()
 Global PARTICLE_INDEX_TANK_TREAD_TRAIL% = postfix_index()
-Global PARTICLE_INDEX_MR_THE_BOX_TRAIL% = postfix_index()
 
 particle_archetype[PARTICLE_INDEX_CANNON_MUZZLE_FLASH] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_muzzle_flash,,,,, LAYER_FOREGROUND ))
 particle_archetype[PARTICLE_INDEX_CANNON_SHELL_CASING] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_projectile_shell_casing,,,,, LAYER_FOREGROUND, True, 0.0100 ))
@@ -48,13 +47,11 @@ particle_archetype[PARTICLE_INDEX_ROCKET_THRUST] = PARTICLE( PARTICLE.Create( PA
 particle_archetype[PARTICLE_INDEX_ROCKET_SMOKE_TRAIL] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_muzzle_smoke,,,,, LAYER_FOREGROUND ))
 particle_archetype[PARTICLE_INDEX_TANK_TREAD_DEBRIS] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_debris,,,,, LAYER_BACKGROUND, True, 0.05 ))
 particle_archetype[PARTICLE_INDEX_TANK_TREAD_TRAIL] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_trail,,,,, LAYER_BACKGROUND, True ))
-particle_archetype[PARTICLE_INDEX_MR_THE_BOX_TRAIL] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_box,,,,, LAYER_BACKGROUND ))
 
 '______________________________________________________________________________
 '[ PARTICLE EMITTERS ]
 Global particle_emitter_archetype:EMITTER[20]; reset_index();
 
-Global PARTICLE_EMITTER_INDEX_MR_THE_BOX_TRAIL% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE% = postfix_index()
@@ -75,26 +72,25 @@ Global PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL% = postfix_index()
 
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MR_THE_BOX_TRAIL] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_MR_THE_BOX_TRAIL, MODE_ENABLED_FOREVER, False, False, False, False, False, 500, 500, 0, 0, 3000, 3000, 0.5, 0.5, -0.004, -0.004 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_CANNON_MUZZLE_FLASH,, False, False, False, False, False,,,,, 50, 50 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_CANNON_SHELL_CASING,, True, True, False, False, True,,,,, 2200, 2200 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_CANNON_MUZZLE_SMOKE,, False, True, False, False, False,,, 10, 12, 500, 1000, 0.08, 0.16, -0.002, -0.004, 0.15, 0.75, 0.0010, 0.0100 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_EXPLOSION,, False, False, False, False, False,,,,, 300,350, 1.0,1.0, -0.100,-0.100, 0.350, 0.400, -0.0075, -0.0075, 1.0,1.0, 1.0,1.0, 0.8,0.8, -0.002,-0.002, -0.035,-0.035, -0.030,-0.030 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_RICOCHET_SPARK] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_RICOCHET_SPARK,, False, True, True, False, False,,,,, 50, 50, 1, 1,,, 0.75, 0.75 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_IMPACT_HALO] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_IMPACT_HALO,, False, False, False, False, False,,,,, 100, 100, 0.5, 0.5, 0, 0, 0.35, 0.35, -0.0100, -0.0100 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_MACHINE_GUN_MUZZLE_FLASH,, False, False, False, False, False,,,,, 25, 25 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_MACHINE_GUN_SHELL_CASING,, True, True, False, False, True,,,,, 1400, 1800 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_MACHINE_GUN_MUZZLE_SMOKE,, False, True, False, False, False,,, 6, 8, 300, 600, 0.06, 0.12, -0.002, -0.004, 0.15, 0.75, 0.0010, 0.0100 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_RICOCHET_SPARK] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_RICOCHET_SPARK,, False, True, True, False, False,,,,, 50, 50, 1, 1, 0.0, 0.0, 0.50, 0.50, 0, 0 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_MUZZLE_FLARE] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_LASER_MUZZLE_FLARE,, False, False, False, False, False,,,,, 50, 50 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH] = EMITTER( EMITTER.Archetype( "cannon muzzle flash", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_CANNON_MUZZLE_FLASH,, False, False, False, False, False,,,,, 50, 50 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING] = EMITTER( EMITTER.Archetype( "cannon shell casing", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_CANNON_SHELL_CASING,, True, True, False, False, True,,,,, 2200, 2200 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE] = EMITTER( EMITTER.Archetype( "cannon muzzle smoke", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_CANNON_MUZZLE_SMOKE,, False, True, False, False, False,,, 10, 12, 500, 1000, 0.08, 0.16, -0.002, -0.004, 0.15, 0.75, 0.0010, 0.0100 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_EXPLOSION] = EMITTER( EMITTER.Archetype( "cannon explosion", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_EXPLOSION,, False, False, False, False, False,,,,, 300,350, 1.0,1.0, -0.100,-0.100, 0.350, 0.400, -0.0075, -0.0075, 1.0,1.0, 1.0,1.0, 0.8,0.8, -0.002,-0.002, -0.035,-0.035, -0.030,-0.030 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_RICOCHET_SPARK] = EMITTER( EMITTER.Archetype( "cannon ricochet spark", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_RICOCHET_SPARK,, False, True, True, False, False,,,,, 50, 50, 1, 1,,, 0.75, 0.75 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_IMPACT_HALO] = EMITTER( EMITTER.Archetype( "cannon impact halo", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_IMPACT_HALO,, False, False, False, False, False,,,,, 100, 100, 0.5, 0.5, 0, 0, 0.35, 0.35, -0.0100, -0.0100 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH] = EMITTER( EMITTER.Archetype( "machine gun muzzle flash", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_MACHINE_GUN_MUZZLE_FLASH,, False, False, False, False, False,,,,, 25, 25 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING] = EMITTER( EMITTER.Archetype( "machine gun shell casing", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_MACHINE_GUN_SHELL_CASING,, True, True, False, False, True,,,,, 1400, 1800 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE] = EMITTER( EMITTER.Archetype( "machine gun muzzle smoke", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_MACHINE_GUN_MUZZLE_SMOKE,, False, True, False, False, False,,, 6, 8, 300, 600, 0.06, 0.12, -0.002, -0.004, 0.15, 0.75, 0.0010, 0.0100 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_RICOCHET_SPARK] = EMITTER( EMITTER.Archetype( "machine gun ricochet spark", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_RICOCHET_SPARK,, False, True, True, False, False,,,,, 50, 50, 1, 1, 0.0, 0.0, 0.50, 0.50, 0, 0 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_MUZZLE_FLARE] = EMITTER( EMITTER.Archetype( "laser muzzle flare", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_LASER_MUZZLE_FLARE,, False, False, False, False, False,,,,, 50, 50 ))
 'particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_EXPLOSION]
 'particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_IMPACT_HALO]
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_THRUST] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_ROCKET_THRUST, MODE_ENABLED_FOREVER, False, False, False, False, False, 10, 15,,, 10, 15, 0.50, 0.75, 0, 0, 0.25, 1.00, 0, 0 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_ROCKET_SMOKE_TRAIL, MODE_ENABLED_FOREVER, False, False, False, False, False, 0, 30, 0, 0, 250, 500, 0.06, 0.12, -0.002, -0.020, 0.10, 0.70, 0.0008, 0.0300 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_DEBRIS,, False, True, False, False, False, 100, 150, 0, 0, 200, 350, 0.75, 0.75, -0.0012, -0.0025 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_TRAIL,, False, False, False, False, False, 100, 100,,, 50, 50,,,,, 0.60, 0.60, 0.0, 0.0 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_DEBRIS,, False, True, False, False, False, 100, 150, 0, 0, 200, 350, 0.75, 0.75, -0.0012, -0.0025 ))
-particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_TRAIL,, False, False, False, False, False, 100, 100,,, 50, 50 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_THRUST] = EMITTER( EMITTER.Archetype( "rocket thrust", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_ROCKET_THRUST, MODE_ENABLED_FOREVER, False, False, False, False, False, 10, 15,,, 10, 15, 0.50, 0.75, 0, 0, 0.25, 1.00, 0, 0 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] = EMITTER( EMITTER.Archetype( "rocket smoke trail", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_ROCKET_SMOKE_TRAIL, MODE_ENABLED_FOREVER, False, False, False, False, False, 0, 30, 0, 0, 250, 500, 0.06, 0.12, -0.002, -0.020, 0.10, 0.70, 0.0008, 0.0300 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] = EMITTER( EMITTER.Archetype( "tank tread debris", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_DEBRIS,, False, True, False, False, False, 100, 150, 0, 0, 200, 350, 0.75, 0.75, -0.0012, -0.0025 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] = EMITTER( EMITTER.Archetype( "tank tread trail", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_TRAIL,, False, False, False, False, False, 100, 100,,, 50, 50 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS] = EMITTER( EMITTER.Archetype( "quad wheel debris", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_DEBRIS,, False, True, False, False, False, 100, 150, 0, 0, 200, 350, 0.75, 0.75, -0.0012, -0.0025 ))
+particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL] = EMITTER( EMITTER.Archetype( "quad wheel trail", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_TRAIL,, False, False, False, False, False, 100, 100,,, 50, 50,,,,, 0.60, 0.60, 0.0, 0.0 ))
 
 '______________________________________________________________________________
 '[ PROJECTILES ]
@@ -127,10 +123,10 @@ Global PROJECTILE_LAUNCHER_INDEX_MACHINE_GUN% = postfix_index()
 Global PROJECTILE_LAUNCHER_INDEX_LASER% = postfix_index()
 Global PROJECTILE_LAUNCHER_INDEX_ROCKET% = postfix_index()
 
-projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_TANK_CANNON] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_TANK_CANNON,, True, False, False, True, True ))
-projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_MACHINE_GUN] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_MACHINE_GUN,, True, False, False, True, True ))
-projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_LASER] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_LASER,, False, False, False, True, True ))
-projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_ROCKET] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_ROCKET,, True, False, False, True, True ))
+projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_TANK_CANNON] = EMITTER( EMITTER.Archetype( "tank cannon", EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_TANK_CANNON,, True, False, False, True, True ))
+projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_MACHINE_GUN] = EMITTER( EMITTER.Archetype( "machine gun", EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_MACHINE_GUN,, True, False, False, True, True ))
+projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_LASER] = EMITTER( EMITTER.Archetype( "laser", EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_LASER,, False, False, False, True, True ))
+projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_ROCKET] = EMITTER( EMITTER.Archetype( "rocket", EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_ROCKET,, True, False, False, True, True ))
 
 '______________________________________________________________________________
 '[ WIDGETS ]
@@ -260,14 +256,14 @@ complex_agent_archetype[PLAYER_INDEX_MED_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Ar
 		complex_agent_archetype[PLAYER_INDEX_MED_TANK].firing_sequence = [ [[0],[1]], [[2]] ]
 		complex_agent_archetype[PLAYER_INDEX_MED_TANK].firing_state = [ 0, 0 ]
 		complex_agent_archetype[PLAYER_INDEX_MED_TANK].FLAG_increment_firing_group = [ False, False ]
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 15, -8, 0, 2, -45, 45, 0.3, 0.6 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 15, 8, 0, 2, -45, 45, 0.3, 0.6 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, -8, 0, 2, 135, 225, 0.3, 0.6 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, 8, 0, 2, 135, 225, 0.3, 0.6 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_FORWARD ).attach_at( 15, -8, 1, 1 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_FORWARD ).attach_at( 15, 8, 1, 1 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, -8, 1, 1 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, 8, 1, 1 )
+	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 15, -8, 0, 2, -45, 45, 0.3, 0.6 )
+	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 15, 8, 0, 2, -45, 45, 0.3, 0.6 )
+	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, -8, 0, 2, 135, 225, 0.3, 0.6 )
+	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, 8, 0, 2, 135, 225, 0.3, 0.6 )
+	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_FORWARD ).attach_at( 15, -8, 1, 1 )
+	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_FORWARD ).attach_at( 15, 8, 1, 1 )
+	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, -8, 1, 1 )
+	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, 8, 1, 1 )
 
 '[ ENEMIES ]
 Global ENEMY_INDEX_START% = array_index
@@ -294,13 +290,13 @@ complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_A
 
 complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun quad", img_enemy_quad_chassis, img_quad_gibs, AI_BRAIN_TANK, 150, 100, 400, 25.0, 1, 2, 35.0, 55.0 ))
 	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 0 ).attach_at( -6, 0 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 3, -4, 0, 2, -45, 45, 0.3, 0.6 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 3, 4, 0, 2, -45, 45, 0.3, 0.6 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -3, -4, 0, 2, 135, 225, 0.3, 0.6 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -3, 4, 0, 2, 135, 225, 0.3, 0.6 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_FORWARD ).attach_at( 3, -4, 1, 1 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_FORWARD ).attach_at( 3, 4, 1, 1 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -3, -4, 1, 1 )
-	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -3, 4, 1, 1 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 3, -4, 0, 2, -45, 45, 0.3, 0.6 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 3, 4, 0, 2, -45, 45, 0.3, 0.6 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -3, -4, 0, 2, 135, 225, 0.3, 0.6 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -3, 4, 0, 2, 135, 225, 0.3, 0.6 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_FORWARD ).attach_at( 3, -4, 1, 1 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_FORWARD ).attach_at( 3, 4, 1, 1 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -3, -4, 1, 1 )
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -3, 4, 1, 1 )
 
 

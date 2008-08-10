@@ -138,7 +138,6 @@ End Function
 Function respawn_player( archetype_index% )
 	
 	If player <> Null And player.managed() Then player.remove_me()
-	
 	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
 	player_spawn_point = friendly_spawn_points[ Rand( 0, friendly_spawn_points.Length - 1 )]
 	player.pos_x = player_spawn_point.pos_x - 0.5
