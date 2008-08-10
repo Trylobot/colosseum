@@ -89,7 +89,8 @@ Function draw_all()
 		'help reminder
 		Else
 			SetImageFont( consolas_normal_12 )
-			DrawText_with_shadow( "F1 for help", arena_offset - 10, 2 )
+			str = "F1 for help"
+			DrawText_with_shadow( str, player_spawn_point.pos_x - arena_offset - TextWidth( str ), player_spawn_point.pos_y - arena_offset/3 )
 		End If
 		
 		'game over
@@ -130,7 +131,7 @@ Function draw_all()
 		
 		SetImageFont( consolas_normal_12 )
 		SetAlpha( 0.75 )
-		Local x# = player_spawn_point.pos_x + arena_offset, y# = player_spawn_point.pos_y-10
+		Local x# = player_spawn_point.pos_x + arena_offset, y# = player_spawn_point.pos_y - arena_offset/3
 		'commands to player
 		If Not FLAG_player_engine_running
 			DrawText_with_shadow( "[E] start your engine.", x, y )

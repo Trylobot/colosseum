@@ -346,8 +346,8 @@ Type EMITTER extends MANAGED_OBJECT
 	
 End Type
 
-Function Copy_EMITTER:EMITTER( other_em:EMITTER, managed_list:TList = Null, new_parent:POINT = Null, source_id% = NULL_ID )
-	Return EMITTER( EMITTER.Copy( other_em, managed_list, new_parent, source_id ))
+Function Copy_EMITTER:EMITTER( other_em:EMITTER )
+	Return EMITTER( EMITTER.Copy( other_em ))
 End Function
 
 

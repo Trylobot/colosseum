@@ -15,6 +15,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	Field img:TImage 'image to be drawn
 	Field snd_impact:TSound 'sound to be played on impact
 	Field damage# 'maximum damage dealt by projectile
+	Field explosive_force_magnitude#
 	Field radius# 'radius of damage spread
 	Field max_vel# 'absolute maximum speed (enforced)
 	Field ignore_other_projectiles% 'whether to ignore collisions with other projectiles {true|false}
@@ -30,7 +31,8 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	Function Create:Object( ..
 	img:TImage = Null, ..
 	snd_impact:TSound = Null, ..
-	damage#, ..
+	damage# = 0.0, ..
+	explosive_force_magnitude# = 0.0, ..
 	radius# = 0.0, ..
 	max_vel# = INFINITY, ..
 	mass# = 1.0, ..
@@ -65,7 +67,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	
 	Method clone:PROJECTILE( new_source_id% = NULL_ID )
 		Local p:PROJECTILE = PROJECTILE( PROJECTILE.Create( ..
-			img, snd_impact, damage, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
+			img, snd_impact, damage, explosive_force_magnitude, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
 		'emitter lists
 		For Local em:EMITTER = EachIn emitter_list_constant
 			p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_CONSTANT )

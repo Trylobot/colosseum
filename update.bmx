@@ -17,7 +17,7 @@ Function update_all()
 		'if waiting for player to enter arena
 		If FLAG_waiting_for_player_to_enter_arena
 			'if player has not entered the arena
-			If player_spawn_point.dist_to(player) < (arena_offset/2.0)
+			If player_spawn_point.dist_to(player) < arena_offset
 				'if the player has started the engine
 				If FLAG_player_engine_running
 					'open the friendly doors
@@ -40,10 +40,9 @@ Function update_all()
 			FLAG_spawn_enemies = False
 		End If
 		'if the battle is over, and waiting for player to exit arena, and player has exited the arena
-		If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And player_spawn_point.dist_to(player) < (arena_offset/5.0)
+		If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And player_spawn_point.dist_to(player) < (arena_offset/2.0)
 			FLAG_waiting_for_player_to_exit_arena = False
 			FLAG_player_in_locker = True
-			If friendly_doors_status = DOOR_STATUS_OPEN Then activate_doors( ALIGNMENT_FRIENDLY )
 			'FLAG_player_engine_running = False
 			load_next_level()
 		End If

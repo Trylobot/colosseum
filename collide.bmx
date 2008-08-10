@@ -70,11 +70,26 @@ Function collide_all()
 					'activate collision response for affected entity(ies)
 					Local offset#, offset_ang#
 					cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
-					Local total_force# = proj.mass*PROJECTILE_AGENT_ENERGY_COEFFICIENT*Sqr( proj.vel_x*proj.vel_x + proj.vel_y*proj.vel_y )
+					Local total_force# = proj.mass*PROJECTILE_AGENT_ENERGY_COEFFICIENT*Sqr( Pow(proj.vel_x,2) + Pow(proj.vel_y,2) )
 					ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - proj.ang ), 100 )))
 					ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - proj.ang ), 100 )))
 					'add damage sticky to agent
 					'ag.add_sticky( PARTICLE( PARTICLE.Create( img_stickies, Rand( 0, img_stickies.frames.Length - 1 ), LAYER_FOREGROUND, False, 0.0, 255, 255, 255, INFINITY, 0.0, 0.0, 0.0, 0.0, proj.ang, 0.0, 0.5, 0.0, 1.0, 0.0 ))).attach_at( proj.pos_x - ag.pos_x, proj.pos_y - ag.pos_y )
+					'add explosive force to nearby agents
+					For list = EachIn agent_lists
+						For other = EachIn list
+							'if this agent is a different agent than the one hit by the projectile
+							If ag.id <> other.id
+								Local dist# = proj.dist_to( other )
+								If dist < proj.radius
+									Local ang# = proj.ang_to( other )
+									Local total_force# = proj.explosive_force_magnitude / Pow( dist, 2 )
+									other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, total_force*Cos( ang ), 100 )))
+									other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, dist*total_force*Sin( ang ), 100 )))
+								End If
+							End If
+						Next
+					Next
 					'process damage, death, cash and pickups resulting from it
 					ag.receive_damage( proj.damage )
 					If ag.dead() 'some agent was killed
@@ -109,9 +124,9 @@ Function collide_all()
 						'activate collision response for affected entity(ies)
 						Local offset#, offset_ang#
 						cartesian_to_polar( ag.pos_x - other.pos_x, ag.pos_y - other.pos_y, offset, offset_ang )
-						Local total_force# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*Sqr( other.vel_x*other.vel_x + other.vel_y*other.vel_y )
+						Local total_force# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*Sqr( Pow(other.vel_x,2) + Pow(other.vel_y,2) )
 						ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - other.ang ), 100 )))
-						ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - other.ang ), 100 )))
+						ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*(total_force/3.0)*Sin( offset_ang - other.ang ), 100 )))
 					End If
 				Next
 			Next
@@ -126,6 +141,15 @@ Function collide_all()
 					'COLLISION! between {ag} and {wall}
 					Local offset#, offset_ang#
 					cartesian_to_polar( ag.pos_x - wall_mid_x(wall), ag.pos_y - wall_mid_y(wall), offset, offset_ang )
+					Local ang# = clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )
+					''nudge
+					'ag.pos_x :+ WALL_NUDGE_DIST*Cos( ang )
+					'ag.pos_y :+ WALL_NUDGE_DIST*Sin( ang )
+					''cancellation of (the scalar projection of (the agent's {velocity|acceleration} onto the direction of (the collision response force)))
+					'Local vel:cVEC = Create_cVEC( ag.vel_x, ag.vel_y )
+					'ag.vel_x :- vel.r() * Cos( ang - vel.a() )
+					'Local acc:cVEC = Create_cVEC( ag.acc_x, ag.acc_y )
+					'ag.acc_x :- acc.r() * Cos( ang - acc.a() )
 					Select clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )
 						Case 0
 							ag.pos_x :+ WALL_NUDGE_DIST
@@ -151,6 +175,19 @@ Function collide_all()
 				result = CollideRect( wall[1],wall[2], wall[3],wall[4], PROJECTILE_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
 				For proj = EachIn result
 					'COLLISION! between {proj} and {wall}
+					'add explosive force to nearby agents
+					For list = EachIn agent_lists
+						For other = EachIn list
+							DebugStop
+							Local dist# = proj.dist_to( other )
+							If dist < proj.radius
+								Local ang# = proj.ang_to( other )
+								Local total_force# = proj.explosive_force_magnitude / Pow( dist, 2 )
+								other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, total_force*Cos( ang ), 100 )))
+								other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, dist*total_force*Sin( ang ), 100 )))
+							End If
+						Next
+					Next
 					proj.impact()
 					proj.remove_me()
 				Next
@@ -172,28 +209,6 @@ Function collide_all()
 			Exit
 		Next
 
-		'collisions between projectiles and other projectiles (disabled)
-		Rem
-		For proj = EachIn projectile_list
-			'only collide projectile if it does not ignore these types of collisions
-			If proj.ignore_other_projectiles = True Then Continue
-			SetRotation( proj.ang )
-			result = CollideImage( proj.img, proj.pos_x, proj.pos_y, 0, PROJECTILE_COLLISION_LAYER, SECONDARY_PROJECTILE_COLLISION_LAYER, proj )
-			For other_proj = EachIn result
-				If other_proj.ignore_other_projectiles = True Then Continue
-				If proj.id <> other_proj.id And proj.source_id <> other_proj.source_id
-					'COLLISON! between {proj} and {other_proj}
-					'activate collision response for affect entities
-					Local offset#, offset_ang#
-					cartesian_to_polar( proj.pos_x - other_proj.pos_x, proj.pos_y - other_proj.pos_y, offset, offset_ang )
-					Local total_force# = other_proj.mass*PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT*Sqr( other_proj.vel_x*other_proj.vel_x + other_proj.vel_y*other_proj.vel_y )
-					other_proj.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - other_proj.ang ), 100 )))
-					other_proj.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - other_proj.ang ), 100 )))
-				End If
-			Next
-		Next 
-		EndRem
-		
 	End If
 End Function
 

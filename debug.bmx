@@ -6,10 +6,9 @@ EndRem
 
 'This entire file is ignored if not in debug mode
 ?Debug
-
 '______________________________________________________________________________
-'Global sx%, sy%, h%, px#, py#
-'Global maus_x#, maus_y#, speed# = 1, r#, a#
+Global sx%, sy%, h%
+'Global maus_x#, maus_y#, speed# = 1, r#, a#, px#, py#
 'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
 'Const PATH_UNSET% = 1000
 'Global path_type% = PATH_UNSET, mouse_path_type%
@@ -22,7 +21,28 @@ EndRem
 'w[0] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[0].parent = p; w[0].attach_at( arena_offset/2, -arena_offset/2, 180 - 45 )
 'w[1] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[1].parent = p; w[1].attach_at( arena_offset/2, arena_offset/2, 180 + 45 )
 '
-'
+'______________________________________________________________________________
+Function debug_ts( message$ )
+	Print( String.FromInt( now() ) + ":" + message )
+End Function
+
+Function debug_drawtext( message$ )
+	SetImageFont( consolas_normal_10 )
+	SetColor( 0, 0, 0 )
+	DrawText( message, sx+1, sy+1 )
+	SetColor( 255, 255, 255 )
+	DrawText( message, sx, sy )
+	sy :+ h
+End Function
+'______________________________________________________________________________
+Function debug_complex_agent_emitters()
+	sx = arena_offset + 3; sy = arena_offset + 3; h = 10
+	If player <> Null And Not FLAG_in_menu
+		debug_drawtext( player.drive_forward_emitters.Count() )
+		debug_drawtext( player.drive_backward_emitters.Count() )
+		debug_drawtext( player.death_emitters.Count() )
+	End If
+End Function
 ''______________________________________________________________________________
 'Function debug_main()
 '	Repeat
@@ -109,20 +129,6 @@ EndRem
 '	Next
 '	Print str
 '	
-'End Function
-''______________________________________________________________________________
-'Function debug_ts( message$ )
-'	Print( String.FromInt( now() ) + ":" + message )
-'End Function
-'Global sx%, sy%, h% = 10
-'
-'Function debug_drawtext( message$ )
-'	SetImageFont( consolas_normal_10 )
-'	SetColor( 0, 0, 0 )
-'	DrawText( message, sx+1, sy+1 )
-'	SetColor( 255, 255, 255 )
-'	DrawText( message, sx, sy )
-'	sy :+ h
 'End Function
 ''______________________________________________________________________________
 'Function debug_brain_under_mouse()

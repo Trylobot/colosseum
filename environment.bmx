@@ -16,13 +16,19 @@ Global enemy_spawn_points:POINT[] = [ ..
 	Create_POINT( Floor(1.5*arena_offset + arena_w + arena_offset/3), Floor(arena_offset + arena_h/2), 180 ) ]
 
 'Turret anchor points (6x)
-Global enemy_turret_anchors:POINT[] = [ ..
-	Create_POINT( Floor(arena_offset+arena_offset*1), Floor(arena_offset+arena_offset*1), 45 ), ..
-	Create_POINT( Floor(arena_offset+arena_offset*2), Floor(arena_offset+arena_offset*1), 45 ), ..
-	Create_POINT( Floor(arena_offset+arena_offset*1), Floor(arena_offset+arena_offset*2), 45 ), ..
-	Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*1), 135 ), ..
-	Create_POINT( Floor((arena_offset+arena_w)-arena_offset*2), Floor(arena_offset+arena_offset*1), 135 ), ..
-	Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*2), 135 ) ]
+Global enemy_turret_anchors:POINT[] = New POINT[12]
+	enemy_turret_anchors[ 0] = Create_POINT( Floor(arena_offset+arena_offset*1), Floor(arena_offset+arena_offset*1), 45 )
+	enemy_turret_anchors[ 1] = Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*1), 135 )
+	enemy_turret_anchors[ 2] = Create_POINT( Floor(arena_offset+arena_offset*1), Floor((arena_offset+arena_h)-arena_offset*1), -45 )
+	enemy_turret_anchors[ 3] = Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor((arena_offset+arena_h)-arena_offset*1), -135 )
+	enemy_turret_anchors[ 4] = enemy_turret_anchors[0].add_pos( arena_offset, 0 )
+	enemy_turret_anchors[ 5] = enemy_turret_anchors[0].add_pos( 0, arena_offset )
+	enemy_turret_anchors[ 6] = enemy_turret_anchors[0].add_pos( -arena_offset, 0 )
+	enemy_turret_anchors[ 7] = enemy_turret_anchors[0].add_pos( 0, arena_offset )
+	enemy_turret_anchors[ 8] = enemy_turret_anchors[0].add_pos( arena_offset, 0 )
+	enemy_turret_anchors[ 9] = enemy_turret_anchors[0].add_pos( 0, -arena_offset )
+	enemy_turret_anchors[10] = enemy_turret_anchors[0].add_pos( -arena_offset, 0 )
+	enemy_turret_anchors[11] = enemy_turret_anchors[0].add_pos( 0, -arena_offset )
 
 Global anchor_deck%[] = New Int[ enemy_turret_anchors.Length ]
 Global anchor_i%
@@ -137,12 +143,14 @@ End Function
 Global level_squads%[][][] = ..
 [ ..
 	[	..
+		[ ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT ], ..
 		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
 		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
 		[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
 		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ] ..
 	], ..
 	[ ..
+		[ ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT, ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT ], ..
 		[ ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB, ENEMY_INDEX_MOBILE_MINI_BOMB ], ..
 		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ], ..
 		[ ENEMY_INDEX_LIGHT_QUAD, ENEMY_INDEX_LIGHT_QUAD ] ..
@@ -233,7 +241,7 @@ Global friendly_doors_status% = DOOR_STATUS_CLOSED
 Global hostile_door_list:TList = CreateList() 'TList:WIDGET
 Global hostile_doors_status% = DOOR_STATUS_CLOSED
 
-'attach door widgets To every spawn POINT
+'attach door widgets To every spawn
 For Local spawn:POINT = EachIn friendly_spawn_points
 	attach_door( spawn, friendly_door_list )
 Next
@@ -243,7 +251,7 @@ Next
 
 Function attach_door( p:POINT, political_door_list:TList )
 	Local door:WIDGET
-	'Right door
+
 	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
 	door.parent = p
 	door.attach_at( arena_offset/2 + arena_offset/3 - door.img.height/2 + 1, 0, 90, True )
@@ -251,7 +259,7 @@ Function attach_door( p:POINT, political_door_list:TList )
 	door.auto_manage()
 	'this managed list simply differentiates "friendly" doors from "hostile" doors
 	political_door_list.AddLast( door )
-	'Left door
+	
 	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
 	door.parent = p
 	door.attach_at( arena_offset/2 + arena_offset/3 - door.img.height/2 + 1, 0, -90, True )

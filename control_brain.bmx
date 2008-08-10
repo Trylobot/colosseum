@@ -110,14 +110,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method see_target%()
-		If avatar.pos_x < arena_offset ..
-		Or avatar.pos_x > arena_offset+arena_w ..
-		Or avatar.pos_y < arena_offset ..
-		Or avatar.pos_y > arena_offset+arena_h
-			'avatar is not the arena; blind it
-			Return False
-			
-		Else If target <> Null
+		If target <> Null
 			last_look_target_ts = now()
 			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
 			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
@@ -134,6 +127,17 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			'after checking all the walls, still haven't returned; avatar can therefore see its target
 			Return True
 		Else 'target == Null
+			Return False
+		End If
+	End Method
+	
+	Method outside_arena%()
+		If avatar.pos_x < arena_offset ..
+		Or avatar.pos_x > arena_offset+arena_w ..
+		Or avatar.pos_y < arena_offset ..
+		Or avatar.pos_y > arena_offset+arena_h
+			Return True
+		Else
 			Return False
 		End If
 	End Method
@@ -213,23 +217,28 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				
 			Case AI_BRAIN_TURRET
 				If target <> Null And Not target.dead()
-					'if not facing target, face target; when facing target, fire
-					ang_to_target = avatar.ang_to( target )
-					Local diff# = angle_diff( avatar.turrets[0].ang, ang_to_target )
-					If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
-						If diff < 180 Then avatar.turn_turrets( -1.0 ) ..
-						Else               avatar.turn_turrets( 1.0 )
-					Else 'if enemy in sight, fire; To Do: add code to check for friendlies in the line of fire.
-						avatar.turn_turrets( 0 )
-						'wait for cooldown
-						If FLAG_waiting And avatar.turrets[0].cur_heat <= 0.25*avatar.turrets[0].max_heat Then FLAG_waiting = False ..
-						Else If avatar.turrets[0].overheated() Then FLAG_waiting = True
-						If Not FLAG_waiting Then avatar.fire_turret( 0 )
+					If (now() - last_look_target_ts < look_target_delay)
+						sighted_target = see_target()
 					End If
-				Else
-					'no target
-					avatar.turn_turrets( 0 )
-					target = acquire_target()
+					If sighted_target
+						'if not facing target, face target; when facing target, fire
+						ang_to_target = avatar.ang_to( target )
+						Local diff# = angle_diff( avatar.turrets[0].ang, ang_to_target )
+						If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
+							If diff < 180 Then avatar.turn_turrets( -1.0 ) ..
+							Else               avatar.turn_turrets( 1.0 )
+						Else 'if enemy in sight, fire; To Do: add code to check for friendlies in the line of fire.
+							avatar.turn_turrets( 0 )
+							'wait for cooldown
+							If FLAG_waiting And avatar.turrets[0].cur_heat <= 0.25*avatar.turrets[0].max_heat Then FLAG_waiting = False ..
+							Else If avatar.turrets[0].overheated() Then FLAG_waiting = True
+							If Not FLAG_waiting Then avatar.fire_turret( 0 )
+						End If
+					Else
+						'no target
+						avatar.turn_turrets( 0 )
+						target = acquire_target()
+					End If
 				End If
 				
 			Case AI_BRAIN_SEEKER
@@ -257,13 +266,16 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					End If
 				Else
 					'no target
-					avatar.drive( 0.0 )
-					avatar.turn( 0.0 )
+					avatar.drive( 0.333 )
+					avatar.turn( RandF( -0.5, 0.5 ))
 					target = acquire_target()
 				End If
 				
 			Case AI_BRAIN_TANK
-				If target <> Null And Not target.dead()
+				If outside_arena()
+					avatar.drive( 1.0 )
+					Return
+				Else If target <> Null And Not target.dead()
 					'if it can see the target, then..
 					If (now() - last_look_target_ts >= look_target_delay)
 						sighted_target = see_target()

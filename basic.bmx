@@ -109,6 +109,12 @@ Type POINT Extends MANAGED_OBJECT
 		Return ATan2( other.y-pos_y, other.x-pos_x )
 	End Method
 	
+	Method add_pos:POINT( delta_pos_x#, delta_pos_y# )
+		Local p:POINT = Copy_POINT( Self )
+		p.pos_x :+ delta_pos_x; p.pos_y :+ delta_pos_y
+		Return p
+	End Method
+	
 End Type
 
 Function Create_POINT:POINT( ..
@@ -127,12 +133,27 @@ ang_acc# = 0.0 )
 	p.ang_acc = ang_acc
 	Return p
 End Function
+
+Function Copy_POINT:POINT( other:POINT )
+	Return Create_POINT( ..
+		other.pos_x, other.pos_y, ..
+		other.ang, ..
+		other.vel_x, other.vel_y, ..
+		other.ang_vel, ..
+		other.acc_x, other.acc_y, ..
+		other.ang_acc )
+End Function
 '______________________________________________________________________________
 'vector & angle functions
 Function angle_sum#( a1#, a2# )
 	Local a# = (a1 + a2) Mod 360
 	If a < 0 Then Return a + 360 ..
 	Else          Return a
+End Function
+Function angle_diff#( a1#, a2# )
+	Local a# = (a1 - a2) Mod 360
+	If a >= 0 Then Return a ..
+	Else           Return a + 360
 End Function
 Function vector_length#( vx#, vy# )
 	Return Sqr( Pow(vx,2) + Pow(vy,2) )
@@ -155,11 +176,6 @@ End Function
 Function polar_to_cartesian( r#, a#, x# Var, y# Var )
 	x = r*Cos( a )
 	y = r*Sin( a )
-End Function
-Function angle_diff#( a1#, a2# )
-	Local a# = (a1 - a2) Mod 360
-	If a >= 0 Then Return a ..
-	Else           Return a + 360
 End Function
 '______________________________________________________________________________
 Function round_to_nearest#( x#, interval# )
@@ -232,6 +248,12 @@ Type cVEC 'cartesian coordinate system 2D vector
 		Return ATan2( y, x )
 	End Method
 End Type
+
+Function Create_cVEC:cVEC( x#, y# )
+	Local v:cVEC = New cVEC
+	v.x = x; v.y = y
+	Return v
+End Function
 '______________________________________________________________________________
 Type pVEC 'polar coordinate system 2D vector
 	
@@ -257,6 +279,12 @@ Type pVEC 'polar coordinate system 2D vector
 		Return (r * Sin( a ))
 	End Method
 End Type
+
+Function Create_pVEC:pVEC( r#, a# )
+	Local v:pVEC = New pVEC
+	v.r = r; v.a = a
+	Return v
+End Function
 
 '______________________________________________________________________________
 Const RANGE_DISTRIBUTION_FLAT% = 0

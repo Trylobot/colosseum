@@ -329,7 +329,8 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Method add_emitter:EMITTER(	other_em:EMITTER, event% )
-		Local em:EMITTER = Copy_EMITTER( other_em,, Self )
+		Local em:EMITTER = Copy_EMITTER( other_em )
+		em.parent = Self
 		em.trigger_event = event
 		Select event
 			Case EVENT_DRIVE_FORWARD

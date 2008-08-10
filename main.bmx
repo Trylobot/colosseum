@@ -41,6 +41,9 @@ Repeat
 	Cls
 	draw_all()
 	play_all()
+?Debug
+	debug_complex_agent_emitters()
+?
 	Flip( 1 )
 	
 Until AppTerminate()
