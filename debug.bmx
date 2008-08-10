@@ -43,7 +43,7 @@ Function show_level_info()
 End Function
 '______________________________________________________________________________
 Function debug_control_brain()
-	If KeyHit( KEY_O ) Then FLAG_debug_overlay = Not FLAG_debug_overlay 
+	If KeyHit( KEY_TILDE ) Then FLAG_debug_overlay = Not FLAG_debug_overlay 
 	If FLAG_debug_overlay
 		show_db_pathing_grid()
 		Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
@@ -81,13 +81,13 @@ Function debug_control_brain()
 				End If
 				
 				'manipulate by keyboard
-				If KeyDown( KEY_T )
+				If KeyDown( KEY_1 )
 					cb.target = player
 				End If
-				If KeyDown( KEY_H )
+				If KeyDown( KEY_2 )
 					cb.path = cb.get_path_to_target()
 				End If
-				If KeyDown( KEY_P )
+				If KeyDown( KEY_3 )
 					cb.see_target()
 				End If
 				
@@ -112,7 +112,12 @@ Function show_db_pathing_grid()
 	Next
 	
 	'manipulate by keyboard
-	If KeyHit( KEY_Q ) Then load_next_level()
+	If KeyDown( KEY_EQUALS )
+		load_next_level()
+	Else If KeyDown( KEY_MINUS ) And player_level >= 1
+		player_level :- 1
+		load_level( player_level )
+	End If
 End Function
 '______________________________________________________________________________
 Function show_db_path( db_path:TList )

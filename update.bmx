@@ -33,7 +33,8 @@ Function update_all()
 			End If
 		End If
 		'if there are no more enemies this level
-		If level_enemies_remaining = 0
+		If level_enemies_remaining = 0 ..
+		Or (level_enemies_remaining > 0 And hostile_agent_list.Count() = 0 And enemy_spawn_queue.IsEmpty() And cur_squad = Null)
 			FLAG_battle_in_progress = False
 			If hostile_doors_status = DOOR_STATUS_OPEN Then activate_doors( ALIGNMENT_HOSTILE )
 			level_passed_ts = now()
