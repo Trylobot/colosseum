@@ -40,6 +40,12 @@ End Function
 Function show_level_info()
 	debug_drawtext "level_enemies_remaining -> "+level_enemies_remaining
 	debug_drawtext "hostile_agent_list.Count() -> "+hostile_agent_list.Count()
+	
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	For Local p:POINT = EachIn enemy_turret_anchors
+		DrawOval( p.pos_x - 4,p.pos_y - 4, 8,8 )
+	Next
 End Function
 '______________________________________________________________________________
 Function debug_control_brain()

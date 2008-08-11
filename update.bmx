@@ -37,7 +37,6 @@ Function update_all()
 		Or (level_enemies_remaining > 0 And hostile_agent_list.Count() = 0 And enemy_spawn_queue.IsEmpty() And cur_squad = Null)
 			FLAG_battle_in_progress = False
 			If hostile_doors_status = DOOR_STATUS_OPEN Then activate_doors( ALIGNMENT_HOSTILE )
-			level_passed_ts = now()
 			FLAG_spawn_enemies = False
 		End If
 		'if the battle is over, and waiting for player to exit arena, and player has exited the arena
@@ -45,6 +44,7 @@ Function update_all()
 			FLAG_waiting_for_player_to_exit_arena = False
 			FLAG_player_in_locker = True
 			'FLAG_player_engine_running = False
+			level_passed_ts = now()
 			load_next_level()
 		End If
 		

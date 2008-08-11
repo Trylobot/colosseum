@@ -16,20 +16,20 @@ Global enemy_spawn_points:POINT[] = [ ..
 	Create_POINT( Floor(1.5*arena_offset + arena_w + arena_offset/3), Floor(arena_offset + arena_h/2), 180 ) ]
 
 'Turret anchor points (6x)
-Global enemy_turret_anchors:POINT[] = New POINT[4]
-'Global enemy_turret_anchors:POINT[] = New POINT[12]
+'Global enemy_turret_anchors:POINT[] = New POINT[4]
+Global enemy_turret_anchors:POINT[] = New POINT[12]
 	enemy_turret_anchors[ 0] = Create_POINT( Floor(arena_offset+arena_offset*1), Floor(arena_offset+arena_offset*1), 45 )
 	enemy_turret_anchors[ 1] = Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*1), 135 )
 	enemy_turret_anchors[ 2] = Create_POINT( Floor(arena_offset+arena_offset*1), Floor((arena_offset+arena_h)-arena_offset*1), -45 )
 	enemy_turret_anchors[ 3] = Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor((arena_offset+arena_h)-arena_offset*1), -135 )
-'	enemy_turret_anchors[ 4] = enemy_turret_anchors[0].add_pos( arena_offset, 0 )
-'	enemy_turret_anchors[ 5] = enemy_turret_anchors[0].add_pos( 0, arena_offset )
-'	enemy_turret_anchors[ 6] = enemy_turret_anchors[0].add_pos( -arena_offset, 0 )
-'	enemy_turret_anchors[ 7] = enemy_turret_anchors[0].add_pos( 0, arena_offset )
-'	enemy_turret_anchors[ 8] = enemy_turret_anchors[0].add_pos( arena_offset, 0 )
-'	enemy_turret_anchors[ 9] = enemy_turret_anchors[0].add_pos( 0, -arena_offset )
-'	enemy_turret_anchors[10] = enemy_turret_anchors[0].add_pos( -arena_offset, 0 )
-'	enemy_turret_anchors[11] = enemy_turret_anchors[0].add_pos( 0, -arena_offset )
+	enemy_turret_anchors[ 4] = enemy_turret_anchors[0].add_pos( arena_offset, 0 )
+	enemy_turret_anchors[ 5] = enemy_turret_anchors[0].add_pos( 0, arena_offset )
+	enemy_turret_anchors[ 6] = enemy_turret_anchors[1].add_pos( -arena_offset, 0 )
+	enemy_turret_anchors[ 7] = enemy_turret_anchors[1].add_pos( 0, arena_offset )
+	enemy_turret_anchors[ 8] = enemy_turret_anchors[2].add_pos( arena_offset, 0 )
+	enemy_turret_anchors[ 9] = enemy_turret_anchors[2].add_pos( 0, -arena_offset )
+	enemy_turret_anchors[10] = enemy_turret_anchors[3].add_pos( -arena_offset, 0 )
+	enemy_turret_anchors[11] = enemy_turret_anchors[3].add_pos( 0, -arena_offset )
 
 Global anchor_deck%[] = New Int[ enemy_turret_anchors.Length ]
 Global anchor_i%
