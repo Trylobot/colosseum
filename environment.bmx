@@ -108,7 +108,6 @@ Function spawn_from_squad( squad:TList ) 'this function should be treated as a r
 	last_spawned_enemy.auto_manage( ALIGNMENT_HOSTILE )
 	'is this agent a turret
 	If last_spawned_enemy.ai_type = AI_BRAIN_TURRET And cur_turret_anchor <> Null
-DebugStop
 		last_spawned_enemy.pos_x = cur_turret_anchor.pos_x
 		last_spawned_enemy.pos_y = cur_turret_anchor.pos_y
 		last_spawned_enemy.ang = cur_turret_anchor.ang

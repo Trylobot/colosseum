@@ -44,6 +44,16 @@ Function draw_all()
 		For Local proj:PROJECTILE = EachIn projectile_list
 			proj.draw()
 		Next
+		SetRotation( 0 )
+		SetScale( 1, 1 )
+		SetColor( 255, 255, 255 )
+		'pickups
+		For Local pkp:PICKUP = EachIn pickup_list
+			pkp.draw()
+		Next
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetScale( 1, 1 )
 		'hostile agents
 		For Local hostile:COMPLEX_AGENT = EachIn hostile_agent_list
 			hostile.draw()
@@ -60,16 +70,11 @@ Function draw_all()
 		SetRotation( 0 )
 		SetScale( 1, 1 )
 		SetColor( 255, 255, 255 )
-		'pickups
-		For Local pkp:PICKUP = EachIn pickup_list
-			pkp.draw()
-		Next
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		SetScale( 1, 1 )
 		
 		'arena foreground
 		draw_arena_fg()
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
 		
 		'aiming reticle
 		SetRotation( player.turrets[0].ang )
@@ -184,22 +189,20 @@ Function draw_arena_fg()
 	Next
 	
 	'use battle_toggle_ts and arena_lights_fade_time to set alpha
-	If Not FLAG_battle_in_progress
-		SetScale( 1, 1 )
-		SetRotation( 0 )
-		SetColor( 0, 0, 0 )
-		SetAlpha( 0.4 )
-		DrawRect( 0,0, arena_offset*2+arena_w,arena_offset*2+arena_h )
-		SetColor( 255, 255, 255 )
-		SetAlpha( 0.2 )
-		SetBlend( LIGHTBLEND )
-		DrawImage( img_halo, player.pos_x,player.pos_y )
-		If Not FLAG_player_in_locker
-			SetScale( 2, 2 )
-			DrawImage( img_halo, player_spawn_point.pos_x,player_spawn_point.pos_y )
-		End If
-		SetBlend( ALPHABLEND )
+	SetScale( 1, 1 )
+	SetRotation( 0 )
+	SetColor( 0, 0, 0 )
+	SetAlpha( 0.4*time_alpha_pct( battle_toggle_ts, arena_lights_fade_time, Not FLAG_battle_in_progress ))
+	DrawRect( 0,0, arena_offset*2+arena_w,arena_offset*2+arena_h )
+	SetColor( 255, 255, 255 )
+	SetAlpha( 0.2*time_alpha_pct( battle_toggle_ts, arena_lights_fade_time, Not FLAG_battle_in_progress ))
+	SetBlend( LIGHTBLEND )
+	DrawImage( img_halo, player.pos_x,player.pos_y )
+	If Not FLAG_player_in_locker
+		SetScale( 2, 2 )
+		DrawImage( img_halo, player_spawn_point.pos_x,player_spawn_point.pos_y+arena_offset/3 )
 	End If
+	SetBlend( ALPHABLEND )
 End Function
 '______________________________________________________________________________
 Function draw_walls( walls:TList )

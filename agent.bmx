@@ -59,7 +59,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 		End If
 		For Local em:EMITTER = EachIn death_emitters
 			em.enable( MODE_ENABLED_WITH_COUNTER )
-			While em.ready()
+			While em.ready() And em.is_enabled()
 				em.update()
 				em.emit()
 			End While
