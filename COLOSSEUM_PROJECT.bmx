@@ -44,12 +44,12 @@ Import BRL.Timer
 'GUI
 'guid:e2f17149_9a68_460c_a3de_03fd0d792659
 Private
-Type z_e2f17149_9a68_460c_a3de_03fd0d792659_3_0 Abstract  'Resource folder
+TYPE z_e2f17149_9a68_460c_a3de_03fd0d792659_3_0 abstract  'Resource folder
 End Type
 
 
-Type z_blide_bge2f17149_9a68_460c_a3de_03fd0d792659 Abstract
-    Const Name:String = "Colosseum" 'This string contains the name of the program
+TYPE z_blide_bge2f17149_9a68_460c_a3de_03fd0d792659 Abstract
+    Const Name:string = "Colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
     Const MinorVersion:Int = 2  'This Const contains the minor version number of the program
     Const Revision:Int =  5  'This Const contains the revision number of the current program version
@@ -73,7 +73,7 @@ Type z_blide_bge2f17149_9a68_460c_a3de_03fd0d792659 Abstract
     ?debug
     Const DebugOn : Int = True    'This const will have the integer value of TRUE if the application was build on debug mode, or false if it was build on release mode
     ?
-    ?Not debug
+    ?not debug
     Const DebugOn : Int = False
     ?
 EndType
