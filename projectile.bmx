@@ -108,11 +108,10 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	End Method
 	
 	Method impact()
-DebugStop
 		'payload emitters
 		For Local em:EMITTER = EachIn emitter_list_payload
 			em.enable( MODE_ENABLED_WITH_COUNTER )
-			While em.ready()
+			While em.is_enabled() And em.ready()
 				em.update()
 				em.emit()
 			End While

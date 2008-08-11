@@ -1,15 +1,11 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
 		
 		[Mini to-do]
-			rocket turret is having trouble shooting dunno why
-			turret spawn points are somewhat messed
 			agent/door collisions not working
 			
 			mouse turret control, mouse-click tank control
 			when returning to locker, put a spotlight on it, and darken the rest of the arena.
 			animated particles for agent death
-			create levels (walls, squads)
-			laser needs payload emitters (and images)
 			
 	_ allow RANGE objects to have mathematical equations to calculate the distribution of returned values
 	_ take mini-snapshots of kills, and display them in an album at the end of the level.

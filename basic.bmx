@@ -24,6 +24,22 @@ Function avg#( a#, b# )
 	Return (a + b)/2.0
 End Function
 '______________________________________________________________________________
+Function time_alpha_pct#( ts%, time%, in% = True )
+	If in 'fade in
+		If (now() - ts) <= time
+			Return (Float(now() - ts) / Float(time))
+		Else
+			Return 1.0
+		End If
+	Else 'fade out
+		If (now() - ts) <= time
+			Return (1.0 - (Float(now() - ts) / Float(time)))
+		Else
+			Return 0.0
+		End If
+	End If
+End Function
+'______________________________________________________________________________
 Type MANAGED_OBJECT
 	
 	Field name$

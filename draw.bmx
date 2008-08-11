@@ -12,6 +12,7 @@ Global str$
 '______________________________________________________________________________
 'Drawing to Screen
 Function draw_all()
+	SetBlend( ALPHABLEND )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetAlpha( 1 )
@@ -181,6 +182,24 @@ Function draw_arena_fg()
 	For Local w:WIDGET = EachIn environmental_widget_list
 		w.draw()
 	Next
+	
+	'use battle_toggle_ts and arena_lights_fade_time to set alpha
+	If Not FLAG_battle_in_progress
+		SetScale( 1, 1 )
+		SetRotation( 0 )
+		SetColor( 0, 0, 0 )
+		SetAlpha( 0.4 )
+		DrawRect( 0,0, arena_offset*2+arena_w,arena_offset*2+arena_h )
+		SetColor( 255, 255, 255 )
+		SetAlpha( 0.2 )
+		SetBlend( LIGHTBLEND )
+		DrawImage( img_halo, player.pos_x,player.pos_y )
+		If Not FLAG_player_in_locker
+			SetScale( 2, 2 )
+			DrawImage( img_halo, player_spawn_point.pos_x,player_spawn_point.pos_y )
+		End If
+		SetBlend( ALPHABLEND )
+	End If
 End Function
 '______________________________________________________________________________
 Function draw_walls( walls:TList )

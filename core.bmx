@@ -24,6 +24,8 @@ Global FLAG_player_engine_running% = False
 Global FLAG_player_in_locker% = False
 Global FLAG_waiting_for_player_to_enter_arena% = False
 Global FLAG_battle_in_progress% = False
+Global battle_toggle_ts%
+Global arena_lights_fade_time% = 1000
 Global FLAG_waiting_for_player_to_exit_arena% = False
 Global FLAG_spawn_enemies% = False
 

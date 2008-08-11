@@ -100,7 +100,7 @@ Type EMITTER extends MANAGED_OBJECT
 	End Method
 	
 	Method ready%()
-		Return (now() - last_emit_ts > interval_cur)
+		Return (now() - last_emit_ts >= interval_cur)
 	End Method
 	
 	'like the fire() method of the TANK type, this method should be treated like a request.

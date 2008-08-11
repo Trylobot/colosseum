@@ -28,6 +28,7 @@ Function update_all()
 				FLAG_waiting_for_player_to_enter_arena = False
 				If hostile_doors_status = DOOR_STATUS_CLOSED Then activate_doors( ALIGNMENT_HOSTILE )
 				FLAG_battle_in_progress = True
+				battle_toggle_ts = now()
 				FLAG_waiting_for_player_to_exit_arena = True
 				FLAG_spawn_enemies = True
 			End If
@@ -36,6 +37,7 @@ Function update_all()
 		If level_enemies_remaining = 0 ..
 		Or (level_enemies_remaining > 0 And hostile_agent_list.Count() = 0 And enemy_spawn_queue.IsEmpty() And cur_squad = Null)
 			FLAG_battle_in_progress = False
+			battle_toggle_ts = now()
 			If hostile_doors_status = DOOR_STATUS_OPEN Then activate_doors( ALIGNMENT_HOSTILE )
 			FLAG_spawn_enemies = False
 		End If
