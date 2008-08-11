@@ -21,10 +21,8 @@ Graphics( window_w, window_h )
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
-'?Debug
-'debug_atan2()
-'End
-'?
+?Debug
+?
 
 '______________________________________________________________________________
 'MAIN
