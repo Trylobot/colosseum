@@ -208,7 +208,7 @@ Type COMPLEX_AGENT Extends AGENT
 			Local speed# = vector_length( vel_x, vel_y )
 			Local speed_pct# = speed / 3.0
 			If speed_pct <> 0 Then left_track.frame_delay = 1/speed_pct Else left_track.frame_delay = INFINITY
-			If speed_pct <> 0 Then right_track.frame_delay = -(1/speed_pct) Else left_track.frame_delay = INFINITY
+			If speed_pct <> 0 Then right_track.frame_delay = 1/speed_pct Else left_track.frame_delay = INFINITY
 			'left_track.frame_delay = 1 - speed / 2.0
 			'right_track.frame_delay = -(1 - speed / 2.0)
 			'left_track.frame_delay_pct = 1.0/(driving_force.control_pct + 0.00001)
