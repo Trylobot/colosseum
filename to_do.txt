@@ -1,12 +1,13 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
 		
-		[Mini to-do]
-			agent/door collisions not working
+	[Mini to-do]
+		agent/door collisions not working
+		
+		mouse turret control, mouse-click tank control
+		when returning to locker, put a spotlight on it, and darken the rest of the arena.
+		animated particles for agent death
 			
-			mouse turret control, mouse-click tank control
-			when returning to locker, put a spotlight on it, and darken the rest of the arena.
-			animated particles for agent death
-			
+	_ scriptable AI.
 	_ allow RANGE objects to have mathematical equations to calculate the distribution of returned values
 	_ take mini-snapshots of kills, and display them in an album at the end of the level.
 			(experimental!)
@@ -136,7 +137,7 @@
 			application: obviously, to make the game world seem more "real"
 	X create gibs for enemies
 	X make gibs spawn as particles when enemies die
-	O create scars
+	_ create scars
 	X create "shells" to be ejected from the ejector port of turret object
 	X create blocks for static environments that can be collided with
 	X create example arenas

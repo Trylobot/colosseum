@@ -91,7 +91,7 @@ Function draw_all()
 			DrawRect( 0, 0, window_w, window_h )
 			SetColor( 255, 255, 255 )
 			SetAlpha( 1 )
-			DrawImage( img_help, window_w/2 - img_help.width/2, window_h/2 - img_help.height/2 )
+			DrawImage( img_help, arena_offset + arena_w/2 - img_help.width/2, arena_offset + arena_h/2 - img_help.height/2 )
 		'help reminder
 		Else
 			SetImageFont( consolas_normal_12 )

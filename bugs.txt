@@ -1,4 +1,6 @@
 [COLOSSEUM - KNOWN BUG LIST] (F-fixed, O-in progress)
+	_ Doors have inverse logic after starting a new game, after one has been started already
+	_ Tank tracks animate incorrectly
 	_ PROJECTILE explosive forces are not working properly (ie, at all)
 	_ PATH_QUEUE needs some TLC (pop_root)
 	

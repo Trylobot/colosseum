@@ -11,18 +11,22 @@ Global particle_lists:TList = CreateList()
 Global particle_list_background:TList = CreateList(); particle_lists.AddLast( particle_list_background )
 Global particle_list_foreground:TList = CreateList(); particle_lists.AddLast( particle_list_foreground )
 
-Const LAYER_FOREGROUND% = 0
-Const LAYER_BACKGROUND% = 1
+Const LAYER_UNSPECIFIED% = 0
+Const LAYER_FOREGROUND% = 1
+Const LAYER_BACKGROUND% = 2
 
 Const PARTICLE_TYPE_IMG% = 0
 Const PARTICLE_TYPE_ANIM% = 1
 Const PARTICLE_TYPE_STR% = 2
 
+Const ANIMATION_DIRECTION_FORWARDS% = 0
+Const ANIMATION_DIRECTION_BACKWARDS% = 1
+
 Type PARTICLE Extends POINT
 
 	Field particle_type% '{single_image|animated|string}
 	Field img:TImage, frame% 'image to be drawn, and the current frame index for animation and randomly varied particle sets
-	Field max_frame_delay% 'maximum delay between frames (animated only)
+	Field frame_delay% 'actual delay until next frame, can be INFINITE
 	Field str$, font:TImageFont 'text string and font for STR particles
 	Field layer% 'layer {foreground|background}
 	Field retain% 'copy particle to background on death?
@@ -36,7 +40,7 @@ Type PARTICLE Extends POINT
 	Field alpha_delta# 'alpha rate of change with respect to time
 	Field scale# 'scale coefficient
 	Field scale_delta# 'scale coefficient rate of change with respect to time
-	Field frame_delay_pct# 'percentage from 0.0 to 1.0 of the frame delay to be using (animated_only, default 1.0)
+	Field animation_direction% '{forwards|backwards}
 	Field last_frame_advance_ts% 'timestamp of last frame advance
 	Field text_width#, text_height# 'dimensions of text (STR particles only)
 	
@@ -49,9 +53,9 @@ Type PARTICLE Extends POINT
 	Function Create:Object( ..
 	particle_type%, ..
 	img:TImage = Null, frame% = 0, ..
-	max_frame_delay% = 250, ..
+	frame_delay% = INFINITY, ..
 	str$ = Null, font:TImageFont = Null, ..
-	layer%, ..
+	layer% = LAYER_UNSPECIFIED, ..
 	retain% = False, ..
 	frictional_coefficient# = 0.0, ..
 	red# = 255, green# = 255, blue# = 255, ..
@@ -70,7 +74,6 @@ Type PARTICLE Extends POINT
 		'static fields
 		p.particle_type = particle_type
 		p.img = img; p.frame = frame
-		p.max_frame_delay = max_frame_delay
 		p.str = str; p.font = font
 		If str <> Null And font <> Null
 			SetImageFont( font )
@@ -101,7 +104,7 @@ Type PARTICLE Extends POINT
 	Method clone:PARTICLE( new_frame% = -1 )
 		If new_frame < 0 Then new_frame = frame
 		Return PARTICLE( PARTICLE.Create( ..
-			particle_type, img, new_frame, max_frame_delay, str, font, layer, retain, frictional_coefficient, red, green, blue, red_delta, green_delta, blue_delta, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
+			particle_type, img, new_frame, frame_delay, str, font, layer, retain, frictional_coefficient, red, green, blue, red_delta, green_delta, blue_delta, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
 	End Method
 	
 	Method update()
@@ -118,7 +121,7 @@ Type PARTICLE Extends POINT
 		'color
 		red :+ red_delta; green :+ green_delta; blue :+ blue_delta
 		'animation
-		If particle_type = PARTICLE_TYPE_ANIM And frame_delay_pct <> 0 And (now() - last_frame_advance_ts >= (Abs(frame_delay_pct)*max_frame_delay))
+		If particle_type = PARTICLE_TYPE_ANIM And frame_delay <> INFINITY And (now() - last_frame_advance_ts) >= frame_delay
 			advance_frame()
 		End If
 	End Method
@@ -154,17 +157,13 @@ Type PARTICLE Extends POINT
 	
 	Method advance_frame()
 		last_frame_advance_ts = now()
-		If frame_delay_pct > 0 'animate forwards
+		If animation_direction = ANIMATION_DIRECTION_FORWARDS
 			frame :+ 1
 			If frame >= img.frames.Length - 1 Then frame = 0
-		Else If frame_delay_pct < 0 'animate backwards
+		Else If animation_direction = ANIMATION_DIRECTION_BACKWARDS
 			frame :- 1
 			If frame < 0 Then frame = img.frames.Length - 1
 		End If
-	End Method
-	
-	Method control_animation( control# )
-		frame_delay_pct = 1.0 - control
 	End Method
 	
 	Method dead%()

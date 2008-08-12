@@ -43,6 +43,9 @@ Type COMPLEX_AGENT Extends AGENT
 	Field widget_list_above:TList
 	Field stickies:TList
 	
+	Field left_track:PARTICLE
+	Field right_track:PARTICLE
+	
 	Method New()
 		drive_forward_emitters = CreateList()
 		drive_backward_emitters = CreateList()
@@ -147,6 +150,15 @@ Type COMPLEX_AGENT Extends AGENT
 			c.add_widget( other_w ).attach_at( other_w.attach_x, other_w.attach_y )
 		Next
 		
+		If other.right_track <> Null
+			c.right_track = other.right_track.clone()
+			c.right_track.parent = c
+		End If
+		If other.left_track <> Null
+			c.left_track = other.left_track.clone()
+			c.left_track.parent = c
+		End If
+		
 		If      political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..
 		Else If political_alignment = ALIGNMENT_HOSTILE  Then c.add_me( hostile_agent_list )
 		Return c
@@ -190,6 +202,21 @@ Type COMPLEX_AGENT Extends AGENT
 				em.emit()
 			Next
 		Next
+		
+		'tracks
+		If right_track <> Null And left_track <> Null
+			Local speed# = vector_length( vel_x, vel_y )
+			Local speed_pct# = speed / 3.0
+			If speed_pct <> 0 Then left_track.frame_delay = 1/speed_pct Else left_track.frame_delay = INFINITY
+			If speed_pct <> 0 Then right_track.frame_delay = -(1/speed_pct) Else left_track.frame_delay = INFINITY
+			'left_track.frame_delay = 1 - speed / 2.0
+			'right_track.frame_delay = -(1 - speed / 2.0)
+			'left_track.frame_delay_pct = 1.0/(driving_force.control_pct + 0.00001)
+			'right_track.frame_delay_pct = 1.0/-(driving_force.control_pct + 0.00001)
+			
+			left_track.update()
+			right_track.update()
+		End If
 	End Method
 	
 	Method draw()
@@ -201,7 +228,14 @@ Type COMPLEX_AGENT Extends AGENT
 		SetAlpha( 1 )
 		SetScale( 1, 1 )
 		SetRotation( ang )
+		
+		'chassis
 		If img <> Null Then DrawImage( img, pos_x, pos_y )
+		'tracks
+		If right_track <> Null And left_track <> Null
+			left_track.draw()
+			right_track.draw()
+		End If
 		
 		For Local t:TURRET = EachIn turrets
 			t.draw()
