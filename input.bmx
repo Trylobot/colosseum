@@ -23,6 +23,9 @@ Function get_all_input()
 				menu_enabled[5] = False
 				menu_enabled[6] = False
 				menu_enabled[7] = False
+				'clear keystate listeners
+				KeyHit( KEY_DOWN )
+				KeyHit( KEY_UP )
 			End If
 		Else If FLAG_game_in_progress 'And FLAG_in_menu
 			menu_command( MENU_RESUME )

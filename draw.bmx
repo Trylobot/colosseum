@@ -75,6 +75,7 @@ Function draw_all()
 		draw_arena_fg()
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
+		SetScale( 1, 1 )
 		
 		'aiming reticle
 		SetRotation( player.turrets[0].ang )
@@ -198,10 +199,10 @@ Function draw_arena_fg()
 	SetAlpha( 0.2*time_alpha_pct( battle_toggle_ts, arena_lights_fade_time, Not FLAG_battle_in_progress ))
 	SetBlend( LIGHTBLEND )
 	DrawImage( img_halo, player.pos_x,player.pos_y )
-	If Not FLAG_player_in_locker
+'	If Not FLAG_player_in_locker
 		SetScale( 2, 2 )
 		DrawImage( img_halo, player_spawn_point.pos_x,player_spawn_point.pos_y+arena_offset/3 )
-	End If
+'	End If
 	SetBlend( ALPHABLEND )
 End Function
 '______________________________________________________________________________

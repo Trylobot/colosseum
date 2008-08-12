@@ -13,10 +13,6 @@ Global FLAG_debug_overlay% = False
 'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
 'Const PATH_UNSET% = 1000
 'Global path_type% = PATH_UNSET, mouse_path_type%
-Global global_start:CELL
-Global global_goal:CELL
-Global db_path:TList
-'
 'Global p:POINT = Create_POINT( arena_offset+arena_w/2, arena_offset+arena_h/2, -90 )
 'Global w:WIDGET[] = New WIDGET[2]
 'w[0] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[0].parent = p; w[0].attach_at( arena_offset/2, -arena_offset/2, 180 - 45 )
@@ -140,14 +136,18 @@ Function show_db_path( db_path:TList )
 		v0.x = v1.x; v0.y = v1.y
 	Next
 	'start and goal
-	If global_start <> Null
-		SetColor( 64, 255, 64 ); SetAlpha( 1 )
-		DrawRect( global_start.col*cell_size + 1, global_start.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-	End If
-	If global_goal <> Null
-		SetColor( 64, 64, 255 ); SetAlpha( 1 )
-		DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-	End If
+	Local start:cVEC = cVEC( db_path.First() )
+	Local goal:cVEC = cVEC( db_path.Last() )
+	SetColor( 64, 255, 64 ); SetAlpha( 1 )
+	DrawRect( start.x - cell_size + 1, start.y - cell_size + 1, cell_size - 2, cell_size - 2 )
+	SetColor( 64, 64, 255 ); SetAlpha( 1 )
+	DrawRect( goal.x - cell_size + 1, goal.y - cell_size + 1, cell_size - 2, cell_size - 2 )
+End Function
+
+Function test_ang_wrap()
+	For Local i# = -750.0 To 750.0 Step 10
+		If Abs( ang_wrap( i )) > 180 Then RuntimeError( "ang_wrap() test failed" )
+	Next
 End Function
 ''______________________________________________________________________________
 'Function debug_atan2()

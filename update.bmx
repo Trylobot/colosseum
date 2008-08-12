@@ -24,7 +24,8 @@ Function update_all()
 					If friendly_doors_status = DOOR_STATUS_CLOSED Then activate_doors( ALIGNMENT_FRIENDLY )
 				End If
 			'else, player has entered the arena
-			Else 'player_spawn_point.dist_to(player) > (arena_offset/2.0)
+			Else 'player_spawn_point.dist_to(player) >= (arena_offset/2.0)
+				FLAG_player_in_locker = False
 				FLAG_waiting_for_player_to_enter_arena = False
 				If hostile_doors_status = DOOR_STATUS_CLOSED Then activate_doors( ALIGNMENT_HOSTILE )
 				FLAG_battle_in_progress = True

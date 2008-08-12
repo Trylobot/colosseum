@@ -111,7 +111,7 @@ Type POINT Extends MANAGED_OBJECT
 		'angular velocity
 		ang_vel :+ ang_acc
 		'orientation
-		ang = angle_sum( ang, ang_vel )
+		ang = ang_sum( ang, ang_vel )
 	End Method
 	
 	Method dist_to#( other:POINT )
@@ -164,22 +164,30 @@ Function Copy_POINT:POINT( other:POINT )
 End Function
 '______________________________________________________________________________
 'vector & angle functions
-Function angle_sum#( a1#, a2# )
-	Local a# = (a1 + a2) Mod 360
-	If a < 0 Then Return a + 360 ..
-	Else          Return a
+Function ang_wrap#( a# ) 'forces the angle into the range [-180,180]
+	If a < -180
+		Local mult% = Abs( (a-180) / 360 )
+		a :+ mult * 360
+	Else If a > 180
+		Local mult% = Abs( (a+180) / 360 )
+		a :- mult * 360
+	End If
+	Return a
 End Function
-Function angle_diff#( a1#, a2# )
-	Local a# = (a1 - a2) Mod 360
-	If a >= 0 Then Return a ..
-	Else           Return a + 360
+Function ang_sum#( a1#, a2# )
+	Return ang_wrap( a1 + a2 )
 End Function
+Function ang_diff#( a1#, a2# )
+	Return ang_wrap( a1 - a2 )
+End Function
+
 Function vector_length#( vx#, vy# )
 	Return Sqr( Pow(vx,2) + Pow(vy,2) )
 End Function
 Function vector_angle#( vx#, vy# )
 	Return ATan2( vy, vx )
 End Function
+
 Function vector_diff_length#( ax#, ay#, bx#, by# ) 'distance /a/ and /b/
 	Local dx# = bx - ax, dy# = by - ay
 	Return Sqr( Pow(dx,2) + Pow(dy,2) )
@@ -188,6 +196,7 @@ Function vector_diff_angle#( ax#, ay#, bx#, by# ) 'angle of line connecting /a/ 
 	Local dx# = bx - ax, dy# = by - ay
 	Return ATan2( dy, dx )
 End Function
+
 Function cartesian_to_polar( x#, y#, r# Var, a# Var )
 	r = Sqr( Pow(x,2) + Pow(y,2) )
 	a = ATan2( y, x )

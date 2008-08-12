@@ -254,7 +254,6 @@ complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.
 	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track = particle_archetype[PARTICLE_INDEX_LIGHT_TANK_TRACK].clone()
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track.parent = complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK]
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track.ang = 180
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 
 ' max speed = 1.0
 complex_agent_archetype[PLAYER_INDEX_LASER_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] ))

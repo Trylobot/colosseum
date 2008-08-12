@@ -169,6 +169,13 @@ Type COMPLEX_AGENT Extends AGENT
 	Method update()
 		'update agent variables
 		Super.update()
+		'smooth out velocity
+		Local vel# = vector_length( vel_x, vel_y )
+		If vel <= 0.00001
+			vel_x = 0
+			vel_y = 0
+		End If
+		
 		'turrets
 		For Local t:TURRET = EachIn turrets
 			t.update()
@@ -206,19 +213,36 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 		
 		'tracks
+		'right side is "backwards" of normal
 		If right_track <> Null And left_track <> Null
-			Local speed# = vector_length( vel_x, vel_y )
-			Local speed_pct# = speed / 3.0
-			If speed_pct = 0
-				left_track.frame_delay = INFINITY
-				right_track.frame_delay = INFINITY
-			Else
-				left_track.frame_delay = 2.5/speed_pct
-				right_track.frame_delay = 2.5/speed_pct
+			Local frame_delay# = INFINITY
+			Local vel_ang# = vector_angle( vel_x, vel_y )
+			If vel > 0.00001
+				If Abs( ang_diff( vel_ang, ang )) > 90
+					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
+					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
+					frame_delay = 20 * (1.0/vel)
+				Else
+					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
+					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
+					frame_delay = 20 * (1.0/vel)
+				End If
 			End If
-			
-			left_track.update()
+			If frame_delay >= 40 Or frame_delay = INFINITY
+				If ang_vel > 0.00001
+					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
+					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
+					frame_delay = 40 * (1.0/Abs(ang_vel))
+				Else If ang_vel < -0.00001
+					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
+					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
+					frame_delay = 40 * (1.0/Abs(ang_vel))
+				End If
+			End If
+			right_track.frame_delay = frame_delay
+			left_track.frame_delay = frame_delay
 			right_track.update()
+			left_track.update()
 		End If
 	End Method
 	

@@ -22,6 +22,8 @@ SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
 ?Debug
+'	test_ang_wrap()
+'	End
 ?
 
 '______________________________________________________________________________
@@ -40,7 +42,7 @@ Repeat
 	draw_all()
 	play_all()
 ?Debug
-debug_control_brain()
+If player <> Null Then debug_control_brain()
 ?
 	Flip( 1 )
 	
