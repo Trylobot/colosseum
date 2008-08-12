@@ -436,8 +436,10 @@ Type PATHING_STRUCTURE
 	End Method
 	
 	Method find_path_cells:TList( start:CELL, goal:CELL )
-'		global_start = start
-'		global_goal = goal
+?Debug
+		global_start = start
+		global_goal = goal
+?
 		set_g( start, 0 )
 		set_h( start, distance( start, goal ))
 		set_f_implicit( start )

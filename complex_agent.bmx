@@ -153,10 +153,12 @@ Type COMPLEX_AGENT Extends AGENT
 		If other.right_track <> Null
 			c.right_track = other.right_track.clone()
 			c.right_track.parent = c
+			c.right_track.animation_direction = other.right_track.animation_direction
 		End If
 		If other.left_track <> Null
 			c.left_track = other.left_track.clone()
 			c.left_track.parent = c
+			c.left_track.animation_direction = other.left_track.animation_direction
 		End If
 		
 		If      political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..
@@ -207,12 +209,13 @@ Type COMPLEX_AGENT Extends AGENT
 		If right_track <> Null And left_track <> Null
 			Local speed# = vector_length( vel_x, vel_y )
 			Local speed_pct# = speed / 3.0
-			If speed_pct <> 0 Then left_track.frame_delay = 1/speed_pct Else left_track.frame_delay = INFINITY
-			If speed_pct <> 0 Then right_track.frame_delay = 1/speed_pct Else left_track.frame_delay = INFINITY
-			'left_track.frame_delay = 1 - speed / 2.0
-			'right_track.frame_delay = -(1 - speed / 2.0)
-			'left_track.frame_delay_pct = 1.0/(driving_force.control_pct + 0.00001)
-			'right_track.frame_delay_pct = 1.0/-(driving_force.control_pct + 0.00001)
+			If speed_pct = 0
+				left_track.frame_delay = INFINITY
+				right_track.frame_delay = INFINITY
+			Else
+				left_track.frame_delay = 2.5/speed_pct
+				right_track.frame_delay = 2.5/speed_pct
+			End If
 			
 			left_track.update()
 			right_track.update()

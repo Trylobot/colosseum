@@ -38,8 +38,9 @@ Function debug_drawtext( message$ )
 End Function
 '______________________________________________________________________________
 Function show_level_info()
-	debug_drawtext "level_enemies_remaining -> "+level_enemies_remaining
-	debug_drawtext "hostile_agent_list.Count() -> "+hostile_agent_list.Count()
+	'debug_drawtext "level_enemies_remaining -> "+level_enemies_remaining
+	'debug_drawtext "hostile_agent_list.Count() -> "+hostile_agent_list.Count()
+	debug_drawtext "player speed -> "+vector_length( player.vel_x, player.vel_y )
 	
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )

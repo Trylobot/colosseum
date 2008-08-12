@@ -234,6 +234,7 @@ Global PLAYER_INDEX_LIGHT_TANK% = postfix_index()
 Global PLAYER_INDEX_LASER_TANK% = postfix_index()
 Global PLAYER_INDEX_MED_TANK% = postfix_index()
 
+' max speed = 1.0
 complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "light tank", img_player_tank_chassis, Null, AI_BRAIN_TANK, 0, 500, 800.0, 75.0, 2, 2, 75.0, 100.0 ))
 	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON], 0 ).attach_at( -5, 0 )
 	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN], 1 ).attach_at( -5, 0 )
@@ -255,6 +256,7 @@ complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track.ang = 180
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 
+' max speed = 1.0
 complex_agent_archetype[PLAYER_INDEX_LASER_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] ))
 	complex_agent_archetype[PLAYER_INDEX_LASER_TANK].name = "light tank/laser"
 	complex_agent_archetype[PLAYER_INDEX_LASER_TANK].turret_count = 1
@@ -264,6 +266,7 @@ complex_agent_archetype[PLAYER_INDEX_LASER_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.
 		complex_agent_archetype[PLAYER_INDEX_LASER_TANK].firing_state = [ 0 ]
 		complex_agent_archetype[PLAYER_INDEX_LASER_TANK].FLAG_increment_firing_group = [ False ]
 
+' max speed = 0.8
 complex_agent_archetype[PLAYER_INDEX_MED_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "medium tank", img_player_tank_chassis_med, Null, AI_BRAIN_TANK, 0, 750, 1200, 125.0, 3, 2, 100.0, 125.0 ))
 	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_LEFT], 0 ).attach_at( -9, 0 )
 	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON_RIGHT], 1 ).attach_at( -9, 0 )

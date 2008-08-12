@@ -13,7 +13,8 @@ Const UNSPECIFIED% = 0
 Const CONTROL_TYPE_HUMAN% = 1
 Const CONTROL_TYPE_AI% = 2
 Const INPUT_KEYBOARD% = 1
-Const INPUT_XBOX_360_CONTROLLER% = 2
+Const INPUT_KEYBOARD_MOUSE_HYBRID% = 2
+Const INPUT_XBOX_360_CONTROLLER% = 3
 Const AI_BRAIN_MR_THE_BOX% = 1
 Const AI_BRAIN_TURRET% = 2
 Const AI_BRAIN_SEEKER% = 3
@@ -202,8 +203,11 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					avatar.fire( 2 )
 				End If
 					
+			Case INPUT_KEYBOARD_MOUSE_HYBRID
+				'..?
+				
 			Case INPUT_XBOX_360_CONTROLLER
-				'...?
+				'..?
 			
 		End Select
 	End Method
