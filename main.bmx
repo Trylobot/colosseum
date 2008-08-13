@@ -21,11 +21,6 @@ Graphics( window_w, window_h )
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
-?Debug
-'	test_ang_wrap()
-'	End
-?
-
 '______________________________________________________________________________
 'MAIN
 Local before% = 0
@@ -42,7 +37,7 @@ Repeat
 	draw_all()
 	play_all()
 ?Debug
-If player <> Null Then debug_control_brain()
+If player <> Null Then debug_overlay()
 ?
 	Flip( 1 )
 	

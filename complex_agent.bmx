@@ -221,14 +221,14 @@ Type COMPLEX_AGENT Extends AGENT
 				If Abs( ang_diff( vel_ang, ang )) > 90
 					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
-					frame_delay = 20 * (1.0/vel)
+					frame_delay = 17.5 * (1.0/vel)
 				Else
 					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
-					frame_delay = 20 * (1.0/vel)
+					frame_delay = 17.5 * (1.0/vel)
 				End If
 			End If
-			If frame_delay >= 40 Or frame_delay = INFINITY
+			If frame_delay >= 100 Or frame_delay = INFINITY
 				If ang_vel > 0.00001
 					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS

@@ -155,7 +155,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Method input_control()
 		Select input_type
 			
-			Case INPUT_KEYBOARD
+			Case INPUT_KEYBOARD, INPUT_KEYBOARD_MOUSE_HYBRID
 				'If engine is running
 				If FLAG_player_engine_running
 					'velocity
@@ -183,14 +183,35 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					End If
 				End If
 				
-				'turret(s) angular velocity
-				If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
-					avatar.turn_turrets( 1.0  )
-				ElseIf KeyDown( KEY_LEFT ) Or KeyDown( KEY_J )
-					avatar.turn_turrets( -1.0 )
-				Else
-					avatar.turn_turrets( 0.0 )
-				EndIf
+				If input_type = INPUT_KEYBOARD
+					'turret(s) angular velocity
+					If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
+						avatar.turn_turrets( 1.0  )
+					ElseIf KeyDown( KEY_LEFT ) Or KeyDown( KEY_J )
+						avatar.turn_turrets( -1.0 )
+					Else
+						avatar.turn_turrets( 0.0 )
+					EndIf
+				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+					Local diff# = ang_diff( player.turrets[0].ang, mouse_point.ang )
+					If diff <> 0
+						If diff < 0
+							If diff < -( player.turrets[0].max_ang_vel )
+								player.turn_turrets( -1.0 )
+							Else 'diff >= -( player.turrets[0].max_turning_velocity )
+								player.turn_turrets( -0.5 )
+							End If
+						Else 'diff > 0
+							If diff > player.turrets[0].max_ang_vel
+								player.turn_turrets( 1.0 )
+							Else 'diff <= player.turrets[0].max_turning_velocity
+								player.turn_turrets( 0.5 )
+							End If
+						End If
+					Else 'diff = 0
+						player.turn_turrets( 0.0 )
+					End If
+				End If
 				
 				'turret(s) fire
 				If KeyDown( KEY_SPACE )
@@ -203,9 +224,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					avatar.fire( 2 )
 				End If
 					
-			Case INPUT_KEYBOARD_MOUSE_HYBRID
-				'..?
-				
 			Case INPUT_XBOX_360_CONTROLLER
 				'..?
 			

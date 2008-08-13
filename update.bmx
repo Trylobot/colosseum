@@ -7,6 +7,13 @@ EndRem
 '______________________________________________________________________________
 'Physics and Timing Update
 Function update_all()
+	
+	mouse_point.pos_x = MouseX()
+	mouse_point.pos_y = MouseY()
+	If player <> Null And player.turrets.Length > 0 And player.turrets[0] <> Null
+		mouse_point.ang = mouse_point.ang_to( player.turrets[0] )
+	End If
+
 	If ..
 	Not FLAG_in_menu And ..
 	Not FLAG_in_shop And ..
@@ -86,6 +93,11 @@ Function update_all()
 		For Local w:WIDGET = EachIn environmental_widget_list
 			w.update()
 		Next
+		
+		''retained particles
+		'If retained_particle_list_count > retained_particle_limit
+		'	FLAG_retain_particles = True
+		'End If
 		
 	End If
 End Function

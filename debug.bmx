@@ -33,22 +33,21 @@ Function debug_drawtext( message$ )
 	sy :+ 10
 End Function
 '______________________________________________________________________________
-Function show_level_info()
-	'debug_drawtext "level_enemies_remaining -> "+level_enemies_remaining
-	'debug_drawtext "hostile_agent_list.Count() -> "+hostile_agent_list.Count()
-	debug_drawtext "player speed -> "+vector_length( player.vel_x, player.vel_y )
-	
-	SetColor( 255, 255, 255 )
-	SetAlpha( 1 )
-	For Local p:POINT = EachIn enemy_turret_anchors
-		DrawOval( p.pos_x - 4,p.pos_y - 4, 8,8 )
-	Next
-End Function
-'______________________________________________________________________________
-Function debug_control_brain()
+Function debug_overlay()
 	If KeyHit( KEY_TILDE ) Then FLAG_debug_overlay = Not FLAG_debug_overlay 
 	If FLAG_debug_overlay
-		show_db_pathing_grid()
+
+		'show pathing grid
+		Local cursor:CELL = New CELL
+		For cursor.row = 0 To pathing_grid_h - 1
+			For cursor.col = 0 To pathing_grid_w - 1
+				'blockable/passing grid
+				SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
+				If pathing.grid( cursor ) = PATH_BLOCKED Then ..
+					DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+			Next
+		Next
+
 		Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
 		SetColor( 255, 255, 255 )
 		For Local cb:CONTROL_BRAIN = EachIn control_brain_list
@@ -76,9 +75,26 @@ Function debug_control_brain()
 					SetColor( 255, 255, 255 )
 					SetAlpha( 1 )
 				End If
-				show_db_path( cb.path )
+				
 				If cb.path <> Null
 					debug_drawtext( "path to target displayed" )
+					'path
+					Local v0:cVEC = Null, v1:cVEC = Null
+					For Local v1:cVEC = EachIn cb.path
+						If v0 <> Null
+							DrawLine( v0.x,v0.y, v1.x,v1.y )
+						Else
+							v0 = New cVEC
+						End If
+						v0.x = v1.x; v0.y = v1.y
+					Next
+					'start and goal
+					Local start:cVEC = cVEC( cb.path.First() )
+					Local goal:cVEC = cVEC( cb.path.Last() )
+					SetColor( 64, 255, 64 ); SetAlpha( 1 )
+					DrawRect( start.x - cell_size + 1, start.y - cell_size + 1, cell_size - 2, cell_size - 2 )
+					SetColor( 64, 64, 255 ); SetAlpha( 1 )
+					DrawRect( goal.x - cell_size + 1, goal.y - cell_size + 1, cell_size - 2, cell_size - 2 )
 				Else
 					debug_drawtext( "no path" )
 				End If
@@ -97,58 +113,41 @@ Function debug_control_brain()
 				Return
 			End If
 		Next
+		
 		sx = arena_offset+3; sy = arena_offset+3
-		show_level_info()
-	End If
-End Function
-'______________________________________________________________________________
-Function show_db_pathing_grid()
-	'show pathing grid
-	Local cursor:CELL = New CELL
-	For cursor.row = 0 To pathing_grid_h - 1
-		For cursor.col = 0 To pathing_grid_w - 1
-			'blockable/passing grid
-			SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
-			If pathing.grid( cursor ) = PATH_BLOCKED Then ..
-				DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+		'debug_drawtext "level_enemies_remaining -> "+level_enemies_remaining
+		'debug_drawtext "hostile_agent_list.Count() -> "+hostile_agent_list.Count()
+		debug_drawtext "player speed -> "+vector_length( player.vel_x, player.vel_y )
+		
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		For Local p:POINT = EachIn enemy_turret_anchors
+			DrawOval( p.pos_x - 4,p.pos_y - 4, 8,8 )
 		Next
-	Next
-	
-	'manipulate by keyboard
-	If KeyDown( KEY_EQUALS )
-		load_next_level()
-	Else If KeyDown( KEY_MINUS ) And player_level >= 1
-		player_level :- 1
-		load_level( player_level )
+		
+		'manipulate by keyboard
+		If KeyDown( KEY_EQUALS )
+			load_next_level()
+		Else If KeyDown( KEY_MINUS ) And player_level >= 1
+			player_level :- 1
+			load_level( player_level )
+		End If
+		
+		If KeyHit( KEY_C )
+			If player <> Null
+				If player_brain.input_type = INPUT_KEYBOARD Then player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+				If player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID Then player_brain.input_type = INPUT_KEYBOARD
+			End If
+		End If
+			
 	End If
 End Function
-'______________________________________________________________________________
-Function show_db_path( db_path:TList )
-	If db_path = Null Or db_path.IsEmpty() Then Return
-	'path
-	Local v0:cVEC = Null, v1:cVEC = Null
-	For Local v1:cVEC = EachIn db_path
-		If v0 <> Null
-			DrawLine( v0.x,v0.y, v1.x,v1.y )
-		Else
-			v0 = New cVEC
-		End If
-		v0.x = v1.x; v0.y = v1.y
-	Next
-	'start and goal
-	Local start:cVEC = cVEC( db_path.First() )
-	Local goal:cVEC = cVEC( db_path.Last() )
-	SetColor( 64, 255, 64 ); SetAlpha( 1 )
-	DrawRect( start.x - cell_size + 1, start.y - cell_size + 1, cell_size - 2, cell_size - 2 )
-	SetColor( 64, 64, 255 ); SetAlpha( 1 )
-	DrawRect( goal.x - cell_size + 1, goal.y - cell_size + 1, cell_size - 2, cell_size - 2 )
-End Function
-
-Function test_ang_wrap()
-	For Local i# = -750.0 To 750.0 Step 10
-		If Abs( ang_wrap( i )) > 180 Then RuntimeError( "ang_wrap() test failed" )
-	Next
-End Function
+''______________________________________________________________________________
+'Function test_ang_wrap()
+'	For Local i# = -750.0 To 750.0 Step 10
+'		If Abs( ang_wrap( i )) > 180 Then RuntimeError( "ang_wrap() test failed" )
+'	Next
+'End Function
 ''______________________________________________________________________________
 'Function debug_atan2()
 '	For Local i% = 0 To 360

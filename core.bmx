@@ -7,6 +7,7 @@ EndRem
 '______________________________________________________________________________
 'Generic globals
 Const INFINITY% = -1
+Global mouse_point:POINT = New POINT
 
 'game settings flags
 Global FLAG_in_menu% = True
@@ -28,6 +29,7 @@ Global battle_toggle_ts%
 Global arena_lights_fade_time% = 1000
 Global FLAG_waiting_for_player_to_exit_arena% = False
 Global FLAG_spawn_enemies% = False
+Global FLAG_retain_particles% = False
 
 'global player stuff
 Global player_type% = 0
@@ -103,8 +105,11 @@ Function init_pathing_system()
 End Function
 '______________________________________________________________________________
 Function load_next_level()
+	
 	player_level :+ 1
 	load_level( player_level )
+	FLAG_retain_particles = True
+	
 End Function
 Function load_level( index% )
 	

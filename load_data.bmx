@@ -113,7 +113,7 @@ Global img_icon_speaker_off:TImage = LoadImage_SetHandle( "icon_speaker_off.png"
 Global img_icon_player_cannon_ammo:TImage = LoadImage_SetHandle( "icon_player_cannon_ammo.png", 0, 0 )
 
 Global img_door:TImage = LoadImage_SetHandle( "door.png", 1, 7 )
-Global img_reticle:TImage = LoadImage_SetHandle( "reticle.png", -8.5, 7.5 )
+Global img_reticle:TImage = LoadImage_SetHandle( "reticle.png", 22.5, 2.5 )
 
 
 

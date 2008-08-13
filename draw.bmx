@@ -78,8 +78,16 @@ Function draw_all()
 		SetScale( 1, 1 )
 		
 		'aiming reticle
-		SetRotation( player.turrets[0].ang )
-		DrawImage( img_reticle, player.turrets[0].pos_x, player.turrets[0].pos_y )
+		If player_brain.input_type = INPUT_KEYBOARD
+			'use existing reticle code
+			SetRotation( player.turrets[0].ang )
+			DrawImage( img_reticle, player.turrets[0].pos_x + 50*Cos( player.turrets[0].ang ), player.turrets[0].pos_y + 40*Sin( player.turrets[0].ang ) )
+		Else If player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+			'position the larger dot of the reticle directly at the mouse position
+			'point the ellipsis dots at the player's turret
+			SetRotation( mouse_point.ang )
+			DrawImage( img_reticle, mouse_point.pos_x, mouse_point.pos_y )
+		End If
 		SetRotation( 0 )
 
 		'interface
@@ -167,7 +175,9 @@ Function draw_arena_bg()
 	For Local part:PARTICLE = EachIn retained_particle_list
 		part.draw()
 	Next
-	If retained_particle_list_count > retained_particle_limit
+
+	If FLAG_retain_particles
+		FLAG_retain_particles = False
 		GrabImage( bg_cache, 0,0 )
 		retained_particle_list.Clear()
 		retained_particle_list_count = 0
@@ -235,7 +245,7 @@ Function dim_bg_cache()
 	SetAlpha( 1 )
 	SetRotation( 0 )
 	DrawImage( bg_cache, 0,0 )
-	SetAlpha( 0.3333 )
+	SetAlpha( 0.450 )
 	DrawImage( img_arena_bg, 0,0 )
 	GrabImage( bg_cache, 0,0 )
 End Function
