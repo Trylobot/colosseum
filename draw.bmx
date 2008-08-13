@@ -73,8 +73,8 @@ Function draw_all()
 		'arena foreground
 		draw_arena_fg()
 		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
 		SetScale( 1, 1 )
+		SetAlpha( 1 )
 		
 		'aiming reticle
 		If player_brain.input_type = INPUT_KEYBOARD
@@ -150,7 +150,7 @@ Function draw_all()
 		If Not FLAG_player_engine_running
 			DrawText_with_shadow( "(E) start your engine.", x, y )
 		Else If FLAG_player_in_locker And FLAG_waiting_for_player_to_enter_arena
-			DrawText_with_shadow( "enter now.", x, y )
+			DrawText_with_shadow( "enter the arena.", x, y )
 		Else If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena
 			DrawText_with_shadow( "return to gate. (R) skip", x, y )
 		End If

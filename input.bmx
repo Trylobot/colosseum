@@ -8,6 +8,19 @@ EndRem
 'Keyboard Input
 Function get_all_input()
 	
+	'mouse
+	mouse_point.pos_x = MouseX()
+	mouse_point.pos_y = MouseY()
+	If player <> Null And player.turrets.Length > 0 And player.turrets[0] <> Null
+		mouse_point.ang = mouse_point.ang_to( player.turrets[0] )
+	End If
+	
+	If player_brain <> Null And player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+		HideMouse()
+	Else
+		ShowMouse()
+	End If
+	
 	'music enable/disable
 	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
 	
@@ -51,5 +64,13 @@ Function get_all_input()
 		End If
 		
 	End If
+	
+	If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And KeyDown( KEY_R )
+		player.pos_x = player_spawn_point.pos_x
+		player.pos_y = player_spawn_point.pos_y
+		player.ang = player_spawn_point.ang
+		player.snap_turrets()
+	End If
+	
 End Function
 

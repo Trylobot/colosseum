@@ -8,18 +8,6 @@ EndRem
 'Physics and Timing Update
 Function update_all()
 	
-	mouse_point.pos_x = MouseX()
-	mouse_point.pos_y = MouseY()
-	If player <> Null And player.turrets.Length > 0 And player.turrets[0] <> Null
-		mouse_point.ang = mouse_point.ang_to( player.turrets[0] )
-	End If
-	
-	If player_brain <> Null And player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-		HideMouse()
-	Else
-		ShowMouse()
-	End If
-	
 	If ..
 	Not FLAG_in_menu And ..
 	Not FLAG_in_shop And ..
