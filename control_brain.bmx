@@ -193,15 +193,39 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						avatar.turn_turrets( 0.0 )
 					EndIf
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-					Local diff# = ang_diff( player.turrets[0].ang, mouse_point.ang )
+					Local diff# = ang_wrap( player.turrets[0].ang - player.turrets[0].ang_to_cVEC( mouse_point ))
 					Local diff_mag# = Abs( diff )
-					If diff_mag > 2*player.turrets[0].max_ang_vel
+					If diff_mag > 5*player.turrets[0].max_ang_vel
 						If diff < 0
-							player.turn_turrets( -1.0 )
-						Else 'diff > 0
 							player.turn_turrets( 1.0 )
+						Else 'diff > 0
+							player.turn_turrets( -1.0 )
 						End If
-					Else 'diff_mag <= 2*player.turrets[0].max_ang_vel
+					Else If diff_mag > 2.5*player.turrets[0].max_ang_vel
+						If diff < 0
+							player.turn_turrets( 0.5 )
+						Else 'diff > 0
+							player.turn_turrets( -0.5 )
+						End If
+					Else If diff_mag > 1.25*player.turrets[0].max_ang_vel
+						If diff < 0
+							player.turn_turrets( 0.25 )
+						Else 'diff > 0
+							player.turn_turrets( -0.25 )
+						End If
+					Else If diff_mag > 0.75*player.turrets[0].max_ang_vel
+						If diff < 0
+							player.turn_turrets( 0.125 )
+						Else 'diff > 0
+							player.turn_turrets( -0.125 )
+						End If
+					Else If diff_mag > 0.375*player.turrets[0].max_ang_vel
+						If diff < 0
+							player.turn_turrets( 0.0625 )
+						Else 'diff > 0
+							player.turn_turrets( -0.0625 )
+						End If
+					Else
 						player.turn_turrets( 0.0 )
 					End If
 				End If
@@ -250,7 +274,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					If sighted_target
 						'if not facing target, face target; when facing target, fire
 						ang_to_target = avatar.ang_to( target )
-						Local diff# = ang_diff( avatar.turrets[0].ang, ang_to_target )
+						Local diff# = ang_wrap( avatar.turrets[0].ang - ang_to_target )
 						If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
 							If diff >= 0 Then avatar.turn_turrets( -1.0 ) ..
 							Else               avatar.turn_turrets( 1.0 )
@@ -282,7 +306,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						'chase after current target; if target in range, self-destruct
 						avatar.drive( 1.0 )
 						ang_to_target = avatar.ang_to( target )
-						Local diff# = ang_diff( avatar.ang, ang_to_target )
+						Local diff# = ang_wrap( avatar.ang - ang_to_target )
 						If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
 							If diff >= 0 Then avatar.turn( -1.0 ) ..
 							Else               avatar.turn( 1.0 )
@@ -315,7 +339,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					If sighted_target
 						path = Null
 						ang_to_target = avatar.ang_to( target )
-						Local diff# = ang_diff( avatar.turrets[0].ang, ang_to_target )
+						Local diff# = ang_wrap( avatar.turrets[0].ang - ang_to_target )
 						'stop moving
 						avatar.drive( 0.0 )
 						avatar.turn( 0.0 )
@@ -337,7 +361,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					'else (can't see the target) -- if it has a path to the target, then..
 					Else
 						'return the turret to its resting angle
-						Local diff# = ang_diff( avatar.ang, avatar.turrets[0].ang )
+						Local diff# = ang_wrap( avatar.ang - avatar.turrets[0].ang )
 						If Abs(diff) <= 3.000
 							avatar.turn_turrets( 0.0 )
 						Else
@@ -347,7 +371,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 
 						If path <> Null And Not path.IsEmpty() And waypoint <> Null
 							ang_to_target = avatar.ang_to_cVEC( waypoint )
-							Local diff# = ang_diff( avatar.ang, ang_to_target )
+							Local diff# = ang_wrap( avatar.ang - ang_to_target )
 							'if it is pointed toward the path's next waypoint, then..
 							If Abs(diff) <= 15.000
 								'drive forward

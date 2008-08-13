@@ -57,6 +57,7 @@ Global img_player_tank_turret_base:TImage = LoadImage_SetHandle( "player_tank_tu
 Global img_player_tank_turret_barrel:TImage = LoadImage_SetHandle( "player_tank_turret_barrel.png", 3.5, 3.5 )
 Global img_player_mgun_turret:TImage = LoadImage_SetHandle( "player_tank_mgun_turret.png", 3.5, 3.5 )
 Global img_player_tank_chassis_med:TImage = LoadImage_SetHandle( "player_tank_chassis_med.png", 16.5, 11.5 )
+Global img_player_med_tank_track:TImage = LoadAnimImage_SetHandle( "med_tank_track.png", 16.5, 11.5, 33, 12, 8 )
 Global img_player_tank_turret_med_base_right:TImage = LoadImage_SetHandle( "player_tank_turret_med_base_right.png", 7.5, 11.5 )
 Global img_player_tank_turret_med_base_left:TImage = LoadImage_SetHandle( "player_tank_turret_med_base_left.png", 7.5, 11.5 )
 Global img_player_tank_turret_med_barrel_right:TImage = LoadImage_SetHandle( "player_tank_turret_med_barrel_right.png", 7.5, 11.5 )

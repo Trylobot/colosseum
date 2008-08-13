@@ -121,9 +121,7 @@ Type TURRET Extends POINT
 		pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang )
 		pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang )
 		'angle (includes parent's)
-		ang :+ ang_vel + parent.ang_vel
-		If ang >= 360 Then ang :- 360
-		If ang <  0   Then ang :+ 360
+		ang = ang_wrap( ang + ang_vel + parent.ang_vel )
 		'recoil position (relative to turret handle)
 		If ready_to_fire() Or out_of_ammo()
 			cur_recoil_off_x = 0

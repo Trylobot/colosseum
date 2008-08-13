@@ -9,11 +9,8 @@ EndRem
 Function get_all_input()
 	
 	'mouse
-	mouse_point.pos_x = MouseX()
-	mouse_point.pos_y = MouseY()
-	If player <> Null And player.turrets.Length > 0 And player.turrets[0] <> Null
-		mouse_point.ang = mouse_point.ang_to( player.turrets[0] )
-	End If
+	mouse_point.x = MouseX()
+	mouse_point.y = MouseY()
 	
 	If player_brain <> Null And player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 		HideMouse()

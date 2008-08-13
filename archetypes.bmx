@@ -21,6 +21,7 @@ Global particle_archetype:PARTICLE[50]; reset_index()
 Global PARTICLE_INDEX_TANK_TREAD_DEBRIS% = postfix_index()
 Global PARTICLE_INDEX_TANK_TREAD_TRAIL% = postfix_index()
 Global PARTICLE_INDEX_LIGHT_TANK_TRACK% = postfix_index()
+Global PARTICLE_INDEX_MED_TANK_TRACK% = postfix_index()
 Global PARTICLE_INDEX_CANNON_MUZZLE_FLASH% = postfix_index()
 Global PARTICLE_INDEX_CANNON_SHELL_CASING% = postfix_index()
 Global PARTICLE_INDEX_CANNON_MUZZLE_SMOKE% = postfix_index()
@@ -37,6 +38,7 @@ Global PARTICLE_INDEX_ROCKET_SMOKE_TRAIL% = postfix_index()
 particle_archetype[PARTICLE_INDEX_TANK_TREAD_DEBRIS] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_debris,,,,, LAYER_BACKGROUND, True, 0.05 ))
 particle_archetype[PARTICLE_INDEX_TANK_TREAD_TRAIL] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_trail,,,,, LAYER_BACKGROUND, True ))
 particle_archetype[PARTICLE_INDEX_LIGHT_TANK_TRACK] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_ANIM, img_light_tank_track,,,,,,,,,,,,,, INFINITY ))
+particle_archetype[PARTICLE_INDEX_MED_TANK_TRACK] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_ANIM, img_player_med_tank_track,,,,,,,,,,,,,, INFINITY ))
 particle_archetype[PARTICLE_INDEX_CANNON_MUZZLE_FLASH] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_muzzle_flash,,,,, LAYER_FOREGROUND ))
 particle_archetype[PARTICLE_INDEX_CANNON_SHELL_CASING] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_projectile_shell_casing,,,,, LAYER_FOREGROUND, True, 0.0100 ))
 particle_archetype[PARTICLE_INDEX_CANNON_MUZZLE_SMOKE] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_muzzle_smoke,,,,, LAYER_FOREGROUND ))
@@ -251,6 +253,7 @@ complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.
 	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, 7, 1, 1 )
 	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track = particle_archetype[PARTICLE_INDEX_LIGHT_TANK_TRACK].clone()
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track.parent = complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK]
+		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track.ang = 0
 	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track = particle_archetype[PARTICLE_INDEX_LIGHT_TANK_TRACK].clone()
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track.parent = complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK]
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track.ang = 180
@@ -281,7 +284,13 @@ complex_agent_archetype[PLAYER_INDEX_MED_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Ar
 	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_FORWARD ).attach_at( 15, 8, 1, 1 )
 	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, -8, 1, 1 )
 	complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, 8, 1, 1 )
-
+	complex_agent_archetype[PLAYER_INDEX_MED_TANK].left_track = particle_archetype[PARTICLE_INDEX_MED_TANK_TRACK].clone()
+		complex_agent_archetype[PLAYER_INDEX_MED_TANK].left_track.parent = complex_agent_archetype[PLAYER_INDEX_MED_TANK]
+		complex_agent_archetype[PLAYER_INDEX_MED_TANK].left_track.ang = 0
+	complex_agent_archetype[PLAYER_INDEX_MED_TANK].right_track = particle_archetype[PARTICLE_INDEX_MED_TANK_TRACK].clone()
+		complex_agent_archetype[PLAYER_INDEX_MED_TANK].right_track.parent = complex_agent_archetype[PLAYER_INDEX_MED_TANK]
+		complex_agent_archetype[PLAYER_INDEX_MED_TANK].right_track.ang = 180
+	
 '[ ENEMIES ]
 Global ENEMY_INDEX_START% = array_index
 Global ENEMY_INDEX_MR_THE_BOX% = postfix_index()

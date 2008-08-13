@@ -111,7 +111,7 @@ Type POINT Extends MANAGED_OBJECT
 		'angular velocity
 		ang_vel :+ ang_acc
 		'orientation
-		ang = ang_sum( ang, ang_vel )
+		ang = ang_wrap( ang + ang_vel )
 	End Method
 	
 	Method dist_to#( other:POINT )
@@ -173,12 +173,6 @@ Function ang_wrap#( a# ) 'forces the angle into the range [-180,180]
 		a :- mult * 360
 	End If
 	Return a
-End Function
-Function ang_sum#( a1#, a2# )
-	Return ang_wrap( a1 + a2 )
-End Function
-Function ang_diff#( a1#, a2# )
-	Return ang_wrap( a1 - a2 )
 End Function
 
 Function vector_length#( vx#, vy# )

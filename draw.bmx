@@ -84,8 +84,8 @@ Function draw_all()
 		Else If player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 			'position the larger dot of the reticle directly at the mouse position
 			'point the ellipsis dots at the player's turret
-			SetRotation( 180 + mouse_point.ang )
-			DrawImage( img_reticle, mouse_point.pos_x, mouse_point.pos_y )
+			SetRotation( player.turrets[0].ang_to_cVEC( mouse_point ))
+			DrawImage( img_reticle, mouse_point.x, mouse_point.y )
 		End If
 		SetRotation( 0 )
 

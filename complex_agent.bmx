@@ -218,7 +218,7 @@ Type COMPLEX_AGENT Extends AGENT
 			Local frame_delay# = INFINITY
 			Local vel_ang# = vector_angle( vel_x, vel_y )
 			If vel > 0.00001
-				If Abs( ang_diff( vel_ang, ang )) > 90
+				If Abs( ang_wrap( vel_ang - ang )) > 90
 					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					frame_delay = 17.5 * (1.0/vel)
@@ -256,19 +256,21 @@ Type COMPLEX_AGENT Extends AGENT
 		SetScale( 1, 1 )
 		SetRotation( ang )
 		
-		'chassis
-		If img <> Null Then DrawImage( img, pos_x, pos_y )
 		'tracks
 		If right_track <> Null And left_track <> Null
 			left_track.draw()
 			right_track.draw()
 		End If
+		'chassis
+		SetRotation( ang )
+		If img <> Null Then DrawImage( img, pos_x, pos_y )
+		'chassis widgets
+		For Local w:WIDGET = EachIn widget_list_above
+			w.draw()
+		Next
 		
 		For Local t:TURRET = EachIn turrets
 			t.draw()
-		Next
-		For Local w:WIDGET = EachIn widget_list_above
-			w.draw()
 		Next
 		For Local s:PARTICLE = EachIn stickies
 			s.draw()
