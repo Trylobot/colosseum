@@ -194,34 +194,37 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					EndIf
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 					Local diff# = ang_diff( player.turrets[0].ang, mouse_point.ang )
-					If diff <> 0
+					Local diff_mag# = Abs( diff )
+					If diff_mag > 2*player.turrets[0].max_ang_vel
 						If diff < 0
-							If diff < -( player.turrets[0].max_ang_vel )
-								player.turn_turrets( -1.0 )
-							Else 'diff >= -( player.turrets[0].max_turning_velocity )
-								player.turn_turrets( -0.5 )
-							End If
+							player.turn_turrets( -1.0 )
 						Else 'diff > 0
-							If diff > player.turrets[0].max_ang_vel
-								player.turn_turrets( 1.0 )
-							Else 'diff <= player.turrets[0].max_turning_velocity
-								player.turn_turrets( 0.5 )
-							End If
+							player.turn_turrets( 1.0 )
 						End If
-					Else 'diff = 0
+					Else 'diff_mag <= 2*player.turrets[0].max_ang_vel
 						player.turn_turrets( 0.0 )
 					End If
 				End If
 				
-				'turret(s) fire
-				If KeyDown( KEY_SPACE )
-					avatar.fire( 0 )
-				End If
-				If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
-					avatar.fire( 1 )
-				End If
-				If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
-					avatar.fire( 2 )
+				If input_type = INPUT_KEYBOARD
+					'turret(s) fire
+					If KeyDown( KEY_SPACE )
+						avatar.fire( 0 )
+					End If
+					If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
+						avatar.fire( 1 )
+					End If
+					If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
+						avatar.fire( 2 )
+					End If
+				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+					'turret(s) fire
+					If MouseDown( 1 )
+						avatar.fire( 0 )
+					End If
+					If MouseDown( 2 )
+						avatar.fire( 1 )
+					End If
 				End If
 					
 			Case INPUT_XBOX_360_CONTROLLER

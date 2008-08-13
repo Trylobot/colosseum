@@ -133,10 +133,11 @@ Function debug_overlay()
 			load_level( player_level )
 		End If
 		
-		If KeyHit( KEY_C )
-			If player <> Null
-				If player_brain.input_type = INPUT_KEYBOARD Then player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-				If player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID Then player_brain.input_type = INPUT_KEYBOARD
+		If player_brain <> Null
+			If KeyDown( KEY_5 )
+				player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+			Else If KeyDown( KEY_6 )
+			  player_brain.input_type = INPUT_KEYBOARD
 			End If
 		End If
 			

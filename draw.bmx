@@ -27,8 +27,7 @@ Function draw_all()
 		draw_shop()
 	
 	Else
-
-		'arena & retained particles
+		'arena (& retained particles)
 		draw_arena_bg()
 		SetColor( 255, 255, 255 )
 
@@ -81,11 +80,11 @@ Function draw_all()
 		If player_brain.input_type = INPUT_KEYBOARD
 			'use existing reticle code
 			SetRotation( player.turrets[0].ang )
-			DrawImage( img_reticle, player.turrets[0].pos_x + 50*Cos( player.turrets[0].ang ), player.turrets[0].pos_y + 40*Sin( player.turrets[0].ang ) )
+			DrawImage( img_reticle, player.turrets[0].pos_x + 50*Cos( player.turrets[0].ang ), player.turrets[0].pos_y + 50*Sin( player.turrets[0].ang ) )
 		Else If player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 			'position the larger dot of the reticle directly at the mouse position
 			'point the ellipsis dots at the player's turret
-			SetRotation( mouse_point.ang )
+			SetRotation( 180 + mouse_point.ang )
 			DrawImage( img_reticle, mouse_point.pos_x, mouse_point.pos_y )
 		End If
 		SetRotation( 0 )
@@ -111,10 +110,10 @@ Function draw_all()
 		'game over
 		If FLAG_game_over
 			SetColor( 0, 0, 0 )
-			SetAlpha( 0.550 )
+			SetAlpha( 0.650 )
 			DrawRect( 0, 0, window_w, window_h )
 			SetRotation( -30 )
-			SetAlpha( 0.333 )
+			SetAlpha( 0.500 )
 			SetColor( 200, 255, 200 )
 			SetImageFont( consolas_bold_150 )
 			DrawText( "GAME OVER", 25, window_h - 150 )
@@ -128,7 +127,7 @@ Function draw_all()
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		
-		'level intro
+		'level X
 		If (now() - level_passed_ts) < level_intro_time
 			SetImageFont( consolas_bold_100 )
 			SetColor( 255, 255, 127 )
@@ -149,11 +148,11 @@ Function draw_all()
 		Local x# = player_spawn_point.pos_x + arena_offset, y# = player_spawn_point.pos_y - arena_offset/3
 		'commands to player
 		If Not FLAG_player_engine_running
-			DrawText_with_shadow( "[E] start your engine.", x, y )
+			DrawText_with_shadow( "(E) start your engine.", x, y )
 		Else If FLAG_player_in_locker And FLAG_waiting_for_player_to_enter_arena
-			DrawText_with_shadow( "Please enter the arena.", x, y )
+			DrawText_with_shadow( "enter now.", x, y )
 		Else If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena
-			DrawText_with_shadow( "To proceed, return to your gate.", x, y )
+			DrawText_with_shadow( "return to gate. (R) skip", x, y )
 		End If
 		
 	End If
