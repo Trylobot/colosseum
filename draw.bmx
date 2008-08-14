@@ -99,7 +99,11 @@ Function draw_all()
 			DrawRect( 0, 0, window_w, window_h )
 			SetColor( 255, 255, 255 )
 			SetAlpha( 1 )
-			DrawImage( img_help, arena_offset + arena_w/2 - img_help.width/2, arena_offset + arena_h/2 - img_help.height/2 )
+			If player_brain.input_type = INPUT_KEYBOARD
+				DrawImage( img_help_kb, arena_offset + arena_w/2 - img_help_kb.width/2, arena_offset + arena_h/2 - img_help_kb.height/2 )
+			Else If player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+				DrawImage( img_help_kb_mouse, arena_offset + arena_w/2 - img_help_kb_mouse.width/2, arena_offset + arena_h/2 - img_help_kb_mouse.height/2 )
+			End If
 		'help reminder
 		Else
 			SetImageFont( consolas_normal_12 )

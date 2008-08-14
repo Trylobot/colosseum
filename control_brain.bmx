@@ -152,6 +152,68 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
+	Method get_path_to_somewhere:TList()
+		last_find_path_ts = now()
+		Local somewhere:cVEC = cVEC( cVEC.Create( RandF( arena_offset, arena_offset+arena_w-1 ), RandF( arena_offset, arena_offset+arena_h-1 )))
+		Return find_path( avatar.pos_x,avatar.pos_y, somewhere.x,somewhere.y )
+	End Method
+	
+	Method blindly_wander()
+		avatar.drive( 0.333 )
+		avatar.turn( RandF( -0.5, 0.5 ))
+	End Method
+	
+	Method seek_target()
+		avatar.drive( 1.0 )
+		turn_toward_target()
+	End Method
+	
+	Method follow_path()
+		ang_to_target = avatar.ang_to_cVEC( waypoint )
+		Local diff# = ang_wrap( avatar.ang - ang_to_target )
+		'if it is pointed toward the path's next waypoint, then..
+		If Abs(diff) <= 15.000
+			'drive forward
+			avatar.drive( 1.0 )
+			avatar.turn( 0.0 )
+		'else (not pointed toward next waypoint)..
+		Else
+			'turn towards the next waypoint and drive at 1/3 speed
+			avatar.drive( 0.3333 )
+			If diff >= 0 Then avatar.turn( -1.0 ) ..
+			Else               avatar.turn( 1.0 )
+		End If
+	End Method
+	
+	Method turn_toward_target()
+		ang_to_target = avatar.ang_to( target )
+		Local diff# = ang_wrap( avatar.ang - ang_to_target )
+		If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
+			If diff >= 0 Then avatar.turn( -1.0 ) ..
+			Else               avatar.turn( 1.0 )
+		Else
+			avatar.turn( 0 )
+		End If
+	End Method
+	
+	Method fire_at_target()
+		'fire turret(s)
+		'wait for cooldown
+		If FLAG_waiting And avatar.turrets[0].cur_heat <= 0.25*avatar.turrets[0].max_heat Then FLAG_waiting = False ..
+		Else If avatar.turrets[0].overheated() Then FLAG_waiting = True
+		If Not FLAG_waiting Then avatar.fire_turret( 0 )
+		'stop aiming
+		avatar.turn_turrets( 0.0 )
+	End Method
+	
+	Method turn_turrets_toward_target()
+		ang_to_target = avatar.ang_to( target )
+		Local diff# = ang_wrap( avatar.ang - ang_to_target )
+		'aim the turret at the target
+		If diff >= 0 Then avatar.turn_turrets( -1.0 ) ..
+		Else               avatar.turn_turrets( 1.0 )
+	End Method
+	
 	Method input_control()
 		Select input_type
 			
@@ -261,8 +323,15 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		Select ai_type
 
 			Case AI_BRAIN_MR_THE_BOX
-				avatar.drive( 1.0 )
-				avatar.turn( RandF( -1.0, 1.0 ))
+				If path <> Null And Not path.IsEmpty() And waypoint <> Null
+					follow_path()
+				Else
+					If (now() - last_find_path_ts >= find_path_delay)
+						path = get_path_to_somewhere()
+					Else
+						blindly_wander()
+					End If
+				End If
 				
 			Case AI_BRAIN_TURRET
 				If target <> Null And Not target.dead()
@@ -304,6 +373,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					'if it can see the target, chase it.
 					If sighted_target
 						'chase after current target; if target in range, self-destruct
+						path = Null
 						avatar.drive( 1.0 )
 						ang_to_target = avatar.ang_to( target )
 						Local diff# = ang_wrap( avatar.ang - ang_to_target )
@@ -315,9 +385,30 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						End If
 						dist_to_target = avatar.dist_to( target )
 						If dist_to_target <= 20 Then avatar.self_destruct( target )
-					Else
-						avatar.drive( 0.333 )
-						avatar.turn( RandF( -0.5, 0.5 ))
+					Else 'cannot see target
+						If path <> Null And Not path.IsEmpty() And waypoint <> Null
+							ang_to_target = avatar.ang_to_cVEC( waypoint )
+							Local diff# = ang_wrap( avatar.ang - ang_to_target )
+							'if it is pointed toward the path's next waypoint, then..
+							If Abs(diff) <= 5.000
+								'drive forward
+								avatar.drive( 0.4600 )
+								avatar.turn( 0.0 )
+							'else (not pointed toward next waypoint)..
+							Else
+								'turn towards the next waypoint and drive at 1/3 speed
+								avatar.drive( 0.2300 )
+								If diff >= 0 Then avatar.turn( -1.0 ) ..
+								Else               avatar.turn( 1.0 )
+							End If
+						'else (can't see the target, no path to the target)
+						Else
+							'attempt to get a path to the target (which will not be used until the next "think cycle"
+							If (now() - last_find_path_ts >= find_path_delay)
+								path = get_path_to_target()
+							End If
+							blindly_wander()
+						End If
 					End If
 				Else
 					'no target

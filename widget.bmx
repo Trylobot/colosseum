@@ -167,19 +167,9 @@ Type WIDGET Extends MANAGED_OBJECT
 			parent.pos_y + offset*Sin( parent.ang + offset_ang ) + state.pos_length*Sin( parent.ang + offset_ang + state.ang + ang_offset ) )
 	End Method
 	
-'	Method widget_offset:pVEC()
-'		Return pVEC( pVEC.Create( offset, parent.ang + offset_ang ))
-'	End Method
-'	Method state_offset:pVEC()
-'		Return pVEC( pVEC.Create( state.pos_length, parent.ang + offset_ang + state.ang + ang_offset ))
-'	End Method
-		
 	Method begin_transformation( count% = INFINITY )
-		If transforming
-			cur_state = state_successor( cur_state )
-		End If
 		transformations_remaining = count
-		transform_begin_ts = now()
+		If Not transforming Then transform_begin_ts = now()
 		transforming = True
 	End Method
 	

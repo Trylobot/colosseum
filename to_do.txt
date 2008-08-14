@@ -1,12 +1,19 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
 		
-	[Mini to-do]
-		agent/door collisions not working
+	[control_brain to-do]	
+		_ new field group: behavior_state%, behavior_started_ts%, behavior_time%
+			these fields are by the control brain to determine the current behavior, and allow it to finish between updates.
+		_ new field: squadmates:TList, a list of COMPLEX_AGENTs
+			behaviors can use the squadmates list for swarming and other complex behaviors
+		_ encapsulate more behaviors in preparation for scriptable AI.
+		_ add a random_wander() behavior, for use by any CONTROL_BRAIN which does not have a path to follow.
+		_ add a friendly_fire() behavior, which checks to see if the line of sight to current target is blocked by a friendly
+		_ add a dodge() behavior, which forces the agent to move out of the way of incoming projectiles
 		
-		mouse turret control, mouse-click tank control
-		when returning to locker, put a spotlight on it, and darken the rest of the arena.
-		animated particles for agent death
-			
+	_ agent/door collisions not working
+	X mouse turret control, mouse-click tank control
+	X when returning to locker, put a spotlight on it, and darken the rest of the arena.
+	_ animated particles for agent death
 	_ scriptable AI.
 	_ allow RANGE objects to have mathematical equations to calculate the distribution of returned values
 	_ take mini-snapshots of kills, and display them in an album at the end of the level.

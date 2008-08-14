@@ -105,7 +105,8 @@ Global img_pickup_ammo_main_5:TImage = LoadImage_SetHandle( "pickup_ammo_main_5.
 Global img_pickup_health:TImage = LoadImage_SetHandle( "pickup_health.png", 16, 9 )
 Global img_pickup_cooldown:TImage = LoadImage_SetHandle( "pickup_cooldown.png", 16, 9 )
 
-Global img_help:TImage = LoadImage_SetHandle( "help.png", 0, 0 )
+Global img_help_kb:TImage = LoadImage_SetHandle( "help_kb.png", 0, 0 )
+Global img_help_kb_mouse:TImage = LoadImage_SetHandle( "help_kb_and_mouse.png", 0, 0 )
 Global img_arena_bg:TImage = LoadImage_SetHandle( "bg.png", 0, 0 )
 Global img_arena_fg:TImage = LoadImage_SetHandle( "fg.png", 0, 0 )
 Global img_icon_music_note:TImage = LoadImage_SetHandle( "icon_music_note.png", 0, 0 )
@@ -116,6 +117,121 @@ Global img_icon_player_cannon_ammo:TImage = LoadImage_SetHandle( "icon_player_ca
 Global img_door:TImage = LoadImage_SetHandle( "door.png", 1, 7 )
 Global img_reticle:TImage = LoadImage_SetHandle( "reticle.png", 22.5, 2.5 )
 
+Global file_paths:TList = CreateList()
+Global img_map:TMap = CreateMap()
+
+''_Main________________________________
+'main()
+'End
+'
+'Function main()
+'  load_base()
+'  For Local path$ = EachIn file_paths
+'    DebugLog "load_file( path="+path+" )"
+'    load_file( path )
+'  Next
+'  For Local key$ = EachIn img_map.Keys()
+'    Local img:TImage = TImage( img_map.ValueForKey( key ))
+'    DebugLog( key )
+'    If img <> Null
+'      DebugLog "  handle_x# = "+img.handle_x
+'      DebugLog "  handle_y# = "+img.handle_y
+'    Else
+'      DebugLog "  null"
+'    End If
+'  Next
+'End Function
+'____________________________________
+Const DIRECTIVE_LOAD_FILE$ = "[load_data]"
+Const DIRECTIVE_ADD_IMAGE$ = "[add_image]"
+
+Function is_directive%( str$ )
+  Return str.StartsWith( "[" ) And str.EndsWith( "]" )
+End Function
+
+Function is_comment%( str$ )
+  Return str.StartsWith( ";" )
+End Function
+
+Function load_base()
+  Local line$, directive$, token$[], variable$, value$ 
+  Local path$
+  
+  Local base:TStream = ReadFile( "base.ini" )
+  If Not base Then RuntimeError( "error: base.ini not found." )
+  While Not Eof( base )
+    line = ((ReadLine( base )).Trim()).ToLower()
+    If (Not is_comment) And is_directive( line )
+      directive = line
+      Select directive
+        Case DIRECTIVE_LOAD_FILE
+          line = (ReadLine( base )).ToLower()
+          If is_directive( line ) Then RuntimeError( "base.ini "+directive+" -> error: 0 variables found of 1 variables required." )
+          token = line.Split( "=" )
+          variable = token[0].Trim()
+          value = token[1].Trim()
+          Select variable
+            Case "path$"
+              path = value
+              file_paths.AddLast( path )
+          End Select
+        Default
+          RuntimeError( "base.ini -> error: "+directive+" is not a recognized directive." )
+      End Select
+    End If
+  End While
+  CloseStream( base )
+End Function
+
+Function load_file( file_path$ )
+  Local line$, directive$, result$
+  
+  Local file:TStream = ReadFile( file_path )
+  While Not Eof( file )
+    line = ((ReadLine( file )).Trim()).ToLower()
+    If (Not is_comment) And is_directive( line )
+      directive = line
+      Select directive
+        Case DIRECTIVE_ADD_IMAGE
+          result = add_image( file, img_map )
+          If result <> "success" Then RuntimeError( ""+StripDir( file_path )+" "+directive+" -> "+result )
+        Default
+          RuntimeError( ""+StripDir( file_path )+" -> error: "+directive+" is not a recognized directive." )
+      End Select
+    End If
+  End While
+  CloseStream( file )
+End Function
+
+Function add_image$( file:TStream, map:TMap )
+  Local line$, token$[], variable$, value$
+  Local img:TImage, handle_x#, handle_y#
+  Local path$, variable_count%
+
+  variable_count = 3
+  For Local i% = 0 To variable_count - 1
+    line = ((ReadLine( file )).Trim()).ToLower()
+    If is_directive( line ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
+    token = line.Split( "=" )
+    variable = token[0].Trim()
+    value = token[1].Trim()
+    Select variable
+      Case "path$"
+        path = value
+      Case "handle_x#"
+        handle_x = value.ToFloat()
+      Case "handle_y#"
+        handle_y = value.ToFloat()
+      Default
+        Return "error: "+variable+" is not a recognized variable for this directive."
+    End Select
+  Next
+  img = LoadImage( path )
+  SetImageHandle( img, handle_x, handle_y )
+  map.Insert( StripAll( path ), img )
+  
+  Return "success"
+End Function
 
 
 

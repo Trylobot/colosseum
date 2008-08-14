@@ -108,7 +108,7 @@ Function load_next_level()
 	
 	player_level :+ 1
 	load_level( player_level )
-	FLAG_retain_particles = True
+	'FLAG_retain_particles = True
 	
 End Function
 Function load_level( index% )
@@ -148,6 +148,10 @@ Function prep_spawner()
 	End If
 
 	shuffle_anchor_deck()
+DebugLog ""
+For Local i% = 0 To anchor_deck.Length - 1
+	DebugLog anchor_deck[i]
+Next
 
 End Function
 '______________________________________________________________________________

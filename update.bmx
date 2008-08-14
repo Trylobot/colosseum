@@ -88,10 +88,10 @@ Function update_all()
 			w.update()
 		Next
 		
-		''retained particles
-		'If retained_particle_list_count > retained_particle_limit
-		'	FLAG_retain_particles = True
-		'End If
+		'retained particles
+		If retained_particle_list_count > retained_particle_limit
+			FLAG_retain_particles = True
+		End If
 		
 	End If
 End Function
