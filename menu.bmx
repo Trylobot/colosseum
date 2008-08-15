@@ -5,14 +5,65 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-'Menus and options
+Global menu_font:TImageFont = get_font( "consolas_24" )
+
+Type MENU_OPTION
+	Field name$ 'display to user
+	Field value% 'return to system
+	Field visible% 'draw this option? {true|false}
+	Field enabled% 'can this option be selected? {true|false}
+	
+	Function Create:MENU_OPTION( name$, value%, visible%, enabled% )
+		Local opt:MENU_OPTION = New MENU_OPTION
+		opt.name = name
+		opt.value = value
+		opt.visible = visible
+		opt.enabled = enabled
+		Return opt
+	End Function
+	
+	Method draw( x%, y% )
+		DrawText( name, x, y )
+	End Method
+End Type
+'______________________________________________________________________________
+Const MENU_TYPE_SELECT_ONE_VERTICAL_WRAP_LIST
+Const MENU_TYPE_SELECT_ONE_HORIZONTAL_CYCLIC_LIST
 
 Type MENU
+	Field name$ 'display to user
+	Field menu_type% 'controls display and input
+	Field options:MENU_OPTION[] 'array of possible options
+	Field margin% 'visual margin
+	Field focus% 'index into options[]
+	Field width% '(private) width of entire menu with margins
+	Field height% '(private) height of entire menu with margins
 	
+	Function Create:MENU( name$, menu_type%, options:MENU_OPTION[], margin% )
+		Local m:MENU = New MENU
+		m.name = name
+		m.menu_type = menu_type
+		m.options = options
+		m.margin = margin
+		m.width = 0
+		m.height = 0
+		For Local opt:MENU_OPTION = EachIn options
+			SetImageFont( menu_font )
+			If (2*margin + TextWidth( opt.name )) > m.width
+				m.width =(2*margin + TextWidth( opt.name )) 
+		Next
+		Return m
+	End Function
 	
-	
+	Method draw( x%, y% )
+		
+	End Method
 End Type
 
+
+
+'______________________________________________________________________________
+'old code
 Global menu_option_count% = 8
 Const MENU_RESUME% = 0
 Const MENU_NEW% = 1

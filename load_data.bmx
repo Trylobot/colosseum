@@ -26,6 +26,10 @@ Function load_all()
 	Next
 End Function
 '______________________________________________________________________________
+Function get_font:TImageFont( key$ )
+	Return TImageFont( font_map.ValueForKey( key ))
+End Function
+'______________________________________________________________________________
 Function is_directive%( str$ )
   Return str.StartsWith( "[" ) And str.EndsWith( "]" )
 End Function
@@ -115,10 +119,6 @@ Function add_font$( file:TStream, map:TMap )
   
   Return "success"
 End Function
-
-Function get_font:TImageFont( key$ )
-	Return TImageFont( font_map.ValueForKey( key ))
-End Function
 '______________________________________________________________________________
 Function add_image$( file:TStream, map:TMap )
   Local line$, token$[], variable$, value$
@@ -157,17 +157,6 @@ Function add_image$( file:TStream, map:TMap )
 End Function
 
 '______________________________________________________________________________
-'Fonts
-'Global consolas_normal_8:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 8 )
-'Global consolas_normal_10:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 10 )
-'Global consolas_normal_12:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 12 )
-'Global consolas_normal_24:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 24 )
-'Global consolas_bold_24:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 24 )
-'Global consolas_bold_50:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 50 )
-'Global consolas_bold_100:TimageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 100 )
-'Global consolas_bold_150:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 150 )
-
-'______________________________________________________________________________
 'Sounds
 Global bg_music_victory_8_bit:TSound = LoadSound( audio_path_prefix + "victory_8-bit.ogg", SOUND_LOOP )
 Global bg_music:TChannel = AllocChannel()
@@ -195,7 +184,7 @@ End Function
 Function LoadAnimImage_SetHandle:TImage( path$, x# = 0, y# = 0, w# = 1, h# = 1, frames% = 1 )
 	Local img:TImage = LoadAnimImage( image_path_prefix + path, w, h, 0, frames )
 	SetImageHandle( img, x, y )
-	Return img 
+	Return img
 End Function
 
 Global img_player_tank_chassis:TImage = LoadImage_SetHandle( "player_tank_chassis.png", 12.5, 9.5 )
