@@ -18,152 +18,218 @@ Function draw_all()
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 
-	If FLAG_in_menu
-		'main menu
-		draw_menu()
-	
-	Else If FLAG_in_shop
-		'buy stuff at the shop
-		draw_shop()
-	
+	If Not FLAG_in_menu And Not FLAG_in_shop
+		draw_game()
 	Else
-		'arena (& retained particles)
-		draw_arena_bg()
-		SetColor( 255, 255, 255 )
+		If FLAG_in_menu
+			draw_menu()
+		Else If FLAG_in_shop
+			draw_shop()
+		End If
+	End If
+	
+End Function
+'______________________________________________________________________________
+'In-game stuff
+Function draw_game()
+	
+	'arena (& retained particles)
+	draw_arena_bg()
+	SetColor( 255, 255, 255 )
 
-		'background particles
-		For Local part:PARTICLE = EachIn particle_list_background
-			part.draw()
-		Next
+	'background particles
+	For Local part:PARTICLE = EachIn particle_list_background
+		part.draw()
+	Next
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
+	SetColor( 255, 255, 255 )
+	
+	'projectiles
+	For Local proj:PROJECTILE = EachIn projectile_list
+		proj.draw()
+	Next
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	SetColor( 255, 255, 255 )
+	'pickups
+	For Local pkp:PICKUP = EachIn pickup_list
+		pkp.draw()
+	Next
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
+	'hostile agents
+	For Local hostile:COMPLEX_AGENT = EachIn hostile_agent_list
+		hostile.draw()
+	Next
+	'friendly agents
+	For Local friendly:COMPLEX_AGENT = EachIn friendly_agent_list
+		friendly.draw()
+	Next
+	
+	'foreground particles
+	For Local part:PARTICLE = EachIn particle_list_foreground
+		part.draw()
+	Next
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	SetColor( 255, 255, 255 )
+	
+	'arena foreground
+	draw_arena_fg()
+	SetColor( 255, 255, 255 )
+	SetScale( 1, 1 )
+	SetAlpha( 1 )
+	
+	'aiming reticle
+	If player_brain.input_type = INPUT_KEYBOARD
+		'use existing reticle code
+		SetRotation( player.turrets[0].ang )
+		DrawImage( img_reticle, player.turrets[0].pos_x + 50*Cos( player.turrets[0].ang ), player.turrets[0].pos_y + 50*Sin( player.turrets[0].ang ) )
+	Else If player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+		'position the larger dot of the reticle directly at the mouse position
+		'point the ellipsis dots at the player's turret
+		SetRotation( player.turrets[0].ang_to_cVEC( mouse_point ))
+		DrawImage( img_reticle, mouse_point.x, mouse_point.y )
+	End If
+	SetRotation( 0 )
+
+	'interface
+	draw_stats()
+
+	'help actual
+	If FLAG_draw_help
+		SetColor( 0, 0, 0 )
+		SetAlpha( 0.550 )
+		DrawRect( 0, 0, window_w, window_h )
+		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
-		SetScale( 1, 1 )
-		SetColor( 255, 255, 255 )
-		
-		'projectiles
-		For Local proj:PROJECTILE = EachIn projectile_list
-			proj.draw()
-		Next
-		SetRotation( 0 )
-		SetScale( 1, 1 )
-		SetColor( 255, 255, 255 )
-		'pickups
-		For Local pkp:PICKUP = EachIn pickup_list
-			pkp.draw()
-		Next
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		SetScale( 1, 1 )
-		'hostile agents
-		For Local hostile:COMPLEX_AGENT = EachIn hostile_agent_list
-			hostile.draw()
-		Next
-		'friendly agents
-		For Local friendly:COMPLEX_AGENT = EachIn friendly_agent_list
-			friendly.draw()
-		Next
-		
-		'foreground particles
-		For Local part:PARTICLE = EachIn particle_list_foreground
-			part.draw()
-		Next
-		SetRotation( 0 )
-		SetScale( 1, 1 )
-		SetColor( 255, 255, 255 )
-		
-		'arena foreground
-		draw_arena_fg()
-		SetColor( 255, 255, 255 )
-		SetScale( 1, 1 )
-		SetAlpha( 1 )
-		
-		'aiming reticle
 		If player_brain.input_type = INPUT_KEYBOARD
-			'use existing reticle code
-			SetRotation( player.turrets[0].ang )
-			DrawImage( img_reticle, player.turrets[0].pos_x + 50*Cos( player.turrets[0].ang ), player.turrets[0].pos_y + 50*Sin( player.turrets[0].ang ) )
+			DrawImage( img_help_kb, arena_offset + arena_w/2 - img_help_kb.width/2, arena_offset + arena_h/2 - img_help_kb.height/2 )
 		Else If player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-			'position the larger dot of the reticle directly at the mouse position
-			'point the ellipsis dots at the player's turret
-			SetRotation( player.turrets[0].ang_to_cVEC( mouse_point ))
-			DrawImage( img_reticle, mouse_point.x, mouse_point.y )
+			DrawImage( img_help_kb_mouse, arena_offset + arena_w/2 - img_help_kb_mouse.width/2, arena_offset + arena_h/2 - img_help_kb_mouse.height/2 )
 		End If
-		SetRotation( 0 )
-
-		'interface
-		draw_stats()
-
-		'help actual
-		If FLAG_draw_help
-			SetColor( 0, 0, 0 )
-			SetAlpha( 0.550 )
-			DrawRect( 0, 0, window_w, window_h )
-			SetColor( 255, 255, 255 )
-			SetAlpha( 1 )
-			If player_brain.input_type = INPUT_KEYBOARD
-				DrawImage( img_help_kb, arena_offset + arena_w/2 - img_help_kb.width/2, arena_offset + arena_h/2 - img_help_kb.height/2 )
-			Else If player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-				DrawImage( img_help_kb_mouse, arena_offset + arena_w/2 - img_help_kb_mouse.width/2, arena_offset + arena_h/2 - img_help_kb_mouse.height/2 )
-			End If
-		'help reminder
-		Else
-			SetImageFont( get_font( "consolas_12" ))
-			str = "F1 for help"
-			DrawText_with_shadow( str, player_spawn_point.pos_x - arena_offset - TextWidth( str ), player_spawn_point.pos_y - arena_offset/3 )
-		End If
-		
-		'game over
-		If FLAG_game_over
-			SetColor( 0, 0, 0 )
-			SetAlpha( 0.650 )
-			DrawRect( 0, 0, window_w, window_h )
-			SetRotation( -30 )
-			SetAlpha( 0.500 )
-			SetColor( 200, 255, 200 )
-			SetImageFont( get_font( "consolas_bold_150" ))
-			DrawText( "GAME OVER", 25, window_h - 150 )
-			SetAlpha( 1 )
-			SetColor( 255, 255, 255 )
-			SetImageFont( get_font( "consolas_24" ))
-			DrawText( "press ESC", 300, window_h - 150 )
-			
-		End If
-		SetRotation( 0 )
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		
-		'level X
-		If (now() - level_passed_ts) < level_intro_time
-			SetImageFont( get_font( "consolas_bold_100" ))
-			SetColor( 255, 255, 127 )
-			Local pct# = Float(now() - level_passed_ts)/Float(level_intro_time)
-			If pct < 0.25 'fade in
-				SetAlpha( pct / 0.25 )
-			Else If pct < 0.75 'hold
-				SetAlpha( 1 )
-			Else 'fade out
-				SetAlpha( 1 - (( pct - 0.75) / 0.25 ))
-			End If
-			str = "LEVEL " + (player_level + 1)
-			DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 )
-		End If
-		
+	'help reminder
+	Else
 		SetImageFont( get_font( "consolas_12" ))
-		SetAlpha( 0.75 )
-		Local x# = player_spawn_point.pos_x + arena_offset, y# = player_spawn_point.pos_y - arena_offset/3
-		'commands to player
-		If Not FLAG_player_engine_running
-			DrawText_with_shadow( "(E) start your engine.", x, y )
-		Else If FLAG_player_in_locker And FLAG_waiting_for_player_to_enter_arena
-			DrawText_with_shadow( "enter the arena.", x, y )
-		Else If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena
-			DrawText_with_shadow( "return to gate. (R) skip", x, y )
-		End If
+		str = "F1 for help"
+		DrawText_with_shadow( str, player_spawn_point.pos_x - arena_offset - TextWidth( str ), player_spawn_point.pos_y - arena_offset/3 )
+	End If
+	
+	'game over
+	If FLAG_game_over
+		SetColor( 0, 0, 0 )
+		SetAlpha( 0.650 )
+		DrawRect( 0, 0, window_w, window_h )
+		SetRotation( -30 )
+		SetAlpha( 0.500 )
+		SetColor( 200, 255, 200 )
+		SetImageFont( get_font( "consolas_bold_150" ))
+		DrawText( "GAME OVER", 25, window_h - 150 )
+		SetAlpha( 1 )
+		SetColor( 255, 255, 255 )
+		SetImageFont( get_font( "consolas_24" ))
+		DrawText( "press ESC", 300, window_h - 150 )
 		
+	End If
+	SetRotation( 0 )
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	
+	'level X
+	If (now() - level_passed_ts) < level_intro_time
+		SetImageFont( get_font( "consolas_bold_100" ))
+		SetColor( 255, 255, 127 )
+		Local pct# = Float(now() - level_passed_ts)/Float(level_intro_time)
+		If pct < 0.25 'fade in
+			SetAlpha( pct / 0.25 )
+		Else If pct < 0.75 'hold
+			SetAlpha( 1 )
+		Else 'fade out
+			SetAlpha( 1 - (( pct - 0.75) / 0.25 ))
+		End If
+		str = "LEVEL " + (player_level + 1)
+		DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 )
+	End If
+	
+	SetImageFont( get_font( "consolas_12" ))
+	SetAlpha( 0.75 )
+	Local x# = player_spawn_point.pos_x + arena_offset, y# = player_spawn_point.pos_y - arena_offset/3
+	'commands to player
+	If Not FLAG_player_engine_running
+		DrawText_with_shadow( "(E) start your engine.", x, y )
+	Else If FLAG_player_in_locker And FLAG_waiting_for_player_to_enter_arena
+		DrawText_with_shadow( "enter the arena.", x, y )
+	Else If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena
+		DrawText_with_shadow( "return to gate. (R) skip", x, y )
 	End If
 	
 End Function
 '______________________________________________________________________________
 'Menu and GUI
+Function draw_menu()
+	Local x%, y%
+	
+	'title
+	x = 25; y = 25
+	SetColor( 255, 255, 127 ); SetImageFont( get_font( "consolas_bold_50" ))
+		DrawText( My.Application.AssemblyInfo, x, y )
+	
+	'menu options
+	x :+ 5; y :+ 70
+	Local x_indent% = 0
+	For Local option% = 0 To menu_option_count - 1
+		If menu_enabled[ option ]
+			If option = menu_option
+				SetColor( 255, 255, 255 )
+				SetImageFont( get_font( "consolas_bold_24" ))
+				SetAlpha( 1 )
+			Else
+				SetColor( 127, 127, 127 )
+				SetImageFont( get_font( "consolas_24" ))
+				SetAlpha( 1 )
+			End If
+		Else
+			If option <= 4
+				SetColor( 64, 64, 64 )
+				SetImageFont( get_font( "consolas_24" ))
+				SetAlpha( 1 )
+			Else
+				SetColor( 64, 64, 64 )
+				SetImageFont( get_font( "consolas_24" ))
+				SetAlpha( 0 )
+			End If
+		End If
+		If option > 4 Then x_indent = 20
+		DrawText( menu_display_string[ option ], x + x_indent, y + option*26 )
+	Next
+	SetAlpha( 1 )
+	
+	'copyright stuff
+	SetColor( 157, 157, 157 )
+	SetImageFont( get_font( "consolas_8" ))
+	x :+ 200; y :+ 7
+	DrawText( "Colosseum (c) 2008 Tylerbot", x, y ); y :+ 10
+	DrawText( "  [Tyler W.R. Cole]", x, y ); y :+ 10
+	y :+ 10
+	DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
+	DrawText( "  http://www.blitzmax.com", x, y ); y :+ 10
+	y :+ 10
+	DrawText( "music by NickPerrin", x, y ); y :+ 10
+	DrawText( "  Victory! (8-bit Chiptune)", x, y ); y :+ 10
+	DrawText( "  http://www.newgrounds.com", x, y ); y :+ 10
+	y :+ 10
+	DrawText( "special thanks to", x, y ); y :+ 10
+	DrawText( "  Kaze", x, y ); y :+ 10
+	DrawText( "  SniperAceX", x, y ); y :+ 10
+	
+End Function
+'______________________________________________________________________________
+Function draw_shop()
+	
+End Function
+'______________________________________________________________________________
 Function draw_arena_bg()
 
 	If bg_cache = Null
@@ -253,64 +319,6 @@ Function dim_bg_cache()
 	GrabImage( bg_cache, 0,0 )
 End Function
 '______________________________________________________________________________
-Function draw_menu()
-	Local x%, y%
-	
-	'title
-	x = 25; y = 25
-	SetColor( 255, 255, 127 ); SetImageFont( get_font( "consolas_bold_50" ))
-		DrawText( My.Application.AssemblyInfo, x, y )
-	
-	'menu options
-	x :+ 5; y :+ 70
-	Local x_indent% = 0
-	For Local option% = 0 To menu_option_count - 1
-		If menu_enabled[ option ]
-			If option = menu_option
-				SetColor( 255, 255, 255 )
-				SetImageFont( get_font( "consolas_bold_24" ))
-				SetAlpha( 1 )
-			Else
-				SetColor( 127, 127, 127 )
-				SetImageFont( get_font( "consolas_24" ))
-				SetAlpha( 1 )
-			End If
-		Else
-			If option <= 4
-				SetColor( 64, 64, 64 )
-				SetImageFont( get_font( "consolas_24" ))
-				SetAlpha( 1 )
-			Else
-				SetColor( 64, 64, 64 )
-				SetImageFont( get_font( "consolas_24" ))
-				SetAlpha( 0 )
-			End If
-		End If
-		If option > 4 Then x_indent = 20
-		DrawText( menu_display_string[ option ], x + x_indent, y + option*26 )
-	Next
-	SetAlpha( 1 )
-	
-	'copyright stuff
-	SetColor( 157, 157, 157 )
-	SetImageFont( get_font( "consolas_8" ))
-	x :+ 200; y :+ 7
-	DrawText( "Colosseum (c) 2008 Tylerbot", x, y ); y :+ 10
-	DrawText( "  [Tyler W.R. Cole]", x, y ); y :+ 10
-	y :+ 10
-	DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
-	DrawText( "  http://www.blitzmax.com", x, y ); y :+ 10
-	y :+ 10
-	DrawText( "music by NickPerrin", x, y ); y :+ 10
-	DrawText( "  Victory! (8-bit Chiptune)", x, y ); y :+ 10
-	DrawText( "  http://www.newgrounds.com", x, y ); y :+ 10
-	y :+ 10
-	DrawText( "special thanks to", x, y ); y :+ 10
-	DrawText( "  Kaze", x, y ); y :+ 10
-	DrawText( "  SniperAceX", x, y ); y :+ 10
-	
-End Function
-'______________________________________________________________________________
 Function draw_stats()
 	Local x%, y%, w%, h%
 	
@@ -387,10 +395,6 @@ Function draw_stats()
 	
 End Function
 '______________________________________________________________________________
-Function draw_shop()
-	
-End Function
-
 Function DrawText_with_shadow( str$, pos_x%, pos_y% )
 	SetColor( 0, 0, 0 )
 	DrawText( str, pos_x + 1, pos_y + 1 )
