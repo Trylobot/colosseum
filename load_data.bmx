@@ -39,15 +39,15 @@ Function load_base()
   Local path$
   
   Local base:TStream = ReadFile( data_path_prefix + "base.ini" )
-  If Not base Then RuntimeError( "error: base.ini not found." )
+  If Not base Then DebugLog( " error: base.ini not found." )
   While Not Eof( base )
     line = ((ReadLine( base )).Trim()).ToLower()
-    If (Not is_comment) And is_directive( line )
+    If (Not is_comment( line )) And is_directive( line )
       directive = line
       Select directive
         Case DIRECTIVE_LOAD_FILE
           line = ((ReadLine( base )).Trim()).ToLower()
-          If is_directive( line ) Then RuntimeError( "base.ini "+directive+" -> error: 0 variables found of 1 variables required." )
+          If is_directive( line ) Then DebugLog( " base.ini "+directive+" -> error: 0 variables found of 1 variables required." )
           token = line.Split( "=" )
           variable = token[0].Trim()
           value = token[1].Trim()
@@ -56,10 +56,10 @@ Function load_base()
               path = value
               file_paths.AddLast( path )
 			      Default
-			        RuntimeError( "base.ini -> error: "+variable+" is not a recognized variable for this directive." )
+			        DebugLog( " base.ini -> error: "+variable+" is not a recognized variable for this directive." )
           End Select
         Default
-          RuntimeError( "base.ini -> error: "+directive+" is not a recognized directive." )
+          DebugLog( " base.ini -> error: "+directive+" is not a recognized directive." )
       End Select
     End If
   End While
@@ -72,17 +72,17 @@ Function load_file( file_path$ )
   Local file:TStream = ReadFile( file_path )
   While Not Eof( file )
     line = ((ReadLine( file )).Trim()).ToLower()
-    If (Not is_comment) And is_directive( line )
+    If (Not is_comment( line )) And is_directive( line )
       directive = line
       Select directive
 				Case DIRECTIVE_ADD_FONT
 					result = add_font( file, font_map )
-					If result <> "success" Then RuntimeError( ""+StripDir( file_path )+" "+directive+" -> "+result )
+					If result <> "success" Then DebugLog( " "+StripDir( file_path )+" "+directive+" -> "+result )
         Case DIRECTIVE_ADD_IMAGE
           result = add_image( file, img_map )
-          If result <> "success" Then RuntimeError( ""+StripDir( file_path )+" "+directive+" -> "+result )
+          If result <> "success" Then DebugLog( " "+StripDir( file_path )+" "+directive+" -> "+result )
         Default
-          RuntimeError( ""+StripDir( file_path )+" -> error: "+directive+" is not a recognized directive." )
+          DebugLog( " "+StripDir( file_path )+" -> error: "+directive+" is not a recognized directive." )
       End Select
     End If
   End While
@@ -91,10 +91,11 @@ End Function
 '______________________________________________________________________________
 Function add_font$( file:TStream, map:TMap )
   Local line$, token$[], variable$, value$
-  Local font:TImageFont, path$, size#
+  Local font:TImageFont, path$, size%
   Local variable_count% = 2
 
   For Local i% = 0 To variable_count - 1
+		If Eof( file ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
     line = ((ReadLine( file )).Trim()).ToLower()
     If is_directive( line ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
     token = line.Split( "=" )
@@ -103,8 +104,8 @@ Function add_font$( file:TStream, map:TMap )
     Select variable
       Case "path$"
         path = value
-      Case "size#"
-        size = value.ToFloat()
+      Case "size%"
+        size = value.ToInt()
       Default
         Return "error: "+variable+" is not a recognized variable for this directive."
     End Select
@@ -125,6 +126,7 @@ Function add_image$( file:TStream, map:TMap )
   Local variable_count% = 6
 
   For Local i% = 0 To variable_count - 1
+		If Eof( file ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
     line = ((ReadLine( file )).Trim()).ToLower()
     If is_directive( line ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
     token = line.Split( "=" )
@@ -147,7 +149,7 @@ Function add_image$( file:TStream, map:TMap )
         Return "error: "+variable+" is not a recognized variable for this directive."
     End Select
   Next
-  img = LoadImage( path, (filtered&FILTEREDIMAGE)|(mipmapped&MIPMAPPEDIMAGE)|(dynamic&DYNAMICIMAGE) )
+  img = LoadImage( path, (filtered & FILTEREDIMAGE) | (mipmapped & MIPMAPPEDIMAGE) | (dynamic & DYNAMICIMAGE) )
   SetImageHandle( img, handle_x, handle_y )
   map.Insert( StripAll( path ), img )
   
@@ -156,14 +158,14 @@ End Function
 
 '______________________________________________________________________________
 'Fonts
-Global consolas_normal_8:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 8 )
+'Global consolas_normal_8:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 8 )
 'Global consolas_normal_10:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 10 )
-Global consolas_normal_12:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 12 )
-Global consolas_normal_24:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 24 )
-Global consolas_bold_24:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 24 )
-Global consolas_bold_50:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 50 )
-Global consolas_bold_100:TimageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 100 )
-Global consolas_bold_150:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 150 )
+'Global consolas_normal_12:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 12 )
+'Global consolas_normal_24:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 24 )
+'Global consolas_bold_24:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 24 )
+'Global consolas_bold_50:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 50 )
+'Global consolas_bold_100:TimageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 100 )
+'Global consolas_bold_150:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 150 )
 
 '______________________________________________________________________________
 'Sounds

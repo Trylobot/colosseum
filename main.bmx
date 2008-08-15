@@ -22,6 +22,10 @@ SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
 load_all()
+'?Debug
+'debug_load_data()
+'End
+'?
 
 '______________________________________________________________________________
 'MAIN

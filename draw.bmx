@@ -106,7 +106,7 @@ Function draw_all()
 			End If
 		'help reminder
 		Else
-			SetImageFont( consolas_normal_12 )
+			SetImageFont( get_font( "consolas_12" ))
 			str = "F1 for help"
 			DrawText_with_shadow( str, player_spawn_point.pos_x - arena_offset - TextWidth( str ), player_spawn_point.pos_y - arena_offset/3 )
 		End If
@@ -119,11 +119,11 @@ Function draw_all()
 			SetRotation( -30 )
 			SetAlpha( 0.500 )
 			SetColor( 200, 255, 200 )
-			SetImageFont( consolas_bold_150 )
+			SetImageFont( get_font( "consolas_bold_150" ))
 			DrawText( "GAME OVER", 25, window_h - 150 )
 			SetAlpha( 1 )
 			SetColor( 255, 255, 255 )
-			SetImageFont( consolas_normal_24 )
+			SetImageFont( get_font( "consolas_24" ))
 			DrawText( "press ESC", 300, window_h - 150 )
 			
 		End If
@@ -133,7 +133,7 @@ Function draw_all()
 		
 		'level X
 		If (now() - level_passed_ts) < level_intro_time
-			SetImageFont( consolas_bold_100 )
+			SetImageFont( get_font( "consolas_bold_100" ))
 			SetColor( 255, 255, 127 )
 			Local pct# = Float(now() - level_passed_ts)/Float(level_intro_time)
 			If pct < 0.25 'fade in
@@ -147,7 +147,7 @@ Function draw_all()
 			DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 )
 		End If
 		
-		SetImageFont( consolas_normal_12 )
+		SetImageFont( get_font( "consolas_12" ))
 		SetAlpha( 0.75 )
 		Local x# = player_spawn_point.pos_x + arena_offset, y# = player_spawn_point.pos_y - arena_offset/3
 		'commands to player
@@ -258,7 +258,7 @@ Function draw_menu()
 	
 	'title
 	x = 25; y = 25
-	SetColor( 255, 255, 127 ); SetImageFont( consolas_bold_50 )
+	SetColor( 255, 255, 127 ); SetImageFont( get_font( "consolas_bold_50" ))
 		DrawText( My.Application.AssemblyInfo, x, y )
 	
 	'menu options
@@ -268,21 +268,21 @@ Function draw_menu()
 		If menu_enabled[ option ]
 			If option = menu_option
 				SetColor( 255, 255, 255 )
-				SetImageFont( consolas_bold_24 )
+				SetImageFont( get_font( "consolas_bold_24" ))
 				SetAlpha( 1 )
 			Else
 				SetColor( 127, 127, 127 )
-				SetImageFont( consolas_normal_24 )
+				SetImageFont( get_font( "consolas_24" ))
 				SetAlpha( 1 )
 			End If
 		Else
 			If option <= 4
 				SetColor( 64, 64, 64 )
-				SetImageFont( consolas_normal_24 )
+				SetImageFont( get_font( "consolas_24" ))
 				SetAlpha( 1 )
 			Else
 				SetColor( 64, 64, 64 )
-				SetImageFont( consolas_normal_24 )
+				SetImageFont( get_font( "consolas_24" ))
 				SetAlpha( 0 )
 			End If
 		End If
@@ -317,22 +317,22 @@ Function draw_stats()
 	'level number
 	x = arena_w + (arena_offset*2) + arena_offset/2
 	y = arena_offset/2
-	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
+	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
 	DrawText( "level", x, y ); y :+ 12
-	SetColor( 255, 255, 127 ); SetImageFont( consolas_bold_50 )
+	SetColor( 255, 255, 127 ); SetImageFont( get_font( "consolas_bold_50" ))
 	DrawText( player_level + 1, x, y ); y :+ 50
 	
 	'player cash
 	y :+ arena_offset
-	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
+	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
 	'ToDo: put some code here to comma-separate the displayed cash value
 	DrawText( "cash", x, y ); y :+ 12
-	SetColor( 50, 220, 50 ); SetImageFont( consolas_bold_50 )
+	SetColor( 50, 220, 50 ); SetImageFont( get_font( "consolas_bold_50" ))
 	DrawText( "$" + player_cash, x, y ); y :+ 50
 		
 	'player health		
 	y :+ arena_offset
-	SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
+	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
 	DrawText( "health", x, y ); y :+ 12
 	w = 175;h = 18
 	SetColor( 255, 255, 255 )
@@ -349,7 +349,7 @@ Function draw_stats()
 	Local temp_x%, temp_y%
 	For Local t:TURRET = EachIn player.turrets
 		If t.name <> Null And t.name <> ""
-			SetColor( 255, 255, 255 ); SetImageFont( consolas_normal_12 )
+			SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
 			DrawText( t.name, x, y ); y :+ 12
 		End If
 		temp_x = x; temp_y = y

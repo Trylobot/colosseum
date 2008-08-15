@@ -34,6 +34,17 @@ Function debug_drawtext( message$ )
 	sy :+ 10
 End Function
 '______________________________________________________________________________
+Function debug_load_data()
+	DebugLog( " debug load_data" )
+	For Local file_path$ = EachIn file_paths
+		DebugLog( " file_path -> "+file_path )
+	Next
+	For Local key$ = EachIn font_map.Keys()
+		Local font:TImageFont = get_font( key )
+		DebugLog( " font_map -> "+key+" -> { CountGlyphs():"+font.CountGlyphs()+", Height():"+font.Height()+" }" )
+	Next
+End Function
+'______________________________________________________________________________
 Function debug_overlay()
 	If KeyHit( KEY_TILDE ) Then FLAG_debug_overlay = Not FLAG_debug_overlay 
 	If FLAG_debug_overlay
@@ -147,7 +158,7 @@ End Function
 ''______________________________________________________________________________
 'Function test_ang_wrap()
 '	For Local i# = -750.0 To 750.0 Step 10
-'		If Abs( ang_wrap( i )) > 180 Then RuntimeError( "ang_wrap() test failed" )
+'		If Abs( ang_wrap( i )) > 180 Then debuglog( "ang_wrap() test failed" )
 '	Next
 'End Function
 ''______________________________________________________________________________
@@ -277,7 +288,7 @@ Function debug_heap( message$ = "" )
 		
 		'draw optional message
 		SetColor( 127, 127, 255 ); SetAlpha( 1 )
-		SetImageFont( consolas_normal_12 )
+		SetImageFont( get_font( "consolas_12" ))
 		DrawText( message, sx, sy ); sy :+ 11
 
 		SetImageFont( get_font( "consolas_10" ))
@@ -368,7 +379,7 @@ Function debug_pathing( message$ = "", done% = False )
 		
 		'draw debug help
 		SetColor( 0, 0, 0 ); SetAlpha( 1 )
-		SetImageFont( consolas_normal_12 )
+		SetImageFont( get_font( "consolas_12" ))
 		DrawText( "set_goal,find_path:F4  pause:F4/faster:F3  block:F5  clear:F6", 3, -26 )
 		'draw pathing_grid cell border lines
 		SetLineWidth( 1 ); SetColor( 32, 32, 32 ); SetAlpha( 1.00 )
@@ -418,7 +429,7 @@ Function debug_pathing( message$ = "", done% = False )
 		End If
 		'draw optional message
 		SetColor( 255, 255, 255 ); SetAlpha( 1 )
-		SetImageFont( consolas_normal_12 )
+		SetImageFont( get_font( "consolas_12" ))
 		DrawText( message, 3, -14 )
 		
 		Flip
