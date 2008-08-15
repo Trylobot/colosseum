@@ -53,7 +53,7 @@ Type CELL
 			Case DIRECTION_NORTHEAST
 				row :- 1; col :+ 1
 			Case DIRECTION_EAST
-									col :+ 1
+				          col :+ 1
 			Case DIRECTION_SOUTHEAST
 				row :+ 1; col :+ 1
 			Case DIRECTION_SOUTH
@@ -61,7 +61,7 @@ Type CELL
 			Case DIRECTION_SOUTHWEST
 				row :+ 1; col :- 1
 			Case DIRECTION_WEST
-									col :- 1
+				          col :+ 1
 			Case DIRECTION_NORTHWEST
 				row :- 1; col :- 1
 		End Select
@@ -101,7 +101,8 @@ Type PATH_QUEUE
 	Field max_size% '(private) row_count*col_count
 	Field item_count% 'number of items in this data structure
 	Field binary_tree:CELL[] 'min-heap binary tree implemented as an array
-	Field registry%[,] 'a dual-purpose array; detects whether a given CELL ordered pair is present in the queue, and also determines the index of items the binary_tree by their location
+	Field cost#[] 'cost values of the items in the binary tree
+	Field registry%[,] 'a dual-purpose array; detects whether a given CELL ordered pair is present in the queue, and also determines the index of items in the binary_tree by their location
 	
 	Method New()
 	End Method
@@ -112,7 +113,11 @@ Type PATH_QUEUE
 		pq.col_count = col_count
 		pq.max_size = row_count*col_count
 		pq.item_count = 0
-		pq.binary_tree = New CELL[ row_count*col_count ]
+		pq.binary_tree = New CELL[ pq.max_size ]
+		pq.cost = New Float[ pq.max_size ]
+		For Local i% = 0 To pq.max_size - 1
+			pq.cost[i] = MAXIMUM_COST
+		Next
 		pq.registry = New Int[ row_count, col_count ]
 		For Local r% = 0 To row_count - 1
 			For Local c% = 0 To col_count - 1
@@ -121,12 +126,18 @@ Type PATH_QUEUE
 		Next
 		Return pq
 	End Function
-	Method is_root%( i% )
-		Return ( i = 0 )
+	
+	Method is_empty%()
+		Return item_count = 0
 	End Method
-	Method is_leaf%( i% )
-		Return ( left_child_i( i ) >= item_count )
+	
+	Method get_cost#( i% )
+		Return cost[i]
 	End Method
+	Method set_cost( i%, cost_value# )
+		cost[i] = cost_value
+	End Method
+	
 	Method parent_i%( i% )
 		Return ( i - 1 ) / 2
 	End Method
@@ -136,16 +147,7 @@ Type PATH_QUEUE
 	Method right_child_i%( i% )
 		Return ( 2 * i ) + 2
 	End Method
-	Method smallest_child_i%( i% )
-		Local left_c% = left_child_i( i )
-		Local right_c% = right_child_i( i )
-		If( f_less_than( binary_tree[left_c], binary_tree[right_c] )) Then ..
-		Return left_c Else Return right_c
-	End Method
 	
-	Method is_empty%()
-		Return item_count = 0
-	End Method
 	Method in_queue%( c:CELL )
 		Return (registry[c.row,c.col] <> REGISTRY_NOT_PRESENT)
 	End Method
@@ -165,146 +167,192 @@ Type PATH_QUEUE
 			Local swap_cell:CELL = binary_tree[i]
 			binary_tree[i] = binary_tree[j]
 			binary_tree[j] = swap_cell
+			Local swap_cost# = get_cost( i )
+			set_cost( i, get_cost( j ))
+			set_cost( j, swap_cost )
 			Return True
 		Else
 			Return False
 		End If
 	End Method
 	
-	Method insert%( i:CELL )
-'		debug_heap( "insert: (" + i.row + "," + i.col + ")" + " f:" + Int( pathing.f( i )) )  
+	Method insert%( i:CELL, cost_value# )
 		If item_count < max_size And Not in_queue( i ) 'if not full and item to be inserted is not already present in the queue
-			Local item_i% = item_count 'new item's index is equal to the current size of the heap
-			binary_tree[item_count] = i.clone() 'insert a deep-copy of the argument into the next available slot
-			If Not is_empty()
-				Local item_parent_i% = parent_i( item_i ) 'pre-cache parent's index
-'				debug_heap( "insert: up-sift" )  
-				
-				While Not is_root( item_i ) ..
-				And Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] )
-					'while the min-heap property is being violated
-'					debug_heap( "insert: swap( i:"+item_i+", parent:"+item_parent_i+" )" ) 
-					swap( item_i, item_parent_i ) 'swap item with its parent
-'					debug_heap( "insert: swap( i:"+item_i+", parent:"+item_parent_i+" ) success" ) 
-					item_i = item_parent_i 'item's new index is its current parent's index
-					item_parent_i = parent_i( item_i ) 'calculate item's new parent's index
-				End While
-				
-			End If
-			register( i, item_i ) 'maintain uniqueness registry array
 			item_count :+ 1 'maintain size-tracking field
-'			debug_heap( "insert: success" )  
+			Local item_i% = item_count - 1 'new item's index is equal to the current size of the heap
+			binary_tree[item_i] = i.clone() 'append the new item to the 
+			register( i, item_i ) 'maintain uniqueness registry
+?Debug
+debug_heap( "insert "+item_i+" "+Int(cost_value) )
+?	
+			set_cost( item_i, cost_value ) 'update cost
+			item_i = sift_up( item_i ) 'maintain heap
+?Debug
+debug_heap( "insert "+heap_info(item_i)+" COMPLETE" )
+?	
 			Return True 'successful insert
 		Else
-'			debug_heap( "insert: failure" )  
 			Return False 'not enough room, or item to be inserted is not unique
 		End If
 	End Method
 	
 	Method pop_root:CELL()
-'		debug_heap( "pop_root" )
 		If item_count > 0 'if not empty
-			Local root:CELL = binary_tree[0].clone() 'save the current root; it's always at [0]
-			unregister( root ) 'maintain uniqueness registry array
-			If item_count >= 2 'if the root is not the only element
-'				debug_heap( "pop_root: down-sift" )  
-				binary_tree[0] = binary_tree[item_count - 1] 'set the root to the last element in the heap
-				binary_tree[item_count - 1] = Null 'remove the reference at end of the heap to the new root
-				Local item_i% = 0 'index is root index
-				Local child_i% = smallest_child_i( item_i ) 'get the smaller of two children
-				
-				While Not is_leaf( item_i ) ..
-				And Not f_less_than( binary_tree[item_i], binary_tree[child_i] )
-					'while the heap property is being violated
-'					debug_heap( "pop_root: swap( i:"+item_i+", child:"+child_i+" )" )  
-					swap( item_i, child_i ) 'swap item with its smallest child
-'					debug_heap( "pop_root: swap( i:"+item_i+", child:"+child_i+" ) success" )  
-					item_i = child_i 'set item to its current smallest child
-					child_i = smallest_child_i( item_i ) 'update item's smallest child
-				End While
-				
-			Else 'item_count == 1
-				binary_tree[0] = Null
-			End If
 			item_count :- 1 'maintain size-tracking field
-'			debug_heap( "pop_root: success" )  
+			Local item_i% = 0
+			Local root:CELL = binary_tree[item_i].clone() 'save the current root; it's always at [0]
+			unregister( root ) 'maintain uniqueness registry array
+?Debug
+debug_heap( "pop root "+heap_info( 0 ))
+?
+			If Not is_empty() 'if the root was not the only element
+				binary_tree[item_i] = binary_tree[item_count - 1] 'set the root to the last element in the heap
+				set_cost( item_i, item_count - 1 )
+				binary_tree[item_count - 1] = Null 'remove the reference at end of the heap to the new root
+				set_cost( item_count - 1, MAXIMUM_COST )
+				item_i = sift_down( item_i )
+			Else 'item_count == 1
+				binary_tree[item_i] = Null
+				set_cost( item_i, MAXIMUM_COST )
+			End If
+?Debug
+debug_heap( "pop root "+heap_info( 0 )+" COMPLETE" )
+?
 			Return root 'extract the root and return it
 		Else
-'			debug_heap( "pop_root: failure" )  
 			Return Null 'no root to pop
 		End If
 	End Method
 	
-	'The following method is in theory functionally equivalent to pop_root(), except that it takes longer to execute (linear time), but is guaranteed to be correct.
-	Method extract_min_SLOWER:CELL()
-		If item_count > 0 'if not empty
-			Local root:CELL
-			If item_count >= 2 'if the root is not the only element
-				Local scan%, min_i% = 0
-				For scan = 1 To item_count
-					If f_less_than( binary_tree[scan], binary_tree[min_i] )
-					'If h_less_than( binary_tree[scan], binary_tree[min_i] )
-						min_i = scan
-					End If
-				Next
-				root = binary_tree[min_i].clone() 'save the current root; it's always at [0]
-				unregister( root ) 'maintain uniqueness registry array
-				swap( min_i, item_count - 1 )
-				binary_tree[item_count - 1] = Null
-			Else
-				root = binary_tree[0].clone()
-				binary_tree[0] = Null
-			End If
-			item_count :- 1
-			Return root
-		Else
-			Return Null 'no root to pop
-		End If
+	Method sift_up%( item_i% )
+?Debug
+debug_heap( "sift up "+heap_info(item_i) )
+?		
+		Local item_parent_i% = parent_i( item_i )
+		'While item_i > 1 And Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] )
+		While item_i > 1 And Not (get_cost(item_parent_i) < get_cost(item_i))
+?Debug
+debug_heap( "swap( "+heap_info(item_parent_i)+", "+heap_info(item_i)+" )" )
+?		
+			swap( item_i, item_parent_i ) 'swap item with its parent
+?Debug
+debug_heap( "swap( "+heap_info(item_parent_i)+", "+heap_info(item_i)+" ) COMPLETE" )
+?		
+			item_i = item_parent_i 'item's new index is its current parent's index
+			item_parent_i = parent_i( item_i ) 'calculate item's new parent's index
+		End While
+?Debug
+debug_heap( "sift up "+heap_info(item_i)+" COMPLETE" )
+?		
+		Return item_i
 	End Method
 	
-	Method update%( c:CELL )
-'		debug_heap( "update ("+c.row+", "+c.col+")" )
-		Local item_i% = index_of( c )
-		If item_i <> REGISTRY_NOT_PRESENT
-			unregister( c )
-			If Not is_root( item_i )
-				'heapsort UP (towards root) if not root
-				Local item_parent_i% = parent_i( item_i ) 'pre-cache parent's index
-'				debug_heap( "update: sift-up" )
-				
-				While Not is_root( item_i ) ..
-				And Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] )
-					'while the min-heap property is being violated
-'					debug_heap( "update: swap( i:"+item_i+", parent:"+item_parent_i+" )" )
-					swap( item_i, item_parent_i ) 'swap item with its parent
-'					debug_heap( "update: swap( i:"+item_i+", parent:"+item_parent_i+" ) success" )
-					item_i = item_parent_i 'item's new index is its current parent's index
-					item_parent_i = parent_i( item_i ) 'calculate item's new parent's index
-				End While
-				
-			Else If Not is_leaf( item_i )
-				'heapsort DOWN (towards leaves) if not a leaf
-				Local child_i% = smallest_child_i( item_i ) 'get the smaller of two children
-'				debug_heap( "update: sift-down" )
-				
-				While Not is_leaf( item_i ) ..
-				And Not f_less_than( binary_tree[item_i], binary_tree[child_i] )
-'					debug_heap( "update: swap( i:"+item_i+", child:"+child_i+" )" )
-					swap( item_i, child_i ) 'swap item with its smallest child
-'					debug_heap( "update: swap( i:"+item_i+", child:"+child_i+" ) success" )
-					item_i = child_i 'set item to its current smallest child
-					child_i = smallest_child_i( item_i ) 'update item's smallest child
-				End While
-				
+	Method sift_down%( item_i% = 0 )
+?Debug
+debug_heap( "sift down "+heap_info(item_i) )
+?		
+		Local item_min_child_i%
+		While left_child_i( item_i ) < item_count
+			If left_child_i( item_i ) = item_count - 1
+				item_min_child_i = left_child_i( item_i )
+			Else 'left_child_i( item_i ) <> item_count - 1
+				'If f_less_than( binary_tree[left_child_i( item_i )], binary_tree[right_child_i( item_i )] )
+				If Not (get_cost( item_i ) < get_cost( left_child_i( item_i )))
+					item_min_child_i = left_child_i( item_i )
+				Else 'Not f_less_than( binary_tree[left_child_i( item_i )], binary_tree[right_child_i( item_i )] )
+					item_min_child_i = right_child_i( item_i )
+				End If
 			End If
-			register( c, item_i )
-'			debug_heap( "update: success" )
-			Return True
-		Else
-'			debug_heap( "update: failure" )
-			Return False
-		End If
+			'If Not f_less_than( binary_tree[item_i], binary_tree[item_min_child_i] )
+			If Not (get_cost( item_i ) < get_cost( item_min_child_i ))
+?Debug
+debug_heap( "swap( "+heap_info(item_i)+", "+heap_info(item_min_child_i)+" )" )
+?		
+				swap( item_i, item_min_child_i )
+?Debug
+debug_heap( "swap( "+heap_info(item_i)+", "+heap_info(item_min_child_i)+" ) COMPLETE" )
+?		
+				item_i = item_min_child_i
+			Else 'f_less_than( binary_tree[item_i], binary_tree[item_min_child_i] )
+				Exit 'done
+			End If
+		End While
+?Debug
+debug_heap( "sift down "+heap_info(item_i)+" COMPLETE" )
+?		
+		Return item_i
 	End Method
+	
+'	'The following method is in theory functionally equivalent to pop_root(), except that it takes longer to execute (linear time), but is guaranteed to be correct.
+'	Method extract_min_SLOWER:CELL()
+'		If item_count > 0 'if not empty
+'			Local root:CELL
+'			If item_count >= 2 'if the root is not the only element
+'				Local scan%, min_i% = 0
+'				For scan = 1 To item_count
+'					If f_less_than( binary_tree[scan], binary_tree[min_i] )
+'					'If h_less_than( binary_tree[scan], binary_tree[min_i] )
+'						min_i = scan
+'					End If
+'				Next
+'				root = binary_tree[min_i].clone() 'save the current root; it's always at [0]
+'				unregister( root ) 'maintain uniqueness registry array
+'				swap( min_i, item_count - 1 )
+'				binary_tree[item_count - 1] = Null
+'			Else
+'				root = binary_tree[0].clone()
+'				binary_tree[0] = Null
+'			End If
+'			item_count :- 1
+'			Return root
+'		Else
+'			Return Null 'no root to pop
+'		End If
+'	End Method
+	
+'	Method update%( c:CELL )
+''		debug_heap( "update ("+c.row+", "+c.col+")" )
+'		Local item_i% = index_of( c )
+'		If item_i <> REGISTRY_NOT_PRESENT
+'			unregister( c )
+'			If Not is_root( item_i )
+'				'heapsort UP (towards root) if not root
+'				Local item_parent_i% = parent_i( item_i ) 'pre-cache parent's index
+''				debug_heap( "update: sift-up" )
+'				
+'				While Not is_root( item_i ) ..
+'				And Not f_less_than( binary_tree[item_parent_i], binary_tree[item_i] )
+'					'while the min-heap property is being violated
+''					debug_heap( "update: swap( i:"+item_i+", parent:"+item_parent_i+" )" )
+'					swap( item_i, item_parent_i ) 'swap item with its parent
+''					debug_heap( "update: swap( i:"+item_i+", parent:"+item_parent_i+" ) success" )
+'					item_i = item_parent_i 'item's new index is its current parent's index
+'					item_parent_i = parent_i( item_i ) 'calculate item's new parent's index
+'				End While
+'				
+'			Else If Not is_leaf( item_i )
+'				'heapsort DOWN (towards leaves) if not a leaf
+'				Local child_i% = smallest_child_i( item_i ) 'get the smaller of two children
+''				debug_heap( "update: sift-down" )
+'				
+'				While Not is_leaf( item_i ) ..
+'				And Not f_less_than( binary_tree[item_i], binary_tree[child_i] )
+''					debug_heap( "update: swap( i:"+item_i+", child:"+child_i+" )" )
+'					swap( item_i, child_i ) 'swap item with its smallest child
+''					debug_heap( "update: swap( i:"+item_i+", child:"+child_i+" ) success" )
+'					item_i = child_i 'set item to its current smallest child
+'					child_i = smallest_child_i( item_i ) 'update item's smallest child
+'				End While
+'				
+'			End If
+'			register( c, item_i )
+''			debug_heap( "update: success" )
+'			Return True
+'		Else
+''			debug_heap( "update: failure" )
+'			Return False
+'		End If
+'	End Method
 	
 	Method reset()
 		For Local i% = 0 To item_count - 1
@@ -313,6 +361,21 @@ Type PATH_QUEUE
 		Next
 		item_count = 0
 	End Method
+	
+?Debug
+	Method unit_test()
+'		For Local i% = 1 To item_count - 1
+'			If Not f_less_than( binary_tree[parent_i(i)], binary_tree[i] )
+'				Local dump$ = "PATHING core dump: ["
+'				For Local i% = 0 To item_count - 1
+'					dump :+ Int( pathing.f( binary_tree[i] ))+","
+'				Next
+'				dump = dump[..dump.Length-2] + "]"
+'				DebugLog( dump )
+'			End If
+'		Next
+	End Method
+?
 	
 End Type
 '______________________________________________________________________________
@@ -329,27 +392,22 @@ Type PATHING_STRUCTURE
 	Method New()
 	End Method
 	
-	Function Create:PATHING_STRUCTURE( row_count% = 1, col_count% = 1 )
+	Function Create:PATHING_STRUCTURE( row_count%, col_count% )
 		Local ps:PATHING_STRUCTURE = New PATHING_STRUCTURE
 
 		ps.row_count = row_count; ps.col_count = col_count
-
 		ps.pathing_grid = New Int[ row_count, pathing_grid_w ]
-
 		ps.pathing_came_from = New CELL[ row_count, col_count ]
 		For Local row% = 0 To row_count - 1
 			For Local col% = 0 To col_count - 1
 				ps.pathing_came_from[ row, col ] = CELL.Create( row, col )
 			Next
 		Next
-
 		ps.pathing_visited = New Int[ row_count, col_count ]
 		ps.pathing_visited_list = CreateList()
-
 		ps.pathing_g = New Float[ row_count, col_count ]
 		ps.pathing_h = New Float[ row_count, col_count ]
 		ps.pathing_f = New Float[ row_count, col_count ]
-
 		ps.potential_paths = PATH_QUEUE.Create( row_count, col_count )
 
 		Return ps
@@ -368,6 +426,15 @@ Type PATHING_STRUCTURE
 		If Not in_bounds( c ) Then Return
 		pathing_grid[c.row,c.col] = value
 	End Method
+	Method set_area( top_left:CELL, bottom_right:CELL, value% )
+		Local cursor:CELL = New CELL
+		For cursor.row = top_left.row To bottom_right.row
+			For cursor.col = top_left.col To bottom_right.col
+				set_grid( cursor, value% )
+			Next
+		Next
+	End Method
+		
 	Method visited%( c:CELL )
 		If Not in_bounds( c ) Then Return True
 		Return pathing_visited[c.row,c.col]
@@ -377,6 +444,7 @@ Type PATHING_STRUCTURE
 		pathing_visited[c.row,c.col] = True
 		pathing_visited_list.addlast( c.clone() )
 	End Method
+	
 	Method came_from:CELL( c:CELL )
 		If Not in_bounds( c ) Then Return CELL.Create( -1, -1 )
 		Return pathing_came_from[c.row,c.col]
@@ -385,6 +453,7 @@ Type PATHING_STRUCTURE
 		If Not in_bounds( c ) Then Return
 		pathing_came_from[c.row,c.col] = value.clone()
 	End Method
+	
 	Method g#( c:CELL )
 		If Not in_bounds( c ) Then Return MAXIMUM_COST
 		Return pathing_g[c.row,c.col]
@@ -426,6 +495,7 @@ Type PATHING_STRUCTURE
 		Next
 		Return list
 	End Method
+	
 	Method backtrace_path:TList( c:CELL, start:CELL )
 		Local list:TList = CreateList()
 		list.AddFirst( c.clone() )
@@ -436,16 +506,29 @@ Type PATHING_STRUCTURE
 	End Method
 	
 	Method find_path_cells:TList( start:CELL, goal:CELL )
+?Debug
+global_start = start
+global_goal = goal
+?
 		set_g( start, 0 )
 		set_h( start, distance( start, goal ))
 		set_f_implicit( start )
-		potential_paths.insert( start )
+		potential_paths.insert( start, f( start ))
+?Debug
+potential_paths.unit_test()
+?
 		While Not potential_paths.is_empty()
-'			debug_pathing( "cursor = potential_paths.pop_root()" )
-			'Local cursor:CELL = potential_paths.pop_root()
-			Local cursor:CELL = potential_paths.extract_min_SLOWER()
+?Debug
+debug_pathing( "pop root" )
+?
+			Local cursor:CELL = potential_paths.pop_root()
+?Debug
+potential_paths.unit_test()
+?
 			If cursor.eq( goal )
-'				debug_pathing( "path found; F2 to continue", True )
+?Debug
+debug_pathing( "success", True)
+?
 				Return backtrace_path( goal, start )
 			End If
 			visit( cursor )
@@ -456,7 +539,10 @@ Type PATHING_STRUCTURE
 				set_h( neighbor, distance( neighbor, goal ))
 				set_f_implicit( neighbor )
 				If Not potential_paths.in_queue( neighbor )
-					potential_paths.insert( neighbor )
+					potential_paths.insert( neighbor, f( start ))
+?Debug
+potential_paths.unit_test()
+?
 					tentative_g_is_better = True
 				Else If tentative_g < g( neighbor )
 					tentative_g_is_better = True
@@ -465,34 +551,14 @@ Type PATHING_STRUCTURE
 					set_came_from( neighbor, cursor )
 					set_g( neighbor, tentative_g )
 					set_f_implicit( neighbor )
-					potential_paths.update( neighbor )
+					'potential_paths.update( neighbor )
 				End If
 			Next
 		End While
 		Return Null
 	End Method
 	
-	Method set_area( top_left:CELL, bottom_right:CELL, value% )
-		Local cursor:CELL = New CELL
-		For cursor.row = top_left.row To bottom_right.row
-			For cursor.col = top_left.col To bottom_right.col
-				set_grid( cursor, value% )
-			Next
-		Next
-	End Method
-	
 	Method reset()
-'		For Local row% = 0 To row_count - 1
-'			For Local col% = 0 To col_count - 1
-'				pathing_came_from[ row, col ].set( row, col )
-'				pathing_visited[ row, col ] = False
-'				pathing_g[ row, col ] = INFINITY
-'				pathing_h[ row, col ] = INFINITY
-'				pathing_f[ row, col ] = INFINITY
-'			Next
-'		Next
-'		pathing_visited_list = CreateList()
-
 		For Local c:CELL = EachIn pathing_visited_list
 			pathing_visited[c.row,c.col] = False
 		Next
@@ -511,52 +577,3 @@ Type PATHING_STRUCTURE
 	End Method
 	
 End Type
-'______________________________________________________________________________
-Global pathing:PATHING_STRUCTURE
-
-Function g_less_than%( i:CELL, j:CELL ) 'g(i) < g(j)
-	Return pathing.g( i ) <= pathing.g( j )
-End Function
-Function h_less_than%( i:CELL, j:CELL ) 'h(i) < h(j)
-	Return pathing.h( i ) <= pathing.h( j )
-End Function
-Function f_less_than%( i:CELL, j:CELL ) 'f(i) < f(j)
-	Return pathing.f( i ) <= pathing.f( j )
-End Function
-'______________________________________________________________________________
-Function init_pathing_grid_from_walls( level_walls:TList )
-	If pathing <> Null
-		For Local wall%[] = EachIn level_walls
-			pathing.set_area( containing_cell( wall[1], wall[2] ), containing_cell( wall[1]+wall[3], wall[2]+wall[4] ), wall[0] )
-		Next
-	End If
-End Function
-Function clear_pathing_grid_center_walls()
-	If pathing <> Null
-		pathing.set_area( containing_cell( arena_offset, arena_offset ), containing_cell( arena_offset+arena_w-1, arena_offset+arena_h-1 ), PATH_PASSABLE )
-	End If
-End Function
-'______________________________________________________________________________
-Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
-	Local start_cell:CELL = containing_cell( start_x, start_y )
-	Local goal_cell:CELL = containing_cell( goal_x, goal_y )
-	If pathing.grid( start_cell ) = PATH_BLOCKED Or pathing.grid( goal_cell ) = PATH_BLOCKED
-		Return Null 'no path possible to or from
-	End If
-	
-	pathing.reset()
-	Local cell_list:TList = pathing.find_path_cells( start_cell, goal_cell )
-
-	Local list:TList = CreateList()
-	If cell_list <> Null And Not cell_list.IsEmpty()
-		For Local cursor:CELL = EachIn cell_list
-			list.AddLast( cVEC.Create( cursor.col*cell_size + cell_size/2, cursor.row*cell_size + cell_size/2 ))
-		Next
-	End If
-	Return list
-End Function
-'______________________________________________________________________________
-
-
-
-

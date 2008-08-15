@@ -21,6 +21,8 @@ Graphics( window_w, window_h )
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
+load_all()
+
 '______________________________________________________________________________
 'MAIN
 Local before% = 0
@@ -37,7 +39,10 @@ Repeat
 	draw_all()
 	play_all()
 ?Debug
-If player <> Null Then debug_overlay()
+'If player <> Null Then debug_overlay()
+If KeyHit( KEY_F4 )
+	find_path( player.pos_x,player.pos_y, mouse_point.x,mouse_point.y )
+End If
 ?
 	Flip( 1 )
 	

@@ -5,11 +5,159 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-'Fonts
+Global data_path_prefix$ = "data/"
 Global font_path_prefix$ = "fonts/"
+Global audio_path_prefix$ = "sound/"
+Global image_path_prefix$ = "art/"
 
+Global file_paths:TList = CreateList()
+Global font_map:TMap = CreateMap()
+Global img_map:TMap = CreateMap()
+
+Const DIRECTIVE_LOAD_FILE$ = "[load_data]"
+Const DIRECTIVE_ADD_FONT$ = "[add_font]"
+Const DIRECTIVE_ADD_IMAGE$ = "[add_image]"
+
+'______________________________________________________________________________
+Function load_all()
+	load_base()
+	For Local path$ = EachIn file_paths
+		load_file( path )
+	Next
+End Function
+'______________________________________________________________________________
+Function is_directive%( str$ )
+  Return str.StartsWith( "[" ) And str.EndsWith( "]" )
+End Function
+
+Function is_comment%( str$ )
+  Return str.StartsWith( ";" )
+End Function
+'______________________________________________________________________________
+Function load_base()
+  Local line$, directive$, token$[], variable$, value$ 
+  Local path$
+  
+  Local base:TStream = ReadFile( data_path_prefix + "base.ini" )
+  If Not base Then RuntimeError( "error: base.ini not found." )
+  While Not Eof( base )
+    line = ((ReadLine( base )).Trim()).ToLower()
+    If (Not is_comment) And is_directive( line )
+      directive = line
+      Select directive
+        Case DIRECTIVE_LOAD_FILE
+          line = ((ReadLine( base )).Trim()).ToLower()
+          If is_directive( line ) Then RuntimeError( "base.ini "+directive+" -> error: 0 variables found of 1 variables required." )
+          token = line.Split( "=" )
+          variable = token[0].Trim()
+          value = token[1].Trim()
+          Select variable
+            Case "path$"
+              path = value
+              file_paths.AddLast( path )
+			      Default
+			        RuntimeError( "base.ini -> error: "+variable+" is not a recognized variable for this directive." )
+          End Select
+        Default
+          RuntimeError( "base.ini -> error: "+directive+" is not a recognized directive." )
+      End Select
+    End If
+  End While
+  CloseStream( base )
+End Function
+'______________________________________________________________________________
+Function load_file( file_path$ )
+  Local line$, directive$, result$
+  
+  Local file:TStream = ReadFile( file_path )
+  While Not Eof( file )
+    line = ((ReadLine( file )).Trim()).ToLower()
+    If (Not is_comment) And is_directive( line )
+      directive = line
+      Select directive
+				Case DIRECTIVE_ADD_FONT
+					result = add_font( file, font_map )
+					If result <> "success" Then RuntimeError( ""+StripDir( file_path )+" "+directive+" -> "+result )
+        Case DIRECTIVE_ADD_IMAGE
+          result = add_image( file, img_map )
+          If result <> "success" Then RuntimeError( ""+StripDir( file_path )+" "+directive+" -> "+result )
+        Default
+          RuntimeError( ""+StripDir( file_path )+" -> error: "+directive+" is not a recognized directive." )
+      End Select
+    End If
+  End While
+  CloseStream( file )
+End Function
+'______________________________________________________________________________
+Function add_font$( file:TStream, map:TMap )
+  Local line$, token$[], variable$, value$
+  Local font:TImageFont, path$, size#
+  Local variable_count% = 2
+
+  For Local i% = 0 To variable_count - 1
+    line = ((ReadLine( file )).Trim()).ToLower()
+    If is_directive( line ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
+    token = line.Split( "=" )
+    variable = token[0].Trim()
+    value = token[1].Trim()
+    Select variable
+      Case "path$"
+        path = value
+      Case "size#"
+        size = value.ToFloat()
+      Default
+        Return "error: "+variable+" is not a recognized variable for this directive."
+    End Select
+  Next
+  font = LoadImageFont( path, size, SMOOTHFONT )
+  map.Insert( StripAll( path )+"_"+size, font )
+  
+  Return "success"
+End Function
+
+Function get_font:TImageFont( key$ )
+	Return TImageFont( font_map.ValueForKey( key ))
+End Function
+'______________________________________________________________________________
+Function add_image$( file:TStream, map:TMap )
+  Local line$, token$[], variable$, value$
+  Local img:TImage, path$, handle_x#, handle_y#, filtered%, mipmapped%, dynamic%
+  Local variable_count% = 6
+
+  For Local i% = 0 To variable_count - 1
+    line = ((ReadLine( file )).Trim()).ToLower()
+    If is_directive( line ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
+    token = line.Split( "=" )
+    variable = token[0].Trim()
+    value = token[1].Trim()
+    Select variable
+      Case "path$"
+        path = value
+      Case "handle_x#"
+        handle_x = value.ToFloat()
+      Case "handle_y#"
+        handle_y = value.ToFloat()
+			Case "filtered%"
+				filtered = value.ToInt()
+			Case "mipmapped%"
+				mipmapped = value.ToInt()
+			Case "dynamic%"
+				dynamic = value.ToInt()
+      Default
+        Return "error: "+variable+" is not a recognized variable for this directive."
+    End Select
+  Next
+  img = LoadImage( path, (filtered&FILTEREDIMAGE)|(mipmapped&MIPMAPPEDIMAGE)|(dynamic&DYNAMICIMAGE) )
+  SetImageHandle( img, handle_x, handle_y )
+  map.Insert( StripAll( path ), img )
+  
+  Return "success"
+End Function
+
+'______________________________________________________________________________
+'Fonts
 Global consolas_normal_8:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 8 )
-Global consolas_normal_10:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 10 )
+'Global consolas_normal_10:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 10 )
 Global consolas_normal_12:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 12 )
 Global consolas_normal_24:TImageFont = LoadImageFont( font_path_prefix + "consolas.ttf", 24 )
 Global consolas_bold_24:TImageFont = LoadImageFont( font_path_prefix + "consolas_bold.ttf", 24 )
@@ -19,8 +167,6 @@ Global consolas_bold_150:TImageFont = LoadImageFont( font_path_prefix + "consola
 
 '______________________________________________________________________________
 'Sounds
-Global audio_path_prefix$ = "sound/"
-
 Global bg_music_victory_8_bit:TSound = LoadSound( audio_path_prefix + "victory_8-bit.ogg", SOUND_LOOP )
 Global bg_music:TChannel = AllocChannel()
 CueSound( bg_music_victory_8_bit, bg_music )
@@ -38,7 +184,6 @@ Global snd_laser_hit:TSound = LoadSound( audio_path_prefix + "laser_hit.ogg" )
 '______________________________________________________________________________
 'Images
 AutoImageFlags( FILTEREDIMAGE | MIPMAPPEDIMAGE )
-Global image_path_prefix$ = "art/"
 
 Function LoadImage_SetHandle:TImage( path$, x# = 0, y# = 0 )
 	Local img:TImage = LoadImage( image_path_prefix + path )
@@ -116,122 +261,6 @@ Global img_icon_player_cannon_ammo:TImage = LoadImage_SetHandle( "icon_player_ca
 
 Global img_door:TImage = LoadImage_SetHandle( "door.png", 1, 7 )
 Global img_reticle:TImage = LoadImage_SetHandle( "reticle.png", 22.5, 2.5 )
-
-Global file_paths:TList = CreateList()
-Global img_map:TMap = CreateMap()
-
-''_Main________________________________
-'main()
-'End
-'
-'Function main()
-'  load_base()
-'  For Local path$ = EachIn file_paths
-'    DebugLog "load_file( path="+path+" )"
-'    load_file( path )
-'  Next
-'  For Local key$ = EachIn img_map.Keys()
-'    Local img:TImage = TImage( img_map.ValueForKey( key ))
-'    DebugLog( key )
-'    If img <> Null
-'      DebugLog "  handle_x# = "+img.handle_x
-'      DebugLog "  handle_y# = "+img.handle_y
-'    Else
-'      DebugLog "  null"
-'    End If
-'  Next
-'End Function
-'____________________________________
-Const DIRECTIVE_LOAD_FILE$ = "[load_data]"
-Const DIRECTIVE_ADD_IMAGE$ = "[add_image]"
-
-Function is_directive%( str$ )
-  Return str.StartsWith( "[" ) And str.EndsWith( "]" )
-End Function
-
-Function is_comment%( str$ )
-  Return str.StartsWith( ";" )
-End Function
-
-Function load_base()
-  Local line$, directive$, token$[], variable$, value$ 
-  Local path$
-  
-  Local base:TStream = ReadFile( "base.ini" )
-  If Not base Then RuntimeError( "error: base.ini not found." )
-  While Not Eof( base )
-    line = ((ReadLine( base )).Trim()).ToLower()
-    If (Not is_comment) And is_directive( line )
-      directive = line
-      Select directive
-        Case DIRECTIVE_LOAD_FILE
-          line = (ReadLine( base )).ToLower()
-          If is_directive( line ) Then RuntimeError( "base.ini "+directive+" -> error: 0 variables found of 1 variables required." )
-          token = line.Split( "=" )
-          variable = token[0].Trim()
-          value = token[1].Trim()
-          Select variable
-            Case "path$"
-              path = value
-              file_paths.AddLast( path )
-          End Select
-        Default
-          RuntimeError( "base.ini -> error: "+directive+" is not a recognized directive." )
-      End Select
-    End If
-  End While
-  CloseStream( base )
-End Function
-
-Function load_file( file_path$ )
-  Local line$, directive$, result$
-  
-  Local file:TStream = ReadFile( file_path )
-  While Not Eof( file )
-    line = ((ReadLine( file )).Trim()).ToLower()
-    If (Not is_comment) And is_directive( line )
-      directive = line
-      Select directive
-        Case DIRECTIVE_ADD_IMAGE
-          result = add_image( file, img_map )
-          If result <> "success" Then RuntimeError( ""+StripDir( file_path )+" "+directive+" -> "+result )
-        Default
-          RuntimeError( ""+StripDir( file_path )+" -> error: "+directive+" is not a recognized directive." )
-      End Select
-    End If
-  End While
-  CloseStream( file )
-End Function
-
-Function add_image$( file:TStream, map:TMap )
-  Local line$, token$[], variable$, value$
-  Local img:TImage, handle_x#, handle_y#
-  Local path$, variable_count%
-
-  variable_count = 3
-  For Local i% = 0 To variable_count - 1
-    line = ((ReadLine( file )).Trim()).ToLower()
-    If is_directive( line ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
-    token = line.Split( "=" )
-    variable = token[0].Trim()
-    value = token[1].Trim()
-    Select variable
-      Case "path$"
-        path = value
-      Case "handle_x#"
-        handle_x = value.ToFloat()
-      Case "handle_y#"
-        handle_y = value.ToFloat()
-      Default
-        Return "error: "+variable+" is not a recognized variable for this directive."
-    End Select
-  Next
-  img = LoadImage( path )
-  SetImageHandle( img, handle_x, handle_y )
-  map.Insert( StripAll( path ), img )
-  
-  Return "success"
-End Function
 
 
 

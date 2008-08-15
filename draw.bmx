@@ -293,7 +293,7 @@ Function draw_menu()
 	
 	'copyright stuff
 	SetColor( 157, 157, 157 )
-	SetImageFont( consolas_normal_10 )
+	SetImageFont( get_font( "consolas_8" ))
 	x :+ 200; y :+ 7
 	DrawText( "Colosseum (c) 2008 Tylerbot", x, y ); y :+ 10
 	DrawText( "  [Tyler W.R. Cole]", x, y ); y :+ 10
