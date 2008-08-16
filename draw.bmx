@@ -225,6 +225,9 @@ Function draw_main_screen()
 	DrawText( "  Kaze", x, y ); y :+ 10
 	DrawText( "  SniperAceX", x, y ); y :+ 10
 	
+	'draw AI demo
+	
+	
 End Function
 '______________________________________________________________________________
 Function draw_shop()
@@ -232,8 +235,15 @@ Function draw_shop()
 End Function
 '______________________________________________________________________________
 Function draw_menus( x%, y% )
-	SetImageFont( get_font( "consolas_24" ))
-	get_current_menu().draw( x, y, True )
+	For Local i% = 0 To current_menu
+		SetAlpha( 0.3333 )
+		SetColor( 0, 0, 0 )
+		DrawRect( x-3,y-3, 300, 500 )
+
+		SetAlpha( 1 )
+		SetColor( 255, 255, 255 )
+		get_menu( menu_stack[i] ).draw( x + i*20, y + i*20, True )
+	Next
 End Function
 '______________________________________________________________________________
 Function draw_arena_bg()

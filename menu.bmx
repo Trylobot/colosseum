@@ -33,12 +33,12 @@ End Type
 Const ARROW_RIGHT% = 1
 Const ARROW_LEFT% = 2
 
-Function draw_arrow( arrow_type%, x#, y# )
+Function draw_arrow( arrow_type%, x#, y#, height% )
 	Select arrow_type
 		Case ARROW_RIGHT
-			DrawPoly( [ x,y, x,y+24, x+12,y+12 ])
+			DrawPoly( [ x,y, x,y+height, x+height/2,y+height/2 ])
 		Case ARROW_LEFT
-			DrawPoly( [ x,y, x,y+24, x-12,y+12 ])
+			DrawPoly( [ x,y, x,y+height, x-height/2,y+height/2 ])
 	End Select
 End Function
 '______________________________________________________________________________
@@ -69,28 +69,34 @@ Type MENU
 	
 	Method draw( x%, y%, border% = False )
 		Local cx% = x, cy% = y, opt:MENU_OPTION
+		
+		Local arrow_height% = 20
+		Local border_width% = 3
+		Local text_height_factor# = 0.70
 		Local width% = 0, height% = 0
+		
+		SetImageFont( get_font( "consolas_bold_24" ))
 		Select menu_type
 			
 			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
 				For Local opt:MENU_OPTION = EachIn options
 					opt = opt.clone()
-					If (2*margin + TextWidth( opt.name )) > width
-						width = (2*margin + TextWidth( opt.name )) 
+					If (2*margin + TextWidth( opt.name ) + 2*border_width) > width
+						width = (2*margin + TextWidth( opt.name ) + 6)
 					End If
 				Next
-				height = (2*margin + options.Length*(TextHeight( options[0].name ) + margin))
+				height = (margin + options.Length*(text_height_factor*GetImageFont().Height() + margin) + 2*border_width)
 				If border
 					SetColor( 64, 64, 64 )
-					DrawRect( x, y, width, height )
+					DrawRect( x-border_width,y-border_width, width,height )
 					SetColor( 0, 0, 0 )
-					DrawRect( x+3,y+3, width-6,height-6 )
+					DrawRect( x,y, width-2*border_width,height-2*border_width )
 				End If
 				x :+ margin; y :+ margin
 				For Local i% = 0 To options.Length - 1
 					opt = options[i]
 					If i = focus
-						SetColor( 224, 224, 255 )
+						SetColor( 255, 255, 255 )
 					Else
 						If (opt.enabled And opt.visible)
 							SetColor( 127, 127, 127 )
@@ -100,20 +106,25 @@ Type MENU
 							SetColor( 0, 0, 0 )
 						End If
 					End If
+					
 					opt.draw( x, y )
-					y :+ TextHeight( options[0].name ) + margin
+					y :+ text_height_factor*GetImageFont().Height() + margin
 				Next
 				
 			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
-				width = (2*margin + TextWidth( options[0].name ))
-				height = (2*margin + TextHeight( options[0].name ))
+				For Local opt:MENU_OPTION = EachIn options
+					opt = opt.clone()
+					If (4*margin + TextWidth( opt.name ) + 2*arrow_height/2 + 2*border_width) > width
+						width = (4*margin + TextWidth( opt.name ) + 2*arrow_height/2 + 2*border_width)
+					End If
+				Next
+				height = (2*margin + text_height_factor*GetImageFont().Height() + 2*border_width)
 				If border
 					SetColor( 64, 64, 64 )
-					DrawRect( x, y, width, height )
+					DrawRect( x-border_width, y-border_width, width,height )
 					SetColor( 0, 0, 0 )
-					DrawRect( x+3,y+3, width-6,height-6 )
+					DrawRect( x,y, width-2*border_width,height-2*border_width )
 				End If
-				x :+ margin; y :+ margin
 				Local left_color%, right_color%
 				If focus = 0
 					left_color = 96
@@ -133,12 +144,15 @@ Type MENU
 					left_color = 255
 					right_color = 255
 				End If
+				
 				SetColor( left_color, left_color, left_color )
-				draw_arrow( ARROW_LEFT, x, y + margin )
+				draw_arrow( ARROW_LEFT, x + margin + arrow_height/2, y + margin, arrow_height )
+				
 				SetColor( right_color, right_color, right_color )
-				draw_arrow( ARROW_RIGHT, x + 2*margin + width, y + margin )
-				SetColor( 224, 224, 255 )
-				options[focus].draw( x + margin, y + margin )
+				draw_arrow( ARROW_RIGHT, x + width - 2*margin - arrow_height/2, y + margin, arrow_height )
+				
+				SetColor( 255, 255, 255 )
+				options[focus].draw( x + 2*margin + arrow_height/2, y + margin )
 				
 		End Select
 	End Method
@@ -214,7 +228,7 @@ Const MENU_ID_OPTIONS_AUDIO% = 42
 Const MENU_ID_OPTIONS_CONTROLS% = 43
 Const MENU_ID_OPTIONS_GAME% = 44
 
-Global menu_margin% = 3
+Global menu_margin% = 8
 Global all_menus:MENU[] = ..
 [ ..
 	MENU.Create( "main menu", MENU_ID_MAIN_MENU, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 1, ..
@@ -275,7 +289,6 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			
 		Case COMMAND_BACK_TO_PARENT_MENU
 			If current_menu > 0 Then current_menu :- 1
-			
 			
 		Case COMMAND_RESUME
 			FLAG_in_menu = False
