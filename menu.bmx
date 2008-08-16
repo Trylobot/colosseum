@@ -12,7 +12,7 @@ Type MENU_OPTION
 	Field visible% 'draw this option? {true|false}
 	Field enabled% 'can this option be selected? {true|false}
 	
-	Function Create:MENU_OPTION( name$, command_code%, command_argument% = COMMAND_ARGUMENT_NULL, visible% = True, enabled% = True )
+	Function Create:MENU_OPTION( name$, command_code%, command_argument% = 0, visible% = True, enabled% = True )
 		Local opt:MENU_OPTION = New MENU_OPTION
 		opt.name = name
 		opt.command_code = command_code
@@ -30,15 +30,15 @@ Type MENU_OPTION
 	End Method
 End Type
 '______________________________________________________________________________
-Const ARROW_LEFT% = 1
-Const ARROW_RIGHT% = 2
+Const ARROW_RIGHT% = 1
+Const ARROW_LEFT% = 2
 
-Function draw_arrow( arrow_type%, x%, y% )
+Function draw_arrow( arrow_type%, x#, y# )
 	Select arrow_type
-		Case ARROW_LEFT
-			DrawPoly([ x,y, x,y+24, x+12,y+12 ])
 		Case ARROW_RIGHT
-			DrawPoly([ x,y, x,y+24, x-12,y+12 ])
+			DrawPoly( [ x,y, x,y+24, x+12,y+12 ])
+		Case ARROW_LEFT
+			DrawPoly( [ x,y, x,y+24, x-12,y+12 ])
 	End Select
 End Function
 '______________________________________________________________________________
@@ -55,89 +55,116 @@ Type MENU
 	Field options:MENU_OPTION[] 'array of possible options
 	Field children%[] 'array of handles, can be 0 (no child)
 	Field focus% 'index into options[]
-	Field width% '(private) width of entire menu with margins
-	Field height% '(private) height of entire menu with margins
 	
-	Function Create:MENU( name$, menu_id%, menu_type%, margin%, options:MENU_OPTION[] )
+	Function Create:MENU( name$, menu_id%, menu_type%, margin%, focus%, options:MENU_OPTION[] )
 		Local m:MENU = New MENU
 		m.name = name
 		m.menu_id = menu_id
 		m.menu_type = menu_type
-		m.options = options[..]
 		m.margin = margin
-		m.width = 0
-		For Local opt:MENU_OPTION = EachIn options
-			opt = opt.clone()
-			SetImageFont( menu_font )
-			If (2*margin + TextWidth( opt.name )) > m.width
-				m.width = (2*margin + TextWidth( opt.name )) 
-			End If
-		Next
-		Select menu_type
-			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
-				m.height = (2*margin + options.Length*(TextHeight(options[0].name) + margin))
-			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
-				m.height = (2*margin + TextHeight(options[0].name))
-		End Select
+		m.focus = focus
+		m.options = options[..]
 		Return m
 	End Function
 	
 	Method draw( x%, y%, border% = False )
 		Local cx% = x, cy% = y, opt:MENU_OPTION
-		If border
+		Local width% = 0, height% = 0
+		Select menu_type
 			
-		End If
-		x :+ margin; y :+ margin
-		For Local opt:MENU_OPTION = EachIn options
-			Select menu_type
-				
-				Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
-					For Local i% = 0 To options.Length - 1
-						opt = options[i]
-						If i = focus
-							SetColor( 224, 224, 255 )
-						Else
-							If (opt.enabled And opt.visible)
-								SetColor( 127, 127, 127 )
-							Else If opt.visible
-								SetColor( 64, 64, 64 )
-							Else
-								SetColor( 0, 0, 0 )
-							End If
-						End If
-						opt.draw
-						y :+ margin
-					Next
-					
-				Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
-					Local left_color%, right_color%
-					If focus = 0
-						left_color = 96
-						If options.Length > 1
-							right_color = 255
-						Else
-							right_color = 96
-						End If
-					Else If focus = options.Length - 1
-						right_color = 96
-						If options.Length > 1
-							left_color = 255
-						Else
-							left_color = 96
-						End If
-					Else
-						left_color = 255
-						right_color = 255
+			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
+				For Local opt:MENU_OPTION = EachIn options
+					opt = opt.clone()
+					If (2*margin + TextWidth( opt.name )) > width
+						width = (2*margin + TextWidth( opt.name )) 
 					End If
-					SetColor( left_color, left_color, left_color )
-					draw_arrow( ARROW_LEFT, x, y + margin )
-					SetColor( right_color, right_color, right_color )
-					draw_arrow( ARROW_RIGHT, x + 2*margin + width, y + margin )
-					SetColor( 224, 224, 255 )
-					options[focus].draw( x + margin, y + margin )
-					
-			End Select
+				Next
+				height = (2*margin + options.Length*(TextHeight( options[0].name ) + margin))
+				If border
+					SetColor( 64, 64, 64 )
+					DrawRect( x, y, width, height )
+					SetColor( 0, 0, 0 )
+					DrawRect( x+3,y+3, width-6,height-6 )
+				End If
+				x :+ margin; y :+ margin
+				For Local i% = 0 To options.Length - 1
+					opt = options[i]
+					If i = focus
+						SetColor( 224, 224, 255 )
+					Else
+						If (opt.enabled And opt.visible)
+							SetColor( 127, 127, 127 )
+						Else If opt.visible
+							SetColor( 64, 64, 64 )
+						Else
+							SetColor( 0, 0, 0 )
+						End If
+					End If
+					opt.draw( x, y )
+					y :+ TextHeight( options[0].name ) + margin
+				Next
+				
+			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
+				width = (2*margin + TextWidth( options[0].name ))
+				height = (2*margin + TextHeight( options[0].name ))
+				If border
+					SetColor( 64, 64, 64 )
+					DrawRect( x, y, width, height )
+					SetColor( 0, 0, 0 )
+					DrawRect( x+3,y+3, width-6,height-6 )
+				End If
+				x :+ margin; y :+ margin
+				Local left_color%, right_color%
+				If focus = 0
+					left_color = 96
+					If options.Length > 1
+						right_color = 255
+					Else
+						right_color = 96
+					End If
+				Else If focus = options.Length - 1
+					right_color = 96
+					If options.Length > 1
+						left_color = 255
+					Else
+						left_color = 96
+					End If
+				Else
+					left_color = 255
+					right_color = 255
+				End If
+				SetColor( left_color, left_color, left_color )
+				draw_arrow( ARROW_LEFT, x, y + margin )
+				SetColor( right_color, right_color, right_color )
+				draw_arrow( ARROW_RIGHT, x + 2*margin + width, y + margin )
+				SetColor( 224, 224, 255 )
+				options[focus].draw( x + margin, y + margin )
+				
+		End Select
+	End Method
+	
+	Method get_focus:MENU_OPTION()
+		Return options[focus]
+	End Method
+	
+	Method set_focus( key$ )
+		Local i% = find_option( key )
+		If i <> -1 Then focus = i
+	End Method
+
+	Method set_enabled( key$, value% )
+		Local i% = find_option( key )
+		If i <> -1 Then options[i].enabled = value
+	End Method
+	
+	Method find_option%( key$ )
+		key = key.ToLower()
+		For Local i% = 0 To options.Length - 1
+			If key = options[i].name.ToLower()
+				Return i
+			End If
 		Next
+		Return -1
 	End Method
 	
 	Method increment_focus()
@@ -157,12 +184,26 @@ Type MENU
 	End Method
 	
 	Method wrap_focus()
-		If      focus > (options.Length - 1) Then focus = 0 ..
-		Else If focus < 0                    Then focus = (options.Length - 1)
+'		Select menu_type
+'			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
+				If      focus > (options.Length - 1) Then focus = 0 ..
+				Else If focus < 0                    Then focus = (options.Length - 1)
+'			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
+'				If      focus > (options.Length - 1) Then focus = (options.Length - 1) ..
+'				Else If focus < 0                    Then focus = 0
+'		End Select
 	End Method
 End Type
 '______________________________________________________________________________
-Const MENU_ID_NONE% = 0
+Const COMMAND_SHOW_CHILD_MENU% = 50
+Const COMMAND_BACK_TO_PARENT_MENU% = 51
+Const COMMAND_RESUME% = 100
+Const COMMAND_NEW_GAME% = 101
+Const COMMAND_LOAD_GAME% = 102
+Const COMMAND_PLAYER_INPUT_TYPE% = 200
+Const COMMAND_QUIT_GAME% = 10000
+
+Const COMMAND_ARGUMENT_NULL% = 0
 
 Const MENU_ID_MAIN_MENU% = 10
 Const MENU_ID_NEW% = 20
@@ -173,33 +214,34 @@ Const MENU_ID_OPTIONS_AUDIO% = 42
 Const MENU_ID_OPTIONS_CONTROLS% = 43
 Const MENU_ID_OPTIONS_GAME% = 44
 
+Global menu_margin% = 3
 Global all_menus:MENU[] = ..
 [ ..
-	MENU.Create( "main menu", MENU_ID_MAIN_MENU, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, 15, ..
+	MENU.Create( "main menu", MENU_ID_MAIN_MENU, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 1, ..
 		[	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, False ), ..
 			MENU_OPTION.Create( "new", COMMAND_SHOW_CHILD_MENU, MENU_ID_NEW, True, True ), ..
 			MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, MENU_ID_LOAD, True, True ), ..
 			MENU_OPTION.Create( "options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS, True, True ), ..
 			MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ]), ..
-	MENU.Create( "select a vehicle", MENU_ID_NEW, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, 15, ..
+	MENU.Create( "select a vehicle", MENU_ID_NEW, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, menu_margin, 1, ..
 		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "light tank", COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK, True, True ), ..
 			MENU_OPTION.Create( "laser tank", COMMAND_NEW_GAME, PLAYER_INDEX_LASER_TANK, True, True ), ..
 			MENU_OPTION.Create( "medium tank", COMMAND_NEW_GAME, PLAYER_INDEX_MED_TANK, True, True ) ]), ..
-	MENU.Create( "select a saved game slot", MENU_ID_LOAD, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, 15, ..
+	MENU.Create( "select a saved game slot", MENU_ID_LOAD, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 0, ..
 		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "slot 1", COMMAND_LOAD_GAME, 0, True, False ), ..
 			MENU_OPTION.Create( "slot 2", COMMAND_LOAD_GAME, 1, True, False ), ..
 			MENU_OPTION.Create( "slot 3", COMMAND_LOAD_GAME, 2, True, False ), ..
 			MENU_OPTION.Create( "slot 4", COMMAND_LOAD_GAME, 3, True, False ), ..
 			MENU_OPTION.Create( "slot 5", COMMAND_LOAD_GAME, 4, True, False ) ]), ..
-	MENU.Create( "options", MENU_ID_OPTIONS, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, 15, ..
+	MENU.Create( "options", MENU_ID_OPTIONS, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 0, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_VIDEO, True, False ), ..
 			MENU_OPTION.Create( "audio options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_AUDIO, True, False ), ..
 			MENU_OPTION.Create( "control options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_CONTROLS, True, True ), ..
 			MENU_OPTION.Create( "game options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_GAME, True, False ) ]), ..
-	MENU.Create( "control options", MENU_ID_OPTIONS_CONTROLS, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, 15, ..
+	MENU.Create( "control options", MENU_ID_OPTIONS_CONTROLS, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, menu_margin, 0, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD, True, True ), ..
 			MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD_MOUSE_HYBRID, True, True ), ..
@@ -208,16 +250,21 @@ Global all_menus:MENU[] = ..
 
 '______________________________________________________________________________
 Global menu_stack%[] = New Int[10]
+	menu_stack[0] = MENU_ID_MAIN_MENU
 Global current_menu% = 0
 
-Const COMMAND_SHOW_CHILD_MENU% = 50
-Const COMMAND_BACK_TO_PARENT_MENU% = 51
-Const COMMAND_RESUME% = 100
-Const COMMAND_NEW_GAME% = 101
-Const COMMAND_LOAD_GAME% = 102
-Const COMMAND_QUIT% = 400
+Function get_current_menu:MENU()
+	Return get_menu( menu_stack[current_menu] )
+End Function
 
-Const COMMAND_ARGUMENT_NULL% = 0
+Function get_menu:MENU( menu_id% )
+	For Local i% = 0 To all_menus.Length - 1
+		If all_menus[i].menu_id = menu_id
+			Return all_menus[i]
+		End If
+	Next
+	Return Null
+End Function
 
 Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL )
 	Select command_code
@@ -227,14 +274,15 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			menu_stack[current_menu] = command_argument
 			
 		Case COMMAND_BACK_TO_PARENT_MENU
-			current_menu :- 1
+			If current_menu > 0 Then current_menu :- 1
+			
 			
 		Case COMMAND_RESUME
 			FLAG_in_menu = False
 			FLAG_player_engine_running = True
 			
 		Case COMMAND_NEW_GAME
-			player_type = PLAYER_INDEX_START + (command_index - 5)
+			player_type = command_argument
 			FLAG_in_menu = False
 			reset_game()
 			init_game()

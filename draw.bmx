@@ -22,7 +22,7 @@ Function draw_all()
 		draw_game()
 	Else
 		If FLAG_in_menu
-			draw_menu()
+			draw_main_screen()
 		Else If FLAG_in_shop
 			draw_shop()
 		End If
@@ -168,7 +168,7 @@ Function draw_game()
 End Function
 '______________________________________________________________________________
 'Menu and GUI
-Function draw_menu()
+Function draw_main_screen()
 	Local x%, y%
 	
 	'title
@@ -178,38 +178,39 @@ Function draw_menu()
 	
 	'menu options
 	x :+ 5; y :+ 70
-	Local x_indent% = 0
-	For Local option% = 0 To menu_option_count - 1
-		If menu_enabled[ option ]
-			If option = menu_option
-				SetColor( 255, 255, 255 )
-				SetImageFont( get_font( "consolas_bold_24" ))
-				SetAlpha( 1 )
-			Else
-				SetColor( 127, 127, 127 )
-				SetImageFont( get_font( "consolas_24" ))
-				SetAlpha( 1 )
-			End If
-		Else
-			If option <= 4
-				SetColor( 64, 64, 64 )
-				SetImageFont( get_font( "consolas_24" ))
-				SetAlpha( 1 )
-			Else
-				SetColor( 64, 64, 64 )
-				SetImageFont( get_font( "consolas_24" ))
-				SetAlpha( 0 )
-			End If
-		End If
-		If option > 4 Then x_indent = 20
-		DrawText( menu_display_string[ option ], x + x_indent, y + option*26 )
-	Next
-	SetAlpha( 1 )
+	draw_menus( x, y )
+'	Local x_indent% = 0
+'	For Local option% = 0 To menu_option_count - 1
+'		If menu_enabled[ option ]
+'			If option = menu_option
+'				SetColor( 255, 255, 255 )
+'				SetImageFont( get_font( "consolas_bold_24" ))
+'				SetAlpha( 1 )
+'			Else
+'				SetColor( 127, 127, 127 )
+'				SetImageFont( get_font( "consolas_24" ))
+'				SetAlpha( 1 )
+'			End If
+'		Else
+'			If option <= 4
+'				SetColor( 64, 64, 64 )
+'				SetImageFont( get_font( "consolas_24" ))
+'				SetAlpha( 1 )
+'			Else
+'				SetColor( 64, 64, 64 )
+'				SetImageFont( get_font( "consolas_24" ))
+'				SetAlpha( 0 )
+'			End If
+'		End If
+'		If option > 4 Then x_indent = 20
+'		DrawText( menu_display_string[ option ], x + x_indent, y + option*26 )
+'	Next
+'	SetAlpha( 1 )
 	
 	'copyright stuff
 	SetColor( 157, 157, 157 )
-	SetImageFont( get_font( "consolas_8" ))
-	x :+ 200; y :+ 7
+	SetImageFont( get_font( "consolas_10" ))
+	x = window_w - 200; y = 25
 	DrawText( "Colosseum (c) 2008 Tylerbot", x, y ); y :+ 10
 	DrawText( "  [Tyler W.R. Cole]", x, y ); y :+ 10
 	y :+ 10
@@ -228,6 +229,11 @@ End Function
 '______________________________________________________________________________
 Function draw_shop()
 	
+End Function
+'______________________________________________________________________________
+Function draw_menus( x%, y% )
+	SetImageFont( get_font( "consolas_24" ))
+	get_current_menu().draw( x, y, True )
 End Function
 '______________________________________________________________________________
 Function draw_arena_bg()
