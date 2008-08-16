@@ -9,14 +9,14 @@ Global menu_font:TImageFont = get_font( "consolas_24" )
 
 Type MENU_OPTION
 	Field name$ 'display to user
-	Field value% 'return to system
+	Field command% 'return to system
 	Field visible% 'draw this option? {true|false}
 	Field enabled% 'can this option be selected? {true|false}
 	
-	Function Create:MENU_OPTION( name$, value%, visible%, enabled% )
+	Function Create:MENU_OPTION( name$, command%, visible%, enabled% )
 		Local opt:MENU_OPTION = New MENU_OPTION
 		opt.name = name
-		opt.value = value
+		opt.command = command
 		opt.visible = visible
 		opt.enabled = enabled
 		Return opt
@@ -25,17 +25,21 @@ Type MENU_OPTION
 	Method draw( x%, y% )
 		DrawText( name, x, y )
 	End Method
+
 End Type
 '______________________________________________________________________________
-Const MENU_TYPE_SELECT_ONE_VERTICAL_WRAP_LIST
-Const MENU_TYPE_SELECT_ONE_HORIZONTAL_CYCLIC_LIST
+Const MENU_TYPE_SELECT_ONE_VERTICAL_LIST
+Const MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
 
 Type MENU
 	Field name$ 'display to user
+	Field menu_id% 'handle
 	Field menu_type% 'controls display and input
 	Field options:MENU_OPTION[] 'array of possible options
 	Field margin% 'visual margin
 	Field focus% 'index into options[]
+	Field parent:MENU
+	Field children
 	Field width% '(private) width of entire menu with margins
 	Field height% '(private) height of entire menu with margins
 	
@@ -46,20 +50,41 @@ Type MENU
 		m.options = options
 		m.margin = margin
 		m.width = 0
-		m.height = 0
 		For Local opt:MENU_OPTION = EachIn options
 			SetImageFont( menu_font )
-			If (2*margin + TextWidth( opt.name )) > m.width
-				m.width =(2*margin + TextWidth( opt.name )) 
+			If menu_type = MENU_TYPE_SELECT_ONE_VERTICAL_LIST
+				If (2*margin + TextWidth( opt.name )) > m.width
+					m.width = (2*margin + TextWidth( opt.name )) 
+				End If
+			End If
 		Next
+		m.height = (2*margin + options.Length*(TextHeight(options[0].name) + margin))
 		Return m
 	End Function
 	
-	Method draw( x%, y% )
+	Method draw( x%, y%, border% = False )
+		Local cx% = x, cy% = y
+		If border
+			
+		End If
 		
+		x :+ margin; y :+ margin
+		For Local opt:MENU_OPTION = EachIn options
+			Select menu_type
+				Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
+					For Local opt:MENU_OPTION = EachIn options
+						opt.draw
+						y :+ margin
+					Next
+					
+				Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
+					
+			End Select
+		Next
 	End Method
 End Type
-
+'______________________________________________________________________________
+Global menu_stack:TList 'TList:MENU
 
 
 '______________________________________________________________________________
