@@ -5,43 +5,6 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const COMMAND_SHOW_CHILD_MENU% = 50
-Const COMMAND_BACK_TO_PARENT_MENU% = 51
-Const COMMAND_RESUME% = 100
-Const COMMAND_NEW_GAME% = 101
-Const COMMAND_LOAD_GAME% = 102
-Const COMMAND_QUIT% = 400
-
-Const COMMAND_ARGUMENT_NULL% = 0
-
-Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL )
-	Select command_code
-		
-		Case COMMAND_SHOW_CHILD_MENU
-			
-		Case COMMAND_BACK_TO_PARENT_MENU
-			
-		Case COMMAND_RESUME
-			FLAG_in_menu = False
-			FLAG_player_engine_running = True
-			
-		Case COMMAND_NEW_GAME
-			player_type = PLAYER_INDEX_START + (command_index - 5)
-			FLAG_in_menu = False
-			reset_game()
-			init_game()
-			FLAG_game_in_progress = True
-			
-		Case COMMAND_LOAD_GAME
-			
-		Case COMMAND_QUIT_GAME
-			End
-			
-	End Select
-End Function
-'______________________________________________________________________________
-Global menu_font:TImageFont = get_font( "consolas_24" )
-
 Type MENU_OPTION
 	Field name$ 'display to user
 	Field command_code% 'command to execute
@@ -79,6 +42,8 @@ Function draw_arrow( arrow_type%, x%, y% )
 	End Select
 End Function
 '______________________________________________________________________________
+Global menu_font:TImageFont = get_font( "consolas_24" )
+
 Const MENU_TYPE_SELECT_ONE_VERTICAL_LIST% = 1
 Const MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST% = 2
 
@@ -197,9 +162,6 @@ Type MENU
 	End Method
 End Type
 '______________________________________________________________________________
-Global menu_stack%[10]
-Global current_menu_stack_index% = 0
-
 Const MENU_ID_NONE% = 0
 
 Const MENU_ID_MAIN_MENU% = 10
@@ -211,105 +173,80 @@ Const MENU_ID_OPTIONS_AUDIO% = 42
 Const MENU_ID_OPTIONS_CONTROLS% = 43
 Const MENU_ID_OPTIONS_GAME% = 44
 
-Global main_menu:MENU = MENU.Create( "main menu", MENU_ID_MAIN_MENU, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, 15, ..
-	[	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, False ), ..
-		MENU_OPTION.Create( "new", COMMAND_SHOW_CHILD_MENU, MENU_ID_NEW, True, True ), ..
-		MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, MENU_ID_LOAD, True, True ), ..
-		MENU_OPTION.Create( "options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS, True, True ), ..
-		MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ])
-Global new_game_menu:MENU = MENU.Create( "select a vehicle", MENU_ID_NEW, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, 15, ..
-	[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-		MENU_OPTION.Create( "light tank", COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK, True, True ), ..
-		MENU_OPTION.Create( "laser tank", COMMAND_NEW_GAME, PLAYER_INDEX_LASER_TANK, True, True ), ..
-		MENU_OPTION.Create( "medium tank", COMMAND_NEW_GAME, PLAYER_INDEX_MED_TANK, True, True ) ])
-Global load_game_menu:MENU = MENU.Create( "select a saved game slot", MENU_ID_LOAD, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, 15, ..
-	[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-		MENU_OPTION.Create( "slot 1", COMMAND_LOAD_GAME, 0, True, False ), ..
-		MENU_OPTION.Create( "slot 2", COMMAND_LOAD_GAME, 1, True, False ), ..
-		MENU_OPTION.Create( "slot 3", COMMAND_LOAD_GAME, 2, True, False ), ..
-		MENU_OPTION.Create( "slot 4", COMMAND_LOAD_GAME, 3, True, False ), ..
-		MENU_OPTION.Create( "slot 5", COMMAND_LOAD_GAME, 4, True, False ) ])
-Global options_menu:MENU = MENU.Create( "options", MENU_ID_OPTIONS, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, 15, ..
-	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-		MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_VIDEO, True, False ), ..
-		MENU_OPTION.Create( "audio options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_AUDIO, True, False ), ..
-		MENU_OPTION.Create( "control options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_CONTROLS, True, True ), ..
-		MENU_OPTION.Create( "game options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_GAME, True, False ) ])
-'Global options_video_menu:MENU
-'Global options_audio_menu:MENU
-Global options_controls_menu:MENU = menu.Create( "control options", MENU_ID_OPTIONS_CONTROLS, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, 15, ..
-	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-		MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD, True, True ), ..
-		MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD_MOUSE_HYBRID, True, True ), ..
-		MENU_OPTION.Create( "xbox 360 controller", COMMAND_PLAYER_INPUT_TYPE, INPUT_XBOX_360_CONTROLLER, True, False ) ])
-'Global options_game_menu:MENU
-
+Global all_menus:MENU[] = ..
+[ ..
+	MENU.Create( "main menu", MENU_ID_MAIN_MENU, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, 15, ..
+		[	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, False ), ..
+			MENU_OPTION.Create( "new", COMMAND_SHOW_CHILD_MENU, MENU_ID_NEW, True, True ), ..
+			MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, MENU_ID_LOAD, True, True ), ..
+			MENU_OPTION.Create( "options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS, True, True ), ..
+			MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ]), ..
+	MENU.Create( "select a vehicle", MENU_ID_NEW, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, 15, ..
+		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "light tank", COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK, True, True ), ..
+			MENU_OPTION.Create( "laser tank", COMMAND_NEW_GAME, PLAYER_INDEX_LASER_TANK, True, True ), ..
+			MENU_OPTION.Create( "medium tank", COMMAND_NEW_GAME, PLAYER_INDEX_MED_TANK, True, True ) ]), ..
+	MENU.Create( "select a saved game slot", MENU_ID_LOAD, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, 15, ..
+		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "slot 1", COMMAND_LOAD_GAME, 0, True, False ), ..
+			MENU_OPTION.Create( "slot 2", COMMAND_LOAD_GAME, 1, True, False ), ..
+			MENU_OPTION.Create( "slot 3", COMMAND_LOAD_GAME, 2, True, False ), ..
+			MENU_OPTION.Create( "slot 4", COMMAND_LOAD_GAME, 3, True, False ), ..
+			MENU_OPTION.Create( "slot 5", COMMAND_LOAD_GAME, 4, True, False ) ]), ..
+	MENU.Create( "options", MENU_ID_OPTIONS, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, 15, ..
+		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_VIDEO, True, False ), ..
+			MENU_OPTION.Create( "audio options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_AUDIO, True, False ), ..
+			MENU_OPTION.Create( "control options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_CONTROLS, True, True ), ..
+			MENU_OPTION.Create( "game options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_GAME, True, False ) ]), ..
+	MENU.Create( "control options", MENU_ID_OPTIONS_CONTROLS, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, 15, ..
+		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD, True, True ), ..
+			MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD_MOUSE_HYBRID, True, True ), ..
+			MENU_OPTION.Create( "xbox 360 controller", COMMAND_PLAYER_INPUT_TYPE, INPUT_XBOX_360_CONTROLLER, True, False ) ]) ..
+]
 
 '______________________________________________________________________________
-'old code
-'Global menu_option_count% = 8
-'Const MENU_RESUME% = 0
-'Const MENU_NEW% = 1
-'Const MENU_LOAD% = 2
-'Const MENU_SETTINGS% = 3
-'Const MENU_QUIT% = 4
-''light tank = 5
-''laser tank = 6
-''medium tank = 7
-''AI_DEMO
-''LEVEL_EDITOR
-'
-'Global menu_display_string$[] = [ "resume", "new game", "load saved", "settings", "quit", "light tank", "laser tank", "medium tank" ]
-'Global menu_enabled%[] =        [  False,    True,       False,        False,      True,   False,        False,        False ]
-'Global menu_option% = MENU_NEW
-'
-''______________________________________________________________________________
-'Function next_enabled_menu_option()
-'	menu_option :+ 1
-'	If menu_option >= menu_option_count Then menu_option = 0
-'	While Not menu_enabled[ menu_option ]
-'		menu_option :+ 1
-'		If menu_option >= menu_option_count Then menu_option = 0
-'	End While
-'End Function
-'Function prev_enabled_menu_option()
-'	menu_option :- 1
-'	If menu_option < 0 Then menu_option = menu_option_count - 1
-'	While Not menu_enabled[ menu_option ]
-'		menu_option :- 1
-'		If menu_option < 0 Then menu_option = menu_option_count - 1
-'	End While
-'End Function
-'______________________________________________________________________________
-'Menu Commands
-'Function menu_command( command_index% )
-'	Select command_index
-'		
-		Case MENU_RESUME
+Global menu_stack%[] = New Int[10]
+Global current_menu% = 0
+
+Const COMMAND_SHOW_CHILD_MENU% = 50
+Const COMMAND_BACK_TO_PARENT_MENU% = 51
+Const COMMAND_RESUME% = 100
+Const COMMAND_NEW_GAME% = 101
+Const COMMAND_LOAD_GAME% = 102
+Const COMMAND_QUIT% = 400
+
+Const COMMAND_ARGUMENT_NULL% = 0
+
+Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL )
+	Select command_code
 		
-		Case MENU_NEW
-			menu_enabled[MENU_NEW] = False
-			menu_enabled[5] = True
-			menu_enabled[6] = True
-			menu_enabled[7] = True
-			menu_option = 5
+		Case COMMAND_SHOW_CHILD_MENU
+			current_menu :+ 1
+			menu_stack[current_menu] = command_argument
 			
-		Case MENU_LOAD
-			'..?
-		
-		Case MENU_SETTINGS
-			'..?
-		
-		Case MENU_QUIT
-			End 'quit now
+		Case COMMAND_BACK_TO_PARENT_MENU
+			current_menu :- 1
 			
-		Case 5, 6, 7 'tank selection (part of NEW)
-			menu_enabled[MENU_NEW] = True
-			menu_enabled[5] = False
-			menu_enabled[6] = False
-			menu_enabled[7] = False
-'			
-'	End Select
-'End Function
+		Case COMMAND_RESUME
+			FLAG_in_menu = False
+			FLAG_player_engine_running = True
+			
+		Case COMMAND_NEW_GAME
+			player_type = PLAYER_INDEX_START + (command_index - 5)
+			FLAG_in_menu = False
+			reset_game()
+			init_game()
+			FLAG_game_in_progress = True
+			
+		Case COMMAND_LOAD_GAME
+			'..?
+			
+		Case COMMAND_QUIT_GAME
+			End
+			
+	End Select
+End Function
 
 
