@@ -28,6 +28,8 @@ Type COMPLEX_AGENT Extends AGENT
 	Field political_alignment% '{friendly|hostile}
 	Field ai_type% 'artificial intelligence subroutine index (only used for AI-controlled agents)
 	
+	Field turret_groups:TList 'list of turret groups attached to this agent
+	
 	Field turrets:TURRET[] 'turret array
 	Field turret_count% 'number of turret slots
 	Field firing_sequence%[][][]
@@ -47,6 +49,7 @@ Type COMPLEX_AGENT Extends AGENT
 	Field right_track:PARTICLE
 	
 	Method New()
+		turret_groups = CreateList()
 		drive_forward_emitters = CreateList()
 		drive_backward_emitters = CreateList()
 		all_emitters = CreateList()
@@ -386,6 +389,12 @@ Type COMPLEX_AGENT Extends AGENT
 			
 		End Select
 		pkp.remove_me()
+	End Method
+	
+	Method add_turret_group:TURRET_GROUP( other_t:TURRET_GROUP )
+		Local t:TURRET_GROUP = other_t.clone()
+		
+		Return t
 	End Method
 	
 	Method add_turret:TURRET( other_t:TURRET, slot% )

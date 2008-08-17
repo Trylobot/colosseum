@@ -19,7 +19,6 @@ Type TURRET Extends POINT
 	Field control_pct# '[-1, 1] percent of angular velocity that is being used
 	Field reload_time% 'time required to reload
 	Field max_ammo% 'maximum number of rounds in reserve (this should be stored in individual ammo objects?)
-	'Field ammo:AMMUNITION 'ammunition object that controls the fired projectiles' look, muzzle velocity, mass, and damage
 	Field recoil_off_x#
 	Field recoil_off_y#
 	Field recoil_offset# 'current distance from local origin due to recoil
@@ -29,9 +28,7 @@ Type TURRET Extends POINT
 	Field heat_per_shot_max#
 	Field cooling_coefficient#
 	Field overheat_delay%
-	
 	Field emitter_list:TList 'list of all emitters, to be enabled (with count) when turret fires
-	'it is expected that at least one projectile emitter would be added to this object, so it can fire, but it's not necessary.
 
 	Field off_x#
 	Field off_y#
@@ -226,4 +223,22 @@ Type TURRET Extends POINT
 	
 End Type
 
+'______________________________________________________________________________
+Type TURRET_GROUP
+	Field turret_array:TURRET[] 'actual turret array, not be accessed directly
+	Field firing_sequence%[][] 'a list of lists of turret indices; describes the firing behavior of this entity
+	Field firing_state% 'indicates which sequence index this turret group is currently on
+	Field FLAG_increment% 'if true, indicates this turret group wishes to move to the next firing state; will actually move when completely reloaded
+	Field max_ang_vel# 'maximum rotation speed for this turret group
+	Field control_pct# 'control variable, directly affects angular velocity of every turret in the group
+	
+	Method clone:TURRET_GROUP()
+		
+	End Method
+	
+	
+End Type
 
+Function Create_TURRET_GROUP:TURRET_GROUP()
+	
+End Function
