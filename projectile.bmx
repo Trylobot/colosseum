@@ -107,7 +107,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		add_me( projectile_list )
 	End Method
 	
-	Method impact()
+	Method impact( other:COMPLEX_AGENT = Null )
 		'payload emitters
 		For Local em:EMITTER = EachIn emitter_list_payload
 			em.enable( MODE_ENABLED_WITH_COUNTER )
@@ -116,16 +116,16 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 				em.emit()
 			End While
 		Next
-		play_impact_sound()
+		Local volume# = 0.3333
+		If other <> Null And other.id = get_player_id() Then volume = 1.00
+		play_impact_sound( volume )
 	End Method
 	
-	Method play_impact_sound()
+	Method play_impact_sound( volume# )
 		If snd_impact <> Null
 			Local ch:TChannel = AllocChannel()
 			CueSound( snd_impact, ch )
-			If source_id <> get_player_id()
-				SetChannelVolume( ch, 0.1500 )
-			End If
+			SetChannelVolume( ch, volume )
 			SetChannelRate( ch, RandF( 0.75, 1.25 ))
 			ResumeChannel( ch )
 			audio_channels.AddLast( ch )

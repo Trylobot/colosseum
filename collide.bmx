@@ -168,7 +168,7 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 		End If
 	End If
 	'activate projectile impact emitter
-	proj.impact()
+	proj.impact( ag )
 	'remove projectile
 	proj.remove_me()
 End Function
