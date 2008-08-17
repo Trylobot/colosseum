@@ -123,6 +123,15 @@ Function spawn_from_squad( squad:TList ) 'this function should be treated as a r
 End Function
 
 '______________________________________________________________________________
+'Level objects
+Type LEVEL
+	Field squads%[][]
+	Field squad_spawn_delay%[]
+	Field walls:BOX[]
+	
+End Type
+
+'______________________________________________________________________________
 'Level Squads
 Function get_level_squads%[][]( i% )
 	If i < level_squads.Length
@@ -245,10 +254,10 @@ End Function
 '[ WALL_TYPE%, X%, Y%, W%, H% ]
 Global common_walls:TList = CreateList()
 'common outermost walls: N, E, S, W
-common_walls.AddLast([ WALL_ADD, -50,-50,                    (arena_offset*2+arena_w+100),50 ])
-common_walls.AddLast([ WALL_ADD, arena_offset*2+arena_w,-50, 50,(arena_offset*2+arena_h+100) ])
-common_walls.AddLast([ WALL_ADD, -50,arena_offset*2+arena_h, (arena_offset*2+arena_w+100),50 ])
-common_walls.AddLast([ WALL_ADD, -50,-50,                    50,(arena_offset*2+arena_h+100) ])
+common_walls.AddLast([ WALL_ADD, -50,-50,                    (arena_offset*2+arena_w+100)-1,50-1 ])
+common_walls.AddLast([ WALL_ADD, arena_offset*2+arena_w,-50, 50-1,(arena_offset*2+arena_h+100)-1 ])
+common_walls.AddLast([ WALL_ADD, -50,arena_offset*2+arena_h, (arena_offset*2+arena_w+100)-1,50-1 ])
+common_walls.AddLast([ WALL_ADD, -50,-50,                    50-1,(arena_offset*2+arena_h+100)-1 ])
 'common inner walls: N,N, E,E, S,S, W,W
 common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
 common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),0,                    arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])

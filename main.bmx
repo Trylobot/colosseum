@@ -43,10 +43,10 @@ Repeat
 	draw_all()
 	play_all()
 ?Debug
-'If player <> Null Then debug_overlay()
-If KeyHit( KEY_F4 ) And FLAG_game_in_progress
-	find_path( player.pos_x,player.pos_y, mouse_point.x,mouse_point.y )
-End If
+If player <> Null Then debug_overlay()
+'If KeyHit( KEY_F4 ) And FLAG_game_in_progress
+'	find_path( player.pos_x,player.pos_y, mouse_point.x,mouse_point.y )
+'End If
 ?
 	Flip( 1 )
 	

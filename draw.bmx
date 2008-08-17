@@ -179,33 +179,6 @@ Function draw_main_screen()
 	'menu options
 	x :+ 5; y :+ 70
 	draw_menus( x, y )
-'	Local x_indent% = 0
-'	For Local option% = 0 To menu_option_count - 1
-'		If menu_enabled[ option ]
-'			If option = menu_option
-'				SetColor( 255, 255, 255 )
-'				SetImageFont( get_font( "consolas_bold_24" ))
-'				SetAlpha( 1 )
-'			Else
-'				SetColor( 127, 127, 127 )
-'				SetImageFont( get_font( "consolas_24" ))
-'				SetAlpha( 1 )
-'			End If
-'		Else
-'			If option <= 4
-'				SetColor( 64, 64, 64 )
-'				SetImageFont( get_font( "consolas_24" ))
-'				SetAlpha( 1 )
-'			Else
-'				SetColor( 64, 64, 64 )
-'				SetImageFont( get_font( "consolas_24" ))
-'				SetAlpha( 0 )
-'			End If
-'		End If
-'		If option > 4 Then x_indent = 20
-'		DrawText( menu_display_string[ option ], x + x_indent, y + option*26 )
-'	Next
-'	SetAlpha( 1 )
 	
 	'copyright stuff
 	SetColor( 157, 157, 157 )
@@ -225,7 +198,7 @@ Function draw_main_screen()
 	DrawText( "  Kaze", x, y ); y :+ 10
 	DrawText( "  SniperAceX", x, y ); y :+ 10
 	
-	'draw AI demo
+	'draw auto-AI demo area
 	
 	
 End Function
@@ -236,7 +209,7 @@ End Function
 '______________________________________________________________________________
 Function draw_menus( x%, y% )
 	For Local i% = 0 To current_menu
-		SetAlpha( 0.3333 )
+		SetAlpha( 0.5 )
 		SetColor( 0, 0, 0 )
 		DrawRect( x-3,y-3, 300, 500 )
 
@@ -294,10 +267,8 @@ Function draw_arena_fg()
 	SetAlpha( 0.2*time_alpha_pct( battle_toggle_ts, arena_lights_fade_time, Not FLAG_battle_in_progress ))
 	SetBlend( LIGHTBLEND )
 	DrawImage( img_halo, player.pos_x,player.pos_y )
-'	If Not FLAG_player_in_locker
-		SetScale( 2, 2 )
-		DrawImage( img_halo, player_spawn_point.pos_x,player_spawn_point.pos_y+arena_offset/3 )
-'	End If
+	SetScale( 2, 2 )
+	DrawImage( img_halo, player_spawn_point.pos_x,player_spawn_point.pos_y+arena_offset/3 )
 	SetBlend( ALPHABLEND )
 End Function
 '______________________________________________________________________________
@@ -330,7 +301,7 @@ Function dim_bg_cache()
 	SetAlpha( 1 )
 	SetRotation( 0 )
 	DrawImage( bg_cache, 0,0 )
-	SetAlpha( 0.450 )
+	SetAlpha( 0.5 )
 	DrawImage( img_arena_bg, 0,0 )
 	GrabImage( bg_cache, 0,0 )
 End Function
@@ -395,8 +366,18 @@ Function draw_stats()
 			DrawRect( x, y, w, h )
 			SetColor( 32, 32, 32 )
 			DrawRect( x + 1, y + 1, w - 2, h - 2 )
-			SetColor( 255*heat_pct, 0, 255*(1 - heat_pct) )
-			DrawRect( x + 2, y + 2, (Double(w) - 4.0)*heat_pct, h - 4 )
+			If (now() - t.bonus_cooling_start_ts) < t.bonus_cooling_time
+				SetColor( 32, 32, 255 )
+				DrawRect( x + 2, y + 2, w - 4, h - 4 )
+				SetViewport( x + 2, y + 2, w - 4, h - 4 )
+				SetColor( 255, 255, 255 )
+				Local x_offset# = (now()/4) Mod (w+20)
+				DrawImage( img_shine, x-10+Abs(x_offset), y + 2 )
+				SetViewport( 0,0, window_w,window_h )
+			Else
+				SetColor( 255*heat_pct, 0, 255*(1 - heat_pct) )
+				DrawRect( x + 2, y + 2, (Double(w) - 4.0)*heat_pct, h - 4 )
+			End If
 		End If
 	Next
 	y :+ h
@@ -414,7 +395,19 @@ End Function
 Function DrawText_with_shadow( str$, pos_x%, pos_y% )
 	SetColor( 0, 0, 0 )
 	DrawText( str, pos_x + 1, pos_y + 1 )
+	
 	SetColor( 255, 255, 255 )
+	DrawText( str, pos_x, pos_y )
+End Function
+
+Function DrawText_with_glow( str$, pos_x%, pos_y% )
+	SetColor( 255, 255, 255 )
+	SetAlpha( 0.2 )
+	DrawText( str, pos_x-1, pos_y-1 )
+	DrawText( str, pos_x+1, pos_y-1 )
+	DrawText( str, pos_x+1, pos_y+1 )
+	DrawText( str, pos_x-1, pos_y-1 )
+	SetAlpha( 1 )
 	DrawText( str, pos_x, pos_y )
 End Function
 

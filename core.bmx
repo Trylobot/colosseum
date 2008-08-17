@@ -88,30 +88,29 @@ Function reset_game()
 End Function
 '______________________________________________________________________________
 Function init_game()
-	
 	init_pathing_system()
 	player_level = -1
 	respawn_player( player_type )
 	load_next_level()
-	
 End Function
 '______________________________________________________________________________
 Function init_pathing_system()
-	
 	pathing_grid_h = (arena_h + 2*arena_offset) / cell_size
 	pathing_grid_w = (arena_w + 2*arena_offset) / cell_size
 	pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
 	init_pathing_grid_from_walls( common_walls )
-	
+End Function
+
+Function singleton_pathing_system_f_value#( inquiry:CELL )
+	Return pathing.f( inquiry )
 End Function
 '______________________________________________________________________________
 Function load_next_level()
-	
 	player_level :+ 1
 	load_level( player_level )
 	'FLAG_retain_particles = True
-	
 End Function
+
 Function load_level( index% )
 	
 	FLAG_player_in_locker = True
@@ -202,7 +201,7 @@ Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
 	End If
 	
 	pathing.reset()
-	Local cell_list:TList = pathing.find_path_cells( start_cell, goal_cell )
+	Local cell_list:TList = pathing.find_CELL_path( start_cell, goal_cell )
 
 	Local list:TList = CreateList()
 	If cell_list <> Null And Not cell_list.IsEmpty()
@@ -212,5 +211,7 @@ Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
 	End If
 	Return list
 End Function
+
+
 
 

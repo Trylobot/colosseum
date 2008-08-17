@@ -464,7 +464,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 							ang_to_target = avatar.ang_to_cVEC( waypoint )
 							Local diff# = ang_wrap( avatar.ang - ang_to_target )
 							'if it is pointed toward the path's next waypoint, then..
-							If Abs(diff) <= 15.000
+							If Abs(diff) <= 3.000
 								'drive forward
 								avatar.drive( 1.0 )
 								avatar.turn( 0.0 )

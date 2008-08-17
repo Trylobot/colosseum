@@ -145,14 +145,10 @@ Function debug_overlay()
 			load_level( player_level )
 		End If
 		
-		If player_brain <> Null
-			If KeyDown( KEY_5 )
-				player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-			Else If KeyDown( KEY_6 )
-			  player_brain.input_type = INPUT_KEYBOARD
-			End If
+		If KeyHit( KEY_5 )
+			spawn_pickup( mouse_point.x, mouse_point.y )
 		End If
-			
+		
 	End If
 End Function
 ''______________________________________________________________________________
@@ -263,188 +259,185 @@ End Function
 '	
 'End Function
 '______________________________________________________________________________
-Function debug_heap( message$ = "" )
-	SetColor( 255, 255, 255 )
-	SetRotation( 0 )
-	SetScale( 1, 1 )
-	SetAlpha( 1 )
-	
-	Local pq:PATH_QUEUE = pathing.potential_paths
-	Local tree:CELL[] = pathing.potential_paths.binary_tree
-
-	Local wait_ts% = now()
-	Local wait_time%
-	If KeyDown( KEY_F3 ) Then wait_time = 0 Else wait_time = 500
-	wait_time = 500
-
-	While ((now() - wait_ts) <= wait_time) And Not KeyHit( KEY_F3 )
-		
-		If KeyHit( KEY_ESCAPE ) Then End
-		If KeyDown( KEY_F4 ) Then wait_ts = now()
-		
-		Cls
-		
-		sx = 3; sy = 3
-		
-		'draw optional message
-		SetColor( 127, 127, 255 ); SetAlpha( 1 )
-		SetImageFont( get_font( "consolas_12" ))
-		DrawText( message, sx, sy ); sy :+ 11
-
-		SetImageFont( get_font( "consolas_10" ))
-		If tree[0] = Null Then SetColor( 64, 64, 64 ) ..
-		Else                   SetColor( 255, 255, 255 )
-		DrawText( heap_info( 0 ), sx, sy )
-		draw_heap( 0 )
-		
-		Flip
-		
-	End While
-End Function
-
-Function draw_heap( i% )
-	Local pq:PATH_QUEUE = pathing.potential_paths
-	Local tree:CELL[] = pathing.potential_paths.binary_tree
-	If i < pq.item_count
-		
-		If pq.left_child_i( i ) < pq.item_count
-			sx :+ 4; sy :+ 9
-			If tree[pq.left_child_i( i )] = Null Then                        SetColor( 64, 64, 64 ) ..
-			Else If pq.get_cost(i) > pq.get_cost( pq.left_child_i( i )) Then SetColor( 255, 127, 127 ) ..
-			Else                                                             SetColor( 255, 255, 255 )
-			DrawText( heap_info( pq.left_child_i( i )), sx, sy )
-			draw_heap( pq.left_child_i( i ))
-			
-			If pq.right_child_i( i ) < pq.item_count
-				sy :+ 9
-				If tree[pq.right_child_i( i )] = Null Then                        SetColor( 64, 64, 64 ) ..
-				Else If pq.get_cost(i) > pq.get_cost( pq.right_child_i( i )) Then SetColor( 255, 127, 127 ) ..
-				Else                                                              SetColor( 255, 255, 255 )
-				DrawText( heap_info( pq.right_child_i( i )), sx, sy )
-				draw_heap( pq.right_child_i( i ))
-			End If
-			
-			sx :- 4
-		End If
-		
-	End If
-End Function
-
-Function heap_info$( i% )
-	Local info$ = ""+i+" "
-	If pathing.potential_paths.binary_tree[i] <> Null
-		'info :+ Int( pathing.f( pathing.potential_paths.binary_tree[i] ))
-		info :+ Int( pathing.potential_paths.get_cost( i ))
-	Else 'tree[i] == Null
-		info :+ "null"
-	End If
-	If i = 0
-		info :+ " {ROOT}"
-'	Else If pathing.potential_paths.left_child_i( i ) > pathing.potential_paths.item_count - 1
-'		info :+ " {leaf}"
-'	Else If i = pathing.potential_paths.item_count - 1
-'		info :+ " {LAST}"
-	End If
-	Return info
-End Function
-'______________________________________________________________________________
-'F4 to path from player to mouse; hold F4 to pause; hold F3 to fast-forward
-Function debug_pathing( message$ = "", done% = False )
-'/////////////////////////////////////////////
-	Return
-'/////////////////////////////////////////////
-	SetColor( 255, 255, 255 )
-	SetRotation( 0 )
-	SetScale( 1, 1 )
-	SetAlpha( 1 )
-	
-	Local wait_ts% = now()
-	Local wait_time%
-	If KeyDown( KEY_F3 ) Then wait_time = 0 Else wait_time = 500
-
-	While (((now() - wait_ts) <= wait_time) And (Not done)) ..
-	Or (done And Not KeyHit( KEY_F2 ))
-		
-		If KeyHit( KEY_ESCAPE ) Then End
-		If KeyDown( KEY_F4 ) Then wait_ts = now()
-		
-		Local mouse:CELL = containing_cell( MouseX() - arena_offset, MouseY() - arena_offset )
-		If KeyDown( KEY_F5 )
-			pathing.set_grid( mouse, PATH_BLOCKED )
-		Else If KeyDown( KEY_F6 )
-			pathing.set_grid( mouse, PATH_PASSABLE )
-		End If
-		
-		Cls
-		
-		'draw debug help
-		SetColor( 0, 0, 0 ); SetAlpha( 1 )
-		SetImageFont( get_font( "consolas_12" ))
-		DrawText( "set_goal,find_path:F4  pause:F4/faster:F3  block:F5  clear:F6", 3, -26 )
-		'draw pathing_grid cell border lines
-		SetLineWidth( 1 ); SetColor( 32, 32, 32 ); SetAlpha( 1.00 )
-		For Local r% = 2 To pathing_grid_h - 2
-			DrawLine( arena_offset, r*cell_size, pathing_grid_w*cell_size - arena_offset, r*cell_size )
-		Next
-		For Local c% = 2 To pathing_grid_w - 2
-			DrawLine( c*cell_size, arena_offset, c*cell_size, pathing_grid_h*cell_size - arena_offset )
-		Next
-		Local cursor:CELL = New CELL
-		For cursor.row = 2 To pathing_grid_h - 3
-			For cursor.col = 2 To pathing_grid_w - 3
-				'draw pathing_grid contents
-				SetColor( 255, 255, 255 ); SetAlpha( 0.85 )
-				If pathing.grid( cursor ) = PATH_BLOCKED Then ..
-					DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-			Next
-		Next
-		For cursor = EachIn pathing.pathing_visited_list
-			'draw pathing_came_from
-			SetLineWidth( 1 ); SetColor( 255, 255, 255 ); SetAlpha( 0.5 )
-			If pathing.came_from( cursor ) <> Null Then ..
-				DrawLine( cursor.col*cell_size + cell_size/2, cursor.row*cell_size + cell_size/2, pathing.came_from( cursor ).col*cell_size + cell_size/2, pathing.came_from( cursor ).row*cell_size + cell_size/2 )
-			'draw pathing_visited
-			SetColor( 255, 212, 212 ); SetAlpha( 0.5 )
-			DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-		Next
-		'potential paths header
-		SetAlpha( 1 ); SetImageFont( get_font( "consolas_10" ))
-		SetColor( 127, 127, 127 )
-		DrawText( "potential paths", arena_w + 4, 4 )
-		sx = arena_offset + arena_w + 4
-		sy = arena_offset
-		SetImageFont( get_font( "consolas_10" ))
-		If pathing.potential_paths.binary_tree[0] = Null Then SetColor( 64, 64, 64 ) Else SetColor( 255, 255, 255 )
-		DrawText( heap_info( 0 ), sx, sy )
-		draw_heap( 0 )
-		
-		'start and goal
-		If global_start <> Null
-			SetColor( 64, 255, 64 ); SetAlpha( 1 )
-			DrawRect( global_start.col*cell_size + 1, global_start.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-		End If
-		If global_goal <> Null
-			SetColor( 64, 64, 255 ); SetAlpha( 1 )
-			DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
-		End If
-		'draw optional message
-		SetColor( 255, 255, 255 ); SetAlpha( 1 )
-		SetImageFont( get_font( "consolas_12" ))
-		DrawText( message, 3, -14 )
-		
-		Flip
-		
-	End While
-End Function
-
-Function debug_heap_indent%( i% )
-	Local indent% = 0
-	While i > 0
-		indent :+ 4
-		i = pathing.potential_paths.parent_i( i )
-	End While
-	Return indent
-End Function
+'Function debug_heap( message$ = "" )
+'	SetColor( 255, 255, 255 )
+'	SetRotation( 0 )
+'	SetScale( 1, 1 )
+'	SetAlpha( 1 )
+'	
+'	Local pq:PATH_QUEUE = pathing.potential_paths
+'	Local tree:CELL[] = pathing.potential_paths.binary_tree
+'
+'	Local wait_ts% = now()
+'	Local wait_time%
+'	If KeyDown( KEY_F3 ) Then wait_time = 0 Else wait_time = 500
+'	wait_time = 500
+'
+'	While ((now() - wait_ts) <= wait_time) And Not KeyHit( KEY_F3 )
+'		
+'		If KeyHit( KEY_ESCAPE ) Then End
+'		If KeyDown( KEY_F4 ) Then wait_ts = now()
+'		
+'		Cls
+'		
+'		sx = 3; sy = 3
+'		
+'		'draw optional message
+'		SetColor( 127, 127, 255 ); SetAlpha( 1 )
+'		SetImageFont( get_font( "consolas_12" ))
+'		DrawText( message, sx, sy ); sy :+ 11
+'
+'		SetImageFont( get_font( "consolas_10" ))
+'		If tree[0] = Null Then SetColor( 64, 64, 64 ) ..
+'		Else                   SetColor( 255, 255, 255 )
+'		DrawText( heap_info( 0 ), sx, sy )
+'		draw_heap( 0 )
+'		
+'		Flip
+'		
+'	End While
+'End Function
+'
+'Function draw_heap( i% )
+'	Local pq:PATH_QUEUE = pathing.potential_paths
+'	Local tree:CELL[] = pathing.potential_paths.binary_tree
+'	If i < pq.item_count
+'		
+'		If pq.left_child_i( i ) < pq.item_count
+'			sx :+ 4; sy :+ 9
+'			If tree[pq.left_child_i( i )] = Null Then                        SetColor( 64, 64, 64 ) ..
+'			Else If pq.get_cost(i) > pq.get_cost( pq.left_child_i( i )) Then SetColor( 255, 127, 127 ) ..
+'			Else                                                             SetColor( 255, 255, 255 )
+'			DrawText( heap_info( pq.left_child_i( i )), sx, sy )
+'			draw_heap( pq.left_child_i( i ))
+'			
+'			If pq.right_child_i( i ) < pq.item_count
+'				sy :+ 9
+'				If tree[pq.right_child_i( i )] = Null Then                        SetColor( 64, 64, 64 ) ..
+'				Else If pq.get_cost(i) > pq.get_cost( pq.right_child_i( i )) Then SetColor( 255, 127, 127 ) ..
+'				Else                                                              SetColor( 255, 255, 255 )
+'				DrawText( heap_info( pq.right_child_i( i )), sx, sy )
+'				draw_heap( pq.right_child_i( i ))
+'			End If
+'			
+'			sx :- 4
+'		End If
+'		
+'	End If
+'End Function
+'
+'Function heap_info$( i% )
+'	Local info$ = ""+i+" "
+'	If pathing.potential_paths.binary_tree[i] <> Null
+'		'info :+ Int( pathing.f( pathing.potential_paths.binary_tree[i] ))
+'		info :+ Int( pathing.potential_paths.get_cost( i ))
+'	Else 'tree[i] == Null
+'		info :+ "null"
+'	End If
+'	If i = 0
+'		info :+ " {ROOT}"
+''	Else If pathing.potential_paths.left_child_i( i ) > pathing.potential_paths.item_count - 1
+''		info :+ " {leaf}"
+''	Else If i = pathing.potential_paths.item_count - 1
+''		info :+ " {LAST}"
+'	End If
+'	Return info
+'End Function
+'
+'Function debug_heap_indent%( i% )
+'	Local indent% = 0
+'	While i > 0
+'		indent :+ 4
+'		i = pathing.potential_paths.parent_i( i )
+'	End While
+'	Return indent
+'End Function
+''______________________________________________________________________________
+''F4 to path from player to mouse; hold F4 to pause; hold F3 to fast-forward
+'Function debug_pathing( message$ = "", done% = False )
+'	SetColor( 255, 255, 255 )
+'	SetRotation( 0 )
+'	SetScale( 1, 1 )
+'	SetAlpha( 1 )
+'	
+'	Local wait_ts% = now()
+'	Local wait_time%
+'	If KeyDown( KEY_F3 ) Then wait_time = 0 Else wait_time = 500
+'
+'	While (((now() - wait_ts) <= wait_time) And (Not done)) ..
+'	Or (done And Not KeyHit( KEY_F2 ))
+'		
+'		If KeyHit( KEY_ESCAPE ) Then End
+'		If KeyDown( KEY_F4 ) Then wait_ts = now()
+'		
+'		Local mouse:CELL = containing_cell( MouseX() - arena_offset, MouseY() - arena_offset )
+'		If KeyDown( KEY_F5 )
+'			pathing.set_grid( mouse, PATH_BLOCKED )
+'		Else If KeyDown( KEY_F6 )
+'			pathing.set_grid( mouse, PATH_PASSABLE )
+'		End If
+'		
+'		Cls
+'		
+'		'draw debug help
+'		SetColor( 255, 255, 255 ); SetAlpha( 1 )
+'		SetImageFont( get_font( "consolas_12" ))
+'		DrawText( "set_goal,find_path:F4  pause:F4/faster:F3  block:F5  clear:F6", 3, 3 )
+'		'draw pathing_grid cell border lines
+'		SetLineWidth( 1 ); SetColor( 32, 32, 32 ); SetAlpha( 1.00 )
+'		For Local r% = 2 To pathing_grid_h - 2
+'			DrawLine( arena_offset, r*cell_size, pathing_grid_w*cell_size - arena_offset, r*cell_size )
+'		Next
+'		For Local c% = 2 To pathing_grid_w - 2
+'			DrawLine( c*cell_size, arena_offset, c*cell_size, pathing_grid_h*cell_size - arena_offset )
+'		Next
+'		Local cursor:CELL = New CELL
+'		For cursor.row = 2 To pathing_grid_h - 3
+'			For cursor.col = 2 To pathing_grid_w - 3
+'				'draw pathing_grid contents
+'				SetColor( 255, 255, 255 ); SetAlpha( 0.85 )
+'				If pathing.grid( cursor ) = PATH_BLOCKED Then ..
+'					DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+'			Next
+'		Next
+'		For cursor = EachIn pathing.pathing_visited_list
+'			'draw pathing_came_from
+'			SetLineWidth( 1 ); SetColor( 255, 255, 255 ); SetAlpha( 0.5 )
+'			If pathing.came_from( cursor ) <> Null Then ..
+'				DrawLine( cursor.col*cell_size + cell_size/2, cursor.row*cell_size + cell_size/2, pathing.came_from( cursor ).col*cell_size + cell_size/2, pathing.came_from( cursor ).row*cell_size + cell_size/2 )
+'			'draw pathing_visited
+'			SetColor( 255, 212, 212 ); SetAlpha( 0.5 )
+'			DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+'		Next
+'		''potential paths header
+'		'SetAlpha( 1 ); SetImageFont( get_font( "consolas_10" ))
+'		'SetColor( 127, 127, 127 )
+'		'DrawText( "potential paths", arena_w + 4, 4 )
+'		'sx = arena_offset + arena_w + 4
+'		'sy = arena_offset
+'		'SetImageFont( get_font( "consolas_10" ))
+'		'If pathing.potential_paths.binary_tree[0] = Null Then SetColor( 64, 64, 64 ) Else SetColor( 255, 255, 255 )
+'		'DrawText( heap_info( 0 ), sx, sy )
+'		'draw_heap( 0 )
+'		
+'		'start and goal
+'		If global_start <> Null
+'			SetColor( 64, 255, 64 ); SetAlpha( 1 )
+'			DrawRect( global_start.col*cell_size + 1, global_start.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+'		End If
+'		If global_goal <> Null
+'			SetColor( 64, 64, 255 ); SetAlpha( 1 )
+'			DrawRect( global_goal.col*cell_size + 1, global_goal.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+'		End If
+'		'draw optional message
+'		SetColor( 255, 255, 255 ); SetAlpha( 1 )
+'		SetImageFont( get_font( "consolas_12" ))
+'		DrawText( message, 3, 15 )
+'		
+'		Flip
+'		
+'	End While
+'End Function
 ''______________________________________________________________________________
 'Function console_debug()
 '	For Local i% = 0 To 360 Step 5

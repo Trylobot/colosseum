@@ -12,7 +12,8 @@ Function get_all_input()
 	mouse_point.x = MouseX()
 	mouse_point.y = MouseY()
 	
-	If player_brain <> Null And player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+	If player_brain <> Null And player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID ..
+	And Not FLAG_in_menu
 		HideMouse()
 	Else
 		ShowMouse()
@@ -42,6 +43,7 @@ Function get_all_input()
 		If Not FLAG_in_menu
 			FLAG_in_menu = True
 			If FLAG_game_in_progress
+				menu_command( COMMAND_BACK_TO_MAIN_MENU )
 				get_menu( MENU_ID_MAIN_MENU ).set_enabled( "resume", True )
 				get_menu( MENU_ID_MAIN_MENU ).set_focus( "resume" )
 				FLAG_player_engine_running = False

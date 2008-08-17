@@ -378,7 +378,11 @@ Type COMPLEX_AGENT Extends AGENT
 						highest_cur_heat_turret = t
 					End If
 				Next
-				If highest_cur_heat_turret <> Null Then highest_cur_heat_turret.cur_heat = 0
+				If highest_cur_heat_turret <> Null
+					highest_cur_heat_turret.cur_heat = 0
+					highest_cur_heat_turret.bonus_cooling_start_ts = now()
+					highest_cur_heat_turret.bonus_cooling_time = pkp.pickup_amount
+				End If
 			
 		End Select
 		pkp.remove_me()

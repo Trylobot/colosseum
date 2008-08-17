@@ -44,6 +44,8 @@ Type TURRET Extends POINT
 	Field cur_recoil_off_y# '(private) used in calculating recoil's effect on final position
 	Field cur_heat#
 	Field last_overheat_ts%
+	Field bonus_cooling_start_ts%
+	Field bonus_cooling_time%
 
 	Method New()
 		emitter_list = CreateList()
@@ -161,23 +163,30 @@ Type TURRET Extends POINT
 			(now() - last_reloaded_ts) >= reload_time And ..
 			(max_heat = INFINITY Or cur_heat < max_heat)
 	End Method
+	
 	Method reload()
 		last_reloaded_ts = now()
 	End Method
+	
 	Method re_stock( count% )
 		cur_ammo :+ count
 		If cur_ammo > max_ammo Then cur_ammo = max_ammo
 	End Method
+	
 	Method out_of_ammo%()
 		Return (cur_ammo = 0)
 	End Method
+	
 	Method raise_temp()
-		cur_heat :+ RandF( heat_per_shot_min, heat_per_shot_max )
-		If cur_heat >= max_heat
-			last_overheat_ts = now()
-			cur_heat = max_heat
+		If (now() - bonus_cooling_start_ts) >= bonus_cooling_time
+			cur_heat :+ RandF( heat_per_shot_min, heat_per_shot_max )
+			If cur_heat >= max_heat
+				last_overheat_ts = now()
+				cur_heat = max_heat
+			End If
 		End If
 	End Method
+	
 	Method overheated%()
 		Return (now() - last_overheat_ts) < overheat_delay
 	End Method

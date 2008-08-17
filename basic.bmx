@@ -246,8 +246,22 @@ Function line_intersects_rect%( v1:cVEC, v2:cVEC, r:cVEC, r_dim:cVEC )
 	End If
 End Function
 '______________________________________________________________________________
+Type BOX
+	Field x#, y# 'position components
+	Field w#, h# 'dimension components
+	Method clone:BOX()
+		Return Create_BOX( x, y, w, h )
+	End Method
+End Type
+Function Create_BOX:BOX( x#, y#, w#, h# )
+	Local b:BOX = New BOX
+	b.x = x; b.y = y
+	b.w = w; b.h = h
+	Return b
+End Function
+
+'______________________________________________________________________________
 Type cVEC 'cartesian coordinate system 2D vector
-	
 	Field x# 'x axis vector component
 	Field y# 'y axis vector component
 	
@@ -278,7 +292,6 @@ Function Create_cVEC:cVEC( x#, y# )
 End Function
 '______________________________________________________________________________
 Type pVEC 'polar coordinate system 2D vector
-	
 	Field r# 'radius vector component
 	Field a# 'angle vector component (theta)
 	
