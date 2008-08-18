@@ -15,8 +15,8 @@ Const arena_h% = 500
 Const stats_panel_w% = 250
 Const window_w% = arena_w + (2*arena_offset) + (arena_offset+stats_panel_w)
 Const window_h% = arena_h + (2*arena_offset)
-'Const window_w% = arena_w + (2*arena_offset) + (arena_offset+stats_panel_w)
-'Const window_h% = arena_h + (2*arena_offset)
+'Const window_w% = arena_offset_left + arena_w + arena_offset_right  + (arena_offset+stats_panel_w)
+'Const window_h% = arena_offset_top + arena_w + arena_offset_bottom
 
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo
@@ -28,10 +28,10 @@ SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
 load_all()
-'?Debug
-'debug_load_data()
-'End
-'?
+?Debug
+debug_load_data()
+End
+?
 
 '______________________________________________________________________________
 'MAIN

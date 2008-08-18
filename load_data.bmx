@@ -5,19 +5,39 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global data_path_prefix$ = "data/"
-Global font_path_prefix$ = "fonts/"
-Global audio_path_prefix$ = "sound/"
-Global image_path_prefix$ = "art/"
-
 Global file_paths:TList = CreateList()
+
 Global font_map:TMap = CreateMap()
-Global img_map:TMap = CreateMap()
+Global sound_map:TMap = CreateMap()
+Global image_map:TMap = CreateMap()
+
+Global particle_prototype_map:TMap = CreateMap()
+Global particle_emitter_prototype_map:TMap = CreateMap()
+Global projectile_prototype_map:TMap = CreateMap()
+Global projectile_launcher_prototype_map:TMap = CreateMap()
+Global widget_prototype_map:TMap = CreateMap()
+Global pickup_prototype_map:TMap = CreateMap()
+Global turret_prototype_map:TMap = CreateMap()
+Global complex_agent_prototype_map:TMap = CreateMap()
 
 Const DIRECTIVE_LOAD_FILE$ = "[load_data]"
-Const DIRECTIVE_ADD_FONT$ = "[add_font]"
-Const DIRECTIVE_ADD_IMAGE$ = "[add_image]"
+Const DIRECTIVE_LOAD_CONFIG$ = "[load_config]"
 
+Const DIRECTIVE_ADD_FONT$ = "[add_font]"
+Const DIRECTIVE_ADD_SOUND$ = "[add_sound]"
+Const DIRECTIVE_ADD_IMAGE$ = "[add_image]"
+Const DIRECTIVE_ADD_MULTI_FRAME_IMAGE$ = "[add_multi_frame_image]"
+
+Const DIRECTIVE_ADD_PARTICLE_PROTOTYPE$ = "[add_particle]"
+Const DIRECTIVE_ADD_PARTICLE_EMITTER_PROTOTYPE$ = "[add_particle_emitter]"
+Const DIRECTIVE_ADD_PROJECTILE_PROTOTYPE$ = "[add_projectile]"
+Const DIRECTIVE_ADD_PROJECTILE_LAUNCHER_PROTOTYPE$ = "[add_projectile_emitter]"
+Const DIRECTIVE_ADD_WIDGET_PROTOTYPE$ = "[add_widget]"
+Const DIRECTIVE_ADD_PICKUP_PROTOTYPE$ = "[add_pickup]"
+Const DIRECTIVE_ADD_TURRET_PROTOTYPE$ = "[add_turret]"
+Const DIRECTIVE_ADD_COMPLEX_AGENT_PROTOTYPE$ = "[add_complex_agent]"
+
+Global data_path_prefix$ = "data/"
 '______________________________________________________________________________
 Function load_all()
 	load_base()
@@ -29,6 +49,14 @@ End Function
 Function get_font:TImageFont( key$ )
 	Return TImageFont( font_map.ValueForKey( key ))
 End Function
+
+Function get_sound:TSound( key$ )
+	Return TSound( sound_map.ValueForKey( key ))
+End Function
+
+Function get_image:TImage( key$ )
+	Return TImage( image_map.ValueForKey( key ))
+End Function
 '______________________________________________________________________________
 Function is_directive%( str$ )
   Return str.StartsWith( "[" ) And str.EndsWith( "]" )
@@ -36,6 +64,29 @@ End Function
 
 Function is_comment%( str$ )
   Return str.StartsWith( ";" )
+End Function
+
+Function string_to_boolean%( str$ )
+	Select str
+		Case "true"
+			Return 1
+		Case "false"
+			Return 0
+		Case "yes"
+			Return 1
+		Case "no"
+			Return 0
+		Case "on"
+			Return 1
+		Case "off"
+			Return 0
+		Case "enabled"
+			Return 1
+		Case "disabled"
+			Return 0
+		Default
+			Return str.ToInt()
+	End Select
 End Function
 '______________________________________________________________________________
 Function load_base()
@@ -56,10 +107,12 @@ Function load_base()
           variable = token[0].Trim()
           value = token[1].Trim()
           Select variable
-            Case "path$"
+            
+						Case "path$"
               path = value
               file_paths.AddLast( path )
-			      Default
+			      
+						Default
 			        DebugLog( " base.ini -> error: "+variable+" is not a recognized variable for this directive." )
           End Select
         Default
@@ -79,15 +132,20 @@ Function load_file( file_path$ )
     If (Not is_comment( line )) And is_directive( line )
       directive = line
       Select directive
+				
 				Case DIRECTIVE_ADD_FONT
 					result = add_font( file, font_map )
-					If result <> "success" Then DebugLog( " "+StripDir( file_path )+" "+directive+" -> "+result )
+				Case DIRECTIVE_ADD_SOUND
+					result = add_sound( file, sound_map )
         Case DIRECTIVE_ADD_IMAGE
-          result = add_image( file, img_map )
-          If result <> "success" Then DebugLog( " "+StripDir( file_path )+" "+directive+" -> "+result )
-        Default
+          result = add_image( file, image_map, False )
+				Case DIRECTIVE_ADD_MULTI_FRAME_IMAGE
+					result = add_image( file, image_map, True )
+        
+				Default
           DebugLog( " "+StripDir( file_path )+" -> error: "+directive+" is not a recognized directive." )
       End Select
+			If result <> "success" Then DebugLog( " "+StripDir( file_path )+" "+directive+" -> "+result )
     End If
   End While
   CloseStream( file )
@@ -106,24 +164,60 @@ Function add_font$( file:TStream, map:TMap )
     variable = token[0].Trim()
     value = token[1].Trim()
     Select variable
-      Case "path$"
+      
+			Case "path$"
         path = value
       Case "size%"
         size = value.ToInt()
-      Default
+      
+			Default
         Return "error: "+variable+" is not a recognized variable for this directive."
     End Select
   Next
-  font = LoadImageFont( path, size, SMOOTHFONT )
+  
+	font = LoadImageFont( path, size, SMOOTHFONT )
   map.Insert( StripAll( path )+"_"+size, font )
   
   Return "success"
 End Function
 '______________________________________________________________________________
-Function add_image$( file:TStream, map:TMap )
+Function add_sound$( file:TStream, map:TMap )
   Local line$, token$[], variable$, value$
-  Local img:TImage, path$, handle_x#, handle_y#, filtered%, mipmapped%, dynamic%
+  Local sound:TSound, path$, looped%
+  Local variable_count% = 2
+
+  For Local i% = 0 To variable_count - 1
+		If Eof( file ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
+    line = ((ReadLine( file )).Trim()).ToLower()
+    If is_directive( line ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
+    token = line.Split( "=" )
+    variable = token[0].Trim()
+    value = token[1].Trim()
+		Select variable
+      
+			Case "path$"
+        path = value
+      Case "looped%"
+        looped = string_to_boolean( value )
+      
+			Default
+        Return "error: "+variable+" is not a recognized variable for this directive."
+    End Select
+  Next
+  
+	sound = LoadSound( path, (looped & SOUND_LOOP) )
+  map.Insert( StripAll( path ), sound )
+  
+  Return "success"
+End Function
+'______________________________________________________________________________
+Function add_image$( file:TStream, map:TMap, multi_frame% = False )
+  Local line$, token$[], variable$, value$
+  Local img:TImage, path$, handle_x#, handle_y#, cell_width%, cell_height%, cell_count%, filtered%, mipmapped%, dynamic%
   Local variable_count% = 6
+	If multi_frame
+		variable_count :+ 3
+	End If
 
   For Local i% = 0 To variable_count - 1
 		If Eof( file ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
@@ -133,23 +227,36 @@ Function add_image$( file:TStream, map:TMap )
     variable = token[0].Trim()
     value = token[1].Trim()
     Select variable
-      Case "path$"
+      
+			Case "path$"
         path = value
       Case "handle_x#"
         handle_x = value.ToFloat()
       Case "handle_y#"
         handle_y = value.ToFloat()
+      Case "cell_width%"
+        handle_y = value.ToInt()
+      Case "cell_height%"
+        handle_y = value.ToInt()
+      Case "cell_count%"
+        handle_y = value.ToInt()
 			Case "filtered%"
-				filtered = value.ToInt()
+				filtered = string_to_boolean( value )
 			Case "mipmapped%"
-				mipmapped = value.ToInt()
+				mipmapped = string_to_boolean( value )
 			Case "dynamic%"
-				dynamic = value.ToInt()
-      Default
+				dynamic = string_to_boolean( value )
+      
+			Default
         Return "error: "+variable+" is not a recognized variable for this directive."
     End Select
   Next
-  img = LoadImage( path, (filtered & FILTEREDIMAGE) | (mipmapped & MIPMAPPEDIMAGE) | (dynamic & DYNAMICIMAGE) )
+  
+	If multi_frame
+		img = LoadAnimImage( path, cell_width, cell_height, 0, cell_count, (filtered & FILTEREDIMAGE) | (mipmapped & MIPMAPPEDIMAGE) | (dynamic & DYNAMICIMAGE) )
+	else
+		img = LoadImage( path, (filtered & FILTEREDIMAGE) | (mipmapped & MIPMAPPEDIMAGE) | (dynamic & DYNAMICIMAGE) )
+	End If
   SetImageHandle( img, handle_x, handle_y )
   map.Insert( StripAll( path ), img )
   
@@ -158,31 +265,31 @@ End Function
 
 '______________________________________________________________________________
 'Sounds
-Global bg_music_victory_8_bit:TSound = LoadSound( audio_path_prefix + "victory_8-bit.ogg", SOUND_LOOP )
+Global bg_music_victory_8_bit:TSound = LoadSound( "sound/" + "victory_8-bit.ogg", SOUND_LOOP )
 Global bg_music:TChannel = AllocChannel()
 CueSound( bg_music_victory_8_bit, bg_music )
 
-Global snd_engine_start:TSound = LoadSound( audio_path_prefix + "engine_start.ogg" )
-Global snd_engine_idle_loop:TSound = LoadSound( audio_path_prefix + "engine_idle_loop.ogg", SOUND_LOOP )
+Global snd_engine_start:TSound = LoadSound( "sound/" + "engine_start.ogg" )
+Global snd_engine_idle_loop:TSound = LoadSound( "sound/" + "engine_idle_loop.ogg", SOUND_LOOP )
 
-Global snd_cannon_fire:TSound = LoadSound( audio_path_prefix + "cannon.ogg" )
-Global snd_mgun_turret_fire:TSound = LoadSound( audio_path_prefix + "mgun.ogg" )
-Global snd_laser_fire:TSound = LoadSound( audio_path_prefix + "laser.ogg" )
-Global snd_cannon_hit:TSound = LoadSound( audio_path_prefix + "cannon_hit.ogg" )
-Global snd_mgun_hit:TSound = LoadSound( audio_path_prefix + "mgun_hit.ogg" )
-Global snd_laser_hit:TSound = LoadSound( audio_path_prefix + "laser_hit.ogg" )
+Global snd_cannon_fire:TSound = LoadSound( "sound/" + "cannon.ogg" )
+Global snd_mgun_turret_fire:TSound = LoadSound( "sound/" + "mgun.ogg" )
+Global snd_laser_fire:TSound = LoadSound( "sound/" + "laser.ogg" )
+Global snd_cannon_hit:TSound = LoadSound( "sound/" + "cannon_hit.ogg" )
+Global snd_mgun_hit:TSound = LoadSound( "sound/" + "mgun_hit.ogg" )
+Global snd_laser_hit:TSound = LoadSound( "sound/" + "laser_hit.ogg" )
 
 '______________________________________________________________________________
 'Images
 AutoImageFlags( FILTEREDIMAGE | MIPMAPPEDIMAGE )
 
 Function LoadImage_SetHandle:TImage( path$, x# = 0, y# = 0 )
-	Local img:TImage = LoadImage( image_path_prefix + path )
+	Local img:TImage = LoadImage( "art/" + path )
 	SetImageHandle( img, x, y )
 	Return img
 End Function
 Function LoadAnimImage_SetHandle:TImage( path$, x# = 0, y# = 0, w# = 1, h# = 1, frames% = 1 )
-	Local img:TImage = LoadAnimImage( image_path_prefix + path, w, h, 0, frames )
+	Local img:TImage = LoadAnimImage( "art/" + path, w, h, 0, frames )
 	SetImageHandle( img, x, y )
 	Return img
 End Function

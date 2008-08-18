@@ -43,6 +43,12 @@ Function debug_load_data()
 		Local font:TImageFont = get_font( key )
 		DebugLog( " font_map -> "+key+" -> { CountGlyphs():"+font.CountGlyphs()+", Height():"+font.Height()+" }" )
 	Next
+	For Local key$ = EachIn sound_map.Keys()
+		Local sound:TSound = get_sound( key )
+		Local db_str$ = "null"
+		If sound <> Null Then db_str = "loaded"
+		DebugLog( " sound_map -> "+key+" -> "+db_str )
+	Next
 End Function
 '______________________________________________________________________________
 Global cb:CONTROL_BRAIN = Null
