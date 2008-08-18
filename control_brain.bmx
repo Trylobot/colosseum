@@ -7,7 +7,8 @@ EndRem
 '______________________________________________________________________________
 Global control_brain_list:TList = CreateList()
 
-Const WAYPOINT_RADIUS% = 0.75*cell_size
+Const waypoint_radius# = 0.75*cell_size
+Const friendly_blocking_scalar_projection_distance# = 20
 
 Const UNSPECIFIED% = 0
 Const CONTROL_TYPE_HUMAN% = 1
@@ -126,12 +127,53 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Next
 			Next
 			'after checking all the walls, still haven't returned; avatar can therefore see its target
-			Return True
+			'however, the shot might be blocked by a friendly
+			If avatar.turret_count > 0
+				Return friendly_blocking()
+			Else 'avatar.turret_count <= 0
+				Return True
+			End If
 		Else 'target == Null
 			Return False
 		End If
 	End Method
 	
+	Method friendly_blocking%()
+		If target <> Null
+			last_look_target_ts = now()
+			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
+			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
+			'for each allied agent
+			Local allied_agent_list:TList = CreateList()
+			Select avatar.political_alignment
+				Case ALIGNMENT_FRIENDLY
+					allied_agent_list = friendly_agent_list
+				Case ALIGNMENT_HOSTILE
+					allied_agent_list = hostile_agent_list
+			End Select
+			Local ally_offset#, ally_offset_ang#
+			Local scalar_projection#
+			For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
+				'if the line of sight of the avatar is too close to the ally
+				ally_offset = avatar.turrets[0].dist_to( ally )
+				ally_offset_ang = avatar.turrets[0].ang_to( ally )
+				scalar_projection = ally_offset*Cos( ally_offset_ang - avatar.turrets[0].ang )
+				
+				If vector_length( ..
+				(ally.pos_x - av.x+scalar_projection*Cos(avatar.turrets[0].ang)), ..
+				(ally.pos_y - av.y+scalar_projection*Sin(avatar.turrets[0].ang)) ) ..
+				< friendly_blocking_scalar_projection_distance
+					'then the avatar's shot is blocked by this ally
+					Return True
+				End If
+			Next
+			'after checking all the allies, none are blocking
+			Return False
+		Else 'target == Null, thus no blockers
+			Return False
+		End If
+	End Method
+
 	Method outside_arena%()
 		If avatar.pos_x < arena_offset ..
 		Or avatar.pos_x > arena_offset+arena_w ..

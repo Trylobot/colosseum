@@ -6,11 +6,17 @@ EndRem
 
 'Window / Arena size
 Const arena_offset% = 50
+Const arena_offset_top% = 12
+Const arena_offset_right% = 12
+Const arena_offset_bottom% = 100
+Const arena_offset_left% = 12
 Const arena_w% = 500
 Const arena_h% = 500
 Const stats_panel_w% = 250
 Const window_w% = arena_w + (2*arena_offset) + (arena_offset+stats_panel_w)
 Const window_h% = arena_h + (2*arena_offset)
+'Const window_w% = arena_w + (2*arena_offset) + (arena_offset+stats_panel_w)
+'Const window_h% = arena_h + (2*arena_offset)
 
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo

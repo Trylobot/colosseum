@@ -45,9 +45,15 @@ Function debug_load_data()
 	Next
 End Function
 '______________________________________________________________________________
+Global cb:CONTROL_BRAIN = Null
+
 Function debug_overlay()
-	If KeyHit( KEY_TILDE ) Then FLAG_debug_overlay = Not FLAG_debug_overlay 
-	If FLAG_debug_overlay
+	
+	If KeyHit( KEY_TILDE )
+		FLAG_debug_overlay = Not FLAG_debug_overlay
+	End If
+	
+	If FLAG_debug_overlay And Not FLAG_in_menu
 
 		'show pathing grid
 		Local cursor:CELL = New CELL
@@ -55,76 +61,123 @@ Function debug_overlay()
 			For cursor.col = 0 To pathing_grid_w - 1
 				'blockable/passing grid
 				SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
-				If pathing.grid( cursor ) = PATH_BLOCKED Then ..
+				If pathing.grid( cursor ) = PATH_BLOCKED
 					DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+				End If
 			Next
 		Next
 
 		Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
 		SetColor( 255, 255, 255 )
-		For Local cb:CONTROL_BRAIN = EachIn control_brain_list
-			If cb.avatar.dist_to( mouse ) <= 20
-				
-				'draw info
-				sx = mouse.pos_x + 16; sy = mouse.pos_y
-				debug_drawtext( cb.avatar.name )
-				If cb.target <> Null
-					debug_drawtext( "target -> " + cb.target.name )
-				Else 'cb.target == Null
-					debug_drawtext( "no target" )
+		
+		If MouseHit( 1 )
+			cb = Null
+			For Local brain:CONTROL_BRAIN = EachIn control_brain_list
+				If brain.avatar.dist_to( mouse ) <= 15
+					cb = brain
+					Exit
 				End If
-				If cb.sighted_target
-					debug_drawtext( "can see target" )
+			Next
+		Else
+			For Local brain:CONTROL_BRAIN = EachIn control_brain_list
+				If brain.avatar.dist_to( mouse ) <= 15
 					SetColor( 255, 255, 255 )
-				Else
-					debug_drawtext( "no line-of-sight to target" )
-					SetColor( 255, 32, 32 )
+					SetAlpha( 0.333 )
+					DrawOval( brain.avatar.pos_x-15,brain.avatar.pos_y-15, 30,30 )
 				End If
-				If cb.target <> Null
-					SetLineWidth( 1 )
-					SetAlpha( 0.5 )
-					DrawLine( cb.avatar.pos_x,cb.avatar.pos_y, cb.target.pos_x,cb.target.pos_y )
-					SetColor( 255, 255, 255 )
-					SetAlpha( 1 )
-				End If
-				
-				If cb.path <> Null
-					debug_drawtext( "path to target displayed" )
-					'path
-					Local v0:cVEC = Null, v1:cVEC = Null
-					For Local v1:cVEC = EachIn cb.path
-						If v0 <> Null
-							DrawLine( v0.x,v0.y, v1.x,v1.y )
-						Else
-							v0 = New cVEC
-						End If
-						v0.x = v1.x; v0.y = v1.y
-					Next
-					'start and goal
-					Local start:cVEC = cVEC( cb.path.First() )
-					Local goal:cVEC = cVEC( cb.path.Last() )
-					SetColor( 64, 255, 64 ); SetAlpha( 1 )
-					DrawRect( start.x - cell_size + 1, start.y - cell_size + 1, cell_size - 2, cell_size - 2 )
-					SetColor( 64, 64, 255 ); SetAlpha( 1 )
-					DrawRect( goal.x - cell_size + 1, goal.y - cell_size + 1, cell_size - 2, cell_size - 2 )
-				Else
-					debug_drawtext( "no path" )
-				End If
-				
-				'manipulate by keyboard
-				If KeyDown( KEY_1 )
-					cb.target = player
-				End If
-				If KeyDown( KEY_2 )
-					cb.path = cb.get_path_to_target()
-				End If
-				If KeyDown( KEY_3 )
-					cb.see_target()
-				End If
-				
-				Return
+			Next
+		End If
+		
+		If cb <> Null
+			'draw info
+			sx = mouse.pos_x + 16; sy = mouse.pos_y
+			debug_drawtext( cb.avatar.name )
+			If cb.target <> Null
+				debug_drawtext( "target -> " + cb.target.name )
+			Else 'cb.target == Null
+				debug_drawtext( "no target" )
 			End If
-		Next
+			If cb.sighted_target
+				debug_drawtext( "can see target" )
+				SetColor( 255, 255, 255 )
+			Else
+				debug_drawtext( "no line-of-sight to target" )
+				SetColor( 255, 32, 32 )
+			End If
+			If cb.target <> Null
+				SetLineWidth( 1 )
+				SetAlpha( 0.5 )
+				DrawLine( cb.avatar.pos_x,cb.avatar.pos_y, cb.target.pos_x,cb.target.pos_y )
+				SetColor( 255, 255, 255 )
+				SetAlpha( 1 )
+			End If
+			
+			If cb.path <> Null
+				debug_drawtext( "path to target displayed" )
+				'start and goal
+				Local start:cVEC = cVEC( cb.path.First() )
+				Local goal:cVEC = cVEC( cb.path.Last() )
+				SetColor( 64, 255, 64 ); SetAlpha( 0.5 )
+				DrawRect( start.x - cell_size/2 + 1, start.y - cell_size/2 + 1, cell_size - 2, cell_size - 2 )
+				SetColor( 64, 64, 255 ); SetAlpha( 0.5 )
+				DrawRect( goal.x - cell_size/2 + 1, goal.y - cell_size/2 + 1, cell_size - 2, cell_size - 2 )
+				'path
+				Local v0:cVEC, v1:cVEC
+				SetColor( 255, 255, 255 )
+				For Local v1:cVEC = EachIn cb.path
+					If v0 <> Null Then DrawLine( v0.x,v0.y, v1.x,v1.y ) Else v0 = New cVEC
+					v0.x = v1.x; v0.y = v1.y
+				Next
+			Else
+				debug_drawtext( "no path" )
+			End If
+			
+			'friendly fire
+			If cb.target <> Null And cb.avatar.turret_count > 0
+				SetLineWidth( 3 )
+				SetColor( 196, 196, 196 )
+				SetAlpha( 0.5 )
+				Local av:cVEC = cVEC( cVEC.Create( cb.avatar.pos_x, cb.avatar.pos_y ))
+				Local targ:cVEC = cVEC( cVEC.Create( cb.target.pos_x, cb.target.pos_y ))
+				Local allied_agent_list:TList = CreateList()
+				Select cb.avatar.political_alignment
+					Case ALIGNMENT_FRIENDLY
+						allied_agent_list = friendly_agent_list
+					Case ALIGNMENT_HOSTILE
+						allied_agent_list = hostile_agent_list
+				End Select
+				Local ally_offset#, ally_offset_ang#
+				Local scalar_projection#
+				For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
+					'if the line of sight of the avatar is too close to the ally
+					ally_offset = cb.avatar.turrets[0].dist_to( ally )
+					ally_offset_ang = cb.avatar.turrets[0].ang_to( ally )
+					scalar_projection = ally_offset*Cos( ally_offset_ang - cb.avatar.turrets[0].ang )
+					SetColor( 196, 196, 196 )
+					DrawLine( av.x,av.y, av.x+scalar_projection*Cos(cb.avatar.turrets[0].ang),av.y+scalar_projection*Sin(cb.avatar.turrets[0].ang) )
+					
+					If vector_length( ..
+					(ally.pos_x - av.x+scalar_projection*Cos(cb.avatar.turrets[0].ang)), ..
+					(ally.pos_y - av.y+scalar_projection*Sin(cb.avatar.turrets[0].ang)) ) ..
+					< friendly_blocking_scalar_projection_distance
+						SetColor( 255, 127, 127 )
+					End If
+					DrawLine( ally.pos_x,ally.pos_y, av.x+scalar_projection*Cos(cb.avatar.turrets[0].ang),av.y+scalar_projection*Sin(cb.avatar.turrets[0].ang) )
+				Next
+			End If
+				
+			'manipulate by keyboard
+			If KeyDown( KEY_1 )
+				cb.target = player
+			End If
+			If KeyDown( KEY_2 )
+				cb.path = cb.get_path_to_target()
+			End If
+			If KeyDown( KEY_3 )
+				cb.see_target()
+			End If
+			
+		End If
 		
 		sx = arena_offset+3; sy = arena_offset+3
 		debug_drawtext "particles to be retained -> "+retained_particle_list.Count()
@@ -136,9 +189,9 @@ Function debug_overlay()
 		Next
 		
 		'manipulate by keyboard
-		If KeyDown( KEY_EQUALS )
+		If KeyHit( KEY_EQUALS )
 			load_next_level()
-		Else If KeyDown( KEY_MINUS ) And player_level >= 1
+		Else If KeyHit( KEY_MINUS ) And player_level >= 1
 			player_level :- 1
 			load_level( player_level )
 		End If
@@ -155,6 +208,7 @@ Function debug_overlay()
 		End If
 		
 	End If
+	
 End Function
 ''______________________________________________________________________________
 'Function test_ang_wrap()
