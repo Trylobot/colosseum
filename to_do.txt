@@ -1,13 +1,18 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
 		
+	_ the projectile_launcher:EMITTER should have the code to play the sound associated with its emission
+			(and not the turret itself)
+	_ same goes for particle emitters; they should have an option to play a sound when they emit.
+			this way, explosion emitters could automatically emit the explosion sound associated with it.
+	
 	[control_brain to-do]	
 		_ new field group: behavior_state%, behavior_started_ts%, behavior_time%
 			these fields are by the control brain to determine the current behavior, and allow it to finish between updates.
 		_ new field: squadmates:TList, a list of COMPLEX_AGENTs
 			behaviors can use the squadmates list for swarming and other complex behaviors
 		_ encapsulate more behaviors in preparation for scriptable AI.
-		_ add a random_wander() behavior, for use by any CONTROL_BRAIN which does not have a path to follow.
-		_ add a friendly_fire() behavior, which checks to see if the line of sight to current target is blocked by a friendly
+		X add a random_wander() behavior, for use by any CONTROL_BRAIN which does not have a path to follow.
+		X add a friendly_fire() behavior, which checks to see if the line of sight to current target is blocked by a friendly
 		_ add a dodge() behavior, which forces the agent to move out of the way of incoming projectiles
 		
 	_ agent/door collisions not working

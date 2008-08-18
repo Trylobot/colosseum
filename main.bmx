@@ -27,7 +27,9 @@ Graphics( window_w, window_h )
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
-load_all()
+load_data_files()
+load_all_archetypes()
+load_environment()
 ?Debug
 debug_load_data()
 End

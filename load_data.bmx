@@ -39,7 +39,7 @@ Const DIRECTIVE_ADD_COMPLEX_AGENT_PROTOTYPE$ = "[add_complex_agent]"
 
 Global data_path_prefix$ = "data/"
 '______________________________________________________________________________
-Function load_all()
+Function load_data_files()
 	load_base()
 	For Local path$ = EachIn file_paths
 		load_file( path )
