@@ -127,9 +127,7 @@ Function debug_overlay()
 		Next
 		
 		sx = arena_offset+3; sy = arena_offset+3
-		'debug_drawtext "level_enemies_remaining -> "+level_enemies_remaining
-		'debug_drawtext "hostile_agent_list.Count() -> "+hostile_agent_list.Count()
-		debug_drawtext "player speed -> "+vector_length( player.vel_x, player.vel_y )
+		debug_drawtext "particles to be retained -> "+retained_particle_list.Count()
 		
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
@@ -147,6 +145,13 @@ Function debug_overlay()
 		
 		If KeyHit( KEY_5 )
 			spawn_pickup( mouse_point.x, mouse_point.y )
+		End If
+		
+		If KeyHit( KEY_9 )
+			FLAG_retain_particles = True
+			If KeyDown( KEY_0 )
+				FLAG_dim_bg = True
+			End If
 		End If
 		
 	End If

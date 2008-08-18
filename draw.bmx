@@ -6,7 +6,9 @@ EndRem
 
 'Background cached texture
 Global bg_cache:TImage
-Const retained_particle_limit% = 5000
+Global FLAG_retain_particles% = False
+Const retained_particle_limit% = 500
+Global FLAG_dim_bg% = False
 Global str$
 
 '______________________________________________________________________________
@@ -34,8 +36,12 @@ End Function
 Function draw_game()
 	
 	'arena (& retained particles)
-	draw_arena_bg()
+	SetBlend( ALPHABLEND )
 	SetColor( 255, 255, 255 )
+	SetRotation( 0 )
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
+	draw_arena_bg()
 
 	'background particles
 	For Local part:PARTICLE = EachIn particle_list_background
@@ -226,6 +232,9 @@ Function draw_arena_bg()
 	End If
 
 	'draw arena background cache image
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
 	SetRotation( 0 )
 	DrawImage( bg_cache, 0,0 )
 
@@ -236,9 +245,22 @@ Function draw_arena_bg()
 
 	If FLAG_retain_particles
 		FLAG_retain_particles = False
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetScale( 1, 1 )
+		SetRotation( 0 )
 		GrabImage( bg_cache, 0,0 )
 		retained_particle_list.Clear()
 		retained_particle_list_count = 0
+		If FLAG_dim_bg
+			FLAG_dim_bg = False
+			SetColor( 255, 255, 255 )
+			SetAlpha( 0.5 )
+			SetScale( 1, 1 )
+			SetRotation( 0 )
+			DrawImage( img_arena_bg, 0,0 )
+			GrabImage( bg_cache, 0,0 )
+		End If
 	End If
 		
 End Function
@@ -272,14 +294,6 @@ Function draw_arena_fg()
 	SetBlend( ALPHABLEND )
 End Function
 '______________________________________________________________________________
-Function draw_walls( walls:TList )
-	For Local wall%[] = EachIn walls
-		'SetViewport( ?,?, ?,? )
-		DrawRect( wall[1],wall[2], wall[3],wall[4] )
-	Next
-	SetViewport( 0,0, window_w,window_h )
-End Function
-'______________________________________________________________________________
 Function init_bg_cache()
 	bg_cache = CreateImage( arena_w + 2*arena_offset,arena_h + 2*arena_offset, DYNAMICIMAGE )
 
@@ -287,23 +301,17 @@ Function init_bg_cache()
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	SetRotation( 0 )
+	SetScale( 1, 1 )
 	DrawImage( img_arena_bg, 0,0 )
 	GrabImage( bg_cache, 0,0 )
 End Function
 '______________________________________________________________________________
-Function dim_bg_cache()
-	If bg_cache = Null
-		init_bg_cache()
-	End If
-
-	Cls
-	SetColor( 255, 255, 255 )
-	SetAlpha( 1 )
-	SetRotation( 0 )
-	DrawImage( bg_cache, 0,0 )
-	SetAlpha( 0.5 )
-	DrawImage( img_arena_bg, 0,0 )
-	GrabImage( bg_cache, 0,0 )
+Function draw_walls( walls:TList )
+	For Local wall%[] = EachIn walls
+		'SetViewport( ?,?, ?,? )
+		DrawRect( wall[1],wall[2], wall[3],wall[4] )
+	Next
+	SetViewport( 0,0, window_w,window_h )
 End Function
 '______________________________________________________________________________
 Function draw_stats()

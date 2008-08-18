@@ -30,7 +30,6 @@ Global battle_toggle_ts%
 Global arena_lights_fade_time% = 1000
 Global FLAG_waiting_for_player_to_exit_arena% = False
 Global FLAG_spawn_enemies% = False
-Global FLAG_retain_particles% = False
 
 'global player stuff
 Global player_type% = 0
@@ -108,7 +107,6 @@ End Function
 Function load_next_level()
 	player_level :+ 1
 	load_level( player_level )
-	'FLAG_retain_particles = True
 End Function
 
 Function load_level( index% )
@@ -118,7 +116,9 @@ Function load_level( index% )
 	FLAG_battle_in_progress = False
 	FLAG_waiting_for_player_to_exit_arena = False
 	
-	dim_bg_cache()
+	FLAG_dim_bg = True
+	FLAG_retain_particles = True
+	
 	prep_spawner()
 	update_all()
 	level_passed_ts% = now()
