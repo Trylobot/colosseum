@@ -197,7 +197,7 @@ Function add_sound$( file:TStream, map:TMap )
       
 			Case "path$"
         path = value
-      Case "looped%"
+      Case "looped@"
         looped = string_to_boolean( value )
       
 			Default
@@ -235,16 +235,16 @@ Function add_image$( file:TStream, map:TMap, multi_frame% = False )
       Case "handle_y#"
         handle_y = value.ToFloat()
       Case "cell_width%"
-        handle_y = value.ToInt()
+        cell_width = value.ToInt()
       Case "cell_height%"
-        handle_y = value.ToInt()
+        cell_height = value.ToInt()
       Case "cell_count%"
-        handle_y = value.ToInt()
-			Case "filtered%"
+        cell_count = value.ToInt()
+			Case "filtered@"
 				filtered = string_to_boolean( value )
-			Case "mipmapped%"
+			Case "mipmapped@"
 				mipmapped = string_to_boolean( value )
-			Case "dynamic%"
+			Case "dynamic@"
 				dynamic = string_to_boolean( value )
       
 			Default

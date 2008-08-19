@@ -176,7 +176,7 @@ Function set_widget_archetypes()
 	widget_archetype[WIDGET_INDEX_ARENA_DOOR] = WIDGET( WIDGET.Create( "door", img_door, LAYER_IN_FRONT_OF_PARENT, REPEAT_MODE_CYCLIC_WRAP, 2, False ))
 		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1, 1, 1, 1750 )))
 		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 25, 0, 0, 255, 255, 255, 1, 1, 1, 925 )))
-	widget_archetype[WIDGET_INDEX_LIMB] = WIDGET( WIDGET.Create( "limb", img_limb, LAYER_BEHIND_PARENT, LAYER_BEHIND_PARENT, 3, True ))
+	'widget_archetype[WIDGET_INDEX_LIMB] = WIDGET( WIDGET.Create( "limb", img_limb, LAYER_BEHIND_PARENT, LAYER_BEHIND_PARENT, 3, True ))
 		
 End Function
 
@@ -256,6 +256,10 @@ Function set_turret_archetypes()
 		turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE ).attach_at( 8, 0, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 		turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN].add_emitter( EMITTER_TYPE_PARTICLE, PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING ).attach_at( 1, 1, 0, 0, 0, 0, 0.3, 0.4, 85, 95, 0, 0, 0, 0, -5, 5, -5, 5, 0, 0 )
 End Function
+
+'______________________________________________________________________________
+'[ TURRET_GROUPS ]
+
 
 '______________________________________________________________________________
 '[ COMPLEX_AGENTS ]

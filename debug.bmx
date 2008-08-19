@@ -49,6 +49,10 @@ Function debug_load_data()
 		If sound <> Null Then db_str = "loaded"
 		DebugLog( " sound_map -> "+key+" -> "+db_str )
 	Next
+	For Local key$ = EachIn image_map.Keys()
+		Local image:TImage = get_image( key )
+		DebugLog( " image_map -> "+key+" -> { size("+image.width+","+image.height+"), handle("+Int(image.handle_x)+","+Int(image.handle_y)+"), frames:"+image.frames.Length )
+	Next
 End Function
 '______________________________________________________________________________
 Global cb:CONTROL_BRAIN = Null
