@@ -259,7 +259,7 @@ Function draw_arena_bg()
 		If FLAG_dim_bg
 			FLAG_dim_bg = False
 			SetColor( 255, 255, 255 )
-			SetAlpha( 0.5 )
+			SetAlpha( 0.3333 )
 			SetScale( 1, 1 )
 			SetRotation( 0 )
 			DrawImage( img_arena_bg, 0,0 )
