@@ -264,22 +264,6 @@ Function add_image$( file:TStream, map:TMap, multi_frame% = False )
 End Function
 
 '______________________________________________________________________________
-'Sounds
-Global bg_music_victory_8_bit:TSound = LoadSound( "sound/" + "victory_8-bit.ogg", SOUND_LOOP )
-Global bg_music:TChannel = AllocChannel()
-CueSound( bg_music_victory_8_bit, bg_music )
-
-Global snd_engine_start:TSound = LoadSound( "sound/" + "engine_start.ogg" )
-Global snd_engine_idle_loop:TSound = LoadSound( "sound/" + "engine_idle_loop.ogg", SOUND_LOOP )
-
-'Global snd_cannon_fire:TSound = LoadSound( "sound/" + "cannon.ogg" )
-'Global snd_mgun_turret_fire:TSound = LoadSound( "sound/" + "mgun.ogg" ) 'get_sound( "mgun" )
-'Global snd_laser_fire:TSound = LoadSound( "sound/" + "laser.ogg" )
-'Global snd_cannon_hit:TSound = LoadSound( "sound/" + "cannon_hit.ogg" )
-'Global snd_mgun_hit:TSound = LoadSound( "sound/" + "mgun_hit.ogg" )
-'Global snd_laser_hit:TSound = LoadSound( "sound/" + "laser_hit.ogg" )
-
-'______________________________________________________________________________
 'Images
 AutoImageFlags( FILTEREDIMAGE | MIPMAPPEDIMAGE )
 
@@ -352,6 +336,8 @@ Global img_help_kb:TImage = LoadImage_SetHandle( "help_kb.png", 0, 0 )
 Global img_help_kb_mouse:TImage = LoadImage_SetHandle( "help_kb_and_mouse.png", 0, 0 )
 Global img_arena_bg:TImage = LoadImage_SetHandle( "bg.png", 0, 0 )
 Global img_arena_fg:TImage = LoadImage_SetHandle( "fg.png", 0, 0 )
+Global img_walls_border:TImage = LoadImage_SetHandle( "walls_border.png", 0, 0 )
+Global img_walls_inner:TImage = LoadImage_SetHandle( "walls_inner.png", 0, 0 )
 Global img_icon_music_note:TImage = LoadImage_SetHandle( "icon_music_note.png", 0, 0 )
 Global img_icon_speaker_on:TImage = LoadImage_SetHandle( "icon_speaker_on.png", 0, 0 )
 Global img_icon_speaker_off:TImage = LoadImage_SetHandle( "icon_speaker_off.png", 0, 0 )

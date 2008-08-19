@@ -31,7 +31,13 @@ Function play_all()
 	End If
 End Function
 '______________________________________________________________________________
+Global bg_music:TChannel
+
 Function play_bg_music()
+	If bg_music = Null
+		bg_music = AllocChannel()
+		CueSound( get_sound( "victory_8-bit" ), bg_music )
+	End If
 	If FLAG_bg_music_on
 		ResumeChannel( bg_music )
 	Else If Not FLAG_bg_music_on
@@ -49,13 +55,13 @@ Function start_player_engine()
 		engine_start = Null
 	End If
 	engine_start = AllocChannel()
-	CueSound( snd_engine_start, engine_start )
+	CueSound( get_sound( "engine_start" ), engine_start )
 	SetChannelVolume( engine_start, 0.5 )
 	ResumeChannel( engine_start )
 	FLAG_player_engine_ignition = False
 	FLAG_player_engine_running = False
 End Function
-'______________________________________________________________________________
+
 Function tweak_engine_idle()
 	If FLAG_player_engine_running	
 		If engine_start <> Null
@@ -65,7 +71,7 @@ Function tweak_engine_idle()
 				engine_start = Null
 				'start engine_idle
 				engine_idle = AllocChannel()
-				CueSound( snd_engine_idle_loop, engine_idle )
+				CueSound( get_sound( "engine_idle_loop" ), engine_idle )
 				SetChannelVolume( engine_idle, 0.5 )
 				ResumeChannel( engine_idle )
 			End If
@@ -73,7 +79,7 @@ Function tweak_engine_idle()
 			If engine_idle = Null
 				'start engine_idle
 				engine_idle = AllocChannel()
-				CueSound( snd_engine_idle_loop, engine_idle )
+				CueSound( get_sound( "engine_idle_loop" ), engine_idle )
 				ResumeChannel( engine_idle )
 			End If
 			Local p_speed# = Sqr( Pow(player.vel_x,2) + Pow(player.vel_y,2) )

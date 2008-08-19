@@ -18,6 +18,7 @@ Global FLAG_draw_help% = False
 Global FLAG_console% = False
 Global level_intro_time% = 2000
 Global level_passed_ts%
+Global FLAG_AI_demo% = True
 'game state flags
 Global FLAG_game_in_progress% = False
 Global FLAG_game_over% = False
@@ -35,6 +36,7 @@ Global FLAG_spawn_enemies% = False
 Global player_type% = 0
 Global player:COMPLEX_AGENT
 Global player_brain:CONTROL_BRAIN
+Global player_input_type% = INPUT_KEYBOARD_MOUSE_HYBRID 
 Global player_spawn_point:POINT
 Global player_level% = 0
 Global player_cash% = 0
@@ -110,7 +112,6 @@ Function load_next_level()
 End Function
 
 Function load_level( index% )
-	
 	FLAG_player_in_locker = True
 	FLAG_waiting_for_player_to_enter_arena = True
 	FLAG_battle_in_progress = False
@@ -129,6 +130,9 @@ Function load_level( index% )
 	
 	clear_pathing_grid_center_walls()
 	init_pathing_grid_from_walls( get_level_walls( player_level ))
+End Function
+
+Function load_AI_demo_level()
 	
 End Function
 '______________________________________________________________________________
@@ -156,7 +160,7 @@ Function respawn_player( archetype_index% )
 	
 	If player <> Null And player.managed() Then player.remove_me()
 	player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
-	player_brain = Create_and_Manage_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, INPUT_KEYBOARD_MOUSE_HYBRID )
+	player_brain = Create_and_Manage_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, player_input_type )
 	
 	player_spawn_point = friendly_spawn_points[ Rand( 0, friendly_spawn_points.Length - 1 )]
 	player.pos_x = player_spawn_point.pos_x - 0.5
@@ -173,9 +177,12 @@ Function spawn_pickup( x%, y% ) 'request; depends on probability
 	Local pkp:PICKUP
 	If RandF( 0.0, 1.0 ) < PICKUP_PROBABILITY
 		Local index% = Rand( 0, pickup_archetype.Length - 1 )
-		pkp = pickup_archetype[index].clone()
-		pkp.pos_x = x; pkp.pos_y = y
-		pkp.auto_manage()
+		pkp = pickup_archetype[index]
+		If pkp <> Null
+			pkp = pkp.clone()
+			pkp.pos_x = x; pkp.pos_y = y
+			pkp.auto_manage()
+		End If
 	End If
 End Function
 '______________________________________________________________________________

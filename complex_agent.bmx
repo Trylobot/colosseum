@@ -17,6 +17,9 @@ Const EVENT_DRIVE_FORWARD% = 3
 Const EVENT_DRIVE_BACKWARD% = 4
 Const EVENT_DEATH% = 5
 
+Const WIDGET_CONSTANT% = 1
+Const WIDGET_DEPLOY% = 2
+
 Const TURRETS_ALL% = -1
 
 Const ALIGNMENT_NONE% = 0
@@ -38,15 +41,16 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	Field driving_force:FORCE 'permanent force for this object; also added to the general force list
 	Field turning_force:FORCE 'permanent torque for this object; also added to the general force list
-	Field drive_forward_emitters:TList
-	Field drive_backward_emitters:TList
-	Field all_emitters:TList
-	Field widget_list_below:TList
-	Field widget_list_above:TList
-	Field stickies:TList
+	Field drive_forward_emitters:TList 'emitters triggered when the agent drives forward
+	Field drive_backward_emitters:TList 'emitters triggered when the agent drives backward
+	Field all_emitters:TList 'master emitter list
+	Field constant_widgets:TList 'always-on widgets
+	Field deploy_widgets:TList 'widgets that toggle when the agent deploys/undeploys
+	Field all_widgets:TList 'widget master list
+	Field stickies:TList 'damage particles
 	
-	Field left_track:PARTICLE
-	Field right_track:PARTICLE
+	Field left_track:PARTICLE 'a special particle that represents the "left track" of a tank
+	Field right_track:PARTICLE 'a special particle that represents the "right track" of a tank
 	
 	Method New()
 		turret_groups = CreateList()
@@ -56,8 +60,11 @@ Type COMPLEX_AGENT Extends AGENT
 			all_emitters.AddLast( drive_forward_emitters )
 			all_emitters.AddLast( drive_backward_emitters )
 			all_emitters.AddLast( death_emitters )
-		widget_list_below = CreateList()
-		widget_list_above = CreateList()
+		constant_widgets = CreateList()
+		deploy_widgets = CreateList()
+		all_widgets = CreateList()
+			all_widgets.AddLast( constant_widgets )
+			all_widgets.AddLast( deploy_widgets )
 		stickies = CreateList()
 	End Method
 	
@@ -146,11 +153,11 @@ Type COMPLEX_AGENT Extends AGENT
 		c.driving_force.combine_ang_with_parent_ang = True
 		c.turning_force = FORCE( FORCE.Copy( other.turning_force, c.force_list ))
 		
-		For Local other_w:WIDGET = EachIn other.widget_list_below
-			c.add_widget( other_w ).attach_at( other_w.attach_x, other_w.attach_y )
+		For Local other_w:WIDGET = EachIn other.constant_widgets
+			c.add_widget( other_w, WIDGET_CONSTANT ).attach_at( other_w.attach_x, other_w.attach_y )
 		Next
-		For Local other_w:WIDGET = EachIn other.widget_list_above
-			c.add_widget( other_w ).attach_at( other_w.attach_x, other_w.attach_y )
+		For Local other_w:WIDGET = EachIn other.deploy_widgets
+			c.add_widget( other_w, WIDGET_DEPLOY ).attach_at( other_w.attach_x, other_w.attach_y )
 		Next
 		
 		If other.right_track <> Null
@@ -201,11 +208,10 @@ Type COMPLEX_AGENT Extends AGENT
 			End If
 		Next
 		'widgets
-		For Local w:WIDGET = EachIn widget_list_below
-			w.update()
-		Next
-		For Local w:WIDGET = EachIn widget_list_above
-			w.update()
+		For Local widget_list:TList = EachIn all_widgets
+			For Local w:WIDGET = EachIn widget_list
+				w.update()
+			Next
 		Next
 		'emitters
 		For Local list:TList = EachIn all_emitters
@@ -250,8 +256,12 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Method draw()
-		For Local w:WIDGET = EachIn widget_list_below
-			w.draw()
+		For Local widget_list:TList = EachIn all_widgets
+			For Local w:WIDGET = EachIn widget_list
+				If w.layer = LAYER_BEHIND_PARENT
+					w.draw()
+				End If
+			Next
 		Next
 		
 		SetColor( 255, 255, 255 )
@@ -268,8 +278,12 @@ Type COMPLEX_AGENT Extends AGENT
 		SetRotation( ang )
 		If img <> Null Then DrawImage( img, pos_x, pos_y )
 		'chassis widgets
-		For Local w:WIDGET = EachIn widget_list_above
-			w.draw()
+		For Local widget_list:TList = EachIn all_widgets
+			For Local w:WIDGET = EachIn widget_list
+				If w.layer = LAYER_IN_FRONT_OF_PARENT
+					w.draw()
+				End If
+			Next
 		Next
 		
 		For Local t:TURRET = EachIn turrets
@@ -419,14 +433,15 @@ Type COMPLEX_AGENT Extends AGENT
 		Return em
 	End Method
 	
-	Method add_widget:WIDGET( other_w:WIDGET )
+	Method add_widget:WIDGET( other_w:WIDGET, widget_type% )
 		Local w:WIDGET = other_w.clone()
 		w.parent = Self
-		If w.layer = LAYER_BEHIND_PARENT
-			w.add_me( widget_list_below )
-		Else If w.layer = LAYER_IN_FRONT_OF_PARENT
-			w.add_me( widget_list_above )
-		End If
+		Select widget_type
+			Case WIDGET_CONSTANT
+				w.add_me( constant_widgets )
+			Case WIDGET_DEPLOY
+				w.add_me( deploy_widgets )
+		End Select
 		Return w
 	End Method
 	

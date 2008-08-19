@@ -256,6 +256,20 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		Else               avatar.turn_turrets( 1.0 )
 	End Method
 	
+	Method enable_seek_lights()
+		For Local w:WIDGET = EachIn avatar.constant_widgets
+			If      w.name = "AI seek light"   Then w.visible = True ..
+			Else If w.name = "AI wander light" Then w.visible = False
+		Next
+	End Method
+	
+	Method enable_wander_lights()
+		For Local w:WIDGET = EachIn avatar.constant_widgets
+			If      w.name = "AI seek light"   Then w.visible = False ..
+			Else If w.name = "AI wander light" Then w.visible = True
+		Next
+	End Method
+	
 	Method input_control()
 		Select input_type
 			
@@ -414,6 +428,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					End If
 					'if it can see the target, chase it.
 					If sighted_target
+						enable_seek_lights()
 						'chase after current target; if target in range, self-destruct
 						path = Null
 						avatar.drive( 1.0 )
@@ -428,6 +443,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						dist_to_target = avatar.dist_to( target )
 						If dist_to_target <= 20 Then avatar.self_destruct( target )
 					Else 'cannot see target
+						enable_wander_lights()
 						If path <> Null And Not path.IsEmpty() And waypoint <> Null
 							ang_to_target = avatar.ang_to_cVEC( waypoint )
 							Local diff# = ang_wrap( avatar.ang - ang_to_target )

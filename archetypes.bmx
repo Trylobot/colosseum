@@ -160,23 +160,27 @@ End Function
 	
 '______________________________________________________________________________
 '[ WIDGETS ]
-Global widget_archetype:WIDGET[5]; reset_index()
+Global widget_archetype:WIDGET[10]; reset_index()
 
-Global WIDGET_INDEX_GLOW% = postfix_index()
-Global WIDGET_ARENA_DOOR% = postfix_index()
+Global WIDGET_INDEX_AI_SEEK_LIGHT% = postfix_index()
+Global WIDGET_INDEX_AI_WANDER_LIGHT% = postfix_index()
+Global WIDGET_INDEX_ARENA_DOOR% = postfix_index()
 
 Function set_widget_archetypes()
-	widget_archetype[WIDGET_INDEX_GLOW] = WIDGET( WIDGET.Create( img_glow, LAYER_IN_FRONT_OF_PARENT, REPEAT_MODE_CYCLIC_WRAP, 2, True ))
-		widget_archetype[WIDGET_INDEX_GLOW].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.000, 1, 1, 333 )))
-		widget_archetype[WIDGET_INDEX_GLOW].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.750, 1, 1, 333 )))
-	widget_archetype[WIDGET_ARENA_DOOR] = WIDGET( WIDGET.Create( img_door, LAYER_IN_FRONT_OF_PARENT, REPEAT_MODE_CYCLIC_WRAP, 2, False ))
-		widget_archetype[WIDGET_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1, 1, 1, 1750 )))
-		widget_archetype[WIDGET_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 25, 0, 0, 255, 255, 255, 1, 1, 1, 925 )))
+	widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT] = WIDGET( WIDGET.Create( "AI seek light", img_glow, LAYER_IN_FRONT_OF_PARENT, REPEAT_MODE_CYCLIC_WRAP, 2, True ))
+		widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.000, 1, 1, 200 )))
+		widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.750, 1, 1, 200 )))
+	widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT] = WIDGET( WIDGET.Create( "AI wander light", img_glow, LAYER_IN_FRONT_OF_PARENT, REPEAT_MODE_CYCLIC_WRAP, 2, True ))
+		widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 96, 96, 255, 0.000, 1, 1, 400 )))
+		widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 96, 96, 255, 0.750, 1, 1, 400 )))
+	widget_archetype[WIDGET_INDEX_ARENA_DOOR] = WIDGET( WIDGET.Create( "door", img_door, LAYER_IN_FRONT_OF_PARENT, REPEAT_MODE_CYCLIC_WRAP, 2, False ))
+		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1, 1, 1, 1750 )))
+		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 25, 0, 0, 255, 255, 255, 1, 1, 1, 925 )))
 End Function
 
 '______________________________________________________________________________
 '[ PICKUPS ]
-Global pickup_archetype:PICKUP[3]; reset_index()
+Global pickup_archetype:PICKUP[10]; reset_index()
 
 Global PICKUP_INDEX_HEALTH% = postfix_index()
 Global PICKUP_INDEX_CANNON_AMMO% = postfix_index()
@@ -190,7 +194,7 @@ End Function
 
 '______________________________________________________________________________
 '[ TURRETS ]
-Global turret_archetype:TURRET[10]; reset_index()
+Global turret_archetype:TURRET[30]; reset_index()
 
 Global TURRET_INDEX_TANK_SINGLE_CANNON% = postfix_index()
 Global TURRET_INDEX_TANK_MACHINE_GUN% = postfix_index()
@@ -342,7 +346,8 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 		
 	complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mini bomb", img_nme_mobile_bomb, img_bomb_gibs, AI_BRAIN_SEEKER, 75, 50, 200, 10.0, 0, 1, 7.50, 30.0 ))
-		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_widget( widget_archetype[WIDGET_INDEX_GLOW] ).attach_at( -6, 0 )
+		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_widget( widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT], WIDGET_CONSTANT ).attach_at( -6, 0 )
+		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -6, 0 )
 		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 		
 	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun quad", img_enemy_quad_chassis, img_quad_gibs, AI_BRAIN_TANK, 150, 100, 400, 25.0, 1, 2, 35.0, 55.0 ))

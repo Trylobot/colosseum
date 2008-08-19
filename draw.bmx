@@ -189,13 +189,13 @@ Function draw_main_screen()
 	'copyright stuff
 	SetColor( 157, 157, 157 )
 	SetImageFont( get_font( "consolas_10" ))
-	x = window_w - 200; y = 25
+	x = window_w - 400; y = 25
 	DrawText( "Colosseum (c) 2008 Tylerbot", x, y ); y :+ 10
 	DrawText( "  [Tyler W.R. Cole]", x, y ); y :+ 10
 	y :+ 10
 	DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
 	DrawText( "  http://www.blitzmax.com", x, y ); y :+ 10
-	y :+ 10
+	x = window_w - 200; y = 25
 	DrawText( "music by NickPerrin", x, y ); y :+ 10
 	DrawText( "  Victory! (8-bit Chiptune)", x, y ); y :+ 10
 	DrawText( "  http://www.newgrounds.com", x, y ); y :+ 10
@@ -205,7 +205,7 @@ Function draw_main_screen()
 	DrawText( "  SniperAceX", x, y ); y :+ 10
 	
 	'draw auto-AI demo area
-	
+	draw_AI_demo()
 	
 End Function
 '______________________________________________________________________________
@@ -223,6 +223,10 @@ Function draw_menus( x%, y% )
 		SetColor( 255, 255, 255 )
 		get_menu( menu_stack[i] ).draw( x + i*20, y + i*20, True )
 	Next
+End Function
+'______________________________________________________________________________
+Function draw_AI_demo()
+	
 End Function
 '______________________________________________________________________________
 Function draw_arena_bg()
@@ -272,7 +276,6 @@ Function draw_arena_fg()
 	SetRotation( 0 )
 	
 	DrawImage( img_arena_fg, 0,0 )
-	SetColor( 122, 111, 83 )
 	draw_walls( get_level_walls( player_level ))
 
 	For Local w:WIDGET = EachIn environmental_widget_list
@@ -307,9 +310,14 @@ Function init_bg_cache()
 End Function
 '______________________________________________________________________________
 Function draw_walls( walls:TList )
+	
 	For Local wall%[] = EachIn walls
-		'SetViewport( ?,?, ?,? )
-		DrawRect( wall[1],wall[2], wall[3],wall[4] )
+		SetViewport( wall[1],wall[2], wall[3],wall[4] )
+		DrawImage( img_walls_inner, arena_offset,arena_offset )
+	Next
+	For Local wall%[] = EachIn walls
+		SetViewport( wall[1]+8,wall[2]+8, wall[3]-16,wall[4]-16 )
+		DrawImage( img_walls_border, arena_offset,arena_offset )
 	Next
 	SetViewport( 0,0, window_w,window_h )
 End Function

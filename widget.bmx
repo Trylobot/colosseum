@@ -74,17 +74,20 @@ Type WIDGET Extends MANAGED_OBJECT
 	Field transforming% '{true|false}
 	Field transform_begin_ts% 'timestamp of beginning of current transformation, used with interpolation
 	Field transformations_remaining% '{INFINITE|integer}
+	Field visible% '{true|false}
 	
 	Method New()
 	End Method
 	
 	Function Create:Object( ..
+	name$ = Null, ..
 	img:TImage, ..
 	layer%, ..
 	repeat_mode%, ..
 	state_count%, ..
 	initially_transforming% )
 		Local w:WIDGET = New WIDGET
+		w.name = name
 		w.img = img
 		w.layer = layer
 		w.repeat_mode = repeat_mode
@@ -98,7 +101,7 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Function
 	
 	Method clone:WIDGET()
-		Local w:WIDGET = WIDGET( WIDGET.Create( img, layer, repeat_mode, states.Length, transforming ))
+		Local w:WIDGET = WIDGET( WIDGET.Create( name, img, layer, repeat_mode, states.Length, transforming ))
 		'list of states
 		For Local cur_state:TRANSFORM_STATE = EachIn states
 			w.add_state( cur_state )
@@ -157,14 +160,16 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Method
 	
 	Method draw()
-		SetColor( state.red, state.green, state.blue )
-		SetAlpha( state.alpha )
-		SetScale( state.scale_x, state.scale_y )
-		
-		SetRotation( parent.ang + offset_ang + state.ang + ang_offset )
-		DrawImage( img, ..
-			parent.pos_x + offset*Cos( parent.ang + offset_ang ) + state.pos_length*Cos( parent.ang + offset_ang + state.ang + ang_offset ), ..
-			parent.pos_y + offset*Sin( parent.ang + offset_ang ) + state.pos_length*Sin( parent.ang + offset_ang + state.ang + ang_offset ) )
+		If visible
+			SetColor( state.red, state.green, state.blue )
+			SetAlpha( state.alpha )
+			SetScale( state.scale_x, state.scale_y )
+			
+			SetRotation( parent.ang + offset_ang + state.ang + ang_offset )
+			DrawImage( img, ..
+				parent.pos_x + offset*Cos( parent.ang + offset_ang ) + state.pos_length*Cos( parent.ang + offset_ang + state.ang + ang_offset ), ..
+				parent.pos_y + offset*Sin( parent.ang + offset_ang ) + state.pos_length*Sin( parent.ang + offset_ang + state.ang + ang_offset ) )
+		End If
 	End Method
 	
 	Method begin_transformation( count% = INFINITY )

@@ -347,7 +347,10 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			'save_game_by_slot( command_argument )
 			
 		Case COMMAND_PLAYER_INPUT_TYPE
-			player_brain.input_type = command_argument
+			player_input_type = command_argument
+			If player_brain <> Null
+				player_brain.input_type = player_input_type
+			End If
 			
 		Case COMMAND_QUIT_GAME
 			End

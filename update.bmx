@@ -93,7 +93,14 @@ Function update_all()
 			FLAG_retain_particles = True
 		End If
 		
+	Else If FLAG_in_menu And FLAG_AI_demo
+		update_AI_demo()
+	
 	End If
+End Function
+
+Function update_AI_demo()
+	
 End Function
 
 

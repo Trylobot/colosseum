@@ -326,7 +326,7 @@ Global all_door_lists:TList = CreateList()
 Function attach_door( p:POINT, political_door_list:TList )
 	Local door:WIDGET
 
-	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
+	door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
 	door.parent = p
 	door.attach_at( arena_offset/2 + arena_offset/3 - door.img.height/2 + 1, 0, 90, True )
 	'the auto-manage list keeps track of all widgets, for updating and drawing
@@ -334,7 +334,7 @@ Function attach_door( p:POINT, political_door_list:TList )
 	'this managed list simply differentiates "friendly" doors from "hostile" doors
 	political_door_list.AddLast( door )
 	
-	door = widget_archetype[WIDGET_ARENA_DOOR].clone()
+	door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
 	door.parent = p
 	door.attach_at( arena_offset/2 + arena_offset/3 - door.img.height/2 + 1, 0, -90, True )
 	'the auto-manage list keeps track of all widgets, for updating and drawing
