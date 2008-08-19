@@ -76,7 +76,7 @@ Function debug_overlay()
 		Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
 		SetColor( 255, 255, 255 )
 		
-		If MouseHit( 1 )
+		If KeyHit( KEY_Q )
 			cb = Null
 			For Local brain:CONTROL_BRAIN = EachIn control_brain_list
 				If brain.avatar.dist_to( mouse ) <= 15

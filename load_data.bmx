@@ -272,12 +272,12 @@ CueSound( bg_music_victory_8_bit, bg_music )
 Global snd_engine_start:TSound = LoadSound( "sound/" + "engine_start.ogg" )
 Global snd_engine_idle_loop:TSound = LoadSound( "sound/" + "engine_idle_loop.ogg", SOUND_LOOP )
 
-Global snd_cannon_fire:TSound = LoadSound( "sound/" + "cannon.ogg" )
-Global snd_mgun_turret_fire:TSound = LoadSound( "sound/" + "mgun.ogg" )
-Global snd_laser_fire:TSound = LoadSound( "sound/" + "laser.ogg" )
-Global snd_cannon_hit:TSound = LoadSound( "sound/" + "cannon_hit.ogg" )
-Global snd_mgun_hit:TSound = LoadSound( "sound/" + "mgun_hit.ogg" )
-Global snd_laser_hit:TSound = LoadSound( "sound/" + "laser_hit.ogg" )
+'Global snd_cannon_fire:TSound = LoadSound( "sound/" + "cannon.ogg" )
+'Global snd_mgun_turret_fire:TSound = LoadSound( "sound/" + "mgun.ogg" ) 'get_sound( "mgun" )
+'Global snd_laser_fire:TSound = LoadSound( "sound/" + "laser.ogg" )
+'Global snd_cannon_hit:TSound = LoadSound( "sound/" + "cannon_hit.ogg" )
+'Global snd_mgun_hit:TSound = LoadSound( "sound/" + "mgun_hit.ogg" )
+'Global snd_laser_hit:TSound = LoadSound( "sound/" + "laser_hit.ogg" )
 
 '______________________________________________________________________________
 'Images

@@ -192,21 +192,44 @@ Type MENU
 	End Method
 	
 	Method increment_focus()
-		For Local f% = focus + 1 To options.Length - 1 Step 1
-			If options[f].visible And options[f].enabled
-				focus = f
-				Return
-			End If
-		Next
+		Select menu_type
+			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
+				Local last_focus% = focus
+				focus :+ 1; wrap_focus()
+				While focus <> last_focus And Not options[focus].enabled
+					focus :+ 1; wrap_focus()
+				End While
+			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
+				For Local f% = focus + 1 To options.Length - 1 Step 1
+					If options[f].visible And options[f].enabled
+						focus = f
+						Return
+					End If
+				Next
+		End Select
 	End Method
 	
 	Method decrement_focus()
-		For Local f% = focus - 1 To 0 Step -1
-			If options[f].visible And options[f].enabled
-				focus = f
-				Return
-			End If
-		Next
+		Select menu_type
+			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
+				Local last_focus% = focus
+				focus :- 1; wrap_focus()
+				While focus <> last_focus And Not options[focus].enabled
+					focus :- 1; wrap_focus()
+				End While
+			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
+				For Local f% = focus - 1 To 0 Step -1
+					If options[f].visible And options[f].enabled
+						focus = f
+						Return
+					End If
+				Next
+		End Select
+	End Method
+	
+	Method wrap_focus()
+		If      focus > (options.Length - 1) Then focus = 0 ..
+		Else If focus < 0                    Then focus = (options.Length - 1)
 	End Method
 	
 End Type
