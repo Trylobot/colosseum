@@ -190,7 +190,7 @@ Function debug_overlay()
 		End If
 		
 		sx = arena_offset+3; sy = arena_offset+3
-		debug_drawtext "particles to be retained -> "+retained_particle_list.Count()
+		debug_drawtext "friendly doors -> "+friendly_door_list.Count()
 		
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )

@@ -59,6 +59,7 @@ Type WIDGET Extends MANAGED_OBJECT
 	Field parent:POINT 'parent object, provides local origin
 	Field img:TImage 'image to be drawn
 	Field layer% 'whether to be drawn before the parent or after it
+	Field visible% '{true|false}
 	
 	Field attach_x# 'original attachment position (x component)
 	Field attach_y# 'original attachment position (y component)
@@ -74,7 +75,6 @@ Type WIDGET Extends MANAGED_OBJECT
 	Field transforming% '{true|false}
 	Field transform_begin_ts% 'timestamp of beginning of current transformation, used with interpolation
 	Field transformations_remaining% '{INFINITE|integer}
-	Field visible% '{true|false}
 	
 	Method New()
 	End Method
@@ -83,6 +83,7 @@ Type WIDGET Extends MANAGED_OBJECT
 	name$ = Null, ..
 	img:TImage, ..
 	layer%, ..
+	visible% = True, ..
 	repeat_mode%, ..
 	state_count%, ..
 	initially_transforming% )

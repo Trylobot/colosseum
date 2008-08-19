@@ -30,10 +30,10 @@ SetBlend( ALPHABLEND )
 load_data_files()
 load_all_archetypes()
 load_environment()
-?Debug
-debug_load_data()
-End
-?
+'?Debug
+'debug_load_data()
+'End
+'?
 
 '______________________________________________________________________________
 'MAIN
