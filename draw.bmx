@@ -62,9 +62,14 @@ Function draw_game()
 	For Local pkp:PICKUP = EachIn pickup_list
 		pkp.draw()
 	Next
-	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
+
+	'arena foreground
+	draw_arena_fg()
+	SetColor( 255, 255, 255 )
 	SetScale( 1, 1 )
+	SetAlpha( 1 )
+	
 	'hostile agents
 	For Local hostile:COMPLEX_AGENT = EachIn hostile_agent_list
 		hostile.draw()
@@ -82,18 +87,11 @@ Function draw_game()
 	SetScale( 1, 1 )
 	SetColor( 255, 255, 255 )
 	
-	'arena foreground
-	draw_arena_fg()
-	SetColor( 255, 255, 255 )
-	SetScale( 1, 1 )
-	SetAlpha( 1 )
-	
 	'aiming reticle
-	If player_brain.input_type = INPUT_KEYBOARD
-		'use existing reticle code
+	If player_input_type = INPUT_KEYBOARD
 		SetRotation( player.turrets[0].ang )
-		DrawImage( img_reticle, player.turrets[0].pos_x + 50*Cos( player.turrets[0].ang ), player.turrets[0].pos_y + 50*Sin( player.turrets[0].ang ) )
-	Else If player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+		DrawImage( img_reticle, player.turrets[0].pos_x + 60*Cos( player.turrets[0].ang ), player.turrets[0].pos_y + 50*Sin( player.turrets[0].ang ) )
+	Else If player_input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 		'position the larger dot of the reticle directly at the mouse position
 		'point the ellipsis dots at the player's turret
 		SetRotation( player.turrets[0].ang_to_cVEC( mouse_point ))
@@ -101,7 +99,7 @@ Function draw_game()
 	End If
 	SetRotation( 0 )
 
-	'interface
+	'draw side-panel statistics and info
 	draw_stats()
 
 	'help actual

@@ -153,6 +153,9 @@ End Function
 ' note: turrets must come first in the level index (for now)
 Global level_squads%[][][] = ..
 	[ ..
+		[ ..
+			[ ENEMY_INDEX_LIGHT_TANK ] ..
+		], ..
 		[	..
 			[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..
 			[ ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX, ENEMY_INDEX_MR_THE_BOX ], ..

@@ -15,7 +15,6 @@ Type TURRET Extends POINT
 	Field img_base:TImage 'image to be drawn for the "base" of the turret
 	Field img_barrel:TImage 'image to be drawn for the "barrel" of the turret
 	Field snd_fire:TSound 'sound to be played when the turret is fired
-	Field max_ang_vel# 'maximum rotation speed for this turret
 	Field control_pct# '[-1, 1] percent of angular velocity that is being used
 	Field reload_time% 'time required to reload
 	Field max_ammo% 'maximum number of rounds in reserve (this should be stored in individual ammo objects?)
@@ -53,7 +52,6 @@ Type TURRET Extends POINT
 	class%, ..
 	img_base:TImage, img_barrel:TImage, ..
 	snd_fire:TSound, ..
-	max_ang_vel#, ..
 	reload_time%, ..
 	max_ammo%, ..
 	recoil_off_x#, recoil_off_y#, ..
@@ -68,7 +66,6 @@ Type TURRET Extends POINT
 		t.class = class
 		t.img_base = img_base; t.img_barrel = img_barrel
 		t.snd_fire = snd_fire
-		t.max_ang_vel = max_ang_vel
 		t.reload_time = reload_time
 		t.max_ammo = max_ammo
 		t.recoil_off_x = recoil_off_x; t.recoil_off_y = recoil_off_y
@@ -92,7 +89,7 @@ Type TURRET Extends POINT
 	
 	Method clone:TURRET()
 		Local t:TURRET = TURRET( TURRET.Create( ..
-			name, class, img_base, img_barrel, snd_fire, max_ang_vel, reload_time, max_ammo, recoil_off_x, recoil_off_y, max_heat, heat_per_shot_min, heat_per_shot_max, cooling_coefficient, overheat_delay ))
+			name, class, img_base, img_barrel, snd_fire, reload_time, max_ammo, recoil_off_x, recoil_off_y, max_heat, heat_per_shot_min, heat_per_shot_max, cooling_coefficient, overheat_delay ))
 		'copy all emitters
 		For Local em:EMITTER = EachIn emitter_list
 			EMITTER( EMITTER.Copy( em, t.emitter_list, t ))
@@ -149,9 +146,8 @@ Type TURRET Extends POINT
 		End If
 	End Method
 	
-	Method turn( pct# )
-		control_pct = pct
-		ang_vel = control_pct*max_ang_vel
+	Method turn( ctrl#, max_ang_vel# )
+		ang_vel = ctrl*max_ang_vel
 	End Method
 	
 	Method ready_to_fire%()
@@ -224,21 +220,110 @@ Type TURRET Extends POINT
 End Type
 
 '______________________________________________________________________________
+Function Create_TURRET_GROUP:TURRET_GROUP( ..
+turret_slots%, ..
+firing_sequence%[][], ..
+max_ang_vel# )
+	Local tg:TURRET_GROUP = New TURRET_GROUP
+	tg.turret_array = New TURRET[turret_slots]
+	tg.firing_sequence = firing_sequence[..]
+	tg.max_ang_vel = max_ang_vel
+	Return tg
+End Function
+
 Type TURRET_GROUP
+	Field parent:COMPLEX_AGENT
+	
 	Field turret_array:TURRET[] 'actual turret array, not be accessed directly
 	Field firing_sequence%[][] 'a list of lists of turret indices; describes the firing behavior of this entity
+	Field max_ang_vel# 'maximum rotation speed for this turret group
+	Field attach_x#, attach_y# 'attach to parent at (x,y)
+	
 	Field firing_state% 'indicates which sequence index this turret group is currently on
 	Field FLAG_increment% 'if true, indicates this turret group wishes to move to the next firing state; will actually move when completely reloaded
-	Field max_ang_vel# 'maximum rotation speed for this turret group
-	Field control_pct# 'control variable, directly affects angular velocity of every turret in the group
 	
-	Method clone:TURRET_GROUP()
-		
+	Method New()
+		parent = Null
 	End Method
 	
+	Method clone:TURRET_GROUP()
+		Local tg:TURRET_GROUP = Create_TURRET_GROUP( ..
+			turret_array.Length, firing_sequence, max_ang_vel )
+		For Local i% = 0 To turret_array.Length - 1
+			tg.add_turret( turret_array[i], i ).attach_at( attach_x, attach_y )
+		Next
+		Return tg
+	End Method
+	
+	Method set_parent( new_parent:COMPLEX_AGENT )
+		parent = new_parent
+		For Local t:TURRET = EachIn turret_array
+			t.set_parent( parent )
+		Next
+	End Method
+
+	Method attach_at( new_attach_x#, new_attach_y# )
+		attach_x = new_attach_x; attach_y = new_attach_y
+		For Local t:TURRET = EachIn turret_array
+			t.attach_at( new_attach_x, new_attach_y )
+		Next
+	End Method
+	
+	Method update()
+		For Local t:TURRET = EachIn turret_array
+			t.update()
+		Next
+		'group firing state readiness check (wait for everyone to be ready)
+		If FLAG_increment
+			Local all_ready% = True
+			For Local t_index% = EachIn firing_sequence[firing_state]
+				If Not turret_array[t_index].ready_to_fire()
+					all_ready = False
+					Exit
+				End If
+			Next
+			If all_ready
+				firing_state :+ 1
+				'firing state: cyclic wrap
+				If firing_state > firing_sequence.Length - 1 Then firing_state = 0
+				FLAG_increment = False
+			End If
+		End If
+	End Method
+	
+	Method draw()
+		For Local t:TURRET = EachIn turret_array
+			t.draw()
+		Next
+	End Method
+	
+	Method turn( ctrl# )
+		For Local t:TURRET = EachIn turret_array
+			t.turn( ctrl, max_ang_vel )
+		Next
+	End Method
+	
+	Method fire()
+		If Not FLAG_increment
+			For Local t:TURRET = EachIn turret_array
+				t.fire()
+			Next
+			FLAG_increment = True
+		End If
+	End Method
+	
+	Method snap_to_parent()
+		For Local t:TURRET = EachIn turret_array
+			t.ang = parent.ang
+		Next
+	End Method
+	
+	Method add_turret:TURRET( other_t:TURRET, slot% )
+		Local t:TURRET = other_t.clone()
+		t.set_parent( parent )
+		turret_array[slot] = t
+		Return t
+	End Method
 	
 End Type
 
-Function Create_TURRET_GROUP:TURRET_GROUP()
-	
-End Function

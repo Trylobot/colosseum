@@ -26,32 +26,30 @@ Const ALIGNMENT_NONE% = 0
 Const ALIGNMENT_FRIENDLY% = 1
 Const ALIGNMENT_HOSTILE% = 2
 
+'___________________________________________
 Type COMPLEX_AGENT Extends AGENT
 	
 	Field political_alignment% '{friendly|hostile}
 	Field ai_type% 'artificial intelligence subroutine index (only used for AI-controlled agents)
-	
+
 	Field turret_groups:TList 'list of turret groups attached to this agent
-	
-	Field turrets:TURRET[] 'turret array
-	Field turret_count% 'number of turret slots
-	Field firing_sequence%[][][]
-	Field firing_state%[]
-	Field FLAG_increment_firing_group%[]
-	
+
 	Field driving_force:FORCE 'permanent force for this object; also added to the general force list
 	Field turning_force:FORCE 'permanent torque for this object; also added to the general force list
+
 	Field drive_forward_emitters:TList 'emitters triggered when the agent drives forward
 	Field drive_backward_emitters:TList 'emitters triggered when the agent drives backward
 	Field all_emitters:TList 'master emitter list
+
 	Field constant_widgets:TList 'always-on widgets
 	Field deploy_widgets:TList 'widgets that toggle when the agent deploys/undeploys
 	Field all_widgets:TList 'widget master list
+
 	Field stickies:TList 'damage particles
-	
 	Field left_track:PARTICLE 'a special particle that represents the "left track" of a tank
 	Field right_track:PARTICLE 'a special particle that represents the "right track" of a tank
 	
+	'___________________________________________
 	Method New()
 		turret_groups = CreateList()
 		drive_forward_emitters = CreateList()
@@ -68,6 +66,7 @@ Type COMPLEX_AGENT Extends AGENT
 		stickies = CreateList()
 	End Method
 	
+	'___________________________________________
 	Function Archetype:Object( ..
 	name$, ..
 	img:TImage, ..
@@ -77,8 +76,6 @@ Type COMPLEX_AGENT Extends AGENT
 	max_health#, ..
 	mass#, ..
 	frictional_coefficient#, ..
-	turret_count%, ..
-	motivator_count%, ..
 	driving_force_magnitude#, ..
 	turning_force_magnitude#, ..
 	physics_disabled% = False )
@@ -97,16 +94,14 @@ Type COMPLEX_AGENT Extends AGENT
 		
 		'dynamic fields
 		c.cur_health = max_health
-		c.turret_count = turret_count
-		If c.turret_count > 0
-			c.turrets = New TURRET[ turret_count ]
-		End If
+
 		c.driving_force = FORCE( FORCE.Create( PHYSICS_FORCE, 0, driving_force_magnitude ))
 		c.turning_force = FORCE( FORCE.Create( PHYSICS_TORQUE, 0, turning_force_magnitude ))
 		
 		Return c
 	End Function
 	
+	'___________________________________________
 	Function Copy:Object( other:COMPLEX_AGENT, political_alignment% = ALIGNMENT_NONE )
 		If other = Null Then Return Null
 		Local c:COMPLEX_AGENT = New COMPLEX_AGENT
@@ -130,18 +125,9 @@ Type COMPLEX_AGENT Extends AGENT
 		c.ang = other.ang
 		c.cur_health = c.max_health
 		
-		If other.turret_count > 0
-			c.turret_count = other.turret_count
-			c.turrets = New TURRET[ other.turret_count ]
-			For Local i% = 0 To other.turret_count - 1
-				If other.turrets[i] <> Null
-					c.add_turret( other.turrets[i], i ).attach_at( other.turrets[i].off_x, other.turrets[i].off_y )
-				End If
-			Next
-		End If
-		c.firing_sequence = other.firing_sequence[..]
-		c.firing_state = other.firing_state[..]
-		c.FLAG_increment_firing_group = other.FLAG_increment_firing_group[..]
+		For Local other_tg:TURRET_GROUP = EachIn other.turret_groups
+			c.add_turret_group( other_tg ).attach_at( other_tg.attach_x, other_tg.attach_y )
+		Next
 		
 		For Local list:TList = EachIn other.all_emitters
 			For Local other_em:EMITTER = EachIn list
@@ -176,6 +162,7 @@ Type COMPLEX_AGENT Extends AGENT
 		Return c
 	End Function
 
+	'___________________________________________
 	Method update()
 		'update agent variables
 		Super.update()
@@ -186,26 +173,9 @@ Type COMPLEX_AGENT Extends AGENT
 			vel_y = 0
 		End If
 		
-		'turrets
-		For Local t:TURRET = EachIn turrets
-			t.update()
-		Next
-		'firing groups
-		For Local i% = 0 To FLAG_increment_firing_group.Length - 1
-			If FLAG_increment_firing_group[i]
-				Local all_ready% = True
-				For Local t_index% = EachIn firing_sequence[i][firing_state[i]]
-					If Not turrets[t_index].ready_to_fire()
-						all_ready = False
-						Exit
-					End If
-				Next
-				If all_ready
-					firing_state[i] :+ 1
-					If firing_state[i] > firing_sequence[i].Length - 1 Then firing_state[i] = 0
-					FLAG_increment_firing_group[i] = False
-				End If
-			End If
+		'turret groups
+		For Local tg:TURRET_GROUP = EachIn turret_groups
+			tg.update()
 		Next
 		'widgets
 		For Local widget_list:TList = EachIn all_widgets
@@ -221,29 +191,28 @@ Type COMPLEX_AGENT Extends AGENT
 			Next
 		Next
 		
-		'tracks
-		'right side is "backwards" of normal
+		'tracks (will be motivator objects soon, and this will be somewhat automatic, as a function of {velocity} and {angular velocity}
 		If right_track <> Null And left_track <> Null
 			Local frame_delay# = INFINITY
 			Local vel_ang# = vector_angle( vel_x, vel_y )
 			If vel > 0.00001
 				If Abs( ang_wrap( vel_ang - ang )) > 90
-					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
+					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					frame_delay = 17.5 * (1.0/vel)
 				Else
-					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
+					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					frame_delay = 17.5 * (1.0/vel)
 				End If
 			End If
 			If frame_delay >= 100 Or frame_delay = INFINITY
 				If ang_vel > 0.00001
-					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
+					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					frame_delay = 40 * (1.0/Abs(ang_vel))
 				Else If ang_vel < -0.00001
-					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
+					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					frame_delay = 40 * (1.0/Abs(ang_vel))
 				End If
@@ -255,7 +224,9 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 	End Method
 	
+	'___________________________________________
 	Method draw()
+		'chassis widgets
 		For Local widget_list:TList = EachIn all_widgets
 			For Local w:WIDGET = EachIn widget_list
 				If w.layer = LAYER_BEHIND_PARENT
@@ -263,12 +234,10 @@ Type COMPLEX_AGENT Extends AGENT
 				End If
 			Next
 		Next
-		
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		SetScale( 1, 1 )
 		SetRotation( ang )
-		
 		'tracks
 		If right_track <> Null And left_track <> Null
 			left_track.draw()
@@ -286,57 +255,46 @@ Type COMPLEX_AGENT Extends AGENT
 			Next
 		Next
 		
-		For Local t:TURRET = EachIn turrets
-			t.draw()
+		'turret groups
+		For Local tg:TURRET_GROUP = EachIn turret_groups
+			tg.draw()
 		Next
+		'sticky particles (damage)
 		For Local s:PARTICLE = EachIn stickies
 			s.draw()
 		Next
 	End Method
 	
-	'think of this method like a request, safe to call at any time.
-	'ie, if the player is currently reloading, this method will do nothing.
-	Method fire_turret( turret_index% = 0 )
-		If turret_index < turrets.Length And turrets[turret_index] <> Null Then turrets[turret_index].fire()
-	End Method
-	'this method uses firing groups and sequences for complex turret control
-	Method fire( seq_index% )
-		If seq_index = TURRETS_ALL
-			For Local i% = 0 To firing_sequence.Length - 1
-				fire( i )
-			Next
-			Return
-		End If
-		If seq_index < firing_sequence.Length And Not FLAG_increment_firing_group[seq_index]
-			For Local t_index% = EachIn firing_sequence[seq_index][firing_state[seq_index]]
-				fire_turret( t_index )
-			Next
-			FLAG_increment_firing_group[seq_index] = True
-		End If
-	End Method
-	
+	'___________________________________________
 	Method drive( pct# )
 		driving_force.control_pct = pct
 		If      pct > 0 Then enable_only_rear_emitters() ..
 		Else If pct < 0 Then enable_only_forward_emitters() ..
 		Else                 disable_all_emitters()
 	End Method
-	
+	'___________________________________________
 	Method turn( pct# )
 		turning_force.control_pct = pct
 	End Method
 	
-	Method turn_turrets( pct# )
-		For Local t:TURRET = EachIn turrets
-			t.turn( pct )
-		Next
+	'___________________________________________
+	Method fire_turret_group( index% )
+		Local tg:TURRET_GROUP = TURRET_GROUP( turret_groups.ValueAtIndex( index ))
+		If tg <> Null Then tg.fire()
 	End Method
+	'___________________________________________
+	Method turn_turret_group( index%, pct# )
+		Local tg:TURRET_GROUP = TURRET_GROUP( turret_groups.ValueAtIndex( index ))
+		If tg <> Null Then tg.turn( pct )
+	End Method
+	'___________________________________________
 	Method snap_turrets()
-		For Local t:TURRET = EachIn turrets
-			t.ang = ang
+		For Local tg:TURRET_GROUP = EachIn turret_groups
+			tg.snap_to_parent()
 		Next
 	End Method
 	
+	'___________________________________________
 	Method enable_only_forward_emitters()
 		For Local em:EMITTER = EachIn drive_forward_emitters
 			em.enable( MODE_ENABLED_FOREVER )
@@ -345,6 +303,7 @@ Type COMPLEX_AGENT Extends AGENT
 			em.disable()
 		Next
 	End Method
+	'___________________________________________
 	Method enable_only_rear_emitters()
 		For Local em:EMITTER = EachIn drive_forward_emitters
 			em.disable()
@@ -353,6 +312,7 @@ Type COMPLEX_AGENT Extends AGENT
 			em.enable( MODE_ENABLED_FOREVER )
 		Next
 	End Method
+	'___________________________________________
 	Method disable_all_emitters()
 		For Local em:EMITTER = EachIn drive_forward_emitters
 			em.disable()
@@ -362,62 +322,57 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 	End Method
 	
+	'___________________________________________
 	Method grant_pickup( pkp:PICKUP )
 		Select pkp.pickup_type
 			
 			Case AMMO_PICKUP
-				Local tur_list:TList = CreateList()
-				For Local t:TURRET = EachIn turrets
-					If t.class = TURRET_CLASS_AMMUNITION And t.max_ammo <> INFINITY Then tur_list.AddLast( t )
-				Next
-				Local lowest_cur_ammo% = -1, lowest_cur_ammo_turret:TURRET
-				For Local t:TURRET = EachIn tur_list
-					If t.cur_ammo < lowest_cur_ammo Or lowest_cur_ammo < 0
-						lowest_cur_ammo = t.cur_ammo
-						lowest_cur_ammo_turret = t
-					End If
-				Next
-				If lowest_cur_ammo_turret <> Null Then lowest_cur_ammo_turret.re_stock( pkp.pickup_amount )
+'				Local tur_list:TList = CreateList()
+'				For Local t:TURRET = EachIn turrets
+'					If t.class = TURRET_CLASS_AMMUNITION And t.max_ammo <> INFINITY Then tur_list.AddLast( t )
+'				Next
+'				Local lowest_cur_ammo% = -1, lowest_cur_ammo_turret:TURRET
+'				For Local t:TURRET = EachIn tur_list
+'					If t.cur_ammo < lowest_cur_ammo Or lowest_cur_ammo < 0
+'						lowest_cur_ammo = t.cur_ammo
+'						lowest_cur_ammo_turret = t
+'					End If
+'				Next
+'				If lowest_cur_ammo_turret <> Null Then lowest_cur_ammo_turret.re_stock( pkp.pickup_amount )
 			
 			Case HEALTH_PICKUP
 				cur_health :+ pkp.pickup_amount
 				If cur_health > max_health Then cur_health = max_health
 			
 			Case PICKUP_INDEX_COOLDOWN
-				Local tur_list:TList = CreateList()
-				For Local t:TURRET = EachIn turrets
-					If t.max_heat <> INFINITY Then tur_list.AddLast( t )
-				Next
-				Local highest_cur_heat% = -1, highest_cur_heat_turret:TURRET
-				For Local t:TURRET = EachIn tur_list
-					If t.cur_heat > highest_cur_heat
-						highest_cur_heat = t.cur_heat
-						highest_cur_heat_turret = t
-					End If
-				Next
-				If highest_cur_heat_turret <> Null
-					highest_cur_heat_turret.cur_heat = 0
-					highest_cur_heat_turret.bonus_cooling_start_ts = now()
-					highest_cur_heat_turret.bonus_cooling_time = pkp.pickup_amount
-				End If
+'				Local tur_list:TList = CreateList()
+'				For Local t:TURRET = EachIn turrets
+'					If t.max_heat <> INFINITY Then tur_list.AddLast( t )
+'				Next
+'				Local highest_cur_heat% = -1, highest_cur_heat_turret:TURRET
+'				For Local t:TURRET = EachIn tur_list
+'					If t.cur_heat > highest_cur_heat
+'						highest_cur_heat = t.cur_heat
+'						highest_cur_heat_turret = t
+'					End If
+'				Next
+'				If highest_cur_heat_turret <> Null
+'					highest_cur_heat_turret.cur_heat = 0
+'					highest_cur_heat_turret.bonus_cooling_start_ts = now()
+'					highest_cur_heat_turret.bonus_cooling_time = pkp.pickup_amount
+'				End If
 			
 		End Select
 		pkp.remove_me()
 	End Method
 	
-	Method add_turret_group:TURRET_GROUP( other_t:TURRET_GROUP )
-		Local t:TURRET_GROUP = other_t.clone()
-		
-		Return t
+	'___________________________________________
+	Method add_turret_group:TURRET_GROUP( other_tg:TURRET_GROUP )
+		Local tg:TURRET_GROUP = other_tg.clone()
+		tg.set_parent( Self )
+		Return tg
 	End Method
-	
-	Method add_turret:TURRET( other_t:TURRET, slot% )
-		Local t:TURRET = other_t.clone()
-		t.set_parent( Self )
-		turrets[slot] = t
-		Return t
-	End Method
-	
+	'___________________________________________
 	Method add_emitter:EMITTER(	other_em:EMITTER, event% )
 		Local em:EMITTER = Copy_EMITTER( other_em )
 		em.parent = Self
@@ -432,7 +387,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End Select
 		Return em
 	End Method
-	
+	'___________________________________________
 	Method add_widget:WIDGET( other_w:WIDGET, widget_type% )
 		Local w:WIDGET = other_w.clone()
 		w.parent = Self
@@ -444,7 +399,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End Select
 		Return w
 	End Method
-	
+	'___________________________________________
 	Method add_sticky:PARTICLE( other_p:PARTICLE )
 		Local p:PARTICLE = other_p.clone()
 		p.add_me( stickies )
@@ -452,6 +407,7 @@ Type COMPLEX_AGENT Extends AGENT
 		Return p
 	End Method
 	
+	'___________________________________________
 	Method auto_manage( new_political_alignment% = ALIGNMENT_NONE )
 		political_alignment = new_political_alignment
 		If      new_political_alignment = ALIGNMENT_FRIENDLY Then add_me( friendly_agent_list ) ..

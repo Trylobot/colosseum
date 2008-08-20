@@ -1,5 +1,9 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
-		
+	_ turret_groups should have logical linkages through the complex_agent parent to an anchor point.
+			turret_groups would thus only be attached to pre-set anchor points on the complex_agent
+			when any turret_group's turn() function is called, any linked turret groups also get called implicitly.
+			the linkage would be at a complex_agent level, and the turret groups themselves would need no knowledge of the link or the anchor point.
+			also need a complex_agent method to get the current orientation of all turret_groups associated with a given anchor.
 	_ the projectile_launcher:EMITTER should have the code to play the sound associated with its emission
 			(and not the turret itself)
 	_ same goes for particle emitters; they should have an option to play a sound when they emit.
