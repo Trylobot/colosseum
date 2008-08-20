@@ -5,6 +5,23 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Function Create_TURRET_BARREL:TURRET_BARREL( )
+	
+End Function
+
+Type TURRET_BARREL
+	Field img:TImage 'image associated with this turret barrel
+	Field recoil_max# 'maximum recoil distance
+	
+	Field attach_x#, attach_y# 'attachment anchor (at default orientation), set at create-time
+	Field attach_offset_length#, attach_offset_angle# 'attachment anchor as a polar, to be able to combine parent turret's current orientation at draw-time
+	
+	Field parent:TURRET 'parent turret
+	Field recoil_cur# 'current recoil distance
+	Field emitter_list:TList 'list of emitters to be enabled (by count) when barrel fires
+	
+End Type
+'______________________________________________________________________________
 Const TURRET_CLASS_ENERGY% = 0
 Const TURRET_CLASS_AMMUNITION% = 1
 
@@ -12,22 +29,29 @@ Type TURRET Extends POINT
 	
 	Field parent:COMPLEX_AGENT 'parental complex agent this turret is attached to
 	Field class% '{ammunition|energy}
-	Field img_base:TImage 'image to be drawn for the "base" of the turret
-	Field img_barrel:TImage 'image to be drawn for the "barrel" of the turret
+'	Field img_base:TImage 'image to be drawn for the "base" of the turret
+	Field img:TImage 'image to be drawn for the "base" of the turret
 	Field snd_fire:TSound 'sound to be played when the turret is fired
+'	Field snd_turn:TSound 'sound to be played when the turret is turned
+	Field barrel_array:TURRET_BARREL[] 'barrels attached to this turret
+	Field firing_sequence%[][] 'describes the sequential firing order of the barrels; wrap mode is locked to CYCLIC_WRAP style for simplicity
+	Field max_ang_vel# 'maximum rotation speed for this turret group
+	Field firing_state% 'indicates which sequence index this turret group is currently on
+	Field FLAG_increment% 'if true, indicates this turret group wishes to move to the next firing state; will actually move when completely reloaded
+'	Field img_barrel:TImage 'image to be drawn for the "barrel" of the turret
 	Field control_pct# '[-1, 1] percent of angular velocity that is being used
 	Field reload_time% 'time required to reload
 	Field max_ammo% 'maximum number of rounds in reserve (this should be stored in individual ammo objects?)
-	Field recoil_off_x#
-	Field recoil_off_y#
-	Field recoil_offset# 'current distance from local origin due to recoil
-	Field recoil_offset_ang# 'current angle of recoil
+'	Field recoil_off_x#
+'	Field recoil_off_y#
+'	Field recoil_offset# 'current distance from local origin due to recoil
+'	Field recoil_offset_ang# 'current angle of recoil
 	Field max_heat#
 	Field heat_per_shot_min#
 	Field heat_per_shot_max#
 	Field cooling_coefficient#
 	Field overheat_delay%
-	Field emitter_list:TList 'list of all emitters, to be enabled (with count) when turret fires
+	Field emitter_list:TList 'list of all emitters to be enabled (with count) when turret fires
 
 	Field off_x#
 	Field off_y#
@@ -36,8 +60,8 @@ Type TURRET Extends POINT
 	Field last_reloaded_ts% 'timestamp of last reload
 	Field reloading_progress_inverse# '(private) used for calculating turret position
 	Field cur_ammo% 'remaining ammunition
-	Field cur_recoil_off_x# '(private) used in calculating recoil's effect on final position
-	Field cur_recoil_off_y# '(private) used in calculating recoil's effect on final position
+'	Field cur_recoil_off_x# '(private) used in calculating recoil's effect on final position
+'	Field cur_recoil_off_y# '(private) used in calculating recoil's effect on final position
 	Field cur_heat#
 	Field last_overheat_ts%
 	Field bonus_cooling_start_ts%
@@ -236,7 +260,7 @@ Type TURRET_GROUP
 	
 	Field turret_array:TURRET[] 'actual turret array, not be accessed directly
 	Field firing_sequence%[][] 'a list of lists of turret indices; describes the firing behavior of this entity
-	Field max_ang_vel# 'maximum rotation speed for this turret group
+	Field max_ang_vel# 'maximum rotation speed for this turret
 	Field attach_x#, attach_y# 'attach to parent at (x,y)
 	
 	Field firing_state% 'indicates which sequence index this turret group is currently on
