@@ -32,7 +32,7 @@ Type COMPLEX_AGENT Extends AGENT
 	Field political_alignment% '{friendly|hostile}
 	Field ai_type% 'artificial intelligence subroutine index (only used for AI-controlled agents)
 
-	Field turret_groups:TList 'list of turret groups attached to this agent
+	Field turret_list:TList 'list of turret groups attached to this agent
 
 	Field driving_force:FORCE 'permanent force for this object; also added to the general force list
 	Field turning_force:FORCE 'permanent torque for this object; also added to the general force list
@@ -51,7 +51,7 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	'___________________________________________
 	Method New()
-		turret_groups = CreateList()
+		turret_list = CreateList()
 		drive_forward_emitters = CreateList()
 		drive_backward_emitters = CreateList()
 		all_emitters = CreateList()
@@ -125,8 +125,8 @@ Type COMPLEX_AGENT Extends AGENT
 		c.ang = other.ang
 		c.cur_health = c.max_health
 		
-		For Local other_tg:TURRET_GROUP = EachIn other.turret_groups
-			c.add_turret_group( other_tg ).attach_at( other_tg.attach_x, other_tg.attach_y )
+		For Local other_t:TURRET = EachIn other.turret_list
+			c.add_turret( other_t ).attach_at( other_t.off_x, other_t.off_y )
 		Next
 		
 		For Local list:TList = EachIn other.all_emitters
@@ -254,10 +254,9 @@ Type COMPLEX_AGENT Extends AGENT
 				End If
 			Next
 		Next
-		
-		'turret groups
-		For Local tg:TURRET_GROUP = EachIn turret_groups
-			tg.draw()
+		'turrets
+		For Local t:TURRET = EachIn turret_list
+			t.draw()
 		Next
 		'sticky particles (damage)
 		For Local s:PARTICLE = EachIn stickies
@@ -367,10 +366,10 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
-	Method add_turret_group:TURRET_GROUP( other_tg:TURRET_GROUP )
-		Local tg:TURRET_GROUP = other_tg.clone()
-		tg.set_parent( Self )
-		Return tg
+	Method add_turret:TURRET( other_t:TURRET )
+		Local t:TURRET = other_t.clone()
+		t.set_parent( Self )
+		Return t
 	End Method
 	'___________________________________________
 	Method add_emitter:EMITTER(	other_em:EMITTER, event% )

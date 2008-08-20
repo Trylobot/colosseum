@@ -1,4 +1,11 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ laser turret needs to have some more emitters
+			puff of little smoke to either side (maybe)
+			battery/shell casing ejected, possibly with neat glow fade-out effect
+	_ rocket turret needs more emitters also (this is potentially a duplicate)
+			two rocket shell casing emitters in back, 45 deg angles
+			a large-ish muzzle flash, also out the back
+			lots of smoke out the back
 	_ turret_groups should have logical linkages through the complex_agent parent to an anchor point.
 			turret_groups would thus only be attached to pre-set anchor points on the complex_agent
 			when any turret_group's turn() function is called, any linked turret groups also get called implicitly.

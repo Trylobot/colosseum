@@ -1,5 +1,5 @@
 [COLOSSEUM - KNOWN BUG LIST] (F-fixed, O-in progress)
+	_ Rockets' smoke trails are messed  up
 	_ Doors have inverse logic after starting a new game, after one has been started already
 	_ PROJECTILE explosive forces are not working properly (ie, at all)
-	_ PATH_QUEUE needs some TLC (pop_root)
 	

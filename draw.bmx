@@ -353,48 +353,48 @@ Function draw_stats()
 	y :+ h
 	
 	'player ammo, overheat & charge indicators
-	y :+ arena_offset
-	Local ammo_row_len% = 10
-	Local temp_x%, temp_y%
-	For Local t:TURRET = EachIn player.turrets
-		If t.name <> Null And t.name <> ""
-			SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
-			DrawText( t.name, x, y ); y :+ 12
-		End If
-		temp_x = x; temp_y = y
-		If t.max_ammo <> INFINITY
-		For Local i% = 0 To t.cur_ammo - 1
-			If ((i Mod ammo_row_len) = 0) And (i > 0)
-				temp_x = x
-				If ((i / ammo_row_len) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width / 2
-				temp_y :+ img_icon_player_cannon_ammo.height / 3
-			End If
-			DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
-			temp_x :+ img_icon_player_cannon_ammo.width - 1
-		Next; y :+ (t.max_ammo / ammo_row_len)*img_icon_player_cannon_ammo.height - 4
-		End If
-		If t.max_heat <> INFINITY
-			w = 125; h = 14
-			Local heat_pct# = (t.cur_heat / t.max_heat)
-			SetColor( 255, 255, 255 )
-			DrawRect( x, y, w, h )
-			SetColor( 32, 32, 32 )
-			DrawRect( x + 1, y + 1, w - 2, h - 2 )
-			If (now() - t.bonus_cooling_start_ts) < t.bonus_cooling_time
-				SetColor( 32, 32, 255 )
-				DrawRect( x + 2, y + 2, w - 4, h - 4 )
-				SetViewport( x + 2, y + 2, w - 4, h - 4 )
-				SetColor( 255, 255, 255 )
-				Local x_offset# = (now()/4) Mod (w+20)
-				DrawImage( img_shine, x-10+Abs(x_offset), y + 2 )
-				SetViewport( 0,0, window_w,window_h )
-			Else
-				SetColor( 255*heat_pct, 0, 255*(1 - heat_pct) )
-				DrawRect( x + 2, y + 2, (Double(w) - 4.0)*heat_pct, h - 4 )
-			End If
-		End If
-	Next
-	y :+ h
+'	y :+ arena_offset
+'	Local ammo_row_len% = 10
+'	Local temp_x%, temp_y%
+'	For Local t:TURRET = EachIn player.turrets
+'		If t.name <> Null And t.name <> ""
+'			SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
+'			DrawText( t.name, x, y ); y :+ 12
+'		End If
+'		temp_x = x; temp_y = y
+'		If t.max_ammo <> INFINITY
+'		For Local i% = 0 To t.cur_ammo - 1
+'			If ((i Mod ammo_row_len) = 0) And (i > 0)
+'				temp_x = x
+'				If ((i / ammo_row_len) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width / 2
+'				temp_y :+ img_icon_player_cannon_ammo.height / 3
+'			End If
+'			DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
+'			temp_x :+ img_icon_player_cannon_ammo.width - 1
+'		Next; y :+ (t.max_ammo / ammo_row_len)*img_icon_player_cannon_ammo.height - 4
+'		End If
+'		If t.max_heat <> INFINITY
+'			w = 125; h = 14
+'			Local heat_pct# = (t.cur_heat / t.max_heat)
+'			SetColor( 255, 255, 255 )
+'			DrawRect( x, y, w, h )
+'			SetColor( 32, 32, 32 )
+'			DrawRect( x + 1, y + 1, w - 2, h - 2 )
+'			If (now() - t.bonus_cooling_start_ts) < t.bonus_cooling_time
+'				SetColor( 32, 32, 255 )
+'				DrawRect( x + 2, y + 2, w - 4, h - 4 )
+'				SetViewport( x + 2, y + 2, w - 4, h - 4 )
+'				SetColor( 255, 255, 255 )
+'				Local x_offset# = (now()/4) Mod (w+20)
+'				DrawImage( img_shine, x-10+Abs(x_offset), y + 2 )
+'				SetViewport( 0,0, window_w,window_h )
+'			Else
+'				SetColor( 255*heat_pct, 0, 255*(1 - heat_pct) )
+'				DrawRect( x + 2, y + 2, (Double(w) - 4.0)*heat_pct, h - 4 )
+'			End If
+'		End If
+'	Next
+'	y :+ h
 	
 	'music icon
 	y :+ arena_offset
