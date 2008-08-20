@@ -7,7 +7,7 @@ EndRem
 '______________________________________________________________________________
 Global control_brain_list:TList = CreateList()
 
-Const waypoint_radius# = 0.75*cell_size
+Const waypoint_radius# = 0.50*cell_size
 Const friendly_blocking_scalar_projection_distance# = 20
 
 Const UNSPECIFIED% = 0

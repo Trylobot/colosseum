@@ -91,6 +91,7 @@ Type WIDGET Extends MANAGED_OBJECT
 		w.name = name
 		w.img = img
 		w.layer = layer
+		w.visible = visible
 		w.repeat_mode = repeat_mode
 		w.states = New TRANSFORM_STATE[state_count]
 		w.cur_state = -1
@@ -102,7 +103,7 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Function
 	
 	Method clone:WIDGET()
-		Local w:WIDGET = WIDGET( WIDGET.Create( name, img, layer, repeat_mode, states.Length, transforming ))
+		Local w:WIDGET = WIDGET( WIDGET.Create( name, img, layer, visible, repeat_mode, states.Length, transforming ))
 		'list of states
 		For Local cur_state:TRANSFORM_STATE = EachIn states
 			w.add_state( cur_state )
