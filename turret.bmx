@@ -55,9 +55,9 @@ Type TURRET_BARREL Extends POINT
 		'angle (includes parent's)
 		ang = parent.ang
 		'recoil position
-		If parent.ready_to_fire() Or parent.out_of_ammo()
+		If parent.ready_to_fire() Or parent.out_of_ammo() 'not reloading
 			recoil_cur = 0
-		Else If Not out_of_ammo() 'reloading
+		Else If Not parent.out_of_ammo() 'reloading
 			recoil_cur = recoil_max * (1.0 - Float(now() - last_reloaded_ts) / Float(reload_time))
 		End If
 		'emitters
@@ -140,7 +140,7 @@ Type TURRET Extends POINT
 	Function Create:Object( ..
 	name$ = Null, ..
 	class%, ..
-	img = Null, ..
+	img:TImage = Null, ..
 	snd_fire:TSound, ..
 	turret_barrel_count%, ..
 	firing_sequence%[][], ..
@@ -159,7 +159,7 @@ Type TURRET Extends POINT
 		t.snd_fire = snd_fire
 		t.turret_barrel_array = New TURRET_BARREL[turret_barrel_count]
 		t.firing_sequence = firing_sequence[..]
-		t.reload_time = reload_time
+		t.max_ang_vel = max_ang_vel
 		t.max_ammo = max_ammo
 		t.max_heat = max_heat
 		t.heat_per_shot_min = heat_per_shot_min; t.heat_per_shot_max = heat_per_shot_max
@@ -174,8 +174,7 @@ Type TURRET Extends POINT
 	End Function
 	
 	Method clone:TURRET()
-		Local t:TURRET = TURRET( TURRET.Create( ..
-			name, class, img, snd_fire, reload_time, max_ammo, max_heat, heat_per_shot_min, heat_per_shot_max, cooling_coefficient, overheat_delay ))
+		Local t:TURRET = TURRET( TURRET.Create( name, class, img, snd_fire, turret_barrel_array.Length, firing_sequence, max_ang_vel, max_ammo, max_heat, heat_per_shot_min, heat_per_shot_max, cooling_coefficient, overheat_delay ))
 		'copy all emitters
 		For Local em:EMITTER = EachIn emitter_list
 			EMITTER( EMITTER.Copy( em, t.emitter_list, t ))
@@ -294,10 +293,6 @@ Type TURRET Extends POINT
 		Return (now() - last_overheat_ts) < overheat_delay
 	End Method
 	
-	Method snap_ang()
-		ang = parent.ang
-	End Method
-		
 	Method play_firing_sound()
 		If snd_fire <> Null
 			Local ch:TChannel = AllocChannel()

@@ -125,71 +125,73 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				If input_type = INPUT_KEYBOARD
 					'turret(s) angular velocity
 					If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
-						avatar.turn_turret_group( 0, 1.0  )
-						avatar.turn_turret_group( 1, 1.0  )
+						avatar.turn_turret( 0, 1.0  )
+						avatar.turn_turret( 1, 1.0  )
 					ElseIf KeyDown( KEY_LEFT ) Or KeyDown( KEY_J )
-						avatar.turn_turret_group( 0, -1.0 )
-						avatar.turn_turret_group( 1, -1.0 )
+						avatar.turn_turret( 0, -1.0 )
+						avatar.turn_turret( 1, -1.0 )
 					Else
-						avatar.turn_turret_group( 0, 0.0 )
-						avatar.turn_turret_group( 1, 0.0 )
+						avatar.turn_turret( 0, 0.0 )
+						avatar.turn_turret( 1, 0.0 )
 					EndIf
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-					Local diff# = ang_wrap( player.turrets[0].ang - player.turrets[0].ang_to_cVEC( mouse_point ))
-					Local diff_mag# = Abs( diff )
-					If diff_mag > 5*player.turrets[0].max_ang_vel
-						If diff < 0
-							avatar.turn_turret_group( 0, 1.0  )
-							avatar.turn_turret_group( 1, 1.0  )
-						Else 'diff > 0
-							avatar.turn_turret_group( 0, -1.0 )
-							avatar.turn_turret_group( 1, -1.0 )
+					For Local t:TURRET = EachIn player.turret_list
+						Local diff# = ang_wrap( t.ang - t.ang_to_cVEC( mouse_point ))
+						Local diff_mag# = Abs( diff )
+						If diff_mag > 5*t.max_ang_vel
+							If diff < 0
+								avatar.turn_turret( 0, 1.0  )
+								avatar.turn_turret( 1, 1.0  )
+							Else 'diff > 0
+								avatar.turn_turret( 0, -1.0 )
+								avatar.turn_turret( 1, -1.0 )
+							End If
+						Else If diff_mag > 2.5*t.max_ang_vel
+							If diff < 0
+								avatar.turn_turret( 0, 0.5  )
+								avatar.turn_turret( 1, 0.5  )
+							Else 'diff > 0
+								avatar.turn_turret( 0, -0.5 )
+								avatar.turn_turret( 1, -0.5 )
+							End If
+						Else If diff_mag > 1.25*t.max_ang_vel
+							If diff < 0
+								player.turn_turret( 0, 0.25 )
+								player.turn_turret( 1, 0.25 )
+							Else 'diff > 0
+								player.turn_turret( 0, -0.25 )
+								player.turn_turret( 1, -0.25 )
+							End If
+						Else If diff_mag > 0.75*t.max_ang_vel
+							If diff < 0
+								player.turn_turret( 0, 0.125 )
+								player.turn_turret( 1, 0.125 )
+							Else 'diff > 0
+								player.turn_turret( 0, -0.125 )
+								player.turn_turret( 1, -0.125 )
+							End If
+						Else If diff_mag > 0.375*t.max_ang_vel
+							If diff < 0
+								player.turn_turret( 0, 0.0625 )
+								player.turn_turret( 1, 0.0625 )
+							Else 'diff > 0
+								player.turn_turret( 0, -0.0625 )
+								player.turn_turret( 1, -0.0625 )
+							End If
+						Else
+							player.turn_turret( 0, 0.0 )
+							player.turn_turret( 1, 0.0 )
 						End If
-					Else If diff_mag > 2.5*player.turrets[0].max_ang_vel
-						If diff < 0
-							avatar.turn_turret_group( 0, 0.5  )
-							avatar.turn_turret_group( 1, 0.5  )
-						Else 'diff > 0
-							avatar.turn_turret_group( 0, -0.5 )
-							avatar.turn_turret_group( 1, -0.5 )
-						End If
-					Else If diff_mag > 1.25*player.turrets[0].max_ang_vel
-						If diff < 0
-							player.turn_turret_group( 0, 0.25 )
-							player.turn_turret_group( 1, 0.25 )
-						Else 'diff > 0
-							player.turn_turret_group( 0, -0.25 )
-							player.turn_turret_group( 1, -0.25 )
-						End If
-					Else If diff_mag > 0.75*player.turrets[0].max_ang_vel
-						If diff < 0
-							player.turn_turret_group( 0, 0.125 )
-							player.turn_turret_group( 1, 0.125 )
-						Else 'diff > 0
-							player.turn_turret_group( 0, -0.125 )
-							player.turn_turret_group( 1, -0.125 )
-						End If
-					Else If diff_mag > 0.375*player.turrets[0].max_ang_vel
-						If diff < 0
-							player.turn_turret_group( 0, 0.0625 )
-							player.turn_turret_group( 1, 0.0625 )
-						Else 'diff > 0
-							player.turn_turret_group( 0, -0.0625 )
-							player.turn_turret_group( 1, -0.0625 )
-						End If
-					Else
-						player.turn_turret_group( 0, 0.0 )
-						player.turn_turret_group( 1, 0.0 )
-					End If
+					Next
 				End If
 				
 				If input_type = INPUT_KEYBOARD
 					'turret(s) fire
 					If KeyDown( KEY_SPACE )
-						avatar.fire_turret_group( 0 )
+						avatar.fire( 0 )
 					End If
 					If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
-						avatar.fire_turret_group( 1 )
+						avatar.fire( 1 )
 					End If
 '					If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
 '						avatar.fire_turret_group( 2 )
@@ -197,10 +199,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 					'turret(s) fire
 					If MouseDown( 1 )
-						avatar.fire_turret_group( 0 )
+						avatar.fire( 0 )
 					End If
 					If MouseDown( 2 )
-						avatar.fire_turret_group( 1 )
+						avatar.fire( 1 )
 					End If
 				End If
 					
@@ -234,16 +236,16 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					If sighted_target
 						'if not facing target, face target; when facing target, fire
 						ang_to_target = avatar.ang_to( target )
-						Local diff# = ang_wrap( avatar.turrets[0].ang - ang_to_target )
+						Local diff# = ang_wrap( TURRET( avatar.turret_list.First() ).ang - ang_to_target )
 						If Abs( diff ) >= 2.500 'if not pointing at enemy, rotate until ye do
-							If diff >= 0 Then avatar.turn_turrets( -1.0 ) ..
-							Else               avatar.turn_turrets( 1.0 )
+							If diff >= 0 Then avatar.turn_turret( 0, -1.0 ) ..
+							Else               avatar.turn_turret( 0, 1.0 )
 						Else 'if enemy in sight, fire; To Do: add code to check for friendlies in the line of fire.
-							avatar.turn_turrets( 0 )
+							avatar.turn_turret( 0, 0 )
 							'wait for cooldown
-							If FLAG_waiting And avatar.turrets[0].cur_heat <= 0.25*avatar.turrets[0].max_heat Then FLAG_waiting = False ..
-							Else If avatar.turrets[0].overheated() Then FLAG_waiting = True
-							If Not FLAG_waiting Then avatar.fire_turret( 0 )
+							If FLAG_waiting And TURRET( avatar.turret_list.First() ).cur_heat <= 0.25*TURRET( avatar.turret_list.First() ).max_heat Then FLAG_waiting = False ..
+							Else If TURRET( avatar.turret_list.First() ).overheated() Then FLAG_waiting = True
+							If Not FLAG_waiting Then avatar.fire( 0 )
 						End If
 					Else
 						'no line of sight to target

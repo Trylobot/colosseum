@@ -174,8 +174,8 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		
 		'turret groups
-		For Local tg:TURRET_GROUP = EachIn turret_groups
-			tg.update()
+		For Local t:TURRET = EachIn turret_list
+			t.update()
 		Next
 		'widgets
 		For Local widget_list:TList = EachIn all_widgets
@@ -192,27 +192,28 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 		
 		'tracks (will be motivator objects soon, and this will be somewhat automatic, as a function of {velocity} and {angular velocity}
+		'right track is backwards of normal
 		If right_track <> Null And left_track <> Null
 			Local frame_delay# = INFINITY
 			Local vel_ang# = vector_angle( vel_x, vel_y )
 			If vel > 0.00001
 				If Abs( ang_wrap( vel_ang - ang )) > 90
-					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
+					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					frame_delay = 17.5 * (1.0/vel)
 				Else
-					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
+					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					frame_delay = 17.5 * (1.0/vel)
 				End If
 			End If
 			If frame_delay >= 100 Or frame_delay = INFINITY
 				If ang_vel > 0.00001
-					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
+					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					frame_delay = 40 * (1.0/Abs(ang_vel))
 				Else If ang_vel < -0.00001
-					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
+					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					frame_delay = 40 * (1.0/Abs(ang_vel))
 				End If
@@ -277,19 +278,19 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
-	Method fire_turret_group( index% )
-		Local tg:TURRET_GROUP = TURRET_GROUP( turret_groups.ValueAtIndex( index ))
-		If tg <> Null Then tg.fire()
+	Method fire( index% )
+		Local t:TURRET = TURRET( turret_list.ValueAtIndex( index ))
+		If t <> Null Then t.fire()
 	End Method
 	'___________________________________________
-	Method turn_turret_group( index%, pct# )
-		Local tg:TURRET_GROUP = TURRET_GROUP( turret_groups.ValueAtIndex( index ))
-		If tg <> Null Then tg.turn( pct )
+	Method turn_turret( index%, control_pct# )
+		Local t:TURRET = TURRET( turret_list.ValueAtIndex( index ))
+		If t <> Null Then t.turn( control_pct )
 	End Method
 	'___________________________________________
-	Method snap_turrets()
-		For Local tg:TURRET_GROUP = EachIn turret_groups
-			tg.snap_to_parent()
+	Method snap_all_turrets()
+		For Local t:TURRET = EachIn turret_list
+			t.ang = ang
 		Next
 	End Method
 	
