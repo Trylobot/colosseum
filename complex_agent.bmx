@@ -192,31 +192,28 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 		
 		'tracks (will be motivator objects soon, and this will be somewhat automatic, as a function of {velocity} and {angular velocity}
-		'right track is backwards of normal
 		If right_track <> Null And left_track <> Null
 			Local frame_delay# = INFINITY
 			Local vel_ang# = vector_angle( vel_x, vel_y )
 			If vel > 0.00001
-				If Abs( ang_wrap( vel_ang - ang )) > 90
+				If Abs( ang_wrap( vel_ang - ang )) <= 90
 					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
-					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
-					frame_delay = 17.5 * (1.0/vel)
+					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 				Else
 					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
-					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
-					frame_delay = 17.5 * (1.0/vel)
+					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 				End If
+				frame_delay = 17.5 * (1.0/vel)
 			End If
 			If frame_delay >= 100 Or frame_delay = INFINITY
 				If ang_vel > 0.00001
-					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
-					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
-					frame_delay = 40 * (1.0/Abs(ang_vel))
-				Else If ang_vel < -0.00001
 					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
+					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
+				Else If ang_vel < -0.00001
+					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
-					frame_delay = 40 * (1.0/Abs(ang_vel))
 				End If
+				frame_delay = 40 * (1.0/Abs(ang_vel))
 			End If
 			right_track.frame_delay = frame_delay
 			left_track.frame_delay = frame_delay
@@ -370,6 +367,7 @@ Type COMPLEX_AGENT Extends AGENT
 	Method add_turret:TURRET( other_t:TURRET )
 		Local t:TURRET = other_t.clone()
 		t.set_parent( Self )
+		t.add_me( turret_list )
 		Return t
 	End Method
 	'___________________________________________

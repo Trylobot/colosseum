@@ -249,11 +249,11 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						End If
 					Else
 						'no line of sight to target
-						avatar.turn_turrets( 0 )
+						avatar.turn_turret( 0, 0 )
 					End If
 				Else
 					'no target
-					avatar.turn_turrets( 0 )
+					avatar.turn_turret( 0, 0 )
 					target = acquire_target()
 				End If
 				
@@ -326,7 +326,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						enable_seek_lights()
 						path = Null
 						ang_to_target = avatar.ang_to( target )
-						Local diff# = ang_wrap( avatar.turrets[0].ang - ang_to_target )
+						Local diff# = ang_wrap( TURRET( avatar.turret_list.First() ).ang - ang_to_target )
 						'stop moving
 						avatar.drive( 0.0 )
 						avatar.turn( 0.0 )
@@ -334,27 +334,27 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						If Abs(diff) <= 3.000
 							'fire turret(s)
 							'wait for cooldown
-							If FLAG_waiting And avatar.turrets[0].cur_heat <= 0.25*avatar.turrets[0].max_heat Then FLAG_waiting = False ..
-							Else If avatar.turrets[0].overheated() Then FLAG_waiting = True
-							If Not FLAG_waiting Then avatar.fire_turret( 0 )
+							If FLAG_waiting And TURRET( avatar.turret_list.First() ).cur_heat <= 0.25*TURRET( avatar.turret_list.First() ).max_heat Then FLAG_waiting = False ..
+							Else If TURRET( avatar.turret_list.First() ).overheated() Then FLAG_waiting = True
+							If Not FLAG_waiting Then avatar.fire( 0 )
 							'stop aiming
-							avatar.turn_turrets( 0.0 )
+							avatar.turn_turret( 0, 0.0 )
 						'else (not pointing at target)..
 						Else
 							'aim the turret at the target
-							If diff >= 0 Then avatar.turn_turrets( -1.0 ) ..
-							Else               avatar.turn_turrets( 1.0 )
+							If diff >= 0 Then avatar.turn_turret( 0, -1.0 ) ..
+							Else               avatar.turn_turret( 0, 1.0 )
 						End If
 					'else (can't see the target) -- if it has a path to the target, then..
 					Else
 						enable_wander_lights()
 						'return the turret to its resting angle
-						Local diff# = ang_wrap( avatar.ang - avatar.turrets[0].ang )
+						Local diff# = ang_wrap( avatar.ang - TURRET( avatar.turret_list.First() ).ang )
 						If Abs(diff) <= 3.000
-							avatar.turn_turrets( 0.0 )
+							avatar.turn_turret( 0, 0.0 )
 						Else
-							If diff >= 0 Then avatar.turn_turrets( 1.0 ) ..
-							Else               avatar.turn_turrets( -1.0 )
+							If diff >= 0 Then avatar.turn_turret( 0, 1.0 ) ..
+							Else               avatar.turn_turret( 0, -1.0 )
 						End If
 
 						If path <> Null And Not path.IsEmpty() And waypoint <> Null
@@ -460,7 +460,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Next
 			'after checking all the walls, still haven't returned; avatar can therefore see its target
 			'however, the shot might be blocked by a friendly
-			If avatar.turret_count > 0
+			If avatar.turret_list.Count() > 0
 				Return friendly_blocking()
 			Else 'avatar.turret_count <= 0
 				Return True
@@ -487,13 +487,13 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Local scalar_projection#
 			For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
 				'if the line of sight of the avatar is too close to the ally
-				ally_offset = avatar.turrets[0].dist_to( ally )
-				ally_offset_ang = avatar.turrets[0].ang_to( ally )
-				scalar_projection = ally_offset*Cos( ally_offset_ang - avatar.turrets[0].ang )
+				ally_offset = TURRET( avatar.turret_list.First() ).dist_to( ally )
+				ally_offset_ang = TURRET( avatar.turret_list.First() ).ang_to( ally )
+				scalar_projection = ally_offset*Cos( ally_offset_ang - TURRET( avatar.turret_list.First() ).ang )
 				
 				If vector_length( ..
-				(ally.pos_x - av.x+scalar_projection*Cos(avatar.turrets[0].ang)), ..
-				(ally.pos_y - av.y+scalar_projection*Sin(avatar.turrets[0].ang)) ) ..
+				(ally.pos_x - av.x+scalar_projection*Cos(TURRET( avatar.turret_list.First() ).ang)), ..
+				(ally.pos_y - av.y+scalar_projection*Sin(TURRET( avatar.turret_list.First() ).ang)) ) ..
 				< friendly_blocking_scalar_projection_distance
 					'then the avatar's shot is blocked by this ally
 					Return True
@@ -573,19 +573,19 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Method fire_at_target()
 		'fire turret(s)
 		'wait for cooldown
-		If FLAG_waiting And avatar.turrets[0].cur_heat <= 0.25*avatar.turrets[0].max_heat Then FLAG_waiting = False ..
-		Else If avatar.turrets[0].overheated() Then FLAG_waiting = True
-		If Not FLAG_waiting Then avatar.fire_turret( 0 )
+		If FLAG_waiting And TURRET( avatar.turret_list.First() ).cur_heat <= 0.25*TURRET( avatar.turret_list.First() ).max_heat Then FLAG_waiting = False ..
+		Else If TURRET( avatar.turret_list.First() ).overheated() Then FLAG_waiting = True
+		If Not FLAG_waiting Then avatar.fire( 0 )
 		'stop aiming
-		avatar.turn_turrets( 0.0 )
+		avatar.turn_turret( 0, 0.0 )
 	End Method
 	
 	Method turn_turrets_toward_target()
 		ang_to_target = avatar.ang_to( target )
 		Local diff# = ang_wrap( avatar.ang - ang_to_target )
 		'aim the turret at the target
-		If diff >= 0 Then avatar.turn_turrets( -1.0 ) ..
-		Else               avatar.turn_turrets( 1.0 )
+		If diff >= 0 Then avatar.turn_turret( 0, -1.0 ) ..
+		Else               avatar.turn_turret( 0, 1.0 )
 	End Method
 	
 	Method enable_seek_lights()

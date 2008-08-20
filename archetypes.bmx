@@ -337,13 +337,13 @@ Function set_complex_agent_archetypes()
 	' max speed = 1.0
 	complex_agent_archetype[PLAYER_INDEX_LASER_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] ))
 		complex_agent_archetype[PLAYER_INDEX_LASER_TANK].name = "light tank/laser"
-		complex_agent_archetype[PLAYER_INDEX_LASER_TANK].turret_groups = CreateList()
-		complex_agent_archetype[PLAYER_INDEX_LASER_TANK].add_turret_group( turret_group_archetype[TURRET_GROUP_INDEX_TANK_LASER], 0 ).attach_at( -5, 0 )
+		complex_agent_archetype[PLAYER_INDEX_LASER_TANK].turret_list = CreateList()
+		complex_agent_archetype[PLAYER_INDEX_LASER_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_LASER] ).attach_at( -5, 0 )
 	
 	' max speed = 0.8
 	complex_agent_archetype[PLAYER_INDEX_MED_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "medium tank", img_player_tank_chassis_med, Null, AI_BRAIN_TANK, 0, 750, 1200, 125.0, 100.0, 125.0 ))
-		complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_turret( turret_group_archetype[TURRET_INDEX_TANK_DUAL_CANNON] ).attach_at( -9, 0 )
-		complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_turret( turret_group_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN] ).attach_at( -9, 0 )
+		complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON] ).attach_at( -9, 0 )
+		complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_turret( turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN] ).attach_at( -9, 0 )
 		complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 15, -8, 0, 2, -45, 45, 0.3, 0.6 )
 		complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 15, 8, 0, 2, -45, 45, 0.3, 0.6 )
 		complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, -8, 0, 2, 135, 225, 0.3, 0.6 )

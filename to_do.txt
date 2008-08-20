@@ -1,4 +1,5 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ grenade launcher
 	_ laser turret needs to have some more emitters
 			puff of little smoke to either side (maybe)
 			battery/shell casing ejected, possibly with neat glow fade-out effect

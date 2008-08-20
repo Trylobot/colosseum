@@ -176,6 +176,7 @@ Function add_font$( file:TStream, map:TMap )
   Next
   
 	font = LoadImageFont( path, size, SMOOTHFONT )
+	If font = Null Then Return "error: "+StripDir( path )+" could not be loaded."
   map.Insert( StripAll( path )+"_"+size, font )
   
   Return "success"
@@ -206,6 +207,7 @@ Function add_sound$( file:TStream, map:TMap )
   Next
   
 	sound = LoadSound( path, (looped & SOUND_LOOP) )
+	If sound = Null Then Return "error: "+StripDir( path )+" could not be loaded."
   map.Insert( StripAll( path ), sound )
   
   Return "success"
@@ -257,6 +259,7 @@ Function add_image$( file:TStream, map:TMap, multi_frame% = False )
 	else
 		img = LoadImage( path, (filtered & FILTEREDIMAGE) | (mipmapped & MIPMAPPEDIMAGE) | (dynamic & DYNAMICIMAGE) )
 	End If
+	If img = Null Then Return "error: "+StripDir( path )+" could not be loaded."
   SetImageHandle( img, handle_x, handle_y )
   map.Insert( StripAll( path ), img )
   

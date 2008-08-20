@@ -143,12 +143,11 @@ Function debug_overlay()
 			End If
 			
 			'friendly fire
-			If cb.target <> Null And cb.avatar.turret_count > 0
+			If cb.target <> Null And cb.avatar.turret_list.Count() > 0
 				SetLineWidth( 3 )
 				SetColor( 196, 196, 196 )
 				SetAlpha( 0.5 )
 				Local av:cVEC = cVEC( cVEC.Create( cb.avatar.pos_x, cb.avatar.pos_y ))
-				Local targ:cVEC = cVEC( cVEC.Create( cb.target.pos_x, cb.target.pos_y ))
 				Local allied_agent_list:TList = CreateList()
 				Select cb.avatar.political_alignment
 					Case ALIGNMENT_FRIENDLY
@@ -160,19 +159,19 @@ Function debug_overlay()
 				Local scalar_projection#
 				For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
 					'if the line of sight of the avatar is too close to the ally
-					ally_offset = cb.avatar.turrets[0].dist_to( ally )
-					ally_offset_ang = cb.avatar.turrets[0].ang_to( ally )
-					scalar_projection = ally_offset*Cos( ally_offset_ang - cb.avatar.turrets[0].ang )
+					ally_offset = TURRET( cb.avatar.turret_list.First() ).dist_to( ally )
+					ally_offset_ang = TURRET( cb.avatar.turret_list.First() ).ang_to( ally )
+					scalar_projection = ally_offset*Cos( ally_offset_ang - TURRET( cb.avatar.turret_list.First() ).ang )
 					SetColor( 196, 196, 196 )
-					DrawLine( av.x,av.y, av.x+scalar_projection*Cos(cb.avatar.turrets[0].ang),av.y+scalar_projection*Sin(cb.avatar.turrets[0].ang) )
+					DrawLine( av.x,av.y, av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang),av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang) )
 					
 					If vector_length( ..
-					(ally.pos_x - av.x+scalar_projection*Cos(cb.avatar.turrets[0].ang)), ..
-					(ally.pos_y - av.y+scalar_projection*Sin(cb.avatar.turrets[0].ang)) ) ..
+					(ally.pos_x - av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang)), ..
+					(ally.pos_y - av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang)) ) ..
 					< friendly_blocking_scalar_projection_distance
 						SetColor( 255, 127, 127 )
 					End If
-					DrawLine( ally.pos_x,ally.pos_y, av.x+scalar_projection*Cos(cb.avatar.turrets[0].ang),av.y+scalar_projection*Sin(cb.avatar.turrets[0].ang) )
+					DrawLine( ally.pos_x,ally.pos_y, av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang),av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang) )
 				Next
 			End If
 				

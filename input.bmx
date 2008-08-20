@@ -64,7 +64,7 @@ Function get_all_input()
 		player.pos_x = player_spawn_point.pos_x
 		player.pos_y = player_spawn_point.pos_y
 		player.ang = player_spawn_point.ang
-		player.snap_turrets()
+		player.snap_all_turrets()
 	End If
 	
 End Function

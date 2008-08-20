@@ -88,14 +88,16 @@ Function draw_game()
 	SetColor( 255, 255, 255 )
 	
 	'aiming reticle
-	If player_input_type = INPUT_KEYBOARD
-		SetRotation( player.turrets[0].ang )
-		DrawImage( img_reticle, player.turrets[0].pos_x + 60*Cos( player.turrets[0].ang ), player.turrets[0].pos_y + 50*Sin( player.turrets[0].ang ) )
-	Else If player_input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-		'position the larger dot of the reticle directly at the mouse position
-		'point the ellipsis dots at the player's turret
-		SetRotation( player.turrets[0].ang_to_cVEC( mouse_point ))
-		DrawImage( img_reticle, mouse_point.x, mouse_point.y )
+	If player.turret_list.Count() <> 0
+		If player_input_type = INPUT_KEYBOARD
+			SetRotation( TURRET( player.turret_list.First() ).ang )
+			DrawImage( img_reticle, TURRET( player.turret_list.First() ).pos_x + 60*Cos( TURRET( player.turret_list.First() ).ang ), TURRET( player.turret_list.First() ).pos_y + 50*Sin( TURRET( player.turret_list.First() ).ang ) )
+		Else If player_input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+			'position the larger dot of the reticle directly at the mouse position
+			'point the ellipsis dots at the player's turret
+			SetRotation( TURRET( player.turret_list.First() ).ang_to_cVEC( mouse_point ))
+			DrawImage( img_reticle, mouse_point.x, mouse_point.y )
+		End If
 	End If
 	SetRotation( 0 )
 

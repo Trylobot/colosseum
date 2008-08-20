@@ -166,7 +166,7 @@ Function respawn_player( archetype_index% )
 	player.pos_x = player_spawn_point.pos_x - 0.5
 	player.pos_y = player_spawn_point.pos_y - 0.5
 	player.ang = -90
-	player.snap_turrets()
+	player.snap_all_turrets()
 	
 	FLAG_player_engine_ignition = False
 	FLAG_player_engine_running = False
