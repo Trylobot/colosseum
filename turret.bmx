@@ -6,9 +6,9 @@ EndRem
 
 '______________________________________________________________________________
 Function Create_TURRET_BARREL:TURRET_BARREL( ..
-img:TImage, ..
+img:TImage = Null, ..
 reload_time%, ..
-recoil_max# )
+recoil_max# = 0 )
 	Local tb:TURRET_BARREL = New TURRET_BARREL
 	'static fields
 	tb.img = img
