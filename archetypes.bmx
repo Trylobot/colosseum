@@ -283,15 +283,15 @@ End Function
 
 '______________________________________________________________________________
 '[ COMPLEX_AGENTS ]
-Global complex_agent_archetype:COMPLEX_AGENT[20]; reset_index()
+Global complex_agent_archetype:COMPLEX_AGENT[10]; reset_index()
 
 '[ PLAYERS ]
-Global PLAYER_INDEX_START% = array_index
+Global player_index_start% = array_index
 Global PLAYER_INDEX_LIGHT_TANK% = postfix_index()
 Global PLAYER_INDEX_LASER_TANK% = postfix_index()
 Global PLAYER_INDEX_MED_TANK% = postfix_index()
 '[ ENEMIES ]
-Global ENEMY_INDEX_START% = array_index
+Global enemy_index_start% = array_index
 Global ENEMY_INDEX_MR_THE_BOX% = postfix_index()
 Global ENEMY_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT% = postfix_index()
 Global ENEMY_INDEX_CANNON_TURRET_EMPLACEMENT% = postfix_index()
