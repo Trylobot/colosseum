@@ -31,6 +31,10 @@ Function draw_all()
 	End If
 	
 End Function
+
+Function draw_loading()
+	draw_percentage_bar( window_w/5,window_h/5, 3*window_w/5,3*window_w/5, loaded_pct )
+End Function
 '______________________________________________________________________________
 'In-game stuff
 Function draw_game()
@@ -83,9 +87,10 @@ Function draw_game()
 	For Local part:PARTICLE = EachIn particle_list_foreground
 		part.draw()
 	Next
+	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
-	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
 	
 	'aiming reticle
 	If player.turret_list.Count() <> 0
@@ -345,13 +350,8 @@ Function draw_stats()
 	y :+ arena_offset
 	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
 	DrawText( "health", x, y ); y :+ 12
-	w = 175;h = 18
-	SetColor( 255, 255, 255 )
-	DrawRect( x, y, w, h )
-	SetColor( 32, 32, 32 )
-	DrawRect( x + 1, y + 1, w - 2, h - 2 )
-	SetColor( 255, 255, 255 )
-	DrawRect( x + 2, y + 2, (Double(w) - 4.0)*(player.cur_health / player.max_health), h - 4 )
+	w = 175; h = 18
+	draw_percentage_bar( x,y, w,h, (player.cur_health/player.max_health) )
 	y :+ h
 	
 	'player ammo, overheat & charge indicators
@@ -408,6 +408,15 @@ Function draw_stats()
 	
 End Function
 '______________________________________________________________________________
+Function draw_percentage_bar( x%,y%, w%,h%, pct# )
+	SetColor( 255, 255, 255 )
+	DrawRect( x, y, w, h )
+	SetColor( 64, 64, 64 )
+	DrawRect( x + 1, y + 1, w - 2, h - 2 )
+	SetColor( 255, 255, 255 )
+	DrawRect( x + 2, y + 2, pct*(w - 4.0), h - 4 )
+End Function
+
 Function DrawText_with_shadow( str$, pos_x%, pos_y% )
 	SetColor( 0, 0, 0 )
 	DrawText( str, pos_x + 1, pos_y + 1 )

@@ -37,8 +37,7 @@ Type TURRET_BARREL Extends POINT
 	End Method
 	
 	Method clone:Object()
-		Local tb:TURRET_BARREL = Create_TURRET_BARREL( ..
-			img, reload_time, recoil_max )
+		Local tb:TURRET_BARREL = Create_TURRET_BARREL( img, reload_time, recoil_max )
 		tb.add_launcher( launcher )
 		For Local em:EMITTER = EachIn emitter_list
 			tb.add_emitter( em )
@@ -56,7 +55,7 @@ Type TURRET_BARREL Extends POINT
 		'angle (includes parent's)
 		ang = parent.ang
 		'recoil position
-		If parent.ready_to_fire() Or parent.out_of_ammo() 'not reloading
+		If ready_to_fire() Or parent.out_of_ammo() 'not reloading
 			recoil_cur = 0
 		Else If Not parent.out_of_ammo() 'reloading
 			recoil_cur = recoil_max * (1.0 - Float(now() - last_reloaded_ts) / Float(reload_time))
@@ -81,11 +80,21 @@ Type TURRET_BARREL Extends POINT
 	End Method
 	
 	Method fire()
-		If launcher <> Null Then launcher.enable( MODE_ENABLED_WITH_COUNTER )
+		If launcher <> Null
+			launcher.enable( MODE_ENABLED_WITH_COUNTER )
+		End If
 		For Local em:EMITTER = EachIn emitter_list
 			em.enable( MODE_ENABLED_WITH_COUNTER )
 		Next
 		last_reloaded_ts = now()
+	End Method
+	
+	Method ready_to_fire%()
+		Return ..
+			(parent <> Null) And ..
+			(parent.cur_ammo <> 0) And ..
+			((now() - last_reloaded_ts) >= reload_time) And ..
+			(parent.max_heat = INFINITY Or parent.cur_heat < parent.max_heat )
 	End Method
 	
 	Method add_launcher:EMITTER( new_launcher:EMITTER )
@@ -166,7 +175,6 @@ Type TURRET Extends POINT
 		t.heat_per_shot_min = heat_per_shot_min; t.heat_per_shot_max = heat_per_shot_max
 		t.cooling_coefficient = cooling_coefficient
 		t.overheat_delay = overheat_delay
-		
 		'dynamic fields
 		t.cur_ammo = max_ammo
 		t.last_overheat_ts = now() - t.overheat_delay
@@ -176,6 +184,10 @@ Type TURRET Extends POINT
 	
 	Method clone:TURRET()
 		Local t:TURRET = TURRET( TURRET.Create( name, class, img, snd_fire, turret_barrel_array.Length, firing_sequence, max_ang_vel, max_ammo, max_heat, heat_per_shot_min, heat_per_shot_max, cooling_coefficient, overheat_delay ))
+		'turret barrels
+		For Local tb% = 0 To turret_barrel_array.Length - 1
+			t.add_turret_barrel( turret_barrel_array[tb], tb )
+		Next
 		'copy all emitters
 		For Local em:EMITTER = EachIn emitter_list
 			EMITTER( EMITTER.Copy( em, t.emitter_list, t ))
@@ -254,16 +266,11 @@ Type TURRET Extends POINT
 	End Method
 	
 	Method ready_to_fire%()
-		For Local tb_index% = EachIn firing_sequence[firing_state]
-			Local tb:TURRET_BARREL = turret_barrel_array[tb_index]
-			If cur_ammo = 0 Or ..
-			(now() - tb.last_reloaded_ts) < tb.reload_time Or ..
-			(max_heat <> INFINITY And cur_heat >= max_heat )
-				'this turret barrel is not yet ready
+		For Local tb% = EachIn firing_sequence[firing_state]
+			If Not turret_barrel_array[tb].ready_to_fire()
 				Return False
 			End If
 		Next
-		'have not yet returned; all checks out
 		Return True
 	End Method
 	

@@ -146,13 +146,14 @@ Type COMPLEX_AGENT Extends AGENT
 			c.add_widget( other_w, WIDGET_DEPLOY ).attach_at( other_w.attach_x, other_w.attach_y )
 		Next
 		
-		If other.right_track <> Null
+		If other.right_track <> Null And other.left_track <> Null
 			c.right_track = other.right_track.clone()
+			c.right_track.attach_at( other.right_track.off_x, other.right_track.off_y )
 			c.right_track.parent = c
 			c.right_track.animation_direction = other.right_track.animation_direction
-		End If
-		If other.left_track <> Null
+			
 			c.left_track = other.left_track.clone()
+			c.left_track.attach_at( other.left_track.off_x, other.left_track.off_y )
 			c.left_track.parent = c
 			c.left_track.animation_direction = other.left_track.animation_direction
 		End If
@@ -199,21 +200,23 @@ Type COMPLEX_AGENT Extends AGENT
 				If Abs( ang_wrap( vel_ang - ang )) <= 90
 					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
+					frame_delay = 17.5 * (1.0/vel)
 				Else
 					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
+					frame_delay = 17.5 * (1.0/vel)
 				End If
-				frame_delay = 17.5 * (1.0/vel)
 			End If
 			If frame_delay >= 100 Or frame_delay = INFINITY
 				If ang_vel > 0.00001
 					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
+					frame_delay = 40 * (1.0/Abs(ang_vel))
 				Else If ang_vel < -0.00001
 					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
+					frame_delay = 40 * (1.0/Abs(ang_vel))
 				End If
-				frame_delay = 40 * (1.0/Abs(ang_vel))
 			End If
 			right_track.frame_delay = frame_delay
 			left_track.frame_delay = frame_delay
@@ -276,13 +279,17 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	'___________________________________________
 	Method fire( index% )
-		Local t:TURRET = TURRET( turret_list.ValueAtIndex( index ))
-		If t <> Null Then t.fire()
+		If index < turret_list.Count()
+			Local t:TURRET = TURRET( turret_list.ValueAtIndex( index ))
+			If t <> Null Then t.fire()
+		End If
 	End Method
 	'___________________________________________
 	Method turn_turret( index%, control_pct# )
-		Local t:TURRET = TURRET( turret_list.ValueAtIndex( index ))
-		If t <> Null Then t.turn( control_pct )
+		If index < turret_list.Count()
+			Local t:TURRET = TURRET( turret_list.ValueAtIndex( index ))
+			If t <> Null Then t.turn( control_pct )
+		End If
 	End Method
 	'___________________________________________
 	Method snap_all_turrets()

@@ -214,7 +214,7 @@ Function set_turret_barrel_archetypes()
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CANNON].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH] ).attach_at( 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CANNON].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE] ).attach_at( 20, 0, 3, 6, -45, 45, 0.05, 0.40, -45, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CANNON].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING] ).attach_at( -3, 3, 0, 0, 0, 0, 0.4, 0.6, 80, 100, 0, 0, 0, 0, -10, 10, -3.5, 3.5, 0, 0 )
-	turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN] = Create_TURRET_BARREL( img_player_mgun_turret, 62 )
+	turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN] = Create_TURRET_BARREL( img_player_mgun_turret, 62, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN].add_launcher( projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_MACHINE_GUN] ).attach_at( 14, 2, 0, 0, 0, 0, 4.30, 4.70, 0, 0, 0, 0, 0, 0, -2.2, 2.2, 0, 0, 0, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH] ).attach_at( 14, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE] ).attach_at( 14, 2, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -328,10 +328,10 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, 7, 1, 1 )
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track = particle_archetype[PARTICLE_INDEX_LIGHT_TANK_TRACK].clone()
 			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track.parent = complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK]
-			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track.attach_at( 0, -7.5 )
+			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track.attach_at( 0, -6.5 )
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track = particle_archetype[PARTICLE_INDEX_LIGHT_TANK_TRACK].clone()
 			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track.parent = complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK]
-			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track.attach_at( 0, 7.5 )
+			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track.attach_at( 0, 6.5 )
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 	
 	' max speed = 1.0
@@ -354,10 +354,10 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, 8, 1, 1 )
 		complex_agent_archetype[PLAYER_INDEX_MED_TANK].left_track = particle_archetype[PARTICLE_INDEX_MED_TANK_TRACK].clone()
 			complex_agent_archetype[PLAYER_INDEX_MED_TANK].left_track.parent = complex_agent_archetype[PLAYER_INDEX_MED_TANK]
-			complex_agent_archetype[PLAYER_INDEX_MED_TANK].left_track.attach_at( 0, -10.5 )
+			complex_agent_archetype[PLAYER_INDEX_MED_TANK].left_track.attach_at( 0, -7.5 )
 		complex_agent_archetype[PLAYER_INDEX_MED_TANK].right_track = particle_archetype[PARTICLE_INDEX_MED_TANK_TRACK].clone()
 			complex_agent_archetype[PLAYER_INDEX_MED_TANK].right_track.parent = complex_agent_archetype[PLAYER_INDEX_MED_TANK]
-			complex_agent_archetype[PLAYER_INDEX_MED_TANK].right_track.attach_at( 0, -10.5 )
+			complex_agent_archetype[PLAYER_INDEX_MED_TANK].right_track.attach_at( 0, 7.5 )
 		complex_agent_archetype[PLAYER_INDEX_MED_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 		
 	complex_agent_archetype[ENEMY_INDEX_MR_THE_BOX] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mr. the box", img_box, img_box_gib, AI_BRAIN_MR_THE_BOX, 50, 35, 200.0, 10.0, 6.0, 12.0 ))
@@ -394,8 +394,10 @@ Function set_complex_agent_archetypes()
 
 	complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] ))
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].cash_value = 300
-		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].max_health = 150
-		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].add_widget( widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT], WIDGET_CONSTANT ).attach_at( -10.5, 0 )
-		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -10.5, 0 )
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].max_health :* (3/10)
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].driving_force.magnitude_max :* (2/3)
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turning_force.magnitude_max :* (2/3)
+		'complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].add_widget( widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT], WIDGET_CONSTANT ).attach_at( -10.5, 0 )
+		'complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -10.5, 0 )
 		
 End Function

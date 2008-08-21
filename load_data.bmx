@@ -6,6 +6,8 @@ EndRem
 
 '______________________________________________________________________________
 Global file_paths:TList = CreateList()
+Global data_path_prefix$ = "data/"
+Global loaded_pct# = 0.00
 
 Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
@@ -37,12 +39,16 @@ Const DIRECTIVE_ADD_PICKUP_PROTOTYPE$ = "[add_pickup]"
 Const DIRECTIVE_ADD_TURRET_PROTOTYPE$ = "[add_turret]"
 Const DIRECTIVE_ADD_COMPLEX_AGENT_PROTOTYPE$ = "[add_complex_agent]"
 
-Global data_path_prefix$ = "data/"
 '______________________________________________________________________________
 Function load_data_files()
 	load_base()
+	'Local file_count% = file_paths.Count() + 1
+	'loaded_pct :+ 1.0 / Float(file_count)
+	'draw_loading()
 	For Local path$ = EachIn file_paths
 		load_file( path )
+		'loaded_pct :+ 1.0 / Float(file_count)
+		'draw_loading()
 	Next
 End Function
 '______________________________________________________________________________

@@ -189,8 +189,7 @@ Function debug_overlay()
 		End If
 		
 		sx = arena_offset+3; sy = arena_offset+3
-		debug_drawtext "friendly doors -> "+friendly_door_list.Count()
-		debug_drawtext "hostile doors -> "+hostile_door_list.Count()
+		debug_drawtext( "fps "+fps )
 		
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )

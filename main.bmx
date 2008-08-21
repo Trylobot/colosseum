@@ -23,13 +23,14 @@ AppTitle = My.Application.AssemblyInfo
 If My.Application.DebugOn Then AppTitle :+ " " + My.Application.Platform + " (Debug)"
 SetGraphicsDriver GLMax2DDriver()
 
-Graphics( window_w, window_h )
+Graphics( window_w, window_h,,, GRAPHICS_BACKBUFFER )
+'Graphics( 1024, 768, 32, 85, GRAPHICS_BACKBUFFER )'|GRAPHICS_ALPHABUFFER|GRAPHICS_DEPTHBUFFER|GRAPHICS_STENCILBUFFER|GRAPHICS_ACCUMBUFFER )
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
 load_data_files()
-load_all_archetypes()
-load_environment()
+load_all_archetypes() 'this will be in data files, eventually
+load_environment() 'same here; this will be externalized with LEVEL objects
 '?Debug
 'debug_load_data()
 'End
@@ -37,7 +38,10 @@ load_environment()
 
 '______________________________________________________________________________
 'MAIN
-Local before% = 0
+Local before%
+?Debug
+Global last_frame_ts%, time_count%, frame_count%, fps%
+?
 Repeat
 	
 	If (now() - before) > (1000/60) ' = 60 hertz
@@ -50,7 +54,16 @@ Repeat
 	Cls
 	draw_all()
 	play_all()
+
 ?Debug
+frame_count :+ 1
+time_count :+ (now() - last_frame_ts)
+last_frame_ts = now()
+If time_count >= 1000
+	fps = frame_count
+	frame_count = 0
+	time_count = 0
+End If
 If player <> Null Then debug_overlay()
 'If KeyHit( KEY_F4 ) And FLAG_game_in_progress
 '	find_path( player.pos_x,player.pos_y, mouse_point.x,mouse_point.y )

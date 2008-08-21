@@ -45,6 +45,7 @@ Type PARTICLE Extends POINT
 	Field text_width#, text_height# 'dimensions of text (STR particles only)
 	
 	Field parent:POINT
+	Field off_x#, off_y#
 	Field offset#, offset_ang#
 	
 	Method New()
@@ -192,8 +193,9 @@ Type PARTICLE Extends POINT
 		End If
 	End Method
 	
-	Method attach_at( off_x#, off_y# )
-		cartesian_to_polar( off_x, off_y, offset, offset_ang )
+	Method attach_at( new_off_x#, new_off_y# )
+		off_x = new_off_x; off_y = new_off_y
+		cartesian_to_polar( off_x,off_y, offset,offset_ang )
 	End Method
 	
 End Type
