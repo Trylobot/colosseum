@@ -55,5 +55,23 @@ Type PHYSICAL_OBJECT Extends POINT
 		return f
 	End Method
 	
+?Debug
+	Method serialize$()
+		Return ..
+			Super.serialize()+ ..
+			"[PHYSICAL_OBJECT]"+ "~n"+ ..
+			" mass# = "+Int(mass)+ "~n"+ ..
+			" force_list:TList<FORCE> = "+serialize_force_list()+ "~n"+ ..
+			" frictional_coefficient# = "+frictional_coefficient+ "~n"+ ..
+			" physics_disabled% = "+boolean_to_string( physics_disabled )+ "~n"
+	End Method
+	Method serialize_force_list$()
+		Local str$ = "[TList]"
+		For Local f:FORCE = EachIn force_list
+			str :+ "~n  "+f.serialize_one_liner()
+		Next
+		Return str
+	End Method
+?	
 End Type
 

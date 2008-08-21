@@ -170,7 +170,6 @@ Function respawn_player( archetype_index% )
 	
 	FLAG_player_engine_ignition = False
 	FLAG_player_engine_running = False
-DebugStop
 		
 End Function
 '______________________________________________________________________________

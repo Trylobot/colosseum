@@ -18,23 +18,25 @@ Const window_h% = arena_h + (2*arena_offset)
 'Const window_w% = arena_offset_left + arena_w + arena_offset_right  + (arena_offset+stats_panel_w)
 'Const window_h% = arena_offset_top + arena_w + arena_offset_bottom
 
+'external data load
+load_data_files()
+	load_all_archetypes() 'this will be in data files, eventually
+	load_environment() 'same here; this will be externalized with LEVEL objects
+'?Debug
+'debug_load_data()
+'End
+'?
+
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo
 If My.Application.DebugOn Then AppTitle :+ " " + My.Application.Platform + " (Debug)"
 SetGraphicsDriver GLMax2DDriver()
 
+'GRAPHICS_BACKBUFFER|GRAPHICS_ALPHABUFFER|GRAPHICS_DEPTHBUFFER|GRAPHICS_STENCILBUFFER|GRAPHICS_ACCUMBUFFER )
 Graphics( window_w, window_h,,, GRAPHICS_BACKBUFFER )
-'Graphics( 1024, 768, 32, 85, GRAPHICS_BACKBUFFER )'|GRAPHICS_ALPHABUFFER|GRAPHICS_DEPTHBUFFER|GRAPHICS_STENCILBUFFER|GRAPHICS_ACCUMBUFFER )
+'Graphics( 1024, 768, 32, 85, GRAPHICS_BACKBUFFER )
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
-
-load_data_files()
-load_all_archetypes() 'this will be in data files, eventually
-load_environment() 'same here; this will be externalized with LEVEL objects
-'?Debug
-'debug_load_data()
-'End
-'?
 
 '______________________________________________________________________________
 'MAIN

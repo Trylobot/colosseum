@@ -13,18 +13,6 @@ Function postfix_index%( amount% = 1 )
 	array_index :+ amount
 	Return (array_index - amount)
 End Function
-'______________________________________________________________________________
-Function load_all_archetypes()
-	set_particle_archetypes()
-	set_particle_emitter_archetypes()
-	set_projectile_archetypes()
-	set_projectile_launcher_archetypes()
-	set_widget_archetypes()
-	set_pickup_archetypes()
-	set_turret_barrel_archetypes()
-	set_turret_archetypes()
-	set_complex_agent_archetypes()
-End Function
 
 '______________________________________________________________________________
 '[ PARTICLES ]

@@ -8,20 +8,40 @@ EndRem
 'clock and random
 SeedRnd MilliSecs()
 Global clock:TTimer = CreateTimer( 1000 )
+
 Function now%()
 	Return clock.Ticks()
 End Function
+
 Function RandF#( lo#, hi# )
 	Return lo + (hi-lo)*RndFloat()
 End Function
+
 Function Pow#( x#, p% )
 	For Local i% = 1 To p - 1
 		x :* x
 	Next
 	Return x
 End Function
+
 Function avg#( a#, b# )
 	Return (a + b)/2.0
+End Function
+
+Function boolean_to_string$( b% )
+	If b = True
+		Return "true"
+	Else 'b = false
+		Return "false"
+	End If
+End Function
+'______________________________________________________________________________
+Function address%( obj:Object )
+	If obj <> Null
+		Return Int( Byte Ptr( obj ))
+	Else
+		Return 0
+	End If
 End Function
 '______________________________________________________________________________
 Function time_alpha_pct#( ts%, time%, in% = True )
@@ -64,6 +84,15 @@ Type MANAGED_OBJECT
 		Return (link <> Null)
 	End Method
 	
+?Debug
+	Method serialize$()
+		Return ..
+			"[MANAGED_OBJECT]"+ "~n"+ ..
+			" name$ = "+name+ "~n"+ ..
+			" link:TLink = "+address(link)+ "~n"+ ..
+			" id% = "+id+ "~n"
+	End Method
+?	
 End Type
 '______________________________________________________________________________
 Global next_managed_object_id% = 0
@@ -82,6 +111,33 @@ End Function
 '	Return newlist
 'End Function
 '______________________________________________________________________________
+Function Create_POINT:POINT( ..
+pos_x# = 0.0, pos_y# = 0.0, ..
+ang# = 0.0, ..
+vel_x# = 0.0, vel_y# = 0.0, ..
+ang_vel# = 0.0, ..
+acc_x# = 0.0, acc_y# = 0.0, ..
+ang_acc# = 0.0 )
+	Local p:POINT = New POINT
+	p.pos_x = pos_x; p.pos_y = pos_y
+	p.ang = ang
+	p.vel_x = vel_x; p.vel_y = vel_y
+	p.ang_vel = ang_vel
+	p.acc_x = acc_x; p.acc_y = acc_y
+	p.ang_acc = ang_acc
+	Return p
+End Function
+
+Function Copy_POINT:POINT( other:POINT )
+	Return Create_POINT( ..
+		other.pos_x, other.pos_y, ..
+		other.ang, ..
+		other.vel_x, other.vel_y, ..
+		other.ang_vel, ..
+		other.acc_x, other.acc_y, ..
+		other.ang_acc )
+End Function
+'__________________________________
 Type POINT Extends MANAGED_OBJECT
 	
 	Field pos_x# 'position (x-axis), pixels
@@ -134,34 +190,20 @@ Type POINT Extends MANAGED_OBJECT
 		Return p
 	End Method
 	
+?Debug
+	Method serialize$()
+		Return ..
+			Super.serialize()+ ..
+			"[POINT]"+ "~n"+ ..
+			" pos# = ("+Int(pos_x)+","+Int(pos_y)+")"+ "~n"+ ..
+			" ang# = "+Int(ang)+ "~n"+ ..
+			" vel# = ("+Int(vel_x)+","+Int(vel_y)+")"+ "~n"+ ..
+			" ang_vel# = "+Int(ang_vel)+ "~n"+ ..
+			" acc# = ("+Int(acc_x)+","+Int(acc_y)+")"+ "~n"+ ..
+			" ang_acc# = "+Int(ang_acc)+ "~n"
+	End Method
+?
 End Type
-
-Function Create_POINT:POINT( ..
-pos_x# = 0.0, pos_y# = 0.0, ..
-ang# = 0.0, ..
-vel_x# = 0.0, vel_y# = 0.0, ..
-ang_vel# = 0.0, ..
-acc_x# = 0.0, acc_y# = 0.0, ..
-ang_acc# = 0.0 )
-	Local p:POINT = New POINT
-	p.pos_x = pos_x; p.pos_y = pos_y
-	p.ang = ang
-	p.vel_x = vel_x; p.vel_y = vel_y
-	p.ang_vel = ang_vel
-	p.acc_x = acc_x; p.acc_y = acc_y
-	p.ang_acc = ang_acc
-	Return p
-End Function
-
-Function Copy_POINT:POINT( other:POINT )
-	Return Create_POINT( ..
-		other.pos_x, other.pos_y, ..
-		other.ang, ..
-		other.vel_x, other.vel_y, ..
-		other.ang_vel, ..
-		other.acc_x, other.acc_y, ..
-		other.ang_acc )
-End Function
 '______________________________________________________________________________
 'vector & angle functions
 Function ang_wrap#( a# ) 'forces the angle into the range [-180,180]
@@ -178,6 +220,7 @@ End Function
 Function vector_length#( vx#, vy# )
 	Return Sqr( Pow(vx,2) + Pow(vy,2) )
 End Function
+
 Function vector_angle#( vx#, vy# )
 	Return ATan2( vy, vx )
 End Function
@@ -186,6 +229,7 @@ Function vector_diff_length#( ax#, ay#, bx#, by# ) 'distance /a/ and /b/
 	Local dx# = bx - ax, dy# = by - ay
 	Return Sqr( Pow(dx,2) + Pow(dy,2) )
 End Function
+
 Function vector_diff_angle#( ax#, ay#, bx#, by# ) 'angle of line connecting /a/ to /b/
 	Local dx# = bx - ax, dy# = by - ay
 	Return ATan2( dy, dx )
@@ -246,13 +290,6 @@ Function line_intersects_rect%( v1:cVEC, v2:cVEC, r:cVEC, r_dim:cVEC )
 	End If
 End Function
 '______________________________________________________________________________
-Type BOX
-	Field x#, y# 'position components
-	Field w#, h# 'dimension components
-	Method clone:BOX()
-		Return Create_BOX( x, y, w, h )
-	End Method
-End Type
 Function Create_BOX:BOX( x#, y#, w#, h# )
 	Local b:BOX = New BOX
 	b.x = x; b.y = y
@@ -260,7 +297,21 @@ Function Create_BOX:BOX( x#, y#, w#, h# )
 	Return b
 End Function
 
+Type BOX
+	Field x#, y# 'position components
+	Field w#, h# 'dimension components
+	Method clone:BOX()
+		Return Create_BOX( x, y, w, h )
+	End Method
+End Type
+
 '______________________________________________________________________________
+Function Create_cVEC:cVEC( x#, y# )
+	Local v:cVEC = New cVEC
+	v.x = x; v.y = y
+	Return v
+End Function
+
 Type cVEC 'cartesian coordinate system 2D vector
 	Field x# 'x axis vector component
 	Field y# 'y axis vector component
@@ -284,13 +335,13 @@ Type cVEC 'cartesian coordinate system 2D vector
 		Return ATan2( y, x )
 	End Method
 End Type
-
-Function Create_cVEC:cVEC( x#, y# )
-	Local v:cVEC = New cVEC
-	v.x = x; v.y = y
+'______________________________________________________________________________
+Function Create_pVEC:pVEC( r#, a# )
+	Local v:pVEC = New pVEC
+	v.r = r; v.a = a
 	Return v
 End Function
-'______________________________________________________________________________
+
 Type pVEC 'polar coordinate system 2D vector
 	Field r# 'radius vector component
 	Field a# 'angle vector component (theta)
@@ -314,12 +365,6 @@ Type pVEC 'polar coordinate system 2D vector
 		Return (r * Sin( a ))
 	End Method
 End Type
-
-Function Create_pVEC:pVEC( r#, a# )
-	Local v:pVEC = New pVEC
-	v.r = r; v.a = a
-	Return v
-End Function
 
 '______________________________________________________________________________
 Const RANGE_DISTRIBUTION_FLAT% = 0

@@ -8,7 +8,7 @@ EndRem
 ?Debug
 '______________________________________________________________________________
 Global sx%, sy%
-Global FLAG_debug_overlay% = False
+Global FLAG_debug_overlay% = False, FLAG_spawn_mode% = False, spawn_archetype% = 0
 Global global_start:CELL, global_goal:CELL
 'Global maus_x#, maus_y#, speed# = 1, r#, a#, px#, py#
 'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
@@ -34,26 +34,26 @@ Function debug_drawtext( message$ )
 	sy :+ 10
 End Function
 '______________________________________________________________________________
-Function debug_load_data()
-	DebugLog( " debug load_data" )
-	For Local file_path$ = EachIn file_paths
-		DebugLog( " file_path -> "+file_path )
-	Next
-	For Local key$ = EachIn font_map.Keys()
-		Local font:TImageFont = get_font( key )
-		DebugLog( " font_map -> "+key+" -> { CountGlyphs():"+font.CountGlyphs()+", Height():"+font.Height()+" }" )
-	Next
-	For Local key$ = EachIn sound_map.Keys()
-		Local sound:TSound = get_sound( key )
-		Local db_str$ = "null"
-		If sound <> Null Then db_str = "loaded"
-		DebugLog( " sound_map -> "+key+" -> "+db_str )
-	Next
-	For Local key$ = EachIn image_map.Keys()
-		Local image:TImage = get_image( key )
-		DebugLog( " image_map -> "+key+" -> { size("+image.width+","+image.height+"), handle("+Int(image.handle_x)+","+Int(image.handle_y)+"), frames:"+image.frames.Length )
-	Next
-End Function
+'Function debug_load_data()
+'	DebugLog( " debug load_data" )
+'	For Local file_path$ = EachIn file_paths
+'		DebugLog( " file_path -> "+file_path )
+'	Next
+'	For Local key$ = EachIn font_map.Keys()
+'		Local font:TImageFont = get_font( key )
+'		DebugLog( " font_map -> "+key+" -> { CountGlyphs():"+font.CountGlyphs()+", Height():"+font.Height()+" }" )
+'	Next
+'	For Local key$ = EachIn sound_map.Keys()
+'		Local sound:TSound = get_sound( key )
+'		Local db_str$ = "null"
+'		If sound <> Null Then db_str = "loaded"
+'		DebugLog( " sound_map -> "+key+" -> "+db_str )
+'	Next
+'	For Local key$ = EachIn image_map.Keys()
+'		Local image:TImage = get_image( key )
+'		DebugLog( " image_map -> "+key+" -> { size("+image.width+","+image.height+"), handle("+Int(image.handle_x)+","+Int(image.handle_y)+"), frames:"+image.frames.Length )
+'	Next
+'End Function
 '______________________________________________________________________________
 Global cb:CONTROL_BRAIN = Null
 
@@ -64,7 +64,16 @@ Function debug_overlay()
 	End If
 	
 	If FLAG_debug_overlay And Not FLAG_in_menu
-
+	
+		'erase stats
+		SetColor( 0, 0, 0 )
+		SetAlpha( 1 )
+		DrawRect( 2*arena_offset+arena_w,0, 2000,2000 )
+		
+		'fps
+		sx = 2*arena_offset+arena_w+4; sy = 3
+		debug_drawtext( "fps "+fps )
+		
 		'show pathing grid
 		Local cursor:CELL = New CELL
 		For cursor.row = 0 To pathing_grid_h - 1
@@ -188,9 +197,6 @@ Function debug_overlay()
 			
 		End If
 		
-		sx = arena_offset+3; sy = arena_offset+3
-		debug_drawtext( "fps "+fps )
-		
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		For Local p:POINT = EachIn enemy_turret_anchors
@@ -213,6 +219,33 @@ Function debug_overlay()
 			FLAG_retain_particles = True
 			If KeyDown( KEY_0 )
 				FLAG_dim_bg = True
+			End If
+		End If
+		
+		If KeyHit( KEY_P )
+			FLAG_spawn_mode = Not FLAG_spawn_mode
+		End If
+		If FLAG_spawn_mode
+			SetOrigin( mouse.pos_x, mouse.pos_y )
+			SetRotation( 90 )
+			complex_agent_archetype[spawn_archetype].draw()
+			SetOrigin( 0, 0 )
+			SetRotation( 0 )
+			
+			If KeyHit( KEY_OPENBRACKET )
+				spawn_archetype :+ 1
+				If spawn_archetype > complex_agent_archetype.Length - 1 Then spawn_archetype = 0
+			Else If KeyHit( KEY_CLOSEBRACKET )
+				spawn_archetype :- 1
+				If spawn_archetype < 0 Then spawn_archetype = complex_agent_archetype.Length - 1
+			End If
+			If KeyHit( KEY_ENTER )
+				Local ag:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
+				ag.pos_x = mouse.pos_x
+				ag.pos_y = mouse.pos_y
+				ag.ang = 90
+				ag.snap_all_turrets()
+				Create_and_Manage_CONTROL_BRAIN( ag, CONTROL_TYPE_AI,, 10, 1000, 1000 )
 			End If
 		End If
 		

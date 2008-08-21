@@ -5,7 +5,6 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global file_paths:TList = CreateList()
 Global data_path_prefix$ = "data/"
 Global loaded_pct# = 0.00
 
@@ -39,18 +38,6 @@ Const DIRECTIVE_ADD_PICKUP_PROTOTYPE$ = "[add_pickup]"
 Const DIRECTIVE_ADD_TURRET_PROTOTYPE$ = "[add_turret]"
 Const DIRECTIVE_ADD_COMPLEX_AGENT_PROTOTYPE$ = "[add_complex_agent]"
 
-'______________________________________________________________________________
-Function load_data_files()
-	load_base()
-	'Local file_count% = file_paths.Count() + 1
-	'loaded_pct :+ 1.0 / Float(file_count)
-	'draw_loading()
-	For Local path$ = EachIn file_paths
-		load_file( path )
-		'loaded_pct :+ 1.0 / Float(file_count)
-		'draw_loading()
-	Next
-End Function
 '______________________________________________________________________________
 Function get_font:TImageFont( key$ )
 	Return TImageFont( font_map.ValueForKey( key ))
@@ -95,12 +82,13 @@ Function string_to_boolean%( str$ )
 	End Select
 End Function
 '______________________________________________________________________________
-Function load_base()
-  Local line$, directive$, token$[], variable$, value$ 
+Function load_data_files()
+  Local line$, directive$, token$[], variable$, value$
   Local path$
-  
+  Local file_paths:TList = CreateList()
+
   Local base:TStream = ReadFile( data_path_prefix + "base.ini" )
-  If Not base Then DebugLog( " error: base.ini not found." )
+  If Not base Then append_load_data_error( " error: base.ini not found." )
   While Not Eof( base )
     line = ((ReadLine( base )).Trim()).ToLower()
     If (Not is_comment( line )) And is_directive( line )
@@ -108,7 +96,7 @@ Function load_base()
       Select directive
         Case DIRECTIVE_LOAD_FILE
           line = ((ReadLine( base )).Trim()).ToLower()
-          If is_directive( line ) Then DebugLog( " base.ini "+directive+" -> error: 0 variables found of 1 variables required." )
+          If is_directive( line ) Then append_load_data_error( " base.ini "+directive+" -> error: 0 variables found of 1 variables required." )
           token = line.Split( "=" )
           variable = token[0].Trim()
           value = token[1].Trim()
@@ -119,21 +107,43 @@ Function load_base()
               file_paths.AddLast( path )
 			      
 						Default
-			        DebugLog( " base.ini -> error: "+variable+" is not a recognized variable for this directive." )
+			        append_load_data_error( " base.ini -> error: "+variable+" is not a recognized variable for this directive." )
           End Select
         Default
-          DebugLog( " base.ini -> error: "+directive+" is not a recognized directive." )
+          append_load_data_error( " base.ini -> error: "+directive+" is not a recognized directive." )
       End Select
     End If
   End While
   CloseStream( base )
+	
+	Local result$
+	For Local file$ = EachIn file_paths
+		result = load_file( file )
+		If result <> "success" Then append_load_data_error( " "+StripDir( file )+" -> "+result )
+	Next
+	
+	output_load_data_errors()
 End Function
 '______________________________________________________________________________
-Function load_file( file_path$ )
+Global load_data_errors$ = ""
+
+Function append_load_data_error( error_str$ )
+	load_data_errors :+ error_str + "~n"
+End Function
+
+Function output_load_data_errors()
+	If load_data_errors.Length > 0
+		DebugLog load_data_errors
+		Notify load_data_errors
+	End If
+End Function
+'______________________________________________________________________________
+Function load_file$( file_path$ )
   Local line$, directive$, result$
   
   Local file:TStream = ReadFile( file_path )
   While Not Eof( file )
+		result = "success"
     line = ((ReadLine( file )).Trim()).ToLower()
     If (Not is_comment( line )) And is_directive( line )
       directive = line
@@ -149,9 +159,9 @@ Function load_file( file_path$ )
 					result = add_image( file, image_map, True )
         
 				Default
-          DebugLog( " "+StripDir( file_path )+" -> error: "+directive+" is not a recognized directive." )
+          Return "error: "+directive+" is not a recognized directive."
       End Select
-			If result <> "success" Then DebugLog( " "+StripDir( file_path )+" "+directive+" -> "+result )
+			If result <> "success" Then Return "error: "+directive+" -> "+result
     End If
   End While
   CloseStream( file )
@@ -271,8 +281,30 @@ Function add_image$( file:TStream, map:TMap, multi_frame% = False )
   
   Return "success"
 End Function
-
 '______________________________________________________________________________
+Function load_all_archetypes()
+	set_particle_archetypes()
+	set_particle_emitter_archetypes()
+	set_projectile_archetypes()
+	set_projectile_launcher_archetypes()
+	set_widget_archetypes()
+	set_pickup_archetypes()
+	set_turret_barrel_archetypes()
+	set_turret_archetypes()
+	set_complex_agent_archetypes()
+End Function
+'______________________________________________________________________________
+Function load_environment()
+	'attach door widgets To every spawn point
+	For Local spawn:POINT = EachIn friendly_spawn_points
+		attach_door( spawn, friendly_door_list )
+	Next
+	For Local spawn:POINT = EachIn enemy_spawn_points
+		attach_door( spawn, hostile_door_list )
+	Next
+End Function
+
+'###############################################################################################################################################
 'Images
 AutoImageFlags( FILTEREDIMAGE | MIPMAPPEDIMAGE )
 

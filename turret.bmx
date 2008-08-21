@@ -61,6 +61,8 @@ Type TURRET_BARREL Extends POINT
 			recoil_cur = recoil_max * (1.0 - Float(now() - last_reloaded_ts) / Float(reload_time))
 		End If
 		'emitters
+		launcher.update()
+		launcher.emit()
 		For Local em:EMITTER = EachIn emitter_list
 			em.update()
 			em.emit()

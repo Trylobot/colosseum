@@ -367,18 +367,6 @@ Function reset_all_doors()
 		door.reset()
 	Next
 End Function
-'______________________________________________________________________________
-Function load_environment()
-	
-	'attach door widgets To every spawn point
-	For Local spawn:POINT = EachIn friendly_spawn_points
-		attach_door( spawn, friendly_door_list )
-	Next
-	For Local spawn:POINT = EachIn enemy_spawn_points
-		attach_door( spawn, hostile_door_list )
-	Next
-
-End Function
 
 
 
