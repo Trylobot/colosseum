@@ -41,7 +41,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 		'spawn gibs
 		If gibs <> Null
 			For Local i% = 0 To gibs.frames.Length - 1
-				Local gib:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, gibs, i,,,, LAYER_FOREGROUND, True, 0.100,,,,,,, 750 ))
+				Local gib:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, gibs, i,,,, LAYER_BACKGROUND, True, 0.100,,,,,,, 750 ))
 				Local gib_offset#, gib_offset_ang#
 				cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
 				gib.pos_x = pos_x + gib_offset*Cos( gib_offset_ang + ang )

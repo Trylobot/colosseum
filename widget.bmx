@@ -132,9 +132,12 @@ Type WIDGET Extends MANAGED_OBJECT
 				cs = states[cur_state]
 				transform_begin_ts = now()
 				If transformations_remaining > 0
-					'are there any transformations left to do?
+					'are there any transformations left
 					transformations_remaining :- 1
-					If transformations_remaining = 0 Then transforming = False
+					If transformations_remaining <= 0
+						'no? fine
+						transforming = False
+					End If
 				End If
 			End If
 			If transforming
@@ -174,8 +177,8 @@ Type WIDGET Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method begin_transformation( count% = INFINITY )
-		transformations_remaining = count
+	Method go( count% = INFINITY )
+		transformations_remaining :+ count
 		If Not transforming Then transform_begin_ts = now()
 		transforming = True
 	End Method

@@ -301,9 +301,11 @@ Function load_environment()
 	For Local spawn:POINT = EachIn friendly_spawn_points
 		attach_door( spawn, friendly_door_list )
 	Next
+	friendly_doors_status = DOOR_STATUS_CLOSED
 	For Local spawn:POINT = EachIn enemy_spawn_points
 		attach_door( spawn, hostile_door_list )
 	Next
+	hostile_doors_status = DOOR_STATUS_CLOSED
 End Function
 
 '###############################################################################################################################################

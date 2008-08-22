@@ -348,12 +348,12 @@ Function activate_doors( political_alignment% )
 	Select political_alignment
 		Case ALIGNMENT_FRIENDLY
 			For door = EachIn friendly_door_list
-				door.begin_transformation( 1 )
+				door.go( 1 )
 			Next
 			friendly_doors_status = Not friendly_doors_status
 		Case ALIGNMENT_HOSTILE
 			For door = EachIn hostile_door_list
-				door.begin_transformation( 1 )
+				door.go( 1 )
 			Next
 			hostile_doors_status = Not hostile_doors_status
 	End Select
@@ -363,9 +363,11 @@ Function reset_all_doors()
 	For Local door:WIDGET = EachIn friendly_door_list
 		door.reset()
 	Next
+	friendly_doors_status = DOOR_STATUS_CLOSED
 	For Local door:WIDGET = EachIn hostile_door_list
 		door.reset()
 	Next
+	hostile_doors_status = DOOR_STATUS_CLOSED
 End Function
 
 
