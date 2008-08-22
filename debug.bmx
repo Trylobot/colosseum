@@ -84,7 +84,7 @@ Function debug_overlay()
 				'blockable/passing grid
 				SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
 				If pathing.grid( cursor ) = PATH_BLOCKED
-					DrawRect( cursor.col*cell_size - pathing_grid_origin.x + 1, cursor.row*cell_size - pathing_grid_origin.y + 1, cell_size - 2, cell_size - 2 )
+					DrawRect( cursor.col*cell_size + pathing_grid_origin.x + 1, cursor.row*cell_size + pathing_grid_origin.y + 1, cell_size - 2, cell_size - 2 )
 				End If
 			Next
 		Next
@@ -200,8 +200,9 @@ Function debug_overlay()
 			
 		End If
 		
+		'turret anchors
 		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
+		SetAlpha( 0.3333 )
 		For Local p:POINT = EachIn enemy_turret_anchors
 			DrawOval( p.pos_x - 4,p.pos_y - 4, 8,8 )
 		Next

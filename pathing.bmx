@@ -87,8 +87,8 @@ Global pathing_grid_h% 'number of rows in pathing system
 Global pathing_grid_w% 'number of columns in pathing system
 
 Function containing_cell:CELL( x#, y# )
-	x :+ pathing_grid_origin.x
-	y :+ pathing_grid_origin.y
+	x :- pathing_grid_origin.x
+	y :- pathing_grid_origin.y
 	If cell_size = 0 Then Return CELL.Create( -1, -1 )
 	Return CELL.Create( Floor( y/cell_size ), Floor( x/cell_size ))
 End Function
@@ -367,7 +367,7 @@ Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
 	Local list:TList = CreateList()
 	If cell_list <> Null And Not cell_list.IsEmpty()
 		For Local cursor:CELL = EachIn cell_list
-			list.AddLast( cVEC.Create( cursor.col*cell_size + cell_size/2 - pathing_grid_origin.x, cursor.row*cell_size + cell_size/2 - pathing_grid_origin.y ))
+			list.AddLast( cVEC.Create( cursor.col*cell_size + cell_size/2 + pathing_grid_origin.x, cursor.row*cell_size + cell_size/2 + pathing_grid_origin.y ))
 		Next
 	End If
 	Return list
