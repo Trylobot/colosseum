@@ -1,4 +1,6 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ gibs object with a gib image (with many gib frames potentially)
+			also containing a list of angles and velocity ranges, to be applied when agent is gibbed
 	_ grenade launcher
 	_ laser turret needs to have some more emitters
 			puff of little smoke to either side (maybe)

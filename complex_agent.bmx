@@ -331,40 +331,40 @@ Type COMPLEX_AGENT Extends AGENT
 		Select pkp.pickup_type
 			
 			Case AMMO_PICKUP
-'				Local tur_list:TList = CreateList()
-'				For Local t:TURRET = EachIn turrets
-'					If t.class = TURRET_CLASS_AMMUNITION And t.max_ammo <> INFINITY Then tur_list.AddLast( t )
-'				Next
-'				Local lowest_cur_ammo% = -1, lowest_cur_ammo_turret:TURRET
-'				For Local t:TURRET = EachIn tur_list
-'					If t.cur_ammo < lowest_cur_ammo Or lowest_cur_ammo < 0
-'						lowest_cur_ammo = t.cur_ammo
-'						lowest_cur_ammo_turret = t
-'					End If
-'				Next
-'				If lowest_cur_ammo_turret <> Null Then lowest_cur_ammo_turret.re_stock( pkp.pickup_amount )
+				Local tur_list:TList = CreateList()
+				For Local t:TURRET = EachIn turret_list
+					If t.class = TURRET_CLASS_AMMUNITION And t.max_ammo <> INFINITY Then tur_list.AddLast( t )
+				Next
+				Local lowest_cur_ammo% = -1, lowest_cur_ammo_turret:TURRET
+				For Local t:TURRET = EachIn tur_list
+					If t.cur_ammo < lowest_cur_ammo Or lowest_cur_ammo < 0
+						lowest_cur_ammo = t.cur_ammo
+						lowest_cur_ammo_turret = t
+					End If
+				Next
+				If lowest_cur_ammo_turret <> Null Then lowest_cur_ammo_turret.re_stock( pkp.pickup_amount )
 			
 			Case HEALTH_PICKUP
 				cur_health :+ pkp.pickup_amount
 				If cur_health > max_health Then cur_health = max_health
 			
 			Case PICKUP_INDEX_COOLDOWN
-'				Local tur_list:TList = CreateList()
-'				For Local t:TURRET = EachIn turrets
-'					If t.max_heat <> INFINITY Then tur_list.AddLast( t )
-'				Next
-'				Local highest_cur_heat% = -1, highest_cur_heat_turret:TURRET
-'				For Local t:TURRET = EachIn tur_list
-'					If t.cur_heat > highest_cur_heat
-'						highest_cur_heat = t.cur_heat
-'						highest_cur_heat_turret = t
-'					End If
-'				Next
-'				If highest_cur_heat_turret <> Null
-'					highest_cur_heat_turret.cur_heat = 0
-'					highest_cur_heat_turret.bonus_cooling_start_ts = now()
-'					highest_cur_heat_turret.bonus_cooling_time = pkp.pickup_amount
-'				End If
+				Local tur_list:TList = CreateList()
+				For Local t:TURRET = EachIn turret_list
+					If t.max_heat <> INFINITY Then tur_list.AddLast( t )
+				Next
+				Local highest_cur_heat% = -1, highest_cur_heat_turret:TURRET
+				For Local t:TURRET = EachIn tur_list
+					If t.cur_heat > highest_cur_heat
+						highest_cur_heat = t.cur_heat
+						highest_cur_heat_turret = t
+					End If
+				Next
+				If highest_cur_heat_turret <> Null
+					highest_cur_heat_turret.cur_heat = 0
+					highest_cur_heat_turret.bonus_cooling_start_ts = now()
+					highest_cur_heat_turret.bonus_cooling_time = pkp.pickup_amount
+				End If
 			
 		End Select
 		pkp.remove_me()

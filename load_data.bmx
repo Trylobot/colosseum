@@ -159,12 +159,14 @@ Function load_file$( file_path$ )
 					result = add_image( file, image_map, True )
         
 				Default
-          Return "error: "+directive+" is not a recognized directive."
+          result = "error: "+directive+" is not a recognized directive."
       End Select
-			If result <> "success" Then Return "error: "+directive+" -> "+result
+			If result <> "success" Then Return result
     End If
   End While
   CloseStream( file )
+	
+	Return "success"
 End Function
 '______________________________________________________________________________
 Function add_font$( file:TStream, map:TMap )
@@ -358,7 +360,7 @@ Global img_circle:TImage = LoadImage_SetHandle( "white_circle.png", 25, 25 )
 Global img_projectile:TImage = LoadImage_SetHandle( "projectile.png", 6.5, 3.5 )
 Global img_mgun:TImage = LoadImage_SetHandle( "mgun.png", 4.5, 1.5 )
 Global img_laser:TImage = LoadImage_SetHandle( "laser.png", 13.5, 2.5 )
-Global img_rocket:TImage = LoadImage_SetHandle( "rocket.png", 13.5, 5.5 )
+Global img_rocket:TImage = LoadImage_SetHandle( "rocket.png", 10.5, 3.5 )
 
 Global img_debris:TImage = LoadAnimImage_SetHandle( "debris.png", 2.5, 2.5, 5, 5, 5 )
 Global img_trail:TImage = LoadAnimImage_SetHandle( "trail.png", 2.5, 3.5, 4, 7, 5 )

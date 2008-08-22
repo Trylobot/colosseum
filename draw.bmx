@@ -7,7 +7,7 @@ EndRem
 'Background cached texture
 Global bg_cache:TImage
 Global FLAG_retain_particles% = False
-Const retained_particle_limit% = 500
+Const retained_particle_limit% = 1500
 Global FLAG_dim_bg% = False
 Global str$
 
