@@ -1,4 +1,7 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ create a GAME object which contains all of the managed object lists.
+			GAME would also have an update() and a draw() method.
+			this way it will be possible to keep different simultaneous games separate, such as in the case of the menu AI demo and the actual game being separate.
 	_ gibs object with a gib image (with many gib frames potentially)
 			also containing a list of angles and velocity ranges, to be applied when agent is gibbed
 	_ grenade launcher
