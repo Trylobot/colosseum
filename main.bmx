@@ -40,13 +40,15 @@ SetBlend( ALPHABLEND )
 
 ?Debug
 Global last_frame_ts%, time_count%, frame_count%, fps%
-menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
+'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
 ?
 
 '______________________________________________________________________________
 'MAIN
 Local before%
 Repeat
+	
+	check_esc_held()
 	
 	If (now() - before) > (1000/60) ' = 60 hertz
 		before = now()
@@ -77,8 +79,32 @@ If player <> Null Then debug_overlay()
 	
 Until AppTerminate()
 
+'______________________________________________________________________________
+'Quit from anywhere; "instaquit" by holding ESC
+Global esc_held% = False, esc_press_ts% = now()
+Global esc_held_progress_bar_show_time_required% = 500, instaquit_time_required% = 3000
 
+Function check_esc_held()
+	If KeyDown( KEY_ESCAPE ) And Not esc_held
+		esc_press_ts = now()
+		esc_held = True
+	End If
 
+	If KeyDown( KEY_ESCAPE ) And esc_held
+		If (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
+			draw_instaquit_progress()
+		End If
+		If (now() - esc_press_ts) >= instaquit_time_required
+			End
+		End If
+	End If
+End Function
 
+Function draw_instaquit_progress()
+	SetAlpha( 1 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	draw_percentage_bar( 100,window_h/2-50, window_w-200,100, Float( now() - esc_press_ts ) / Float( instaquit_time_required ))
+End Function
 
 

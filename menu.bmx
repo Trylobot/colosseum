@@ -260,7 +260,8 @@ Const COMMAND_RESUME% = 100
 Const COMMAND_NEW_GAME% = 101
 Const COMMAND_LOAD_GAME% = 102
 Const COMMAND_SAVE_GAME% = 103
-Const COMMAND_PLAYER_INPUT_TYPE% = 200
+Const COMMAND_EDIT_LEVEL% = 200
+Const COMMAND_PLAYER_INPUT_TYPE% = 1000
 Const COMMAND_QUIT_GAME% = 10000
 
 Const COMMAND_ARGUMENT_NULL% = 0
@@ -274,6 +275,7 @@ Const MENU_ID_OPTIONS_VIDEO% = 51
 Const MENU_ID_OPTIONS_AUDIO% = 52
 Const MENU_ID_OPTIONS_CONTROLS% = 53
 Const MENU_ID_OPTIONS_GAME% = 54
+Const MENU_ID_EDITORS% = 60
 
 Global menu_margin% = 8
 Global all_menus:MENU[] = ..
@@ -284,8 +286,9 @@ Global all_menus:MENU[] = ..
 			MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, MENU_ID_LOAD, True, True ), ..
 			MENU_OPTION.Create( "save", COMMAND_SHOW_CHILD_MENU, MENU_ID_SAVE, True, True ), ..
 			MENU_OPTION.Create( "options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS, True, True ), ..
+			MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, MENU_ID_EDITORS, True, True ), ..
 			MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ]), ..
-	MENU.Create( "new game", 255, 255, 127, MENU_ID_NEW, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, menu_margin,, ..
+	MENU.Create( "new game", 255, 255, 127, MENU_ID_NEW, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, menu_margin, 1, ..
 		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "light tank", COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK, True, True ), ..
 			MENU_OPTION.Create( "laser tank", COMMAND_NEW_GAME, PLAYER_INDEX_LASER_TANK, True, True ), ..
@@ -310,6 +313,9 @@ Global all_menus:MENU[] = ..
 			MENU_OPTION.Create( "audio options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_AUDIO, True, False ), ..
 			MENU_OPTION.Create( "control options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_CONTROLS, True, True ), ..
 			MENU_OPTION.Create( "game options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_GAME, True, False ) ]), ..
+	MENU.Create( "editors", 196, 196, 196, MENU_ID_EDITORS, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "level editor", COMMAND_EDIT_LEVEL,, True, True ) ]), ..
 	MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD, True, True ), ..
@@ -370,6 +376,9 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			If player_brain <> Null
 				player_brain.input_type = player_input_type
 			End If
+			
+		Case COMMAND_EDIT_LEVEL
+			edit_level( Create_LEVEL( 500, 500 ))
 			
 		Case COMMAND_QUIT_GAME
 			End

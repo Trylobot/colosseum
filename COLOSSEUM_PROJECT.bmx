@@ -105,6 +105,7 @@ Include "emitter.bmx"
 Include "turret.bmx"
 Include "agent.bmx"
 Include "complex_agent.bmx"
+Include "level.bmx"
 Include "pathing.bmx"
 Include "control_brain.bmx"
 Include "archetypes.bmx"
@@ -117,7 +118,6 @@ Include "core.bmx"
 Include "debug.bmx"
 Include "menu.bmx"
 Include "main.bmx"
-Include "level.bmx"
  
 '#EndRegion &H03
 
