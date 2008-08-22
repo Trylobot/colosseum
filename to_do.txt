@@ -1,4 +1,5 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ divider-based level system with dynamic sized pathing grid
 	_ make static functions out of the CPU-intensive AI tasks such as find path and see target etc
 			these global functions keep track of their own global delay timers, so that if there are a lot of requests, some will get denied.
 	_ if a control_brain cannot see its current target, have it request another.

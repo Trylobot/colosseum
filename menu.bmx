@@ -5,12 +5,19 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Const MENU_OPTION_CLASS_LABEL% = 1
+Const MENU_OPTION_CLASS_HORIZONTAL_SELECT_ONE% = 2
+Const MENU_OPTION_CLASS_VERTICAL_SELECT_ONE% = 3
+Const MENU_OPTION_CLASS_INPUT% = 4
+Const MENU_OPTION_CLASS_SLIDER% = 5
+
 Type MENU_OPTION
-	Field name$ 'display to user
-	Field command_code% 'command to execute
-	Field command_argument% 'integer parameter, has meaning in combination with command
+	Field name$ 'display this to user
+	Field class% 'option class
+	Field command_code% 'command to execute when this option is selected
+	Field command_argument% 'integer parameter, has meaning in combination with command_code
 	Field visible% 'draw this option? {true|false}
-	Field enabled% 'can this option be selected? {true|false}
+	Field enabled% 'this option can be selected? {true|false}
 	
 	Function Create:MENU_OPTION( name$, command_code%, command_argument% = 0, visible% = True, enabled% = True )
 		Local opt:MENU_OPTION = New MENU_OPTION

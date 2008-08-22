@@ -248,19 +248,19 @@ End Function
 '[ WALL_TYPE%, X%, Y%, W%, H% ]
 Global common_walls:TList = CreateList()
 'common outermost walls: N, E, S, W
-common_walls.AddLast([ WALL_ADD, -50,-50,                    (arena_offset*2+arena_w+100)-1,50-1 ])
-common_walls.AddLast([ WALL_ADD, arena_offset*2+arena_w,-50, 50-1,(arena_offset*2+arena_h+100)-1 ])
-common_walls.AddLast([ WALL_ADD, -50,arena_offset*2+arena_h, (arena_offset*2+arena_w+100)-1,50-1 ])
-common_walls.AddLast([ WALL_ADD, -50,-50,                    50-1,(arena_offset*2+arena_h+100)-1 ])
+'common_walls.AddLast([ WALL_ADD, Int(-(cell_size*2)),Int(-(cell_size*2)),                               Int((arena_offset_left+arena_w+arena_offset_right+(cell_size*4))-1),Int((cell_size*2)-1) ])
+'common_walls.AddLast([ WALL_ADD, Int(arena_offset_left+arena_w+arena_offset_right),Int(-(cell_size*2)), Int((cell_size*2)-1),Int((arena_offset_top+arena_h+arena_offset_bottom+(cell_size*4))-1) ])
+'common_walls.AddLast([ WALL_ADD, Int(-(cell_size*2)),Int(arena_offset_top+arena_h+arena_offset_bottom), Int((arena_offset_left+arena_w+arena_offset_right+(cell_size*4))-1),Int((cell_size*2)-1) ])
+'common_walls.AddLast([ WALL_ADD, Int(-(cell_size*2)),Int(-(cell_size*2)),                               Int((cell_size*2)-1),Int((arena_offset_top+arena_h+arena_offset_bottom+(cell_size*4))-1) ])
 'common inner walls: N,N, E,E, S,S, W,W
-common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
-common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),0,                    arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
-common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,0,                                         arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
-common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,arena_offset+(arena_h/2)+(arena_offset/2), arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
-common_walls.AddLast([ WALL_ADD, 0,arena_offset+arena_h,                                         arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
-common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),arena_offset+arena_h, arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
-common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
-common_walls.AddLast([ WALL_ADD, 0,arena_offset+(arena_h/2)+(arena_offset/2),                    arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
+'common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
+'common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),0,                    arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
+'common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,0,                                         arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
+'common_walls.AddLast([ WALL_ADD, arena_offset+arena_w,arena_offset+(arena_h/2)+(arena_offset/2), arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
+'common_walls.AddLast([ WALL_ADD, 0,arena_offset+arena_h,                                         arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
+'common_walls.AddLast([ WALL_ADD, arena_offset+(arena_w/2)+(arena_offset/2),arena_offset+arena_h, arena_offset+(arena_w/2)-(arena_offset/2)-1,arena_offset-1 ])
+'common_walls.AddLast([ WALL_ADD, 0,0,                                                            arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
+'common_walls.AddLast([ WALL_ADD, 0,arena_offset+(arena_h/2)+(arena_offset/2),                    arena_offset-1,arena_offset+(arena_h/2)-(arena_offset/2)-1 ])
 
 Global level_walls:TList[] = New TList[6]
 For Local i% = 0 To level_walls.Length - 1
