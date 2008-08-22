@@ -73,7 +73,8 @@ Function debug_overlay()
 		
 		'fps
 		sx = 2*arena_offset+arena_w+4; sy = 3
-		debug_drawtext( "fps "+fps )
+		debug_drawtext( "fps -> "+fps )
+		'debug_drawtext( "enemies -> "+hostile_agent_list.Count() )
 		
 		'show pathing grid
 		Local cursor:CELL = New CELL
@@ -227,13 +228,16 @@ Function debug_overlay()
 			FLAG_spawn_mode = Not FLAG_spawn_mode
 		End If
 		If FLAG_spawn_mode
-			If spawn_agent = Null Then spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
+			If spawn_agent = Null
+				spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
+			End If
+			spawn_agent.ang = spawn_agent.ang_to( player ) + 180
 			spawn_agent.pos_x = mouse.pos_x; spawn_agent.pos_y = mouse.pos_y
 			spawn_agent.update()
+			spawn_agent.snap_all_turrets()
 			spawn_agent.draw()
 			
 			If KeyHit( KEY_ENTER )
-				If spawn_archetype = ENEMY_INDEX_LIGHT_TANK Then DebugStop
 				spawn_agent.auto_manage( ALIGNMENT_HOSTILE )
 				Create_and_Manage_CONTROL_BRAIN( spawn_agent, CONTROL_TYPE_AI,, 10, 1000, 1000 )
 				spawn_agent = Null

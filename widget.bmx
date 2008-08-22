@@ -177,10 +177,14 @@ Type WIDGET Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method go( count% = INFINITY )
-		transformations_remaining :+ count
-		If Not transforming Then transform_begin_ts = now()
-		transforming = True
+	Method queue_transformation( count% = INFINITY )
+		If transforming
+			transformations_remaining :+ count
+		Else
+			transformations_remaining = count
+			transforming = True
+			transform_begin_ts = now()
+		End If
 	End Method
 	
 	Method add_state( s:TRANSFORM_STATE )

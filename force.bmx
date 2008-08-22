@@ -26,7 +26,7 @@ Type FORCE Extends MANAGED_OBJECT
 	
 	Function Create:Object( ..
 	physics_type%, ..
-	direction#, ..
+	direction# = 0.0, ..
 	magnitude_max#, ..
 	life_time% = INFINITY )
 		Local f:FORCE = New FORCE

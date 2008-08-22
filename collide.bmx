@@ -17,11 +17,10 @@ Const DOOR_COLLISION_LAYER% = $0040
 Const PICKUP_COLLISION_LAYER% = $0080
 
 Const PROJECTILE_EXPLOSIVE_FORCE_COEFFICIENT# = 1000.0 'energy multiplier for all explosive forces generated
-Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 500.0 'energy multiplier for all collisions involving projectiles and agents
+Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 350.0 'energy multiplier for all collisions involving projectiles and agents
 Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.012 'energy multiplier for all projectile-projectile collisions
-Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.010 'energy multiplier for all agent-agent collisions
-
-Const WALL_NUDGE_DIST# = 0.20
+Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.1 'energy multiplier for all agent-agent collisions
+Const WALL_NUDGE_DIST# = 0.2
 
 Function collide_all()
 	If ..
@@ -173,7 +172,7 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 	proj.remove_me()
 End Function
 
-Function collision_agent_agent( ag:AGENT, other:COMPLEX_AGENT )
+Function collision_agent_agent( ag:COMPLEX_AGENT, other:COMPLEX_AGENT )
 	'activate collision response for affected entity(ies)
 	'Local offset#, offset_ang#
 	'cartesian_to_polar( ag.pos_x - other.pos_x, ag.pos_y - other.pos_y, offset, offset_ang )
@@ -183,13 +182,27 @@ Function collision_agent_agent( ag:AGENT, other:COMPLEX_AGENT )
 	
 	Local dist# = other.dist_to( ag )
 	Local ang# = other.ang_to( ag )
-	Local ag_force_magnitude# = ag.mass*AGENT_AGENT_ENERGY_COEFFICIENT*Sqr( Pow(ag.vel_x,2) + Pow(ag.vel_y,2) )
 	'nudge
-	
+	ag.pos_x :+ WALL_NUDGE_DIST*Cos( ang )
+	ag.pos_y :+ WALL_NUDGE_DIST*Sin( ang )
+	'velocity cancellation
+	Local vel:cVEC = Create_cVEC( ag.vel_x, ag.vel_y )
+	Local vel_projection# = vel.r()*Cos( ang - vel.a() )
+	ag.vel_x :- vel_projection*Cos( ang )
+	ag.vel_y :- vel_projection*Sin( ang )
+	'acceleration cancellation
+	Local acc:cVEC = Create_cVEC( ag.acc_x, ag.acc_y )
+	Local acc_projection# = acc.r()*Cos( ang - acc.a() )
+	ag.acc_x :- acc_projection*Cos( ang )
+	ag.acc_y :- acc_projection*Sin( ang )
+	'collision force/torque
+	Local collision_force_mag# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*vel.r()
+	ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, collision_force_mag*Cos( ang - other.ang ), 50 )))
+	ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, dist*(collision_force_mag/3.0)*Sin( ang - other.ang ), 50 )))
 	
 End Function
 
-Function collision_agent_wall( ag:AGENT, wall%[] )
+Function collision_agent_wall( ag:COMPLEX_AGENT, wall%[] )
 	Local offset#, offset_ang#
 	cartesian_to_polar( ag.pos_x - wall_mid_x(wall), ag.pos_y - wall_mid_y(wall), offset, offset_ang )
 	Local ang# = clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )

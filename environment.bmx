@@ -325,38 +325,33 @@ Global all_door_lists:TList = CreateList()
 
 Function attach_door( p:POINT, political_door_list:TList )
 	Local door:WIDGET
-
+	'left side
 	door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
 	door.parent = p
 	door.attach_at( arena_offset/2 + arena_offset/3 - door.img.height/2 + 1, 0, 90, True )
-	'the auto-manage list keeps track of all widgets, for updating and drawing
 	door.auto_manage()
-	'this managed list simply differentiates "friendly" doors from "hostile" doors
 	political_door_list.AddLast( door )
-	
+	'right side
 	door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
 	door.parent = p
 	door.attach_at( arena_offset/2 + arena_offset/3 - door.img.height/2 + 1, 0, -90, True )
-	'the auto-manage list keeps track of all widgets, for updating and drawing
 	door.auto_manage()
-	'this managed list simply differentiates "friendly" doors from "hostile" doors
 	political_door_list.AddLast( door )
 End Function
 
 Function activate_doors( political_alignment% )
-	Local door:WIDGET
+	Local political_door_list:TList
 	Select political_alignment
 		Case ALIGNMENT_FRIENDLY
-			For door = EachIn friendly_door_list
-				door.go( 1 )
-			Next
+			political_door_list = friendly_door_list
 			friendly_doors_status = Not friendly_doors_status
 		Case ALIGNMENT_HOSTILE
-			For door = EachIn hostile_door_list
-				door.go( 1 )
-			Next
+			political_door_list = hostile_door_list
 			hostile_doors_status = Not hostile_doors_status
 	End Select
+	For Local door:WIDGET = EachIn political_door_list
+		door.queue_transformation( 1 )
+	Next
 End Function
 
 Function reset_all_doors()

@@ -6,17 +6,17 @@ EndRem
 
 'Window / Arena size
 Const arena_offset% = 50
-Const arena_offset_top% = 12
-Const arena_offset_right% = 12
-Const arena_offset_bottom% = 100
-Const arena_offset_left% = 12
+Const arena_offset_top% = 10
+Const arena_offset_right% = 10
+Const arena_offset_bottom% = 50
+Const arena_offset_left% = 10
 Const arena_w% = 500
 Const arena_h% = 500
 Const stats_panel_w% = 250
-Const window_w% = arena_w + (2*arena_offset) + (arena_offset+stats_panel_w)
-Const window_h% = arena_h + (2*arena_offset)
-'Const window_w% = arena_offset_left + arena_w + arena_offset_right  + (arena_offset+stats_panel_w)
-'Const window_h% = arena_offset_top + arena_w + arena_offset_bottom
+'Const window_w% = arena_w + (2*arena_offset) + (arena_offset+stats_panel_w)
+'Const window_h% = arena_h + (2*arena_offset)
+Const window_w% = (arena_offset_left + arena_w + arena_offset_right) + (arena_offset + stats_panel_w)
+Const window_h% = (arena_offset_top + arena_w + arena_offset_bottom)
 
 'external data load
 load_data_files()
@@ -38,12 +38,14 @@ Graphics( window_w, window_h,,, GRAPHICS_BACKBUFFER )
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
+?Debug
+Global last_frame_ts%, time_count%, frame_count%, fps%
+menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_MED_TANK )
+?
+
 '______________________________________________________________________________
 'MAIN
 Local before%
-?Debug
-Global last_frame_ts%, time_count%, frame_count%, fps%
-?
 Repeat
 	
 	If (now() - before) > (1000/60) ' = 60 hertz
