@@ -122,15 +122,6 @@ Function spawn_from_squad( squad:TList ) 'this function should be treated as a r
 End Function
 
 '______________________________________________________________________________
-'Level objects
-Type LEVEL
-	Field squads%[][]
-	Field squad_spawn_delay%[]
-	Field walls:BOX[]
-	
-End Type
-
-'______________________________________________________________________________
 'Level Squads
 Function get_level_squads%[][]( i% )
 	If i < level_squads.Length

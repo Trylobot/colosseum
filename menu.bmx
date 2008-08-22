@@ -19,6 +19,8 @@ Type MENU_OPTION
 	Field visible% 'draw this option? {true|false}
 	Field enabled% 'this option can be selected? {true|false}
 	
+	Field last_x%, last_y% '(private) records last drawn position
+	
 	Function Create:MENU_OPTION( name$, command_code%, command_argument% = 0, visible% = True, enabled% = True )
 		Local opt:MENU_OPTION = New MENU_OPTION
 		opt.name = name
@@ -31,6 +33,16 @@ Type MENU_OPTION
 	
 	Method clone:MENU_OPTION()
 		Return Create( name, command_code, visible, enabled )
+	End Method
+	
+	Method draw( x%,y%, glow% = False, red% = 255, green% = 255, blue% = 255 )
+		last_x = x; last_y = y
+		SetColor( red, green, blue )
+		If glow
+			
+		Else
+			
+		End If
 	End Method
 End Type
 '______________________________________________________________________________

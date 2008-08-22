@@ -81,8 +81,8 @@ Global ALL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_NORTHEAST, DIRECTION_EAS
 Const cell_size# = 25
 Global pathing_grid_origin:cVEC = Create_Cvec( -40, -40 )
 
-Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
-Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
+'Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
+'Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
 Global pathing_grid_h% 'number of rows in pathing system
 Global pathing_grid_w% 'number of columns in pathing system
 
