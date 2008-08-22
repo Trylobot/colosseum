@@ -8,7 +8,8 @@ EndRem
 ?Debug
 '______________________________________________________________________________
 Global sx%, sy%
-Global FLAG_debug_overlay% = False, FLAG_spawn_mode% = False
+Const SPAWN_OFF% = 0, SPAWN_HOSTILES% = 1, SPAWN_FRIENDLIES% = 2
+Global FLAG_debug_overlay% = False, FLAG_spawn_mode% = SPAWN_HOSTILES
 Global spawn_archetype% = enemy_index_start, spawn_agent:COMPLEX_AGENT
 Global global_start:CELL, global_goal:CELL
 'Global maus_x#, maus_y#, speed# = 1, r#, a#, px#, py#
@@ -225,9 +226,11 @@ Function debug_overlay()
 		End If
 		
 		If KeyHit( KEY_P )
-			FLAG_spawn_mode = Not FLAG_spawn_mode
+			FLAG_spawn_mode :+ 1
+			If FLAG_spawn_mode > 2 Then FLAG_spawn_mode = 0
 		End If
-		If FLAG_spawn_mode
+		If FLAG_spawn_mode <> SPAWN_OFF
+			
 			If spawn_agent = Null
 				spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
 			End If
@@ -238,17 +241,26 @@ Function debug_overlay()
 			spawn_agent.draw()
 			
 			If KeyHit( KEY_ENTER )
-				spawn_agent.auto_manage( ALIGNMENT_HOSTILE )
+				If FLAG_spawn_mode = SPAWN_HOSTILES
+					spawn_agent.auto_manage( ALIGNMENT_HOSTILE )
+					spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
+				Else 'FLAG_spawn_mode = SPAWN_FRIENDLIES
+					spawn_agent.auto_manage( ALIGNMENT_FRIENDLY )
+					spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
+				End If
 				Create_and_Manage_CONTROL_BRAIN( spawn_agent, CONTROL_TYPE_AI,, 10, 1000, 1000 )
 				spawn_agent = Null
+				
 			Else If KeyHit( KEY_OPENBRACKET )
 				spawn_archetype :- 1
-				If spawn_archetype < enemy_index_start Then spawn_archetype = complex_agent_archetype.Length - 1
+				If spawn_archetype < 0 Then spawn_archetype = complex_agent_archetype.Length - 1
 				spawn_agent = Null
+				
 			Else If KeyHit( KEY_CLOSEBRACKET )
 				spawn_archetype :+ 1
-				If spawn_archetype > complex_agent_archetype.Length - 1 Then spawn_archetype = enemy_index_start
+				If spawn_archetype > complex_agent_archetype.Length - 1 Then spawn_archetype = 0
 				spawn_agent = Null
+				
 			End If
 		End If
 		

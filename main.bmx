@@ -8,7 +8,7 @@ EndRem
 Const arena_offset% = 50
 Const arena_offset_top% = 10
 Const arena_offset_right% = 10
-Const arena_offset_bottom% = 50
+Const arena_offset_bottom% = 100
 Const arena_offset_left% = 10
 Const arena_w% = 500
 Const arena_h% = 500
@@ -40,7 +40,7 @@ SetBlend( ALPHABLEND )
 
 ?Debug
 Global last_frame_ts%, time_count%, frame_count%, fps%
-menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_MED_TANK )
+menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
 ?
 
 '______________________________________________________________________________

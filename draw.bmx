@@ -39,6 +39,8 @@ End Function
 'In-game stuff
 Function draw_game()
 	
+	SetViewport( 0,0, arena_offset_left+arena_w+arena_offset_right,arena_offset_top+arena_h+arena_offset_bottom )
+	
 	'arena (& retained particles)
 	SetBlend( ALPHABLEND )
 	SetColor( 255, 255, 255 )
@@ -105,6 +107,8 @@ Function draw_game()
 		End If
 	End If
 	SetRotation( 0 )
+
+	SetViewport( 0,0, window_w,window_h )
 
 	'draw side-panel statistics and info
 	draw_stats()

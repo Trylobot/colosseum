@@ -6,9 +6,10 @@ EndRem
 
 '______________________________________________________________________________
 'All Spawnpoints
+Const SPAWN_POINT_OFFSET% = 43
 'south
 Global friendly_spawn_points:POINT[] = [ ..
-	Create_POINT( Floor(arena_offset + arena_w/2), Floor(1.5*arena_offset + arena_h + arena_offset/3), 270 ) ]
+	Create_POINT( Floor(arena_offset_left + arena_w/2), Floor(arena_offset_top + arena_h + SPAWN_POINT_OFFSET), 270 ) ]
 'west, north, east
 Global enemy_spawn_points:POINT[] = [ ..
 	Create_POINT( Floor(arena_offset/2 - arena_offset/3), Floor(arena_offset + arena_h/2), 0 ), ..

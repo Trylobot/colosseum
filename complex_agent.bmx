@@ -255,6 +255,9 @@ Type COMPLEX_AGENT Extends AGENT
 				End If
 			Next
 		Next
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetScale( 1, 1 )
 		'turrets
 		For Local t:TURRET = EachIn turret_list
 			t.draw()

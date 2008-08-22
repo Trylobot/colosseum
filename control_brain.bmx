@@ -393,6 +393,56 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
+	Method track( t:TURRET, p:POINT )
+		Local diff# = ang_wrap( t.ang - t.ang_to( p ))
+		Local diff_mag# = Abs( diff )
+		
+'		If diff_mag > 5*t.max_ang_vel
+'			If diff < 0
+'				avatar.turn_turret( 0, 1.0  )
+'				avatar.turn_turret( 1, 1.0  )
+'			Else 'diff > 0
+'				avatar.turn_turret( 0, -1.0 )
+'				avatar.turn_turret( 1, -1.0 )
+'			End If
+'		Else If diff_mag > 2.5*t.max_ang_vel
+'			If diff < 0
+'				avatar.turn_turret( 0, 0.5  )
+'				avatar.turn_turret( 1, 0.5  )
+'			Else 'diff > 0
+'				avatar.turn_turret( 0, -0.5 )
+'				avatar.turn_turret( 1, -0.5 )
+'			End If
+'		Else If diff_mag > 1.25*t.max_ang_vel
+'			If diff < 0
+'				player.turn_turret( 0, 0.25 )
+'				player.turn_turret( 1, 0.25 )
+'			Else 'diff > 0
+'				player.turn_turret( 0, -0.25 )
+'				player.turn_turret( 1, -0.25 )
+'			End If
+'		Else If diff_mag > 0.75*t.max_ang_vel
+'			If diff < 0
+'				player.turn_turret( 0, 0.125 )
+'				player.turn_turret( 1, 0.125 )
+'			Else 'diff > 0
+'				player.turn_turret( 0, -0.125 )
+'				player.turn_turret( 1, -0.125 )
+'			End If
+'		Else If diff_mag > 0.375*t.max_ang_vel
+'			If diff < 0
+'				player.turn_turret( 0, 0.0625 )
+'				player.turn_turret( 1, 0.0625 )
+'			Else 'diff > 0
+'				player.turn_turret( 0, -0.0625 )
+'				player.turn_turret( 1, -0.0625 )
+'			End If
+'		Else
+'			player.turn_turret( 0, 0.0 )
+'			player.turn_turret( 1, 0.0 )
+'		End If
+	End Method
+	
 	Method waypoint_reached%()
 		If waypoint <> Null
 			dist_to_target = avatar.dist_to_cVEC( waypoint )
@@ -507,10 +557,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 
 	Method outside_arena%()
-		If avatar.pos_x < arena_offset ..
-		Or avatar.pos_x > arena_offset+arena_w ..
-		Or avatar.pos_y < arena_offset ..
-		Or avatar.pos_y > arena_offset+arena_h
+		If avatar.pos_x < arena_offset_left ..
+		Or avatar.pos_x > arena_offset_left + arena_w ..
+		Or avatar.pos_y < arena_offset_top ..
+		Or avatar.pos_y > arena_offset_top + arena_h
 			Return True
 		Else
 			Return False
