@@ -378,7 +378,7 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			End If
 			
 		Case COMMAND_EDIT_LEVEL
-			edit_level( Create_LEVEL( 500, 500 ))
+			edit_level( Create_LEVEL( 520, 610 ))
 			
 		Case COMMAND_QUIT_GAME
 			End

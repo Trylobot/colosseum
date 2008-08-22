@@ -48,8 +48,6 @@ Global last_frame_ts%, time_count%, frame_count%, fps%
 Local before%
 Repeat
 	
-	check_esc_held()
-	
 	If (now() - before) > (1000/60) ' = 60 hertz
 		before = now()
 		get_all_input()
@@ -75,6 +73,8 @@ If player <> Null Then debug_overlay()
 '	find_path( player.pos_x,player.pos_y, mouse_point.x,mouse_point.y )
 'End If
 ?
+	check_esc_held()
+	
 	Flip( 1 )
 	
 Until AppTerminate()
@@ -82,29 +82,37 @@ Until AppTerminate()
 '______________________________________________________________________________
 'Quit from anywhere; "instaquit" by holding ESC
 Global esc_held% = False, esc_press_ts% = now()
-Global esc_held_progress_bar_show_time_required% = 500, instaquit_time_required% = 3000
+Global esc_held_progress_bar_show_time_required% = 300, instaquit_time_required% = 1500
 
 Function check_esc_held()
 	If KeyDown( KEY_ESCAPE ) And Not esc_held
 		esc_press_ts = now()
 		esc_held = True
-	End If
-
-	If KeyDown( KEY_ESCAPE ) And esc_held
+	Else If KeyDown( KEY_ESCAPE ) 'esc_held
 		If (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
 			draw_instaquit_progress()
 		End If
 		If (now() - esc_press_ts) >= instaquit_time_required
 			End
 		End If
+	Else
+		esc_held = False
 	End If
 End Function
 
 Function draw_instaquit_progress()
+	SetAlpha( 0.5 )
+	SetColor( 0, 0, 0 )
+	DrawRect( 0,0, window_w,window_h )
+	
 	SetAlpha( 1 )
+	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
-	draw_percentage_bar( 100,window_h/2-50, window_w-200,100, Float( now() - esc_press_ts ) / Float( instaquit_time_required ))
+	draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required ))
+	Local str$ = "continue holding ESC to quit"
+	SetImageFont( get_font( "consolas_bold_24" ))
+	DrawText_with_glow( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
 End Function
 
 
