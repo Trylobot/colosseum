@@ -12,25 +12,23 @@ Global friendly_spawn_points:POINT[] = [ ..
 	Create_POINT( Floor(arena_offset_left + arena_w/2), Floor(arena_offset_top + arena_h + SPAWN_POINT_OFFSET), 270 ) ]
 'west, north, east
 Global enemy_spawn_points:POINT[] = [ ..
-	Create_POINT( Floor(arena_offset/2 - arena_offset/3), Floor(arena_offset + arena_h/2), 0 ), ..
-	Create_POINT( Floor(arena_offset + arena_w/2), Floor(arena_offset/2 - arena_offset/3), 90 ), ..
-	Create_POINT( Floor(1.5*arena_offset + arena_w + arena_offset/3), Floor(arena_offset + arena_h/2), 180 ) ]
-
-'Turret anchor points (6x)
-'Global enemy_turret_anchors:POINT[] = New POINT[4]
+	Create_POINT( Floor(arena_offset_left - SPAWN_POINT_OFFSET), Floor(arena_offset_top + arena_h/2), 0 ), ..
+	Create_POINT( Floor(arena_offset_left + arena_w/2), Floor(arena_offset_top - SPAWN_POINT_OFFSET), 90 ), ..
+	Create_POINT( Floor(arena_offset_left + arena_w + SPAWN_POINT_OFFSET), Floor(arena_offset_top + arena_h/2), 180 ) ]
+'turret anchor points (12)
 Global enemy_turret_anchors:POINT[] = New POINT[12]
-	enemy_turret_anchors[ 0] = Create_POINT( Floor(arena_offset+arena_offset*1), Floor(arena_offset+arena_offset*1), 45 )
-	enemy_turret_anchors[ 1] = Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor(arena_offset+arena_offset*1), 135 )
-	enemy_turret_anchors[ 2] = Create_POINT( Floor(arena_offset+arena_offset*1), Floor((arena_offset+arena_h)-arena_offset*1), -45 )
-	enemy_turret_anchors[ 3] = Create_POINT( Floor((arena_offset+arena_w)-arena_offset*1), Floor((arena_offset+arena_h)-arena_offset*1), -135 )
-	enemy_turret_anchors[ 4] = enemy_turret_anchors[0].add_pos( arena_offset, 0 )
-	enemy_turret_anchors[ 5] = enemy_turret_anchors[0].add_pos( 0, arena_offset )
-	enemy_turret_anchors[ 6] = enemy_turret_anchors[1].add_pos( -arena_offset, 0 )
-	enemy_turret_anchors[ 7] = enemy_turret_anchors[1].add_pos( 0, arena_offset )
-	enemy_turret_anchors[ 8] = enemy_turret_anchors[2].add_pos( arena_offset, 0 )
-	enemy_turret_anchors[ 9] = enemy_turret_anchors[2].add_pos( 0, -arena_offset )
-	enemy_turret_anchors[10] = enemy_turret_anchors[3].add_pos( -arena_offset, 0 )
-	enemy_turret_anchors[11] = enemy_turret_anchors[3].add_pos( 0, -arena_offset )
+	enemy_turret_anchors[ 0] = Create_POINT( Floor(arena_offset_left+SPAWN_POINT_OFFSET), Floor(arena_offset_top+SPAWN_POINT_OFFSET), 45 )
+	enemy_turret_anchors[ 1] = Create_POINT( Floor((arena_offset_left+arena_w)-SPAWN_POINT_OFFSET), Floor(arena_offset_top+SPAWN_POINT_OFFSET), 135 )
+	enemy_turret_anchors[ 2] = Create_POINT( Floor(arena_offset_left+SPAWN_POINT_OFFSET), Floor((arena_offset_top+arena_h)-SPAWN_POINT_OFFSET), -45 )
+	enemy_turret_anchors[ 3] = Create_POINT( Floor((arena_offset_left+arena_w)-SPAWN_POINT_OFFSET), Floor((arena_offset_top+arena_h)-SPAWN_POINT_OFFSET), -135 )
+	enemy_turret_anchors[ 4] = enemy_turret_anchors[0].add_pos( SPAWN_POINT_OFFSET, 0 )
+	enemy_turret_anchors[ 5] = enemy_turret_anchors[0].add_pos( 0, SPAWN_POINT_OFFSET )
+	enemy_turret_anchors[ 6] = enemy_turret_anchors[1].add_pos( -SPAWN_POINT_OFFSET, 0 )
+	enemy_turret_anchors[ 7] = enemy_turret_anchors[1].add_pos( 0, SPAWN_POINT_OFFSET )
+	enemy_turret_anchors[ 8] = enemy_turret_anchors[2].add_pos( SPAWN_POINT_OFFSET, 0 )
+	enemy_turret_anchors[ 9] = enemy_turret_anchors[2].add_pos( 0, -SPAWN_POINT_OFFSET )
+	enemy_turret_anchors[10] = enemy_turret_anchors[3].add_pos( -SPAWN_POINT_OFFSET, 0 )
+	enemy_turret_anchors[11] = enemy_turret_anchors[3].add_pos( 0, -SPAWN_POINT_OFFSET )
 
 Global anchor_deck%[] = New Int[ enemy_turret_anchors.Length ]
 Global anchor_i%
@@ -49,7 +47,7 @@ Function shuffle_anchor_deck()
 End Function
 	
 'Serialized Enemy Spawning system, by Squad and Level
-Const SPAWN_CLEAR_DIST# = 18.0
+'this should be specific to the level and the squad
 Const squad_spawn_delay% = 3000
 
 Global enemy_spawn_queue:TList = CreateList()
@@ -82,7 +80,7 @@ Function spawning_system_update()
 		End If
 		'if there is no last spawned enemy, or the last spawned enemy is clear of the spawn, or the last spawned enemy has died (yeah it can happen.. CAMPER!)
 		If (last_spawned_enemy = Null ..
-		Or cur_spawn_point.dist_to( last_spawned_enemy ) >= SPAWN_CLEAR_DIST ..
+		Or point_inside_arena( last_spawned_enemy ) ..
 		Or (last_spawned_enemy <> Null And last_spawned_enemy.dead())) ..
 		And (now() - squad_begin_spawning_ts >= squad_spawn_delay)
 			spawn_from_squad( cur_squad )
@@ -270,27 +268,20 @@ For Local i% = 0 To level_walls.Length - 1
 Next
 '[ WALL_TYPE%, X%, Y%, W%, H% ]
 'level 1
-level_walls[0].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300-1,50-1 ])
-level_walls[0].AddLast([ WALL_ADD, arena_offset+225,arena_offset+100, 50-1,300-1 ])
+level_walls[0].AddLast([ WALL_ADD, arena_offset_left+100,arena_offset_top+225, 300-1,50-1 ])
+level_walls[0].AddLast([ WALL_ADD, arena_offset_left+225,arena_offset_top+100, 50-1,300-1 ])
 'level 2
-level_walls[1] = level_walls[0]
+level_walls[1].AddLast([ WALL_ADD, arena_offset_left+100,arena_offset_top+200, 50-1,100-1 ])
+level_walls[1].AddLast([ WALL_ADD, arena_offset_left+350,arena_offset_top+200, 50-1,100-1 ])
+level_walls[1].AddLast([ WALL_ADD, arena_offset_left+200,arena_offset_top+100, 100-1,50-1 ])
+level_walls[1].AddLast([ WALL_ADD, arena_offset_left+200,arena_offset_top+350, 100-1,50-1 ])
 'level 3
-level_walls[2].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
-level_walls[2].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
-level_walls[2].AddLast([ WALL_ADD, arena_offset+200,arena_offset+100, 100-1,50-1 ])
-level_walls[2].AddLast([ WALL_ADD, arena_offset+200,arena_offset+350, 100-1,50-1 ])
-'level 4
-level_walls[3] = level_walls[2]
-'level 5
-level_walls[4].AddLast([ WALL_ADD, arena_offset+100,arena_offset+225, 300-1,50-1 ])
-level_walls[4].AddLast([ WALL_ADD, arena_offset+225,arena_offset+100, 50-1,300-1 ])
-level_walls[4].AddLast([ WALL_ADD, arena_offset+100,arena_offset+200, 50-1,100-1 ])
-level_walls[4].AddLast([ WALL_ADD, arena_offset+350,arena_offset+200, 50-1,100-1 ])
-level_walls[4].AddLast([ WALL_ADD, arena_offset+200,arena_offset+100, 100-1,50-1 ])
-level_walls[4].AddLast([ WALL_ADD, arena_offset+200,arena_offset+350, 100-1,50-1 ])
-'level 6
-level_walls[5] = level_walls[4]
-
+level_walls[2].AddLast([ WALL_ADD, arena_offset_left+100,arena_offset_top+225, 300-1,50-1 ])
+level_walls[2].AddLast([ WALL_ADD, arena_offset_left+225,arena_offset_top+100, 50-1,300-1 ])
+level_walls[2].AddLast([ WALL_ADD, arena_offset_left+100,arena_offset_top+200, 50-1,100-1 ])
+level_walls[2].AddLast([ WALL_ADD, arena_offset_left+350,arena_offset_top+200, 50-1,100-1 ])
+level_walls[2].AddLast([ WALL_ADD, arena_offset_left+200,arena_offset_top+100, 100-1,50-1 ])
+level_walls[2].AddLast([ WALL_ADD, arena_offset_left+200,arena_offset_top+350, 100-1,50-1 ])
 
 Function get_level_walls:TList( i% )
 	If i < level_walls.Length

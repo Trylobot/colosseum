@@ -79,6 +79,7 @@ Global ALL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_NORTHEAST, DIRECTION_EAS
 'Const cell_size# = 10
 'Const cell_size# = 20
 Const cell_size# = 25
+Global pathing_grid_origin:cVEC = Create_Cvec( -40, -40 )
 
 Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
 Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
@@ -86,6 +87,8 @@ Global pathing_grid_h% 'number of rows in pathing system
 Global pathing_grid_w% 'number of columns in pathing system
 
 Function containing_cell:CELL( x#, y# )
+	x :+ pathing_grid_origin.x
+	y :+ pathing_grid_origin.y
 	If cell_size = 0 Then Return CELL.Create( -1, -1 )
 	Return CELL.Create( Floor( y/cell_size ), Floor( x/cell_size ))
 End Function
@@ -350,3 +353,24 @@ Type PATHING_STRUCTURE
 	End Method
 	
 End Type
+'______________________________________________________________________________
+Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
+	Local start_cell:CELL = containing_cell( start_x, start_y )
+	Local goal_cell:CELL = containing_cell( goal_x, goal_y )
+	If pathing.grid( start_cell ) = PATH_BLOCKED Or pathing.grid( goal_cell ) = PATH_BLOCKED
+		Return Null
+	End If
+	
+	pathing.reset()
+	Local cell_list:TList = pathing.find_CELL_path( start_cell, goal_cell )
+
+	Local list:TList = CreateList()
+	If cell_list <> Null And Not cell_list.IsEmpty()
+		For Local cursor:CELL = EachIn cell_list
+			list.AddLast( cVEC.Create( cursor.col*cell_size + cell_size/2 - pathing_grid_origin.x, cursor.row*cell_size + cell_size/2 - pathing_grid_origin.y ))
+		Next
+	End If
+	Return list
+End Function
+
+

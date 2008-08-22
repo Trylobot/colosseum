@@ -84,7 +84,7 @@ Function debug_overlay()
 				'blockable/passing grid
 				SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
 				If pathing.grid( cursor ) = PATH_BLOCKED
-					DrawRect( cursor.col*cell_size + 1, cursor.row*cell_size + 1, cell_size - 2, cell_size - 2 )
+					DrawRect( cursor.col*cell_size - pathing_grid_origin.x + 1, cursor.row*cell_size - pathing_grid_origin.y + 1, cell_size - 2, cell_size - 2 )
 				End If
 			Next
 		Next

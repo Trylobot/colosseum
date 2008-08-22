@@ -313,7 +313,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				End If
 				
 			Case AI_BRAIN_TANK
-				If outside_arena()
+				If Not point_inside_arena( avatar )
 					avatar.drive( 1.0 )
 					Return
 				Else If target <> Null And Not target.dead()
@@ -556,17 +556,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 
-	Method outside_arena%()
-		If avatar.pos_x < arena_offset_left ..
-		Or avatar.pos_x > arena_offset_left + arena_w ..
-		Or avatar.pos_y < arena_offset_top ..
-		Or avatar.pos_y > arena_offset_top + arena_h
-			Return True
-		Else
-			Return False
-		End If
-	End Method
-	
 	Method get_path_to_target:TList()
 		If target <> Null
 			last_find_path_ts = now()

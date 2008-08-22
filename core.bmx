@@ -199,25 +199,6 @@ Function clear_pathing_grid_center_walls()
 		pathing.set_area( containing_cell( arena_offset, arena_offset ), containing_cell( arena_offset+arena_w-1, arena_offset+arena_h-1 ), PATH_PASSABLE )
 	End If
 End Function
-'______________________________________________________________________________
-Function find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
-	Local start_cell:CELL = containing_cell( start_x, start_y )
-	Local goal_cell:CELL = containing_cell( goal_x, goal_y )
-	If pathing.grid( start_cell ) = PATH_BLOCKED Or pathing.grid( goal_cell ) = PATH_BLOCKED
-		Return Null 'no path possible to or from
-	End If
-	
-	pathing.reset()
-	Local cell_list:TList = pathing.find_CELL_path( start_cell, goal_cell )
-
-	Local list:TList = CreateList()
-	If cell_list <> Null And Not cell_list.IsEmpty()
-		For Local cursor:CELL = EachIn cell_list
-			list.AddLast( cVEC.Create( cursor.col*cell_size + cell_size/2, cursor.row*cell_size + cell_size/2 ))
-		Next
-	End If
-	Return list
-End Function
 
 
 

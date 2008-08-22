@@ -59,6 +59,17 @@ Function time_alpha_pct#( ts%, time%, in% = True )
 		End If
 	End If
 End Function
+
+Function point_inside_arena%( p:POINT )
+	If p.pos_x < arena_offset_left ..
+	Or p.pos_x > arena_offset_left + arena_w ..
+	Or p.pos_y < arena_offset_top ..
+	Or p.pos_y > arena_offset_top + arena_h
+		Return False
+	Else
+		Return True
+	End If
+End Function
 '______________________________________________________________________________
 Type MANAGED_OBJECT
 	

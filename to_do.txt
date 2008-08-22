@@ -1,4 +1,7 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
+	_ make static functions out of the CPU-intensive AI tasks such as find path and see target etc
+			these global functions keep track of their own global delay timers, so that if there are a lot of requests, some will get denied.
+	_ if a control_brain cannot see its current target, have it request another.
 	_ create a GAME object which contains all of the managed object lists.
 			GAME would also have an update() and a draw() method.
 			this way it will be possible to keep different simultaneous games separate, such as in the case of the menu AI demo and the actual game being separate.
