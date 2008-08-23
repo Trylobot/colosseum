@@ -255,25 +255,42 @@ Function draw_arena_bg()
 	For Local part:PARTICLE = EachIn retained_particle_list
 		part.draw()
 	Next
-
+	
 	If FLAG_retain_particles
-		FLAG_retain_particles = False
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		SetScale( 1, 1 )
-		SetRotation( 0 )
-		GrabImage( bg_cache, 0,0 )
-		retained_particle_list.Clear()
-		retained_particle_list_count = 0
-		If FLAG_dim_bg
-			FLAG_dim_bg = False
-			SetColor( 255, 255, 255 )
-			SetAlpha( 0.3333 )
-			SetScale( 1, 1 )
-			SetRotation( 0 )
-			DrawImage( img_arena_bg, 0,0 )
-			GrabImage( bg_cache, 0,0 )
-		End If
+		Select global_particle_prune_action
+			
+			Case PARTICLE_PRUNE_ACTION_ADD_TO_BG_CACHE
+				FLAG_retain_particles = False
+				retained_particle_list.Clear()
+				retained_particle_list_count = 0
+				
+				SetColor( 255, 255, 255 )
+				SetAlpha( 1 )
+				SetScale( 1, 1 )
+				SetRotation( 0 )
+				
+				GrabImage( bg_cache, 0,0 )
+				
+				If FLAG_dim_bg
+					FLAG_dim_bg = False
+					
+					SetColor( 255, 255, 255 )
+					SetAlpha( 0.3333 )
+					SetScale( 1, 1 )
+					SetRotation( 0 )
+					
+					DrawImage( img_arena_bg, 0,0 )
+					GrabImage( bg_cache, 0,0 )
+					
+				End If
+				
+			Case PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
+				While retained_particle_list_count >= retained_particle_limit
+					retained_particle_list.FirstLink().Remove()
+					retained_particle_list_count :- 1
+				End While
+			
+		End Select
 	End If
 		
 End Function
@@ -440,5 +457,8 @@ Function DrawText_with_glow( str$, pos_x%, pos_y% )
 	DrawText( str, pos_x, pos_y )
 End Function
 
-
+Function screenshot()
+	Local screen:TImage = New TImage
+	save_screenshot_to_file( screen )
+End Function
 

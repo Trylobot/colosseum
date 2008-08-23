@@ -60,6 +60,7 @@ Function time_alpha_pct#( ts%, time%, in% = True )
 	End If
 End Function
 
+'this needs to be based somehow on a LEVEL object
 Function point_inside_arena%( p:POINT )
 	If p.pos_x < arena_offset_left ..
 	Or p.pos_x > arena_offset_left + arena_w ..
@@ -70,6 +71,7 @@ Function point_inside_arena%( p:POINT )
 		Return True
 	End If
 End Function
+
 '______________________________________________________________________________
 Type MANAGED_OBJECT
 	
@@ -84,6 +86,7 @@ Type MANAGED_OBJECT
 	Method add_me( list:TList )
 		link = ( list.AddLast( Self ))
 	End Method
+	
 	Method remove_me()
 		If link <> Null
 			link.Remove()

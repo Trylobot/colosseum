@@ -1,17 +1,19 @@
 Rem
-	load_data.bmx
+	data.bmx
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
 
 '______________________________________________________________________________
+global data_file_suffix$ = ".ini"
 Global data_path_prefix$ = "data/"
+Global user_path_prefix$ = "user/"
 Global loaded_pct# = 0.00
 
 Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
 Global image_map:TMap = CreateMap()
-
+Global level_map:TMap = CreateMap()
 Global particle_prototype_map:TMap = CreateMap()
 Global particle_emitter_prototype_map:TMap = CreateMap()
 Global projectile_prototype_map:TMap = CreateMap()
@@ -27,8 +29,8 @@ Const DIRECTIVE_LOAD_CONFIG$ = "[load_config]"
 Const DIRECTIVE_ADD_FONT$ = "[add_font]"
 Const DIRECTIVE_ADD_SOUND$ = "[add_sound]"
 Const DIRECTIVE_ADD_IMAGE$ = "[add_image]"
+Const DIRECTIVE_ADD_LEVEL$ = "[add_level]"
 Const DIRECTIVE_ADD_MULTI_FRAME_IMAGE$ = "[add_multi_frame_image]"
-
 Const DIRECTIVE_ADD_PARTICLE_PROTOTYPE$ = "[add_particle]"
 Const DIRECTIVE_ADD_PARTICLE_EMITTER_PROTOTYPE$ = "[add_particle_emitter]"
 Const DIRECTIVE_ADD_PROJECTILE_PROTOTYPE$ = "[add_projectile]"
@@ -49,6 +51,10 @@ End Function
 
 Function get_image:TImage( key$ )
 	Return TImage( image_map.ValueForKey( key ))
+End Function
+
+Function get_level:LEVEL( key$ )
+	Return LEVEL( level_map.ValueForKey( key ))
 End Function
 '______________________________________________________________________________
 Function is_directive%( str$ )
@@ -138,6 +144,7 @@ Function output_load_data_errors()
 	End If
 End Function
 '______________________________________________________________________________
+'[ LOAD ] functions
 Function load_file$( file_path$ )
   Local line$, directive$, result$
   
@@ -283,6 +290,24 @@ Function add_image$( file:TStream, map:TMap, multi_frame% = False )
   
   Return "success"
 End Function
+
+'______________________________________________________________________________
+'[ SAVE ] functions
+Function make_filename$( str$ ) 'this needs to replace invalid characters with valid ones
+	Return str
+End Function
+
+Function save_level_to_file%( lev:LEVEL, filename$ = "" )
+	If filename = "" Then filename = make_filename( lev.name ) + data_file_suffix
+	Local file:TStream = WriteFile( user_path_prefix + filename )
+	
+	CloseStream file
+End Function
+
+Function save_screenshot_to_file( screen:TImage, filename$ = "" )
+	
+End Function
+
 '______________________________________________________________________________
 Function load_all_archetypes()
 	set_particle_archetypes()
@@ -308,7 +333,7 @@ Function load_environment()
 	hostile_doors_status = DOOR_STATUS_CLOSED
 End Function
 
-'###############################################################################################################################################
+'##############################################################################
 'Images
 AutoImageFlags( FILTEREDIMAGE | MIPMAPPEDIMAGE )
 

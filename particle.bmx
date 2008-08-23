@@ -5,11 +5,15 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global retained_particle_list:TList = CreateList()
-Global retained_particle_list_count% = 0
 Global particle_lists:TList = CreateList()
 Global particle_list_background:TList = CreateList(); particle_lists.AddLast( particle_list_background )
 Global particle_list_foreground:TList = CreateList(); particle_lists.AddLast( particle_list_foreground )
+Global retained_particle_list:TList = CreateList()
+Global retained_particle_list_count% = 0
+
+Const PARTICLE_PRUNE_ACTION_ADD_TO_BG_CACHE% = 1
+Const PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT% = 2
+Global global_particle_prune_action% = PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
 
 Const LAYER_UNSPECIFIED% = 0
 Const LAYER_FOREGROUND% = 1
@@ -178,9 +182,11 @@ Type PARTICLE Extends POINT
 			'remove from normal managed list
 			remove_me()
 			If retain
-				'particle will be added to the background permanently
 				add_me( retained_particle_list )
 				retained_particle_list_count :+ 1
+				If global_particle_prune_action = PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
+					alpha_delta :- 0.01
+				End If
 			End If
 		End If
 	End Method	

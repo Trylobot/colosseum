@@ -74,6 +74,10 @@ If player <> Null Then debug_overlay()
 ?
 	check_esc_held()
 	
+	If KeyHit( KEY_F12 )
+		screenshot()
+	End If
+	
 	Flip( 1 )
 	
 Until AppTerminate()

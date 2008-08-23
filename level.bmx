@@ -23,6 +23,7 @@ Const COORDINATE_INVALID% = -1
 
 Function Create_LEVEL:LEVEL( width%, height% )
 	Local lev:LEVEL = New LEVEL
+	lev.name = "unsaved level"
 	lev.width = width; lev.height = height
 	lev.row_count = 1; lev.col_count = 1
 	lev.horizontal_divs = [ 0, lev.height ]
@@ -32,6 +33,7 @@ Function Create_LEVEL:LEVEL( width%, height% )
 End Function
 
 Type LEVEL
+	Field name$ 'name of this level
 	Field width%, height% 'size in pixels
 	Field row_count%, col_count% 'number of divisions
 	Field horizontal_divs%[] 'horizontal dividers
@@ -175,20 +177,20 @@ Type LEVEL
 	
 End Type
 
-Const gridsnap% = 10
 '______________________________________________________________________________
+Const gridsnap% = 10
+
 Const EDIT_LEVEL_MODE_PAN% = 1
 Const EDIT_LEVEL_MODE_DIVIDER% = 2
 Const EDIT_LEVEL_MODE_PATHING% = 3
 Const EDIT_LEVEL_MODE_SPAWN% = 4
 
-Function edit_level( lev:LEVEL )
+Function edit_level:LEVEL( lev:LEVEL )
 	Local mode% = EDIT_LEVEL_MODE_PAN
 	Local x% = gridsnap, y% = 2*gridsnap
 	Local mouse_down_1% = False, mouse_down_2% = False
 	
 	While Not KeyHit( KEY_ESCAPE )
-	
 		Cls
 		
 		'draw the grid
@@ -255,8 +257,8 @@ Function edit_level( lev:LEVEL )
 				SetAlpha( 1 )
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PAN+" -> camera pan", 2,2 )
 				If MouseDown( 1 )
-					x = mouse.x/2 + gridsnap
-					y = mouse.y/2 + 2*gridsnap
+					x = mouse.x + gridsnap - lev.width/2
+					y = mouse.y + 2*gridsnap - lev.height/2
 				Else If MouseDown( 2 )
 					x = gridsnap
 					y = 2*gridsnap
@@ -312,7 +314,6 @@ Function edit_level( lev:LEVEL )
 					lev.set_pathing_value( mouse.x-x,mouse.y-y, PATH_PASSABLE )
 				End If
 				
-			
 			Case EDIT_LEVEL_MODE_SPAWN
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
@@ -323,12 +324,20 @@ Function edit_level( lev:LEVEL )
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
 				DrawText_with_shadow( "[level editor]  "+EDIT_LEVEL_MODE_PAN+":pan  "+EDIT_LEVEL_MODE_DIVIDER+":dividers  "+EDIT_LEVEL_MODE_PATHING+":pathing  "+EDIT_LEVEL_MODE_SPAWN+":spawns", 2,2 )
+				Local p:POINT = Create_POINT( mouse.x, mouse.y, 0 )
+				SetAlpha( 0.20 )
+				DrawOval( x+p.pos_x - 3,y+p.pos_y - 3, 6,6 )
+				SetLineWidth( 1 )
+				SetAlpha( 0.4 )
+				DrawLine( x+p.pos_x + 2*Cos(p.ang-90),y+p.pos_y + 2*Sin(p.ang-90), x+p.pos_x + 2*Cos(p.ang+90),y+p.pos_y + 2*Sin(p.ang+90) )
+				DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + 2*Cos(p.ang),y+p.pos_y + 2*Sin(p.ang) )
 			
 		End Select
 
 		Flip( 1 )
-		
 	End While
+	
+	Return lev
 End Function
 
 
