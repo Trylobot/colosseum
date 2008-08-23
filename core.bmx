@@ -19,6 +19,7 @@ Global FLAG_console% = False
 Global level_intro_time% = 2000
 Global level_passed_ts%
 Global FLAG_AI_demo% = True
+Global FLAG_no_particle_retain% = False
 'game state flags
 Global FLAG_game_in_progress% = False
 Global FLAG_game_over% = False

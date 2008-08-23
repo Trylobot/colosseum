@@ -72,6 +72,7 @@ If player <> Null Then debug_overlay()
 'If KeyHit( KEY_F4 ) And FLAG_game_in_progress
 '	find_path( player.pos_x,player.pos_y, mouse_point.x,mouse_point.y )
 'End If
+menu_command( COMMAND_EDIT_LEVEL )
 ?
 	check_esc_held()
 	
@@ -112,7 +113,7 @@ Function draw_instaquit_progress()
 	draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required ))
 	Local str$ = "continue holding ESC to quit"
 	SetImageFont( get_font( "consolas_bold_24" ))
-	DrawText_with_glow( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
+	DrawText( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
 End Function
 
 
