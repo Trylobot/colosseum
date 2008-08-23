@@ -6,6 +6,7 @@ EndRem
 
 'Window / Arena size
 Const arena_offset% = 50
+
 Const arena_offset_top% = 10
 Const arena_offset_right% = 10
 Const arena_offset_bottom% = 100
@@ -22,10 +23,6 @@ Const window_h% = (arena_offset_top + arena_w + arena_offset_bottom)
 load_data_files()
 	load_all_archetypes() 'this will be in data files, eventually
 	load_environment() 'same here; this will be externalized with LEVEL objects
-'?Debug
-'debug_load_data()
-'End
-'?
 
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo
@@ -39,8 +36,10 @@ SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
 
 ?Debug
+'debug_load_data()
 Global last_frame_ts%, time_count%, frame_count%, fps%
 'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
+menu_command( COMMAND_EDIT_LEVEL )
 ?
 
 '______________________________________________________________________________
@@ -72,7 +71,6 @@ If player <> Null Then debug_overlay()
 'If KeyHit( KEY_F4 ) And FLAG_game_in_progress
 '	find_path( player.pos_x,player.pos_y, mouse_point.x,mouse_point.y )
 'End If
-menu_command( COMMAND_EDIT_LEVEL )
 ?
 	check_esc_held()
 	
@@ -83,7 +81,7 @@ Until AppTerminate()
 '______________________________________________________________________________
 'Quit from anywhere; "instaquit" by holding ESC
 Global esc_held% = False, esc_press_ts% = now()
-Global esc_held_progress_bar_show_time_required% = 300, instaquit_time_required% = 1500
+Global esc_held_progress_bar_show_time_required% = 200, instaquit_time_required% = 1200
 
 Function check_esc_held()
 	If KeyDown( KEY_ESCAPE ) And Not esc_held
