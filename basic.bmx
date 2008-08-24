@@ -35,7 +35,30 @@ Function boolean_to_string$( b% )
 		Return "false"
 	End If
 End Function
-'______________________________________________________________________________
+
+Function string_to_boolean%( str$ )
+	Select str
+		Case "true"
+			Return 1
+		Case "false"
+			Return 0
+		Case "yes"
+			Return 1
+		Case "no"
+			Return 0
+		Case "on"
+			Return 1
+		Case "off"
+			Return 0
+		Case "enabled"
+			Return 1
+		Case "disabled"
+			Return 0
+		Default
+			Return str.ToInt()
+	End Select
+End Function
+
 Function address%( obj:Object )
 	If obj <> Null
 		Return Int( Byte Ptr( obj ))
@@ -98,15 +121,6 @@ Type MANAGED_OBJECT
 		Return (link <> Null)
 	End Method
 	
-?Debug
-	Method serialize$()
-		Return ..
-			"[MANAGED_OBJECT]"+ "~n"+ ..
-			" name$ = "+name+ "~n"+ ..
-			" link:TLink = "+address(link)+ "~n"+ ..
-			" id% = "+id+ "~n"
-	End Method
-?	
 End Type
 '______________________________________________________________________________
 Global next_managed_object_id% = 0
@@ -204,20 +218,37 @@ Type POINT Extends MANAGED_OBJECT
 		Return p
 	End Method
 	
-?Debug
-	Method serialize$()
-		Return ..
-			Super.serialize()+ ..
-			"[POINT]"+ "~n"+ ..
-			" pos# = ("+Int(pos_x)+","+Int(pos_y)+")"+ "~n"+ ..
-			" ang# = "+Int(ang)+ "~n"+ ..
-			" vel# = ("+Int(vel_x)+","+Int(vel_y)+")"+ "~n"+ ..
-			" ang_vel# = "+Int(ang_vel)+ "~n"+ ..
-			" acc# = ("+Int(acc_x)+","+Int(acc_y)+")"+ "~n"+ ..
-			" ang_acc# = "+Int(ang_acc)+ "~n"
+	Method to_json:TJSONObject()
+		Local this_json = New TJSONObject
+		this_json.SetByName( "pos_x", New TJSONNumber( pos_x ))
+		this_json.SetByName( "pos_y", New TJSONNumber( pos_y ))
+		this_json.SetByName( "ang", New TJSONNumber( ang ))
+		this_json.SetByName( "vel_x", New TJSONNumber( vel_x ))
+		this_json.SetByName( "vel_y", New TJSONNumber( vel_y ))
+		this_json.SetByName( "ang_vel", New TJSONNumber( ang_vel ))
+		this_json.SetByName( "acc_x", New TJSONNumber( acc_x ))
+		this_json.SetByName( "acc_y", New TJSONNumber( acc_y ))
+		this_json.SetByName( "ang_acc", New TJSONNumber( ang_acc ))
+		Return this_json
 	End Method
-?
+	
 End Type
+
+Function Create_POINT_from_json:POINT( json_val:TJSONObject )
+	Local p:POINT = New POINT
+	Local json:TJSON = TJSON.Create( json_val )
+	p.pos_x = json.GetNumber( "pos_x" )
+	p.pos_y = json.GetNumber( "pos_y" )
+	p.ang = json.GetNumber( "ang" )
+	p.vel_x = json.GetNumber( "vel_x" )
+	p.vel_y = json.GetNumber( "vel_y" )
+	p.ang_vel = json.GetNumber( "ang_vel" )
+	p.acc_x = json.GetNumber( "acc_x" )
+	p.acc_y = json.GetNumber( "acc_y" )
+	p.ang_acc = json.GetNumber( "ang_acc" )
+	Return p
+End Function
+
 '______________________________________________________________________________
 'vector & angle functions
 Function ang_wrap#( a# ) 'forces the angle into the range [-180,180]

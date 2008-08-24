@@ -92,6 +92,7 @@ Public
 
 '------------------------------------------------------------------------------------------------------------------------------------------------------
 '#Region &H03 Includes
+Include "json.bmx"
 Include "data.bmx"
 Include "basic.bmx"
 Include "particle.bmx"

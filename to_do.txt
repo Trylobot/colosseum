@@ -1,5 +1,14 @@
 [COLOSSEUM - TO DO LIST] (O = work in progress, X = done)
-	_ divider-based level system with dynamic sized pathing grid
+	
+	_ bake_level_bg() and bake_level_fg() functions ..
+			.. that each take a LEVEL object as an argument, and return a TImage object containing appropriate procedurally-generated level images fit for drawing.
+			cache_level_bg() will need to draw the "sand" texture based on the total size, as well as some "prefab" structures potentially (for gates/doors on outside wall spawn points)
+			cache_level_fg() will need to draw the walls, multi-layered things based on the LEVEL objects' pre-cached wall list. Walls that "touch" will need to look like it.
+			different base textures and prefabs could be used here to change the "theme" of the level
+			levels will also need to create door widgets for the "outside" spawn points
+				and also pop-out-of-ground widgets for spawn points that are meant to be for turrets (or "surprise" enemies)
+			
+	X divider-based level system with dynamic sized pathing grid
 	_ make static functions out of the CPU-intensive AI tasks such as find path and see target etc
 			these global functions keep track of their own global delay timers, so that if there are a lot of requests, some will get denied.
 	_ if a control_brain cannot see its current target, have it request another.

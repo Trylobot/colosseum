@@ -72,19 +72,5 @@ Type FORCE Extends MANAGED_OBJECT
 			(now() - created_ts) > life_time
 	End Method
 	
-?Debug
-	Method serialize_one_liner$()
-		Local str$ = "[FORCE] "
-		Select physics_type
-			Case PHYSICS_FORCE
-				str :+ "{force}  "
-				str :+ " direction:"+Int(direction)
-			Case PHYSICS_TORQUE
-				str :+ "{torque} "
-		End Select
-		str :+ " magnitude:"+Int(magnitude_cur)
-		Return str
-	End Method
-?
 End Type
 

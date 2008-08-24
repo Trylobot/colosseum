@@ -65,28 +65,6 @@ Function is_comment%( str$ )
   Return str.StartsWith( ";" )
 End Function
 
-Function string_to_boolean%( str$ )
-	Select str
-		Case "true"
-			Return 1
-		Case "false"
-			Return 0
-		Case "yes"
-			Return 1
-		Case "no"
-			Return 0
-		Case "on"
-			Return 1
-		Case "off"
-			Return 0
-		Case "enabled"
-			Return 1
-		Case "disabled"
-			Return 0
-		Default
-			Return str.ToInt()
-	End Select
-End Function
 '______________________________________________________________________________
 Function load_data_files()
   Local line$, directive$, token$[], variable$, value$
@@ -299,9 +277,25 @@ End Function
 
 Function save_level_to_file%( lev:LEVEL, filename$ = "" )
 	If filename = "" Then filename = make_filename( lev.name ) + data_file_suffix
+	CreateDir( user_path_prefix ) 'guarantees the existence of the required path
 	Local file:TStream = WriteFile( user_path_prefix + filename )
 	
-	CloseStream file
+	
+	
+'	file.WriteLine( DIRECTIVE_ADD_LEVEL )
+'	file.WriteLine( "name$ = "+lev.name )
+'	file.WriteLine( "width% = "+lev.width )
+'	file.WriteLine( "height% = "+lev.height )
+'	file.WriteLine( "row_count% = "+lev.row_count )
+'	file.WriteLine( "col_count% = "+lev.col_count )
+'	file.WriteLine( "horizontal_divs%[] = "+serialize_Int_array( lev.horizontal_divs ))
+'	file.WriteLine( "vertical_divs%[] = "+serialize_Int_array( lev.vertical_divs ))
+'	file.WriteLine( "pathing@[,] = "+serialize_Int_array( lev.pathing ))
+'	file.WriteLine( "spawns:List = "+lev.serialize_spawns() )
+'	file.WriteLine( "squads:List = "+lev.serialize_squads() )
+'	file.WriteLine( "" )
+	
+	CloseStream( file )
 End Function
 
 Function save_screenshot_to_file( screen:TImage, filename$ = "" )

@@ -11,7 +11,29 @@ Type SQUAD
 	Field archetypes%[] 'agents to spawn for this squad
 	Field spawn_point% 'can be SPAWN_POINT_RANDOM or a spawn point index
 	Field wait_time% 'time delay between spawning the first agent of the previous squad and the first agent of this squad
+	
+	Method to_json:TJSONObject()
+		Local index% = 0
+		Local this_json = New TJSONObject
+		Local archetypes_json:TJSONArray = TJSONArray.Create( archetypes.Length )
+		For index = 0 To archetypes.Length - 1
+			archetypes_json.SetByIndex( index, TJSONNumber.Create( archetypes[index] ))
+		Next
+		this_json.SetByName( "archetypes", archetypes_json )
+		Return this_json
+	End Method
+	
 End Type
+
+Function Create_SQUAD_from_json:SQUAD( json_val:TJSONObject )
+	Local sq:SQUAD = New SQUAD
+	Local json:TJSON = TJSON.Create( json_val )
+	sq.archetypes = json.GetArrayInt( "archetypes" )
+	sq.spawn_point = json.GetNumber( "spawn_point" )
+	sq.wait_time = json.GetNumber( "wait_time" )
+	Return sq
+End Function
+
 '______________________________________________________________________________
 Const LINE_TYPE_HORIZONTAL% = 1
 Const LINE_TYPE_VERTICAL% = 2
@@ -32,20 +54,29 @@ Function Create_LEVEL:LEVEL( width%, height% )
 	Return lev
 End Function
 
-Type LEVEL
-	Field name$ 'name of this level
-	Field width%, height% 'size in pixels
-	Field row_count%, col_count% 'number of divisions
-	Field horizontal_divs%[] 'horizontal dividers
-	Field vertical_divs%[] 'vertical dividers
+Type LEVEL Extends MANAGED_OBJECT
+	Field width%, height% 'dimensions in whole pixels
+	Field row_count%, col_count% 'number of cells
+	Field horizontal_divs%[], vertical_divs%[] 'dividers
 	Field pathing%[,] '{PASSABLE|BLOCKED}[w,h]
 	Field spawns:TList 'TList<POINT>
 	Field squads:TList 'TList<SQUAD>
-	Field walls:TList 'TList<BOX> (cached after level has been completely initialized)
+	Field walls:TList 'TList<BOX> (auto-cached after level has been completely initialized)
 	
 	Method New()
 		spawns = CreateList()
 		squads = CreateList()
+	End Method
+	
+	Method cache_walls()
+		walls = CreateList()
+		For Local r% = 0 To lev.row_count - 1
+			For Local c% = 0 To lev.col_count - 1
+				If pathing[r,c] = PATH_BLOCKED
+					walls.AddLast( Create_BOX( vertical_divs[c],horizontal_divs[r], vertical_divs[c+1]-vertical_divs[c],horizontal_divs[r+1]-horizontal_divs[r] ))
+				End If
+			Next
+		Next
 	End Method
 	
 	Method add_divider( pos%, line_type% )
@@ -150,6 +181,15 @@ Type LEVEL
 			pathing[ c.row, c.col ] = value
 		End If
 	End Method
+	
+	Method add_spawn( sp:POINT )
+		spawns.AddLast( sp )
+	End Method
+	
+	Method add_squad( sq:SQUAD )
+		squads.AddLast( sq )
+	End Method
+	
 	Method get_cell:CELL( x%, y% )
 		Local c:CELL = CELL.Create( COORDINATE_INVALID, COORDINATE_INVALID )
 		For Local i% = 0 To vertical_divs.Length - 2
@@ -167,15 +207,69 @@ Type LEVEL
 		Return c
 	End Method
 	
-	Method add_spawn( sp:POINT )
-		spawns.AddLast( sp )
-	End Method
-	
-	Method add_squad( sq:SQUAD )
-		squads.AddLast( sq )
+	Method to_json:TJSONObject()
+		Local index% = 0
+		Local this_json = New TJSONObject
+		this_json.SetByName( "name", TJSONString.Create( name ))
+		this_json.SetByName( "width", TJSONNumber.Create( width ))
+		this_json.SetByName( "height", TJSONNumber.Create( height ))
+		this_json.SetByName( "row_count", TJSONNumber.Create( row_count ))
+		this_json.SetByName( "col_count", TJSONNumber.Create( col_count ))
+		Local horizontal_divs_json:TJSONArray = TJSONArray.Create( horizontal_divs.Length )
+		For index = 0 To horizontal_divs.Length - 1
+			horizontal_divs_json.SetByIndex( index, TJSONNumber.Create( horizontal_divs[index] ))
+		Next
+		this_json.SetByName( "horizontal_divs", horizontal_divs_json )
+		Local vertical_divs_json:TJSONArray = TJSONArray.Create( vertical_divs.Length )
+		For index = 0 To vertical_divs.Length - 1
+			vertical_divs_json.SetByIndex( index, TJSONNumber.Create( vertical_divs[index] ))
+		Next
+		this_json.SetByName( "vertical_divs", vertical_divs_json )
+		Local pathing_json:TJSONArray = TJSONArray.Create( pathing.Length )
+		For index = 0 To pathing.Length - 1
+			pathing_json.SetByIndex( index, TJSONNumber.Create( pathing[index] ))
+		Next
+		this_json.SetByName( "pathing", pathing_json )
+		Local spawns_json:TJSONArray = TJSONArray.Create( spawns.Count() )
+		index = 0
+		For Local sp:POINT = EachIn spawns
+			spawns_json.SetByIndex( index, sp.to_json() )
+			index :+ 1
+		Next
+		this_json.SetByName( "spawns", spawns_json )
+		Local squads_json:TJSONArray = TJSONArray.Create( squads.Count() )
+		index = 0
+		For Local sq:POINT = EachIn squads
+			squads_json.SetByIndex( index, sq.to_json() )
+			index :+ 1
+		Next
+		this_json.SetByName( "squads", squads_json )
+		Return this_json
 	End Method
 	
 End Type
+
+Function Create_LEVEL_from_json:LEVEL( json_val:TJSONObject )
+	Local index%
+	Local lev:LEVEL = New LEVEL
+	Local json:TJSON = TJSON.Create( json_val )
+	lev.name = json.GetString( "name" )
+	lev.width = json.GetNumber( "width" )
+	lev.height = json.GetNumber( "height" )
+	lev.row_count = json.GetNumber( "row_count" )
+	lev.col_count = json.GetNumber( "col_count" )
+	lev.horizontal_divs = json.GetArrayInt( "horizontal_divs" )
+	lev.vertical_divs = json.GetArrayInt( "vertical_divs" )
+	lev.pathing = json.GetArrayInt( "pathing" )
+	For index = 0 To json.GetArray( "spawns" ).Size() - 1
+		lev.add_spawn( Create_POINT_from_json( json.GetObject( "spawns."+index )))
+	Next
+	For index = 0 To json.GetArray( "squads" ).Size() - 1
+		lev.add_squad( Create_SQUAD_from_json( json.GetObject( "squads."+index )))
+	Next
+	lev.cache_walls()
+	Return lev
+End Function
 
 '______________________________________________________________________________
 Const gridsnap% = 10
@@ -187,7 +281,7 @@ Const EDIT_LEVEL_MODE_SPAWN% = 4
 
 Function edit_level:LEVEL( lev:LEVEL )
 	Local mode% = EDIT_LEVEL_MODE_PAN
-	Local x% = gridsnap, y% = 2*gridsnap
+	Local x% = gridsnap, y% = gridsnap
 	Local mouse_down_1% = False, mouse_down_2% = False
 	
 	While Not KeyHit( KEY_ESCAPE )
@@ -258,8 +352,9 @@ Function edit_level:LEVEL( lev:LEVEL )
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PAN+" -> camera pan", 2,2 )
 				If MouseDown( 1 )
 					x = round_to_nearest( mouse.x + gridsnap - lev.width/2, gridsnap )
-					y = round_to_nearest( mouse.y + 2*gridsnap - lev.height/2, gridsnap )
-				Else If MouseDown( 2 )
+					y = round_to_nearest( mouse.y + gridsnap - lev.height/2, gridsnap )
+				End If
+				If MouseDown( 2 )
 					x = gridsnap
 					y = 2*gridsnap
 				End If
@@ -336,6 +431,8 @@ Function edit_level:LEVEL( lev:LEVEL )
 
 		Flip( 1 )
 	End While
+	
+	lev.cache_walls()
 	
 	Return lev
 End Function
