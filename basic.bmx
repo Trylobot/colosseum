@@ -219,24 +219,24 @@ Type POINT Extends MANAGED_OBJECT
 	End Method
 	
 	Method to_json:TJSONObject()
-		Local this_json = New TJSONObject
-		this_json.SetByName( "pos_x", New TJSONNumber( pos_x ))
-		this_json.SetByName( "pos_y", New TJSONNumber( pos_y ))
-		this_json.SetByName( "ang", New TJSONNumber( ang ))
-		this_json.SetByName( "vel_x", New TJSONNumber( vel_x ))
-		this_json.SetByName( "vel_y", New TJSONNumber( vel_y ))
-		this_json.SetByName( "ang_vel", New TJSONNumber( ang_vel ))
-		this_json.SetByName( "acc_x", New TJSONNumber( acc_x ))
-		this_json.SetByName( "acc_y", New TJSONNumber( acc_y ))
-		this_json.SetByName( "ang_acc", New TJSONNumber( ang_acc ))
+		Local this_json:TJSONObject = New TJSONObject
+		this_json.SetByName( "pos_x", TJSONNumber.Create( pos_x ))
+		this_json.SetByName( "pos_y", TJSONNumber.Create( pos_y ))
+		this_json.SetByName( "ang", TJSONNumber.Create( ang ))
+		this_json.SetByName( "vel_x", TJSONNumber.Create( vel_x ))
+		this_json.SetByName( "vel_y", TJSONNumber.Create( vel_y ))
+		this_json.SetByName( "ang_vel", TJSONNumber.Create( ang_vel ))
+		this_json.SetByName( "acc_x", TJSONNumber.Create( acc_x ))
+		this_json.SetByName( "acc_y", TJSONNumber.Create( acc_y ))
+		this_json.SetByName( "ang_acc", TJSONNumber.Create( ang_acc ))
 		Return this_json
 	End Method
 	
 End Type
 
 Function Create_POINT_from_json:POINT( json_val:TJSONObject )
-	Local p:POINT = New POINT
 	Local json:TJSON = TJSON.Create( json_val )
+	Local p:POINT = New POINT
 	p.pos_x = json.GetNumber( "pos_x" )
 	p.pos_y = json.GetNumber( "pos_y" )
 	p.ang = json.GetNumber( "ang" )

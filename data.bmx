@@ -5,10 +5,9 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-global data_file_suffix$ = ".ini"
 Global data_path_prefix$ = "data/"
 Global user_path_prefix$ = "user/"
-Global loaded_pct# = 0.00
+Global data_file_suffix$ = ".json"
 
 Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
@@ -280,20 +279,7 @@ Function save_level_to_file%( lev:LEVEL, filename$ = "" )
 	CreateDir( user_path_prefix ) 'guarantees the existence of the required path
 	Local file:TStream = WriteFile( user_path_prefix + filename )
 	
-	
-	
-'	file.WriteLine( DIRECTIVE_ADD_LEVEL )
-'	file.WriteLine( "name$ = "+lev.name )
-'	file.WriteLine( "width% = "+lev.width )
-'	file.WriteLine( "height% = "+lev.height )
-'	file.WriteLine( "row_count% = "+lev.row_count )
-'	file.WriteLine( "col_count% = "+lev.col_count )
-'	file.WriteLine( "horizontal_divs%[] = "+serialize_Int_array( lev.horizontal_divs ))
-'	file.WriteLine( "vertical_divs%[] = "+serialize_Int_array( lev.vertical_divs ))
-'	file.WriteLine( "pathing@[,] = "+serialize_Int_array( lev.pathing ))
-'	file.WriteLine( "spawns:List = "+lev.serialize_spawns() )
-'	file.WriteLine( "squads:List = "+lev.serialize_squads() )
-'	file.WriteLine( "" )
+	file.WriteLine( lev.to_json().ToSource() )
 	
 	CloseStream( file )
 End Function

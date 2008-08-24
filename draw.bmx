@@ -32,9 +32,9 @@ Function draw_all()
 	
 End Function
 
-Function draw_loading()
-	draw_percentage_bar( window_w/5,window_h/5, 3*window_w/5,3*window_w/5, loaded_pct )
-End Function
+'Function draw_loading()
+'	draw_percentage_bar( window_w/5,window_h/5, 3*window_w/5,3*window_w/5, loaded_pct )
+'End Function
 '______________________________________________________________________________
 'In-game stuff
 Function draw_game()
@@ -184,7 +184,7 @@ End Function
 '______________________________________________________________________________
 'Menu and GUI
 Function draw_main_screen()
-	Local x%, y%
+	Local x%, y%, h%
 	
 	'title
 	x = 25; y = 25
@@ -198,20 +198,16 @@ Function draw_main_screen()
 	'copyright stuff
 	SetColor( 157, 157, 157 )
 	SetImageFont( get_font( "consolas_10" ))
-	x = window_w - 400; y = 25
-	DrawText( "Colosseum (c) 2008 Tylerbot", x, y ); y :+ 10
-	DrawText( "  [Tyler W.R. Cole]", x, y ); y :+ 10
-	y :+ 10
-	DrawText( "written in 100% BlitzMax", x, y ); y :+ 10
-	DrawText( "  http://www.blitzmax.com", x, y ); y :+ 10
-	x = window_w - 200; y = 25
-	DrawText( "music by NickPerrin", x, y ); y :+ 10
-	DrawText( "  Victory! (8-bit Chiptune)", x, y ); y :+ 10
-	DrawText( "  http://www.newgrounds.com", x, y ); y :+ 10
-	y :+ 10
-	DrawText( "special thanks to", x, y ); y :+ 10
-	DrawText( "  Kaze", x, y ); y :+ 10
-	DrawText( "  SniperAceX", x, y ); y :+ 10
+	h = GetImageFont().Height() - 1
+	x = 25; y = window_h - h*9
+	DrawText( "Colosseum (c) 2008 Tyler W.R. Cole", x, y ); y :+ h
+	DrawText( "  aka ~qTylerbot~q", x, y ); y :+ h
+	DrawText( "music by ~qNickPerrin~q", x, y ); y :+ h
+	DrawText( "json binding by ~qgrable~q", x, y ); y :+ h
+	DrawText( "special thanks to", x, y ); y :+ h
+	DrawText( "  ~qKaze~q", x, y ); y :+ h
+	DrawText( "  ~qSniperAceX~q", x, y ); y :+ h
+	DrawText( "written in 100% BlitzMax", x, y ); y :+ h
 	
 	'draw auto-AI demo area
 	draw_AI_demo()

@@ -1,7 +1,19 @@
 Rem
 	main.bmx
 	This is a COLOSSEUM project BlitzMax source file.
-	author: Tyler W Cole
+	
+	author: Tyler W Cole, aka "Tylerbot"
+	email: mailto:tylerbot@gmail.com
+	site: http://colosseum.devjav.com
+	
+	-- project description --
+	This is a video game in the genre of classic Asteroids, but with a little more depth.
+	You play a hero with a tank, fighting for your life in a futuristic Colosseum.
+	Enemies come at you in waves, which you must destroy completely before advancing.
+	Between levels, you may visit the shop for repairs and to buy new items with cash gained from kills.
+	After making it past the initial levels, you unlock unlimited "Veteran" difficulty, which allows you to play randomly-generated levels and to unlock for purchase the most prestigious and powerful of the shop items.
+	Because it's a little more than a basic arcade game, you can save/load your progress to/from files on disk (It is completely possible to "cheat", since the files are not encrypted in any way, and this is intentional).
+
 EndRem
 
 'Window / Arena size

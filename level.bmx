@@ -14,7 +14,7 @@ Type SQUAD
 	
 	Method to_json:TJSONObject()
 		Local index% = 0
-		Local this_json = New TJSONObject
+		Local this_json:TJSONObject = New TJSONObject
 		Local archetypes_json:TJSONArray = TJSONArray.Create( archetypes.Length )
 		For index = 0 To archetypes.Length - 1
 			archetypes_json.SetByIndex( index, TJSONNumber.Create( archetypes[index] ))
@@ -26,8 +26,8 @@ Type SQUAD
 End Type
 
 Function Create_SQUAD_from_json:SQUAD( json_val:TJSONObject )
-	Local sq:SQUAD = New SQUAD
 	Local json:TJSON = TJSON.Create( json_val )
+	Local sq:SQUAD = New SQUAD
 	sq.archetypes = json.GetArrayInt( "archetypes" )
 	sq.spawn_point = json.GetNumber( "spawn_point" )
 	sq.wait_time = json.GetNumber( "wait_time" )
@@ -50,7 +50,7 @@ Function Create_LEVEL:LEVEL( width%, height% )
 	lev.row_count = 1; lev.col_count = 1
 	lev.horizontal_divs = [ 0, lev.height ]
 	lev.vertical_divs = [ 0, lev.width ]
-	lev.pathing = New Int[ lev.row_count, lev.col_count ]
+	lev.path_regions = New Int[ lev.row_count, lev.col_count ]
 	Return lev
 End Function
 
@@ -58,7 +58,7 @@ Type LEVEL Extends MANAGED_OBJECT
 	Field width%, height% 'dimensions in whole pixels
 	Field row_count%, col_count% 'number of cells
 	Field horizontal_divs%[], vertical_divs%[] 'dividers
-	Field pathing%[,] '{PASSABLE|BLOCKED}[w,h]
+	Field path_regions%[,] '{PASSABLE|BLOCKED}[w,h]
 	Field spawns:TList 'TList<POINT>
 	Field squads:TList 'TList<SQUAD>
 	Field walls:TList 'TList<BOX> (auto-cached after level has been completely initialized)
@@ -70,9 +70,9 @@ Type LEVEL Extends MANAGED_OBJECT
 	
 	Method cache_walls()
 		walls = CreateList()
-		For Local r% = 0 To lev.row_count - 1
-			For Local c% = 0 To lev.col_count - 1
-				If pathing[r,c] = PATH_BLOCKED
+		For Local r% = 0 To row_count - 1
+			For Local c% = 0 To col_count - 1
+				If path_regions[r,c] = PATH_BLOCKED
 					walls.AddLast( Create_BOX( vertical_divs[c],horizontal_divs[r], vertical_divs[c+1]-vertical_divs[c],horizontal_divs[r+1]-horizontal_divs[r] ))
 				End If
 			Next
@@ -99,7 +99,7 @@ Type LEVEL Extends MANAGED_OBJECT
 							horizontal_divs[j+1] = old_horizontal_divs[j]
 						Next
 						row_count :+ 1
-						pathing = New Int[row_count,col_count]
+						path_regions = New Int[row_count,col_count]
 						Return
 					End If
 				Next
@@ -121,7 +121,7 @@ Type LEVEL Extends MANAGED_OBJECT
 							vertical_divs[j+1] = old_vertical_divs[j]
 						Next
 						col_count :+ 1
-						pathing = New Int[row_count,col_count]
+						path_regions = New Int[row_count,col_count]
 						Return
 					End If
 				Next
@@ -147,7 +147,7 @@ Type LEVEL Extends MANAGED_OBJECT
 							horizontal_divs[j-1] = old_horizontal_divs[j]
 						Next
 						row_count :- 1
-						pathing = New Int[row_count,col_count]
+						path_regions = New Int[row_count,col_count]
 						Return
 					End If
 				Next
@@ -167,7 +167,7 @@ Type LEVEL Extends MANAGED_OBJECT
 							vertical_divs[j-1] = old_vertical_divs[j]
 						Next
 						col_count :- 1
-						pathing = New Int[row_count,col_count]
+						path_regions = New Int[row_count,col_count]
 						Return
 					End If
 				Next
@@ -175,10 +175,10 @@ Type LEVEL Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
-	Method set_pathing_value( x%, y%, value% )
+	Method set_path_regions_value( x%, y%, value% )
 		Local c:CELL = get_cell( x, y )
 		If c.row <> COORDINATE_INVALID And c.col <> COORDINATE_INVALID
-			pathing[ c.row, c.col ] = value
+			path_regions[ c.row, c.col ] = value
 		End If
 	End Method
 	
@@ -208,28 +208,37 @@ Type LEVEL Extends MANAGED_OBJECT
 	End Method
 	
 	Method to_json:TJSONObject()
-		Local index% = 0
-		Local this_json = New TJSONObject
+		Local index%, row%, col%
+		Local this_json:TJSONObject = New TJSONObject
+		
 		this_json.SetByName( "name", TJSONString.Create( name ))
 		this_json.SetByName( "width", TJSONNumber.Create( width ))
 		this_json.SetByName( "height", TJSONNumber.Create( height ))
 		this_json.SetByName( "row_count", TJSONNumber.Create( row_count ))
 		this_json.SetByName( "col_count", TJSONNumber.Create( col_count ))
+		
 		Local horizontal_divs_json:TJSONArray = TJSONArray.Create( horizontal_divs.Length )
-		For index = 0 To horizontal_divs.Length - 1
-			horizontal_divs_json.SetByIndex( index, TJSONNumber.Create( horizontal_divs[index] ))
+		For row = 0 To row_count - 1
+			horizontal_divs_json.SetByIndex( row, TJSONNumber.Create( horizontal_divs[row] ))
 		Next
 		this_json.SetByName( "horizontal_divs", horizontal_divs_json )
+		
 		Local vertical_divs_json:TJSONArray = TJSONArray.Create( vertical_divs.Length )
-		For index = 0 To vertical_divs.Length - 1
-			vertical_divs_json.SetByIndex( index, TJSONNumber.Create( vertical_divs[index] ))
+		For col = 0 To col_count - 1
+			vertical_divs_json.SetByIndex( col, TJSONNumber.Create( vertical_divs[col] ))
 		Next
 		this_json.SetByName( "vertical_divs", vertical_divs_json )
-		Local pathing_json:TJSONArray = TJSONArray.Create( pathing.Length )
-		For index = 0 To pathing.Length - 1
-			pathing_json.SetByIndex( index, TJSONNumber.Create( pathing[index] ))
+		
+		Local path_regions_json:TJSONArray = TJSONArray.Create( row_count )
+		For row = 0 To row_count - 1
+			Local path_regions_json__row:TJSONArray = TJSONArray.Create( col_count )
+			For col = 0 To col_count - 1
+				path_regions_json__row.SetByIndex( col, TJSONNumber.Create( path_regions[row,col] ))
+			Next
+			path_regions_json.SetByIndex( row, path_regions_json__row )
 		Next
-		this_json.SetByName( "pathing", pathing_json )
+		this_json.SetByName( "path_regions", path_regions_json )
+		
 		Local spawns_json:TJSONArray = TJSONArray.Create( spawns.Count() )
 		index = 0
 		For Local sp:POINT = EachIn spawns
@@ -237,6 +246,7 @@ Type LEVEL Extends MANAGED_OBJECT
 			index :+ 1
 		Next
 		this_json.SetByName( "spawns", spawns_json )
+		
 		Local squads_json:TJSONArray = TJSONArray.Create( squads.Count() )
 		index = 0
 		For Local sq:POINT = EachIn squads
@@ -244,15 +254,16 @@ Type LEVEL Extends MANAGED_OBJECT
 			index :+ 1
 		Next
 		this_json.SetByName( "squads", squads_json )
+		
 		Return this_json
 	End Method
 	
 End Type
 
 Function Create_LEVEL_from_json:LEVEL( json_val:TJSONObject )
-	Local index%
-	Local lev:LEVEL = New LEVEL
 	Local json:TJSON = TJSON.Create( json_val )
+	Local index%, row%, col%
+	Local lev:LEVEL = New LEVEL
 	lev.name = json.GetString( "name" )
 	lev.width = json.GetNumber( "width" )
 	lev.height = json.GetNumber( "height" )
@@ -260,7 +271,12 @@ Function Create_LEVEL_from_json:LEVEL( json_val:TJSONObject )
 	lev.col_count = json.GetNumber( "col_count" )
 	lev.horizontal_divs = json.GetArrayInt( "horizontal_divs" )
 	lev.vertical_divs = json.GetArrayInt( "vertical_divs" )
-	lev.pathing = json.GetArrayInt( "pathing" )
+	lev.path_regions = New Int[lev.row_count,lev.col_count]
+	For row = 0 To json.GetArray( "path_regions" ).Size() - 1
+		For col = 0 To json.GetArray( "path_regions."+row ).Size() - 1
+			lev.path_regions[row,col] = json.GetNumber( "path_regions."+row+"."+col )
+		Next
+	Next
 	For index = 0 To json.GetArray( "spawns" ).Size() - 1
 		lev.add_spawn( Create_POINT_from_json( json.GetObject( "spawns."+index )))
 	Next
@@ -282,7 +298,11 @@ Const EDIT_LEVEL_MODE_SPAWN% = 4
 Function edit_level:LEVEL( lev:LEVEL )
 	Local mode% = EDIT_LEVEL_MODE_PAN
 	Local x% = gridsnap, y% = gridsnap
+	Local info_x%, info_y%
 	Local mouse_down_1% = False, mouse_down_2% = False
+	
+	SetImageFont( get_font( "consolas_12" ))
+	Local line_h% = GetImageFont().Height()
 	
 	While Not KeyHit( KEY_ESCAPE )
 		Cls
@@ -314,7 +334,7 @@ Function edit_level:LEVEL( lev:LEVEL )
 		SetAlpha( 0.50 )
 		For Local r% = 0 To lev.row_count - 1 'lev.horizontal_divs.Length - 2
 			For Local c% = 0 To lev.col_count - 1 'lev.vertical_divs.Length - 2
-				If lev.pathing[r,c] = PATH_BLOCKED
+				If lev.path_regions[r,c] = PATH_BLOCKED
 					DrawRect( x+lev.vertical_divs[c],y+lev.horizontal_divs[r], lev.vertical_divs[c+1]-lev.vertical_divs[c],lev.horizontal_divs[r+1]-lev.horizontal_divs[r] )
 				End If
 			Next
@@ -343,13 +363,11 @@ Function edit_level:LEVEL( lev:LEVEL )
 		
 		Local mouse:cVEC = cVEC( cVEC.Create( MouseX(),MouseY() ))
 		
-		SetImageFont( get_font( "consolas_12" ))
 		Select mode
 			
 			Case EDIT_LEVEL_MODE_PAN
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
-				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PAN+" -> camera pan", 2,2 )
 				If MouseDown( 1 )
 					x = round_to_nearest( mouse.x + gridsnap - lev.width/2, gridsnap )
 					y = round_to_nearest( mouse.y + gridsnap - lev.height/2, gridsnap )
@@ -364,7 +382,6 @@ Function edit_level:LEVEL( lev:LEVEL )
 				mouse.y = round_to_nearest( mouse.y, gridsnap )
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
-				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_DIVIDER+" -> dividers vertical/horizontal", 2,2 )
 				If mouse_down_1 And Not MouseDown( 1 )
 					If Not KeyDown( KEY_LCONTROL ) And Not KeyDown( KEY_RCONTROL )
 						lev.add_divider( mouse.x-x, LINE_TYPE_VERTICAL )
@@ -402,23 +419,20 @@ Function edit_level:LEVEL( lev:LEVEL )
 			Case EDIT_LEVEL_MODE_PATHING
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
-				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PATHING+" -> pathing blocked/passable", 2,2 )
 				If MouseDown( 1 )
-					lev.set_pathing_value( mouse.x-x,mouse.y-y, PATH_BLOCKED )
+					lev.set_path_regions_value( mouse.x-x,mouse.y-y, PATH_BLOCKED )
 				Else If MouseDown( 2 )
-					lev.set_pathing_value( mouse.x-x,mouse.y-y, PATH_PASSABLE )
+					lev.set_path_regions_value( mouse.x-x,mouse.y-y, PATH_PASSABLE )
 				End If
 				
 			Case EDIT_LEVEL_MODE_SPAWN
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
-				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_SPAWN+" -> spawn points add/remove", 2,2 )
 				
 			Default
 				'help
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
-				DrawText_with_shadow( "[level editor]  "+EDIT_LEVEL_MODE_PAN+":pan  "+EDIT_LEVEL_MODE_DIVIDER+":dividers  "+EDIT_LEVEL_MODE_PATHING+":pathing  "+EDIT_LEVEL_MODE_SPAWN+":spawns", 2,2 )
 				Local p:POINT = Create_POINT( mouse.x, mouse.y, 0 )
 				SetAlpha( 0.20 )
 				DrawOval( x+p.pos_x - 3,y+p.pos_y - 3, 6,6 )
@@ -428,7 +442,30 @@ Function edit_level:LEVEL( lev:LEVEL )
 				DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + 2*Cos(p.ang),y+p.pos_y + 2*Sin(p.ang) )
 			
 		End Select
-
+		
+		'level info and help
+		info_x = window_w-299; info_y = 0;
+		SetAlpha( 0.75 )
+		SetColor( 0, 0, 0 )
+		DrawRect( info_x,info_y, 300,window_h )
+		SetAlpha( 1 )
+		SetColor( 255, 255, 255 )
+		Select mode
+			Case EDIT_LEVEL_MODE_PAN
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PAN+" -> camera pan", info_x+6,info_y+3 )
+			Case EDIT_LEVEL_MODE_DIVIDER
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_DIVIDER+" -> dividers vertical/horizontal", info_x+6,info_y+3 )
+			Case EDIT_LEVEL_MODE_PATHING
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PATHING+" -> pathing blocked/passable", info_x+6,info_y+3 )
+			Case EDIT_LEVEL_MODE_SPAWN
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_SPAWN+" -> spawn points add/remove", info_x+6,info_y+3 )
+			Default 
+				DrawText_with_shadow( "[level editor]  "+EDIT_LEVEL_MODE_PAN+":pan  "+EDIT_LEVEL_MODE_DIVIDER+":dividers  "+EDIT_LEVEL_MODE_PATHING+":pathing  "+EDIT_LEVEL_MODE_SPAWN+":spawns", info_x+6,info_y+3 )
+		End Select
+		info_y :+ line_h
+		
+		
+		
 		Flip( 1 )
 	End While
 	
