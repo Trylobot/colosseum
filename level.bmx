@@ -257,8 +257,8 @@ Function edit_level:LEVEL( lev:LEVEL )
 				SetAlpha( 1 )
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PAN+" -> camera pan", 2,2 )
 				If MouseDown( 1 )
-					x = mouse.x + gridsnap - lev.width/2
-					y = mouse.y + 2*gridsnap - lev.height/2
+					x = round_to_nearest( mouse.x + gridsnap - lev.width/2, gridsnap )
+					y = round_to_nearest( mouse.y + 2*gridsnap - lev.height/2, gridsnap )
 				Else If MouseDown( 2 )
 					x = gridsnap
 					y = 2*gridsnap
