@@ -72,7 +72,7 @@ Function edit_level_file( file_path$ = "" )
 	If file_path = "" Then file_path = RequestFile( "Load Level Data", data_file_filter, False, user_path )
 	If file_path <> ""
 		json = TJSON.Create( LoadString( file_path ))
-		lev = Create_LEVEL_from_json( json.GetObject( "" ))
+		lev = Create_LEVEL_from_json( json )
 	Else
 		lev = Create_LEVEL( 650, 650 )
 		lev.name = "new level"

@@ -234,8 +234,7 @@ Type POINT Extends MANAGED_OBJECT
 	
 End Type
 
-Function Create_POINT_from_json:POINT( json_val:TJSONObject )
-	Local json:TJSON = TJSON.Create( json_val )
+Function Create_POINT_from_json:POINT( json:TJSON )
 	Local p:POINT = New POINT
 	p.pos_x = json.GetNumber( "pos_x" )
 	p.pos_y = json.GetNumber( "pos_y" )

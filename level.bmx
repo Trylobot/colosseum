@@ -25,8 +25,7 @@ Type SQUAD
 	
 End Type
 
-Function Create_SQUAD_from_json:SQUAD( json_val:TJSONObject )
-	Local json:TJSON = TJSON.Create( json_val )
+Function Create_SQUAD_from_json:SQUAD( json:TJSON )
 	Local sq:SQUAD = New SQUAD
 	sq.archetypes = json.GetArrayInt( "archetypes" )
 	sq.spawn_point = json.GetNumber( "spawn_point" )
@@ -61,7 +60,6 @@ Type LEVEL Extends MANAGED_OBJECT
 	Field path_regions%[,] '{PASSABLE|BLOCKED}[w,h]
 	Field spawns:TList 'TList<POINT>
 	Field squads:TList 'TList<SQUAD>
-	Field walls:TList 'TList<BOX> (auto-cached after level has been completely initialized)
 	
 	Method New()
 		spawns = CreateList()
@@ -196,17 +194,6 @@ Type LEVEL Extends MANAGED_OBJECT
 		Return c
 	End Method
 	
-	Method cache_walls()
-		walls = CreateList()
-		For Local r% = 0 To row_count - 1
-			For Local c% = 0 To col_count - 1
-				If path_regions[r,c] = PATH_BLOCKED
-					walls.AddLast( Create_BOX( vertical_divs[c],horizontal_divs[r], vertical_divs[c+1]-vertical_divs[c],horizontal_divs[r+1]-horizontal_divs[r] ))
-				End If
-			Next
-		Next
-	End Method
-	
 	Method to_json:TJSONObject()
 		Local index%, row%, col%
 		Local this_json:TJSONObject = New TJSONObject
@@ -268,8 +255,7 @@ Type LEVEL Extends MANAGED_OBJECT
 	
 End Type
 
-Function Create_LEVEL_from_json:LEVEL( json_val:TJSONObject )
-	Local json:TJSON = TJSON.Create( json_val )
+Function Create_LEVEL_from_json:LEVEL( json:TJSON )
 	Local index%, row%, col%
 	Local lev:LEVEL = New LEVEL
 	lev.name = json.GetString( "name" )
@@ -287,15 +273,14 @@ Function Create_LEVEL_from_json:LEVEL( json_val:TJSONObject )
 	Next
 	If json.GetArray( "spawns" ) <> Null
 		For index = 0 To json.GetArray( "spawns" ).Size() - 1
-			lev.add_spawn( Create_POINT_from_json( json.GetObject( "spawns."+index )))
+			lev.add_spawn( Create_POINT_from_json( TJSON.Create( json.GetObject( "spawns."+index ))))
 		Next
 	End If
 	If json.GetArray( "squads" ) <> Null
 		For index = 0 To json.GetArray( "squads" ).Size() - 1
-			lev.add_squad( Create_SQUAD_from_json( json.GetObject( "squads."+index )))
+			lev.add_squad( Create_SQUAD_from_json( TJSON.Create( json.GetObject( "squads."+index ))))
 		Next
 	End If
-	lev.cache_walls()
 	Return lev
 End Function
 
@@ -307,9 +292,12 @@ Const EDIT_LEVEL_MODE_PAN% = 1
 Const EDIT_LEVEL_MODE_DIVIDER% = 2
 Const EDIT_LEVEL_MODE_PATHING% = 3
 Const EDIT_LEVEL_MODE_SPAWN% = 4
+Const MAX_LEVEL_NAME_LENGTH% = 22
 
 Function edit_level:LEVEL( lev:LEVEL )
-	Local gridsnap% = 25
+	
+	Local gridsnap_exponent% = 3
+	Local gridsnap% = Pow( 2, gridsnap_exponent )
 	Local mode% = EDIT_LEVEL_MODE_PAN
 	Local FLAG_text_mode% = False
 	Local x% = gridsnap, y% = gridsnap
@@ -318,7 +306,10 @@ Function edit_level:LEVEL( lev:LEVEL )
 	Local spawn_ang% = 0
 	Local kb_handler:CONSOLE = New CONSOLE
 	
-	SetImageFont( get_font( "consolas_12" ))
+	Local normal_font:TImageFont = get_font( "consolas_12" )
+	Local bigger_font:TImageFont = get_font( "consolas_bold_24" )
+	
+	SetImageFont( normal_font )
 	Local line_h% = GetImageFont().Height() - 1
 	
 	Repeat
@@ -373,7 +364,7 @@ Function edit_level:LEVEL( lev:LEVEL )
 			FlushKeys()
 		End If
 		If FLAG_text_mode
-			lev.name = kb_handler.update( lev.name )
+			lev.name = kb_handler.update( lev.name, MAX_LEVEL_NAME_LENGTH )
 		Else 'Not FLAG_text_mode
 			If KeyHit( KEY_1 ) 'divider mode
 				mode = EDIT_LEVEL_MODE_PAN
@@ -385,12 +376,14 @@ Function edit_level:LEVEL( lev:LEVEL )
 				mode = EDIT_LEVEL_MODE_SPAWN
 			End If
 			If KeyHit( KEY_NUMADD )
-				gridsnap :+ 5
+				gridsnap_exponent :+ 1
+				gridsnap = Pow( 2, gridsnap_exponent )
 				x = gridsnap
 				y = gridsnap
 			Else If KeyHit( KEY_NUMSUBTRACT )
-				gridsnap :- 5
-				If gridsnap < 5 Then gridsnap = 5
+				gridsnap_exponent :- 1
+				If gridsnap_exponent < 1 Then gridsnap_exponent = 1
+				gridsnap = Pow( 2, gridsnap_exponent )
 				x = gridsnap
 				y = gridsnap
 			End If
@@ -509,13 +502,15 @@ Function edit_level:LEVEL( lev:LEVEL )
 			Case EDIT_LEVEL_MODE_SPAWN
 				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWN+" -> spawn points add/remove", info_x,info_y )
 		End Select; info_y :+ 2*line_h
-		SetImageFont( get_font( "consolas_bold_24" ))
+		SetImageFont( bigger_font )
 		DrawText_with_glow( lev.name, info_x,info_y )
 		If FLAG_text_mode
+			SetAlpha( kb_handler.cursor_alpha() )
 			DrawText_with_glow( "|", info_x + TextWidth( lev.name ) - 2,info_y )
+			SetAlpha( 1 )
 		End If
 		info_y :+ GetImageFont().Height() - 1
-		SetImageFont( get_font( "consolas_12" ))
+		SetImageFont( normal_font )
 		DrawText( "path_regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
 		DrawText( "spawn points: "+lev.spawns.Count(), info_x,info_y ); info_y :+ line_h
 		DrawText( "squads: "+lev.squads.Count(), info_x,info_y ); info_y :+ line_h

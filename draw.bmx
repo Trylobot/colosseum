@@ -459,4 +459,16 @@ Function screenshot()
 	Local screen:TImage = New TImage
 	save_screenshot_to_file( screen )
 End Function
+'______________________________________________________________________________
+'Procedural drawing methods
+Function generate_sand_image:TImage( w%, h% )
+	'draw sand procedurally by any means necessary
+	
+End Function
+
+Function generate_walls_image:TImage( w%, h%, walls:TList )
+	'draw walls based on BOX objects to an image
+	'first determine if any walls intersect or touch
+	
+End Function
 

@@ -80,26 +80,56 @@ Type CONSOLE
 	Field key_press_ts%
 	Field repeat_ts%
 	
-	Method update$( str$ )
-		Local this_char$ = GetChar_normal()
-		If this_char <> "" And this_char <> last_char
-			key_press_ts = now()
-			last_char = this_char
-			str :+ this_char
-		Else 'this_char = last_char
-			If (now() - key_press_ts) >= key_press_time
-			
+	Method update$( str$, max_size% )
+		If str.Length < max_size
+			Local this_char$ = GetChar_normal()
+			If this_char <> "" And this_char <> last_char
+				key_press_ts = now()
+				last_char = this_char
+				str :+ this_char
+				cursor_index :+ 1
+			Else If this_char <> "" 'this_char = last_char
+				If (now() - key_press_ts) >= key_press_time 'big delay is done
+					If (now() - repeat_ts) >= key_repeat_delay 'small delay is done
+						repeat_ts = now()
+						str :+ this_char
+						cursor_index :+ 1
+					End If
+				Else 'big delay is not done
+					repeat_ts = now()
+				End If
+			Else
+				last_char = ""
 			End If
 		End If
-		If KeyHit( KEY_BACKSPACE )
-			str = str[..(str.Length-1)]
+		
+		If KeyHit( KEY_LEFT ) 'move cursor left
+			cursor_index :- 1
+			If cursor_index < 0 Then cursor_index = 0
+		Else If KeyHit( KEY_RIGHT ) 'move cursor right
+			cursor_index :+ 1
+			If cursor_index > str.Length-1 Then cursor_index = str.Length-1
 		End If
-		FlushKeys()
+		If KeyHit( KEY_BACKSPACE ) '.. 'erase character left of cursor and move cursor left
+		'And cursor_index > 0
+			'this should use the cursor position
+			str = str[..(str.Length-1)]
+			'cursor_index :- 1
+			'If cursor_index < 0 Then cursor_index = 0
+		Else If KeyHit( KEY_DELETE ) '.. 'erase character right of cursor
+		'And cursor_index < str.Length-1
+			'use cursor position
+		End If
+		'FlushKeys()
 		Return str
 	End Method
 	
+	Function cursor_alpha#()
+		Return (0.5 + Sin( Float(now() Mod cursor_blink) / Float(cursor_blink) ))
+	End Function
+	
 	Function GetChar_normal$() 'returns "" if none, or a string representing the character of the key pressed
-		Local normal_index% = KeyHit_normal()
+		Local normal_index% = KeyDown_normal()
 		If normal_index <> -1
 			If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT ) 'upper case
 				Return normal_chars_ucase[normal_index]
