@@ -311,18 +311,6 @@ Function load_all_archetypes()
 	set_turret_archetypes()
 	set_complex_agent_archetypes()
 End Function
-'______________________________________________________________________________
-Function load_environment()
-	'attach door widgets To every spawn point
-	For Local spawn:POINT = EachIn friendly_spawn_points
-		attach_door( spawn, friendly_door_list )
-	Next
-	friendly_doors_status = DOOR_STATUS_CLOSED
-	For Local spawn:POINT = EachIn enemy_spawn_points
-		attach_door( spawn, hostile_door_list )
-	Next
-	hostile_doors_status = DOOR_STATUS_CLOSED
-End Function
 
 '##############################################################################
 'Images

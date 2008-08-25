@@ -16,6 +16,7 @@ Type ENVIRONMENT
 	Field origin:cVEC '(x, y) of the origin of this level
 	Field zoom# 'zoom level
 	Field lev:LEVEL 'level object from which to build the environment, read-only
+	Field pathing:PATHING_STRUCTURE 'pathfinding object for this level
 	Field walls:TList 'TList<BOX> contains all of the wall rectangles of the level
 
 	Field bg_cache:TImage 'background image
@@ -68,7 +69,23 @@ Type ENVIRONMENT
 	End Method
 	
 	Method init()
-		
+		init_pathing_system()
+		'attach door widgets To every spawn point
+		For Local spawn:POINT = EachIn friendly_spawn_points
+			attach_door( spawn, friendly_door_list )
+		Next
+		friendly_doors_status = DOOR_STATUS_CLOSED
+		For Local spawn:POINT = EachIn enemy_spawn_points
+			attach_door( spawn, hostile_door_list )
+		Next
+		hostile_doors_status = DOOR_STATUS_CLOSED
+	End Method
+	
+	Method init_pathing_system()
+		pathing_grid_w = lev.col_count
+		pathing_grid_h = lev.row_count
+		pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
+		init_pathing_grid_from_walls( walls )
 	End Method
 	
 	Method reset()
@@ -204,6 +221,10 @@ Type ENVIRONMENT
 		Next
 		friendly_doors_status = DOOR_STATUS_CLOSED
 		hostile_doors_status = DOOR_STATUS_CLOSED
+	End Method
+	
+	Method pathing_system_f_value#( inquiry:CELL )
+		Return pathing.f( inquiry )
 	End Method
 	
 End Type

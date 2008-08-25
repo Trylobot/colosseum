@@ -95,13 +95,6 @@ Function init_game()
 	load_next_level()
 End Function
 '______________________________________________________________________________
-Function init_pathing_system()
-	pathing_grid_h = (arena_h + 2*arena_offset) / cell_size
-	pathing_grid_w = (arena_w + 2*arena_offset) / cell_size
-	pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
-	init_pathing_grid_from_walls( common_walls )
-End Function
-
 Function singleton_pathing_system_f_value#( inquiry:CELL )
 	Return pathing.f( inquiry )
 End Function
