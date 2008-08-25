@@ -76,9 +76,21 @@ Const cursor_blink% = 500
 
 Type CONSOLE
 	Field cursor_index%
+	Field last_char$
+	Field key_press_ts%
+	Field repeat_ts%
 	
 	Method update$( str$ )
-		str :+ GetChar_normal()
+		Local this_char$ = GetChar_normal()
+		If this_char <> "" And this_char <> last_char
+			key_press_ts = now()
+			last_char = this_char
+			str :+ this_char
+		Else 'this_char = last_char
+			If (now() - key_press_ts) >= key_press_time
+			
+			End If
+		End If
 		If KeyHit( KEY_BACKSPACE )
 			str = str[..(str.Length-1)]
 		End If
@@ -99,9 +111,9 @@ Type CONSOLE
 		End If
 	End Function
 
-	Function KeyHit_normal%() 'returns -1 if none, or the key code of the key hit
+	Function KeyDown_normal%() 'returns -1 if none, or the key code of the key hit
 		For Local normal_index% = 0 To normal_keys.Length - 1
-			If KeyHit( normal_keys[normal_index] )
+			If KeyDown( normal_keys[normal_index] )
 				Return normal_index
 			End If
 		Next
@@ -114,7 +126,7 @@ Type CONSOLE
 		"A", "S", "D", "F", "G", "H", "J", "K", "L", ..
 		"Z", "X", "C", "V", "B", "N", "M", ..
 		"~~", "_", "+", "{", "}", "|", ..
-		":", "~q", "<", ">", "?" ]
+		":", "~q", "<", ">", "?", " " ]
 		
 	Global normal_chars_lcase$[] = [ ..
 		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ..
@@ -122,7 +134,7 @@ Type CONSOLE
 		"a", "s", "d", "f", "g", "h", "j", "k", "l", ..
 		"z", "x", "c", "v", "b", "n", "m", ..
 		"`", "-", "=", "[", "]", "\", ..
-		";", "'", ",", ".", "/" ]
+		";", "'", ",", ".", "/", " " ]
 		
 	Global normal_keys%[] = [ ..
 		KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, ..
@@ -130,7 +142,7 @@ Type CONSOLE
 		KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, ..
 		KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, ..
 		KEY_TILDE, KEY_MINUS, KEY_EQUALS, KEY_OPENBRACKET, KEY_CLOSEBRACKET, KEY_BACKSLASH, ..
-		KEY_SEMICOLON, KEY_QUOTES, KEY_COMMA, KEY_PERIOD, KEY_SLASH ]
+		KEY_SEMICOLON, KEY_QUOTES, KEY_COMMA, KEY_PERIOD, KEY_SLASH, KEY_SPACE ]
 	
 End Type
 
