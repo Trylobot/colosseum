@@ -5,9 +5,10 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global data_path_prefix$ = "data/"
-Global user_path_prefix$ = "user/"
+Global data_path$ = "data/"
+Global user_path$ = "user/"
 Global data_file_suffix$ = ".json"
+Global data_file_filter$ = "Data Files:json;All Files:*"
 
 Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
@@ -55,7 +56,38 @@ End Function
 Function get_level:LEVEL( key$ )
 	Return LEVEL( level_map.ValueForKey( key ))
 End Function
+
+Function make_filename$( str$ ) 'this needs to replace invalid characters with valid ones
+	Return str
+End Function
 '______________________________________________________________________________
+'[ SAVE ] functions
+Function save_screenshot_to_file( screen:TImage, filename$ = "" )
+	
+End Function
+
+Function edit_level_file( file_path$ = "" )
+	Local json:TJSON, lev:LEVEL
+	
+	If file_path = "" Then file_path = RequestFile( "Load Level Data", data_file_filter, False, user_path )
+	If file_path <> ""
+		json = TJSON.Create( LoadString( file_path ))
+		lev = Create_LEVEL_from_json( json.GetObject( "" ))
+	Else
+		lev = Create_LEVEL( 650, 650 )
+	End If
+	lev.name = "new level"
+	
+	edit_level( lev )
+	
+	json = TJSON.Create( lev.to_json() )
+	file_path = RequestFile( "Save Level Data", data_file_filter, True, user_path )
+	If file_path <> ""
+		json.Write( WriteFile( file_path ))
+	End If
+End Function
+'______________________________________________________________________________
+'[ LOAD ] functions
 Function is_directive%( str$ )
   Return str.StartsWith( "[" ) And str.EndsWith( "]" )
 End Function
@@ -70,7 +102,7 @@ Function load_data_files()
   Local path$
   Local file_paths:TList = CreateList()
 
-  Local base:TStream = ReadFile( data_path_prefix + "base.ini" )
+  Local base:TStream = ReadFile( data_path + "base.ini" )
   If Not base Then append_load_data_error( " error: base.ini not found." )
   While Not Eof( base )
     line = ((ReadLine( base )).Trim()).ToLower()
@@ -121,7 +153,6 @@ Function output_load_data_errors()
 	End If
 End Function
 '______________________________________________________________________________
-'[ LOAD ] functions
 Function load_file$( file_path$ )
   Local line$, directive$, result$
   
@@ -266,26 +297,6 @@ Function add_image$( file:TStream, map:TMap, multi_frame% = False )
   map.Insert( StripAll( path ), img )
   
   Return "success"
-End Function
-
-'______________________________________________________________________________
-'[ SAVE ] functions
-Function make_filename$( str$ ) 'this needs to replace invalid characters with valid ones
-	Return str
-End Function
-
-Function save_level_to_file%( lev:LEVEL, filename$ = "" )
-	If filename = "" Then filename = make_filename( lev.name ) + data_file_suffix
-	CreateDir( user_path_prefix ) 'guarantees the existence of the required path
-	Local file:TStream = WriteFile( user_path_prefix + filename )
-	
-	file.WriteLine( lev.to_json().ToSource() )
-	
-	CloseStream( file )
-End Function
-
-Function save_screenshot_to_file( screen:TImage, filename$ = "" )
-	
 End Function
 
 '______________________________________________________________________________

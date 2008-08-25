@@ -199,6 +199,41 @@ Function clear_pathing_grid_center_walls()
 		pathing.set_area( containing_cell( arena_offset, arena_offset ), containing_cell( arena_offset+arena_w-1, arena_offset+arena_h-1 ), PATH_PASSABLE )
 	End If
 End Function
+'______________________________________________________________________________
+'Quit from anywhere; "instaquit", hold ESC to do it
+Global esc_held% = False, esc_press_ts% = now()
+Global esc_held_progress_bar_show_time_required% = 200, instaquit_time_required% = 1000
+
+Function check_esc_held()
+	If KeyDown( KEY_ESCAPE ) And Not esc_held
+		esc_press_ts = now()
+		esc_held = True
+	Else If KeyDown( KEY_ESCAPE ) 'esc_held
+		If (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
+			draw_instaquit_progress()
+		End If
+		If (now() - esc_press_ts) >= instaquit_time_required
+			End
+		End If
+	Else
+		esc_held = False
+	End If
+End Function
+
+Function draw_instaquit_progress()
+	SetAlpha( 0.5 )
+	SetColor( 0, 0, 0 )
+	DrawRect( 0,0, window_w,window_h )
+	
+	SetAlpha( 1 )
+	SetColor( 255, 255, 255 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required ))
+	Local str$ = "continue holding ESC to quit"
+	SetImageFont( get_font( "consolas_bold_24" ))
+	DrawText( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
+End Function
 
 
 

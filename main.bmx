@@ -28,8 +28,10 @@ Const arena_h% = 500
 Const stats_panel_w% = 250
 'Const window_w% = arena_w + (2*arena_offset) + (arena_offset+stats_panel_w)
 'Const window_h% = arena_h + (2*arena_offset)
-Const window_w% = (arena_offset_left + arena_w + arena_offset_right) + (arena_offset + stats_panel_w)
-Const window_h% = (arena_offset_top + arena_w + arena_offset_bottom)
+'Const window_w% = (arena_offset_left + arena_w + arena_offset_right) + (arena_offset + stats_panel_w) + 1
+'Const window_h% = (arena_offset_top + arena_w + arena_offset_bottom) + 1
+Const window_w% = 1024
+Const window_h% = 768
 
 'external data load
 load_data_files()
@@ -50,8 +52,8 @@ SetBlend( ALPHABLEND )
 ?Debug
 'debug_load_data()
 Global last_frame_ts%, time_count%, frame_count%, fps%
-'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
-menu_command( COMMAND_EDIT_LEVEL )
+menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
+'menu_command( COMMAND_EDIT_LEVEL )
 ?
 
 '______________________________________________________________________________
@@ -93,41 +95,4 @@ If player <> Null Then debug_overlay()
 	Flip( 1 )
 	
 Until AppTerminate()
-
-'______________________________________________________________________________
-'Quit from anywhere; "instaquit" by holding ESC
-Global esc_held% = False, esc_press_ts% = now()
-Global esc_held_progress_bar_show_time_required% = 200, instaquit_time_required% = 1200
-
-Function check_esc_held()
-	If KeyDown( KEY_ESCAPE ) And Not esc_held
-		esc_press_ts = now()
-		esc_held = True
-	Else If KeyDown( KEY_ESCAPE ) 'esc_held
-		If (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
-			draw_instaquit_progress()
-		End If
-		If (now() - esc_press_ts) >= instaquit_time_required
-			End
-		End If
-	Else
-		esc_held = False
-	End If
-End Function
-
-Function draw_instaquit_progress()
-	SetAlpha( 0.5 )
-	SetColor( 0, 0, 0 )
-	DrawRect( 0,0, window_w,window_h )
-	
-	SetAlpha( 1 )
-	SetColor( 255, 255, 255 )
-	SetRotation( 0 )
-	SetScale( 1, 1 )
-	draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required ))
-	Local str$ = "continue holding ESC to quit"
-	SetImageFont( get_font( "consolas_bold_24" ))
-	DrawText( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
-End Function
-
-
+If AppTerminate() Then End

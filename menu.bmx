@@ -401,7 +401,7 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			End If
 			
 		Case COMMAND_EDIT_LEVEL
-			save_level_to_file( edit_level( Create_LEVEL( 520, 610 )))
+			edit_level_file()
 			
 		Case COMMAND_QUIT_GAME
 			End

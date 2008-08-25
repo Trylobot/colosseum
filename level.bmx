@@ -68,17 +68,6 @@ Type LEVEL Extends MANAGED_OBJECT
 		squads = CreateList()
 	End Method
 	
-	Method cache_walls()
-		walls = CreateList()
-		For Local r% = 0 To row_count - 1
-			For Local c% = 0 To col_count - 1
-				If path_regions[r,c] = PATH_BLOCKED
-					walls.AddLast( Create_BOX( vertical_divs[c],horizontal_divs[r], vertical_divs[c+1]-vertical_divs[c],horizontal_divs[r+1]-horizontal_divs[r] ))
-				End If
-			Next
-		Next
-	End Method
-	
 	Method add_divider( pos%, line_type% )
 		Select line_type
 			
@@ -207,6 +196,17 @@ Type LEVEL Extends MANAGED_OBJECT
 		Return c
 	End Method
 	
+	Method cache_walls()
+		walls = CreateList()
+		For Local r% = 0 To row_count - 1
+			For Local c% = 0 To col_count - 1
+				If path_regions[r,c] = PATH_BLOCKED
+					walls.AddLast( Create_BOX( vertical_divs[c],horizontal_divs[r], vertical_divs[c+1]-vertical_divs[c],horizontal_divs[r+1]-horizontal_divs[r] ))
+				End If
+			Next
+		Next
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local index%, row%, col%
 		Local this_json:TJSONObject = New TJSONObject
@@ -218,13 +218,13 @@ Type LEVEL Extends MANAGED_OBJECT
 		this_json.SetByName( "col_count", TJSONNumber.Create( col_count ))
 		
 		Local horizontal_divs_json:TJSONArray = TJSONArray.Create( horizontal_divs.Length )
-		For row = 0 To row_count - 1
+		For row = 0 To horizontal_divs.Length - 1
 			horizontal_divs_json.SetByIndex( row, TJSONNumber.Create( horizontal_divs[row] ))
 		Next
 		this_json.SetByName( "horizontal_divs", horizontal_divs_json )
 		
 		Local vertical_divs_json:TJSONArray = TJSONArray.Create( vertical_divs.Length )
-		For col = 0 To col_count - 1
+		For col = 0 To vertical_divs.Length - 1
 			vertical_divs_json.SetByIndex( col, TJSONNumber.Create( vertical_divs[col] ))
 		Next
 		this_json.SetByName( "vertical_divs", vertical_divs_json )
@@ -239,21 +239,29 @@ Type LEVEL Extends MANAGED_OBJECT
 		Next
 		this_json.SetByName( "path_regions", path_regions_json )
 		
-		Local spawns_json:TJSONArray = TJSONArray.Create( spawns.Count() )
-		index = 0
-		For Local sp:POINT = EachIn spawns
-			spawns_json.SetByIndex( index, sp.to_json() )
-			index :+ 1
-		Next
-		this_json.SetByName( "spawns", spawns_json )
-		
-		Local squads_json:TJSONArray = TJSONArray.Create( squads.Count() )
-		index = 0
-		For Local sq:POINT = EachIn squads
-			squads_json.SetByIndex( index, sq.to_json() )
-			index :+ 1
-		Next
-		this_json.SetByName( "squads", squads_json )
+		If spawns.Count() > 0
+			Local spawns_json:TJSONArray = TJSONArray.Create( spawns.Count() )
+			index = 0
+			For Local sp:POINT = EachIn spawns
+				spawns_json.SetByIndex( index, sp.to_json() )
+				index :+ 1
+			Next
+			this_json.SetByName( "spawns", spawns_json )
+		Else
+			this_json.SetByName( "spawns", TJSON.NIL )
+		End If
+
+		If spawns.Count() > 0
+			Local squads_json:TJSONArray = TJSONArray.Create( squads.Count() )
+			index = 0
+			For Local sq:POINT = EachIn squads
+				squads_json.SetByIndex( index, sq.to_json() )
+				index :+ 1
+			Next
+			this_json.SetByName( "squads", squads_json )
+		Else
+			this_json.SetByName( "squads", TJSON.NIL )
+		End If
 		
 		Return this_json
 	End Method
@@ -277,19 +285,25 @@ Function Create_LEVEL_from_json:LEVEL( json_val:TJSONObject )
 			lev.path_regions[row,col] = json.GetNumber( "path_regions."+row+"."+col )
 		Next
 	Next
-	For index = 0 To json.GetArray( "spawns" ).Size() - 1
-		lev.add_spawn( Create_POINT_from_json( json.GetObject( "spawns."+index )))
-	Next
-	For index = 0 To json.GetArray( "squads" ).Size() - 1
-		lev.add_squad( Create_SQUAD_from_json( json.GetObject( "squads."+index )))
-	Next
+	If json.GetArray( "spawns" ) <> Null
+		For index = 0 To json.GetArray( "spawns" ).Size() - 1
+			lev.add_spawn( Create_POINT_from_json( json.GetObject( "spawns."+index )))
+		Next
+	End If
+	If json.GetArray( "squads" ) <> Null
+		For index = 0 To json.GetArray( "squads" ).Size() - 1
+			lev.add_squad( Create_SQUAD_from_json( json.GetObject( "squads."+index )))
+		Next
+	End If
 	lev.cache_walls()
 	Return lev
 End Function
 
 '______________________________________________________________________________
-Const gridsnap% = 10
+Const gridsnap% = 5
+Const spawn_point_preview_radius% = 6
 
+Const EDIT_LEVEL_MODE_NONE% = 0
 Const EDIT_LEVEL_MODE_PAN% = 1
 Const EDIT_LEVEL_MODE_DIVIDER% = 2
 Const EDIT_LEVEL_MODE_PATHING% = 3
@@ -300,176 +314,197 @@ Function edit_level:LEVEL( lev:LEVEL )
 	Local x% = gridsnap, y% = gridsnap
 	Local info_x%, info_y%
 	Local mouse_down_1% = False, mouse_down_2% = False
+	Local spawn_ang% = 0
 	
 	SetImageFont( get_font( "consolas_12" ))
-	Local line_h% = GetImageFont().Height()
+	Local line_h% = GetImageFont().Height() - 1
 	
-	While Not KeyHit( KEY_ESCAPE )
-		Cls
-		
-		'draw the grid
-		SetColor( 255, 255, 255 )
-		SetLineWidth( 1 )
-		SetAlpha( 0.25 )
-		Local grid_rows% = lev.height / gridsnap
-		Local grid_cols% = lev.width / gridsnap
-		For Local i% = 0 To grid_rows
-			DrawLine( x,y+i*gridsnap, x+grid_cols*gridsnap,y+i*gridsnap )
-		Next
-		For Local i% = 0 To grid_cols
-			DrawLine( x+i*gridsnap,y, x+i*gridsnap,y+grid_rows*gridsnap )
-		Next
-		
-		'draw the dividers
-		SetAlpha( 0.50 )
-		For Local i% = 0 To lev.horizontal_divs.length - 1
-			DrawLine( x,y+lev.horizontal_divs[i], x+lev.width,y+lev.horizontal_divs[i] )
-		Next
-		For Local i% = 0 To lev.vertical_divs.length - 1
-			DrawLine( x+lev.vertical_divs[i],y, x+lev.vertical_divs[i],y+lev.height )
-		Next
-		
-		'draw the pathing grid
-		SetColor( 127, 127, 127 )
-		SetAlpha( 0.50 )
-		For Local r% = 0 To lev.row_count - 1 'lev.horizontal_divs.Length - 2
-			For Local c% = 0 To lev.col_count - 1 'lev.vertical_divs.Length - 2
-				If lev.path_regions[r,c] = PATH_BLOCKED
-					DrawRect( x+lev.vertical_divs[c],y+lev.horizontal_divs[r], lev.vertical_divs[c+1]-lev.vertical_divs[c],lev.horizontal_divs[r+1]-lev.horizontal_divs[r] )
-				End If
-			Next
-		Next
-		
-		'draw the spawn points
-		SetAlpha( 0.20 )
-		For Local p:POINT = EachIn lev.spawns
-			DrawOval( x+p.pos_x - 3,y+p.pos_y - 3, 6,6 )
+	Repeat
+		If Not AppSuspended()
+			
+			Cls
+			
+			'draw the gridsnap lines
+			SetColor( 255, 255, 255 )
 			SetLineWidth( 1 )
-			SetAlpha( 0.4 )
-			DrawLine( x+p.pos_x + 2*Cos(p.ang-90),y+p.pos_y + 2*Sin(p.ang-90), x+p.pos_x + 2*Cos(p.ang+90),y+p.pos_y + 2*Sin(p.ang+90) )
-			DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + 2*Cos(p.ang),y+p.pos_y + 2*Sin(p.ang) )
-		Next
-		
-		'process input
-		If KeyHit( KEY_1 ) 'divider mode
-			mode = EDIT_LEVEL_MODE_PAN
-		Else If KeyHit( KEY_2 ) 'pathing passable/blocking mode
-			mode = EDIT_LEVEL_MODE_DIVIDER
-		Else If KeyHit( KEY_3 ) 'spawn point mode
-			mode = EDIT_LEVEL_MODE_PATHING
-		Else If KeyHit( KEY_4 ) 'null mode
-			mode = EDIT_LEVEL_MODE_SPAWN
-		End If
-		
-		Local mouse:cVEC = cVEC( cVEC.Create( MouseX(),MouseY() ))
-		
-		Select mode
+			SetAlpha( 0.25 )
+			Local grid_rows% = lev.height / gridsnap
+			Local grid_cols% = lev.width / gridsnap
+			For Local i% = 0 To grid_rows
+				DrawLine( x,y+i*gridsnap, x+grid_cols*gridsnap,y+i*gridsnap )
+			Next
+			For Local i% = 0 To grid_cols
+				DrawLine( x+i*gridsnap,y, x+i*gridsnap,y+grid_rows*gridsnap )
+			Next
 			
-			Case EDIT_LEVEL_MODE_PAN
-				SetColor( 255, 255, 255 )
-				SetAlpha( 1 )
-				If MouseDown( 1 )
-					x = round_to_nearest( mouse.x + gridsnap - lev.width/2, gridsnap )
-					y = round_to_nearest( mouse.y + gridsnap - lev.height/2, gridsnap )
-				End If
-				If MouseDown( 2 )
-					x = gridsnap
-					y = 2*gridsnap
-				End If
+			'draw the dividers
+			SetAlpha( 0.50 )
+			For Local i% = 0 To lev.horizontal_divs.length - 1
+				DrawLine( x,y+lev.horizontal_divs[i], x+lev.width,y+lev.horizontal_divs[i] )
+			Next
+			For Local i% = 0 To lev.vertical_divs.length - 1
+				DrawLine( x+lev.vertical_divs[i],y, x+lev.vertical_divs[i],y+lev.height )
+			Next
 			
-			Case EDIT_LEVEL_MODE_DIVIDER
-				mouse.x = round_to_nearest( mouse.x, gridsnap )
-				mouse.y = round_to_nearest( mouse.y, gridsnap )
-				SetColor( 255, 255, 255 )
-				SetAlpha( 1 )
-				If mouse_down_1 And Not MouseDown( 1 )
-					If Not KeyDown( KEY_LCONTROL ) And Not KeyDown( KEY_RCONTROL )
-						lev.add_divider( mouse.x-x, LINE_TYPE_VERTICAL )
-					Else 
-						lev.remove_divider( mouse.x-x, LINE_TYPE_VERTICAL )
+			'draw the pathing grid
+			SetColor( 127, 127, 127 )
+			SetAlpha( 0.50 )
+			For Local r% = 0 To lev.row_count - 1 'lev.horizontal_divs.Length - 2
+				For Local c% = 0 To lev.col_count - 1 'lev.vertical_divs.Length - 2
+					If lev.path_regions[r,c] = PATH_BLOCKED
+						DrawRect( x+lev.vertical_divs[c],y+lev.horizontal_divs[r], lev.vertical_divs[c+1]-lev.vertical_divs[c],lev.horizontal_divs[r+1]-lev.horizontal_divs[r] )
 					End If
-				End If
-				If mouse_down_2 And Not MouseDown( 2 )
-					If Not KeyDown( KEY_LCONTROL ) And Not KeyDown( KEY_RCONTROL )
-						lev.add_divider( mouse.y-y, LINE_TYPE_HORIZONTAL )
-					Else 
-						lev.remove_divider( mouse.y-y, LINE_TYPE_HORIZONTAL )
-					End If
-				End If
-				SetAlpha( 0.60 )
-				If MouseDown( 1 )
-					mouse_down_1 = True
-					SetLineWidth( 3 )
-					DrawLine( mouse.x,y, mouse.x,y+lev.height )
-					SetLineWidth( 1 )
-					DrawLine( mouse.x,y, mouse.x,y+lev.height )
-				Else
-					mouse_down_1 = False
-				End If
-				If MouseDown( 2 )
-					mouse_down_2 = True
-					SetLineWidth( 3 )
-					DrawLine( x,mouse.y, x+lev.width,mouse.y )
-					SetLineWidth( 1 )
-					DrawLine( x,mouse.y, x+lev.width,mouse.y )
-				Else
-					mouse_down_2 = False
-				End If
-									
-			Case EDIT_LEVEL_MODE_PATHING
-				SetColor( 255, 255, 255 )
-				SetAlpha( 1 )
-				If MouseDown( 1 )
-					lev.set_path_regions_value( mouse.x-x,mouse.y-y, PATH_BLOCKED )
-				Else If MouseDown( 2 )
-					lev.set_path_regions_value( mouse.x-x,mouse.y-y, PATH_PASSABLE )
-				End If
-				
-			Case EDIT_LEVEL_MODE_SPAWN
-				SetColor( 255, 255, 255 )
-				SetAlpha( 1 )
-				
-			Default
-				'help
-				SetColor( 255, 255, 255 )
-				SetAlpha( 1 )
-				Local p:POINT = Create_POINT( mouse.x, mouse.y, 0 )
-				SetAlpha( 0.20 )
-				DrawOval( x+p.pos_x - 3,y+p.pos_y - 3, 6,6 )
+				Next
+			Next
+			
+			'draw the spawn points
+			SetAlpha( 0.20 )
+			For Local p:POINT = EachIn lev.spawns
+				DrawOval( x+p.pos_x - spawn_point_preview_radius,y+p.pos_y - spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
 				SetLineWidth( 1 )
-				SetAlpha( 0.4 )
-				DrawLine( x+p.pos_x + 2*Cos(p.ang-90),y+p.pos_y + 2*Sin(p.ang-90), x+p.pos_x + 2*Cos(p.ang+90),y+p.pos_y + 2*Sin(p.ang+90) )
-				DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + 2*Cos(p.ang),y+p.pos_y + 2*Sin(p.ang) )
+				SetAlpha( 0.40 )
+				DrawLine( x+p.pos_x + spawn_point_preview_radius*Cos(p.ang-90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang-90), x+p.pos_x + spawn_point_preview_radius*Cos(p.ang+90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang+90) )
+				DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )
+			Next
 			
-		End Select
-		
-		'level info and help
-		info_x = window_w-299; info_y = 0;
-		SetAlpha( 0.75 )
-		SetColor( 0, 0, 0 )
-		DrawRect( info_x,info_y, 300,window_h )
-		SetAlpha( 1 )
-		SetColor( 255, 255, 255 )
-		Select mode
-			Case EDIT_LEVEL_MODE_PAN
-				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PAN+" -> camera pan", info_x+6,info_y+3 )
-			Case EDIT_LEVEL_MODE_DIVIDER
-				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_DIVIDER+" -> dividers vertical/horizontal", info_x+6,info_y+3 )
-			Case EDIT_LEVEL_MODE_PATHING
-				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PATHING+" -> pathing blocked/passable", info_x+6,info_y+3 )
-			Case EDIT_LEVEL_MODE_SPAWN
-				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_SPAWN+" -> spawn points add/remove", info_x+6,info_y+3 )
-			Default 
-				DrawText_with_shadow( "[level editor]  "+EDIT_LEVEL_MODE_PAN+":pan  "+EDIT_LEVEL_MODE_DIVIDER+":dividers  "+EDIT_LEVEL_MODE_PATHING+":pathing  "+EDIT_LEVEL_MODE_SPAWN+":spawns", info_x+6,info_y+3 )
-		End Select
-		info_y :+ line_h
-		
-		
-		
-		Flip( 1 )
-	End While
-	
-	lev.cache_walls()
+			'change mode detect
+			If KeyHit( KEY_1 ) 'divider mode
+				mode = EDIT_LEVEL_MODE_PAN
+			Else If KeyHit( KEY_2 ) 'pathing passable/blocking mode
+				mode = EDIT_LEVEL_MODE_DIVIDER
+			Else If KeyHit( KEY_3 ) 'spawn point mode
+				mode = EDIT_LEVEL_MODE_PATHING
+			Else If KeyHit( KEY_4 ) 'null mode
+				mode = EDIT_LEVEL_MODE_SPAWN
+			End If
+			
+			'mouse init
+			Local mouse:cVEC = cVEC( cVEC.Create( MouseX(),MouseY() ))
+			
+			'behavioral switch based on current mode
+			Select mode
+				
+				Case EDIT_LEVEL_MODE_PAN
+					SetColor( 255, 255, 255 )
+					SetAlpha( 1 )
+					If MouseDown( 1 )
+						x = round_to_nearest( mouse.x + gridsnap - lev.width/2, gridsnap )
+						y = round_to_nearest( mouse.y + gridsnap - lev.height/2, gridsnap )
+					End If
+					If MouseDown( 2 )
+						x = 0
+						y = 0
+					End If
+				
+				Case EDIT_LEVEL_MODE_DIVIDER
+					mouse.x = round_to_nearest( mouse.x, gridsnap )
+					mouse.y = round_to_nearest( mouse.y, gridsnap )
+					SetColor( 255, 255, 255 )
+					SetAlpha( 1 )
+					If mouse_down_1 And Not MouseDown( 1 )
+						If Not KeyDown( KEY_LCONTROL ) And Not KeyDown( KEY_RCONTROL )
+							lev.add_divider( mouse.x-x, LINE_TYPE_VERTICAL )
+						Else 
+							lev.remove_divider( mouse.x-x, LINE_TYPE_VERTICAL )
+						End If
+					End If
+					If mouse_down_2 And Not MouseDown( 2 )
+						If Not KeyDown( KEY_LCONTROL ) And Not KeyDown( KEY_RCONTROL )
+							lev.add_divider( mouse.y-y, LINE_TYPE_HORIZONTAL )
+						Else 
+							lev.remove_divider( mouse.y-y, LINE_TYPE_HORIZONTAL )
+						End If
+					End If
+					SetAlpha( 0.60 )
+					If MouseDown( 1 )
+						mouse_down_1 = True
+						SetLineWidth( 3 )
+						DrawLine( mouse.x,y, mouse.x,y+lev.height )
+						SetLineWidth( 1 )
+						DrawLine( mouse.x,y, mouse.x,y+lev.height )
+					Else
+						mouse_down_1 = False
+					End If
+					If MouseDown( 2 )
+						mouse_down_2 = True
+						SetLineWidth( 3 )
+						DrawLine( x,mouse.y, x+lev.width,mouse.y )
+						SetLineWidth( 1 )
+						DrawLine( x,mouse.y, x+lev.width,mouse.y )
+					Else
+						mouse_down_2 = False
+					End If
+										
+				Case EDIT_LEVEL_MODE_PATHING
+					SetColor( 255, 255, 255 )
+					SetAlpha( 1 )
+					If MouseDown( 1 )
+						lev.set_path_regions_value( mouse.x-x,mouse.y-y, PATH_BLOCKED )
+					Else If MouseDown( 2 )
+						lev.set_path_regions_value( mouse.x-x,mouse.y-y, PATH_PASSABLE )
+					End If
+					
+				Case EDIT_LEVEL_MODE_SPAWN
+					SetColor( 255, 255, 255 )
+					SetAlpha( 1 )
+					If mouse_down_1 And Not MouseDown( 1 )
+						lev.add_spawn( Create_POINT( mouse.x-x,mouse.y-y, spawn_ang ))
+					End If
+					If MouseDown( 1 )
+						mouse_down_1 = True
+						SetAlpha( 0.50 )
+						Local p:POINT = Create_POINT( mouse.x-x,mouse.y-y, spawn_ang )
+						DrawOval( x+p.pos_x - spawn_point_preview_radius,y+p.pos_y - spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
+						SetLineWidth( 1 )
+						SetAlpha( 0.85 )
+						DrawLine( x+p.pos_x + spawn_point_preview_radius*Cos(p.ang-90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang-90), x+p.pos_x + spawn_point_preview_radius*Cos(p.ang+90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang+90) )
+						DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )
+					Else
+						mouse_down_1 = False
+					End If
+					If KeyHit( KEY_LEFT )
+						spawn_ang = ang_wrap( spawn_ang - 45 )
+					Else If KeyHit( KEY_RIGHT )
+						spawn_ang = ang_wrap( spawn_ang + 45 )
+					End If
+					
+			End Select
+			
+			'unconditionally draw level info panel and editor help
+			info_x = round_to_nearest( window_w, gridsnap ) - 300; info_y = 0;
+			SetAlpha( 0.75 )
+			SetColor( 32, 32, 32 )
+			DrawRect( info_x,info_y, 300,window_h )
+			SetAlpha( 1 )
+			SetColor( 196, 196, 196 )
+			DrawLine( info_x,info_y, info_x,window_h )
+			SetColor( 255, 255, 255 )
+			info_x :+ 6; info_y :+ 3
+			DrawText( ""+EDIT_LEVEL_MODE_PAN+":pan  "+EDIT_LEVEL_MODE_DIVIDER+":div  "+EDIT_LEVEL_MODE_PATHING+":paths  "+EDIT_LEVEL_MODE_SPAWN+":spawns  ", info_x,info_y ); info_y :+ line_h
+			Select mode
+				Case EDIT_LEVEL_MODE_PAN
+					DrawText( "mode "+EDIT_LEVEL_MODE_PAN+" -> camera pan", info_x,info_y )
+				Case EDIT_LEVEL_MODE_DIVIDER
+					DrawText( "mode "+EDIT_LEVEL_MODE_DIVIDER+" -> dividers vertical/horizontal", info_x,info_y )
+				Case EDIT_LEVEL_MODE_PATHING
+					DrawText( "mode "+EDIT_LEVEL_MODE_PATHING+" -> pathing blocked/passable", info_x,info_y )
+				Case EDIT_LEVEL_MODE_SPAWN
+					DrawText( "mode "+EDIT_LEVEL_MODE_SPAWN+" -> spawn points add/remove", info_x,info_y )
+			End Select; info_y :+ 2*line_h
+			SetImageFont( get_font( "consolas_bold_24" ))
+			DrawText_with_glow( lev.name, info_x,info_y ); info_y :+ GetImageFont().Height() - 1
+			SetImageFont( get_font( "consolas_12" ))
+			DrawText( "path_regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
+			DrawText( "spawn points: "+lev.spawns.Count(), info_x,info_y ); info_y :+ line_h
+			DrawText( "squads: "+lev.squads.Count(), info_x,info_y ); info_y :+ line_h
+			
+			Flip( 1 )
+			
+		Else
+			
+		End If
+	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+	If AppTerminate() Then End
 	
 	Return lev
 End Function
