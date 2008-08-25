@@ -75,8 +75,8 @@ Function edit_level_file( file_path$ = "" )
 		lev = Create_LEVEL_from_json( json.GetObject( "" ))
 	Else
 		lev = Create_LEVEL( 650, 650 )
+		lev.name = "new level"
 	End If
-	lev.name = "new level"
 	
 	edit_level( lev )
 	

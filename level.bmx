@@ -300,8 +300,7 @@ Function Create_LEVEL_from_json:LEVEL( json_val:TJSONObject )
 End Function
 
 '______________________________________________________________________________
-Const gridsnap% = 5
-Const spawn_point_preview_radius% = 6
+Const spawn_point_preview_radius% = 8
 
 Const EDIT_LEVEL_MODE_NONE% = 0
 Const EDIT_LEVEL_MODE_PAN% = 1
@@ -310,11 +309,14 @@ Const EDIT_LEVEL_MODE_PATHING% = 3
 Const EDIT_LEVEL_MODE_SPAWN% = 4
 
 Function edit_level:LEVEL( lev:LEVEL )
+	Local gridsnap% = 25
 	Local mode% = EDIT_LEVEL_MODE_PAN
+	Local FLAG_text_mode% = False
 	Local x% = gridsnap, y% = gridsnap
 	Local info_x%, info_y%
 	Local mouse_down_1% = False, mouse_down_2% = False
 	Local spawn_ang% = 0
+	Local kb_handler:CONSOLE = New CONSOLE
 	
 	SetImageFont( get_font( "consolas_12" ))
 	Local line_h% = GetImageFont().Height() - 1
@@ -367,15 +369,33 @@ Function edit_level:LEVEL( lev:LEVEL )
 				DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )
 			Next
 			
-			'change mode detect
-			If KeyHit( KEY_1 ) 'divider mode
-				mode = EDIT_LEVEL_MODE_PAN
-			Else If KeyHit( KEY_2 ) 'pathing passable/blocking mode
-				mode = EDIT_LEVEL_MODE_DIVIDER
-			Else If KeyHit( KEY_3 ) 'spawn point mode
-				mode = EDIT_LEVEL_MODE_PATHING
-			Else If KeyHit( KEY_4 ) 'null mode
-				mode = EDIT_LEVEL_MODE_SPAWN
+			'change modes detection
+			If KeyHit( KEY_ENTER )
+				FLAG_text_mode = Not FLAG_text_mode
+				FlushKeys()
+			End If
+			If FLAG_text_mode
+				lev.name = kb_handler.update( lev.name )
+			Else 'Not FLAG_text_mode
+				If KeyHit( KEY_1 ) 'divider mode
+					mode = EDIT_LEVEL_MODE_PAN
+				Else If KeyHit( KEY_2 ) 'pathing passable/blocking mode
+					mode = EDIT_LEVEL_MODE_DIVIDER
+				Else If KeyHit( KEY_3 ) 'spawn point mode
+					mode = EDIT_LEVEL_MODE_PATHING
+				Else If KeyHit( KEY_4 ) 'null mode
+					mode = EDIT_LEVEL_MODE_SPAWN
+				End If
+				If KeyHit( KEY_NUMADD )
+					gridsnap :+ 5
+					x = gridsnap
+					y = gridsnap
+				Else If KeyHit( KEY_NUMSUBTRACT )
+					gridsnap :- 5
+					If gridsnap < 5 Then gridsnap = 5
+					x = gridsnap
+					y = gridsnap
+				End If
 			End If
 			
 			'mouse init
@@ -392,8 +412,8 @@ Function edit_level:LEVEL( lev:LEVEL )
 						y = round_to_nearest( mouse.y + gridsnap - lev.height/2, gridsnap )
 					End If
 					If MouseDown( 2 )
-						x = 0
-						y = 0
+						x = gridsnap
+						y = gridsnap
 					End If
 				
 				Case EDIT_LEVEL_MODE_DIVIDER
@@ -492,7 +512,11 @@ Function edit_level:LEVEL( lev:LEVEL )
 					DrawText( "mode "+EDIT_LEVEL_MODE_SPAWN+" -> spawn points add/remove", info_x,info_y )
 			End Select; info_y :+ 2*line_h
 			SetImageFont( get_font( "consolas_bold_24" ))
-			DrawText_with_glow( lev.name, info_x,info_y ); info_y :+ GetImageFont().Height() - 1
+			DrawText_with_glow( lev.name, info_x,info_y )
+			If FLAG_text_mode
+				DrawText_with_glow( "|", info_x + TextWidth( lev.name ) - 2,info_y )
+			End If
+			info_y :+ GetImageFont().Height() - 1
 			SetImageFont( get_font( "consolas_12" ))
 			DrawText( "path_regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
 			DrawText( "spawn points: "+lev.spawns.Count(), info_x,info_y ); info_y :+ line_h

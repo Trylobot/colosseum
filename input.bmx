@@ -68,4 +68,70 @@ Function get_all_input()
 	End If
 	
 End Function
+'______________________________________________________________________________
+'Text handler
+Const key_press_time% = 1000
+Const key_repeat_delay% = 100
+Const cursor_blink% = 500
+
+Type CONSOLE
+	Field cursor_index%
+	
+	Method update$( str$ )
+		str :+ GetChar_normal()
+		If KeyHit( KEY_BACKSPACE )
+			str = str[..(str.Length-1)]
+		End If
+		FlushKeys()
+		Return str
+	End Method
+	
+	Function GetChar_normal$() 'returns "" if none, or a string representing the character of the key pressed
+		Local normal_index% = KeyHit_normal()
+		If normal_index <> -1
+			If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT ) 'upper case
+				Return normal_chars_ucase[normal_index]
+			Else 'lower case
+				Return normal_chars_lcase[normal_index]
+			End If
+		Else
+			Return "" 'nothing
+		End If
+	End Function
+
+	Function KeyHit_normal%() 'returns -1 if none, or the key code of the key hit
+		For Local normal_index% = 0 To normal_keys.Length - 1
+			If KeyHit( normal_keys[normal_index] )
+				Return normal_index
+			End If
+		Next
+		Return -1
+	End Function
+	
+	Global normal_chars_ucase$[] = [ ..
+		")", "!", "@", "#", "$", "%", "^", "&", "*", "(", ..
+		"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", ..
+		"A", "S", "D", "F", "G", "H", "J", "K", "L", ..
+		"Z", "X", "C", "V", "B", "N", "M", ..
+		"~~", "_", "+", "{", "}", "|", ..
+		":", "~q", "<", ">", "?" ]
+		
+	Global normal_chars_lcase$[] = [ ..
+		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ..
+		"q", "w", "e", "r", "t", "y", "u", "i", "o", "p", ..
+		"a", "s", "d", "f", "g", "h", "j", "k", "l", ..
+		"z", "x", "c", "v", "b", "n", "m", ..
+		"`", "-", "=", "[", "]", "\", ..
+		";", "'", ",", ".", "/" ]
+		
+	Global normal_keys%[] = [ ..
+		KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, ..
+		KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, ..
+		KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, ..
+		KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, ..
+		KEY_TILDE, KEY_MINUS, KEY_EQUALS, KEY_OPENBRACKET, KEY_CLOSEBRACKET, KEY_BACKSLASH, ..
+		KEY_SEMICOLON, KEY_QUOTES, KEY_COMMA, KEY_PERIOD, KEY_SLASH ]
+	
+End Type
+
 

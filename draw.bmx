@@ -430,6 +430,8 @@ Function draw_percentage_bar( x%,y%, w%,h%, pct# )
 	DrawRect( x, y, w, h )
 	SetColor( 64, 64, 64 )
 	DrawRect( x + 1, y + 1, w - 2, h - 2 )
+	If      pct > 1.0 Then pct = 1.0 ..
+	Else If pct < 0.0 Then pct = 0.0
 	SetColor( 255, 255, 255 )
 	DrawRect( x + 2, y + 2, pct*(w - 4.0), h - 4 )
 End Function

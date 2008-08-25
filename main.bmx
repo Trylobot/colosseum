@@ -7,12 +7,12 @@ Rem
 	site: http://colosseum.devjav.com
 	
 	-- project description --
-	This is a video game in the genre of classic Asteroids, but with a little more depth.
-	You play a hero with a tank, fighting for your life in a futuristic Colosseum.
-	Enemies come at you in waves, which you must destroy completely before advancing.
+	This is a retro-style video game with a few modern elements, in the genre of Asteroids.
+	You play a hero driving a tank, fighting for your life in a futuristic Colosseum setting.
+	Enemy robots come at you in waves, which you must destroy before advancing.
 	Between levels, you may visit the shop for repairs and to buy new items with cash gained from kills.
-	After making it past the initial levels, you unlock unlimited "Veteran" difficulty, which allows you to play randomly-generated levels and to unlock for purchase the most prestigious and powerful of the shop items.
-	Because it's a little more than a basic arcade game, you can save/load your progress to/from files on disk (It is completely possible to "cheat", since the files are not encrypted in any way, and this is intentional).
+	After making it past the initial few levels, you unlock "Veteran" difficulty, which allows you to play difficult randomly-generated levels and to unlock for purchase the most prestigious and powerful of the shop items.
+	Because of the persistent elements, you may save and load your progress to/from files on disk; these files are not encrypted.
 
 EndRem
 
@@ -52,8 +52,8 @@ SetBlend( ALPHABLEND )
 ?Debug
 'debug_load_data()
 Global last_frame_ts%, time_count%, frame_count%, fps%
+menu_command( COMMAND_EDIT_LEVEL )
 menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
-'menu_command( COMMAND_EDIT_LEVEL )
 ?
 
 '______________________________________________________________________________
