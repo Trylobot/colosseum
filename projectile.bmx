@@ -5,8 +5,6 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global projectile_list:TList = CreateList()
-
 Const PROJECTILE_MEMBER_EMITTER_CONSTANT% = 0
 Const PROJECTILE_MEMBER_EMITTER_PAYLOAD% = 1
 
@@ -104,7 +102,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	End Method
 	
 	Method auto_manage()
-		add_me( projectile_list )
+		manage( game.projectile_list )
 	End Method
 	
 	Method impact( other:COMPLEX_AGENT = Null )

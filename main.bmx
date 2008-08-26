@@ -17,26 +17,14 @@ Rem
 EndRem
 
 'Window / Arena size
-Const arena_offset% = 50
-
-Const arena_offset_top% = 10
-Const arena_offset_right% = 10
-Const arena_offset_bottom% = 100
-Const arena_offset_left% = 10
-Const arena_w% = 500
-Const arena_h% = 500
 Const stats_panel_w% = 250
-'Const window_w% = arena_w + (2*arena_offset) + (arena_offset+stats_panel_w)
-'Const window_h% = arena_h + (2*arena_offset)
-'Const window_w% = (arena_offset_left + arena_w + arena_offset_right) + (arena_offset + stats_panel_w) + 1
-'Const window_h% = (arena_offset_top + arena_w + arena_offset_bottom) + 1
 Const window_w% = 1024
 Const window_h% = 768
 
 'external data load
 load_data_files()
 	load_all_archetypes() 'this will be in data files, eventually
-	load_environment() 'same here; this will be externalized with LEVEL objects
+	'load_environment() 'same here; this will be externalized with LEVEL objects
 
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo
@@ -53,7 +41,7 @@ SetBlend( ALPHABLEND )
 'debug_load_data()
 Global last_frame_ts%, time_count%, frame_count%, fps%
 menu_command( COMMAND_EDIT_LEVEL )
-menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
+'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
 ?
 
 '______________________________________________________________________________
@@ -81,7 +69,7 @@ If time_count >= 1000
 	frame_count = 0
 	time_count = 0
 End If
-If player <> Null Then debug_overlay()
+If game.player <> Null Then debug_overlay()
 'If KeyHit( KEY_F4 ) And FLAG_game_in_progress
 '	find_path( player.pos_x,player.pos_y, mouse_point.x,mouse_point.y )
 'End If

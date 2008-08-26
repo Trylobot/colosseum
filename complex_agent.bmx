@@ -4,12 +4,6 @@ Rem
 	author: Tyler W Cole
 EndRem
 '______________________________________________________________________________
-Global friendly_agent_list:TList = CreateList()
-Global hostile_agent_list:TList = CreateList()
-Global agent_lists:TList = CreateList()
-	agent_lists.AddLast( friendly_agent_list )
-	agent_lists.AddLast( hostile_agent_list )
-
 Const EVENT_ALL_STOP% = 0
 Const EVENT_TURN_RIGHT% = 1
 Const EVENT_TURN_LEFT% = 2
@@ -158,8 +152,8 @@ Type COMPLEX_AGENT Extends AGENT
 			c.left_track.animation_direction = other.left_track.animation_direction
 		End If
 		
-		If      political_alignment = ALIGNMENT_FRIENDLY Then c.add_me( friendly_agent_list ) ..
-		Else If political_alignment = ALIGNMENT_HOSTILE  Then c.add_me( hostile_agent_list )
+		If      political_alignment = ALIGNMENT_FRIENDLY Then c.manage( game.friendly_agent_list ) ..
+		Else If political_alignment = ALIGNMENT_HOSTILE  Then c.manage( game.hostile_agent_list )
 		Return c
 	End Function
 
@@ -370,14 +364,14 @@ Type COMPLEX_AGENT Extends AGENT
 				End If
 			
 		End Select
-		pkp.remove_me()
+		pkp.unmanage()
 	End Method
 	
 	'___________________________________________
 	Method add_turret:TURRET( other_t:TURRET )
 		Local t:TURRET = other_t.clone()
 		t.set_parent( Self )
-		t.add_me( turret_list )
+		t.manage( turret_list )
 		Return t
 	End Method
 	'___________________________________________
@@ -387,11 +381,11 @@ Type COMPLEX_AGENT Extends AGENT
 		em.trigger_event = event
 		Select event
 			Case EVENT_DRIVE_FORWARD
-				em.add_me( drive_forward_emitters )
+				em.manage( drive_forward_emitters )
 			Case EVENT_DRIVE_BACKWARD
-				em.add_me( drive_backward_emitters )
+				em.manage( drive_backward_emitters )
 			Case EVENT_DEATH
-				em.add_me( death_emitters )
+				em.manage( death_emitters )
 		End Select
 		Return em
 	End Method
@@ -401,16 +395,16 @@ Type COMPLEX_AGENT Extends AGENT
 		w.parent = Self
 		Select widget_type
 			Case WIDGET_CONSTANT
-				w.add_me( constant_widgets )
+				w.manage( constant_widgets )
 			Case WIDGET_DEPLOY
-				w.add_me( deploy_widgets )
+				w.manage( deploy_widgets )
 		End Select
 		Return w
 	End Method
 	'___________________________________________
 	Method add_sticky:PARTICLE( other_p:PARTICLE )
 		Local p:PARTICLE = other_p.clone()
-		p.add_me( stickies )
+		p.manage( stickies )
 		p.parent = Self
 		Return p
 	End Method
@@ -418,8 +412,8 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method auto_manage( new_political_alignment% = ALIGNMENT_NONE )
 		political_alignment = new_political_alignment
-		If      new_political_alignment = ALIGNMENT_FRIENDLY Then add_me( friendly_agent_list ) ..
-		Else If new_political_alignment = ALIGNMENT_HOSTILE  Then add_me( hostile_agent_list )
+		If      new_political_alignment = ALIGNMENT_FRIENDLY Then manage( game.friendly_agent_list ) ..
+		Else If new_political_alignment = ALIGNMENT_HOSTILE  Then manage( game.hostile_agent_list )
 	End Method
 	
 End Type

@@ -8,7 +8,10 @@ EndRem
 'Generic globals
 Const INFINITY% = -1
 Global mouse_point:cVEC = New cVEC
-Global pathing:PATHING_STRUCTURE
+'environment objects
+Global player_game:ENVIRONMENT 'game in which player participates
+Global ai_demo_game:ENVIRONMENT 'menu ai demo environment
+Global game:ENVIRONMENT = player_game 'current game environment
 
 'game settings flags
 Global FLAG_in_menu% = True
@@ -19,6 +22,7 @@ Global FLAG_console% = False
 Global level_intro_time% = 2000
 Global level_passed_ts%
 Global FLAG_AI_demo% = True
+
 'game state flags
 Global FLAG_game_in_progress% = False
 Global FLAG_game_over% = False
@@ -34,8 +38,6 @@ Global FLAG_spawn_enemies% = False
 
 'global player stuff
 Global player_type% = 0
-Global player:COMPLEX_AGENT
-Global player_brain:CONTROL_BRAIN
 Global player_input_type% = INPUT_KEYBOARD_MOUSE_HYBRID 
 Global player_spawn_point:POINT
 Global player_level% = 0
@@ -95,10 +97,6 @@ Function init_game()
 	load_next_level()
 End Function
 '______________________________________________________________________________
-Function singleton_pathing_system_f_value#( inquiry:CELL )
-	Return pathing.f( inquiry )
-End Function
-'______________________________________________________________________________
 Function load_next_level()
 	player_level :+ 1
 	load_level( player_level )
@@ -127,25 +125,6 @@ End Function
 
 Function load_AI_demo_level()
 	
-End Function
-'______________________________________________________________________________
-Function prep_spawner()
-
-	cur_squad = Null
-	cur_spawn_point = Null
-	last_spawned_enemy = Null
-	enemy_spawn_queue.Clear()
-
-	Local squads%[][] = get_level_squads( player_level )
-	If squads <> Null
-		For Local squad_i%[] = EachIn squads
-			queue_squad( squad_i )
-		Next
-		level_enemies_remaining = enemy_count( squads )
-	End If
-
-	shuffle_anchor_deck()
-
 End Function
 '______________________________________________________________________________
 'Spawning and Respawning

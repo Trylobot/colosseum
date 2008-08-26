@@ -34,6 +34,19 @@ Type AGENT Extends PHYSICAL_OBJECT
 		If cur_health < 0 Then cur_health = 0 'no overkill
 	End Method
 
+	Method self_destruct( other:AGENT )
+		'damage
+		other.receive_damage( 100 )
+		'explosive forces
+		Local offset#, offset_ang#
+		cartesian_to_polar( pos_x - other.pos_x, pos_y - other.pos_y, offset, offset_ang )
+		Local total_force# = 100.0
+		other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - ang ), 100 )))
+		other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - ang ), 100 )))
+		'death effects
+		die()
+	End Method
+	
 	Method die()
 		'spawn halo particle
 		Local halo:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, img_halo,,,,, LAYER_BACKGROUND, False,,,,,,,, 200, pos_x, pos_y, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 1.0, -0.1000 ))
@@ -66,20 +79,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 		Next
 		'delete self
 		cur_health = 0
-		remove_me()
-	End Method
-	
-	Method self_destruct( other:AGENT )
-		'damage
-		other.receive_damage( 100 )
-		'explosive forces
-		Local offset#, offset_ang#
-		cartesian_to_polar( pos_x - other.pos_x, pos_y - other.pos_y, offset, offset_ang )
-		Local total_force# = 100.0
-		other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - ang ), 100 )))
-		other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - ang ), 100 )))
-		'death effects
-		die()
+		unmanage()
 	End Method
 	
 End Type

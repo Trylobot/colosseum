@@ -4,31 +4,38 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-'Doors
+'______________________________________________________________________________
 Const DOOR_STATUS_OPEN% = 0
 Const DOOR_STATUS_CLOSED% = 1
 
-'______________________________________________________________________________
-'Environmental objects
 Const SPAWN_POINT_OFFSET% = 43
+
+Function Create_ENVIRONMENT:ENVIRONMENT()
+	Local e:ENVIRONMENT = New ENVIRONMENT
+	
+	Return e
+End Function
 
 Type ENVIRONMENT
 	Field origin:cVEC '(x, y) of the origin of this level
 	Field zoom# 'zoom level
-	Field lev:LEVEL 'level object from which to build the environment, read-only
-	Field pathing:PATHING_STRUCTURE 'pathfinding object for this level
-	Field walls:TList 'TList<BOX> contains all of the wall rectangles of the level
 
+	Field lev:LEVEL 'level object from which to build the environment, read-only
+	Field walls:TList 'TList<BOX> contains all of the wall rectangles of the level
+	Field pathing:PATHING_STRUCTURE 'pathfinding object for this level
 	Field bg_cache:TImage 'background image
 	Field fg_cache:TImage 'foreground image
 	
 	Field particle_list_background:TList 'TList<PARTICLE>
 	Field particle_list_foreground:TList 'TList<PARTICLE>
+	Field particle_lists:TList 'TList<TList<PARTICLE>>
 	Field retained_particle_list:TList 'TList<PARTICLE>
 	Field retained_particle_list_count% 'number of particles currently retained, cached for speed
+	Field environmental_widget_list:TList
 	Field projectile_list:TList 'TList<PROJECTILE>
 	Field friendly_agent_list:TList 'TList<COMPLEX_AGENT>
 	Field hostile_agent_list:TList 'TList<COMPLEX_AGENT>
+	Field agent_lists:TList 'TList<TList<COMPLEX_AGENT>>
 	Field pickup_list:TList 'TList<PICKUP>
 	Field control_brain_list:TList 'TList<CONTROL_BRAIN>
 	
@@ -48,14 +55,24 @@ Type ENVIRONMENT
 	Field hostile_doors_status%
 	Field all_door_lists:TList
 	
+	Field game_in_progress%
+	Field game_over%
+	
 	Method New()
 		walls = CreateList()
 		particle_list_background = CreateList()
 		particle_list_foreground = CreateList()
+		particle_lists = CreateList()
+			particle_lists.AddLast( particle_list_background )
+			particle_lists.AddLast( particle_list_foreground )
 		retained_particle_list = CreateList()
+		environmental_widget_list = CreateList()
 		projectile_list = CreateList()
 		friendly_agent_list = CreateList()
 		hostile_agent_list = CreateList()
+		agent_lists = CreateList()
+			agent_lists.AddLast( friendly_agent_list )
+			agent_lists.AddLast( hostile_agent_list )
 		pickup_list = CreateList()
 		control_brain_list = CreateList()
 		enemy_spawn_queue = CreateList()
@@ -68,35 +85,34 @@ Type ENVIRONMENT
 			all_door_lists.addlast( hostile_door_list )
 	End Method
 	
-	Method init()
-		init_pathing_system()
-		'attach door widgets To every spawn point
-		For Local spawn:POINT = EachIn friendly_spawn_points
-			attach_door( spawn, friendly_door_list )
-		Next
-		friendly_doors_status = DOOR_STATUS_CLOSED
-		For Local spawn:POINT = EachIn enemy_spawn_points
-			attach_door( spawn, hostile_door_list )
-		Next
-		hostile_doors_status = DOOR_STATUS_CLOSED
+	Method clear()
+		bg_cache = Null
+		fg_cache = Null
+		particle_list_background.Clear()
+		particle_list_foreground.Clear()
+		retained_particle_list.Clear()
+		retained_particle_list_count = 0
+		environmental_widget_list.Clear()
+		projectile_list.Clear()
+		friendly_agent_list.Clear()
+		hostile_agent_list.Clear()
+		pickup_list.Clear()
+		control_brain_list.Clear()
+		player = Null
 	End Method
 	
-	Method init_pathing_system()
+	Method load_level( new_lev:LEVEL )
+		lev = new_lev
+		init()
+	End Method
+	
+	Method init()
+		'pathing
 		pathing_grid_w = lev.col_count
 		pathing_grid_h = lev.row_count
 		pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
 		init_pathing_grid_from_walls( walls )
-	End Method
-	
-	Method reset()
-		
-	End Method
-	
-	Method prep_spawner()
-		
-	End Method
-	
-	Method calculate_walls()
+		'walls
 		If lev <> Null
 			If walls = Null Then walls = CreateList()
 			For Local r% = 0 To lev.row_count - 1
@@ -107,15 +123,37 @@ Type ENVIRONMENT
 				Next
 			Next
 		End If
+		'spawning
+		shuffle_anchor_deck()
+		cur_squad = Null
+		cur_spawn_point = Null
+		last_spawned_enemy = Null
+		enemy_spawn_queue.Clear()
+		Local squads%[][] = get_level_squads( player_level )
+		If squads <> Null
+			For Local squad_i%[] = EachIn squads
+				queue_squad( squad_i )
+			Next
+			level_enemies_remaining = enemy_count( squads )
+		End If
+		'doors
+		For Local spawn:POINT = EachIn friendly_spawn_points
+			attach_door( spawn, friendly_door_list )
+		Next
+		friendly_doors_status = DOOR_STATUS_CLOSED
+		For Local spawn:POINT = EachIn enemy_spawn_points
+			attach_door( spawn, hostile_door_list )
+		Next
+		hostile_doors_status = DOOR_STATUS_CLOSED
 	End Method
-
+	
 	Method queue_squad( archetypes%[] )
 		Local squad:TList = CreateList()
 		For Local i% = EachIn archetypes
-			squad.AddLast( COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[i] )))
+			SQUAD.AddLast( COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[i] )))
 		Next
 		enemy_spawn_queue.AddLast( squad )
-		If cur_squad = Null Then cur_squad = squad
+		If cur_squad = Null Then cur_squad = SQUAD
 	End Method
 	
 	Method enemy_count%()
@@ -223,8 +261,31 @@ Type ENVIRONMENT
 		hostile_doors_status = DOOR_STATUS_CLOSED
 	End Method
 	
+	Method find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
+		Local start_cell:CELL = containing_cell( start_x, start_y )
+		Local goal_cell:CELL = containing_cell( goal_x, goal_y )
+		If pathing.grid( start_cell ) = PATH_BLOCKED Or pathing.grid( goal_cell ) = PATH_BLOCKED
+			Return Null
+		End If
+		
+		pathing.reset()
+		Local cell_list:TList = pathing.find_CELL_path( start_cell, goal_cell )
+	
+		Local list:TList = CreateList()
+		If cell_list <> Null And Not cell_list.IsEmpty()
+			For Local cursor:CELL = EachIn cell_list
+				list.AddLast( cVEC.Create( cursor.col*cell_size + cell_size/2 + pathing_grid_origin.x, cursor.row*cell_size + cell_size/2 + pathing_grid_origin.y ))
+			Next
+		End If
+		Return list
+	End Method
+
 	Method pathing_system_f_value#( inquiry:CELL )
 		Return pathing.f( inquiry )
+	End Method
+	
+	Method point_inside_arena%( p:POINT )
+		
 	End Method
 	
 End Type

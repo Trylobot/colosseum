@@ -55,13 +55,13 @@ Type FORCE Extends MANAGED_OBJECT
 		f.created_ts = now()
 		f.update()
 		
-		f.add_me( managed_list )
+		f.manage( managed_list )
 		Return f
 	End Function
 
 	Method update()
 		If dead()
-			remove_me()
+			unmanage()
 		End If
 		magnitude_cur = control_pct*magnitude_max
 	End Method

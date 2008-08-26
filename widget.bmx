@@ -43,8 +43,6 @@ Type TRANSFORM_STATE
 	
 End Type
 '______________________________________________________________________________
-Global environmental_widget_list:TList = CreateList()
-
 Const REPEAT_MODE_CYCLIC_WRAP% = 0
 Const REPEAT_MODE_LOOP_BACK% = 1
 
@@ -229,7 +227,7 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Method
 	
 	Method auto_manage()
-		add_me( environmental_widget_list )
+		manage( game.environmental_widget_list )
 	End Method
 	
 End Type

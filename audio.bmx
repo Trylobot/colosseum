@@ -82,7 +82,7 @@ Function tweak_engine_idle()
 				CueSound( get_sound( "engine_idle_loop" ), engine_idle )
 				ResumeChannel( engine_idle )
 			End If
-			Local p_speed# = Sqr( Pow(player.vel_x,2) + Pow(player.vel_y,2) )
+			Local p_speed# = Sqr( Pow(game.player.vel_x,2) + Pow(game.player.vel_y,2) )
 			SetChannelVolume( engine_idle, 0.5 + ( 0.5 * (p_speed / 2.0) ))
 			SetChannelRate( engine_idle, 1.0 + (p_speed / 2.0) )
 		End If

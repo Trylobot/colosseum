@@ -5,7 +5,6 @@ Rem
 EndRem
 
 'Background cached texture
-Global bg_cache:TImage
 Global FLAG_retain_particles% = False
 Const retained_particle_limit% = 1500
 Global FLAG_dim_bg% = False
@@ -50,7 +49,7 @@ Function draw_game()
 	draw_arena_bg()
 
 	'background particles
-	For Local part:PARTICLE = EachIn particle_list_background
+	For Local part:PARTICLE = EachIn game.particle_list_background
 		part.draw()
 	Next
 	SetAlpha( 1 )
@@ -58,14 +57,14 @@ Function draw_game()
 	SetColor( 255, 255, 255 )
 	
 	'projectiles
-	For Local proj:PROJECTILE = EachIn projectile_list
+	For Local proj:PROJECTILE = EachIn game.projectile_list
 		proj.draw()
 	Next
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	SetColor( 255, 255, 255 )
 	'pickups
-	For Local pkp:PICKUP = EachIn pickup_list
+	For Local pkp:PICKUP = EachIn game.pickup_list
 		pkp.draw()
 	Next
 	SetAlpha( 1 )
@@ -77,16 +76,16 @@ Function draw_game()
 	SetAlpha( 1 )
 	
 	'hostile agents
-	For Local hostile:COMPLEX_AGENT = EachIn hostile_agent_list
+	For Local hostile:COMPLEX_AGENT = EachIn game.hostile_agent_list
 		hostile.draw()
 	Next
 	'friendly agents
-	For Local friendly:COMPLEX_AGENT = EachIn friendly_agent_list
+	For Local friendly:COMPLEX_AGENT = EachIn game.friendly_agent_list
 		friendly.draw()
 	Next
 	
 	'foreground particles
-	For Local part:PARTICLE = EachIn particle_list_foreground
+	For Local part:PARTICLE = EachIn game.particle_list_foreground
 		part.draw()
 	Next
 	SetColor( 255, 255, 255 )
@@ -95,14 +94,14 @@ Function draw_game()
 	SetAlpha( 1 )
 	
 	'aiming reticle
-	If player.turret_list.Count() <> 0
+	If game.player.turret_list.Count() <> 0
 		If player_input_type = INPUT_KEYBOARD
-			SetRotation( TURRET( player.turret_list.First() ).ang )
-			DrawImage( img_reticle, TURRET( player.turret_list.First() ).pos_x + 60*Cos( TURRET( player.turret_list.First() ).ang ), TURRET( player.turret_list.First() ).pos_y + 50*Sin( TURRET( player.turret_list.First() ).ang ) )
+			SetRotation( TURRET( game.player.turret_list.First() ).ang )
+			DrawImage( img_reticle, TURRET( game.player.turret_list.First() ).pos_x + 60*Cos( TURRET( game.player.turret_list.First() ).ang ), TURRET( game.player.turret_list.First() ).pos_y + 50*Sin( TURRET( game.player.turret_list.First() ).ang ) )
 		Else If player_input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 			'position the larger dot of the reticle directly at the mouse position
 			'point the ellipsis dots at the player's turret
-			SetRotation( TURRET( player.turret_list.First() ).ang_to_cVEC( mouse_point ))
+			SetRotation( TURRET( game.player.turret_list.First() ).ang_to_cVEC( mouse_point ))
 			DrawImage( img_reticle, mouse_point.x, mouse_point.y )
 		End If
 	End If
@@ -236,7 +235,7 @@ End Function
 '______________________________________________________________________________
 Function draw_arena_bg()
 
-	If bg_cache = Null
+	If game.bg_cache = Null
 		init_bg_cache()
 	End If
 
@@ -248,7 +247,7 @@ Function draw_arena_bg()
 	DrawImage( bg_cache, 0,0 )
 
 	'incorporate retained particles into bg_cache and remove them from the managed list
-	For Local part:PARTICLE = EachIn retained_particle_list
+	For Local part:PARTICLE = EachIn game.retained_particle_list
 		part.draw()
 	Next
 	
@@ -257,15 +256,15 @@ Function draw_arena_bg()
 			
 			Case PARTICLE_PRUNE_ACTION_ADD_TO_BG_CACHE
 				FLAG_retain_particles = False
-				retained_particle_list.Clear()
-				retained_particle_list_count = 0
+				game.retained_particle_list.Clear()
+				game.retained_particle_list_count = 0
 				
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
 				SetScale( 1, 1 )
 				SetRotation( 0 )
 				
-				GrabImage( bg_cache, 0,0 )
+				GrabImage( game.bg_cache, 0,0 )
 				
 				If FLAG_dim_bg
 					FLAG_dim_bg = False
@@ -275,15 +274,15 @@ Function draw_arena_bg()
 					SetScale( 1, 1 )
 					SetRotation( 0 )
 					
-					DrawImage( img_arena_bg, 0,0 )
-					GrabImage( bg_cache, 0,0 )
+					DrawImage( game.img_arena_bg, 0,0 )
+					GrabImage( game.bg_cache, 0,0 )
 					
 				End If
 				
 			Case PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
-				While retained_particle_list_count >= retained_particle_limit
-					retained_particle_list.FirstLink().Remove()
-					retained_particle_list_count :- 1
+				While game.retained_particle_list_count >= retained_particle_limit
+					game.retained_particle_list.FirstLink().Remove()
+					game.retained_particle_list_count :- 1
 				End While
 			
 		End Select
@@ -298,9 +297,9 @@ Function draw_arena_fg()
 	SetRotation( 0 )
 	
 	DrawImage( img_arena_fg, 0,0 )
-	draw_walls( get_level_walls( player_level ))
+	draw_walls( game.walls )
 
-	For Local w:WIDGET = EachIn environmental_widget_list
+	For Local w:WIDGET = EachIn game.environmental_widget_list
 		w.draw()
 	Next
 	
@@ -309,7 +308,7 @@ Function draw_arena_fg()
 	SetRotation( 0 )
 	SetColor( 0, 0, 0 )
 	SetAlpha( 0.4*time_alpha_pct( battle_toggle_ts, arena_lights_fade_time, Not FLAG_battle_in_progress ))
-	DrawRect( 0,0, arena_offset*2+arena_w,arena_offset*2+arena_h )
+	DrawRect( 0,0, window_w,window_h )
 	SetColor( 255, 255, 255 )
 	SetAlpha( 0.2*time_alpha_pct( battle_toggle_ts, arena_lights_fade_time, Not FLAG_battle_in_progress ))
 	SetBlend( LIGHTBLEND )
@@ -320,7 +319,7 @@ Function draw_arena_fg()
 End Function
 '______________________________________________________________________________
 Function init_bg_cache()
-	bg_cache = CreateImage( arena_w + 2*arena_offset,arena_h + 2*arena_offset, DYNAMICIMAGE )
+	game.bg_cache = CreateImage( game.lev.width,game.lev.height, DYNAMICIMAGE )
 
 	Cls
 	SetColor( 255, 255, 255 )
@@ -333,12 +332,12 @@ End Function
 '______________________________________________________________________________
 Function draw_walls( walls:TList )
 	
-	For Local wall%[] = EachIn walls
-		SetViewport( wall[1],wall[2], wall[3],wall[4] )
+	For Local wall:BOX = EachIn walls
+		SetViewport( wall.x,wall.y, wall.w,wall.h )
 		DrawImage( img_walls_inner, arena_offset,arena_offset )
 	Next
 	For Local wall%[] = EachIn walls
-		SetViewport( wall[1]+8,wall[2]+8, wall[3]-16,wall[4]-16 )
+		SetViewport( wall.x+2,wall.y+2, wall.w-4,wall.h-4 )
 		DrawImage( img_walls_border, arena_offset,arena_offset )
 	Next
 	SetViewport( 0,0, window_w,window_h )
@@ -348,15 +347,15 @@ Function draw_stats()
 	Local x%, y%, w%, h%
 	
 	'level number
-	x = arena_w + (arena_offset*2) + arena_offset/2
-	y = arena_offset/2
+	x = window_w - stats_panel_w
+	y = 25
 	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
 	DrawText( "level", x, y ); y :+ 12
 	SetColor( 255, 255, 127 ); SetImageFont( get_font( "consolas_bold_50" ))
 	DrawText( player_level + 1, x, y ); y :+ 50
 	
 	'player cash
-	y :+ arena_offset
+	y :+ 50
 	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
 	'ToDo: put some code here to comma-separate the displayed cash value
 	DrawText( "cash", x, y ); y :+ 12
@@ -364,18 +363,18 @@ Function draw_stats()
 	DrawText( "$" + player_cash, x, y ); y :+ 50
 		
 	'player health		
-	y :+ arena_offset
+	y :+ 50
 	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
 	DrawText( "health", x, y ); y :+ 12
 	w = 175; h = 18
-	draw_percentage_bar( x,y, w,h, (player.cur_health/player.max_health) )
+	draw_percentage_bar( x,y, w,h, (game.player.cur_health/game.player.max_health) )
 	y :+ h
 	
 	'player ammo, overheat & charge indicators
-	y :+ arena_offset
+	y :+ 50
 	Local ammo_row_len% = 10
 	Local temp_x%, temp_y%
-	For Local t:TURRET = EachIn player.turret_list
+	For Local t:TURRET = EachIn game.player.turret_list
 		If t.name <> Null And t.name <> ""
 			SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
 			DrawText( t.name, x, y ); y :+ 12
@@ -456,7 +455,8 @@ Function DrawText_with_glow( str$, pos_x%, pos_y% )
 End Function
 
 Function screenshot()
-	Local screen:TImage = New TImage
+	Local screen:TImage = TImage.Create( window_w,window_h, 0, DYNAMICIMAGE )
+	GrabImage( screen, 0,0 )
 	save_screenshot_to_file( screen )
 End Function
 '______________________________________________________________________________

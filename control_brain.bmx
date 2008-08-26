@@ -5,8 +5,6 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global control_brain_list:TList = CreateList()
-
 Const waypoint_radius# = 0.50*cell_size
 Const friendly_blocking_scalar_projection_distance# = 20
 
@@ -47,7 +45,7 @@ find_path_delay% = 0 )
 	cb.last_look_target_ts = now()
 	cb.last_find_path_ts = now()
 
-	cb.add_me( control_brain_list )
+	cb.manage( game.control_brain_list )
 	Return cb
 End Function
 '_________________________________________
@@ -135,7 +133,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						avatar.turn_turret( 1, 0.0 )
 					EndIf
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-					For Local t:TURRET = EachIn player.turret_list
+					For Local t:TURRET = EachIn game.player.turret_list
 						Local diff# = ang_wrap( t.ang - t.ang_to_cVEC( mouse_point ))
 						Local diff_mag# = Abs( diff )
 						If diff_mag > 5*t.max_ang_vel
@@ -156,31 +154,31 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 							End If
 						Else If diff_mag > 1.25*t.max_ang_vel
 							If diff < 0
-								player.turn_turret( 0, 0.25 )
-								player.turn_turret( 1, 0.25 )
+								avatar.turn_turret( 0, 0.25 )
+								avatar.turn_turret( 1, 0.25 )
 							Else 'diff > 0
-								player.turn_turret( 0, -0.25 )
-								player.turn_turret( 1, -0.25 )
+								avatar.turn_turret( 0, -0.25 )
+								avatar.turn_turret( 1, -0.25 )
 							End If
 						Else If diff_mag > 0.75*t.max_ang_vel
 							If diff < 0
-								player.turn_turret( 0, 0.125 )
-								player.turn_turret( 1, 0.125 )
+								avatar.turn_turret( 0, 0.125 )
+								avatar.turn_turret( 1, 0.125 )
 							Else 'diff > 0
-								player.turn_turret( 0, -0.125 )
-								player.turn_turret( 1, -0.125 )
+								avatar.turn_turret( 0, -0.125 )
+								avatar.turn_turret( 1, -0.125 )
 							End If
 						Else If diff_mag > 0.375*t.max_ang_vel
 							If diff < 0
-								player.turn_turret( 0, 0.0625 )
-								player.turn_turret( 1, 0.0625 )
+								avatar.turn_turret( 0, 0.0625 )
+								avatar.turn_turret( 1, 0.0625 )
 							Else 'diff > 0
-								player.turn_turret( 0, -0.0625 )
-								player.turn_turret( 1, -0.0625 )
+								avatar.turn_turret( 0, -0.0625 )
+								avatar.turn_turret( 1, -0.0625 )
 							End If
 						Else
-							player.turn_turret( 0, 0.0 )
-							player.turn_turret( 1, 0.0 )
+							avatar.turn_turret( 0, 0.0 )
+							avatar.turn_turret( 1, 0.0 )
 						End If
 					Next
 				End If
@@ -313,7 +311,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				End If
 				
 			Case AI_BRAIN_TANK
-				If Not point_inside_arena( avatar )
+				If Not game.point_inside_arena( avatar )
 					avatar.drive( 1.0 )
 					Return
 				Else If target <> Null And Not target.dead()
@@ -473,7 +471,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Case ALIGNMENT_NONE
 				Return Null
 			Case ALIGNMENT_FRIENDLY
-				For ag = EachIn hostile_agent_list
+				For ag = EachIn game.hostile_agent_list
 					dist = avatar.dist_to( ag )
 					If dist_to_ag < 0 Or dist < dist_to_ag
 						dist_to_ag = dist
@@ -482,7 +480,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Next
 				Return closest_rival_agent 'TARGET ACQUIRED!
 			Case ALIGNMENT_HOSTILE
-				For ag = EachIn friendly_agent_list
+				For ag = EachIn game.friendly_agent_list
 					dist = avatar.dist_to( ag )
 					If dist_to_ag < 0 Or dist < dist_to_ag
 						dist_to_ag = dist
@@ -499,7 +497,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
 			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
 			'for each wall in the level
-			For Local cur_wall_list:TList = EachIn all_walls
+			For Local cur_wall_list:TList = EachIn game.walls
 				For Local wall%[] = EachIn cur_wall_list
 					'if the line connecting this brain's avatar with its target intersects the wall
 					If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall[1],wall[2])), cVEC( cVEC.Create(wall[3],wall[4])) )

@@ -83,42 +83,30 @@ Function time_alpha_pct#( ts%, time%, in% = True )
 	End If
 End Function
 
-'this needs to be based somehow on a LEVEL object
-Function point_inside_arena%( p:POINT )
-	If p.pos_x < arena_offset_left ..
-	Or p.pos_x > arena_offset_left + arena_w ..
-	Or p.pos_y < arena_offset_top ..
-	Or p.pos_y > arena_offset_top + arena_h
-		Return False
-	Else
-		Return True
-	End If
-End Function
-
 '______________________________________________________________________________
 Type MANAGED_OBJECT
 	
-	Field name$
-	Field link:TLink 'back-reference to the list which contains this object
+	Field name$ 'name of this object
 	Field id% 'unique identification number
+	Field link:TLink 'back-reference to the list which contains this object
 	
 	Method New()
 		id = get_new_id()
 	End Method
 	
-	Method add_me( list:TList )
+	Method managed%()
+		Return (link <> Null)
+	End Method
+	
+	Method manage( list:TList )
 		link = ( list.AddLast( Self ))
 	End Method
 	
-	Method remove_me()
+	Method unmanage()
 		If link <> Null
 			link.Remove()
 			link = Null
 		End If
-	End Method
-	
-	Method managed%()
-		Return (link <> Null)
 	End Method
 	
 End Type

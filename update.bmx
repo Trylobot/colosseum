@@ -18,17 +18,17 @@ Function update_all()
 		'if waiting for player to enter arena
 		If FLAG_waiting_for_player_to_enter_arena
 			'if player has not entered the arena
-			If Not point_inside_arena( player )
+			If Not game.point_inside_arena( player )
 				'if the player has started the engine
 				If FLAG_player_engine_running
 					'open the friendly doors
-					If friendly_doors_status = DOOR_STATUS_CLOSED Then activate_doors( ALIGNMENT_FRIENDLY )
+					If game.friendly_doors_status = DOOR_STATUS_CLOSED Then activate_doors( ALIGNMENT_FRIENDLY )
 				End If
 			'else, player has entered the arena
 			Else 'point_inside_arena( player )
 				FLAG_player_in_locker = False
 				FLAG_waiting_for_player_to_enter_arena = False
-				If hostile_doors_status = DOOR_STATUS_CLOSED Then activate_doors( ALIGNMENT_HOSTILE )
+				If game.hostile_doors_status = DOOR_STATUS_CLOSED Then game.activate_doors( ALIGNMENT_HOSTILE )
 				FLAG_battle_in_progress = True
 				battle_toggle_ts = now()
 				FLAG_waiting_for_player_to_exit_arena = True
@@ -36,14 +36,14 @@ Function update_all()
 			End If
 		End If
 		'if there are no more enemies this level
-		If FLAG_battle_in_progress And hostile_agent_list.Count() = 0 And enemy_spawn_queue.IsEmpty() And cur_squad = Null
+		If FLAG_battle_in_progress And game.hostile_agent_list.Count() = 0 And game.enemy_spawn_queue.IsEmpty() And game.cur_squad = Null
 			FLAG_battle_in_progress = False
 			battle_toggle_ts = now()
-			If hostile_doors_status = DOOR_STATUS_OPEN Then activate_doors( ALIGNMENT_HOSTILE )
+			If game.hostile_doors_status = DOOR_STATUS_OPEN Then game.activate_doors( ALIGNMENT_HOSTILE )
 			FLAG_spawn_enemies = False
 		End If
 		'if the battle is over, and waiting for player to exit arena, and player has exited the arena
-		If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And point_inside_arena( player )
+		If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And game.point_inside_arena( player )
 			FLAG_waiting_for_player_to_exit_arena = False
 			FLAG_player_in_locker = True
 			'FLAG_player_engine_running = False
@@ -53,19 +53,19 @@ Function update_all()
 		
 		'spawning
 		If FLAG_spawn_enemies
-			spawning_system_update()
+			game.spawning_system_update()
 		End If
 		
 		'pickups
-		For Local pkp:PICKUP = EachIn pickup_list
+		For Local pkp:PICKUP = EachIn game.pickup_list
 			pkp.update()
 		Next
 		'projectiles
-		For Local proj:PROJECTILE = EachIn projectile_list
+		For Local proj:PROJECTILE = EachIn game.projectile_list
 			proj.update()
 		Next	
 		'particles
-		For Local list:TList = EachIn particle_lists
+		For Local list:TList = EachIn game.particle_lists
 			For Local part:PARTICLE = EachIn list
 				part.update()
 				part.prune()
@@ -73,23 +73,23 @@ Function update_all()
 		Next
 
 		'control brains
-		For Local cb:CONTROL_BRAIN = EachIn control_brain_list
+		For Local cb:CONTROL_BRAIN = EachIn game.control_brain_list
 			cb.update()
 		Next
 		'complex agents
-		For Local list:TList = EachIn agent_lists
+		For Local list:TList = EachIn game.agent_lists
 			For Local ag:COMPLEX_AGENT = EachIn list
 				ag.update()
 			Next
 		Next
 		
 		'environment
-		For Local w:WIDGET = EachIn environmental_widget_list
+		For Local w:WIDGET = EachIn game.environmental_widget_list
 			w.update()
 		Next
 		
 		'retained particles
-		If retained_particle_list_count > retained_particle_limit
+		If game.retained_particle_list_count > retained_particle_limit
 			FLAG_retain_particles = True
 		End If
 		

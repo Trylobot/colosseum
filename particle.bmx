@@ -5,12 +5,6 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global particle_lists:TList = CreateList()
-Global particle_list_background:TList = CreateList(); particle_lists.AddLast( particle_list_background )
-Global particle_list_foreground:TList = CreateList(); particle_lists.AddLast( particle_list_foreground )
-Global retained_particle_list:TList = CreateList()
-Global retained_particle_list_count% = 0
-
 Const PARTICLE_PRUNE_ACTION_ADD_TO_BG_CACHE% = 1
 Const PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT% = 2
 Global global_particle_prune_action% = PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
@@ -180,12 +174,12 @@ Type PARTICLE Extends POINT
 	Method prune()
 		If dead()
 			'remove from normal managed list
-			remove_me()
+			unmanage()
 			If retain
-				add_me( retained_particle_list )
-				retained_particle_list_count :+ 1
+				manage( game.retained_particle_list )
+				game.retained_particle_list_count :+ 1
 				If global_particle_prune_action = PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
-					alpha_delta :- 0.01
+					alpha_delta :- 0.100
 				End If
 			End If
 		End If
@@ -193,9 +187,9 @@ Type PARTICLE Extends POINT
 	
 	Method auto_manage()
 		If layer = LAYER_BACKGROUND
-			add_me( particle_list_background )
+			manage( game.particle_list_background )
 		Else If layer = LAYER_FOREGROUND
-			add_me( particle_list_foreground )
+			manage( game.particle_list_foreground )
 		End If
 	End Method
 	

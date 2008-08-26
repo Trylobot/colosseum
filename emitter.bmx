@@ -319,7 +319,7 @@ Type EMITTER extends MANAGED_OBJECT
 		em.red = other.red.clone(); em.green = other.green.clone(); em.blue = other.blue.clone()
 		em.red_delta = other.red_delta.clone(); em.green_delta = other.green_delta.clone(); em.blue_delta = other.blue_delta.clone()
 		
-		If managed_list <> Null Then em.add_me( managed_list )
+		If managed_list <> Null Then em.manage( managed_list )
 		Return em
 	End Function
 	

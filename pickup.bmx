@@ -5,8 +5,6 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global pickup_list:TList = CreateList()
-
 Const AMMO_PICKUP% = 0
 Const HEALTH_PICKUP% = 1
 Const COOLDOWN_PICKUP% = 2
@@ -81,12 +79,12 @@ Type PICKUP Extends MANAGED_OBJECT
 	
 	Method prune()
 		If dead()
-			remove_me()
+			unmanage()
 		End If
 	End Method
 	
 	Method auto_manage()
-		add_me( pickup_list )
+		manage( game.pickup_list )
 	End Method
 	
 End Type
