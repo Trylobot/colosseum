@@ -396,8 +396,8 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			
 		Case COMMAND_PLAYER_INPUT_TYPE
 			player_input_type = command_argument
-			If player_brain <> Null
-				player_brain.input_type = player_input_type
+			If game.player_brain <> Null
+				game.player_brain.input_type = player_input_type
 			End If
 			
 		Case COMMAND_EDIT_LEVEL

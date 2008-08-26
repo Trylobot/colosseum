@@ -41,6 +41,7 @@ Type ENVIRONMENT
 	
 	Field player:COMPLEX_AGENT
 	Field player_brain:CONTROL_BRAIN
+	Field player_spawn_point:POINT
 	
 	Field enemy_spawn_queue:TList 'TList<COMPLEX_AGENT>
 	Field cur_squad:TList 'TList<COMPLEX_AGENT>
@@ -111,7 +112,7 @@ Type ENVIRONMENT
 		pathing_grid_w = lev.col_count
 		pathing_grid_h = lev.row_count
 		pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
-		init_pathing_grid_from_walls( walls )
+		'init_pathing_grid_from_walls( walls )
 		'walls
 		If lev <> Null
 			If walls = Null Then walls = CreateList()
@@ -124,84 +125,75 @@ Type ENVIRONMENT
 			Next
 		End If
 		'spawning
-		shuffle_anchor_deck()
+		'shuffle_anchor_deck()
 		cur_squad = Null
 		cur_spawn_point = Null
 		last_spawned_enemy = Null
 		enemy_spawn_queue.Clear()
-		Local squads%[][] = get_level_squads( player_level )
-		If squads <> Null
-			For Local squad_i%[] = EachIn squads
-				queue_squad( squad_i )
+		If lev.squads <> Null
+			For Local this_squad:SQUAD = EachIn lev.squads
+				queue_squad( this_squad )
 			Next
-			level_enemies_remaining = enemy_count( squads )
+			level_enemies_remaining = lev.enemy_count()
 		End If
 		'doors
-		For Local spawn:POINT = EachIn friendly_spawn_points
-			attach_door( spawn, friendly_door_list )
-		Next
-		friendly_doors_status = DOOR_STATUS_CLOSED
-		For Local spawn:POINT = EachIn enemy_spawn_points
-			attach_door( spawn, hostile_door_list )
-		Next
-		hostile_doors_status = DOOR_STATUS_CLOSED
+'		For Local spawn:POINT = EachIn friendly_spawn_points
+'			attach_door( spawn, friendly_door_list )
+'		Next
+'		friendly_doors_status = DOOR_STATUS_CLOSED
+'		For Local spawn:POINT = EachIn enemy_spawn_points
+'			attach_door( spawn, hostile_door_list )
+'		Next
+'		hostile_doors_status = DOOR_STATUS_CLOSED
 	End Method
 	
-	Method queue_squad( archetypes%[] )
-		Local squad:TList = CreateList()
-		For Local i% = EachIn archetypes
-			SQUAD.AddLast( COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[i] )))
+	Method queue_squad( this_squad:SQUAD )
+		Local this_squad_baked:TList = CreateList()
+		For Local archetype_index% = EachIn this_squad.archetypes
+			this_squad_baked.AddLast( COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index] )))
 		Next
-		enemy_spawn_queue.AddLast( squad )
-		If cur_squad = Null Then cur_squad = SQUAD
-	End Method
-	
-	Method enemy_count%()
-		Local count% = 0
-		For Local SQUAD%[] = EachIn lev.squads
-			count :+ SQUAD.Length
-		Next
-		Return count
+		enemy_spawn_queue.AddLast( this_squad_baked )
+		If cur_squad = Null Then cur_squad = this_squad_baked
 	End Method
 	
 	Method spawning_system_update()
-		'is there a squad ready
-		If cur_squad <> Null And Not cur_squad.IsEmpty()
-			'find a turret anchor
-			If cur_turret_anchor = Null And anchor_i < anchor_deck.Length
-				cur_turret_anchor = enemy_turret_anchors[anchor_deck[anchor_i]]
-				anchor_i :+ 1
-			End If
-			'find a spawn point
-			If cur_spawn_point = Null
-				cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
-			End If
-			'if there is no last spawned enemy, or the last spawned enemy is clear of the spawn, or the last spawned enemy has died (yeah it can happen.. CAMPER!)
-			If (last_spawned_enemy = Null ..
-			Or point_inside_arena( last_spawned_enemy ) ..
-			Or (last_spawned_enemy <> Null And last_spawned_enemy.dead())) ..
-			And (now() - squad_begin_spawning_ts >= squad_spawn_delay)
-				spawn_from_squad( cur_squad )
-			'else, last_spawned_enemy <> Null And enemy not clear of spawn
-			End If
-		Else 'cur_squad == Null Or cur_squad.IsEmpty()
-			'prepare a squad from the list, if there are any
-			If Not enemy_spawn_queue.IsEmpty()
-				cur_squad = TList( enemy_spawn_queue.First() )
-				enemy_spawn_queue.RemoveFirst()
-				cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
-				squad_begin_spawning_ts = now()
-			Else 'enemy_spawn_queue.IsEmpty()
-				cur_squad = Null
-				cur_spawn_point = Null
-				last_spawned_enemy = Null
-			End If
-		End If
+'		'is there a squad ready
+'		If cur_squad <> Null And Not cur_squad.IsEmpty()
+'			'find a turret anchor
+'			If cur_turret_anchor = Null And anchor_i < anchor_deck.Length
+'				cur_turret_anchor = enemy_turret_anchors[anchor_deck[anchor_i]]
+'				anchor_i :+ 1
+'			End If
+'			'find a spawn point
+'			If cur_spawn_point = Null
+'				cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
+'			End If
+'			'if there is no last spawned enemy, or the last spawned enemy is clear of the spawn, or the last spawned enemy has died (yeah it can happen.. CAMPER!)
+'			If (last_spawned_enemy = Null ..
+'			Or point_inside_arena( last_spawned_enemy ) ..
+'			Or (last_spawned_enemy <> Null And last_spawned_enemy.dead())) ..
+'			And (now() - squad_begin_spawning_ts >= squad_spawn_delay)
+'				spawn_from_squad( cur_squad )
+'			'else, last_spawned_enemy <> Null And enemy not clear of spawn
+'			End If
+'		Else 'cur_squad == Null Or cur_squad.IsEmpty()
+'			'prepare a squad from the list, if there are any
+'			If Not enemy_spawn_queue.IsEmpty()
+'				cur_squad = TList( enemy_spawn_queue.First() )
+'				enemy_spawn_queue.RemoveFirst()
+'				cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
+'				squad_begin_spawning_ts = now()
+'			Else 'enemy_spawn_queue.IsEmpty()
+'				cur_squad = Null
+'				cur_spawn_point = Null
+'				last_spawned_enemy = Null
+'			End If
+'		End If
 	End Method
 	
-	Method spawn_from_squad( squad:TList ) 'this function should be treated as a request, and might not do anything if conditions are not met.
-		last_spawned_enemy = COMPLEX_AGENT( squad.First() )
-		squad.RemoveFirst()
+	Method spawn_from_squad( this_squad:TList ) 'this function should be treated as a request, and might not do anything if conditions are not met.
+		last_spawned_enemy = COMPLEX_AGENT( this_squad.First() )
+		this_squad.RemoveFirst()
 		last_spawned_enemy.auto_manage( ALIGNMENT_HOSTILE )
 		'is this agent a turret
 		If last_spawned_enemy.ai_type = AI_BRAIN_TURRET And cur_turret_anchor <> Null
@@ -224,13 +216,13 @@ Type ENVIRONMENT
 		'left side
 		door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
 		door.parent = p
-		door.attach_at( arena_offset/2 + arena_offset/3 - door.img.height/2 + 1, 0, 90, True )
+		door.attach_at( 25 + 50/3 - door.img.height/2 + 1, 0, 90, True )
 		door.auto_manage()
 		political_door_list.AddLast( door )
 		'right side
 		door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
 		door.parent = p
-		door.attach_at( arena_offset/2 + arena_offset/3 - door.img.height/2 + 1, 0, -90, True )
+		door.attach_at( 25 + 50/3 - door.img.height/2 + 1, 0, -90, True )
 		door.auto_manage()
 		political_door_list.AddLast( door )
 	End Method

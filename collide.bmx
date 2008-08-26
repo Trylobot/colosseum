@@ -37,13 +37,13 @@ Function collide_all()
 		ResetCollisions()
 		
 		'collisions between projectiles and complex_agents
-		For list = EachIn agent_lists
+		For list = EachIn game.agent_lists
 			For ag = EachIn list
 				SetRotation( ag.ang )
 				CollideImage( ag.img, ag.pos_x, ag.pos_y, 0, 0, AGENT_COLLISION_LAYER, ag )
 			Next
 		Next
-		For proj = EachIn projectile_list
+		For proj = EachIn game.projectile_list
 			SetRotation( proj.ang )
 			result = CollideImage( proj.img, proj.pos_x, proj.pos_y, 0, AGENT_COLLISION_LAYER, PROJECTILE_COLLISION_LAYER, proj )
 			For ag = EachIn result
@@ -56,7 +56,7 @@ Function collide_all()
 		Next
 		
 		'collisions between agents and other agents
-		For list = EachIn agent_lists
+		For list = EachIn game.agent_lists
 			For ag = EachIn list
 				SetRotation( ag.ang )
 				result = CollideImage( ag.img, ag.pos_x, ag.pos_y, 0, AGENT_COLLISION_LAYER, SECONDARY_AGENT_COLLISION_LAYER, ag )
@@ -70,22 +70,22 @@ Function collide_all()
 		Next
 		
 		'collisions between {walls|doors} and {agents|projectiles}
-		For Local cur_wall_list:TList = EachIn all_walls
-			For Local wall%[] = EachIn cur_wall_list
+		For Local cur_wall_list:TList = EachIn game.walls
+			For Local wall:BOX = EachIn cur_wall_list
 				SetRotation( 0 )
-				result = CollideRect( wall[1],wall[2], wall[3],wall[4], AGENT_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
+				result = CollideRect( wall.x,wall.y, wall.w,wall.h, AGENT_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
 				For ag = EachIn result
 					'COLLISION! between {ag} and {wall}
 					collision_agent_wall( ag, wall )
 				Next
-				result = CollideRect( wall[1],wall[2], wall[3],wall[4], PROJECTILE_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
+				result = CollideRect( wall.x,wall.y, wall.w,wall.h, PROJECTILE_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
 				For proj = EachIn result
 					'COLLISION! between {proj} and {wall}
 					collision_projectile_wall( proj, wall )
 				Next
 			Next
 		Next
-		For Local cur_door_list:TList = EachIn all_door_lists
+		For Local cur_door_list:TList = EachIn game.all_door_lists
 			For Local door:WIDGET = EachIn cur_door_list
 				SetRotation( door.parent.ang + door.offset_ang + door.state.ang + door.ang_offset )
 				Local x#, y#, w#, h#
@@ -107,16 +107,16 @@ Function collide_all()
 		Next
 
 		'collisions between player and pickups
-		For pkp = EachIn pickup_list
+		For pkp = EachIn game.pickup_list
 			SetRotation( 0 )
 			CollideImage( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
 		Next
-		SetRotation( player.ang )
-		result = CollideImage( player.img, player.pos_x, player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, player )
+		SetRotation( game.player.ang )
+		result = CollideImage( game.player.img, game.player.pos_x, game.player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, game.player )
 		For pkp = EachIn result
 			'COLLISION! between {player} and {pkp}
 			'give pickup to player
-			player.grant_pickup( pkp ) 'i can has lewts?!
+			game.player.grant_pickup( pkp ) 'i can has lewts?!
 			'dump out early; only the first pickup collided with will be applied this frame
 			Exit
 		Next
@@ -134,7 +134,7 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 	'add damage sticky to agent
 	'ag.add_sticky( PARTICLE( PARTICLE.Create( img_stickies, Rand( 0, img_stickies.frames.Length - 1 ), LAYER_FOREGROUND, False, 0.0, 255, 255, 255, INFINITY, 0.0, 0.0, 0.0, 0.0, proj.ang, 0.0, 0.5, 0.0, 1.0, 0.0 ))).attach_at( proj.pos_x - ag.pos_x, proj.pos_y - ag.pos_y )
 	'add explosive force to nearby agents
-	For Local list:TList = EachIn agent_lists
+	For Local list:TList = EachIn game.agent_lists
 		For Local other:AGENT = EachIn list
 			'if this agent is a different agent than the one hit by the projectile
 			If ag.id <> other.id
@@ -152,14 +152,14 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 	ag.receive_damage( proj.damage )
 	If ag.dead() 'some agent was killed
 		'show the player how much cash they got for killing this enemy, if they killed it
-		If proj.source_id = player.id
+		If proj.source_id = get_player_id()
 			player_cash :+ ag.cash_value
 		End If
 		'perhaps! spawneth teh phat lewts?!
 		spawn_pickup( ag.pos_x, ag.pos_y )
 		'agent death
 		ag.die()
-		If player = ag 'player just died? (omgwtf)
+		If game.player = ag 'player just died? (omgwtf)
 			FLAG_game_over = True
 		End If
 		If ag.political_alignment = ALIGNMENT_HOSTILE
@@ -169,7 +169,7 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 	'activate projectile impact emitter
 	proj.impact( ag )
 	'remove projectile
-	proj.remove_me()
+	proj.unmanage()
 End Function
 
 Function collision_agent_agent( ag:COMPLEX_AGENT, other:COMPLEX_AGENT )
@@ -202,9 +202,9 @@ Function collision_agent_agent( ag:COMPLEX_AGENT, other:COMPLEX_AGENT )
 	
 End Function
 
-Function collision_agent_wall( ag:COMPLEX_AGENT, wall%[] )
+Function collision_agent_wall( ag:COMPLEX_AGENT, wall:BOX )
 	Local offset#, offset_ang#
-	cartesian_to_polar( ag.pos_x - wall_mid_x(wall), ag.pos_y - wall_mid_y(wall), offset, offset_ang )
+	cartesian_to_polar( ag.pos_x - avg(wall.x,wall.x+wall.w), ag.pos_y - avg(wall.y,wall.y+wall.h), offset, offset_ang )
 	Local ang# = clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )
 	''nudge
 	'ag.pos_x :+ WALL_NUDGE_DIST*Cos( ang )
@@ -242,9 +242,9 @@ Function collision_projectile_door( proj:PROJECTILE, door:WIDGET )
 	
 End Function
 
-Function collision_projectile_wall( proj:PROJECTILE, wall%[] )
+Function collision_projectile_wall( proj:PROJECTILE, wall:BOX )
 	'add explosive force to nearby agents
-	For Local list:TList = EachIn agent_lists
+	For Local list:TList = EachIn game.agent_lists
 		For Local other:AGENT = EachIn list
 			Local dist# = proj.dist_to( other )
 			If dist < proj.radius
@@ -256,17 +256,17 @@ Function collision_projectile_wall( proj:PROJECTILE, wall%[] )
 		Next
 	Next
 	proj.impact()
-	proj.remove_me()
+	proj.unmanage()
 End Function
 
-Function clamp_ang_to_bifurcate_wall_diagonals#( ang#, wall%[] )
-	Local wx# = wall_mid_x( wall ), wy# = wall_mid_y(wall)
+Function clamp_ang_to_bifurcate_wall_diagonals#( ang#, wall:BOX )
+	Local wx# = avg(wall.x,wall.x+wall.w), wy# = avg(wall.y,wall.y+wall.h)
 	'wall_angle[4] = angle from mid to [ top_left, top_right, bottom_right, bottom_left ].
 	Local wall_angle#[] = ..
-	[	vector_diff_angle( wx,wy, wall[1],        wall[2] ), ..
-		vector_diff_angle( wx,wy, wall[1]+wall[3],wall[2] ), ..
-		vector_diff_angle( wx,wy, wall[1]+wall[3],wall[2]+wall[4] ), ..
-		vector_diff_angle( wx,wy, wall[1],        wall[2]+wall[4] ) ]
+	[	vector_diff_angle( wx,wy, wall.x,        wall.y ), ..
+		vector_diff_angle( wx,wy, wall.x+wall.w,wall.y ), ..
+		vector_diff_angle( wx,wy, wall.x+wall.w,wall.y+wall.h ), ..
+		vector_diff_angle( wx,wy, wall.x,        wall.y+wall.h ) ]
 	If      ang < wall_angle[0] Then Return 180 ..
 	Else If ang < wall_angle[1] Then Return 270 ..
 	Else If ang < wall_angle[2] Then Return 0 ..
@@ -274,14 +274,14 @@ Function clamp_ang_to_bifurcate_wall_diagonals#( ang#, wall%[] )
 	Else                             Return 180
 End Function
 
-Function clamp_ang_to_bifurcate_door_diagonals#( ang#, wall%[] )
-	Local wx# = wall_mid_x( wall ), wy# = wall_mid_y(wall)
+Function clamp_ang_to_bifurcate_door_diagonals#( ang#, wall:BOX )
+	Local wx# = avg(wall.x,wall.x+wall.w), wy# = avg(wall.y,wall.y+wall.h)
 	'wall_angle[4] = angle from mid to [ top_left, top_right, bottom_right, bottom_left ].
 	Local angles#[] = ..
-	[	vector_diff_angle( wx,wy, wall[1],        wall[2] ), ..
-		vector_diff_angle( wx,wy, wall[1]+wall[3],wall[2] ), ..
-		vector_diff_angle( wx,wy, wall[1]+wall[3],wall[2]+wall[4] ), ..
-		vector_diff_angle( wx,wy, wall[1],        wall[2]+wall[4] ) ]
+	[	vector_diff_angle( wx,wy, wall.x,        wall.y ), ..
+		vector_diff_angle( wx,wy, wall.x+wall.w,wall.y ), ..
+		vector_diff_angle( wx,wy, wall.x+wall.w,wall.y+wall.h ), ..
+		vector_diff_angle( wx,wy, wall.x,        wall.y+wall.h ) ]
 	For Local i% = 1 To angles.Length - 1
 		If ang < angles[i-1] Then Return avg( angles[i-1], angles[i] )
 	Next

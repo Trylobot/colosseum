@@ -21,6 +21,12 @@ Const stats_panel_w% = 250
 Const window_w% = 1024
 Const window_h% = 768
 
+'these are here to make the old code work
+Const arena_offset% = 50
+Const arena_w% = 500
+Const arena_h% = 500
+
+
 'external data load
 load_data_files()
 	load_all_archetypes() 'this will be in data files, eventually
@@ -52,7 +58,7 @@ Repeat
 	If (now() - before) > (1000/60) ' = 60 hertz
 		before = now()
 		get_all_input()
-		collide_all()
+		'collide_all()
 		update_all()
 	EndIf
 	
@@ -69,7 +75,7 @@ If time_count >= 1000
 	frame_count = 0
 	time_count = 0
 End If
-If game.player <> Null Then debug_overlay()
+'If game.player <> Null Then debug_overlay()
 'If KeyHit( KEY_F4 ) And FLAG_game_in_progress
 '	find_path( player.pos_x,player.pos_y, mouse_point.x,mouse_point.y )
 'End If

@@ -527,9 +527,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Local allied_agent_list:TList = CreateList()
 			Select avatar.political_alignment
 				Case ALIGNMENT_FRIENDLY
-					allied_agent_list = friendly_agent_list
+					allied_agent_list = game.friendly_agent_list
 				Case ALIGNMENT_HOSTILE
-					allied_agent_list = hostile_agent_list
+					allied_agent_list = game.hostile_agent_list
 			End Select
 			Local ally_offset#, ally_offset_ang#
 			Local scalar_projection#
@@ -557,7 +557,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Method get_path_to_target:TList()
 		If target <> Null
 			last_find_path_ts = now()
-			Return find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y )
+			Return game.find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y )
 		Else
 			Return Null
 		End If
@@ -565,8 +565,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method get_path_to_somewhere:TList()
 		last_find_path_ts = now()
-		Local somewhere:cVEC = cVEC( cVEC.Create( RandF( arena_offset, arena_offset+arena_w-1 ), RandF( arena_offset, arena_offset+arena_h-1 )))
-		Return find_path( avatar.pos_x,avatar.pos_y, somewhere.x,somewhere.y )
+		Local somewhere:cVEC = cVEC( cVEC.Create( RandF( 0, game.lev.width-1 ), RandF( 0, game.lev.height-1 )))
+		Return game.find_path( avatar.pos_x,avatar.pos_y, somewhere.x,somewhere.y )
 	End Method
 	
 	Method blindly_wander()
@@ -641,10 +641,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method prune()
 		If avatar = Null
-			remove_me()
+			unmanage()
 		Else If avatar.dead()
-			avatar.remove_me()
-			remove_me()
+			avatar.unmanage()
+			unmanage()
 		End If
 	End Method
 	

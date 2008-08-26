@@ -12,7 +12,7 @@ Function get_all_input()
 	mouse_point.x = MouseX()
 	mouse_point.y = MouseY()
 	
-	If player_brain <> Null And player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID ..
+	If game.player_brain <> Null And player_input_type = INPUT_KEYBOARD_MOUSE_HYBRID ..
 	And Not FLAG_in_menu
 		HideMouse()
 	Else
@@ -61,10 +61,10 @@ Function get_all_input()
 	End If
 	
 	If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And KeyDown( KEY_R )
-		player.pos_x = player_spawn_point.pos_x
-		player.pos_y = player_spawn_point.pos_y
-		player.ang = player_spawn_point.ang
-		player.snap_all_turrets()
+		game.player.pos_x = game.player_spawn_point.pos_x
+		game.player.pos_y = game.player_spawn_point.pos_y
+		game.player.ang = game.player_spawn_point.ang
+		game.player.snap_all_turrets()
 	End If
 	
 End Function

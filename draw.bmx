@@ -38,7 +38,7 @@ End Function
 'In-game stuff
 Function draw_game()
 	
-	SetViewport( 0,0, arena_offset_left+arena_w+arena_offset_right,arena_offset_top+arena_h+arena_offset_bottom )
+	'SetViewport( 0,0, arena_offset_left+arena_w+arena_offset_right,arena_offset_top+arena_h+arena_offset_bottom )
 	
 	'arena (& retained particles)
 	SetBlend( ALPHABLEND )
@@ -119,16 +119,16 @@ Function draw_game()
 		DrawRect( 0, 0, window_w, window_h )
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
-		If player_brain.input_type = INPUT_KEYBOARD
+		If game.player_brain.input_type = INPUT_KEYBOARD
 			DrawImage( img_help_kb, arena_offset + arena_w/2 - img_help_kb.width/2, arena_offset + arena_h/2 - img_help_kb.height/2 )
-		Else If player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+		Else If game.player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 			DrawImage( img_help_kb_mouse, arena_offset + arena_w/2 - img_help_kb_mouse.width/2, arena_offset + arena_h/2 - img_help_kb_mouse.height/2 )
 		End If
 	'help reminder
 	Else
 		SetImageFont( get_font( "consolas_12" ))
 		str = "F1 for help"
-		DrawText_with_shadow( str, player_spawn_point.pos_x - arena_offset - TextWidth( str ), player_spawn_point.pos_y - arena_offset/3 )
+		DrawText_with_shadow( str, game.player_spawn_point.pos_x - arena_offset - TextWidth( str ), game.player_spawn_point.pos_y - arena_offset/3 )
 	End If
 	
 	'game over
@@ -169,7 +169,7 @@ Function draw_game()
 	
 	SetImageFont( get_font( "consolas_12" ))
 	SetAlpha( 0.75 )
-	Local x# = player_spawn_point.pos_x + arena_offset, y# = player_spawn_point.pos_y - arena_offset/3
+	Local x# = game.player_spawn_point.pos_x + arena_offset, y# = game.player_spawn_point.pos_y - arena_offset/3
 	'commands to player
 	If Not FLAG_player_engine_running
 		DrawText_with_shadow( "(E) start your engine.", x, y )
@@ -244,7 +244,7 @@ Function draw_arena_bg()
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 	SetRotation( 0 )
-	DrawImage( bg_cache, 0,0 )
+	DrawImage( game.bg_cache, 0,0 )
 
 	'incorporate retained particles into bg_cache and remove them from the managed list
 	For Local part:PARTICLE = EachIn game.retained_particle_list
@@ -274,7 +274,7 @@ Function draw_arena_bg()
 					SetScale( 1, 1 )
 					SetRotation( 0 )
 					
-					DrawImage( game.img_arena_bg, 0,0 )
+					DrawImage( img_arena_bg, 0,0 )
 					GrabImage( game.bg_cache, 0,0 )
 					
 				End If
@@ -312,9 +312,9 @@ Function draw_arena_fg()
 	SetColor( 255, 255, 255 )
 	SetAlpha( 0.2*time_alpha_pct( battle_toggle_ts, arena_lights_fade_time, Not FLAG_battle_in_progress ))
 	SetBlend( LIGHTBLEND )
-	DrawImage( img_halo, player.pos_x,player.pos_y )
+	DrawImage( img_halo, game.player.pos_x,game.player.pos_y )
 	SetScale( 2, 2 )
-	DrawImage( img_halo, player_spawn_point.pos_x,player_spawn_point.pos_y+arena_offset/3 )
+	DrawImage( img_halo, game.player_spawn_point.pos_x,game.player_spawn_point.pos_y+arena_offset/3 )
 	SetBlend( ALPHABLEND )
 End Function
 '______________________________________________________________________________
@@ -327,20 +327,20 @@ Function init_bg_cache()
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	DrawImage( img_arena_bg, 0,0 )
-	GrabImage( bg_cache, 0,0 )
+	GrabImage( game.bg_cache, 0,0 )
 End Function
 '______________________________________________________________________________
 Function draw_walls( walls:TList )
 	
-	For Local wall:BOX = EachIn walls
-		SetViewport( wall.x,wall.y, wall.w,wall.h )
-		DrawImage( img_walls_inner, arena_offset,arena_offset )
-	Next
-	For Local wall%[] = EachIn walls
-		SetViewport( wall.x+2,wall.y+2, wall.w-4,wall.h-4 )
-		DrawImage( img_walls_border, arena_offset,arena_offset )
-	Next
-	SetViewport( 0,0, window_w,window_h )
+'	For Local wall:BOX = EachIn walls
+'		SetViewport( wall.x,wall.y, wall.w,wall.h )
+'		DrawImage( img_walls_inner, arena_offset,arena_offset )
+'	Next
+'	For Local wall%[] = EachIn walls
+'		SetViewport( wall.x+2,wall.y+2, wall.w-4,wall.h-4 )
+'		DrawImage( img_walls_border, arena_offset,arena_offset )
+'	Next
+'	SetViewport( 0,0, window_w,window_h )
 End Function
 '______________________________________________________________________________
 Function draw_stats()
@@ -455,9 +455,9 @@ Function DrawText_with_glow( str$, pos_x%, pos_y% )
 End Function
 
 Function screenshot()
-	Local screen:TImage = TImage.Create( window_w,window_h, 0, DYNAMICIMAGE )
-	GrabImage( screen, 0,0 )
-	save_screenshot_to_file( screen )
+'	Local screen:TImage = TImage.Create( window_w,window_h, 0, DYNAMICIMAGE )
+'	GrabImage( screen, 0,0 )
+'	save_screenshot_to_file( screen )
 End Function
 '______________________________________________________________________________
 'Procedural drawing methods

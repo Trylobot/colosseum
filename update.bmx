@@ -18,11 +18,11 @@ Function update_all()
 		'if waiting for player to enter arena
 		If FLAG_waiting_for_player_to_enter_arena
 			'if player has not entered the arena
-			If Not game.point_inside_arena( player )
+			If Not game.point_inside_arena( game.player )
 				'if the player has started the engine
 				If FLAG_player_engine_running
 					'open the friendly doors
-					If game.friendly_doors_status = DOOR_STATUS_CLOSED Then activate_doors( ALIGNMENT_FRIENDLY )
+					If game.friendly_doors_status = DOOR_STATUS_CLOSED Then game.activate_doors( ALIGNMENT_FRIENDLY )
 				End If
 			'else, player has entered the arena
 			Else 'point_inside_arena( player )
@@ -43,7 +43,7 @@ Function update_all()
 			FLAG_spawn_enemies = False
 		End If
 		'if the battle is over, and waiting for player to exit arena, and player has exited the arena
-		If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And game.point_inside_arena( player )
+		If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And game.point_inside_arena( game.player )
 			FLAG_waiting_for_player_to_exit_arena = False
 			FLAG_player_in_locker = True
 			'FLAG_player_engine_running = False

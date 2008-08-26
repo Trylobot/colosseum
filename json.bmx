@@ -244,6 +244,7 @@ Type TJSONObject Extends TJSONValue
 	EndMethod
 	
 	Method SetByName( name:Object, value:TJSONValue)
+		If value = Null Then value = TJSON.NIL
 		Local node:TNode
 		If TJSONKey(name) Then
 			Items.Insert( name, value)

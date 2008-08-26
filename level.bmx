@@ -194,6 +194,14 @@ Type LEVEL Extends MANAGED_OBJECT
 		Return c
 	End Method
 	
+	Method enemy_count%()
+		Local count% = 0
+		For Local this_squad:SQUAD = EachIn squads
+			count :+ this_squad.archetypes.Length
+		Next
+		Return count
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local index%, row%, col%
 		Local this_json:TJSONObject = New TJSONObject
@@ -235,10 +243,10 @@ Type LEVEL Extends MANAGED_OBJECT
 			Next
 			this_json.SetByName( "spawns", spawns_json )
 		Else
-			this_json.SetByName( "spawns", TJSON.NIL )
+			this_json.SetByName( "spawns", Null )
 		End If
 
-		If spawns.Count() > 0
+		If squads.Count() > 0
 			Local squads_json:TJSONArray = TJSONArray.Create( squads.Count() )
 			index = 0
 			For Local sq:POINT = EachIn squads
@@ -247,7 +255,7 @@ Type LEVEL Extends MANAGED_OBJECT
 			Next
 			this_json.SetByName( "squads", squads_json )
 		Else
-			this_json.SetByName( "squads", TJSON.NIL )
+			this_json.SetByName( "squads", Null )
 		End If
 		
 		Return this_json
