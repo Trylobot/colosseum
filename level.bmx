@@ -304,8 +304,7 @@ Const MAX_LEVEL_NAME_LENGTH% = 22
 
 Function edit_level:LEVEL( lev:LEVEL )
 	
-	Local gridsnap_exponent% = 3
-	Local gridsnap% = Pow( 2, gridsnap_exponent )
+	Local gridsnap% = 5
 	Local mode% = EDIT_LEVEL_MODE_PAN
 	Local FLAG_text_mode% = False
 	Local x% = gridsnap, y% = gridsnap
@@ -384,14 +383,11 @@ Function edit_level:LEVEL( lev:LEVEL )
 				mode = EDIT_LEVEL_MODE_SPAWN
 			End If
 			If KeyHit( KEY_NUMADD )
-				gridsnap_exponent :+ 1
-				gridsnap = Pow( 2, gridsnap_exponent )
+				gridsnap :+ 5
 				x = gridsnap
 				y = gridsnap
 			Else If KeyHit( KEY_NUMSUBTRACT )
-				gridsnap_exponent :- 1
-				If gridsnap_exponent < 1 Then gridsnap_exponent = 1
-				gridsnap = Pow( 2, gridsnap_exponent )
+				If gridsnap > 5 Then gridsnap :- 5
 				x = gridsnap
 				y = gridsnap
 			End If

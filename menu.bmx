@@ -402,11 +402,16 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			
 		Case COMMAND_EDIT_LEVEL
 			edit_level_file()
+			End
 			
 		Case COMMAND_QUIT_GAME
 			End
 			
 	End Select
 End Function
+
+
+
+
 
 

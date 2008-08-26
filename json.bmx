@@ -621,7 +621,7 @@ Type TJSONParser
 			' return json string
 			Return TJSONString.Create( s)
 			
-		ElseIf (c >= NUMBER_START) And (c <= NUMBER_STOP) Then
+		ElseIf ((c >= NUMBER_START) And (c <= NUMBER_STOP)) Or (c = MINUS) Then
 			' NUMBER
 			Local start:Int = Index, gotsep:Int = False
 			' scan for rest of number
