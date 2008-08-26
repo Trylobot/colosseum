@@ -120,13 +120,9 @@ Type CONSOLE
 		'And cursor_index < str.Length-1
 			'use cursor position
 		End If
-		'FlushKeys()
+		FlushKeys()
 		Return str
 	End Method
-	
-	Function cursor_alpha#()
-		Return (0.5 + Sin( Float(now() Mod cursor_blink) / Float(cursor_blink) ))
-	End Function
 	
 	Function GetChar_normal$() 'returns "" if none, or a string representing the character of the key pressed
 		Local normal_index% = KeyDown_normal()

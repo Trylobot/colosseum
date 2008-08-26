@@ -5,32 +5,29 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const SPAWN_POINT_RANDOM% = -1
-
-Type SQUAD
-	Field archetypes%[] 'agents to spawn for this squad
-	Field spawn_point% 'can be SPAWN_POINT_RANDOM or a spawn point index
-	Field wait_time% 'time delay between spawning the first agent of the previous squad and the first agent of this squad
+Type SPAWNER
+	Field squads%[][] 'grouped references to COMPLEX_AGENT prototypes; to be "baked" at spawn-time
+	Field spawn_point:POINT 'initial state to be conferred on each spawned agent
+	Field spawn_delay%[] 'time delay for each squad
+	Field political_alignment% '{friendly|hostile}
 	
 	Method to_json:TJSONObject()
-		Local index% = 0
 		Local this_json:TJSONObject = New TJSONObject
-		Local archetypes_json:TJSONArray = TJSONArray.Create( archetypes.Length )
-		For index = 0 To archetypes.Length - 1
-			archetypes_json.SetByIndex( index, TJSONNumber.Create( archetypes[index] ))
-		Next
-		this_json.SetByName( "archetypes", archetypes_json )
+		this_json.SetByName( "squads", Create_TJSONArray_from_Int_array_array( squads ))
+		this_json.SetByName( "spawn_point", spawn_point.to_json() )
+		this_json.SetByName( "spawn_delay", Create_TJSONArray_from_Int_array( spawn_delay ))
+		this_json.SetByName( "political_alignment", TJSONNumber.Create( political_alignment ))
 		Return this_json
 	End Method
-	
 End Type
 
-Function Create_SQUAD_from_json:SQUAD( json:TJSON )
-	Local sq:SQUAD = New SQUAD
-	sq.archetypes = json.GetArrayInt( "archetypes" )
-	sq.spawn_point = json.GetNumber( "spawn_point" )
-	sq.wait_time = json.GetNumber( "wait_time" )
-	Return sq
+Function Create_SPAWNER_from_json( json:TJSON )
+	Local sp:SPAWNER = New SPAWNER
+	sp.squads = Create_Int_array_array_from_TJSONArray( json.GetArray( "squads" ))
+	sp.spawn_point = Create_POINT_from_json( TJSON.Create( json.GetObject( "spawn_point" )))
+	sp.spawn_delay = json.GetArrayInt( "spawn_delay" )
+	sp.political_alignment = json.GetNumber( "political_alignment" )
+	Return sp
 End Function
 
 '______________________________________________________________________________
@@ -50,6 +47,7 @@ Function Create_LEVEL:LEVEL( width%, height% )
 	lev.horizontal_divs = [ 0, lev.height ]
 	lev.vertical_divs = [ 0, lev.width ]
 	lev.path_regions = New Int[ lev.row_count, lev.col_count ]
+	lev.spawners = Null
 	Return lev
 End Function
 
@@ -58,13 +56,7 @@ Type LEVEL Extends MANAGED_OBJECT
 	Field row_count%, col_count% 'number of cells
 	Field horizontal_divs%[], vertical_divs%[] 'dividers
 	Field path_regions%[,] '{PASSABLE|BLOCKED}[w,h]
-	Field spawns:TList 'TList<POINT>
-	Field squads:TList 'TList<SQUAD>
-	
-	Method New()
-		spawns = CreateList()
-		squads = CreateList()
-	End Method
+	Field spawners:SPAWNER[]
 	
 	Method add_divider( pos%, line_type% )
 		Select line_type
@@ -162,19 +154,20 @@ Type LEVEL Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
-	Method set_path_regions_value( x%, y%, value% )
+	Method set_path_region( x%, y%, value% )
 		Local c:CELL = get_cell( x, y )
 		If c.row <> COORDINATE_INVALID And c.col <> COORDINATE_INVALID
 			path_regions[ c.row, c.col ] = value
 		End If
 	End Method
 	
-	Method add_spawn( sp:POINT )
-		spawns.AddLast( sp )
-	End Method
-	
-	Method add_squad( sq:SQUAD )
-		squads.AddLast( sq )
+	Method add_spawner( sp:SPAWNER )
+		If spawners = Null
+			spawners = New SPAWNER[1]
+		Else
+			spawners = spawners[..spawners.Length+1]
+		End If
+		spawners[spawners.Length-1] = sp
 	End Method
 	
 	Method get_cell:CELL( x%, y% )
@@ -195,76 +188,30 @@ Type LEVEL Extends MANAGED_OBJECT
 	End Method
 	
 	Method enemy_count%()
-		Local count% = 0
-		For Local this_squad:SQUAD = EachIn squads
-			count :+ this_squad.archetypes.Length
-		Next
-		Return count
+'		Local count% = 0
+'		For Local this_squad:SQUAD = EachIn squads
+'			count :+ this_squad.archetypes.Length
+'		Next
+'		Return count
 	End Method
 	
 	Method to_json:TJSONObject()
-		Local index%, row%, col%
 		Local this_json:TJSONObject = New TJSONObject
-		
 		this_json.SetByName( "name", TJSONString.Create( name ))
 		this_json.SetByName( "width", TJSONNumber.Create( width ))
 		this_json.SetByName( "height", TJSONNumber.Create( height ))
 		this_json.SetByName( "row_count", TJSONNumber.Create( row_count ))
 		this_json.SetByName( "col_count", TJSONNumber.Create( col_count ))
-		
-		Local horizontal_divs_json:TJSONArray = TJSONArray.Create( horizontal_divs.Length )
-		For row = 0 To horizontal_divs.Length - 1
-			horizontal_divs_json.SetByIndex( row, TJSONNumber.Create( horizontal_divs[row] ))
-		Next
-		this_json.SetByName( "horizontal_divs", horizontal_divs_json )
-		
-		Local vertical_divs_json:TJSONArray = TJSONArray.Create( vertical_divs.Length )
-		For col = 0 To vertical_divs.Length - 1
-			vertical_divs_json.SetByIndex( col, TJSONNumber.Create( vertical_divs[col] ))
-		Next
-		this_json.SetByName( "vertical_divs", vertical_divs_json )
-		
-		Local path_regions_json:TJSONArray = TJSONArray.Create( row_count )
-		For row = 0 To row_count - 1
-			Local path_regions_json__row:TJSONArray = TJSONArray.Create( col_count )
-			For col = 0 To col_count - 1
-				path_regions_json__row.SetByIndex( col, TJSONNumber.Create( path_regions[row,col] ))
-			Next
-			path_regions_json.SetByIndex( row, path_regions_json__row )
-		Next
-		this_json.SetByName( "path_regions", path_regions_json )
-		
-		If spawns.Count() > 0
-			Local spawns_json:TJSONArray = TJSONArray.Create( spawns.Count() )
-			index = 0
-			For Local sp:POINT = EachIn spawns
-				spawns_json.SetByIndex( index, sp.to_json() )
-				index :+ 1
-			Next
-			this_json.SetByName( "spawns", spawns_json )
-		Else
-			this_json.SetByName( "spawns", Null )
-		End If
-
-		If squads.Count() > 0
-			Local squads_json:TJSONArray = TJSONArray.Create( squads.Count() )
-			index = 0
-			For Local sq:POINT = EachIn squads
-				squads_json.SetByIndex( index, sq.to_json() )
-				index :+ 1
-			Next
-			this_json.SetByName( "squads", squads_json )
-		Else
-			this_json.SetByName( "squads", Null )
-		End If
-		
+		this_json.SetByName( "horizontal_divs", Create_TJSONArray_from_Int_array( horizontal_divs ))
+		this_json.SetByName( "vertical_divs", Create_TJSONArray_from_Int_array( vertical_divs ))
+		this_json.SetByName( "path_regions", Create_TJSONArray_from_2D_Int_array( path_regions ))
+		TODO:FINISH
 		Return this_json
 	End Method
 	
 End Type
 
 Function Create_LEVEL_from_json:LEVEL( json:TJSON )
-	Local index%, row%, col%
 	Local lev:LEVEL = New LEVEL
 	lev.name = json.GetString( "name" )
 	lev.width = json.GetNumber( "width" )
@@ -273,34 +220,21 @@ Function Create_LEVEL_from_json:LEVEL( json:TJSON )
 	lev.col_count = json.GetNumber( "col_count" )
 	lev.horizontal_divs = json.GetArrayInt( "horizontal_divs" )
 	lev.vertical_divs = json.GetArrayInt( "vertical_divs" )
-	lev.path_regions = New Int[lev.row_count,lev.col_count]
-	For row = 0 To json.GetArray( "path_regions" ).Size() - 1
-		For col = 0 To json.GetArray( "path_regions."+row ).Size() - 1
-			lev.path_regions[row,col] = json.GetNumber( "path_regions."+row+"."+col )
-		Next
-	Next
-	If json.GetArray( "spawns" ) <> Null
-		For index = 0 To json.GetArray( "spawns" ).Size() - 1
-			lev.add_spawn( Create_POINT_from_json( TJSON.Create( json.GetObject( "spawns."+index ))))
-		Next
-	End If
-	If json.GetArray( "squads" ) <> Null
-		For index = 0 To json.GetArray( "squads" ).Size() - 1
-			lev.add_squad( Create_SQUAD_from_json( TJSON.Create( json.GetObject( "squads."+index ))))
-		Next
-	End If
+	lev.path_regions = Create_2D_Int_array_from_TJSONArray( json.GetArray( "path_regions" ))
+	TODO:FINISH
 	Return lev
 End Function
 
 '______________________________________________________________________________
 Const spawn_point_preview_radius% = 8
+Const max_level_name_length% = 22
 
 Const EDIT_LEVEL_MODE_NONE% = 0
 Const EDIT_LEVEL_MODE_PAN% = 1
 Const EDIT_LEVEL_MODE_DIVIDER% = 2
 Const EDIT_LEVEL_MODE_PATHING% = 3
-Const EDIT_LEVEL_MODE_SPAWN% = 4
-Const MAX_LEVEL_NAME_LENGTH% = 22
+Const EDIT_LEVEL_MODE_SPAWNER_NEW% = 4
+Const EDIT_LEVEL_MODE_SPAWNER_EDIT% = 5
 
 Function edit_level:LEVEL( lev:LEVEL )
 	
@@ -356,12 +290,14 @@ Function edit_level:LEVEL( lev:LEVEL )
 		Next
 		
 		'draw the spawn points
-		SetAlpha( 0.20 )
-		For Local p:POINT = EachIn lev.spawns
+		SetColor( 255, 255, 255 )
+		For Local sp:SPAWNER = EachIn lev.spawners
+			Local p:POINT = sp.spawn_point
+			SetAlpha( 0.50 )
 			DrawOval( x+p.pos_x - spawn_point_preview_radius,y+p.pos_y - spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
-			SetLineWidth( 1 )
-			SetAlpha( 0.40 )
-			DrawLine( x+p.pos_x + spawn_point_preview_radius*Cos(p.ang-90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang-90), x+p.pos_x + spawn_point_preview_radius*Cos(p.ang+90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang+90) )
+			SetLineWidth( 2 )
+			SetAlpha( 1 )
+			'DrawLine( x+p.pos_x + spawn_point_preview_radius*Cos(p.ang-90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang-90), x+p.pos_x + spawn_point_preview_radius*Cos(p.ang+90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang+90) )
 			DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )
 		Next
 		
@@ -371,17 +307,14 @@ Function edit_level:LEVEL( lev:LEVEL )
 			FlushKeys()
 		End If
 		If FLAG_text_mode
-			lev.name = kb_handler.update( lev.name, MAX_LEVEL_NAME_LENGTH )
+			lev.name = kb_handler.update( lev.name, max_level_name_length )
 		Else 'Not FLAG_text_mode
-			If KeyHit( KEY_1 ) 'divider mode
-				mode = EDIT_LEVEL_MODE_PAN
-			Else If KeyHit( KEY_2 ) 'pathing passable/blocking mode
-				mode = EDIT_LEVEL_MODE_DIVIDER
-			Else If KeyHit( KEY_3 ) 'spawn point mode
-				mode = EDIT_LEVEL_MODE_PATHING
-			Else If KeyHit( KEY_4 ) 'null mode
-				mode = EDIT_LEVEL_MODE_SPAWN
-			End If
+			If      KeyHit( KEY_1 ) Then mode = EDIT_LEVEL_MODE_PAN ..
+			Else If KeyHit( KEY_2 ) Then mode = EDIT_LEVEL_MODE_DIVIDER ..
+			Else If KeyHit( KEY_3 ) Then mode = EDIT_LEVEL_MODE_PATHING ..
+			Else If KeyHit( KEY_4 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_NEW ..
+			Else If KeyHit( KEY_5 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_EDIT
+			
 			If KeyHit( KEY_NUMADD )
 				gridsnap :+ 5
 				x = gridsnap
@@ -459,20 +392,21 @@ Function edit_level:LEVEL( lev:LEVEL )
 					lev.set_path_regions_value( mouse.x-x,mouse.y-y, PATH_PASSABLE )
 				End If
 				
-			Case EDIT_LEVEL_MODE_SPAWN
+			Case EDIT_LEVEL_MODE_SPAWNER_NEW
+				mouse.x = round_to_nearest( mouse.x, gridsnap )
+				mouse.y = round_to_nearest( mouse.y, gridsnap )
 				SetColor( 255, 255, 255 )
-				SetAlpha( 1 )
 				If mouse_down_1 And Not MouseDown( 1 )
 					lev.add_spawn( Create_POINT( mouse.x-x,mouse.y-y, spawn_ang ))
 				End If
 				If MouseDown( 1 )
 					mouse_down_1 = True
-					SetAlpha( 0.50 )
 					Local p:POINT = Create_POINT( mouse.x-x,mouse.y-y, spawn_ang )
+					SetAlpha( 0.50 )
 					DrawOval( x+p.pos_x - spawn_point_preview_radius,y+p.pos_y - spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
-					SetLineWidth( 1 )
-					SetAlpha( 0.85 )
-					DrawLine( x+p.pos_x + spawn_point_preview_radius*Cos(p.ang-90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang-90), x+p.pos_x + spawn_point_preview_radius*Cos(p.ang+90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang+90) )
+					SetLineWidth( 2 )
+					SetAlpha( 1 )
+					'DrawLine( x+p.pos_x + spawn_point_preview_radius*Cos(p.ang-90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang-90), x+p.pos_x + spawn_point_preview_radius*Cos(p.ang+90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang+90) )
 					DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )
 				Else
 					mouse_down_1 = False
@@ -482,6 +416,9 @@ Function edit_level:LEVEL( lev:LEVEL )
 				Else If KeyHit( KEY_RIGHT )
 					spawn_ang = ang_wrap( spawn_ang + 45 )
 				End If
+				
+			Case EDIT_LEVEL_MODE_SPAWNER_EDIT
+				
 				
 		End Select
 		
@@ -503,21 +440,23 @@ Function edit_level:LEVEL( lev:LEVEL )
 				DrawText( "mode "+EDIT_LEVEL_MODE_DIVIDER+" -> dividers vertical/horizontal", info_x,info_y )
 			Case EDIT_LEVEL_MODE_PATHING
 				DrawText( "mode "+EDIT_LEVEL_MODE_PATHING+" -> pathing blocked/passable", info_x,info_y )
-			Case EDIT_LEVEL_MODE_SPAWN
-				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWN+" -> spawn points add/remove", info_x,info_y )
+			Case EDIT_LEVEL_MODE_SPAWNER_NEW
+				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_NEW+" -> spawn points add/remove", info_x,info_y )
+			Case EDIT_LEVEL_MODE_SPAWNER_EDIT
+				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_EDIT+" -> spawn points edit", info_x,info_y )
 		End Select; info_y :+ 2*line_h
 		SetImageFont( bigger_font )
 		DrawText_with_glow( lev.name, info_x,info_y )
 		If FLAG_text_mode
-			SetAlpha( kb_handler.cursor_alpha() )
+			SetAlpha( 0.5 + Sin( Float(now() Mod cursor_blink) / Float(cursor_blink) ) )
 			DrawText_with_glow( "|", info_x + TextWidth( lev.name ) - 2,info_y )
 			SetAlpha( 1 )
 		End If
 		info_y :+ GetImageFont().Height() - 1
 		SetImageFont( normal_font )
 		DrawText( "path_regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
-		DrawText( "spawn points: "+lev.spawns.Count(), info_x,info_y ); info_y :+ line_h
-		DrawText( "squads: "+lev.squads.Count(), info_x,info_y ); info_y :+ line_h
+		DrawText( "spawn points: "+lev.spawns.Length, info_x,info_y ); info_y :+ line_h
+		DrawText( "squads: "+lev.squads.Length, info_x,info_y ); info_y :+ line_h
 		
 		Flip( 1 )
 	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
