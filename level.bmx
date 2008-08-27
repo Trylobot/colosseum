@@ -21,7 +21,7 @@ Type SPAWNER
 	End Method
 End Type
 
-Function Create_SPAWNER_from_json( json:TJSON )
+Function Create_SPAWNER_from_json:SPAWNER( json:TJSON )
 	Local sp:SPAWNER = New SPAWNER
 	sp.squads = Create_Int_array_array_from_TJSONArray( json.GetArray( "squads" ))
 	sp.spawn_point = Create_POINT_from_json( TJSON.Create( json.GetObject( "spawn_point" )))
@@ -205,7 +205,15 @@ Type LEVEL Extends MANAGED_OBJECT
 		this_json.SetByName( "horizontal_divs", Create_TJSONArray_from_Int_array( horizontal_divs ))
 		this_json.SetByName( "vertical_divs", Create_TJSONArray_from_Int_array( vertical_divs ))
 		this_json.SetByName( "path_regions", Create_TJSONArray_from_2D_Int_array( path_regions ))
-		TODO:FINISH
+		If spawners <> Null And spawners.Length > 0
+			Local spawners_json:TJSONArray = TJSONArray.Create( spawners.Length )
+			For Local index% = 0 To spawners.Length - 1
+				spawners_json.SetByIndex( index, spawners[index].to_json() )
+			Next
+			this_json.SetByName( "spawners", spawners_json )
+		Else
+			this_json.SetByName( "spawners", TJSON.NIL )
+		End If
 		Return this_json
 	End Method
 	
@@ -221,7 +229,13 @@ Function Create_LEVEL_from_json:LEVEL( json:TJSON )
 	lev.horizontal_divs = json.GetArrayInt( "horizontal_divs" )
 	lev.vertical_divs = json.GetArrayInt( "vertical_divs" )
 	lev.path_regions = Create_2D_Int_array_from_TJSONArray( json.GetArray( "path_regions" ))
-	TODO:FINISH
+	Local spawners_json:TJSONArray = json.GetArray( "spawners" )
+	If spawners_json <> Null And spawners_json.Size() > 0
+		lev.spawners = New SPAWNER[spawners_json.Size()]
+		For Local index% = 0 To spawners_json.Size() - 1
+			lev.spawners[index] = Create_SPAWNER_from_json( TJSON.Create( spawners_json.GetByIndex( index )))
+		Next
+	End If
 	Return lev
 End Function
 
@@ -387,9 +401,9 @@ Function edit_level:LEVEL( lev:LEVEL )
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
 				If MouseDown( 1 )
-					lev.set_path_regions_value( mouse.x-x,mouse.y-y, PATH_BLOCKED )
+					lev.set_path_region( mouse.x-x,mouse.y-y, PATH_BLOCKED )
 				Else If MouseDown( 2 )
-					lev.set_path_regions_value( mouse.x-x,mouse.y-y, PATH_PASSABLE )
+					lev.set_path_region( mouse.x-x,mouse.y-y, PATH_PASSABLE )
 				End If
 				
 			Case EDIT_LEVEL_MODE_SPAWNER_NEW
@@ -397,7 +411,9 @@ Function edit_level:LEVEL( lev:LEVEL )
 				mouse.y = round_to_nearest( mouse.y, gridsnap )
 				SetColor( 255, 255, 255 )
 				If mouse_down_1 And Not MouseDown( 1 )
-					lev.add_spawn( Create_POINT( mouse.x-x,mouse.y-y, spawn_ang ))
+					Local sp:SPAWNER = New SPAWNER
+					sp.spawn_point = Create_POINT( mouse.x-x,mouse.y-y, spawn_ang )
+					lev.add_spawner( sp )
 				End If
 				If MouseDown( 1 )
 					mouse_down_1 = True
@@ -432,7 +448,10 @@ Function edit_level:LEVEL( lev:LEVEL )
 		DrawLine( info_x,info_y, info_x,window_h )
 		SetColor( 255, 255, 255 )
 		info_x :+ 6; info_y :+ 3
-		DrawText( ""+EDIT_LEVEL_MODE_PAN+":pan  "+EDIT_LEVEL_MODE_DIVIDER+":div  "+EDIT_LEVEL_MODE_PATHING+":paths  "+EDIT_LEVEL_MODE_SPAWN+":spawns  ", info_x,info_y ); info_y :+ line_h
+		DrawText( ""+EDIT_LEVEL_MODE_PAN+":pan  "+..
+								 EDIT_LEVEL_MODE_DIVIDER+":div  "+..
+								 EDIT_LEVEL_MODE_PATHING+":paths  "+..
+								 EDIT_LEVEL_MODE_SPAWNER_NEW+","+EDIT_LEVEL_MODE_SPAWNER_EDIT+":spawners  ", info_x,info_y ); info_y :+ line_h
 		Select mode
 			Case EDIT_LEVEL_MODE_PAN
 				DrawText( "mode "+EDIT_LEVEL_MODE_PAN+" -> camera pan", info_x,info_y )
@@ -441,9 +460,9 @@ Function edit_level:LEVEL( lev:LEVEL )
 			Case EDIT_LEVEL_MODE_PATHING
 				DrawText( "mode "+EDIT_LEVEL_MODE_PATHING+" -> pathing blocked/passable", info_x,info_y )
 			Case EDIT_LEVEL_MODE_SPAWNER_NEW
-				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_NEW+" -> spawn points add/remove", info_x,info_y )
+				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_NEW+" -> spawners add/remove", info_x,info_y )
 			Case EDIT_LEVEL_MODE_SPAWNER_EDIT
-				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_EDIT+" -> spawn points edit", info_x,info_y )
+				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_EDIT+" -> spawners edit", info_x,info_y )
 		End Select; info_y :+ 2*line_h
 		SetImageFont( bigger_font )
 		DrawText_with_glow( lev.name, info_x,info_y )
@@ -454,9 +473,8 @@ Function edit_level:LEVEL( lev:LEVEL )
 		End If
 		info_y :+ GetImageFont().Height() - 1
 		SetImageFont( normal_font )
-		DrawText( "path_regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
-		DrawText( "spawn points: "+lev.spawns.Length, info_x,info_y ); info_y :+ line_h
-		DrawText( "squads: "+lev.squads.Length, info_x,info_y ); info_y :+ line_h
+		DrawText( "pathing regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
+		DrawText( "spawners: "+lev.spawners.Length, info_x,info_y ); info_y :+ line_h
 		
 		Flip( 1 )
 	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()

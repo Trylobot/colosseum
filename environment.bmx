@@ -130,12 +130,12 @@ Type ENVIRONMENT
 		cur_spawn_point = Null
 		last_spawned_enemy = Null
 		enemy_spawn_queue.Clear()
-		If lev.squads <> Null
-			For Local this_squad:SQUAD = EachIn lev.squads
-				queue_squad( this_squad )
-			Next
-			level_enemies_remaining = lev.enemy_count()
-		End If
+'		If lev.squads <> Null
+'			For Local this_squad:SQUAD = EachIn lev.squads
+'				queue_squad( this_squad )
+'			Next
+'			level_enemies_remaining = lev.enemy_count()
+'		End If
 		'doors
 '		For Local spawn:POINT = EachIn friendly_spawn_points
 '			attach_door( spawn, friendly_door_list )
@@ -147,14 +147,14 @@ Type ENVIRONMENT
 '		hostile_doors_status = DOOR_STATUS_CLOSED
 	End Method
 	
-	Method queue_squad( this_squad:SQUAD )
-		Local this_squad_baked:TList = CreateList()
-		For Local archetype_index% = EachIn this_squad.archetypes
-			this_squad_baked.AddLast( COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index] )))
-		Next
-		enemy_spawn_queue.AddLast( this_squad_baked )
-		If cur_squad = Null Then cur_squad = this_squad_baked
-	End Method
+'	Method queue_squad( this_squad:SQUAD )
+'		Local this_squad_baked:TList = CreateList()
+'		For Local archetype_index% = EachIn this_squad.archetypes
+'			this_squad_baked.AddLast( COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index] )))
+'		Next
+'		enemy_spawn_queue.AddLast( this_squad_baked )
+'		If cur_squad = Null Then cur_squad = this_squad_baked
+'	End Method
 	
 	Method spawning_system_update()
 '		'is there a squad ready
