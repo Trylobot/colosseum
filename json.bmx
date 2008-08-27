@@ -1037,16 +1037,20 @@ Function Create_2D_Int_array_from_TJSONArray:Int[,]( json:TJSONArray )
 	If json <> Null And Not json.IsNull()
 		Local rows%, cols%, r%, c%
 		rows = json.Size()
-		cols = TJSONArray( json.GetByIndex( 0 )).Size()
-		
+		If rows > 0
+			cols = TJSONArray( json.GetByIndex( 0 )).Size()
+			If cols > 0
+				arr = New Int[rows,cols]
+				For r = 0 To rows - 1
+					Local this_row_json:TJSONArray = TJSONArray( json.GetByIndex( r ))
+					For c = 0 To cols - 1
+						arr[r,c] = TJSONNumber( this_row_json.GetByIndex( c )).Value
+					Next
+				Next
+			End If
+		End If
 	End If
 	Return arr
-'	lev.path_regions = New Int[lev.row_count,lev.col_count]
-'	For row = 0 To json.GetArray( "path_regions" ).Size() - 1
-'		For col = 0 To json.GetArray( "path_regions."+row ).Size() - 1
-'			lev.path_regions[row,col] = json.GetNumber( "path_regions."+row+"."+col )
-'		Next
-'	Next
 End Function
 
 '
