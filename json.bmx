@@ -181,6 +181,10 @@ EndType
 Type TJSONValue Abstract
 	Field Class:Int
 	
+	Method IsNull%()
+		Return (Class = JSON_NULL)
+	End Method
+	
 	Method GetByIndex:TJSONValue( index:Int)
 		Return Null
 	EndMethod
@@ -1006,23 +1010,36 @@ Function Create_Int_array_array_from_TJSONArray:Int[][]( json:TJSONArray )
 End Function
 
 Function Create_TJSONArray_from_2D_Int_array:TJSONArray( arr%[,] )
-	Local this_json:TJSONArray
-	
+	Local this_json:TJSONArray = TJSONArray( TJSON.NIL )
+	If arr <> Null
+		Local rows%, cols%, r%, c%, dim%[]
+		dim = arr.Dimensions()
+		If dim.Length = 2
+			rows = dim[0]
+			cols = dim[1]
+			If rows > 0 And cols > 0
+				this_json = TJSONArray.Create( rows )
+				For r = 0 To rows - 1
+					Local this_row_json:TJSONArray = TJSONArray.Create( cols )
+					For c = 0 To cols - 1
+						this_row_json.SetByIndex( c, TJSONNumber.Create( arr[r,c] ))
+					Next
+					this_json.SetByIndex( r, this_row_json )
+				Next
+			End If
+		End If
+	End If
 	Return this_json
-'	Local path_regions_json:TJSONArray = TJSONArray.Create( row_count )
-'	For row = 0 To row_count - 1
-'		Local path_regions_json__row:TJSONArray = TJSONArray.Create( col_count )
-'		For col = 0 To col_count - 1
-'			path_regions_json__row.SetByIndex( col, TJSONNumber.Create( path_regions[row,col] ))
-'		Next
-'		path_regions_json.SetByIndex( row, path_regions_json__row )
-'	Next
-'	this_json.SetByName( "path_regions", path_regions_json )
 End Function
 
 Function Create_2D_Int_array_from_TJSONArray:Int[,]( json:TJSONArray )
-	Local arr%[,]
-	
+	Local arr%[,] = Null
+	If json <> Null And Not json.IsNull()
+		Local rows%, cols%, r%, c%
+		rows = json.Size()
+		cols = TJSONArray( json.GetByIndex( 0 )).Size()
+		
+	End If
 	Return arr
 '	lev.path_regions = New Int[lev.row_count,lev.col_count]
 '	For row = 0 To json.GetArray( "path_regions" ).Size() - 1
