@@ -21,13 +21,14 @@ Type SPAWNER
 	
 	Method clone:SPAWNER()
 		Local sp:SPAWNER = New SPAWNER
+		sp.class = class
 		sp.squads = New Int[][squads.Length]
 		For Local index% = 0 To squads.Length - 1
 			sp.squads[index] = squads[index][..]
 		Next
-		sp.pos = Copy_POINT( spawn_point )
-		sp.spawn_delay = spawn_delay[..]
-		sp.political_alignment = political_alignment
+		sp.pos = Copy_POINT( pos )
+		sp.delay_time = delay_time[..]
+		sp.alignment = alignment
 		Return sp
 	End Method
 	
@@ -337,7 +338,7 @@ Function edit_level:LEVEL( lev:LEVEL )
 		
 		'draw the spawn points
 		For Local sp:SPAWNER = EachIn lev.spawners
-			Select sp.political_alignment
+			Select sp.alignment
 				Case ALIGNMENT_NONE
 					SetColor( 255, 255, 255 )
 				Case ALIGNMENT_FRIENDLY
@@ -345,12 +346,11 @@ Function edit_level:LEVEL( lev:LEVEL )
 				Case ALIGNMENT_HOSTILE
 					SetColor( 255, 212, 212 )
 			End Select
-			Local p:POINT = sp.spawn_point
+			Local p:POINT = sp.pos
 			SetAlpha( 0.50 )
 			DrawOval( x+p.pos_x - spawn_point_preview_radius,y+p.pos_y - spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
 			SetLineWidth( 2 )
 			SetAlpha( 1 )
-			'DrawLine( x+p.pos_x + spawn_point_preview_radius*Cos(p.ang-90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang-90), x+p.pos_x + spawn_point_preview_radius*Cos(p.ang+90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang+90) )
 			DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )
 		Next
 		
@@ -446,11 +446,11 @@ Function edit_level:LEVEL( lev:LEVEL )
 				End If
 				
 			Case EDIT_LEVEL_MODE_SPAWNER_NEW
-				mouse.x = round_to_nearest( mouse.x, gridsnap )
-				mouse.y = round_to_nearest( mouse.y, gridsnap )
-				new_spawner.spawn_point.pos_x = mouse.x
-				new_spawner.spawn_point.pos_y = mouse.y
-				Select new_spawner.political_alignment
+				mouse.x = round_to_nearest( mouse.x-x, gridsnap )
+				mouse.y = round_to_nearest( mouse.y-y, gridsnap )
+				new_spawner.pos.pos_x = mouse.x
+				new_spawner.pos.pos_y = mouse.y
+				Select new_spawner.alignment
 					Case ALIGNMENT_NONE
 						SetColor( 255, 255, 255 )
 					Case ALIGNMENT_FRIENDLY
@@ -462,14 +462,14 @@ Function edit_level:LEVEL( lev:LEVEL )
 					Local closest_sp:SPAWNER = Null
 					For Local sp:SPAWNER = EachIn lev.spawners
 						If closest_sp = Null Or ..
-						closest_sp.spawn_point.dist_to( Create_POINT( mouse.x, mouse.y )) > sp.spawn_point.dist_to( Create_POINT( mouse.x, mouse.y ))
+						closest_sp.pos.dist_to( Create_POINT( mouse.x, mouse.y )) > sp.pos.dist_to( Create_POINT( mouse.x, mouse.y ))
 							closest_sp = sp
 						End If
 					Next
 					If closest_sp <> Null
 						SetLineWidth( 2 )
 						SetAlpha( 0.6 )
-						Select closest_sp.political_alignment
+						Select closest_sp.alignment
 							Case ALIGNMENT_NONE
 								SetColor( 255, 255, 255 )
 							Case ALIGNMENT_FRIENDLY
@@ -477,7 +477,7 @@ Function edit_level:LEVEL( lev:LEVEL )
 							Case ALIGNMENT_HOSTILE
 								SetColor( 255, 64, 64 )
 						End Select
-						DrawLine( mouse.x,mouse.y, closest_sp.spawn_point.pos_x+x,closest_sp.spawn_point.pos_y+y )
+						DrawLine( mouse.x+x,mouse.y+y, closest_sp.pos.pos_x+x,closest_sp.pos.pos_y+y )
 						If mouse_down_1 And Not MouseDown( 1 )
 							lev.remove_spawner( closest_sp )
 						End If
@@ -491,30 +491,29 @@ Function edit_level:LEVEL( lev:LEVEL )
 				If MouseDown( 1 )
 					mouse_down_1 = True
 					If Not (KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL ))
-						Local p:POINT = new_spawner.spawn_point
+						Local p:POINT = new_spawner.pos
 						SetAlpha( 0.50 )
-						DrawOval( x+p.pos_x - spawn_point_preview_radius,y+p.pos_y - spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
+						DrawOval( x+p.pos_x-spawn_point_preview_radius,y+p.pos_y-spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
 						SetLineWidth( 2 )
 						SetAlpha( 1 )
-						'DrawLine( x+p.pos_x + spawn_point_preview_radius*Cos(p.ang-90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang-90), x+p.pos_x + spawn_point_preview_radius*Cos(p.ang+90),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang+90) )
-						DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )
+						DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x+spawn_point_preview_radius*Cos(p.ang),y+p.pos_y+spawn_point_preview_radius*Sin(p.ang) )
 					End If
 				Else
 					mouse_down_1 = False
 				End If
 				If KeyHit( KEY_LEFT )
-					new_spawner.spawn_point.ang = ang_wrap( new_spawner.spawn_point.ang - 45 )
+					new_spawner.pos.ang = ang_wrap( new_spawner.pos.ang - 45 )
 				End If
 				If KeyHit( KEY_RIGHT )
-					new_spawner.spawn_point.ang = ang_wrap( new_spawner.spawn_point.ang + 45 )
+					new_spawner.pos.ang = ang_wrap( new_spawner.pos.ang + 45 )
 				End If
 				If KeyHit( KEY_UP )
-					new_spawner.political_alignment :+ 1
-					If new_spawner.political_alignment > 2 Then new_spawner.political_alignment = 0
+					new_spawner.alignment :+ 1
+					If new_spawner.alignment > 2 Then new_spawner.alignment = 0
 				End If
 				If KeyHit( KEY_DOWN )
-					new_spawner.political_alignment :- 1
-					If new_spawner.political_alignment < 0 Then new_spawner.political_alignment = 2
+					new_spawner.alignment :- 1
+					If new_spawner.alignment < 0 Then new_spawner.alignment = 2
 				End If
 				
 			Case EDIT_LEVEL_MODE_SPAWNER_EDIT
