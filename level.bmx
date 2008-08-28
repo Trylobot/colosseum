@@ -6,13 +6,17 @@ EndRem
 
 '______________________________________________________________________________
 Type SPAWNER
-	Field squads%[][] 'grouped references to COMPLEX_AGENT prototypes; to be "baked" at spawn-time
-	Field spawn_point:POINT 'initial state to be conferred on each spawned agent
-	Field spawn_delay%[] 'time delay for each squad
-	Field political_alignment% '{friendly|hostile}
+	Global class_GATED_FACTORY% = 1
+	Global class_TURRET_ANCHOR% = 2
+	
+	Field class% '{gated_factory|turret_anchor}
+	Field squads%[][] 'grouped references to COMPLEX_AGENT prototypes; to be "baked" at spawn-time; turret anchors ignore all entries beyond the first.
+	Field pos:POINT 'initial state to be conferred on each spawned agent; velocity and acceleration ignored for turret anchors
+	Field delay_time%[] 'time delay between squad queueing; ignored for turret anchors
+	Field alignment% '{friendly|hostile}
 	
 	Method New()
-		spawn_point = New POINT
+		pos = New POINT
 	End Method
 	
 	Method clone:SPAWNER()
@@ -21,7 +25,7 @@ Type SPAWNER
 		For Local index% = 0 To squads.Length - 1
 			sp.squads[index] = squads[index][..]
 		Next
-		sp.spawn_point = Copy_POINT( spawn_point )
+		sp.pos = Copy_POINT( spawn_point )
 		sp.spawn_delay = spawn_delay[..]
 		sp.political_alignment = political_alignment
 		Return sp
@@ -29,20 +33,22 @@ Type SPAWNER
 	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
+		this_json.SetByName( "class", TJSONNumber.Create( class ))
 		this_json.SetByName( "squads", Create_TJSONArray_from_Int_array_array( squads ))
-		this_json.SetByName( "spawn_point", spawn_point.to_json() )
-		this_json.SetByName( "spawn_delay", Create_TJSONArray_from_Int_array( spawn_delay ))
-		this_json.SetByName( "political_alignment", TJSONNumber.Create( political_alignment ))
+		this_json.SetByName( "pos", pos.to_json() )
+		this_json.SetByName( "delay_time", Create_TJSONArray_from_Int_array( delay_time ))
+		this_json.SetByName( "alignment", TJSONNumber.Create( alignment ))
 		Return this_json
 	End Method
 End Type
 
 Function Create_SPAWNER_from_json:SPAWNER( json:TJSON )
 	Local sp:SPAWNER = New SPAWNER
+	sp.class = json.GetNumber( "class" )
 	sp.squads = Create_Int_array_array_from_TJSONArray( json.GetArray( "squads" ))
-	sp.spawn_point = Create_POINT_from_json( TJSON.Create( json.GetObject( "spawn_point" )))
-	sp.spawn_delay = json.GetArrayInt( "spawn_delay" )
-	sp.political_alignment = json.GetNumber( "political_alignment" )
+	sp.pos = Create_POINT_from_json( TJSON.Create( json.GetObject( "pos" )))
+	sp.delay_time = json.GetArrayInt( "delay_time" )
+	sp.alignment = json.GetNumber( "alignment" )
 	Return sp
 End Function
 
