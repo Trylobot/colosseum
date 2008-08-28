@@ -11,6 +11,10 @@ Type SPAWNER
 	Field spawn_delay%[] 'time delay for each squad
 	Field political_alignment% '{friendly|hostile}
 	
+	Method New()
+		spawn_point = New POINT
+	End Method
+	
 	Method clone:SPAWNER()
 		Local sp:SPAWNER = New SPAWNER
 		sp.squads = New Int[][squads.Length]
@@ -439,27 +443,35 @@ Function edit_level:LEVEL( lev:LEVEL )
 				mouse.x = round_to_nearest( mouse.x, gridsnap )
 				mouse.y = round_to_nearest( mouse.y, gridsnap )
 				new_spawner.spawn_point.pos_x = mouse.x
-				new_spawner.spawn_point.pos_x = mouse.x
+				new_spawner.spawn_point.pos_y = mouse.y
 				Select new_spawner.political_alignment
 					Case ALIGNMENT_NONE
 						SetColor( 255, 255, 255 )
 					Case ALIGNMENT_FRIENDLY
-						SetColor( 212, 212, 255 )
+						SetColor( 64, 64, 255 )
 					Case ALIGNMENT_HOSTILE
-						SetColor( 255, 212, 212 )
+						SetColor( 255, 64, 64 )
 				End Select
 				If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
 					Local closest_sp:SPAWNER = Null
 					For Local sp:SPAWNER = EachIn lev.spawners
 						If closest_sp = Null Or ..
-						closest_sp.spawn_point.dist_to( Create_POINT( mouse.x, mouse.y )) < sp.spawn_point.dist_to( Create_POINT( mouse.x, mouse.y ))
+						closest_sp.spawn_point.dist_to( Create_POINT( mouse.x, mouse.y )) > sp.spawn_point.dist_to( Create_POINT( mouse.x, mouse.y ))
 							closest_sp = sp
 						End If
 					Next
 					If closest_sp <> Null
 						SetLineWidth( 2 )
 						SetAlpha( 0.6 )
-						DrawLine( mouse.x,mouse.y, closest_sp.spawn_point.pos_x,closest_sp.spawn_point.pos_y )
+						Select closest_sp.political_alignment
+							Case ALIGNMENT_NONE
+								SetColor( 255, 255, 255 )
+							Case ALIGNMENT_FRIENDLY
+								SetColor( 64, 64, 255 )
+							Case ALIGNMENT_HOSTILE
+								SetColor( 255, 64, 64 )
+						End Select
+						DrawLine( mouse.x,mouse.y, closest_sp.spawn_point.pos_x+x,closest_sp.spawn_point.pos_y+y )
 						If mouse_down_1 And Not MouseDown( 1 )
 							lev.remove_spawner( closest_sp )
 						End If

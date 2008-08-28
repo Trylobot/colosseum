@@ -181,55 +181,7 @@
 		{
 			squads: null,
 			spawn_point: {
-				pos_x: 325,
-				pos_y: 615,
-				ang: -90,
-				vel_x: 0,
-				vel_y: 0,
-				ang_vel: 0,
-				acc_x: 0,
-				acc_y: 0,
-				ang_acc: 0
-			},
-			spawn_delay: null,
-			political_alignment: 0
-		},
-		{
-			squads: null,
-			spawn_point: {
-				pos_x: 615,
-				pos_y: 325,
-				ang: -180,
-				vel_x: 0,
-				vel_y: 0,
-				ang_vel: 0,
-				acc_x: 0,
-				acc_y: 0,
-				ang_acc: 0
-			},
-			spawn_delay: null,
-			political_alignment: 0
-		},
-		{
-			squads: null,
-			spawn_point: {
-				pos_x: 325,
-				pos_y: 35,
-				ang: 90,
-				vel_x: 0,
-				vel_y: 0,
-				ang_vel: 0,
-				acc_x: 0,
-				acc_y: 0,
-				ang_acc: 0
-			},
-			spawn_delay: null,
-			political_alignment: 0
-		},
-		{
-			squads: null,
-			spawn_point: {
-				pos_x: 35,
+				pos_x: 50,
 				pos_y: 325,
 				ang: 0,
 				vel_x: 0,
@@ -240,14 +192,14 @@
 				ang_acc: 0
 			},
 			spawn_delay: null,
-			political_alignment: 0
+			political_alignment: 2
 		},
 		{
 			squads: null,
 			spawn_point: {
-				pos_x: 215,
-				pos_y: 215,
-				ang: 45,
+				pos_x: 325,
+				pos_y: 50,
+				ang: 90,
 				vel_x: 0,
 				vel_y: 0,
 				ang_vel: 0,
@@ -256,14 +208,14 @@
 				ang_acc: 0
 			},
 			spawn_delay: null,
-			political_alignment: 0
+			political_alignment: 2
 		},
 		{
 			squads: null,
 			spawn_point: {
-				pos_x: 435,
-				pos_y: 215,
-				ang: 135,
+				pos_x: 600,
+				pos_y: 325,
+				ang: 180,
 				vel_x: 0,
 				vel_y: 0,
 				ang_vel: 0,
@@ -272,14 +224,14 @@
 				ang_acc: 0
 			},
 			spawn_delay: null,
-			political_alignment: 0
+			political_alignment: 2
 		},
 		{
 			squads: null,
 			spawn_point: {
-				pos_x: 435,
-				pos_y: 435,
-				ang: -135,
+				pos_x: 325,
+				pos_y: 600,
+				ang: -90,
 				vel_x: 0,
 				vel_y: 0,
 				ang_vel: 0,
@@ -288,12 +240,12 @@
 				ang_acc: 0
 			},
 			spawn_delay: null,
-			political_alignment: 0
+			political_alignment: 1
 		},
 		{
 			squads: null,
 			spawn_point: {
-				pos_x: 215,
+				pos_x: 220,
 				pos_y: 435,
 				ang: -45,
 				vel_x: 0,
@@ -304,7 +256,55 @@
 				ang_acc: 0
 			},
 			spawn_delay: null,
-			political_alignment: 0
+			political_alignment: 2
+		},
+		{
+			squads: null,
+			spawn_point: {
+				pos_x: 220,
+				pos_y: 220,
+				ang: 45,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			spawn_delay: null,
+			political_alignment: 2
+		},
+		{
+			squads: null,
+			spawn_point: {
+				pos_x: 430,
+				pos_y: 220,
+				ang: 135,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			spawn_delay: null,
+			political_alignment: 2
+		},
+		{
+			squads: null,
+			spawn_point: {
+				pos_x: 430,
+				pos_y: 430,
+				ang: -135,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			spawn_delay: null,
+			political_alignment: 2
 		}
 	]
 }
