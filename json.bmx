@@ -891,16 +891,8 @@ Type TJSON
 	EndMethod	
 EndType
 
-
-
-'
-'MARK: Support Functions
-'
 Private
 
-'
-' Simple token seperator
-'
 Function GetNext:String( value:String Var, sep:String)	
 	If (value.Length <= 0) Or (sep.Length <= 0) Then Return Null
 	Local res:String, index:Int = value.Find( sep)
@@ -917,9 +909,6 @@ Function GetNext:String( value:String Var, sep:String)
 	Return res
 EndFunction
 
-'
-' Checks if a string is a number
-'
 Function IsNumber:Int( value:String)
 	Const START:Int = Asc("0")
 	Const STOP:Int = Asc("9")		
@@ -930,9 +919,6 @@ Function IsNumber:Int( value:String)
 	Return True
 EndFunction
 
-'
-' Returns a "pretty" floating point number
-'
 Function DoubleToString:String( value:Double)
 	Const STR_FMT:String = "%f"
 	Const CHAR_0:Byte = Asc("0")
@@ -986,7 +972,7 @@ Function Create_TJSONArray_from_Int_array_array:TJSONArray( arr%[][] )
 		Return TJSONArray( TJSON.NIL )
 	End If
 	Local this_json:TJSONArray = TJSONArray.Create( arr.Length )
-	For Local index% = 0 To arr.Length
+	For Local index% = 0 To arr.Length - 1
 		this_json.SetByIndex( index, Create_TJSONArray_from_Int_array( arr[index] ))
 	Next
 	Return this_json
