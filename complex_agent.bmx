@@ -42,6 +42,10 @@ Type COMPLEX_AGENT Extends AGENT
 	Field stickies:TList 'damage particles
 	Field left_track:PARTICLE 'a special particle that represents the "left track" of a tank
 	Field right_track:PARTICLE 'a special particle that represents the "right track" of a tank
+
+	Field red%, green%, blue%
+	Field alpha#
+	Field scale#
 	
 	'___________________________________________
 	Method New()
@@ -58,6 +62,9 @@ Type COMPLEX_AGENT Extends AGENT
 			all_widgets.AddLast( constant_widgets )
 			all_widgets.AddLast( deploy_widgets )
 		stickies = CreateList()
+		red = 255; green = 255; blue = 255
+		alpha = 1.0
+		scale = 1.0
 	End Method
 	
 	'___________________________________________
@@ -220,7 +227,13 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
-	Method draw()
+	Method draw( red_override% = -1, green_override% = -1, blue_override% = -1, alpha_override# = -1.0, scale_override# = -1.0 )
+		If red_override   <> -1   Then red   = red_override   Else red   = 255
+		If green_override <> -1   Then green = green_override Else green = 255
+		If blue_override  <> -1.0 Then blue  = blue_override  Else blue  = 255
+		If alpha_override <> -1.0 Then alpha = alpha_override Else alpha = 1.0
+		If scale_override <> -1.0 Then scale = scale_override Else scale = 1.0
+		
 		'chassis widgets
 		For Local widget_list:TList = EachIn all_widgets
 			For Local w:WIDGET = EachIn widget_list
@@ -229,9 +242,9 @@ Type COMPLEX_AGENT Extends AGENT
 				End If
 			Next
 		Next
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		SetScale( 1, 1 )
+		SetColor( red, green, blue )
+		SetAlpha( alpha )
+		SetScale( scale, scale )
 		SetRotation( ang )
 		'tracks
 		If right_track <> Null And left_track <> Null
@@ -239,6 +252,9 @@ Type COMPLEX_AGENT Extends AGENT
 			right_track.draw()
 		End If
 		'chassis
+		SetColor( red, green, blue )
+		SetAlpha( alpha )
+		SetScale( scale, scale )
 		SetRotation( ang )
 		If img <> Null Then DrawImage( img, pos_x, pos_y )
 		'chassis widgets
@@ -249,9 +265,6 @@ Type COMPLEX_AGENT Extends AGENT
 				End If
 			Next
 		Next
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		SetScale( 1, 1 )
 		'turrets
 		For Local t:TURRET = EachIn turret_list
 			t.draw()

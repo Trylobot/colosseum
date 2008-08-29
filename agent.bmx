@@ -20,11 +20,6 @@ Type AGENT Extends PHYSICAL_OBJECT
 		death_emitters = CreateList()
 	End Method
 	
-	Method draw()
-		SetRotation( ang )
-		DrawImage( img, pos_x, pos_y )
-	End Method
-	
 	Method dead%()
 		Return (cur_health <= 0)
 	End Method

@@ -1,5 +1,5 @@
 {
-	name: "level3",
+	name: "3 gates",
 	width: 650,
 	height: 650,
 	row_count: 11,
@@ -179,7 +179,7 @@
 	],
 	spawners: [
 		{
-			class: 0,
+			class: 1,
 			squads: null,
 			pos: {
 				pos_x: 325,
@@ -196,8 +196,8 @@
 			alignment: 1
 		},
 		{
-			class: 0,
-			squads: null,
+			class: 2,
+			squads: [ [ 4 ] ],
 			pos: {
 				pos_x: 220,
 				pos_y: 220,
@@ -209,12 +209,23 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: null,
+			delay_time: [ 0 ],
 			alignment: 2
 		},
 		{
-			class: 0,
-			squads: null,
+			class: 1,
+			squads: [
+				[
+					8,
+					8,
+					8,
+					8
+				],
+				[
+					3,
+					3
+				]
+			],
 			pos: {
 				pos_x: 325,
 				pos_y: 40,
@@ -226,12 +237,26 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: null,
+			delay_time: [
+				0,
+				0
+			],
 			alignment: 2
 		},
 		{
-			class: 0,
-			squads: null,
+			class: 1,
+			squads: [
+				[
+					8,
+					8,
+					8,
+					8
+				],
+				[
+					3,
+					3
+				]
+			],
 			pos: {
 				pos_x: 615,
 				pos_y: 325,
@@ -243,12 +268,26 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: null,
+			delay_time: [
+				0,
+				0
+			],
 			alignment: 2
 		},
 		{
-			class: 0,
-			squads: null,
+			class: 1,
+			squads: [
+				[
+					8,
+					8,
+					8,
+					8
+				],
+				[
+					3,
+					3
+				]
+			],
 			pos: {
 				pos_x: 40,
 				pos_y: 325,
@@ -260,12 +299,15 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: null,
+			delay_time: [
+				0,
+				0
+			],
 			alignment: 2
 		},
 		{
-			class: 0,
-			squads: null,
+			class: 2,
+			squads: [ [ 5 ] ],
 			pos: {
 				pos_x: 430,
 				pos_y: 220,
@@ -277,12 +319,12 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: null,
+			delay_time: [ 0 ],
 			alignment: 2
 		},
 		{
-			class: 0,
-			squads: null,
+			class: 2,
+			squads: [ [ 4 ] ],
 			pos: {
 				pos_x: 430,
 				pos_y: 430,
@@ -294,12 +336,12 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: null,
+			delay_time: [ 0 ],
 			alignment: 2
 		},
 		{
-			class: 0,
-			squads: null,
+			class: 2,
+			squads: [ [ 5 ] ],
 			pos: {
 				pos_x: 220,
 				pos_y: 430,
@@ -311,7 +353,7 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: null,
+			delay_time: [ 0 ],
 			alignment: 2
 		}
 	]

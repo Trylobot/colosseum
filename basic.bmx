@@ -126,6 +126,15 @@ End Function
 '	Next
 '	Return newlist
 'End Function
+
+Function remove_from_Int_array:Int[]( arr%[], i% )
+	
+End Function
+
+Function insert_into_Int_array:Int[]( arr%[], i%, val% )
+	
+End Function
+
 '______________________________________________________________________________
 Function Create_POINT:POINT( ..
 pos_x# = 0.0, pos_y# = 0.0, ..

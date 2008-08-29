@@ -243,6 +243,10 @@ Type TURRET Extends POINT
 	End Method
 	
 	Method draw()
+		SetColor( parent.red, parent.green, parent.blue )
+		SetAlpha( parent.alpha )
+		SetScale( parent.scale, parent.scale )
+		
 		SetRotation( ang )
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
 			tb.draw()

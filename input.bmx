@@ -72,7 +72,6 @@ End Function
 'Text handler
 Const key_press_time% = 1000
 Const key_repeat_delay% = 100
-Const cursor_blink% = 500
 
 Type CONSOLE
 	Field cursor_index%

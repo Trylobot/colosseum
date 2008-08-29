@@ -81,7 +81,7 @@ Function edit_level_file( file_path$ = "" )
 	edit_level( lev )
 	
 	json = TJSON.Create( lev.to_json() )
-	file_path = RequestFile( "Save Level Data", data_file_filter, True, user_path )
+	file_path = RequestFile( "Save Level Data", data_file_filter, True, user_path + lev.name )
 	If file_path <> ""
 		json.Write( WriteFile( file_path ))
 	End If

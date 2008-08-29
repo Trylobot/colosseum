@@ -8,6 +8,7 @@ EndRem
 Global FLAG_retain_particles% = False
 Const retained_particle_limit% = 1500
 Global FLAG_dim_bg% = False
+Const cursor_blink% = 500
 Global str$
 
 '______________________________________________________________________________
@@ -438,7 +439,6 @@ End Function
 Function DrawText_with_shadow( str$, pos_x%, pos_y% )
 	SetColor( 0, 0, 0 )
 	DrawText( str, pos_x + 1, pos_y + 1 )
-	
 	SetColor( 255, 255, 255 )
 	DrawText( str, pos_x, pos_y )
 End Function
