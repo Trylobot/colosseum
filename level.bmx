@@ -273,7 +273,7 @@ Function Create_LEVEL_from_json:LEVEL( json:TJSON )
 End Function
 
 '______________________________________________________________________________
-Const spawn_point_preview_radius% = 8
+Const spawn_point_preview_radius% = 10
 Const max_level_name_length% = 22
 
 Const EDIT_LEVEL_MODE_NONE% = 0
@@ -342,13 +342,13 @@ Function edit_level:LEVEL( lev:LEVEL )
 				Case ALIGNMENT_NONE
 					SetColor( 255, 255, 255 )
 				Case ALIGNMENT_FRIENDLY
-					SetColor( 212, 212, 255 )
+					SetColor( 64, 64, 255 )
 				Case ALIGNMENT_HOSTILE
-					SetColor( 255, 212, 212 )
+					SetColor( 255, 64, 64 )
 			End Select
 			Local p:POINT = sp.pos
 			SetAlpha( 0.50 )
-			DrawOval( x+p.pos_x - spawn_point_preview_radius,y+p.pos_y - spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
+			DrawOval( x+p.pos_x-spawn_point_preview_radius,y+p.pos_y-spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
 			SetLineWidth( 2 )
 			SetAlpha( 1 )
 			DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )

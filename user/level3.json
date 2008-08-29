@@ -177,5 +177,142 @@
 			1
 		]
 	],
-	spawners: null
+	spawners: [
+		{
+			class: 0,
+			squads: null,
+			pos: {
+				pos_x: 325,
+				pos_y: 610,
+				ang: -90,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: null,
+			alignment: 1
+		},
+		{
+			class: 0,
+			squads: null,
+			pos: {
+				pos_x: 220,
+				pos_y: 220,
+				ang: 45,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: null,
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: null,
+			pos: {
+				pos_x: 325,
+				pos_y: 40,
+				ang: 90,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: null,
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: null,
+			pos: {
+				pos_x: 615,
+				pos_y: 325,
+				ang: 180,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: null,
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: null,
+			pos: {
+				pos_x: 40,
+				pos_y: 325,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: null,
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: null,
+			pos: {
+				pos_x: 430,
+				pos_y: 220,
+				ang: 135,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: null,
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: null,
+			pos: {
+				pos_x: 430,
+				pos_y: 430,
+				ang: -135,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: null,
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: null,
+			pos: {
+				pos_x: 220,
+				pos_y: 430,
+				ang: -45,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: null,
+			alignment: 2
+		}
+	]
 }
