@@ -79,8 +79,8 @@ Type CONSOLE
 	Field key_press_ts%
 	Field repeat_ts%
 	
-	Method update$( str$, max_size% )
-		If str.Length < max_size
+	Method update$( str$, max_size% = INFINITY )
+		If max_size = INFINITY Or str.Length < max_size
 			Local this_char$ = GetChar_normal()
 			If this_char <> "" And this_char <> last_char
 				key_press_ts = now()
