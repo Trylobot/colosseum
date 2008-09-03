@@ -73,6 +73,7 @@ Type CONSOLE
 	Global key_press_time% = 1000
 	Global key_repeat_delay% = 100
 	
+	Field upper_case%
 	Field cursor_index%
 	Field last_char$
 	Field key_press_ts%
@@ -80,6 +81,11 @@ Type CONSOLE
 	
 	Method update$( str$, max_size% = INFINITY, reset_cursor% = False )
 		If reset_cursor Then cursor_index = str.Length
+		If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
+			upper_case = True
+		Else
+			upper_case = False
+		End If
 		
 		If max_size = INFINITY Or str.Length < max_size
 			Local this_char$ = GetChar_normal()
@@ -124,20 +130,30 @@ Type CONSOLE
 		Return str
 	End Method
 	
-	Function GetChar_normal$() 'returns "" if none, or a string representing the character of the key pressed
-		Local key_index% = -1
-		Local upper_case% = False
+	Global normal_chars_ucase$[] = [ ..
+		")", "!", "@", "#", "$", "%", "^", "&", "*", "(", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ..
+		"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M", ..
+		"~~", "_", "+", "{", "}", "|", ".", "+", "-", "*", "/", ":", "~q", "<", ">", "?", " " ]
+		
+	Global normal_chars_lcase$[] = [ ..
+		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ..
+		"q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m", ..
+		"`",  "-", "=", "[", "]", "\", ".", "+", "-", "*", "/", ";", "'",  ",", ".", "/", " " ]
+		
+	Global normal_keys%[] = [ ..
+		KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_NUM0, KEY_NUM1, KEY_NUM2, KEY_NUM3, KEY_NUM4, KEY_NUM5, KEY_NUM6, KEY_NUM7, KEY_NUM8, KEY_NUM9, ..
+		KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, ..
+		KEY_TILDE, KEY_MINUS, KEY_EQUALS, KEY_OPENBRACKET, KEY_CLOSEBRACKET, KEY_BACKSLASH, KEY_NUMDECIMAL, KEY_NUMADD, KEY_NUMSUBTRACT, KEY_NUMMULTIPLY, KEY_NUMDIVIDE, KEY_SEMICOLON, KEY_QUOTES, KEY_COMMA, KEY_PERIOD, KEY_SLASH, KEY_SPACE ]
+	
+	Method GetChar_normal$() 'returns "" if none, or a string representing the character of the key pressed
+		Local key_index% = INFINITY
 		For Local index% = 0 To normal_keys.Length-1
-			If KeyDown( MODIFIER_SHIFT | normal_keys[index] )
-				key_index = index
-				upper_case = True
-				Exit
-			Else If KeyDown( normal_keys[index] )
+			If KeyDown( normal_keys[index] )
 				key_index = index
 				Exit
 			End If
 		Next
-		If key_index >= 0
+		If key_index <> INFINITY
 			If upper_case
 				Return normal_chars_ucase[key_index]
 			Else 'lower case
@@ -146,41 +162,8 @@ Type CONSOLE
 		Else
 			Return "" 'nothing
 		End If
-	End Function
+	End Method
 
-	Function KeyDown_normal%() 'returns -1 if none, or the key code of the key hit
-	End Function
-	
-	Global normal_chars_ucase$[] = [ ..
-		")", "!", "@", "#", "$", "%", "^", "&", "*", "(", ..
-		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ..
-		"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", ..
-		"A", "S", "D", "F", "G", "H", "J", "K", "L", ..
-		"Z", "X", "C", "V", "B", "N", "M", ..
-		"~~", "_", "+", "{", "}", "|", ..
-		".", "+", "-", "*", "/", ..
-		":", "~q", "<", ">", "?", " " ]
-		
-	Global normal_chars_lcase$[] = [ ..
-		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ..
-		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ..
-		"q", "w", "e", "r", "t", "y", "u", "i", "o", "p", ..
-		"a", "s", "d", "f", "g", "h", "j", "k", "l", ..
-		"z", "x", "c", "v", "b", "n", "m", ..
-		"`", "-", "=", "[", "]", "\", ..
-		".", "+", "-", "*", "/", ..
-		";", "'", ",", ".", "/", " " ]
-		
-	Global normal_keys%[] = [ ..
-		KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, ..
-		KEY_NUM0, KEY_NUM1, KEY_NUM2, KEY_NUM3, KEY_NUM4, KEY_NUM5, KEY_NUM6, KEY_NUM7, KEY_NUM8, KEY_NUM9, ..
-		KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, ..
-		KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, ..
-		KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, ..
-		KEY_TILDE, KEY_MINUS, KEY_EQUALS, KEY_OPENBRACKET, KEY_CLOSEBRACKET, KEY_BACKSLASH, ..
-		KEY_NUMDECIMAL, KEY_NUMADD, KEY_NUMSUBTRACT, KEY_NUMMULTIPLY, KEY_NUMDIVIDE, ..
-		KEY_SEMICOLON, KEY_QUOTES, KEY_COMMA, KEY_PERIOD, KEY_SLASH, KEY_SPACE ]
-	
 End Type
 
 

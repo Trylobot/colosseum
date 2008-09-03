@@ -183,7 +183,11 @@ Function edit_level:LEVEL( lev:LEVEL )
 					y = round_to_nearest( mouse.y - lev.height, gridsnap )
 				Else If MouseDown( 1 )
 					'resize
-					lev.resize( round_to_nearest( mouse.x - x, gridsnap ), round_to_nearest( mouse.y - y, gridsnap )) 
+					Local width% = round_to_nearest( mouse.x - x, gridsnap )
+					If width < gridsnap Then width = gridsnap
+					Local height% = round_to_nearest( mouse.y - y, gridsnap )
+					If height < gridsnap Then height = gridsnap
+					lev.resize( width, height )
 				End If
 				If KeyHit( KEY_ENTER )
 					FLAG_text_mode = Not FLAG_text_mode
