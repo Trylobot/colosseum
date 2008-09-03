@@ -18,7 +18,7 @@ Const EDIT_LEVEL_MODE_SPAWNER_EDIT% = 5
 Function edit_level:LEVEL( lev:LEVEL )
 	
 	Local gridsnap% = 5
-	Local mode% = EDIT_LEVEL_MODE_PAN
+	Local mode% = EDIT_LEVEL_MODE_RESIZE
 	Local FLAG_text_mode% = False
 	Local x% = gridsnap, y% = gridsnap
 	Local info_x%, info_y%
@@ -122,10 +122,10 @@ Function edit_level:LEVEL( lev:LEVEL )
 		info_x :+ 6; info_y :+ 3
 		
 		DrawText( ""+..
-			EDIT_LEVEL_MODE_RESIZE+":resize  "+..
-			EDIT_LEVEL_MODE_DIVIDER+":div  "+..
-			EDIT_LEVEL_MODE_PATHING+":paths  "+..
-			EDIT_LEVEL_MODE_SPAWNER_NEW+","+EDIT_LEVEL_MODE_SPAWNER_EDIT+":spawners  ",..
+			EDIT_LEVEL_MODE_RESIZE+":resize/pan "+..
+			EDIT_LEVEL_MODE_DIVIDER+":split "+..
+			EDIT_LEVEL_MODE_PATHING+":block "+..
+			EDIT_LEVEL_MODE_SPAWNER_NEW+","+EDIT_LEVEL_MODE_SPAWNER_EDIT+":spawners",..
 			info_x,info_y ); info_y :+ line_h
 		
 		Select mode
@@ -177,19 +177,13 @@ Function edit_level:LEVEL( lev:LEVEL )
 			Case EDIT_LEVEL_MODE_RESIZE
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
-				If MouseDown( 1 )
-					'resize the grid, snap to gridsnap
-					lev.width = round_to_nearest( mouse.x + gridsnap, gridsnap )
-					lev.height = round_to_nearest( mouse.y + gridsnap, gridsnap )
-					'reset all previous dividers
-					
-					'reset all previous pathing regions
-					
-				End If
 				If MouseDown( 2 )
-					'pan the grid
-					x = round_to_nearest( mouse.x + gridsnap - lev.width/2, gridsnap )
-					y = round_to_nearest( mouse.y + gridsnap - lev.height/2, gridsnap )
+					'pan
+					x = round_to_nearest( mouse.x - lev.width, gridsnap )
+					y = round_to_nearest( mouse.y - lev.height, gridsnap )
+				Else If MouseDown( 1 )
+					'resize
+					lev.resize( round_to_nearest( mouse.x - x, gridsnap ), round_to_nearest( mouse.y - y, gridsnap )) 
 				End If
 				If KeyHit( KEY_ENTER )
 					FLAG_text_mode = Not FLAG_text_mode

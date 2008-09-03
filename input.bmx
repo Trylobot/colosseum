@@ -78,7 +78,9 @@ Type CONSOLE
 	Field key_press_ts%
 	Field repeat_ts%
 	
-	Method update$( str$, max_size% = INFINITY )
+	Method update$( str$, max_size% = INFINITY, reset_cursor% = False )
+		If reset_cursor Then cursor_index = str.Length
+		
 		If max_size = INFINITY Or str.Length < max_size
 			Local this_char$ = GetChar_normal()
 			If this_char <> "" And this_char <> last_char
@@ -123,12 +125,23 @@ Type CONSOLE
 	End Method
 	
 	Function GetChar_normal$() 'returns "" if none, or a string representing the character of the key pressed
-		Local normal_index% = KeyDown_normal()
-		If normal_index <> -1
-			If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT ) 'upper case
-				Return normal_chars_ucase[normal_index]
+		Local key_index% = -1
+		Local upper_case% = False
+		For Local index% = 0 To normal_keys.Length-1
+			If KeyDown( MODIFIER_SHIFT | normal_keys[index] )
+				key_index = index
+				upper_case = True
+				Exit
+			Else If KeyDown( normal_keys[index] )
+				key_index = index
+				Exit
+			End If
+		Next
+		If key_index >= 0
+			If upper_case
+				Return normal_chars_ucase[key_index]
 			Else 'lower case
-				Return normal_chars_lcase[normal_index]
+				Return normal_chars_lcase[key_index]
 			End If
 		Else
 			Return "" 'nothing
@@ -136,12 +149,6 @@ Type CONSOLE
 	End Function
 
 	Function KeyDown_normal%() 'returns -1 if none, or the key code of the key hit
-		For Local normal_index% = 0 To normal_keys.Length - 1
-			If KeyDown( normal_keys[normal_index] )
-				Return normal_index
-			End If
-		Next
-		Return -1
 	End Function
 	
 	Global normal_chars_ucase$[] = [ ..
@@ -151,6 +158,7 @@ Type CONSOLE
 		"A", "S", "D", "F", "G", "H", "J", "K", "L", ..
 		"Z", "X", "C", "V", "B", "N", "M", ..
 		"~~", "_", "+", "{", "}", "|", ..
+		".", "+", "-", "*", "/", ..
 		":", "~q", "<", ">", "?", " " ]
 		
 	Global normal_chars_lcase$[] = [ ..
@@ -160,6 +168,7 @@ Type CONSOLE
 		"a", "s", "d", "f", "g", "h", "j", "k", "l", ..
 		"z", "x", "c", "v", "b", "n", "m", ..
 		"`", "-", "=", "[", "]", "\", ..
+		".", "+", "-", "*", "/", ..
 		";", "'", ",", ".", "/", " " ]
 		
 	Global normal_keys%[] = [ ..
@@ -169,6 +178,7 @@ Type CONSOLE
 		KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, ..
 		KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, ..
 		KEY_TILDE, KEY_MINUS, KEY_EQUALS, KEY_OPENBRACKET, KEY_CLOSEBRACKET, KEY_BACKSLASH, ..
+		KEY_NUMDECIMAL, KEY_NUMADD, KEY_NUMSUBTRACT, KEY_NUMMULTIPLY, KEY_NUMDIVIDE, ..
 		KEY_SEMICOLON, KEY_QUOTES, KEY_COMMA, KEY_PERIOD, KEY_SLASH, KEY_SPACE ]
 	
 End Type

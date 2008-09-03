@@ -142,6 +142,16 @@ Type LEVEL Extends MANAGED_OBJECT
 	Field path_regions%[,] '{PASSABLE|BLOCKED}[w,h]
 	Field spawners:SPAWNER[]
 	
+	Method resize( new_width%, new_height% )
+		width = new_width
+		height = new_height
+		row_count = 1
+		col_count = 1
+		horizontal_divs = [ 0, height ]
+		vertical_divs = [ 0, width ]
+		path_regions = New Int[ row_count, col_count ]
+	End Method
+	
 	Method add_divider( pos%, line_type% )
 		Select line_type
 			
@@ -282,11 +292,11 @@ Type LEVEL Extends MANAGED_OBJECT
 	End Method
 	
 	Method enemy_count%()
-'		Local count% = 0
-'		For Local this_squad:SQUAD = EachIn squads
-'			count :+ this_squad.archetypes.Length
-'		Next
-'		Return count
+		Local count% = 0
+		For Local index% = 0 To spawners.Length-1
+			count :+ spawners[index].count_all_squadmembers()
+		Next
+		Return count
 	End Method
 	
 	Method to_json:TJSONObject()

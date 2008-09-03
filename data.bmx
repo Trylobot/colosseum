@@ -74,7 +74,7 @@ Function edit_level_file( file_path$ = "" )
 		json = TJSON.Create( LoadString( file_path ))
 		lev = Create_LEVEL_from_json( json )
 	Else
-		lev = Create_LEVEL( 650, 650 )
+		lev = Create_LEVEL( 300, 300 )
 		lev.name = "new level"
 	End If
 	
