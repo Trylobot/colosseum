@@ -238,8 +238,8 @@
 				ang_acc: 0
 			},
 			delay_time: [
-				0,
-				0
+				100,
+				2000
 			],
 			alignment: 2
 		},
@@ -269,8 +269,8 @@
 				ang_acc: 0
 			},
 			delay_time: [
-				0,
-				0
+				100,
+				2000
 			],
 			alignment: 2
 		},
@@ -300,8 +300,8 @@
 				ang_acc: 0
 			},
 			delay_time: [
-				0,
-				0
+				100,
+				2000
 			],
 			alignment: 2
 		},

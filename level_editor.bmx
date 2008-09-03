@@ -9,7 +9,7 @@ Const spawn_point_preview_radius% = 10
 Const max_level_name_length% = 22
 
 Const EDIT_LEVEL_MODE_NONE% = 0
-Const EDIT_LEVEL_MODE_PAN% = 1
+Const EDIT_LEVEL_MODE_RESIZE% = 1
 Const EDIT_LEVEL_MODE_DIVIDER% = 2
 Const EDIT_LEVEL_MODE_PATHING% = 3
 Const EDIT_LEVEL_MODE_SPAWNER_NEW% = 4
@@ -91,7 +91,7 @@ Function edit_level:LEVEL( lev:LEVEL )
 		
 		'change modes detection
 		If Not FLAG_text_mode
-			If      KeyHit( KEY_1 ) Then mode = EDIT_LEVEL_MODE_PAN ..
+			If      KeyHit( KEY_1 ) Then mode = EDIT_LEVEL_MODE_RESIZE ..
 			Else If KeyHit( KEY_2 ) Then mode = EDIT_LEVEL_MODE_DIVIDER ..
 			Else If KeyHit( KEY_3 ) Then mode = EDIT_LEVEL_MODE_PATHING ..
 			Else If KeyHit( KEY_4 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_NEW ..
@@ -122,17 +122,18 @@ Function edit_level:LEVEL( lev:LEVEL )
 		info_x :+ 6; info_y :+ 3
 		
 		DrawText( ""+..
-			EDIT_LEVEL_MODE_PAN+":pan  "+..
+			EDIT_LEVEL_MODE_RESIZE+":resize  "+..
 			EDIT_LEVEL_MODE_DIVIDER+":div  "+..
 			EDIT_LEVEL_MODE_PATHING+":paths  "+..
 			EDIT_LEVEL_MODE_SPAWNER_NEW+","+EDIT_LEVEL_MODE_SPAWNER_EDIT+":spawners  ",..
 			info_x,info_y ); info_y :+ line_h
 		
 		Select mode
-			Case EDIT_LEVEL_MODE_PAN
-				DrawText( "mode "+EDIT_LEVEL_MODE_PAN+" -> camera pan", info_x,info_y )
-				DrawText( "click and drag to pan", mouse.x+10,mouse.y )
-				DrawText( "enter to name level", mouse.x+10,mouse.y+10 )
+			Case EDIT_LEVEL_MODE_RESIZE
+				DrawText( "mode "+EDIT_LEVEL_MODE_RESIZE+" -> camera pan", info_x,info_y )
+				DrawText( "click and drag to resize", mouse.x+10,mouse.y )
+				DrawText( "right-click and drag to pan", mouse.x+10,mouse.y+10 )
+				DrawText( "enter to edit level title", mouse.x+10,mouse.y+20 )
 			Case EDIT_LEVEL_MODE_DIVIDER
 				DrawText( "mode "+EDIT_LEVEL_MODE_DIVIDER+" -> dividers vertical/horizontal", info_x,info_y )
 				DrawText( "click to split vertically", mouse.x+10,mouse.y )
@@ -160,7 +161,8 @@ Function edit_level:LEVEL( lev:LEVEL )
 		DrawText( "numpad +/- to change grid size", info_x,info_y ); info_y :+ 2*line_h
 		
 		SetImageFont( bigger_font )
-		DrawText_with_glow( lev.name, info_x,info_y )
+		DrawText_with_glow( lev.name, info_x, info_y )
+		Local title_y% = info_y
 		info_y :+ GetImageFont().Height() - 1
 		
 		SetImageFont( normal_font )
@@ -172,16 +174,22 @@ Function edit_level:LEVEL( lev:LEVEL )
 		Select mode
 			
 			'____________________________________________________________________________________________________
-			Case EDIT_LEVEL_MODE_PAN
+			Case EDIT_LEVEL_MODE_RESIZE
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
 				If MouseDown( 1 )
-					x = round_to_nearest( mouse.x + gridsnap - lev.width/2, gridsnap )
-					y = round_to_nearest( mouse.y + gridsnap - lev.height/2, gridsnap )
+					'resize the grid, snap to gridsnap
+					lev.width = round_to_nearest( mouse.x + gridsnap, gridsnap )
+					lev.height = round_to_nearest( mouse.y + gridsnap, gridsnap )
+					'reset all previous dividers
+					
+					'reset all previous pathing regions
+					
 				End If
 				If MouseDown( 2 )
-					x = gridsnap
-					y = gridsnap
+					'pan the grid
+					x = round_to_nearest( mouse.x + gridsnap - lev.width/2, gridsnap )
+					y = round_to_nearest( mouse.y + gridsnap - lev.height/2, gridsnap )
 				End If
 				If KeyHit( KEY_ENTER )
 					FLAG_text_mode = Not FLAG_text_mode
@@ -190,7 +198,9 @@ Function edit_level:LEVEL( lev:LEVEL )
 				If FLAG_text_mode
 					lev.name = kb_handler.update( lev.name, max_level_name_length )
 					SetAlpha( 0.5 + Sin(now() Mod 360) )
-					DrawText( "|", info_x + TextWidth( lev.name ) - 2,info_y )
+					SetImageFont( bigger_font )
+					DrawText( "|", info_x + TextWidth( lev.name ) - 2, title_y )
+					SetImageFont( normal_font )
 					SetAlpha( 1 )
 				End If
 			
@@ -357,30 +367,37 @@ Function edit_level:LEVEL( lev:LEVEL )
 						Next
 						SetRotation( 0 )
 						SetScale( 1, 1 )
+						SetColor( 255, 255, 255 )
 						If cursor > sp.count_squads() Then cursor = sp.count_squads()
 					Else
 						cursor = 0
 					End If
 					'draw all delay times except the cursor
-					'For ...
-					'Next
+					For Local r% = 0 To sp.count_squads()-1
+						If r <> cursor
+							DrawText( sp.delay_time[r], window_w - 50, info_y + r*cell_size + line_h/3 )
+						End If
+					Next
 
-					If KeyHit( KEY_ENTER ) And cursor > 0 And cursor < sp.count_squads()
+					If KeyHit( KEY_ENTER ) And cursor >= 0 And cursor < sp.count_squads()
 						FLAG_text_mode = Not FLAG_text_mode
 						FlushKeys()
 						If FLAG_text_mode
-							sp_delay_time = String.FromInt( sp.delay_time[cursor] )
+							sp_delay_time = "" 'String.FromInt( sp.delay_time[cursor] )
 						Else 'Not FLAG_text_mode
-							sp.delay_time[cursor] = String.ToInt( sp_delay_time )
+							sp.delay_time[cursor] = sp_delay_time.ToInt()
 						End If
 					End If
-					If FLAG_text_mode
+					If FLAG_text_mode And cursor >= 0 And cursor < sp.count_squads()
 						sp_delay_time = kb_handler.update( sp_delay_time )
-						'draw sp_delay_time
+						DrawText( sp_delay_time, window_w - 50, info_y + cursor*cell_size + line_h/3 )
 						SetAlpha( 0.5 + Sin(now() Mod 360) )
-						DrawText( "|", info_x + TextWidth( sp_delay_time ) - 2,info_y )
+						DrawText( "|", window_w - 50 + TextWidth( sp_delay_time ) - 2, info_y + cursor*cell_size + line_h/3 )
 						SetAlpha( 1 )
 					Else 'Not FLAG_text_mode
+						If cursor >= 0 And cursor < sp.count_squads()
+							DrawText( String.FromInt( sp.delay_time[cursor] ), window_w - 50, info_y + cursor*cell_size + line_h/3 )
+						End If
 						Local cursor_squadmembers% = sp.count_squadmembers( cursor )
 						Local ag:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[cursor_archetype] ))
 						ag.pos_x = info_x + cell_size + cursor_squadmembers*cell_size - cell_size/2

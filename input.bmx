@@ -69,11 +69,10 @@ Function get_all_input()
 	
 End Function
 '______________________________________________________________________________
-'Text handler
-Const key_press_time% = 1000
-Const key_repeat_delay% = 100
-
 Type CONSOLE
+	Global key_press_time% = 1000
+	Global key_repeat_delay% = 100
+	
 	Field cursor_index%
 	Field last_char$
 	Field key_press_ts%
@@ -147,6 +146,7 @@ Type CONSOLE
 	
 	Global normal_chars_ucase$[] = [ ..
 		")", "!", "@", "#", "$", "%", "^", "&", "*", "(", ..
+		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ..
 		"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", ..
 		"A", "S", "D", "F", "G", "H", "J", "K", "L", ..
 		"Z", "X", "C", "V", "B", "N", "M", ..
@@ -154,6 +154,7 @@ Type CONSOLE
 		":", "~q", "<", ">", "?", " " ]
 		
 	Global normal_chars_lcase$[] = [ ..
+		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ..
 		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ..
 		"q", "w", "e", "r", "t", "y", "u", "i", "o", "p", ..
 		"a", "s", "d", "f", "g", "h", "j", "k", "l", ..
@@ -163,6 +164,7 @@ Type CONSOLE
 		
 	Global normal_keys%[] = [ ..
 		KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, ..
+		KEY_NUM0, KEY_NUM1, KEY_NUM2, KEY_NUM3, KEY_NUM4, KEY_NUM5, KEY_NUM6, KEY_NUM7, KEY_NUM8, KEY_NUM9, ..
 		KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y, KEY_U, KEY_I, KEY_O, KEY_P, ..
 		KEY_A, KEY_S, KEY_D, KEY_F, KEY_G, KEY_H, KEY_J, KEY_K, KEY_L, ..
 		KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B, KEY_N, KEY_M, ..
