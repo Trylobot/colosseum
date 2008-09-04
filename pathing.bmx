@@ -74,45 +74,25 @@ Type CELL
 End Type
 '______________________________________________________________________________
 Global ALL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_NORTHEAST, DIRECTION_EAST, DIRECTION_SOUTHEAST, DIRECTION_SOUTH, DIRECTION_SOUTHWEST, DIRECTION_WEST, DIRECTION_NORTHWEST ]
-'Const cell_size# = 6
-'Const cell_size# = 8
-'Const cell_size# = 10
-'Const cell_size# = 20
-Const cell_size# = 25
-Global pathing_grid_origin:cVEC = Create_Cvec( -40, -40 )
 
-'Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
-'Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
-Global pathing_grid_h% 'number of rows in pathing system
-Global pathing_grid_w% 'number of columns in pathing system
-
-Function containing_cell:CELL( x#, y# )
-	x :- pathing_grid_origin.x
-	y :- pathing_grid_origin.y
-	If cell_size = 0 Then Return CELL.Create( -1, -1 )
-	Return CELL.Create( Floor( y/cell_size ), Floor( x/cell_size ))
-End Function
-Function distance#( c1:CELL, c2:CELL )
-	If cell_size = 0 Then Return -1.0
-	Return Sqr( Pow( cell_size*(c2.row - c1.row), 2 ) + Pow( cell_size*(c2.col - c1.col), 2 ))
-End Function
 '______________________________________________________________________________
 Type PATH_QUEUE
 	Field row_count%, col_count% 'dimensions
 	Field item_count% 'number of items in the queue
 	Field registry%[,] 'in queue? {true|false}
 	Field open_list:TList 'TList:CELL - list of potential paths
+	Field parent:PATHING_STRUCTURE 'reference to owner for purposes of cost calculation
 	
 	Method New()
 		open_list = CreateList()
 	End Method
 	
-	Function Create:PATH_QUEUE( row_count%, col_count% )
+	Function Create:PATH_QUEUE( ps:PATHING_STRUCTURE )
 		Local pq:PATH_QUEUE = New PATH_QUEUE
-		pq.row_count = row_count
-		pq.col_count = col_count
+		pq.row_count = ps.row_count; pq.col_count = ps.col_count
 		pq.item_count = 0
-		pq.registry = New Int[ row_count, col_count ]
+		pq.registry = New Int[ pq.row_count, pq.col_count ]
+		pq.parent = ps
 		Return pq
 	End Function
 	
@@ -149,7 +129,7 @@ Type PATH_QUEUE
 	End Method
 	
 	Method cost#( inquiry:CELL )
-		Return game.pathing_system_f_value( inquiry )
+		Return parent.f( inquiry )
 	End Method
 	
 	Method register( new_item:CELL )
@@ -166,36 +146,24 @@ Type PATH_QUEUE
 		open_list = CreateList()
 	End Method
 	
-'?Debug
-'	Method unit_test( message$ )
-'		DebugLog " PATH_QUEUE/unit test "+message
-'		DebugLog "   item_count        -> "+item_count
-'		DebugLog "   open_list.Count() -> "+open_list.Count()
-'		DebugLog "   open_list ..."
-'		Local open_list_dump$ = "   "
-'		For Local c:CELL = EachIn open_list
-'			open_list_dump :+ "("+c.row+","+c.col+"):"+Int(cost( c ))+", "
-'		Next
-'		DebugLog open_list_dump+"END"
-'	End Method
-'?
 End Type
 '______________________________________________________________________________
 Type PATHING_STRUCTURE
-	Field row_count%, col_count% 'dimensions
+	Field row_count%, col_count% 'dimensions in CELLs
 	Field pathing_grid%[,] 'I am: {passable|blocked}
 	Field pathing_visited%[,] 'I am visited. {true|false}
-	Field pathing_visited_list:TList
-	Field pathing_came_from:CELL[,] 'my parent is: [...]
+	Field pathing_visited_list:TList 'TList<CELL> visited cells
+	Field pathing_came_from:CELL[,] 'my parent is: [..]
 	Field pathing_g#[,] 'actual cost to get here from start
 	Field pathing_h#[,] 'estimated cost to get to goal from here
 	Field pathing_f#[,] 'actual cost to get here from start + estimated cost to get to goal from here
 	Field potential_paths:PATH_QUEUE 'prioritized list of cells representing end-points of potential paths to be explored (open-list)
+	Field lev:LEVEL 'provides information used in movement cost calculation
 	
-	Function Create:PATHING_STRUCTURE( row_count%, col_count% )
+	Function Create:PATHING_STRUCTURE( lev:LEVEL )
 		Local ps:PATHING_STRUCTURE = New PATHING_STRUCTURE
 
-		ps.row_count = row_count; ps.col_count = col_count
+		ps.row_count = lev.row_count; ps.col_count = lev.col_count
 		ps.pathing_grid = New Int[ row_count, pathing_grid_w ]
 		ps.pathing_came_from = New CELL[ row_count, col_count ]
 		For Local row% = 0 To row_count - 1
@@ -208,7 +176,8 @@ Type PATHING_STRUCTURE
 		ps.pathing_g = New Float[ row_count, col_count ]
 		ps.pathing_h = New Float[ row_count, col_count ]
 		ps.pathing_f = New Float[ row_count, col_count ]
-		ps.potential_paths = PATH_QUEUE.Create( row_count, col_count )
+		ps.potential_paths = PATH_QUEUE.Create( Self )
+		ps.lev = lev
 
 		Return ps
 	End Function
@@ -342,6 +311,20 @@ Type PATHING_STRUCTURE
 		End While
 		
 		Return Null
+	End Method
+	
+	Method containing_cell:CELL( x#, y# )
+		
+		'x :- pathing_grid_origin.x
+		'y :- pathing_grid_origin.y
+		'If cell_size = 0 Then Return CELL.Create( -1, -1 )
+		'Return CELL.Create( Floor( y/cell_size ), Floor( x/cell_size ))
+	End Method
+	
+	Method distance#( c1:CELL, c2:CELL )
+		
+		'If cell_size = 0 Then Return -1.0
+		'Return Sqr( Pow( cell_size*(c2.row - c1.row), 2 ) + Pow( cell_size*(c2.col - c1.col), 2 ))
 	End Method
 	
 	Method reset()

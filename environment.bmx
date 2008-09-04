@@ -19,12 +19,26 @@ End Function
 Type ENVIRONMENT
 	Field origin:cVEC '(x, y) of the origin of this level
 	Field zoom# 'zoom level
+	Field bg_cache:TImage 'background image
+	Field fg_cache:TImage 'foreground image
 
 	Field lev:LEVEL 'level object from which to build the environment, read-only
 	Field walls:TList 'TList<BOX> contains all of the wall rectangles of the level
 	Field pathing:PATHING_STRUCTURE 'pathfinding object for this level
-	Field bg_cache:TImage 'background image
-	Field fg_cache:TImage 'foreground image
+	Field spawn_cursor:CELL[] 'for each spawner, a (row,col) pointer indicating the current agent to be spawned
+	
+	Field enemy_spawn_queue:TList 'TList<COMPLEX_AGENT>
+	Field cur_squad:TList 'TList<COMPLEX_AGENT>
+	Field cur_turret_anchor:POINT 'turret spawn point (anchor)
+	Field cur_spawn_point:POINT 'normal spawn point
+	Field last_spawned_enemy:COMPLEX_AGENT 'pointer to last spawned enemy
+	Field squad_begin_spawning_ts% 'timestamp of the first enemy spawned from the most recent squad, for timing purposes
+	
+	Field friendly_door_list:TList 'TList<WIDGET>
+	Field friendly_doors_status%
+	Field hostile_door_list:TList'TList<WIDGET>
+	Field hostile_doors_status%
+	Field all_door_lists:TList
 	
 	Field particle_list_background:TList 'TList<PARTICLE>
 	Field particle_list_foreground:TList 'TList<PARTICLE>
@@ -42,19 +56,6 @@ Type ENVIRONMENT
 	Field player:COMPLEX_AGENT
 	Field player_brain:CONTROL_BRAIN
 	Field player_spawn_point:POINT
-	
-	Field enemy_spawn_queue:TList 'TList<COMPLEX_AGENT>
-	Field cur_squad:TList 'TList<COMPLEX_AGENT>
-	Field cur_turret_anchor:POINT 'turret spawn point (anchor)
-	Field cur_spawn_point:POINT 'normal spawn point
-	Field last_spawned_enemy:COMPLEX_AGENT 'pointer to last spawned enemy
-	Field squad_begin_spawning_ts% 'timestamp of the first enemy spawned from the most recent squad, for timing purposes
-	
-	Field friendly_door_list:TList 'TList<WIDGET>
-	Field friendly_doors_status%
-	Field hostile_door_list:TList'TList<WIDGET>
-	Field hostile_doors_status%
-	Field all_door_lists:TList
 	
 	Field game_in_progress%
 	Field game_over%
@@ -104,47 +105,10 @@ Type ENVIRONMENT
 	
 	Method load_level( new_lev:LEVEL )
 		lev = new_lev
-		init()
-	End Method
-	
-	Method init()
 		'pathing
-		pathing_grid_w = lev.col_count
-		pathing_grid_h = lev.row_count
-		pathing = PATHING_STRUCTURE.Create( pathing_grid_h, pathing_grid_w )
-		'init_pathing_grid_from_walls( walls )
-		'walls
-		If lev <> Null
-			If walls = Null Then walls = CreateList()
-			For Local r% = 0 To lev.row_count - 1
-				For Local c% = 0 To lev.col_count - 1
-					If lev.path_regions[r,c] = PATH_BLOCKED
-						walls.AddLast( Create_BOX( lev.vertical_divs[c],lev.horizontal_divs[r], lev.vertical_divs[c+1]-lev.vertical_divs[c],lev.horizontal_divs[r+1]-lev.horizontal_divs[r] ))
-					End If
-				Next
-			Next
-		End If
-		'spawning
-		'shuffle_anchor_deck()
-		cur_squad = Null
-		cur_spawn_point = Null
-		last_spawned_enemy = Null
-		enemy_spawn_queue.Clear()
-'		If lev.squads <> Null
-'			For Local this_squad:SQUAD = EachIn lev.squads
-'				queue_squad( this_squad )
-'			Next
-'			level_enemies_remaining = lev.enemy_count()
-'		End If
-		'doors
-'		For Local spawn:POINT = EachIn friendly_spawn_points
-'			attach_door( spawn, friendly_door_list )
-'		Next
-'		friendly_doors_status = DOOR_STATUS_CLOSED
-'		For Local spawn:POINT = EachIn enemy_spawn_points
-'			attach_door( spawn, hostile_door_list )
-'		Next
-'		hostile_doors_status = DOOR_STATUS_CLOSED
+		pathing = PATHING_STRUCTURE.Create( lev )
+		'walls - create polygons from the blocked out regions of the pathing
+		'..?
 	End Method
 	
 '	Method queue_squad( this_squad:SQUAD )
@@ -272,10 +236,6 @@ Type ENVIRONMENT
 		Return list
 	End Method
 
-	Method pathing_system_f_value#( inquiry:CELL )
-		Return pathing.f( inquiry )
-	End Method
-	
 	Method point_inside_arena%( p:POINT )
 		
 	End Method
