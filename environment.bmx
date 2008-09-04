@@ -218,8 +218,8 @@ Type ENVIRONMENT
 	End Method
 	
 	Method find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
-		Local start_cell:CELL = containing_cell( start_x, start_y )
-		Local goal_cell:CELL = containing_cell( goal_x, goal_y )
+		Local start_cell:CELL = pathing.containing_cell( start_x, start_y )
+		Local goal_cell:CELL = pathing.containing_cell( goal_x, goal_y )
 		If pathing.grid( start_cell ) = PATH_BLOCKED Or pathing.grid( goal_cell ) = PATH_BLOCKED
 			Return Null
 		End If

@@ -291,7 +291,12 @@ Type LEVEL Extends MANAGED_OBJECT
 		Return c
 	End Method
 	
-	
+	Method midpoint:cVEC( c:CELL )
+		Local m:cVEC = New cVEC
+		m.x = avg( vertical_divs[c.col], vertical_divs[c.col+1] )
+		m.y = avg( horizontal_divs[c.row], horizontal_divs[c.row+1] )
+		Return m
+	End Method
 	
 	Method enemy_count%()
 		Local count% = 0

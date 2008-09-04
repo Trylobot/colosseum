@@ -5,8 +5,8 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const waypoint_radius# = 0.50*cell_size
-Const friendly_blocking_scalar_projection_distance# = 20
+Const waypoint_radius# = 20.0
+Const friendly_blocking_scalar_projection_distance# = 20.0
 
 Const UNSPECIFIED% = 0
 Const CONTROL_TYPE_HUMAN% = 1

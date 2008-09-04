@@ -44,7 +44,7 @@ Type PATH_QUEUE
 	Method pop_root:CELL()
 		If Not is_empty()
 			item_count :- 1
-			Local best_path:CELL, best_path_cost# = MAXIMUM_COST
+			Local best_path:CELL, best_path_cost# = CELL.MAXIMUM_COST
 			For Local c:CELL = EachIn open_list
 				If cost( c ) < best_path_cost
 					best_path = c
@@ -92,27 +92,28 @@ Type PATHING_STRUCTURE
 	Function Create:PATHING_STRUCTURE( lev:LEVEL )
 		Local ps:PATHING_STRUCTURE = New PATHING_STRUCTURE
 
-		ps.row_count = lev.row_count; ps.col_count = lev.col_count
-		ps.pathing_grid = New Int[ row_count, pathing_grid_w ]
-		ps.pathing_came_from = New CELL[ row_count, col_count ]
-		For Local row% = 0 To row_count - 1
-			For Local col% = 0 To col_count - 1
+		ps.row_count = lev.row_count
+		ps.col_count = lev.col_count
+		ps.pathing_grid = lev.path_regions 'New Int[ ps.row_count, ps.col_count ]
+		ps.pathing_came_from = New CELL[ ps.row_count, ps.col_count ]
+		For Local row% = 0 To ps.row_count - 1
+			For Local col% = 0 To ps.col_count - 1
 				ps.pathing_came_from[ row, col ] = CELL.Create( row, col )
 			Next
 		Next
-		ps.pathing_visited = New Int[ row_count, col_count ]
+		ps.pathing_visited = New Int[ ps.row_count, ps.col_count ]
 		ps.pathing_visited_list = CreateList()
-		ps.pathing_g = New Float[ row_count, col_count ]
-		ps.pathing_h = New Float[ row_count, col_count ]
-		ps.pathing_f = New Float[ row_count, col_count ]
-		ps.potential_paths = PATH_QUEUE.Create( Self )
+		ps.pathing_g = New Float[ ps.row_count, ps.col_count ]
+		ps.pathing_h = New Float[ ps.row_count, ps.col_count ]
+		ps.pathing_f = New Float[ ps.row_count, ps.col_count ]
+		ps.potential_paths = PATH_QUEUE.Create( ps )
 		ps.lev = lev
 
 		Return ps
 	End Function
 	
 	Method in_bounds%( c:CELL )
-		If c <> Null And c.row >= 0 And c.row < pathing_grid_h And c.col >= 0 And c.col < pathing_grid_w ..
+		If c <> Null And c.row >= 0 And c.row < row_count And c.col >= 0 And c.col < col_count ..
 		Then Return True Else Return False
 	End Method
 	
@@ -153,7 +154,7 @@ Type PATHING_STRUCTURE
 	End Method
 	
 	Method g#( c:CELL )
-		If Not in_bounds( c ) Then Return MAXIMUM_COST
+		If Not in_bounds( c ) Then Return CELL.MAXIMUM_COST
 		Return pathing_g[c.row,c.col]
 	End Method
 	Method set_g( c:CELL, value# )
@@ -161,7 +162,7 @@ Type PATHING_STRUCTURE
 		pathing_g[c.row,c.col] = value
 	End Method
 	Method h#( c:CELL )
-		If Not in_bounds( c ) Then Return MAXIMUM_COST
+		If Not in_bounds( c ) Then Return CELL.MAXIMUM_COST
 		Return pathing_h[c.row,c.col]
 	End Method
 	Method set_h( c:CELL, value# )
@@ -169,7 +170,7 @@ Type PATHING_STRUCTURE
 		pathing_h[c.row,c.col] = value
 	End Method
 	Method f#( c:CELL )
-		If Not in_bounds( c ) Then Return MAXIMUM_COST
+		If Not in_bounds( c ) Then Return CELL.MAXIMUM_COST
 		Return pathing_f[c.row,c.col]
 	End Method
 	Method set_f( c:CELL, value# )
@@ -244,16 +245,12 @@ Type PATHING_STRUCTURE
 	
 	Method containing_cell:CELL( x#, y# )
 		Return lev.get_cell( x, y )
-		'x :- pathing_grid_origin.x
-		'y :- pathing_grid_origin.y
-		'If cell_size = 0 Then Return CELL.Create( -1, -1 )
-		'Return CELL.Create( Floor( y/cell_size ), Floor( x/cell_size ))
 	End Method
 	
 	Method distance#( c1:CELL, c2:CELL )
-		
-		'If cell_size = 0 Then Return -1.0
-		'Return Sqr( Pow( cell_size*(c2.row - c1.row), 2 ) + Pow( cell_size*(c2.col - c1.col), 2 ))
+		Local v1:cVEC = lev.midpoint( c1 )
+		Local v2:cVEC = lev.midpoint( c2 )
+		Return Sqr( Pow( v1.x - v2.x, 2 ) + Pow( v1.y - v2.y, 2 ))
 	End Method
 	
 	Method reset()

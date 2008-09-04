@@ -519,7 +519,7 @@ Type CELL
 		Return CELL.Create( row, col )
 	End Method
 	
-	Method is_valid()
+	Method is_valid%()
 		Return (row <> COORDINATE_INVALID And col <> COORDINATE_INVALID)
 	End Method
 	
