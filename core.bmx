@@ -93,9 +93,13 @@ Function init_game()
 '	init_pathing_system()
 	player_level = -1
 	respawn_player( player_type )
-	load_next_level()
-	'game.load_level( {the next level object} )
-	game.init()
+	game.load_level( get_next_level() )
+End Function
+
+'Placeholder
+Function get_next_level:LEVEL()
+	Return New LEVEL
+	'..?
 End Function
 '______________________________________________________________________________
 Function load_next_level()

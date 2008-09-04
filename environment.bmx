@@ -230,7 +230,7 @@ Type ENVIRONMENT
 		Local list:TList = CreateList()
 		If cell_list <> Null And Not cell_list.IsEmpty()
 			For Local cursor:CELL = EachIn cell_list
-				list.AddLast( cVEC.Create( cursor.col*cell_size + cell_size/2 + pathing_grid_origin.x, cursor.row*cell_size + cell_size/2 + pathing_grid_origin.y ))
+				list.AddLast( pathing.lev.midpoint( cursor ))
 			Next
 		End If
 		Return list
