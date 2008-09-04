@@ -248,9 +248,9 @@ Type LEVEL Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
-	Method set_path_region( x%, y%, value% )
+	Method set_path_region( x%, y%, value% ) '(x, y) relative to local origin of level. does nothing if not in a valid cell
 		Local c:CELL = get_cell( x, y )
-		If c.row <> COORDINATE_INVALID And c.col <> COORDINATE_INVALID
+		If c.is_valid()
 			path_regions[ c.row, c.col ] = value
 		End If
 	End Method
@@ -275,7 +275,7 @@ Type LEVEL Extends MANAGED_OBJECT
 	End Method
 	
 	Method get_cell:CELL( x%, y% )
-		Local c:CELL = CELL.Create( COORDINATE_INVALID, COORDINATE_INVALID )
+		Local c:CELL = CELL.Create_INVALID()
 		For Local i% = 0 To vertical_divs.Length - 2
 			If x > vertical_divs[i] And x < vertical_divs[i+1]
 				c.col = i
@@ -290,6 +290,8 @@ Type LEVEL Extends MANAGED_OBJECT
 		Next
 		Return c
 	End Method
+	
+	
 	
 	Method enemy_count%()
 		Local count% = 0

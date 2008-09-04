@@ -5,77 +5,6 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const MAXIMUM_COST# = 2147483647
-
-Const DIRECTION_NORTH% = 0
-Const DIRECTION_NORTHEAST% = 1
-Const DIRECTION_EAST% = 2
-Const DIRECTION_SOUTHEAST% = 3
-Const DIRECTION_SOUTH% = 4
-Const DIRECTION_SOUTHWEST% = 5
-Const DIRECTION_WEST% = 6
-Const DIRECTION_NORTHWEST% = 7
-'______________________________________________________________________________
-Type CELL
-	Field row%
-	Field col%
-	Method New()
-	End Method
-	
-	Function Create:CELL( row%, col% )
-		Local c:CELL = New CELL
-		c.row = row; c.col = col
-		Return c
-	End Function
-	Method copy( other:CELL )
-		row = other.row; col = other.col
-	End Method
-	Method clone:CELL()
-		Return CELL.Create( row, col )
-	End Method
-	Method set( new_row%, new_col% )
-		row = new_row; col = new_col
-	End Method
-	Method eq%( other:CELL )
-		If row = other.row And col = other.col ..
-		Then Return True Else Return False
-	End Method
-	Method add_assign( other:CELL )
-		row :+ other.row; col :+ other.col
-	End Method
-	Method add:CELL( other:CELL )
-		Return CELL.Create( row + other.row, col + other.col )
-	End Method
-	Method move_assign( dir% )
-		Select dir
-			Case DIRECTION_NORTH
-				row :- 1
-			Case DIRECTION_NORTHEAST
-				row :- 1; col :+ 1
-			Case DIRECTION_EAST
-				          col :+ 1
-			Case DIRECTION_SOUTHEAST
-				row :+ 1; col :+ 1
-			Case DIRECTION_SOUTH
-				row :+ 1
-			Case DIRECTION_SOUTHWEST
-				row :+ 1; col :- 1
-			Case DIRECTION_WEST
-				          col :+ 1
-			Case DIRECTION_NORTHWEST
-				row :- 1; col :- 1
-		End Select
-	End Method
-	Method move:CELL( dir% )
-		Local c:CELL = clone()
-		c.move_assign( dir )
-		Return c
-	End Method
-End Type
-'______________________________________________________________________________
-Global ALL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_NORTHEAST, DIRECTION_EAST, DIRECTION_SOUTHEAST, DIRECTION_SOUTH, DIRECTION_SOUTHWEST, DIRECTION_WEST, DIRECTION_NORTHWEST ]
-
-'______________________________________________________________________________
 Type PATH_QUEUE
 	Field row_count%, col_count% 'dimensions
 	Field item_count% 'number of items in the queue
@@ -254,7 +183,7 @@ Type PATHING_STRUCTURE
 		
 	Method get_passable_unvisited_neighbors:TList( c:CELL )
 		Local list:TList = CreateList()
-		For Local dir% = 0 To ALL_DIRECTIONS.Length - 1
+		For Local dir% = 0 To CELL.ALL_DIRECTIONS.Length - 1
 			Local c_dir:CELL = c.move( dir )
 			If in_bounds( c_dir ) ..
 			And grid( c_dir ) = PATH_PASSABLE ..
@@ -314,7 +243,7 @@ Type PATHING_STRUCTURE
 	End Method
 	
 	Method containing_cell:CELL( x#, y# )
-		
+		Return lev.get_cell( x, y )
 		'x :- pathing_grid_origin.x
 		'y :- pathing_grid_origin.y
 		'If cell_size = 0 Then Return CELL.Create( -1, -1 )
