@@ -468,14 +468,14 @@ Function generate_sand_image:TImage( w%, h% )
 	Local max_dist# = Sqr( Pow( w/2, 2 ) + Pow( h/2, 2 ))
 	Local dist#
 	Local ratio#
-	'gradient
+	'oval gradient
 	For Local px% = 0 To w-1
 		For Local py% = 0 To h-1
 			dist = Sqr( Pow( w/2 - px, 2 ) + Pow( h/2 - py, 2 ))
-			ratio = dist/max_dist
-			red = Int(( ratio )*255)
-			green = 255
-			blue = 255
+			ratio = 1 - dist/max_dist
+			red = Int(( 0.5 + 0.5*ratio )*255)
+			green = Int(( ratio )*127)
+			blue = Int(( ratio )*64) + 127
 			teh_pixmap.WritePixel( px,py, encode_ARGB( 1.0, red,green,blue ))
 		Next
 	Next

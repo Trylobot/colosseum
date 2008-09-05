@@ -113,6 +113,7 @@ Include "core.bmx"
 Include "debug.bmx"
 Include "menu.bmx"
 Include "main.bmx"
+Include "color.bmx"
  
 '#EndRegion &H03
 

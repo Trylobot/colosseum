@@ -49,6 +49,12 @@ Global last_frame_ts%, time_count%, frame_count%, fps%
 'menu_command( COMMAND_EDIT_LEVEL )
 'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
 game = Create_ENVIRONMENT()
+Local img:TImage = generate_sand_image( window_w, window_h )
+Repeat
+	Cls
+	DrawImage( img, 0,0 )
+	Flip()
+Until KeyHit( KEY_ESCAPE )
 ?
 
 '______________________________________________________________________________
