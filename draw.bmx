@@ -463,7 +463,24 @@ End Function
 'Procedural drawing methods
 Function generate_sand_image:TImage( w%, h% )
 	'draw sand procedurally by any means necessary
-	
+	Local teh_pixmap:TPixmap = CreatePixmap( w,h, PF_RGB888 )
+	Local red%, green%, blue%
+	Local max_dist# = Sqr( Pow( w/2, 2 ) + Pow( h/2, 2 ))
+	Local dist#
+	Local ratio#
+	'gradient
+	For Local px% = 0 To w-1
+		For Local py% = 0 To h-1
+			dist = Sqr( Pow( w/2 - px, 2 ) + Pow( h/2 - py, 2 ))
+			ratio = dist/max_dist
+			red = Int(( ratio )*255)
+			green = 255
+			blue = 255
+			teh_pixmap.WritePixel( px,py, encode_ARGB( 1.0, red,green,blue ))
+		Next
+	Next
+	Local teh_image:TImage = LoadImage( teh_pixmap )
+	Return teh_image
 End Function
 
 Function generate_walls_image:TImage( w%, h%, walls:TList )

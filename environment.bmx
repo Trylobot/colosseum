@@ -5,15 +5,13 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const DOOR_STATUS_OPEN% = 0
-Const DOOR_STATUS_CLOSED% = 1
 
-Const SPAWN_POINT_OFFSET% = 43
+Const SPAWN_POINT_OFFSET% = 43 'delete me (please?)
 
 Function Create_ENVIRONMENT:ENVIRONMENT()
-	Local e:ENVIRONMENT = New ENVIRONMENT
+	Local env:ENVIRONMENT = New ENVIRONMENT
 	
-	Return e
+	Return env
 End Function
 
 Type ENVIRONMENT
@@ -23,22 +21,25 @@ Type ENVIRONMENT
 	Field fg_cache:TImage 'foreground image
 
 	Field lev:LEVEL 'level object from which to build the environment, read-only
-	Field walls:TList 'TList<BOX> contains all of the wall rectangles of the level
 	Field pathing:PATHING_STRUCTURE 'pathfinding object for this level
+	Field walls:TList 'TList<BOX> contains all of the wall rectangles of the level
 	Field spawn_cursor:CELL[] 'for each spawner, a (row,col) pointer indicating the current agent to be spawned
+	Field spawn_ts%[] 'for each spawner, the timestamp of the spawn process start
 	
-	Field enemy_spawn_queue:TList 'TList<COMPLEX_AGENT>
-	Field cur_squad:TList 'TList<COMPLEX_AGENT>
-	Field cur_turret_anchor:POINT 'turret spawn point (anchor)
-	Field cur_spawn_point:POINT 'normal spawn point
-	Field last_spawned_enemy:COMPLEX_AGENT 'pointer to last spawned enemy
-	Field squad_begin_spawning_ts% 'timestamp of the first enemy spawned from the most recent squad, for timing purposes
+	'Field enemy_spawn_queue:TList 'TList<COMPLEX_AGENT>
+	'Field cur_squad:TList 'TList<COMPLEX_AGENT>
+	'Field cur_turret_anchor:POINT 'turret spawn point (anchor)
+	'Field cur_spawn_point:POINT 'normal spawn point
+	'Field last_spawned_enemy:COMPLEX_AGENT 'pointer to last spawned enemy
+	'Field squad_begin_spawning_ts% 'timestamp of the first enemy spawned from the most recent squad, for timing purposes
 	
-	Field friendly_door_list:TList 'TList<WIDGET>
-	Field friendly_doors_status%
-	Field hostile_door_list:TList'TList<WIDGET>
-	Field hostile_doors_status%
-	Field all_door_lists:TList
+	Global DOOR_STATUS_OPEN% = 0
+	Global DOOR_STATUS_CLOSED% = 1
+	Field friendly_door_list:TList 'TList<WIDGET> list of paired door widgets
+	Field friendly_doors_status% 'flag indicating state of all friendly doors
+	Field hostile_door_list:TList'TList<WIDGET> list of paired door widgets
+	Field hostile_doors_status% 'flag indicating state of all hostile doors
+	Field all_door_lists:TList 'list of all door lists
 	
 	Field particle_list_background:TList 'TList<PARTICLE>
 	Field particle_list_foreground:TList 'TList<PARTICLE>
@@ -53,12 +54,13 @@ Type ENVIRONMENT
 	Field pickup_list:TList 'TList<PICKUP>
 	Field control_brain_list:TList 'TList<CONTROL_BRAIN>
 	
-	Field player:COMPLEX_AGENT
-	Field player_brain:CONTROL_BRAIN
-	Field player_spawn_point:POINT
+	Field human_participation% 'flag indicating whether any humans will ever participate in this game
+	Field player_spawn_point:POINT 'reference to the spawnpoint that will spawn or has spawned that player
+	Field player_brain:CONTROL_BRAIN 'reference to that player's brain object
+	Field player:COMPLEX_AGENT 'reference to that player object
 	
-	Field game_in_progress%
-	Field game_over%
+	Field game_in_progress% 'flag indicating the game has begun
+	Field game_over% 'flag indicating ..?
 	
 	Method New()
 		walls = CreateList()
@@ -109,72 +111,16 @@ Type ENVIRONMENT
 		pathing = PATHING_STRUCTURE.Create( lev )
 		'walls - create polygons from the blocked out regions of the pathing
 		'..?
+		'doors
+		'..?
+		'spawners
+		'..?
 	End Method
-	
-'	Method queue_squad( this_squad:SQUAD )
-'		Local this_squad_baked:TList = CreateList()
-'		For Local archetype_index% = EachIn this_squad.archetypes
-'			this_squad_baked.AddLast( COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index] )))
-'		Next
-'		enemy_spawn_queue.AddLast( this_squad_baked )
-'		If cur_squad = Null Then cur_squad = this_squad_baked
-'	End Method
 	
 	Method spawning_system_update()
-'		'is there a squad ready
-'		If cur_squad <> Null And Not cur_squad.IsEmpty()
-'			'find a turret anchor
-'			If cur_turret_anchor = Null And anchor_i < anchor_deck.Length
-'				cur_turret_anchor = enemy_turret_anchors[anchor_deck[anchor_i]]
-'				anchor_i :+ 1
-'			End If
-'			'find a spawn point
-'			If cur_spawn_point = Null
-'				cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
-'			End If
-'			'if there is no last spawned enemy, or the last spawned enemy is clear of the spawn, or the last spawned enemy has died (yeah it can happen.. CAMPER!)
-'			If (last_spawned_enemy = Null ..
-'			Or point_inside_arena( last_spawned_enemy ) ..
-'			Or (last_spawned_enemy <> Null And last_spawned_enemy.dead())) ..
-'			And (now() - squad_begin_spawning_ts >= squad_spawn_delay)
-'				spawn_from_squad( cur_squad )
-'			'else, last_spawned_enemy <> Null And enemy not clear of spawn
-'			End If
-'		Else 'cur_squad == Null Or cur_squad.IsEmpty()
-'			'prepare a squad from the list, if there are any
-'			If Not enemy_spawn_queue.IsEmpty()
-'				cur_squad = TList( enemy_spawn_queue.First() )
-'				enemy_spawn_queue.RemoveFirst()
-'				cur_spawn_point = enemy_spawn_points[ Rand( 0, enemy_spawn_points.Length - 1 )]
-'				squad_begin_spawning_ts = now()
-'			Else 'enemy_spawn_queue.IsEmpty()
-'				cur_squad = Null
-'				cur_spawn_point = Null
-'				last_spawned_enemy = Null
-'			End If
-'		End If
+		
 	End Method
 	
-	Method spawn_from_squad( this_squad:TList ) 'this function should be treated as a request, and might not do anything if conditions are not met.
-		last_spawned_enemy = COMPLEX_AGENT( this_squad.First() )
-		this_squad.RemoveFirst()
-		last_spawned_enemy.auto_manage( ALIGNMENT_HOSTILE )
-		'is this agent a turret
-		If last_spawned_enemy.ai_type = AI_BRAIN_TURRET And cur_turret_anchor <> Null
-			last_spawned_enemy.pos_x = cur_turret_anchor.pos_x
-			last_spawned_enemy.pos_y = cur_turret_anchor.pos_y
-			last_spawned_enemy.ang = cur_turret_anchor.ang
-			cur_turret_anchor = Null
-		'not a turret
-		Else 'last_spawned_enemy.ai_type <> AI_BRAIN_TURRET
-			last_spawned_enemy.pos_x = cur_spawn_point.pos_x
-			last_spawned_enemy.pos_y = cur_spawn_point.pos_y
-			last_spawned_enemy.ang = cur_spawn_point.ang
-		End If
-		last_spawned_enemy.snap_all_turrets()
-		Create_and_Manage_CONTROL_BRAIN( last_spawned_enemy, CONTROL_TYPE_AI,, 10, 1000, 1000 )
-	End Method
-		
 	Method attach_door( p:POINT, political_door_list:TList )
 		Local door:WIDGET
 		'left side

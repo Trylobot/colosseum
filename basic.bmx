@@ -66,6 +66,15 @@ Function address%( obj:Object )
 		Return 0
 	End If
 End Function
+
+Function encode_ARGB%( alpha#, red%, green%, blue% )
+	Local argb% = 0
+	argb :+ blue Shl 0
+	argb :+ green Shl 8
+	argb :+ red Shl 16
+	argb :+ Int(alpha*255) Shl 24
+	Return argb
+End Function
 '______________________________________________________________________________
 Function time_alpha_pct#( ts%, time%, in% = True )
 	If in 'fade in
