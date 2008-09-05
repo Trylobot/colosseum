@@ -7,8 +7,12 @@ EndRem
 '______________________________________________________________________________
 Global data_path$ = "data/"
 Global user_path$ = "user/"
-Global data_file_filter$ = "Data Files:json;All Files:*"
-Global level_file_filter$ = "Level Files:colosseum_level;All Files:*"
+Global data_file_ext$ = "json"
+Global data_file_filter$ = "Data Files:"+data_file_ext+";All Files:*"
+Global level_file_ext$ = "colosseum_level"
+Global level_file_filter$ = "Level Files:"+level_file_ext+";All Files:*"
+Global saved_game_file_ext$ = "colosseum_saved_game"
+Global saved_game_file_filter$ = "Saved Game Files:"+saved_game_file_ext+";All Files:*"
 
 Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
@@ -89,6 +93,30 @@ Function edit_level_file( file_path$ = "" )
 		json.Write( WriteFile( file_path ))
 	End If
 End Function
+
+Function find_files:TList( path$, ext$ = "" )
+	Local list:TList = CreateList()
+	Local dir% = ReadDir( path ) 'if directory exists, assign integer handle
+	If dir = 0 '(directory does not exist)
+		Return list 'empty at this point
+	Else 'dir <> 0 (directory exists)
+		Local file$
+		Repeat
+			file = NextFile( dir )
+			If file <> ""
+				If ext = "" '(no filter)
+					list.AddLast( path + file )
+				Else 'suffix <> "" (filter)
+					If ExtractExt( file ) = ext
+						list.AddLast( path + file )
+					End If
+				End If
+			End If
+		Until file = ""
+		Return list
+	End If
+End Function
+
 '______________________________________________________________________________
 '[ LOAD ] functions
 Function is_directive%( str$ )

@@ -28,6 +28,14 @@ Function avg#( a#, b# )
 	Return (a + b)/2.0
 End Function
 
+Function one_of%( x%, arr%[] )
+	If arr.Length = 0 Then Return False
+	For Local i% = 0 To arr.Length-1
+		If x = arr[i] Then Return True
+	Next
+	Return False
+End Function
+
 Function boolean_to_string$( b% )
 	If b = True
 		Return "true"
