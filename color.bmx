@@ -5,7 +5,7 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Type COLOR
+Type TColor
 	Global RED% = 1
 	Global GREEN% = 2
 	Global BLUE% = 3
@@ -16,12 +16,12 @@ Type COLOR
 	Field R%, G%, B%
 	Field H!, S!, L!
 	
-	Function Create_HSL:COLOR( H!, S!, L! ) '( H [0.0,360.0] ), ( S,L [0.0,1.0] )
-		Local c:COLOR = New COLOR
+	'( H [0.0,360.0] ), ( S,L [0.0,1.0] )
+	Function Create_by_HSL:TColor( H!, S!, L! )
+		Local c:TColor = New TColor
 		c.H = H
 		c.S = S
 		c.L = L
-		c.calc_RGB()
 		Return c
 	End Function
 	
@@ -34,20 +34,56 @@ Type COLOR
 			nG = L
 			nB = L
 		Else 'S <> 0.0
-			If L < 0.500
-				
-			Else 'L >= 0.500
-				
-			End If
+			Local nH!, nH_int%, nH_part!
+			nH = H / 60.0
+			nH_int = Floor( nH )
+			nH_part = nH - nH_int
+			Local e_temp!, f_temp!, g_temp!
+			e_temp = L * (1.0 - S)
+			f_temp = L * (1.0 - (S * nH_part))
+			g_temp = L * (1.0 - (S * (1.0 - nH_part)))
+			Select nH_int
+				Case 0
+					nR = L
+					nG = g_temp
+					nB = e_temp
+				Case 1
+					nR = f_temp
+					nG = L
+					nB = e_temp
+				Case 2
+					nR = e_temp
+					nG = L
+					nB = g_temp
+				Case 3
+					nR = e_temp
+					nG = f_temp
+					nB = L
+				Case 4
+					nR = g_temp
+					nG = e_temp
+					nB = L
+				Case 5
+					nR = L
+					nG = e_temp
+					nB = f_temp
+				Default 'not supposed to happen
+					nR = 0
+					nG = 0
+					nB = 0
+			End Select
 		End If
+		R = nR * 255
+		G = nG * 255
+		B = nB * 255
 	End Method
 	
-	Function Create_RGB:COLOR( R%, G%, B% ) '( R,G,B [0,255] )
-		Local c:COLOR = New COLOR
+	'( R,G,B [0,255] )
+	Function Create_by_RGB:TColor( R%, G%, B% )
+		Local c:TColor = New TColor
 		c.R = R
 		c.G = G
 		c.B = B
-		c.calc_HSL()
 		Return c
 	End Function
 	
@@ -68,10 +104,10 @@ Type COLOR
 			max_component_value = nG
 			min_component_value = nR
 		End If
-		If nB > max_value
+		If nB > max_component_value
 			max_component = BLUE
 			max_component_value = nB
-		Else If nB < min_value
+		Else If nB < min_component_value
 			min_component_value = nB
 		End If
 		L = (max_component_value + min_component_value) / 2.0

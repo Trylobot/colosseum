@@ -463,24 +463,21 @@ End Function
 'Procedural drawing methods
 Function generate_sand_image:TImage( w%, h% )
 	'draw sand procedurally by any means necessary
-	Local teh_pixmap:TPixmap = CreatePixmap( w,h, PF_RGB888 )
-	Local red%, green%, blue%
+	Local pixmap:TPixmap = CreatePixmap( w,h, PF_RGB888 )
 	Local max_dist# = Sqr( Pow( w/2, 2 ) + Pow( h/2, 2 ))
-	Local dist#
-	Local ratio#
+	Local ratio# 'distance from point to center compared with max_dist, range [0.0,1.0]
+	Local color:TColor
 	'oval gradient
 	For Local px% = 0 To w-1
 		For Local py% = 0 To h-1
-			dist = Sqr( Pow( w/2 - px, 2 ) + Pow( h/2 - py, 2 ))
-			ratio = 1 - dist/max_dist
-			red = Int(( 0.5 + 0.5*ratio )*255)
-			green = Int(( ratio )*127)
-			blue = Int(( ratio )*64) + 127
-			teh_pixmap.WritePixel( px,py, encode_ARGB( 1.0, red,green,blue ))
+			ratio = Sqr( Pow( w/2 - px, 2 ) + Pow( h/2 - py, 2 )) / max_dist
+			color = TColor.Create_by_HSL( ratio * 360.0, 0.25, 1.0 )
+			color.calc_RGB()
+			pixmap.WritePixel( px,py, encode_ARGB( 1.0, color.R,color.G,color.B ))
 		Next
 	Next
-	Local teh_image:TImage = LoadImage( teh_pixmap )
-	Return teh_image
+	Local img:TImage = LoadImage( pixmap )
+	Return img
 End Function
 
 Function generate_walls_image:TImage( w%, h%, walls:TList )
