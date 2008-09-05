@@ -1,5 +1,10 @@
+Rem
+	color.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
 
-
+'______________________________________________________________________________
 Type COLOR
 	Global RED% = 1
 	Global GREEN% = 2
@@ -21,10 +26,13 @@ Type COLOR
 	End Function
 	
 	Method calc_RGB()
+		Local nR!
+		Local nG!
+		Local nB!
 		If S = 0.0
-			R = L * 255.0
-			G = L * 255.0
-			B = L * 255.0
+			nR = L
+			nG = L
+			nB = L
 		Else 'S <> 0.0
 			If L < 0.500
 				
