@@ -454,8 +454,7 @@ Function edit_level:LEVEL( lev:LEVEL )
 		End Select
 		
 		Flip( 1 )
-	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
-	If AppTerminate() Then End
+	Until KeyHit( KEY_ESCAPE )
 	
 	Return lev
 End Function

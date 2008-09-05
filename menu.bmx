@@ -317,19 +317,10 @@ Global all_menus:MENU[] = ..
 			MENU_OPTION.Create( "laser tank", COMMAND_NEW_GAME, PLAYER_INDEX_LASER_TANK, True, True ), ..
 			MENU_OPTION.Create( "medium tank", COMMAND_NEW_GAME, PLAYER_INDEX_MED_TANK, True, True ) ]), ..
 	MENU.Create( "load game", 255, 196, 196, MENU_ID_LOAD, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
-		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-			MENU_OPTION.Create( "slot 1", COMMAND_LOAD_GAME, 0, True, False ), ..
-			MENU_OPTION.Create( "slot 2", COMMAND_LOAD_GAME, 1, True, False ), ..
-			MENU_OPTION.Create( "slot 3", COMMAND_LOAD_GAME, 2, True, False ), ..
-			MENU_OPTION.Create( "slot 4", COMMAND_LOAD_GAME, 3, True, False ), ..
-			MENU_OPTION.Create( "slot 5", COMMAND_LOAD_GAME, 4, True, False ) ]), ..
+		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
 	MENU.Create( "save game", 127, 255, 127, MENU_ID_SAVE, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-			MENU_OPTION.Create( "slot 1", COMMAND_SAVE_GAME, 0, True, False ), ..
-			MENU_OPTION.Create( "slot 2", COMMAND_SAVE_GAME, 1, True, False ), ..
-			MENU_OPTION.Create( "slot 3", COMMAND_SAVE_GAME, 2, True, False ), ..
-			MENU_OPTION.Create( "slot 4", COMMAND_SAVE_GAME, 3, True, False ), ..
-			MENU_OPTION.Create( "slot 5", COMMAND_SAVE_GAME, 4, True, False ) ]), ..
+			MENU_OPTION.Create( "new game", COMMAND_SAVE_GAME, -1, True, False ) ]), ..
 	MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_VIDEO, True, False ), ..
@@ -370,6 +361,13 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 		Case COMMAND_SHOW_CHILD_MENU
 			current_menu :+ 1
 			menu_stack[current_menu] = command_argument
+			'special processing
+			Select command_argument
+				Case MENU_ID_LOAD
+					
+				Case MENU_ID_SAVE
+					
+			End Select
 			
 		Case COMMAND_BACK_TO_PARENT_MENU
 			If current_menu > 0 Then current_menu :- 1
@@ -401,8 +399,12 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			End If
 			
 		Case COMMAND_EDIT_LEVEL
+<<<<<<< .mine
+			edit_level_file()
+=======
 			edit_level_file()
 			End
+>>>>>>> .r238
 			
 		Case COMMAND_QUIT_GAME
 			End

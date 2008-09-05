@@ -7,8 +7,8 @@ EndRem
 '______________________________________________________________________________
 Global data_path$ = "data/"
 Global user_path$ = "user/"
-Global data_file_suffix$ = ".json"
 Global data_file_filter$ = "Data Files:json;All Files:*"
+Global level_file_filter$ = "Level Files:colosseum_level;All Files:*"
 
 Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
@@ -69,7 +69,8 @@ End Function
 Function edit_level_file( file_path$ = "" )
 	Local json:TJSON, lev:LEVEL
 	
-	If file_path = "" Then file_path = RequestFile( "Load Level Data", data_file_filter, False, user_path )
+	'selecting a level to load needs to be a function of the level editor, and it needs to use *my* menu class, not the operating system's
+	If file_path = "" Then file_path = RequestFile( "Load Level Data", level_file_filter, False, user_path )
 	If file_path <> ""
 		json = TJSON.Create( LoadString( file_path ))
 		lev = Create_LEVEL_from_json( json )
@@ -78,10 +79,12 @@ Function edit_level_file( file_path$ = "" )
 		lev.name = "new level"
 	End If
 	
+	'the level editor needs to be an object controlled by main, not a "sub-main" as it is now.
 	edit_level( lev )
 	
+	'selecting a filename to save as needs to be a function of the level editor, and it needs to use *my* menu class, not the operating system's
 	json = TJSON.Create( lev.to_json() )
-	file_path = RequestFile( "Save Level Data", data_file_filter, True, user_path + lev.name )
+	file_path = RequestFile( "Save Level Data", level_file_filter, True, user_path + lev.name )
 	If file_path <> ""
 		json.Write( WriteFile( file_path ))
 	End If
