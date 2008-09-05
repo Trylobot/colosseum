@@ -48,7 +48,7 @@ SetBlend( ALPHABLEND )
 Global last_frame_ts%, time_count%, frame_count%, fps%
 'menu_command( COMMAND_EDIT_LEVEL )
 'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
-player_game = Create_ENVIRONMENT()
+game = Create_ENVIRONMENT()
 ?
 
 '______________________________________________________________________________

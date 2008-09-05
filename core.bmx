@@ -11,7 +11,7 @@ Global mouse_point:cVEC = New cVEC
 'environment objects
 Global player_game:ENVIRONMENT 'game in which player participates
 Global ai_demo_game:ENVIRONMENT 'menu ai demo environment
-Global game:ENVIRONMENT = player_game 'current game environment
+Global game:ENVIRONMENT 'current game environment
 
 'game settings flags
 Global FLAG_in_menu% = True

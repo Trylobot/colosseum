@@ -188,8 +188,9 @@ Function draw_main_screen()
 	
 	'title
 	x = 25; y = 25
-	SetColor( 255, 255, 127 ); SetImageFont( get_font( "consolas_bold_50" ))
-		DrawText( My.Application.AssemblyInfo, x, y )
+	SetColor( 255, 255, 127 )
+	SetImageFont( get_font( "consolas_bold_50" ))
+	DrawText_with_glow( My.Application.AssemblyInfo, x, y )
 	
 	'menu options
 	x :+ 5; y :+ 70
@@ -444,7 +445,6 @@ Function DrawText_with_shadow( str$, pos_x%, pos_y% )
 End Function
 
 Function DrawText_with_glow( str$, pos_x%, pos_y% )
-	SetColor( 255, 255, 255 )
 	SetAlpha( 0.2 )
 	DrawText( str, pos_x-1, pos_y-1 )
 	DrawText( str, pos_x+1, pos_y-1 )

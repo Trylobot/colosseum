@@ -79,7 +79,7 @@ Type ENVIRONMENT
 			agent_lists.AddLast( hostile_agent_list )
 		pickup_list = CreateList()
 		control_brain_list = CreateList()
-		enemy_spawn_queue = CreateList()
+		'enemy_spawn_queue = CreateList()
 		friendly_door_list = CreateList()
 		friendly_doors_status = DOOR_STATUS_CLOSED
 		hostile_door_list = CreateList()

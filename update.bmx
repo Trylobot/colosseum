@@ -22,13 +22,13 @@ Function update_all()
 				'if the player has started the engine
 				If FLAG_player_engine_running
 					'open the friendly doors
-					If game.friendly_doors_status = DOOR_STATUS_CLOSED Then game.activate_doors( ALIGNMENT_FRIENDLY )
+					If game.friendly_doors_status = ENVIRONMENT.DOOR_STATUS_CLOSED Then game.activate_doors( ALIGNMENT_FRIENDLY )
 				End If
 			'else, player has entered the arena
 			Else 'point_inside_arena( player )
 				FLAG_player_in_locker = False
 				FLAG_waiting_for_player_to_enter_arena = False
-				If game.hostile_doors_status = DOOR_STATUS_CLOSED Then game.activate_doors( ALIGNMENT_HOSTILE )
+				If game.hostile_doors_status = ENVIRONMENT.DOOR_STATUS_CLOSED Then game.activate_doors( ALIGNMENT_HOSTILE )
 				FLAG_battle_in_progress = True
 				battle_toggle_ts = now()
 				FLAG_waiting_for_player_to_exit_arena = True
@@ -36,10 +36,10 @@ Function update_all()
 			End If
 		End If
 		'if there are no more enemies this level
-		If FLAG_battle_in_progress And game.hostile_agent_list.Count() = 0 And game.enemy_spawn_queue.IsEmpty() And game.cur_squad = Null
+		If FLAG_battle_in_progress And game.hostile_agent_list.Count() = 0 'And game.enemy_spawn_queue.IsEmpty() And game.cur_squad = Null
 			FLAG_battle_in_progress = False
 			battle_toggle_ts = now()
-			If game.hostile_doors_status = DOOR_STATUS_OPEN Then game.activate_doors( ALIGNMENT_HOSTILE )
+			If game.hostile_doors_status = ENVIRONMENT.DOOR_STATUS_OPEN Then game.activate_doors( ALIGNMENT_HOSTILE )
 			FLAG_spawn_enemies = False
 		End If
 		'if the battle is over, and waiting for player to exit arena, and player has exited the arena
