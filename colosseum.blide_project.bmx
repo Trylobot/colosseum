@@ -95,6 +95,7 @@ Public
 Include "json.bmx"
 Include "data.bmx"
 Include "basic.bmx"
+Include "color.bmx"
 Include "particle.bmx"
 Include "physical_object.bmx"
 Include "audio.bmx"
@@ -113,7 +114,6 @@ Include "core.bmx"
 Include "debug.bmx"
 Include "menu.bmx"
 Include "main.bmx"
-Include "color.bmx"
  
 '#EndRegion &H03
 
