@@ -55,8 +55,8 @@ Type AGENT Extends PHYSICAL_OBJECT
 				gib.pos_x = pos_x + gib_offset*Cos( gib_offset_ang + ang )
 				gib.pos_y = pos_y + gib_offset*Sin( gib_offset_ang + ang )
 				Local gib_vel#, gib_vel_ang#
-				gib_vel = RandF( -2.0, 2.0 )
-				gib_vel_ang = RandF( 0.0, 359.9999 )
+				gib_vel = Rnd( -2.0, 2.0 )
+				gib_vel_ang = Rnd( 0.0, 359.9999 )
 				gib.vel_x = vel_x + gib_vel*Cos( gib_vel_ang + ang )
 				gib.vel_y = vel_y + gib_vel*Sin( gib_vel_ang + ang )
 				gib.ang = ang
@@ -199,7 +199,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 			Local ch:TChannel = AllocChannel()
 			CueSound( snd_impact, ch )
 			SetChannelVolume( ch, volume )
-			SetChannelRate( ch, RandF( 0.75, 1.25 ))
+			SetChannelRate( ch, Rnd( 0.75, 1.25 ))
 			ResumeChannel( ch )
 			audio_channels.AddLast( ch )
 		End If
@@ -514,7 +514,7 @@ Type TURRET Extends POINT
 	
 	Method raise_temp()
 		If (now() - bonus_cooling_start_ts) >= bonus_cooling_time
-			cur_heat :+ RandF( heat_per_shot_min, heat_per_shot_max )
+			cur_heat :+ Rnd( heat_per_shot_min, heat_per_shot_max )
 			If cur_heat >= max_heat
 				last_overheat_ts = now()
 				cur_heat = max_heat
@@ -533,7 +533,7 @@ Type TURRET Extends POINT
 			If parent.id <> get_player_id()
 				SetChannelVolume( ch, 0.1500 )
 			End If
-			SetChannelRate( ch, RandF( 0.90, 1.15 ))
+			SetChannelRate( ch, Rnd( 0.90, 1.15 ))
 			ResumeChannel( ch )
 			audio_channels.AddLast( ch )
 		End If
@@ -1282,7 +1282,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Else
 					'no target
 					avatar.drive( 0.333 )
-					avatar.turn( RandF( -0.5, 0.5 ))
+					avatar.turn( Rnd( -0.5, 0.5 ))
 					target = acquire_target()
 				End If
 				
@@ -1541,13 +1541,13 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method get_path_to_somewhere:TList()
 		last_find_path_ts = now()
-		Local somewhere:cVEC = cVEC( cVEC.Create( RandF( 0, game.lev.width-1 ), RandF( 0, game.lev.height-1 )))
+		Local somewhere:cVEC = cVEC( cVEC.Create( Rnd( 0, game.lev.width-1 ), Rnd( 0, game.lev.height-1 )))
 		Return game.find_path( avatar.pos_x,avatar.pos_y, somewhere.x,somewhere.y )
 	End Method
 	
 	Method blindly_wander()
 		avatar.drive( 0.333 )
-		avatar.turn( RandF( -0.5, 0.5 ))
+		avatar.turn( Rnd( -0.5, 0.5 ))
 	End Method
 	
 	Method seek_target()

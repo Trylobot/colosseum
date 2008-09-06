@@ -152,7 +152,7 @@ End Function
 '______________________________________________________________________________
 Function spawn_pickup( x%, y% ) 'request; depends on probability
 	Local pkp:PICKUP
-	If RandF( 0.0, 1.0 ) < PICKUP_PROBABILITY
+	If Rnd( 0.0, 1.0 ) < PICKUP_PROBABILITY
 		Local index% = Rand( 0, pickup_archetype.Length - 1 )
 		pkp = pickup_archetype[index]
 		If pkp <> Null

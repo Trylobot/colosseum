@@ -13,10 +13,6 @@ Function now%()
 	Return clock.Ticks()
 End Function
 
-Function RandF#( lo#, hi# )
-	Return lo + (hi-lo)*RndFloat()
-End Function
-
 Function Pow#( x#, p% )
 	For Local i% = 1 To p - 1
 		x :* x
@@ -462,7 +458,7 @@ Type RANGE
 		If low_eq_high
 			Return low
 		Else
-			Return RandF( low, high )
+			Return Rnd( low, high )
 		End If
 	End Method
 End Type

@@ -467,11 +467,23 @@ Function generate_sand_image:TImage( w%, h% )
 	Local max_dist# = Sqr( Pow( w/2, 2 ) + Pow( h/2, 2 ))
 	Local ratio# 'distance from point to center compared with max_dist, range [0.0,1.0]
 	Local color:TColor
-	'oval gradient
+	'oval shaped earth-tone gradient, with static of varying types
 	For Local px% = 0 To w-1
 		For Local py% = 0 To h-1
 			ratio = Sqr( Pow( w/2 - px, 2 ) + Pow( h/2 - py, 2 )) / max_dist
-			color = TColor.Create_by_HSL( ratio * 360.0, 0.25, 1.0 )
+			'ratio:0 -> HSL( 44, 0.34, 0.35 )
+			'ratio:1 -> HSL( 40, 0.57, 0.28 )
+			color = TColor.Create_by_HSL( 39.0 + ((1.0 - ratio) * 5.0), 0.34 + (ratio * (0.23)), 0.30 + ((1.0 - ratio) * 0.10) )
+			If Rand( 1, 2 ) = 1 '1:2 chance of static
+				Select Rand( 1, 3 ) '3 types of staic
+					Case 1
+						color.H :+ Rnd( -10.0, 5.0 )
+					Case 2
+						color.S :+ Rnd( -0.15, 0.20 )
+					Case 3
+						color.L :+ Rnd( -0.05, 0.05 )
+				End Select
+			End If
 			color.calc_RGB()
 			pixmap.WritePixel( px,py, encode_ARGB( 1.0, color.R,color.G,color.B ))
 		Next
@@ -481,8 +493,7 @@ Function generate_sand_image:TImage( w%, h% )
 End Function
 
 Function generate_walls_image:TImage( w%, h%, walls:TList )
-	'draw walls based on BOX objects to an image
-	'first determine if any walls intersect or touch
+	
 	
 End Function
 
