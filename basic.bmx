@@ -20,8 +20,60 @@ Function Pow#( x#, p% )
 	Return x
 End Function
 
-Function avg#( a#, b# )
-	Return (a + b)/2.0
+Function ints_to_floats:Float[]( arr%[] )
+	Local f#[] = New Float[arr.Length]
+	For Local i% = 0 To arr.Length
+		f[i] = Float( arr[i] )
+	Next
+	Return f
+End Function
+
+Function average#( n#[] ) 'returns the average value of a given list of numbers
+	If n <> Null And n.Length > 0
+		Local sum# = 0
+		For Local i% = 0 To n.Length-1
+			sum :+ n[i]
+		Next
+		Return (sum / Double(n.Length))
+	Else
+		Return 0.0
+	End If
+End Function
+
+Function maximum%( n#[] ) 'returns the index of the maximum value of a given list of numbers
+	If n <> Null And n.Length > 0
+		Local max_i% = 0
+		Local max_val# = n[0]
+		If n.Length > 1
+			For Local i% = 1 To n.length-1
+				If n[i] > max_val
+					max_i = i
+					max_val = n[i]
+				End If
+			Next
+		End If
+		Return max_i
+	Else
+		Return 0
+	End If
+End Function
+
+Function minimum%( n#[] ) 'returns the index of the minimum value of a given list of numbers
+	If n <> Null And n.Length > 0
+		Local min_i% = 0
+		Local min_val# = n[0]
+		If n.Length > 1
+			For Local i% = 1 To n.length-1
+				If n[i] < min_val
+					min_i = i
+					min_val = n[i]
+				End If
+			Next
+		End If
+		Return min_i
+	Else
+		Return 0
+	End If
 End Function
 
 Function one_of%( x%, arr%[] )
@@ -373,7 +425,7 @@ Type cVEC 'cartesian coordinate system 2D vector
 	Method New()
 	End Method
 	
-	Function Create:Object( x#, y# )
+	Function Create:cVEC( x#, y# )
 		Local v:cVEC = New cVEC
 		v.x = x; v.y = y
 		Return v
@@ -403,7 +455,7 @@ Type pVEC 'polar coordinate system 2D vector
 	Method New()
 	End Method
 	
-	Function Create:Object( r#, a# )
+	Function Create:pVEC( r#, a# )
 		Local v:pVEC = New pVEC
 		v.r = r; v.a = a
 		Return v
@@ -509,10 +561,10 @@ Type CELL
 	Global DIRECTION_NORTHWEST% = 7
 	Global ALL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_NORTHEAST, DIRECTION_EAST, DIRECTION_SOUTHEAST, DIRECTION_SOUTH, DIRECTION_SOUTHWEST, DIRECTION_WEST, DIRECTION_NORTHWEST ]
 	Global ALL_CARDINAL_DIRECTIONS%[] = [ DIRECTION_NORTH, DIRECTION_EAST, DIRECTION_SOUTH, DIRECTION_WEST ] 
-	Global CORNER_TOP_LEFT% = 1
-	Global CORNER_TOP_RIGHT% = 2
-	Global CORNER_BOTTOM_RIGHT% = 3
-	Global CORNER_BOTTOM_LEFT% = 4
+	Global CORNER_TOP_LEFT% = 0
+	Global CORNER_TOP_RIGHT% = 1
+	Global CORNER_BOTTOM_RIGHT% = 2
+	Global CORNER_BOTTOM_LEFT% = 3
 	Global ALL_CORNERS%[] = [ CORNER_TOP_LEFT, CORNER_TOP_RIGHT, CORNER_BOTTOM_RIGHT, CORNER_BOTTOM_LEFT ] 
 	
 	Field row%

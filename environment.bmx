@@ -176,7 +176,7 @@ Type ENVIRONMENT
 		Local list:TList = CreateList()
 		If cell_list <> Null And Not cell_list.IsEmpty()
 			For Local cursor:CELL = EachIn cell_list
-				list.AddLast( pathing.lev.midpoint( cursor ))
+				list.AddLast( pathing.lev.get_midpoint( cursor ))
 			Next
 		End If
 		Return list

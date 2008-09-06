@@ -462,7 +462,6 @@ End Function
 '______________________________________________________________________________
 'Procedural drawing methods
 Function generate_sand_image:TImage( w%, h% )
-	'draw sand procedurally by any means necessary
 	Local pixmap:TPixmap = CreatePixmap( w,h, PF_RGB888 )
 	Local max_dist# = Sqr( Pow( w/2, 2 ) + Pow( h/2, 2 ))
 	Local ratio# 'distance from point to center compared with max_dist, range [0.0,1.0]
@@ -494,8 +493,34 @@ End Function
 
 Function generate_walls_image:TImage( lev:LEVEL )
 	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
+	pixmap.ClearPixels( encode_ARGB( 0.0, 0,0,0 ))
 	Local blocking_cells:TList = lev.get_blocking_cells()
-	
-	
+	Local wall:BOX
+	Local neighbor%[]
+	'for each blocking region
+	For Local c:CELL = EachIn blocking_cells
+		wall = lev.get_wall( c )
+		neighbor = lev.get_cardinal_blocking_neighbor_info( c ) 'in same order as CELL.ALL_CARDINAL_DIRECTIONS
+		'for each pixel of the region to be rendered
+		For Local px% = wall.x To wall.x + wall.w - 1
+			For Local py% = wall.y To wall.y + wall.h - 1
+				Local dist#[] = [ -1.0, -1.0, -1.0, -1.0 ]
+				If Not neighbor[0] Then dist[0] = py - wall.y          'TOP
+				If Not neighbor[1] Then dist[1] = wall.x + wall.w - px 'RIGHT
+				If Not neighbor[2] Then dist[2] = wall.y + wall.h - py 'BOTTOM
+				If Not neighbor[3] Then dist[3] = px - wall.x          'LEFT
+				Select Int( minimum( dist ))
+					Case 0, 2 'outermost border line with companion
+						pixmap.WritePixel( px,py, encode_ARGB( 0.25, 255,255,255 ))
+					Case 1, 3 'slightly inset contrast line with companion
+						pixmap.WritePixel( px,py, encode_ARGB( 0.25, 100, 80, 60 ))
+					Default 'inner area, and any area adjacent to another wall
+						pixmap.WritePixel( px,py, encode_ARGB( 0.25, 158,150,142 ))
+				End Select
+			Next
+		Next
+	Next
+	Local img:TImage = LoadImage( pixmap )
+	Return img
 End Function
 

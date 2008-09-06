@@ -52,7 +52,7 @@ game = Create_ENVIRONMENT()
 Cls
 DrawText( "loading", window_w/2, window_h/2 )
 Flip
-Local lev:LEVEL = Create_LEVEL_from_json( TJSON.Create( LoadString( "data/debug.colosseum_level" )))
+Local lev:LEVEL = Create_LEVEL_from_json( TJSON.Create( LoadString( "data/test.colosseum_level" )))
 Local bg:TImage = generate_sand_image( lev.width, lev.height )
 Local fg:TImage = generate_walls_image( lev )
 Repeat

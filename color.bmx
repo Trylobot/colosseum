@@ -14,10 +14,10 @@ Type TColor
 	Global LUMINANCE% = 3
 	
 	Field R%, G%, B%
-	Field H!, S!, L!
+	Field H#, S#, L#
 	
 	'( H [0.0,360.0] ), ( S,L [0.0,1.0] )
-	Function Create_by_HSL:TColor( H!, S!, L! )
+	Function Create_by_HSL:TColor( H#, S#, L# )
 		Local c:TColor = New TColor
 		c.H = H
 		c.S = S
@@ -26,19 +26,19 @@ Type TColor
 	End Function
 	
 	Method calc_RGB()
-		Local nR!
-		Local nG!
-		Local nB!
+		Local nR#
+		Local nG#
+		Local nB#
 		If S = 0.0
 			nR = L
 			nG = L
 			nB = L
 		Else 'S <> 0.0
-			Local nH!, nH_int%, nH_part!
+			Local nH#, nH_int%, nH_part#
 			nH = H / 60.0
 			nH_int = Floor( nH )
 			nH_part = nH - nH_int
-			Local e_temp!, f_temp!, g_temp!
+			Local e_temp#, f_temp#, g_temp#
 			e_temp = L * (1.0 - S)
 			f_temp = L * (1.0 - (S * nH_part))
 			g_temp = L * (1.0 - (S * (1.0 - nH_part)))
@@ -88,13 +88,13 @@ Type TColor
 	End Function
 	
 	Method calc_HSL()
-		Local nR! = R / 255.0
-		Local nG! = G / 255.0
-		Local nB! = B / 255.0
+		Local nR# = R / 255.0
+		Local nG# = G / 255.0
+		Local nB# = B / 255.0
 		Local max_component%
-		Local max_component_value!
-		Local min_component_value!
-		Local delta!
+		Local max_component_value#
+		Local min_component_value#
+		Local delta#
 		If nR > nG
 			max_component = RED
 			max_component_value = nR

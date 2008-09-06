@@ -248,8 +248,8 @@ Type PATHING_STRUCTURE
 	End Method
 	
 	Method distance#( c1:CELL, c2:CELL )
-		Local v1:cVEC = lev.midpoint( c1 )
-		Local v2:cVEC = lev.midpoint( c2 )
+		Local v1:cVEC = lev.get_midpoint( c1 )
+		Local v2:cVEC = lev.get_midpoint( c2 )
 		Return Sqr( Pow( v1.x - v2.x, 2 ) + Pow( v1.y - v2.y, 2 ))
 	End Method
 	

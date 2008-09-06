@@ -204,7 +204,7 @@ End Function
 
 Function collision_agent_wall( ag:COMPLEX_AGENT, wall:BOX )
 	Local offset#, offset_ang#
-	cartesian_to_polar( ag.pos_x - avg(wall.x,wall.x+wall.w), ag.pos_y - avg(wall.y,wall.y+wall.h), offset, offset_ang )
+	cartesian_to_polar( ag.pos_x - average([wall.x,wall.x+wall.w]), ag.pos_y - average([wall.y,wall.y+wall.h]), offset, offset_ang )
 	Local ang# = clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )
 	''nudge
 	'ag.pos_x :+ WALL_NUDGE_DIST*Cos( ang )
@@ -260,7 +260,7 @@ Function collision_projectile_wall( proj:PROJECTILE, wall:BOX )
 End Function
 
 Function clamp_ang_to_bifurcate_wall_diagonals#( ang#, wall:BOX )
-	Local wx# = avg(wall.x,wall.x+wall.w), wy# = avg(wall.y,wall.y+wall.h)
+	Local wx# = average([wall.x,wall.x+wall.w]), wy# = average([wall.y,wall.y+wall.h])
 	'wall_angle[4] = angle from mid to [ top_left, top_right, bottom_right, bottom_left ].
 	Local wall_angle#[] = ..
 	[	vector_diff_angle( wx,wy, wall.x,        wall.y ), ..
@@ -275,7 +275,7 @@ Function clamp_ang_to_bifurcate_wall_diagonals#( ang#, wall:BOX )
 End Function
 
 Function clamp_ang_to_bifurcate_door_diagonals#( ang#, wall:BOX )
-	Local wx# = avg(wall.x,wall.x+wall.w), wy# = avg(wall.y,wall.y+wall.h)
+	Local wx# = average([wall.x,wall.x+wall.w]), wy# = average([wall.y,wall.y+wall.h])
 	'wall_angle[4] = angle from mid to [ top_left, top_right, bottom_right, bottom_left ].
 	Local angles#[] = ..
 	[	vector_diff_angle( wx,wy, wall.x,        wall.y ), ..
@@ -283,9 +283,9 @@ Function clamp_ang_to_bifurcate_door_diagonals#( ang#, wall:BOX )
 		vector_diff_angle( wx,wy, wall.x+wall.w,wall.y+wall.h ), ..
 		vector_diff_angle( wx,wy, wall.x,        wall.y+wall.h ) ]
 	For Local i% = 1 To angles.Length - 1
-		If ang < angles[i-1] Then Return avg( angles[i-1], angles[i] )
+		If ang < angles[i-1] Then Return average([angles[i-1],angles[i]])
 	Next
-	Return avg( angles[3], angles[0] )
+	Return average([angles[3],angles[0]])
 End Function
 
 

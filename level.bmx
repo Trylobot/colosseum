@@ -297,10 +297,10 @@ Type LEVEL Extends MANAGED_OBJECT
 		Return (c.row >= 0 And c.row < Self.row_count And c.col >= 0 And c.col < Self.col_count)
 	End Method
 	
-	Method get_box_of:BOX( c:CELL )
+	Method get_wall:BOX( c:CELL )
 		Local b:BOX = New BOX
-		Local tl:cVEC = get_corner_of( CELL.CORNER_TOP_LEFT, c )
-		Local br:cVEC = get_corner_of( CELL.CORNER_BOTTOM_RIGHT, c )
+		Local tl:cVEC = get_corner( CELL.CORNER_TOP_LEFT, c )
+		Local br:cVEC = get_corner( CELL.CORNER_BOTTOM_RIGHT, c )
 		b.x = tl.x
 		b.y = tl.y
 		b.w = br.x - tl.x
@@ -308,7 +308,7 @@ Type LEVEL Extends MANAGED_OBJECT
 		Return b
 	End Method
 	
-	Method get_corner_of:cVEC( corner%, c:CELL )
+	Method get_corner:cVEC( corner%, c:CELL )
 		If in_bounds( c )
 			Select corner
 				Case CELL.CORNER_TOP_LEFT
@@ -325,11 +325,11 @@ Type LEVEL Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method get_midpoint_of:cVEC( c:CELL )
+	Method get_midpoint:cVEC( c:CELL )
 		If in_bounds( c )
 			Local m:cVEC = New cVEC
-			m.x = avg( vertical_divs[c.col], vertical_divs[c.col+1] )
-			m.y = avg( horizontal_divs[c.row], horizontal_divs[c.row+1] )
+			m.x = Float(vertical_divs[c.col] + vertical_divs[c.col+1]) / 2.0
+			m.y = Float(horizontal_divs[c.row] + horizontal_divs[c.row+1]) / 2.0
 			Return m
 		Else
 			Return Null
@@ -356,18 +356,18 @@ Type LEVEL Extends MANAGED_OBJECT
 		Return list
 	End Method
 	
-	Method get_cardinal_blocking_neighbors:TList( c:CELL )
+	Method get_cardinal_blocking_neighbor_info:Int[]( c:CELL )
 		If in_bounds( c )
-			Local list:TList = CreateList()
-			For Local dir% = EachIn CELL.ALL_CARDINAL_DIRECTIONS
-				Local neighbor:CELL = c.move( dir )
+			Local info%[] = [ False, False, False, False ]
+			For Local index% = 0 To 3
+				Local neighbor:CELL = c.move( CELL.ALL_CARDINAL_DIRECTIONS[index] )
 				If (Not in_bounds( neighbor )) Or (path_regions[ neighbor.row, neighbor.col ] = PATH_BLOCKED)
-					list.AddLast( neighbor )
+					info[index] = True
 				End If
 			Next
-			Return list
+			Return info
 		Else 'Not in_bounds( c )
-			Return Null
+			Return [ True, True, True, True ]
 		End If
 	End Method
 	
