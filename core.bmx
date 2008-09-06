@@ -70,7 +70,6 @@ Global all_levels$[] = [ ..
 '______________________________________________________________________________
 Function core_resume_game()
 	FLAG_in_menu = False
-	game.player_engine_running = True
 End Function
 
 Function core_begin_new_game( archetype% )

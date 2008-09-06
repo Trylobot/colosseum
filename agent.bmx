@@ -708,8 +708,6 @@ Type COMPLEX_AGENT Extends AGENT
 			c.left_track.animation_direction = other.left_track.animation_direction
 		End If
 		
-		If      political_alignment = ALIGNMENT_FRIENDLY Then c.manage( game.friendly_agent_list ) ..
-		Else If political_alignment = ALIGNMENT_HOSTILE  Then c.manage( game.hostile_agent_list )
 		Return c
 	End Function
 
@@ -971,13 +969,6 @@ Type COMPLEX_AGENT Extends AGENT
 		Return p
 	End Method
 	
-	'___________________________________________
-	Method auto_manage( new_political_alignment% = ALIGNMENT_NONE )
-		political_alignment = new_political_alignment
-		If      new_political_alignment = ALIGNMENT_FRIENDLY Then manage( game.friendly_agent_list ) ..
-		Else If new_political_alignment = ALIGNMENT_HOSTILE  Then manage( game.hostile_agent_list )
-	End Method
-	
 End Type
 
 '______________________________________________________________________________
@@ -994,7 +985,7 @@ Const AI_BRAIN_TURRET% = 2
 Const AI_BRAIN_SEEKER% = 3
 Const AI_BRAIN_TANK% = 4
 '___________________________________________
-Function Create_and_Manage_CONTROL_BRAIN:CONTROL_BRAIN( ..
+Function Create_CONTROL_BRAIN:CONTROL_BRAIN( ..
 avatar:COMPLEX_AGENT, ..
 control_type%, ..
 input_type% = UNSPECIFIED, ..
@@ -1020,7 +1011,6 @@ find_path_delay% = 0 )
 	cb.last_look_target_ts = now()
 	cb.last_find_path_ts = now()
 
-	cb.manage( game.control_brain_list )
 	Return cb
 End Function
 '_________________________________________

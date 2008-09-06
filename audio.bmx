@@ -23,8 +23,8 @@ Function play_all_audio()
 	If ch_link <> Null
 		While ch_link <> Null
 			ch = TChannel( ch_link.Value() )
-			If Not ChannelPlaying( ch )
-				StopChannel( ch )
+			If Not ch.Playing()
+				ch.STOP()
 			End If
 			next_ch_link = ch_link.NextLink()
 			ch_link.Remove()

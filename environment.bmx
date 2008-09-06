@@ -158,7 +158,9 @@ Type ENVIRONMENT
 			player_spawn_point = new_player_spawn_point
 			If player <> Null And player.managed() Then player.unmanage()
 			player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
-			player_brain = Create_and_Manage_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, profile.input_method )
+			player.manage( friendly_agent_list )
+			player_brain = Create_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, profile.input_method )
+			player_brain.manage( control_brain_list )
 			player.pos_x = player_spawn_point.pos_x - 0.5
 			player.pos_y = player_spawn_point.pos_y - 0.5
 			player.ang = player_spawn_point.ang

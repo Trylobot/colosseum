@@ -278,7 +278,6 @@ Function draw_arena_bg()
 					
 					DrawImage( img_arena_bg, 0,0 )
 					GrabImage( game.bg_cache, 0,0 )
-					
 				End If
 				
 			Case PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT

@@ -46,7 +46,7 @@ SetBlend( ALPHABLEND )
 '______________________________________________________________________________
 'MAIN
 Local before%
-'?Debug
+?Debug
 'debug_load_data()
 'Global last_frame_ts%, time_count%, frame_count%, fps%
 'menu_command( COMMAND_EDIT_LEVEL )
@@ -63,8 +63,10 @@ Local before%
 '	DrawImage( fg, 0,0 )
 '	Flip
 'Until KeyHit( KEY_ESCAPE )
-'?
+?
 Repeat
+	
+	get_all_input()
 	
 	'game object
 	If Not FLAG_in_shop And Not FLAG_draw_help
@@ -77,8 +79,6 @@ Repeat
 		game = Null
 	End If
 
-	get_all_input()
-	
 	'physics update speed throttle
 	If (now() - before) > (1000/60) ' = 60 hertz
 		before = now()
@@ -93,7 +93,7 @@ Repeat
 	draw_all_graphics()
 	play_all_audio()
 
-'?Debug
+?Debug
 '	frame_count :+ 1
 '	time_count :+ (now() - last_frame_ts)
 '	last_frame_ts = now()
@@ -106,7 +106,12 @@ Repeat
 '	If KeyHit( KEY_F4 ) And FLAG_game_in_progress
 '		find_path( player.pos_x,player.pos_y, mouse.x,mouse.y )
 '	End If
-'?
+If KeyHit( KEY_F4 )
+	DebugLog "game == main_game? "+boolean_to_string( address(game) = address(main_game) )
+	DebugLog "game.control_brain_list.Count()? "+game.control_brain_list.Count()
+	DebugLog "game.control_brain_list.First() == game.player_brain? "+boolean_to_string( address(game.control_brain_list.First()) = address(game.player_brain ))
+End If
+?
 	check_esc_held()
 	
 	If KeyHit( KEY_F12 )

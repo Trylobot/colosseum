@@ -46,7 +46,6 @@ Function get_all_input()
 					menu_command( COMMAND_BACK_TO_MAIN_MENU )
 					get_menu( MENU_ID_MAIN_MENU ).set_enabled( "resume", True )
 					get_menu( MENU_ID_MAIN_MENU ).set_focus( "resume" )
-					game.player_engine_running = False
 					'clear keystate listeners
 					KeyHit( KEY_DOWN )
 					KeyHit( KEY_RIGHT )
