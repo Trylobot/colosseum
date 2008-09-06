@@ -49,11 +49,17 @@ Global last_frame_ts%, time_count%, frame_count%, fps%
 'menu_command( COMMAND_EDIT_LEVEL )
 'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
 game = Create_ENVIRONMENT()
-Local img:TImage = generate_sand_image( window_w, window_h )
+Cls
+DrawText( "loading", window_w/2, window_h/2 )
+Flip
+Local lev:LEVEL = Create_LEVEL_from_json( TJSON.Create( LoadString( "data/debug.colosseum_level" )))
+Local bg:TImage = generate_sand_image( lev.width, lev.height )
+Local fg:TImage = generate_walls_image( lev )
 Repeat
 	Cls
-	DrawImage( img, 0,0 )
-	Flip()
+	DrawImage( bg, 0,0 )
+	DrawImage( fg, 0,0 )
+	Flip
 Until KeyHit( KEY_ESCAPE )
 ?
 

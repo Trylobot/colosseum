@@ -492,7 +492,9 @@ Function generate_sand_image:TImage( w%, h% )
 	Return img
 End Function
 
-Function generate_walls_image:TImage( w%, h%, lev:LEVEL )
+Function generate_walls_image:TImage( lev:LEVEL )
+	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
+	Local blocking_cells:TList = lev.get_blocking_cells()
 	
 	
 End Function

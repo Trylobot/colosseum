@@ -344,6 +344,18 @@ Type LEVEL Extends MANAGED_OBJECT
 		Return count
 	End Method
 	
+	Method get_blocking_cells:TList()
+		Local list:TList = CreateList()
+		For Local r% = 0 To row_count-1
+			For Local c% = 0 To col_count-1
+				If path_regions[r,c] = PATH_BLOCKED
+					list.AddLast( CELL.Create( r, c ))
+				End If
+			Next
+		Next
+		Return list
+	End Method
+	
 	Method get_cardinal_blocking_neighbors:TList( c:CELL )
 		If in_bounds( c )
 			Local list:TList = CreateList()
