@@ -393,15 +393,10 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			current_menu = 0
 			
 		Case COMMAND_RESUME
-			FLAG_in_menu = False
-			FLAG_player_engine_running = True
+			core_resume_game()
 			
 		Case COMMAND_NEW_GAME
-			player_type = command_argument
-			FLAG_in_menu = False
-			reset_game()
-			init_game()
-			FLAG_game_in_progress = True
+			core_begin_new_game( command_argument )
 			
 		Case COMMAND_LOAD_GAME
 			'load_game_by_slot( command_argument )

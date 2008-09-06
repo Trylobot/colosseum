@@ -7,15 +7,8 @@ EndRem
 '______________________________________________________________________________
 Const SPAWN_POINT_OFFSET% = 43 'delete me (please?)
 
-Function Create_ENVIRONMENT:ENVIRONMENT()
-	Local env:ENVIRONMENT = New ENVIRONMENT
-	
-	Return env
-End Function
-
 Type ENVIRONMENT
-	Field origin:cVEC '(x, y) of the origin of this level
-	Field zoom# 'zoom level
+	Field origin:cVEC 'drawing origin
 	Field bg_cache:TImage 'background image
 	Field fg_cache:TImage 'foreground image
 
@@ -116,8 +109,9 @@ Type ENVIRONMENT
 		player = Null
 	End Method
 	
-	Method load_level( new_lev:LEVEL )
-		lev = new_lev
+	Method load_level( level_path$ )
+		'needs error-checking
+		lev = Create_LEVEL_from_json( TJSON.Create( LoadString( level_path )))
 		'pathing
 		pathing = PATHING_STRUCTURE.Create( lev )
 		'images
@@ -138,13 +132,44 @@ Type ENVIRONMENT
 		spawn_cursor = New CELL[lev.spawners.Length] 'automagically initialized to (0, 0); exactly where it needs to be :)
 		spawn_ts = New Int[lev.spawners.Length]
 		'flags
+		
 		level_enemy_count = lev.enemy_count()
 		level_enemies_killed = 0
 		'..?
 	End Method
 	
+	Method load_next_level()
+		load_level( core_get_next_level_id() )
+	End Method
+	
 	Method spawning_system_update()
 		'..?
+	End Method
+	
+	Method spawn_player( archetype_index% )
+		If player <> Null And player.managed() Then player.unmanage()
+		player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
+		player_brain = Create_and_Manage_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, player_input_type )
+		player_spawn_point = New POINT'friendly_spawn_points[ Rand( 0, friendly_spawn_points.Length - 1 )]
+		player.pos_x = player_spawn_point.pos_x - 0.5
+		player.pos_y = player_spawn_point.pos_y - 0.5
+		player.ang = -90
+		player.snap_all_turrets()
+		FLAG_player_engine_ignition = False
+		FLAG_player_engine_running = False
+	End Method
+	
+	Method spawn_pickup( x%, y% ) 'request; depends on probability
+		Local pkp:PICKUP
+		If Rnd( 0.0, 1.0 ) < PICKUP_PROBABILITY
+			Local index% = Rand( 0, pickup_archetype.Length - 1 )
+			pkp = pickup_archetype[index]
+			If pkp <> Null
+				pkp = pkp.clone()
+				pkp.pos_x = x; pkp.pos_y = y
+				pkp.auto_manage()
+			End If
+		End If
 	End Method
 	
 	Method add_door( p:POINT, door_list:TList )

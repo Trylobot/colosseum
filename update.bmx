@@ -8,51 +8,47 @@ EndRem
 'Physics and Timing Update
 Function update_all()
 	
-	If ..
-	Not FLAG_in_menu And ..
-	Not FLAG_in_shop And ..
-	Not FLAG_draw_help
-		
-		'_______________________________________
-		'game logic
+	'update body
+	If game <> Null
+
 		'if waiting for player to enter arena
-		If FLAG_waiting_for_player_to_enter_arena
+		If game.waiting_for_player_to_enter_arena
 			'if player has not entered the arena
 			If Not game.point_inside_arena( game.player )
 				'if the player has started the engine
-				If FLAG_player_engine_running
+				If game.player_engine_running
 					'open the friendly doors
 					If game.friendly_doors_status = ENVIRONMENT.DOOR_STATUS_CLOSED Then game.activate_doors( ALIGNMENT_FRIENDLY )
 				End If
 			'else, player has entered the arena
 			Else 'point_inside_arena( player )
-				FLAG_player_in_locker = False
-				FLAG_waiting_for_player_to_enter_arena = False
+				game.player_in_locker = False
+				game.waiting_for_player_to_enter_arena = False
 				If game.hostile_doors_status = ENVIRONMENT.DOOR_STATUS_CLOSED Then game.activate_doors( ALIGNMENT_HOSTILE )
-				FLAG_battle_in_progress = True
-				battle_toggle_ts = now()
-				FLAG_waiting_for_player_to_exit_arena = True
-				FLAG_spawn_enemies = True
+				game.battle_in_progress = True
+				game.battle_toggle_ts = now()
+				game.waiting_for_player_to_exit_arena = True
+				game.spawn_enemies = True
 			End If
 		End If
 		'if there are no more enemies this level
-		If FLAG_battle_in_progress And game.hostile_agent_list.Count() = 0 'And game.enemy_spawn_queue.IsEmpty() And game.cur_squad = Null
-			FLAG_battle_in_progress = False
-			battle_toggle_ts = now()
+		If game.battle_in_progress And game.level_enemies_killed < game.level_enemy_count
+			game.battle_in_progress = False
+			game.battle_toggle_ts = now()
 			If game.hostile_doors_status = ENVIRONMENT.DOOR_STATUS_OPEN Then game.activate_doors( ALIGNMENT_HOSTILE )
-			FLAG_spawn_enemies = False
+			game.spawn_enemies = False
 		End If
 		'if the battle is over, and waiting for player to exit arena, and player has exited the arena
-		If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And game.point_inside_arena( game.player )
-			FLAG_waiting_for_player_to_exit_arena = False
-			FLAG_player_in_locker = True
+		If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena And game.point_inside_arena( game.player )
+			game.waiting_for_player_to_exit_arena = False
+			game.player_in_locker = True
 			'FLAG_player_engine_running = False
-			level_passed_ts = now()
-			load_next_level()
+			game.level_passed_ts = now()
+			game.load_next_level()
 		End If
 		
 		'spawning
-		If FLAG_spawn_enemies
+		If game.spawn_enemies
 			game.spawning_system_update()
 		End If
 		
@@ -93,14 +89,7 @@ Function update_all()
 			FLAG_retain_particles = True
 		End If
 		
-	Else If FLAG_in_menu And FLAG_AI_demo
-		update_AI_demo()
-	
 	End If
-End Function
-
-Function update_AI_demo()
 	
 End Function
-
 

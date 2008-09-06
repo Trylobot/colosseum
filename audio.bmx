@@ -11,7 +11,7 @@ Global audio_channels:TList = CreateList()
 Function play_all()
 	play_bg_music()
 	
-	If FLAG_player_engine_ignition
+	If game.player_engine_ignition
 		start_player_engine()
 	End If
 	tweak_engine_idle()
@@ -40,7 +40,7 @@ Function play_bg_music()
 	End If
 	If FLAG_bg_music_on
 		ResumeChannel( bg_music )
-	Else If Not FLAG_bg_music_on
+	Else 'Not FLAG_bg_music_on
 		PauseChannel( bg_music )
 	End If
 End Function
@@ -58,8 +58,8 @@ Function start_player_engine()
 	CueSound( get_sound( "engine_start" ), engine_start )
 	SetChannelVolume( engine_start, 0.5 )
 	ResumeChannel( engine_start )
-	FLAG_player_engine_ignition = False
-	FLAG_player_engine_running = False
+	game.player_engine_ignition = False
+	game.player_engine_running = False
 End Function
 
 Function tweak_engine_idle()
@@ -89,7 +89,7 @@ Function tweak_engine_idle()
 	Else 'Not FLAG_playing_engine_running
 		If engine_start <> Null
 			If Not ChannelPlaying( engine_start )
-				FLAG_player_engine_running = True
+				game.player_engine_running = True
 			End If
 		End If
 		If engine_idle <> Null

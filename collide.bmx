@@ -23,10 +23,9 @@ Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.1 'energy multiplier for all agent-age
 Const WALL_NUDGE_DIST# = 0.2
 
 Function collide_all()
-	If ..
-	Not FLAG_in_menu And ..
-	Not FLAG_in_shop And ..
-	Not FLAG_draw_help
+	
+	'collision detection & resolution body
+	If game <> null
 	
 		Local list:TList
 		Local ag:COMPLEX_AGENT, other:COMPLEX_AGENT

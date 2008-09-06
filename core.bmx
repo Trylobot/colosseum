@@ -13,9 +13,10 @@ Global level_intro_time% = 2000
 
 'environmental objects
 Global mouse_point:cVEC = New cVEC
-Global player_game:ENVIRONMENT 'game in which player participates
-Global ai_demo_game:ENVIRONMENT 'menu ai demo environment
+Global main_game:ENVIRONMENT 'game in which player participates
+Global ai_menu_game:ENVIRONMENT 'menu ai demo environment
 Global game:ENVIRONMENT 'current game environment
+Global profile:PLAYER_PROFILE = New PLAYER_PROFILE
 
 'screen state flags
 Global FLAG_in_menu% = True
@@ -23,136 +24,73 @@ Global FLAG_in_shop% = False
 Global FLAG_bg_music_on% = False
 Global FLAG_draw_help% = False
 Global FLAG_console% = False
-Global FLAG_AI_demo% = True
 
 '______________________________________________________________________________
 Type PLAYER_PROFILE
-	Field window_w% = 1024
-	Field window_h% = 768
-	
 	Field archetype%
 	Field input_method%
 	Field current_level$
 	Field cash%
 	Field kills%
+	
+	Method to_json:TJSONObject()
+		Local this_json:TJSONObject = New TJSONObject
+		this_json.SetByName( "archetype", TJSONNumber.Create( archetype ))
+		this_json.SetByName( "input_method", TJSONNumber.Create( input_method ))
+		this_json.SetByName( "current_level", TJSONString.Create( current_level ))
+		this_json.SetByName( "cash", TJSONNumber.Create( cash ))
+		this_json.SetByName( "kills", TJSONNumber.Create( kills ))
+		Return this_json
+	End Method
 End Type
 
-'______________________________________________________________________________
+Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
+	Local prof:PLAYER_PROFILE = New PLAYER_PROFILE
+	prof.archetype = json.GetNumber( "archetype" )
+	prof.input_method = json.GetNumber( "input_method" )
+	prof.current_level = json.GetString( "current_level" )
+	prof.cash = json.GetNumber( "cash" )
+	prof.kills = json.GetNumber( "kills" )
+	Return prof
+End Function
+
 Function get_player_id%()
-	If game.player <> Null
+	If game <> Null And game.player <> Null
 		Return game.player.id
 	Else
 		Return -1
 	End If
 End Function
+'______________________________________________________________________________
+Global current_level_index% = 0
+Global all_levels$ = [ ..
+	"data/test.colosseum_level" ]
 
 '______________________________________________________________________________
-Function reset_game()
-	game.clear()	
-'	bg_cache = Null
-'	
-'	particle_list_background.Clear()
-'	particle_list_foreground.Clear()
-'	retained_particle_list.Clear()
-'	retained_particle_list_count = 0
-'	projectile_list.Clear()
-'	friendly_agent_list.Clear()
-'	hostile_agent_list.Clear()
-'	pickup_list.Clear()
-'	control_brain_list.Clear()
-'	
-'	player = Null
-	player_level = -1
-	player_cash = 0
-	player_level_kills = 0
-	level_enemies_remaining = -1
-	
-'	pathing = Null
-	
-	FLAG_game_in_progress = False
-	FLAG_game_over = False
-	
-'	reset_all_doors()
-	
-	FLAG_waiting_for_player_to_exit_arena = False
-	FLAG_player_in_locker = True
-	FLAG_spawn_enemies = False
-	
-End Function
-'______________________________________________________________________________
-Function init_game()
-'	init_pathing_system()
-	player_level = -1
-	respawn_player( player_type )
-	game.load_level( get_next_level() )
+Function core_resume_game()
+	FLAG_in_menu = False
+	game.player_engine_running = True
 End Function
 
-'Placeholder
-Function get_next_level:LEVEL()
-	Return New LEVEL
-	'..?
-End Function
-'______________________________________________________________________________
-Function load_next_level()
-'	player_level :+ 1
-'	load_level( player_level )
-End Function
-
-Function load_level( index% )
-'	FLAG_player_in_locker = True
-'	FLAG_waiting_for_player_to_enter_arena = True
-'	FLAG_battle_in_progress = False
-'	FLAG_waiting_for_player_to_exit_arena = False
-'	
-'	FLAG_dim_bg = True
-'	FLAG_retain_particles = True
-'	
-'	prep_spawner()
-'	update_all()
-'	level_passed_ts% = now()
-'	
-'	all_walls.Clear()
-'	all_walls.AddLast( common_walls )
-'	all_walls.AddLast( get_level_walls( player_level ))
-'	
-'	clear_pathing_grid_center_walls()
-'	init_pathing_grid_from_walls( get_level_walls( player_level ))
+Function core_begin_new_game( archetype% )
+	FLAG_in_menu = False
+	profile.archetype = archetype
+	game.clear()
+	current_level_index = 0
+	game.load_level( all_levels[current_level_index] )
+	game.game_in_progress = True
+	game.spawn_player( profile.archetype )
 End Function
 
-Function load_AI_demo_level()
-	
-End Function
-'______________________________________________________________________________
-'Spawning and Respawning
-Function respawn_player( archetype_index% )
-	
-	If game.player <> Null And game.player.managed() Then game.player.unmanage()
-	game.player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
-	game.player_brain = Create_and_Manage_CONTROL_BRAIN( game.player, CONTROL_TYPE_HUMAN, player_input_type )
-	
-	game.player_spawn_point = New POINT'friendly_spawn_points[ Rand( 0, friendly_spawn_points.Length - 1 )]
-	game.player.pos_x = game.player_spawn_point.pos_x - 0.5
-	game.player.pos_y = game.player_spawn_point.pos_y - 0.5
-	game.player.ang = -90
-	game.player.snap_all_turrets()
-	
-	FLAG_player_engine_ignition = False
-	FLAG_player_engine_running = False
-		
-End Function
-'______________________________________________________________________________
-Function spawn_pickup( x%, y% ) 'request; depends on probability
-	Local pkp:PICKUP
-	If Rnd( 0.0, 1.0 ) < PICKUP_PROBABILITY
-		Local index% = Rand( 0, pickup_archetype.Length - 1 )
-		pkp = pickup_archetype[index]
-		If pkp <> Null
-			pkp = pkp.clone()
-			pkp.pos_x = x; pkp.pos_y = y
-			pkp.auto_manage()
-		End If
+Function core_get_next_level_id$()
+	If current_level_index >= all_levels.Length-1
+		Return all_levels[all_levels.Length-1]
+	Else
+		current_level_index :+ 1
+		Return all_levels[current_level_index]
 	End If
 End Function
+
 '______________________________________________________________________________
 'Function init_pathing_grid_from_walls( level_walls:TList )
 '	If pathing <> Null
