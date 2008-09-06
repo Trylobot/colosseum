@@ -7,44 +7,35 @@ EndRem
 '______________________________________________________________________________
 'Generic globals
 Const INFINITY% = -1
+Const PICKUP_PROBABILITY# = 0.50 'chance of an enemy dropping a pickup (randomly selected from all pickups)
+Const arena_lights_fade_time% = 1000
+Global level_intro_time% = 2000
+
+'environmental objects
 Global mouse_point:cVEC = New cVEC
-'environment objects
 Global player_game:ENVIRONMENT 'game in which player participates
 Global ai_demo_game:ENVIRONMENT 'menu ai demo environment
 Global game:ENVIRONMENT 'current game environment
 
-'game settings flags
+'screen state flags
 Global FLAG_in_menu% = True
 Global FLAG_in_shop% = False
 Global FLAG_bg_music_on% = False
 Global FLAG_draw_help% = False
 Global FLAG_console% = False
-Global level_intro_time% = 2000
-Global level_passed_ts%
 Global FLAG_AI_demo% = True
 
-'game state flags
-Global FLAG_game_in_progress% = False
-Global FLAG_game_over% = False
-Global FLAG_player_engine_ignition% = False
-Global FLAG_player_engine_running% = False
-Global FLAG_player_in_locker% = False
-Global FLAG_waiting_for_player_to_enter_arena% = False
-Global FLAG_battle_in_progress% = False
-Global battle_toggle_ts%
-Global arena_lights_fade_time% = 1000
-Global FLAG_waiting_for_player_to_exit_arena% = False
-Global FLAG_spawn_enemies% = False
-
-'global player stuff
-Global player_type% = 0
-Global player_input_type% = INPUT_KEYBOARD_MOUSE_HYBRID 
-Global player_level% = 0
-Global player_cash% = 0
-Global player_level_kills%
-Global level_enemies_remaining%
-
-Const PICKUP_PROBABILITY# = 0.50 'chance of an enemy dropping a pickup (randomly selected from all pickups)
+'______________________________________________________________________________
+Type PLAYER_PROFILE
+	Field window_w% = 1024
+	Field window_h% = 768
+	
+	Field archetype%
+	Field input_method%
+	Field current_level$
+	Field cash%
+	Field kills%
+End Type
 
 '______________________________________________________________________________
 Function get_player_id%()
@@ -213,7 +204,4 @@ Function draw_instaquit_progress()
 	SetImageFont( get_font( "consolas_bold_24" ))
 	DrawText( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
 End Function
-
-
-
 

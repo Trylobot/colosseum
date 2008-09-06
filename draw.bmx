@@ -491,7 +491,7 @@ Function generate_sand_image:TImage( w%, h% )
 	Return img
 End Function
 
-Function generate_walls_image:TImage( lev:LEVEL )
+Function generate_level_walls_image:TImage( lev:LEVEL )
 	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
 	pixmap.ClearPixels( encode_ARGB( 0.0, 0,0,0 ))
 	Local blocking_cells:TList = lev.get_blocking_cells()
@@ -510,12 +510,13 @@ Function generate_walls_image:TImage( lev:LEVEL )
 				If Not neighbor[2] Then dist[2] = wall.y + wall.h - py 'BOTTOM
 				If Not neighbor[3] Then dist[3] = px - wall.x          'LEFT
 				Select Int( minimum( dist ))
-					Case 0, 2 'outermost border line with companion
+					Default
+					'Case 0, 2 'outermost border line with companion
 						pixmap.WritePixel( px,py, encode_ARGB( 0.25, 255,255,255 ))
-					Case 1, 3 'slightly inset contrast line with companion
-						pixmap.WritePixel( px,py, encode_ARGB( 0.25, 100, 80, 60 ))
-					Default 'inner area, and any area adjacent to another wall
-						pixmap.WritePixel( px,py, encode_ARGB( 0.25, 158,150,142 ))
+					'Case 1, 3 'slightly inset contrast line with companion
+					'	pixmap.WritePixel( px,py, encode_ARGB( 0.25, 100, 80, 60 ))
+					'Default 'inner area, and any area adjacent to another wall
+					'	pixmap.WritePixel( px,py, encode_ARGB( 0.25, 158,150,142 ))
 				End Select
 			Next
 		Next

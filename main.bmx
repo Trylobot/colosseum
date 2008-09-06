@@ -54,7 +54,7 @@ DrawText( "loading", window_w/2, window_h/2 )
 Flip
 Local lev:LEVEL = Create_LEVEL_from_json( TJSON.Create( LoadString( "data/test.colosseum_level" )))
 Local bg:TImage = generate_sand_image( lev.width, lev.height )
-Local fg:TImage = generate_walls_image( lev )
+Local fg:TImage = generate_level_walls_image( lev )
 Repeat
 	Cls
 	DrawImage( bg, 0,0 )

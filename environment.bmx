@@ -5,7 +5,6 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-
 Const SPAWN_POINT_OFFSET% = 43 'delete me (please?)
 
 Function Create_ENVIRONMENT:ENVIRONMENT()
@@ -54,13 +53,25 @@ Type ENVIRONMENT
 	Field pickup_list:TList 'TList<PICKUP>
 	Field control_brain_list:TList 'TList<CONTROL_BRAIN>
 	
+	Field level_enemy_count% 'number of enemies that could possibly be spawned
+	Field level_enemies_killed% 'number of enemies that have been killed since being spawned
+	
 	Field human_participation% 'flag indicating whether any humans will ever participate in this game
+	Field game_in_progress% 'flag indicating the game has begun
+	Field game_over% 'flag indicating game over state
+	Field level_passed_ts%
+	Field player_engine_ignition%
+	Field player_engine_running%
+	Field player_in_locker%
+	Field waiting_for_player_to_enter_arena%
+	Field battle_in_progress%
+	Field battle_state_toggle_ts%
+	Field waiting_for_player_to_exit_arena%
+	Field spawn_enemies%
+
 	Field player_spawn_point:POINT 'reference to the spawnpoint that will spawn or has spawned that player
 	Field player_brain:CONTROL_BRAIN 'reference to that player's brain object
 	Field player:COMPLEX_AGENT 'reference to that player object
-	
-	Field game_in_progress% 'flag indicating the game has begun
-	Field game_over% 'flag indicating ..?
 	
 	Method New()
 		walls = CreateList()
@@ -109,32 +120,46 @@ Type ENVIRONMENT
 		lev = new_lev
 		'pathing
 		pathing = PATHING_STRUCTURE.Create( lev )
-		'walls - create polygons from the blocked out regions of the pathing
-		'..?
+		'images
+		bg_cache = generate_sand_image( lev.width, lev.height )
+		fg_cache = generate_level_walls_image( lev )
 		'doors
-		'..?
-		'spawners
+		For Local sp:SPAWNER = EachIn lev.spawners
+			If sp.class = SPAWNER.class_GATED_FACTORY
+				Select sp.alignment
+					Case ALIGNMENT_FRIENDLY
+						add_door( sp.pos, friendly_door_list )
+					Case ALIGNMENT_HOSTILE
+						add_door( sp.pos, hostile_door_list )
+				End Select
+			End If
+		Next
+		'spawn queues
+		spawn_cursor = New CELL[lev.spawners.Length] 'automagically initialized to (0, 0); exactly where it needs to be :)
+		spawn_ts = New Int[lev.spawners.Length]
+		'flags
+		level_enemy_count = lev.enemy_count()
+		level_enemies_killed = 0
 		'..?
 	End Method
 	
 	Method spawning_system_update()
-		
+		'..?
 	End Method
 	
-	Method attach_door( p:POINT, political_door_list:TList )
-		Local door:WIDGET
-		'left side
-		door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
-		door.parent = p
-		door.attach_at( 25 + 50/3 - door.img.height/2 + 1, 0, 90, True )
-		door.auto_manage()
-		political_door_list.AddLast( door )
-		'right side
-		door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
-		door.parent = p
-		door.attach_at( 25 + 50/3 - door.img.height/2 + 1, 0, -90, True )
-		door.auto_manage()
-		political_door_list.AddLast( door )
+	Method add_door( p:POINT, door_list:TList )
+		Local left_door:WIDGET
+		Local right_door:WIDGET
+		left_door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
+		right_door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
+		left_door.parent = p
+		right_door.parent = p
+		left_door.attach_at( 25 + 50/3 - widget_archetype[WIDGET_INDEX_ARENA_DOOR].img.height/2 + 1, 0, 90, True )
+		right_door.attach_at( 25 + 50/3 - widget_archetype[WIDGET_INDEX_ARENA_DOOR].img.height/2 + 1, 0, -90, True )
+		left_door.auto_manage()
+		right_door.auto_manage()
+		door_list.AddLast( left_door )
+		door_list.AddLast( right_door )
 	End Method
 	
 	Method activate_doors( political_alignment% )
