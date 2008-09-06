@@ -216,7 +216,7 @@ EndRem
 '		End If
 '		
 '		If KeyHit( KEY_QUOTES )
-'			spawn_pickup( mouse_point.x, mouse_point.y )
+'			spawn_pickup( mouse.x, mouse.y )
 '		End If
 '		
 '		If KeyHit( KEY_9 )

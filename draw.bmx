@@ -13,7 +13,7 @@ Global str$
 
 '______________________________________________________________________________
 'Drawing to Screen
-Function draw_all()
+Function draw_all_graphics()
 	SetBlend( ALPHABLEND )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
@@ -95,15 +95,17 @@ Function draw_game()
 	SetAlpha( 1 )
 	
 	'aiming reticle
-	If game.player.turret_list.Count() <> 0
-		If player_input_type = INPUT_KEYBOARD
-			SetRotation( TURRET( game.player.turret_list.First() ).ang )
-			DrawImage( img_reticle, TURRET( game.player.turret_list.First() ).pos_x + 60*Cos( TURRET( game.player.turret_list.First() ).ang ), TURRET( game.player.turret_list.First() ).pos_y + 50*Sin( TURRET( game.player.turret_list.First() ).ang ) )
-		Else If player_input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-			'position the larger dot of the reticle directly at the mouse position
-			'point the ellipsis dots at the player's turret
-			SetRotation( TURRET( game.player.turret_list.First() ).ang_to_cVEC( mouse_point ))
-			DrawImage( img_reticle, mouse_point.x, mouse_point.y )
+	If game.human_participation
+		If game.player.turret_list.Count() <> 0
+			If profile.input_method = INPUT_KEYBOARD
+				SetRotation( TURRET( game.player.turret_list.First() ).ang )
+				DrawImage( img_reticle, TURRET( game.player.turret_list.First() ).pos_x + 60*Cos( TURRET( game.player.turret_list.First() ).ang ), TURRET( game.player.turret_list.First() ).pos_y + 50*Sin( TURRET( game.player.turret_list.First() ).ang ) )
+			Else If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
+				'position the larger dot of the reticle directly at the mouse position
+				'point the ellipsis dots at the player's turret
+				SetRotation( TURRET( game.player.turret_list.First() ).ang_to_cVEC( mouse ))
+				DrawImage( img_reticle, mouse.x, mouse.y )
+			End If
 		End If
 	End If
 	SetRotation( 0 )
@@ -111,7 +113,9 @@ Function draw_game()
 	SetViewport( 0,0, window_w,window_h )
 
 	'draw side-panel statistics and info
-	draw_stats()
+	If game.human_participation
+		draw_stats()
+	End If
 
 	'help actual
 	If FLAG_draw_help
@@ -133,7 +137,7 @@ Function draw_game()
 	End If
 	
 	'game over
-	If FLAG_game_over
+	If game.game_over
 		SetColor( 0, 0, 0 )
 		SetAlpha( 0.650 )
 		DrawRect( 0, 0, window_w, window_h )
@@ -152,31 +156,31 @@ Function draw_game()
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	
-	'level X
-	If (now() - level_passed_ts) < level_intro_time
-		SetImageFont( get_font( "consolas_bold_100" ))
-		SetColor( 255, 255, 127 )
-		Local pct# = Float(now() - level_passed_ts)/Float(level_intro_time)
-		If pct < 0.25 'fade in
-			SetAlpha( pct / 0.25 )
-		Else If pct < 0.75 'hold
-			SetAlpha( 1 )
-		Else 'fade out
-			SetAlpha( 1 - (( pct - 0.75) / 0.25 ))
-		End If
-		str = "LEVEL " + (player_level + 1)
-		DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 )
-	End If
+'	'level X
+'	If (now() - game.level_passed_ts) < level_intro_time
+'		SetImageFont( get_font( "consolas_bold_100" ))
+'		SetColor( 255, 255, 127 )
+'		Local pct# = Float(now() - game.level_passed_ts)/Float(level_intro_time)
+'		If pct < 0.25 'fade in
+'			SetAlpha( pct / 0.25 )
+'		Else If pct < 0.75 'hold
+'			SetAlpha( 1 )
+'		Else 'fade out
+'			SetAlpha( 1 - (( pct - 0.75) / 0.25 ))
+'		End If
+'		str = "LEVEL " + (profile.player_level + 1)
+'		DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 )
+'	End If
 	
 	SetImageFont( get_font( "consolas_12" ))
 	SetAlpha( 0.75 )
-	Local x# = game.player_spawn_point.pos_x + arena_offset, y# = game.player_spawn_point.pos_y - arena_offset/3
+	Local x# = mouse.x + 5, y# = mouse.y
 	'commands to player
-	If Not FLAG_player_engine_running
+	If Not game.player_engine_running
 		DrawText_with_shadow( "(E) start your engine.", x, y )
-	Else If FLAG_player_in_locker And FLAG_waiting_for_player_to_enter_arena
+	Else If game.player_in_locker And game.waiting_for_player_to_enter_arena
 		DrawText_with_shadow( "enter the arena.", x, y )
-	Else If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena
+	Else If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena
 		DrawText_with_shadow( "return to gate. (R) skip", x, y )
 	End If
 	
@@ -237,10 +241,6 @@ End Function
 '______________________________________________________________________________
 Function draw_arena_bg()
 
-	If game.bg_cache = Null
-		init_bg_cache()
-	End If
-
 	'draw arena background cache image
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
@@ -298,8 +298,7 @@ Function draw_arena_fg()
 	SetScale( 1, 1 )
 	SetRotation( 0 )
 	
-	DrawImage( img_arena_fg, 0,0 )
-	draw_walls( game.walls )
+	DrawImage( game.fg_cache, 0,0 )
 
 	For Local w:WIDGET = EachIn game.environmental_widget_list
 		w.draw()
@@ -309,40 +308,15 @@ Function draw_arena_fg()
 	SetScale( 1, 1 )
 	SetRotation( 0 )
 	SetColor( 0, 0, 0 )
-	SetAlpha( 0.4*time_alpha_pct( battle_toggle_ts, arena_lights_fade_time, Not FLAG_battle_in_progress ))
+	SetAlpha( 0.4*time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
 	DrawRect( 0,0, window_w,window_h )
 	SetColor( 255, 255, 255 )
-	SetAlpha( 0.2*time_alpha_pct( battle_toggle_ts, arena_lights_fade_time, Not FLAG_battle_in_progress ))
+	SetAlpha( 0.2*time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
 	SetBlend( LIGHTBLEND )
-	DrawImage( img_halo, game.player.pos_x,game.player.pos_y )
+	DrawImage( img_halo, game.player.pos_x, game.player.pos_y )
 	SetScale( 2, 2 )
-	DrawImage( img_halo, game.player_spawn_point.pos_x,game.player_spawn_point.pos_y+arena_offset/3 )
+	DrawImage( img_halo, game.player_spawn_point.pos_x, game.player_spawn_point.pos_y+arena_offset/3 )
 	SetBlend( ALPHABLEND )
-End Function
-'______________________________________________________________________________
-Function init_bg_cache()
-	game.bg_cache = CreateImage( game.lev.width,game.lev.height, DYNAMICIMAGE )
-
-	Cls
-	SetColor( 255, 255, 255 )
-	SetAlpha( 1 )
-	SetRotation( 0 )
-	SetScale( 1, 1 )
-	DrawImage( img_arena_bg, 0,0 )
-	GrabImage( game.bg_cache, 0,0 )
-End Function
-'______________________________________________________________________________
-Function draw_walls( walls:TList )
-	
-'	For Local wall:BOX = EachIn walls
-'		SetViewport( wall.x,wall.y, wall.w,wall.h )
-'		DrawImage( img_walls_inner, arena_offset,arena_offset )
-'	Next
-'	For Local wall%[] = EachIn walls
-'		SetViewport( wall.x+2,wall.y+2, wall.w-4,wall.h-4 )
-'		DrawImage( img_walls_border, arena_offset,arena_offset )
-'	Next
-'	SetViewport( 0,0, window_w,window_h )
 End Function
 '______________________________________________________________________________
 Function draw_stats()
@@ -351,10 +325,10 @@ Function draw_stats()
 	'level number
 	x = window_w - stats_panel_w
 	y = 25
-	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
-	DrawText( "level", x, y ); y :+ 12
-	SetColor( 255, 255, 127 ); SetImageFont( get_font( "consolas_bold_50" ))
-	DrawText( player_level + 1, x, y ); y :+ 50
+'	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
+'	DrawText( "level", x, y ); y :+ 12
+'	SetColor( 255, 255, 127 ); SetImageFont( get_font( "consolas_bold_50" ))
+'	DrawText( player_level + 1, x, y ); y :+ 50
 	
 	'player cash
 	y :+ 50
@@ -362,7 +336,7 @@ Function draw_stats()
 	'ToDo: put some code here to comma-separate the displayed cash value
 	DrawText( "cash", x, y ); y :+ 12
 	SetColor( 50, 220, 50 ); SetImageFont( get_font( "consolas_bold_50" ))
-	DrawText( "$" + player_cash, x, y ); y :+ 50
+	DrawText( "$" + profile.cash, x, y ); y :+ 50
 		
 	'player health		
 	y :+ 50
@@ -459,6 +433,7 @@ Function screenshot()
 '	GrabImage( screen, 0,0 )
 '	save_screenshot_to_file( screen )
 End Function
+
 '______________________________________________________________________________
 'Procedural drawing methods
 Function generate_sand_image:TImage( w%, h% )
@@ -490,7 +465,7 @@ Function generate_sand_image:TImage( w%, h% )
 	Local img:TImage = LoadImage( pixmap )
 	Return img
 End Function
-
+'______________________________________________________________________________
 Function generate_level_walls_image:TImage( lev:LEVEL )
 	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
 	pixmap.ClearPixels( encode_ARGB( 0.0, 0,0,0 ))

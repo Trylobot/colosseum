@@ -984,7 +984,6 @@ End Type
 Const waypoint_radius# = 20.0
 Const friendly_blocking_scalar_projection_distance# = 20.0
 
-Const UNSPECIFIED% = 0
 Const CONTROL_TYPE_HUMAN% = 1
 Const CONTROL_TYPE_AI% = 2
 Const INPUT_KEYBOARD% = 1
@@ -1070,7 +1069,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			
 			Case INPUT_KEYBOARD, INPUT_KEYBOARD_MOUSE_HYBRID
 				'If engine is running
-				If FLAG_player_engine_running
+				If game.player_engine_running
 					'velocity
 					If KeyDown( KEY_W ) Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
 						avatar.drive( 1.0 )
@@ -1091,8 +1090,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					avatar.drive( 0.0 )
 					avatar.turn( 0.0 )
 					'start engine
-					If KeyHit( KEY_E ) And Not FLAG_player_engine_ignition
-						FLAG_player_engine_ignition = True
+					If KeyHit( KEY_E ) And Not game.player_engine_ignition
+						game.player_engine_ignition = True
 					End If
 				End If
 				
@@ -1110,7 +1109,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					EndIf
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 					For Local t:TURRET = EachIn game.player.turret_list
-						Local diff# = ang_wrap( t.ang - t.ang_to_cVEC( mouse_point ))
+						Local diff# = ang_wrap( t.ang - t.ang_to_cVEC( mouse ))
 						Local diff_mag# = Abs( diff )
 						If diff_mag > 5*t.max_ang_vel
 							If diff < 0

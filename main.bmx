@@ -27,12 +27,9 @@ Const arena_offset% = 50
 Const arena_w% = 500
 Const arena_h% = 500
 
-
 'external data load
 load_data_files()
 load_all_archetypes() 'this will be in data files, eventually
-main_game = New ENVIRONMENT
-game = main_game
 
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo
@@ -69,6 +66,7 @@ Local before%
 '?
 Repeat
 	
+	'game object
 	If Not FLAG_in_shop And Not FLAG_draw_help
 		If FLAG_in_menu
 			game = ai_menu_game
@@ -78,17 +76,22 @@ Repeat
 	Else
 		game = Null
 	End If
+
+	get_all_input()
 	
+	'physics update speed throttle
 	If (now() - before) > (1000/60) ' = 60 hertz
 		before = now()
-		get_all_input()
-		collide_all()
-		update_all()
+		
+		collide_all_objects()
+		update_all_objects()
+		
 	EndIf
 	
 	Cls
-	draw_all()
-	play_all()
+	
+	draw_all_graphics()
+	play_all_audio()
 
 '?Debug
 '	frame_count :+ 1
@@ -101,7 +104,7 @@ Repeat
 '	End If
 '	If game.player <> Null Then debug_overlay()
 '	If KeyHit( KEY_F4 ) And FLAG_game_in_progress
-'		find_path( player.pos_x,player.pos_y, mouse_point.x,mouse_point.y )
+'		find_path( player.pos_x,player.pos_y, mouse.x,mouse.y )
 '	End If
 '?
 	check_esc_held()

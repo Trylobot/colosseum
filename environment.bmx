@@ -7,6 +7,12 @@ EndRem
 '______________________________________________________________________________
 Const SPAWN_POINT_OFFSET% = 43 'delete me (please?)
 
+Function Create_ENVIRONMENT:ENVIRONMENT( human_participation% )
+	Local env:ENVIRONMENT = New ENVIRONMENT
+	env.human_participation = human_participation
+	Return env
+End Function
+
 Type ENVIRONMENT
 	Field origin:cVEC 'drawing origin
 	Field bg_cache:TImage 'background image
@@ -147,16 +153,19 @@ Type ENVIRONMENT
 	End Method
 	
 	Method spawn_player( archetype_index% )
-		If player <> Null And player.managed() Then player.unmanage()
-		player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
-		player_brain = Create_and_Manage_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, player_input_type )
-		player_spawn_point = New POINT'friendly_spawn_points[ Rand( 0, friendly_spawn_points.Length - 1 )]
-		player.pos_x = player_spawn_point.pos_x - 0.5
-		player.pos_y = player_spawn_point.pos_y - 0.5
-		player.ang = -90
-		player.snap_all_turrets()
-		FLAG_player_engine_ignition = False
-		FLAG_player_engine_running = False
+		Local new_player_spawn_point:POINT = random_spawn_point( ALIGNMENT_FRIENDLY )
+		If new_player_spawn_point <> Null
+			player_spawn_point = new_player_spawn_point
+			If player <> Null And player.managed() Then player.unmanage()
+			player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
+			player_brain = Create_and_Manage_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, profile.input_method )
+			player.pos_x = player_spawn_point.pos_x - 0.5
+			player.pos_y = player_spawn_point.pos_y - 0.5
+			player.ang = player_spawn_point.ang
+			player.snap_all_turrets()
+			player_engine_ignition = False
+			player_engine_running = False
+		End If
 	End Method
 	
 	Method spawn_pickup( x%, y% ) 'request; depends on probability
@@ -169,6 +178,27 @@ Type ENVIRONMENT
 				pkp.pos_x = x; pkp.pos_y = y
 				pkp.auto_manage()
 			End If
+		End If
+	End Method
+	
+	Method random_spawn_point:POINT( alignment% = UNSPECIFIED )
+		If alignment <> UNSPECIFIED And lev.spawners.Length > 0
+			Local list:TList = CreateList()
+			For Local i% = 0 To lev.spawners.Length-1
+				Local sp:SPAWNER = lev.spawners[i]
+				If sp.alignment = alignment
+					list.AddLast( sp.pos )
+				End If
+			Next
+			If Not list.IsEmpty()
+				Return POINT( list.ValueAtIndex( Rand( 0, list.Count()-1 )))
+			Else
+				Return Null
+			End If
+		Else If lev.spawners.Length > 0 'alignment = UNSPECIFIED
+			Return lev.spawners[ Rand( 0, lev.spawners.Length-1 )].pos
+		Else 'lev.spawners.Length = 0
+			Return Null
 		End If
 	End Method
 	

@@ -9,11 +9,9 @@ EndRem
 Function get_all_input()
 	
 	'mouse
-	mouse_point.x = MouseX()
-	mouse_point.y = MouseY()
-	
-	If game.player_brain <> Null And player_input_type = INPUT_KEYBOARD_MOUSE_HYBRID ..
-	And Not FLAG_in_menu
+	mouse.x = MouseX()
+	mouse.y = MouseY()
+	If game <> Null And game.human_participation And game.player_brain <> Null And profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
 		HideMouse()
 	Else
 		ShowMouse()
@@ -30,8 +28,7 @@ Function get_all_input()
 			get_current_menu().decrement_focus()
 		End If
 		If KeyHit( KEY_ENTER )
-			Local opt:MENU_OPTION = get_current_menu().get_focus()
-			menu_command( opt.command_code, opt.command_argument )
+			get_current_menu().execute_current_option()
 		End If
 	Else 'show in-game help
 		If KeyHit( KEY_F1 )
@@ -39,32 +36,39 @@ Function get_all_input()
 		End If
 	End If
 	
-	If KeyHit( KEY_ESCAPE ) 'show menu
-		If Not FLAG_in_menu
-			FLAG_in_menu = True
-			If FLAG_game_in_progress
-				menu_command( COMMAND_BACK_TO_MAIN_MENU )
-				get_menu( MENU_ID_MAIN_MENU ).set_enabled( "resume", True )
-				get_menu( MENU_ID_MAIN_MENU ).set_focus( "resume" )
-				FLAG_player_engine_running = False
-				'clear keystate listeners
-				KeyHit( KEY_DOWN )
-				KeyHit( KEY_RIGHT )
-				KeyHit( KEY_UP )
-				KeyHit( KEY_LEFT )
-			Else	
-				'this could not have happened with the current game logic
+	'game-specific input
+	If game <> Null
+
+		If KeyHit( KEY_ESCAPE ) 'show menu
+			If Not FLAG_in_menu
+				FLAG_in_menu = True
+				If game.game_in_progress
+					menu_command( COMMAND_BACK_TO_MAIN_MENU )
+					get_menu( MENU_ID_MAIN_MENU ).set_enabled( "resume", True )
+					get_menu( MENU_ID_MAIN_MENU ).set_focus( "resume" )
+					game.player_engine_running = False
+					'clear keystate listeners
+					KeyHit( KEY_DOWN )
+					KeyHit( KEY_RIGHT )
+					KeyHit( KEY_UP )
+					KeyHit( KEY_LEFT )
+				Else	
+					'this branch cannot be reached with the current game logic.. I think
+					'it would imply the user is not in a menu and not in a game.
+					'if that's the case.. then where is the user? limbo? idk
+				End If
+			Else 'FLAG_in_menu
+				menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			End If
-		Else 'FLAG_in_menu
-			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		End If
-	End If
-	
-	If Not FLAG_battle_in_progress And FLAG_waiting_for_player_to_exit_arena And KeyDown( KEY_R )
-		game.player.pos_x = game.player_spawn_point.pos_x
-		game.player.pos_y = game.player_spawn_point.pos_y
-		game.player.ang = game.player_spawn_point.ang
-		game.player.snap_all_turrets()
+
+		If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena And KeyDown( KEY_R )
+			game.player.pos_x = game.player_spawn_point.pos_x
+			game.player.pos_y = game.player_spawn_point.pos_y
+			game.player.ang = game.player_spawn_point.ang
+			game.player.snap_all_turrets()
+		End If
+
 	End If
 	
 End Function

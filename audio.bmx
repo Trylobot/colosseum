@@ -8,13 +8,15 @@ EndRem
 'Audio
 Global audio_channels:TList = CreateList()
 
-Function play_all()
+Function play_all_audio()
 	play_bg_music()
 	
-	If game.player_engine_ignition
-		start_player_engine()
+	If game <> Null
+		If game.player_engine_ignition
+			start_player_engine()
+		End If
+		tweak_engine_idle()
 	End If
-	tweak_engine_idle()
 	
 	Local ch:TChannel
 	Local ch_link:TLink = audio_channels.FirstLink(), next_ch_link:TLink
@@ -63,7 +65,7 @@ Function start_player_engine()
 End Function
 
 Function tweak_engine_idle()
-	If FLAG_player_engine_running	
+	If game.player_engine_running	
 		If engine_start <> Null
 			If Not ChannelPlaying( engine_start )
 				'stop engine_start

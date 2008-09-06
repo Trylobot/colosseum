@@ -6,7 +6,7 @@ EndRem
 
 '______________________________________________________________________________
 'Physics and Timing Update
-Function update_all()
+Function update_all_objects()
 	
 	'update body
 	If game <> Null
@@ -26,7 +26,7 @@ Function update_all()
 				game.waiting_for_player_to_enter_arena = False
 				If game.hostile_doors_status = ENVIRONMENT.DOOR_STATUS_CLOSED Then game.activate_doors( ALIGNMENT_HOSTILE )
 				game.battle_in_progress = True
-				game.battle_toggle_ts = now()
+				game.battle_state_toggle_ts = now()
 				game.waiting_for_player_to_exit_arena = True
 				game.spawn_enemies = True
 			End If
@@ -34,7 +34,7 @@ Function update_all()
 		'if there are no more enemies this level
 		If game.battle_in_progress And game.level_enemies_killed < game.level_enemy_count
 			game.battle_in_progress = False
-			game.battle_toggle_ts = now()
+			game.battle_state_toggle_ts = now()
 			If game.hostile_doors_status = ENVIRONMENT.DOOR_STATUS_OPEN Then game.activate_doors( ALIGNMENT_HOSTILE )
 			game.spawn_enemies = False
 		End If

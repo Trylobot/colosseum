@@ -22,16 +22,16 @@ Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.012 'energy multiplier for a
 Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.1 'energy multiplier for all agent-agent collisions
 Const WALL_NUDGE_DIST# = 0.2
 
-Function collide_all()
+Function collide_all_objects()
 	
 	'collision detection & resolution body
 	If game <> null
 	
 		Local list:TList
 		Local ag:COMPLEX_AGENT, other:COMPLEX_AGENT
-		Local proj:PROJECTILE, other_proj:PROJECTILE
+		Local proj:PROJECTILE
 		Local pkp:PICKUP
-		Local result:Object[], result_obj:Object
+		Local result:Object[]
 		
 		ResetCollisions()
 		
@@ -152,17 +152,17 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 	If ag.dead() 'some agent was killed
 		'show the player how much cash they got for killing this enemy, if they killed it
 		If proj.source_id = get_player_id()
-			player_cash :+ ag.cash_value
+			profile.cash :+ ag.cash_value
 		End If
 		'perhaps! spawneth teh phat lewts?!
-		spawn_pickup( ag.pos_x, ag.pos_y )
+		game.spawn_pickup( ag.pos_x, ag.pos_y )
 		'agent death
 		ag.die()
 		If game.player = ag 'player just died? (omgwtf)
-			FLAG_game_over = True
+			game.game_over = True
 		End If
 		If ag.political_alignment = ALIGNMENT_HOSTILE
-			level_enemies_remaining :- 1
+			game.level_enemies_killed :+ 1
 		End If
 	End If
 	'activate projectile impact emitter

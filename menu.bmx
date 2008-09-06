@@ -269,6 +269,11 @@ Type MENU
 		End Select
 	End Method
 	
+	Method execute_current_option()
+		Local opt:MENU_OPTION = get_focus()
+		menu_command( opt.command_code, opt.command_argument )
+	End Method
+	
 	Method wrap_focus()
 		If      focus > (options.Length - 1) Then focus = 0 ..
 		Else If focus < 0                    Then focus = (options.Length - 1)
@@ -413,9 +418,9 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			End If
 			
 		Case COMMAND_PLAYER_INPUT_TYPE
-			player_input_type = command_argument
+			profile.input_method = command_argument
 			If game.player_brain <> Null
-				game.player_brain.input_type = player_input_type
+				game.player_brain.input_type = profile.input_method
 			End If
 			
 		Case COMMAND_EDIT_LEVEL

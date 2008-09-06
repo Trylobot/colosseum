@@ -7,12 +7,13 @@ EndRem
 '______________________________________________________________________________
 'Generic globals
 Const INFINITY% = -1
+Const UNSPECIFIED% = -1
 Const PICKUP_PROBABILITY# = 0.50 'chance of an enemy dropping a pickup (randomly selected from all pickups)
 Const arena_lights_fade_time% = 1000
 Global level_intro_time% = 2000
 
 'environmental objects
-Global mouse_point:cVEC = New cVEC
+Global mouse:cVEC = New cVEC
 Global main_game:ENVIRONMENT 'game in which player participates
 Global ai_menu_game:ENVIRONMENT 'menu ai demo environment
 Global game:ENVIRONMENT 'current game environment
@@ -63,7 +64,7 @@ Function get_player_id%()
 End Function
 '______________________________________________________________________________
 Global current_level_index% = 0
-Global all_levels$ = [ ..
+Global all_levels$[] = [ ..
 	"data/test.colosseum_level" ]
 
 '______________________________________________________________________________
@@ -73,7 +74,9 @@ Function core_resume_game()
 End Function
 
 Function core_begin_new_game( archetype% )
+	main_game = Create_ENVIRONMENT( True )
 	FLAG_in_menu = False
+	game = main_game
 	profile.archetype = archetype
 	game.clear()
 	current_level_index = 0
