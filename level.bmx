@@ -118,9 +118,11 @@ End Function
 Const LINE_TYPE_HORIZONTAL% = 1
 Const LINE_TYPE_VERTICAL% = 2
 
+'this needs to move to PATHING_REGIONS future object definition
 Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
 Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
 
+'this needs to move to CELL
 Const COORDINATE_INVALID% = -1
 
 Function Create_LEVEL:LEVEL( width%, height% )
@@ -291,11 +293,47 @@ Type LEVEL Extends MANAGED_OBJECT
 		Return c
 	End Method
 	
-	Method midpoint:cVEC( c:CELL )
-		Local m:cVEC = New cVEC
-		m.x = avg( vertical_divs[c.col], vertical_divs[c.col+1] )
-		m.y = avg( horizontal_divs[c.row], horizontal_divs[c.row+1] )
-		Return m
+	Method in_bounds%( c:CELL )
+		Return (c.row >= 0 And c.row < Self.row_count And c.col >= 0 And c.col < Self.col_count)
+	End Method
+	
+	Method get_box_of:BOX( c:CELL )
+		Local b:BOX = New BOX
+		Local tl:cVEC = get_corner_of( CELL.CORNER_TOP_LEFT, c )
+		Local br:cVEC = get_corner_of( CELL.CORNER_BOTTOM_RIGHT, c )
+		b.x = tl.x
+		b.y = tl.y
+		b.w = br.x - tl.x
+		b.h = br.y - tl.y
+		Return b
+	End Method
+	
+	Method get_corner_of:cVEC( corner%, c:CELL )
+		If in_bounds( c )
+			Select corner
+				Case CELL.CORNER_TOP_LEFT
+					Return cVEC.Create( vertical_divs[c.col], horizontal_divs[c.row] )
+				Case CELL.CORNER_TOP_RIGHT
+					Return cVEC.Create( vertical_divs[c.col+1], horizontal_divs[c.row] )
+				Case CELL.CORNER_BOTTOM_RIGHT
+					Return cVEC.Create( vertical_divs[c.col+1], horizontal_divs[c.row+1] )
+				Case CELL.CORNER_BOTTOM_LEFT
+					Return cVEC.Create( vertical_divs[c.col], horizontal_divs[c.row+1] )
+			End Select
+		Else
+			Return Null
+		End If
+	End Method
+	
+	Method get_midpoint_of:cVEC( c:CELL )
+		If in_bounds( c )
+			Local m:cVEC = New cVEC
+			m.x = avg( vertical_divs[c.col], vertical_divs[c.col+1] )
+			m.y = avg( horizontal_divs[c.row], horizontal_divs[c.row+1] )
+			Return m
+		Else
+			Return Null
+		End If
 	End Method
 	
 	Method enemy_count%()
@@ -304,6 +342,21 @@ Type LEVEL Extends MANAGED_OBJECT
 			count :+ spawners[index].count_all_squadmembers()
 		Next
 		Return count
+	End Method
+	
+	Method get_cardinal_blocking_neighbors:TList( c:CELL )
+		If in_bounds( c )
+			Local list:TList = CreateList()
+			For Local dir% = EachIn CELL.ALL_CARDINAL_DIRECTIONS
+				Local neighbor:CELL = c.move( dir )
+				If (Not in_bounds( neighbor )) Or (path_regions[ neighbor.row, neighbor.col ] = PATH_BLOCKED)
+					list.AddLast( neighbor )
+				End If
+			Next
+			Return list
+		Else 'Not in_bounds( c )
+			Return Null
+		End If
 	End Method
 	
 	Method to_json:TJSONObject()

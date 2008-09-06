@@ -492,7 +492,7 @@ Function generate_sand_image:TImage( w%, h% )
 	Return img
 End Function
 
-Function generate_walls_image:TImage( w%, h%, walls:TList )
+Function generate_walls_image:TImage( w%, h%, lev:LEVEL )
 	
 	
 End Function
