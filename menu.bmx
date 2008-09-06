@@ -84,6 +84,7 @@ Global menu_font:TImageFont = get_font( "consolas_24" )
 
 Const MENU_TYPE_SELECT_ONE_VERTICAL_LIST% = 1
 Const MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST% = 2
+Const MENU_TYPE_FILE_SELECTOR% = 3
 
 Type MENU
 	Field name$ 'display to user

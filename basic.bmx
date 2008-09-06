@@ -177,6 +177,7 @@ Type MANAGED_OBJECT
 End Type
 '______________________________________________________________________________
 Global next_managed_object_id% = 0
+'this should be a global member of the MANAGED_OBJECT class
 Const NULL_ID% = -1
 
 Function get_new_id%()
@@ -473,15 +474,15 @@ Type pVEC 'polar coordinate system 2D vector
 End Type
 
 '______________________________________________________________________________
-Const RANGE_DISTRIBUTION_FLAT% = 0
-Const RANGE_DISTRIBUTION_LINEAR% = 1
-Const RANGE_DISTRIBUTION_QUADRATIC% = 2
-Const RANGE_DISTRIBUTION_ROOT% = 3
-Const RANGE_DISTRIBUTION_EXPONENTIAL% = 4
-Const RANGE_DISTRIBUTION_LOGARITHMIC% = 5
-Const RANGE_DISTRIBUTION_INVERSE% = 6
-
 Type RANGE
+	Global RANGE_DISTRIBUTION_FLAT% = 0
+	Global RANGE_DISTRIBUTION_LINEAR% = 1
+	Global RANGE_DISTRIBUTION_QUADRATIC% = 2
+	Global RANGE_DISTRIBUTION_ROOT% = 3
+	Global RANGE_DISTRIBUTION_EXPONENTIAL% = 4
+	Global RANGE_DISTRIBUTION_LOGARITHMIC% = 5
+	Global RANGE_DISTRIBUTION_INVERSE% = 6
+
 	Field low#, high# 'absolute min and max of any returned value
 	Field low_eq_high% '{true|false}
 	'Field distribution_type% '{flat|linear|quadratic|root|exponential|logarithmic|inverse}

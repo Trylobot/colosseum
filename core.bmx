@@ -198,11 +198,13 @@ Function check_esc_held()
 End Function
 
 Function draw_instaquit_progress()
-	SetAlpha( 0.5 )
+	Local alpha_multiplier# = time_alpha_pct( esc_press_ts + esc_held_progress_bar_show_time_required, esc_held_progress_bar_show_time_required )
+	
+	SetAlpha( 0.5 * alpha_multiplier )
 	SetColor( 0, 0, 0 )
 	DrawRect( 0,0, window_w,window_h )
 	
-	SetAlpha( 1 )
+	SetAlpha( 1.0 * alpha_multiplier )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
