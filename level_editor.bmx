@@ -292,8 +292,7 @@ Function edit_level:LEVEL( lev:LEVEL )
 					End If
 				Else
 					If mouse_down_1 And Not MouseDown( 1 )
-						lev.add_spawner( new_spawner )
-						new_spawner = new_spawner.clone()
+						lev.add_spawner( new_spawner.clone() )
 					End If
 				End If
 				Local alpha_mod#

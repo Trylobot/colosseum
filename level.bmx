@@ -11,6 +11,7 @@ Type SPAWNER
 	
 	Field class% '{gated_factory|turret_anchor}
 	Field squads%[][] 'grouped references to COMPLEX_AGENT prototypes; to be "baked" at spawn-time; turret anchors ignore all entries beyond the first.
+	Field size% 'cached result of count_all_squadmembers()
 	Field pos:POINT 'initial state to be conferred on each spawned agent; velocity and acceleration ignored for turret anchors
 	Field delay_time%[] 'time delay between squad queueing; ignored for turret anchors
 	Field alignment% '{friendly|hostile}
@@ -55,6 +56,7 @@ Type SPAWNER
 	Method add_new_squadmember( squad_index%, archetype% )
 		squads[squad_index] = squads[squad_index][..squads[squad_index].Length+1]
 		squads[squad_index][squads[squad_index].Length-1] = archetype
+		size = count_all_squadmembers()
 	End Method
 	
 	Method remove_last_squadmember( squad_index% )
@@ -108,6 +110,7 @@ Function Create_SPAWNER_from_json:SPAWNER( json:TJSON )
 	Local sp:SPAWNER = New SPAWNER
 	sp.class = json.GetNumber( "class" )
 	sp.squads = Create_Int_array_array_from_TJSONArray( json.GetArray( "squads" ))
+	sp.size = sp.count_all_squadmembers()
 	sp.pos = Create_POINT_from_json( TJSON.Create( json.GetObject( "pos" )))
 	sp.delay_time = json.GetArrayInt( "delay_time" )
 	sp.alignment = json.GetNumber( "alignment" )

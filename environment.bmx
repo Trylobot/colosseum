@@ -5,7 +5,7 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const SPAWN_POINT_OFFSET% = 43 'delete me (please?)
+Const SPAWN_POINT_POLITE_DISTANCE% = 35.0 'delete me (please?)
 
 Function Create_ENVIRONMENT:ENVIRONMENT( human_participation% )
 	Local env:ENVIRONMENT = New ENVIRONMENT
@@ -23,6 +23,8 @@ Type ENVIRONMENT
 	Field walls:TList 'TList<BOX> contains all of the wall rectangles of the level
 	Field spawn_cursor:CELL[] 'for each spawner, a (row,col) pointer indicating the current agent to be spawned
 	Field spawn_ts%[] 'for each spawner, the timestamp of the spawn process start
+	Field last_spawned:COMPLEX_AGENT[] 'for each spawner, a reference to the last spawned enemy (so they don't overlap)
+	Field spawn_counter%[] 'for each spawner, a count of how many enemies have been spawned so far
 	
 	'Field enemy_spawn_queue:TList 'TList<COMPLEX_AGENT>
 	'Field cur_squad:TList 'TList<COMPLEX_AGENT>
@@ -115,6 +117,10 @@ Type ENVIRONMENT
 		player = Null
 	End Method
 	
+	Method load_next_level()
+		load_level( core_get_next_level_id() )
+	End Method
+	
 	Method load_level( level_path$ )
 		'needs error-checking
 		lev = Create_LEVEL_from_json( TJSON.Create( LoadString( level_path )))
@@ -141,19 +147,60 @@ Type ENVIRONMENT
 		'spawn queues
 		spawn_cursor = New CELL[lev.spawners.Length] 'automagically initialized to (0, 0); exactly where it needs to be :)
 		spawn_ts = New Int[lev.spawners.Length]
+		last_spawned = New COMPLEX_AGENT[lev.spawners.Length]
+		spawn_counter = New Int[lev.spawners.Length]
+		For Local i% = 0 To lev.spawners.Length-1
+			spawn_cursor[i] = New CELL
+			spawn_ts[i] = now()
+			last_spawned[i] = Null
+			spawn_counter[i] = 0
+		Next
 		'flags
-		
+		waiting_for_player_to_enter_arena = True
 		level_enemy_count = lev.enemy_count()
 		level_enemies_killed = 0
-		'..?
-	End Method
-	
-	Method load_next_level()
-		load_level( core_get_next_level_id() )
+		'more..?
 	End Method
 	
 	Method spawning_system_update()
-		'..?
+		'for each spawner
+		Local sp:SPAWNER, cur:CELL, ts%, last:COMPLEX_AGENT, counter%
+		For Local i% = 0 To lev.spawners.Length-1
+			sp = lev.spawners[i]
+			cur = spawn_cursor[i]
+			ts = spawn_ts[i]
+			last = last_spawned[i]
+			counter = spawn_counter[i]
+			'if this spawner has more enemies to spawn
+			If counter < sp.size
+				'if it is time to spawn this spawner's current squad
+				If now() - ts >= sp.delay_time[cur.row]
+					'if this squad is just started, or the last spawned enemy is far enough away
+					If cur.col = 0 Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
+						'spawn the enemy
+						last_spawned[i] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[sp.squads[cur.row][cur.col]], ALIGNMENT_HOSTILE ))
+						last = last_spawned[i]
+						Create_CONTROL_BRAIN( last, CONTROL_TYPE_AI,, 10, 1000, 1000 ).manage( control_brain_list )
+						last.manage( hostile_agent_list )
+						last.pos_x = sp.pos.pos_x
+						last.pos_y = sp.pos.pos_y
+						last.ang = sp.pos.ang
+						last.snap_all_turrets()
+						'counter
+						spawn_counter[i] :+ 1
+						cur.col :+ 1
+						'if that last guy was the last squadmember of the current squad
+						If cur.col > sp.squads[cur.row].Length-1
+							'point to first squadmember of spawner's next squad
+							cur.col = 0
+							cur.row :+ 1
+							'start delay timer
+							spawn_ts[i] = now()
+						End If
+					End If
+				End If
+			End If
+		Next
 	End Method
 	
 	Method spawn_player( archetype_index% )
@@ -269,7 +316,7 @@ Type ENVIRONMENT
 	End Method
 
 	Method point_inside_arena%( p:POINT )
-		
+		Return True
 	End Method
 	
 End Type

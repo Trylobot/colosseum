@@ -1462,14 +1462,12 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
 			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
 			'for each wall in the level
-			For Local cur_wall_list:TList = EachIn game.walls
-				For Local wall%[] = EachIn cur_wall_list
-					'if the line connecting this brain's avatar with its target intersects the wall
-					If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall[1],wall[2])), cVEC( cVEC.Create(wall[3],wall[4])) )
-						'then the avatar cannot see its target
-						Return False
-					End If
-				Next
+			For Local wall:BOX = EachIn game.walls
+				'if the line connecting this brain's avatar with its target intersects the wall
+				If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall.x,wall.y)), cVEC( cVEC.Create(wall.x+wall.w,wall.y+wall.h)) )
+					'then the avatar cannot see its target
+					Return False
+				End If
 			Next
 			'after checking all the walls, still haven't returned; avatar can therefore see its target
 			'however, the shot might be blocked by a friendly

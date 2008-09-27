@@ -102,8 +102,8 @@ Repeat
 '	If KeyHit( KEY_F4 ) And FLAG_game_in_progress
 '		find_path( player.pos_x,player.pos_y, mouse.x,mouse.y )
 '	End If
-If KeyHit( KEY_F4 )
-	DebugLog "game.walls.Count()? "+game.walls.Count()
+If KeyDown( KEY_F4 )
+'	DebugLog "game.walls.Count()? "+game.walls.Count()
 '	DebugLog "game == main_game? "+boolean_to_string( address(game) = address(main_game) )
 '	DebugLog "game.control_brain_list.Count()? "+game.control_brain_list.Count()
 '	DebugLog "game.control_brain_list.First() == game.player_brain? "+boolean_to_string( address(game.control_brain_list.First()) = address(game.player_brain ))
