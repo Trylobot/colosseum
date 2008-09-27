@@ -118,9 +118,13 @@ Type ENVIRONMENT
 	Method load_level( level_path$ )
 		'needs error-checking
 		lev = Create_LEVEL_from_json( TJSON.Create( LoadString( level_path )))
-		'pathing
+		'pathing (AI bots)
 		pathing = PATHING_STRUCTURE.Create( lev )
-		'images
+		'walls (Collisions)
+		For Local cursor:CELL = EachIn lev.get_blocking_cells()
+			walls.AddLast( lev.get_wall( cursor ))
+		Next
+		'images (Drawing)
 		bg_cache = generate_sand_image( lev.width, lev.height )
 		fg_cache = generate_level_walls_image( lev )
 		'doors

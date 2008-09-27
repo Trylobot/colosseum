@@ -69,19 +69,17 @@ Function collide_all_objects()
 		Next
 		
 		'collisions between {walls|doors} and {agents|projectiles}
-		For Local cur_wall_list:TList = EachIn game.walls
-			For Local wall:BOX = EachIn cur_wall_list
-				SetRotation( 0 )
-				result = CollideRect( wall.x,wall.y, wall.w,wall.h, AGENT_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
-				For ag = EachIn result
-					'COLLISION! between {ag} and {wall}
-					collision_agent_wall( ag, wall )
-				Next
-				result = CollideRect( wall.x,wall.y, wall.w,wall.h, PROJECTILE_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
-				For proj = EachIn result
-					'COLLISION! between {proj} and {wall}
-					collision_projectile_wall( proj, wall )
-				Next
+		For Local wall:BOX = EachIn game.walls
+			SetRotation( 0 )
+			result = CollideRect( wall.x,wall.y, wall.w,wall.h, AGENT_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
+			For ag = EachIn result
+				'COLLISION! between {ag} and {wall}
+				collision_agent_wall( ag, wall )
+			Next
+			result = CollideRect( wall.x,wall.y, wall.w,wall.h, PROJECTILE_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
+			For proj = EachIn result
+				'COLLISION! between {proj} and {wall}
+				collision_projectile_wall( proj, wall )
 			Next
 		Next
 		For Local cur_door_list:TList = EachIn game.all_door_lists

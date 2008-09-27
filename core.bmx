@@ -18,6 +18,7 @@ Global main_game:ENVIRONMENT 'game in which player participates
 Global ai_menu_game:ENVIRONMENT 'menu ai demo environment
 Global game:ENVIRONMENT 'current game environment
 Global profile:PLAYER_PROFILE = New PLAYER_PROFILE
+profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
 
 'screen state flags
 Global FLAG_in_menu% = True

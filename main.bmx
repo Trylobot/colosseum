@@ -22,7 +22,7 @@ Const window_w% = 1024
 Const window_h% = 768
 Const fullscreen% = False
 
-'these are here to make the old code work
+'these are here to make the old code work (before levels were data-driven)
 Const arena_offset% = 50
 Const arena_w% = 500
 Const arena_h% = 500
@@ -69,14 +69,10 @@ Repeat
 	get_all_input()
 	
 	'game object
-	If Not FLAG_in_shop And Not FLAG_draw_help
-		If FLAG_in_menu
-			game = ai_menu_game
-		Else
-			game = main_game
-		End If
+	If FLAG_in_menu
+		game = ai_menu_game
 	Else
-		game = Null
+		game = main_game
 	End If
 
 	'physics update speed throttle
@@ -107,9 +103,10 @@ Repeat
 '		find_path( player.pos_x,player.pos_y, mouse.x,mouse.y )
 '	End If
 If KeyHit( KEY_F4 )
-	DebugLog "game == main_game? "+boolean_to_string( address(game) = address(main_game) )
-	DebugLog "game.control_brain_list.Count()? "+game.control_brain_list.Count()
-	DebugLog "game.control_brain_list.First() == game.player_brain? "+boolean_to_string( address(game.control_brain_list.First()) = address(game.player_brain ))
+	DebugLog "game.walls.Count()? "+game.walls.Count()
+'	DebugLog "game == main_game? "+boolean_to_string( address(game) = address(main_game) )
+'	DebugLog "game.control_brain_list.Count()? "+game.control_brain_list.Count()
+'	DebugLog "game.control_brain_list.First() == game.player_brain? "+boolean_to_string( address(game.control_brain_list.First()) = address(game.player_brain ))
 End If
 ?
 	check_esc_held()
