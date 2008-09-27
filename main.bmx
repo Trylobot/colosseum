@@ -47,8 +47,8 @@ SetBlend( ALPHABLEND )
 'MAIN
 Local before%
 ?Debug
+Global last_frame_ts%, time_count%, frame_count%, fps%
 'debug_load_data()
-'Global last_frame_ts%, time_count%, frame_count%, fps%
 'menu_command( COMMAND_EDIT_LEVEL )
 'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
 'Cls
@@ -90,24 +90,17 @@ Repeat
 	play_all_audio()
 
 ?Debug
-'	frame_count :+ 1
-'	time_count :+ (now() - last_frame_ts)
-'	last_frame_ts = now()
-'	If time_count >= 1000
-'		fps = frame_count
-'		frame_count = 0
-'		time_count = 0
-'	End If
-'	If game.player <> Null Then debug_overlay()
-'	If KeyHit( KEY_F4 ) And FLAG_game_in_progress
-'		find_path( player.pos_x,player.pos_y, mouse.x,mouse.y )
-'	End If
-If KeyDown( KEY_F4 )
-'	DebugLog "game.walls.Count()? "+game.walls.Count()
-'	DebugLog "game == main_game? "+boolean_to_string( address(game) = address(main_game) )
-'	DebugLog "game.control_brain_list.Count()? "+game.control_brain_list.Count()
-'	DebugLog "game.control_brain_list.First() == game.player_brain? "+boolean_to_string( address(game.control_brain_list.First()) = address(game.player_brain ))
-End If
+	frame_count :+ 1
+	time_count :+ (now() - last_frame_ts)
+	last_frame_ts = now()
+	If time_count >= 1000
+		fps = frame_count
+		frame_count = 0
+		time_count = 0
+	End If
+	If game <> Null And game.player <> Null
+		debug_overlay()
+	End If
 ?
 	check_esc_held()
 	

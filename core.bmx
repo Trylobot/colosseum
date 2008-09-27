@@ -83,7 +83,6 @@ Function core_begin_new_game( archetype% )
 	game.load_level( all_levels[current_level_index] )
 	game.game_in_progress = True
 	game.spawn_player( profile.archetype )
-	mousex
 End Function
 
 Function core_get_next_level_id$()

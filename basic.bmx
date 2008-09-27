@@ -147,6 +147,13 @@ Function time_alpha_pct#( ts%, time%, in% = True )
 		End If
 	End If
 End Function
+'______________________________________________________________________________
+Function pad$( str$, width%, pad$ = " " )
+	While str.Length < width
+		str = pad + str
+	EndWhile
+	Return str
+End Function
 
 '______________________________________________________________________________
 Type MANAGED_OBJECT

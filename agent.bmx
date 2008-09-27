@@ -1407,13 +1407,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method waypoint_reached%()
-		If waypoint <> Null
-			dist_to_target = avatar.dist_to_cVEC( waypoint )
-			If dist_to_target <= WAYPOINT_RADIUS
-				Return True
-			Else
-				Return False
-			End If
+		If waypoint <> Null And avatar.dist_to_cVEC( waypoint ) <= waypoint_radius
+			Return True
 		Else
 			Return False 'sir, where are we going? LOL :D
 		End If

@@ -471,28 +471,38 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 	Local blocking_cells:TList = lev.get_blocking_cells()
 	Local wall:BOX
 	Local neighbor%[]
+	Local max_dist% = 4
 	'for each blocking region
 	For Local c:CELL = EachIn blocking_cells
 		wall = lev.get_wall( c )
 		neighbor = lev.get_cardinal_blocking_neighbor_info( c ) 'in same order as CELL.ALL_CARDINAL_DIRECTIONS
+		Local dist%[] = New Int[4] 'TOP, RIGHT, BOTTOM, LEFT
 		'for each pixel of the region to be rendered
-		For Local px% = wall.x To wall.x + wall.w - 1
-			For Local py% = wall.y To wall.y + wall.h - 1
-				Local dist#[] = [ -1.0, -1.0, -1.0, -1.0 ]
-				If Not neighbor[0] Then dist[0] = py - wall.y          'TOP
-				If Not neighbor[1] Then dist[1] = wall.x + wall.w - px 'RIGHT
-				If Not neighbor[2] Then dist[2] = wall.y + wall.h - py 'BOTTOM
-				If Not neighbor[3] Then dist[3] = px - wall.x          'LEFT
-				Select Int( minimum( dist ))
-					Default
-					'Case 0, 2 'outermost border line with companion
-						pixmap.WritePixel( px,py, encode_ARGB( 0.25, 255,255,255 ))
-					'Case 1, 3 'slightly inset contrast line with companion
-					'	pixmap.WritePixel( px,py, encode_ARGB( 0.25, 100, 80, 60 ))
-					'Default 'inner area, and any area adjacent to another wall
-					'	pixmap.WritePixel( px,py, encode_ARGB( 0.25, 158,150,142 ))
+		dist[0] = 0 'TOP
+		dist[2] = wall.h 'BOTTOM
+		For Local px% = wall.x To wall.x + wall.w
+			dist[1] = wall.w 'RIGHT
+			dist[3] = 0 'LEFT
+			For Local py% = wall.y To wall.y + wall.h
+				If px >= lev.width Or py >= lev.height Then Continue
+				Local neighbor_dist#[] = New Float[4]
+				For Local index% = 0 To 3
+					If Not neighbor[index] Then neighbor_dist[index] = dist[index] ..
+					Else                        neighbor_dist[index] = max_dist
+				Next
+				Select Int( minimum( neighbor_dist ))
+					Case 0, 2 'outermost border line with companion
+						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 255,255,255 ))
+					Case 1, 3 'slightly inset contrast line with companion
+						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 100, 80, 60 ))
+					Default 'inner area, and any area adjacent to another wall
+						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 158,150,142 ))
 				End Select
+				dist[1] :- 1
+				dist[3] :+ 1
 			Next
+			dist[0] :+ 1
+			dist[2] :- 1
 		Next
 	Next
 	Local img:TImage = LoadImage( pixmap )

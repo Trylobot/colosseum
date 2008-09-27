@@ -362,7 +362,7 @@ Type LEVEL Extends MANAGED_OBJECT
 	Method get_cardinal_blocking_neighbor_info:Int[]( c:CELL )
 		If in_bounds( c )
 			Local info%[] = [ False, False, False, False ]
-			For Local index% = 0 To 3
+			For Local index% = 0 To CELL.ALL_CARDINAL_DIRECTIONS.Length-1
 				Local neighbor:CELL = c.move( CELL.ALL_CARDINAL_DIRECTIONS[index] )
 				If (Not in_bounds( neighbor )) Or (path_regions[ neighbor.row, neighbor.col ] = PATH_BLOCKED)
 					info[index] = True

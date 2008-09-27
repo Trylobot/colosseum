@@ -75,6 +75,7 @@ Type ENVIRONMENT
 	Field player:COMPLEX_AGENT 'reference to that player object
 	
 	Method New()
+		origin = Create_cVEC( 0, 0 )
 		walls = CreateList()
 		particle_list_background = CreateList()
 		particle_list_foreground = CreateList()

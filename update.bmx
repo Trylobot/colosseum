@@ -48,9 +48,9 @@ Function update_all_objects()
 		End If
 		
 		'spawning
-		If game.spawn_enemies
-			game.spawning_system_update()
-		End If
+'		If game.spawn_enemies
+'			game.spawning_system_update()
+'		End If
 		
 		'pickups
 		For Local pkp:PICKUP = EachIn game.pickup_list

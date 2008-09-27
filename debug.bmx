@@ -7,34 +7,33 @@ EndRem
 'This entire file is ignored if not in debug mode
 ?Debug
 ''______________________________________________________________________________
-'Global sx%, sy%
-'Const SPAWN_OFF% = 0, SPAWN_HOSTILES% = 1, SPAWN_FRIENDLIES% = 2
-'Global FLAG_debug_overlay% = False, FLAG_spawn_mode% = SPAWN_HOSTILES
-'Global spawn_archetype% = enemy_index_start, spawn_agent:COMPLEX_AGENT
-'Global global_start:CELL, global_goal:CELL
-''Global maus_x#, maus_y#, speed# = 1, r#, a#, px#, py#
-''Global wait_ts%, wait_time%, r%, c%, mouse:CELL
-''Const PATH_UNSET% = 1000
-''Global path_type% = PATH_UNSET, mouse_path_type%
-''Global p:POINT = Create_POINT( arena_offset+arena_w/2, arena_offset+arena_h/2, -90 )
-''Global w:WIDGET[] = New WIDGET[2]
-''w[0] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[0].parent = p; w[0].attach_at( arena_offset/2, -arena_offset/2, 180 - 45 )
-''w[1] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[1].parent = p; w[1].attach_at( arena_offset/2, arena_offset/2, 180 + 45 )
-''
+Const SPAWN_OFF% = 0, SPAWN_HOSTILES% = 1, SPAWN_FRIENDLIES% = 2
+Global FLAG_spawn_mode% = SPAWN_OFF
+Global spawn_archetype% = enemy_index_start, spawn_agent:COMPLEX_AGENT
+Global global_start:CELL, global_goal:CELL
+'Global maus_x#, maus_y#, speed# = 1, r#, a#, px#, py#
+'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
+'Const PATH_UNSET% = 1000
+'Global path_type% = PATH_UNSET, mouse_path_type%
+'Global p:POINT = Create_POINT( arena_offset+arena_w/2, arena_offset+arena_h/2, -90 )
+'Global w:WIDGET[] = New WIDGET[2]
+'w[0] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[0].parent = p; w[0].attach_at( arena_offset/2, -arena_offset/2, 180 - 45 )
+'w[1] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[1].parent = p; w[1].attach_at( arena_offset/2, arena_offset/2, 180 + 45 )
+'
 ''______________________________________________________________________________
 'Function debug_ts( message$ )
 '	DebugLog "" + now() + " :: " + message
 'End Function
 '
-'Function debug_drawtext( message$ )
-'	SetImageFont( get_font( "consolas_10" ))
-'	SetAlpha( 1 )
-'	SetColor( 0, 0, 0 )
-'	DrawText( message, sx+1, sy+1 )
-'	SetColor( 255, 255, 255 )
-'	DrawText( message, sx, sy )
-'	sy :+ 10
-'End Function
+Function debug_drawtext( message$ )
+	SetImageFont( get_font( "consolas_10" ))
+	SetAlpha( 1 )
+	SetColor( 0, 0, 0 )
+	DrawText( message, sx+1, sy+1 )
+	SetColor( 255, 255, 255 )
+	DrawText( message, sx, sy )
+	sy :+ 10
+End Function
 ''______________________________________________________________________________
 ''Function debug_load_data()
 ''	DebugLog( " debug load_data" )
@@ -56,218 +55,231 @@ EndRem
 ''		DebugLog( " image_map -> "+key+" -> { size("+image.width+","+image.height+"), handle("+Int(image.handle_x)+","+Int(image.handle_y)+"), frames:"+image.frames.Length )
 ''	Next
 ''End Function
-''______________________________________________________________________________
-'Global cb:CONTROL_BRAIN = Null
-'
-'Function debug_overlay()
-'	
-'	If KeyHit( KEY_TILDE )
-'		FLAG_debug_overlay = Not FLAG_debug_overlay
-'	End If
-'	
-'	If FLAG_debug_overlay And Not FLAG_in_menu
-'	
-'		'erase stats
-'		SetColor( 0, 0, 0 )
-'		SetAlpha( 1 )
-'		DrawRect( 2*arena_offset+arena_w,0, 2000,2000 )
-'		
-'		'fps
-'		sx = 2*arena_offset+arena_w+4; sy = 3
-'		debug_drawtext( "fps -> "+fps )
-'		'debug_drawtext( "enemies -> "+hostile_agent_list.Count() )
-'		
-'		'show pathing grid
-'		Local cursor:CELL = New CELL
-'		For cursor.row = 0 To pathing_grid_h - 1
-'			For cursor.col = 0 To pathing_grid_w - 1
-'				'blockable/passing grid
-'				SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
-'				If pathing.grid( cursor ) = PATH_BLOCKED
-'					DrawRect( cursor.col*cell_size + pathing_grid_origin.x + 1, cursor.row*cell_size + pathing_grid_origin.y + 1, cell_size - 2, cell_size - 2 )
-'				End If
-'			Next
-'		Next
-'
-'		Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
-'		SetColor( 255, 255, 255 )
-'		
-'		If KeyHit( KEY_Q )
-'			cb = Null
-'			For Local brain:CONTROL_BRAIN = EachIn control_brain_list
-'				If brain.avatar.dist_to( mouse ) <= 15
-'					cb = brain
-'					Exit
-'				End If
-'			Next
-'		Else
-'			For Local brain:CONTROL_BRAIN = EachIn control_brain_list
-'				If brain.avatar.dist_to( mouse ) <= 15
-'					SetColor( 255, 255, 255 )
-'					SetAlpha( 0.333 )
-'					DrawOval( brain.avatar.pos_x-15,brain.avatar.pos_y-15, 30,30 )
-'				End If
-'			Next
-'		End If
-'		
-'		If cb <> Null
-'			'draw info
-'			sx = mouse.pos_x + 16; sy = mouse.pos_y
-'			debug_drawtext( cb.avatar.name )
-'			If cb.target <> Null
-'				debug_drawtext( "target -> " + cb.target.name )
-'			Else 'cb.target == Null
-'				debug_drawtext( "no target" )
-'			End If
-'			If cb.sighted_target
-'				debug_drawtext( "can see target" )
-'				SetColor( 255, 255, 255 )
-'			Else
-'				debug_drawtext( "no line-of-sight to target" )
-'				SetColor( 255, 32, 32 )
-'			End If
-'			If cb.target <> Null
-'				SetLineWidth( 1 )
-'				SetAlpha( 0.5 )
-'				DrawLine( cb.avatar.pos_x,cb.avatar.pos_y, cb.target.pos_x,cb.target.pos_y )
-'				SetColor( 255, 255, 255 )
-'				SetAlpha( 1 )
-'			End If
-'			
-'			If cb.path <> Null
-'				debug_drawtext( "path to target displayed" )
-'				'start and goal
-'				Local start:cVEC = cVEC( cb.path.First() )
-'				Local goal:cVEC = cVEC( cb.path.Last() )
-'				SetColor( 64, 255, 64 ); SetAlpha( 0.5 )
-'				DrawRect( start.x - cell_size/2 + 1, start.y - cell_size/2 + 1, cell_size - 2, cell_size - 2 )
-'				SetColor( 64, 64, 255 ); SetAlpha( 0.5 )
-'				DrawRect( goal.x - cell_size/2 + 1, goal.y - cell_size/2 + 1, cell_size - 2, cell_size - 2 )
-'				'path
-'				Local v0:cVEC, v1:cVEC
-'				SetColor( 255, 255, 255 )
-'				For Local v1:cVEC = EachIn cb.path
-'					If v0 <> Null Then DrawLine( v0.x,v0.y, v1.x,v1.y ) Else v0 = New cVEC
-'					v0.x = v1.x; v0.y = v1.y
-'				Next
-'			Else
-'				debug_drawtext( "no path" )
-'			End If
-'			
-'			'friendly fire
-'			If cb.target <> Null And cb.avatar.turret_list.Count() > 0
-'				SetLineWidth( 3 )
-'				SetColor( 196, 196, 196 )
-'				SetAlpha( 0.5 )
-'				Local av:cVEC = cVEC( cVEC.Create( cb.avatar.pos_x, cb.avatar.pos_y ))
-'				Local allied_agent_list:TList = CreateList()
-'				Select cb.avatar.political_alignment
-'					Case ALIGNMENT_FRIENDLY
-'						allied_agent_list = friendly_agent_list
-'					Case ALIGNMENT_HOSTILE
-'						allied_agent_list = hostile_agent_list
-'				End Select
-'				Local ally_offset#, ally_offset_ang#
-'				Local scalar_projection#
-'				For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
-'					'if the line of sight of the avatar is too close to the ally
-'					ally_offset = TURRET( cb.avatar.turret_list.First() ).dist_to( ally )
-'					ally_offset_ang = TURRET( cb.avatar.turret_list.First() ).ang_to( ally )
-'					scalar_projection = ally_offset*Cos( ally_offset_ang - TURRET( cb.avatar.turret_list.First() ).ang )
-'					SetColor( 196, 196, 196 )
-'					DrawLine( av.x,av.y, av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang),av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang) )
-'					
-'					If vector_length( ..
-'					(ally.pos_x - av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang)), ..
-'					(ally.pos_y - av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang)) ) ..
-'					< friendly_blocking_scalar_projection_distance
-'						SetColor( 255, 127, 127 )
-'					End If
-'					DrawLine( ally.pos_x,ally.pos_y, av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang),av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang) )
-'				Next
-'			End If
-'				
-'			'manipulate by keyboard
-'			If KeyDown( KEY_1 )
-'				cb.target = player
-'			End If
-'			If KeyDown( KEY_2 )
-'				cb.path = cb.get_path_to_target()
-'			End If
-'			If KeyDown( KEY_3 )
-'				cb.see_target()
-'			End If
-'			
-'		End If
-'		
-'		'turret anchors
-'		SetColor( 255, 255, 255 )
-'		SetAlpha( 0.3333 )
-'		For Local p:POINT = EachIn enemy_turret_anchors
-'			DrawOval( p.pos_x - 4,p.pos_y - 4, 8,8 )
-'		Next
-'		
-'		'manipulate by keyboard
-'		If KeyHit( KEY_EQUALS )
-'			load_next_level()
-'		Else If KeyHit( KEY_MINUS ) And player_level >= 1
-'			player_level :- 1
-'			load_level( player_level )
-'		End If
-'		
-'		If KeyHit( KEY_QUOTES )
-'			spawn_pickup( mouse.x, mouse.y )
-'		End If
-'		
-'		If KeyHit( KEY_9 )
-'			FLAG_retain_particles = True
-'			If KeyDown( KEY_0 )
-'				FLAG_dim_bg = True
-'			End If
-'		End If
-'		
-'		If KeyHit( KEY_P )
-'			FLAG_spawn_mode :+ 1
-'			If FLAG_spawn_mode > 2 Then FLAG_spawn_mode = 0
-'		End If
-'		If FLAG_spawn_mode <> SPAWN_OFF
-'			
-'			If spawn_agent = Null
-'				spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
-'			End If
-'			spawn_agent.ang = spawn_agent.ang_to( player ) + 180
-'			spawn_agent.pos_x = mouse.pos_x; spawn_agent.pos_y = mouse.pos_y
-'			spawn_agent.update()
-'			spawn_agent.snap_all_turrets()
-'			spawn_agent.draw()
-'			
-'			If KeyHit( KEY_ENTER )
-'				If FLAG_spawn_mode = SPAWN_HOSTILES
-'					spawn_agent.auto_manage( ALIGNMENT_HOSTILE )
-'					spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
-'				Else 'FLAG_spawn_mode = SPAWN_FRIENDLIES
-'					spawn_agent.auto_manage( ALIGNMENT_FRIENDLY )
-'					spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
-'				End If
-'				Create_and_Manage_CONTROL_BRAIN( spawn_agent, CONTROL_TYPE_AI,, 10, 1000, 1000 )
-'				spawn_agent = Null
-'				
-'			Else If KeyHit( KEY_OPENBRACKET )
-'				spawn_archetype :- 1
-'				If spawn_archetype < 0 Then spawn_archetype = complex_agent_archetype.Length - 1
-'				spawn_agent = Null
-'				
-'			Else If KeyHit( KEY_CLOSEBRACKET )
-'				spawn_archetype :+ 1
-'				If spawn_archetype > complex_agent_archetype.Length - 1 Then spawn_archetype = 0
-'				spawn_agent = Null
-'				
-'			End If
-'		End If
-'		
-'	End If
-'	
-'End Function
+'______________________________________________________________________________
+Global FLAG_debug_overlay% = False
+Global sx%, sy%
+Global cb:CONTROL_BRAIN = Null
+
+Function debug_overlay()
+	
+	If KeyHit( KEY_TILDE )
+		FLAG_debug_overlay = Not FLAG_debug_overlay
+	End If
+	
+	If FLAG_debug_overlay And Not FLAG_in_menu
+		
+		sx = game.origin.x+game.lev.width	
+		sy = 0
+		
+		'erase stats
+		SetColor( 0, 0, 0 )
+		SetAlpha( 1 )
+		DrawRect( sx,sy, 2000,2000 )
+		
+		'fps
+		sx :+ 3; sy :+ 3
+		debug_drawtext( "fps -> "+fps )
+		'debug_drawtext( "enemies -> "+hostile_agent_list.Count() )
+		
+		'show pathing grid
+		'Local cursor:CELL = New CELL
+		'For cursor.row = 0 To pathing_grid_h - 1
+		'	For cursor.col = 0 To pathing_grid_w - 1
+		'		'blockable/passing grid
+		'		SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
+		'		If pathing.grid( cursor ) = PATH_BLOCKED
+		'			DrawRect( cursor.col*cell_size + pathing_grid_origin.x + 1, cursor.row*cell_size + pathing_grid_origin.y + 1, cell_size - 2, cell_size - 2 )
+		'		End If
+		'	Next
+		'Next
+		SetAlpha( 0.20 )
+		For Local i% = 0 To game.lev.horizontal_divs.length - 1
+			DrawLine( game.origin.x,game.origin.y+game.lev.horizontal_divs[i], game.origin.x+game.lev.width,game.origin.y+game.lev.horizontal_divs[i] )
+		Next
+		For Local i% = 0 To game.lev.vertical_divs.length - 1
+			DrawLine( game.origin.x+game.lev.vertical_divs[i],game.origin.y, game.origin.x+game.lev.vertical_divs[i],game.origin.y+game.lev.height )
+		Next
+
+		Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
+		SetColor( 255, 255, 255 )
+		
+		If KeyHit( KEY_Q )
+			cb = Null
+			For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
+				If brain.avatar.dist_to( mouse ) <= 15
+					cb = brain
+					Exit
+				End If
+			Next
+		Else
+			For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
+				If brain.avatar.dist_to( mouse ) <= 15
+					SetColor( 255, 255, 255 )
+					SetAlpha( 0.333 )
+					DrawOval( brain.avatar.pos_x-15,brain.avatar.pos_y-15, 30,30 )
+				End If
+			Next
+		End If
+		
+		If cb <> Null
+			'draw info
+			sx = mouse.pos_x + 16; sy = mouse.pos_y
+			debug_drawtext( cb.avatar.name )
+			If cb.target <> Null
+				debug_drawtext( "target -> " + cb.target.name )
+			Else 'cb.target == Null
+				debug_drawtext( "no target" )
+			End If
+			If cb.sighted_target
+				debug_drawtext( "can see target" )
+				SetColor( 255, 255, 255 )
+			Else
+				debug_drawtext( "no line-of-sight to target" )
+				SetColor( 255, 32, 32 )
+			End If
+			If cb.target <> Null
+				SetLineWidth( 1 )
+				SetAlpha( 0.5 )
+				DrawLine( cb.avatar.pos_x,cb.avatar.pos_y, cb.target.pos_x,cb.target.pos_y )
+				SetColor( 255, 255, 255 )
+				SetAlpha( 1 )
+			End If
+			
+			If cb.path <> Null
+				debug_drawtext( "path to target displayed" )
+				'start and goal
+				Local cell_size% = 8
+				Local start:cVEC = cVEC( cb.path.First() )
+				Local goal:cVEC = cVEC( cb.path.Last() )
+				SetColor( 64, 255, 64 ); SetAlpha( 0.5 )
+				DrawRect( start.x - cell_size/2 + 1, start.y - cell_size/2 + 1, cell_size - 2, cell_size - 2 )
+				SetColor( 64, 64, 255 ); SetAlpha( 0.5 )
+				DrawRect( goal.x - cell_size/2 + 1, goal.y - cell_size/2 + 1, cell_size - 2, cell_size - 2 )
+				'path
+				Local v0:cVEC, v1:cVEC
+				SetColor( 255, 255, 255 )
+				For Local v1:cVEC = EachIn cb.path
+					If v0 <> Null Then DrawLine( v0.x,v0.y, v1.x,v1.y ) Else v0 = New cVEC
+					v0.x = v1.x; v0.y = v1.y
+				Next
+			Else
+				debug_drawtext( "no path" )
+			End If
+			
+			'friendly fire
+			If cb.target <> Null And cb.avatar.turret_list.Count() > 0
+				SetLineWidth( 1 )
+				SetColor( 196, 196, 196 )
+				SetAlpha( 0.20 )
+				Local av:cVEC = cVEC( cVEC.Create( cb.avatar.pos_x, cb.avatar.pos_y ))
+				Local allied_agent_list:TList = CreateList()
+				Select cb.avatar.political_alignment
+					Case ALIGNMENT_FRIENDLY
+						allied_agent_list = game.friendly_agent_list
+					Case ALIGNMENT_HOSTILE
+						allied_agent_list = game.hostile_agent_list
+				End Select
+				Local ally_offset#, ally_offset_ang#
+				Local scalar_projection#
+				For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
+					'if the line of sight of the avatar is too close to the ally
+					ally_offset = TURRET( cb.avatar.turret_list.First() ).dist_to( ally )
+					ally_offset_ang = TURRET( cb.avatar.turret_list.First() ).ang_to( ally )
+					scalar_projection = ally_offset*Cos( ally_offset_ang - TURRET( cb.avatar.turret_list.First() ).ang )
+					SetColor( 196, 196, 196 )
+					DrawLine( av.x,av.y, av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang),av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang) )
+					
+					If vector_length( ..
+					(ally.pos_x - av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang)), ..
+					(ally.pos_y - av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang)) ) ..
+					< friendly_blocking_scalar_projection_distance
+						SetColor( 255, 127, 127 )
+					End If
+					DrawLine( ally.pos_x,ally.pos_y, av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang),av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang) )
+				Next
+			End If
+				
+			'manipulate by keyboard
+			If KeyDown( KEY_1 )
+				cb.target = game.player
+			End If
+			If KeyDown( KEY_2 )
+				cb.path = cb.get_path_to_target()
+			End If
+			If KeyDown( KEY_3 )
+				cb.see_target()
+			End If
+			
+		End If
+		
+		''turret anchors
+		'SetColor( 255, 255, 255 )
+		'SetAlpha( 0.3333 )
+		'For Local p:POINT = EachIn enemy_turret_anchors
+		'	DrawOval( p.pos_x - 4,p.pos_y - 4, 8,8 )
+		'Next
+		
+		'manipulate by keyboard
+		If KeyHit( KEY_EQUALS )
+			game.load_next_level()
+		'Else If KeyHit( KEY_MINUS ) And player_level >= 1
+		'	player_level :- 1
+		'	load_level( player_level )
+		End If
+		
+		If KeyHit( KEY_QUOTES )
+			game.spawn_pickup( mouse.pos_x, mouse.pos_y )
+		End If
+		
+		If KeyHit( KEY_9 )
+			FLAG_retain_particles = True
+			If KeyDown( KEY_0 )
+				FLAG_dim_bg = True
+			End If
+		End If
+		
+		If KeyHit( KEY_P )
+			FLAG_spawn_mode :+ 1
+			If FLAG_spawn_mode > 2 Then FLAG_spawn_mode = 0
+		End If
+		If FLAG_spawn_mode <> SPAWN_OFF
+			
+			If spawn_agent = Null
+				spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
+			End If
+			spawn_agent.ang = spawn_agent.ang_to( game.player ) + 180
+			spawn_agent.pos_x = mouse.pos_x; spawn_agent.pos_y = mouse.pos_y
+			spawn_agent.update()
+			spawn_agent.snap_all_turrets()
+			spawn_agent.draw()
+			
+			If KeyHit( KEY_ENTER )
+				If FLAG_spawn_mode = SPAWN_HOSTILES
+					spawn_agent.manage( game.hostile_agent_list )
+					spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
+				Else 'FLAG_spawn_mode = SPAWN_FRIENDLIES
+					spawn_agent.manage( game.friendly_agent_list )
+					spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
+				End If
+				Create_CONTROL_BRAIN( spawn_agent, CONTROL_TYPE_AI,, 10, 1000, 1000 ).manage( game.control_brain_list )
+				spawn_agent = Null
+				
+			Else If KeyHit( KEY_OPENBRACKET )
+				spawn_archetype :- 1
+				If spawn_archetype < 0 Then spawn_archetype = complex_agent_archetype.Length - 1
+				spawn_agent = Null
+				
+			Else If KeyHit( KEY_CLOSEBRACKET )
+				spawn_archetype :+ 1
+				If spawn_archetype > complex_agent_archetype.Length - 1 Then spawn_archetype = 0
+				spawn_agent = Null
+				
+			End If
+		End If
+		
+	End If
+	
+End Function
 ''______________________________________________________________________________
 'Function test_ang_wrap()
 '	For Local i# = -750.0 To 750.0 Step 10
