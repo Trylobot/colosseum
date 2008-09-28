@@ -247,9 +247,9 @@ Function edit_level:LEVEL( lev:LEVEL )
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
 				If MouseDown( 1 )
-					lev.set_path_region( mouse.x-x,mouse.y-y, PATH_BLOCKED )
+					lev.set_path_region_from_xy( mouse.x-x,mouse.y-y, PATH_BLOCKED )
 				Else If MouseDown( 2 )
-					lev.set_path_region( mouse.x-x,mouse.y-y, PATH_PASSABLE )
+					lev.set_path_region_from_xy( mouse.x-x,mouse.y-y, PATH_PASSABLE )
 				End If
 				
 			'____________________________________________________________________________________________________

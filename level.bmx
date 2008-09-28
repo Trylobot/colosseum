@@ -253,11 +253,14 @@ Type LEVEL Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
-	Method set_path_region( x%, y%, value% ) '(x, y) relative to local origin of level. does nothing if not in a valid cell
-		Local c:CELL = get_cell( x, y )
+	Method set_path_region( c:CELL, value% )
 		If c.is_valid()
 			path_regions[ c.row, c.col ] = value
 		End If
+	End Method
+	
+	Method set_path_region_from_xy( x%, y%, value% ) '(x, y) relative to local origin of level. does nothing if not in a valid cell
+		set_path_region( get_cell( x, y ), value )
 	End Method
 	
 	Method add_spawner( sp:SPAWNER )
@@ -361,16 +364,18 @@ Type LEVEL Extends MANAGED_OBJECT
 	
 	Method get_cardinal_blocking_neighbor_info:Int[]( c:CELL )
 		If in_bounds( c )
-			Local info%[] = [ False, False, False, False ]
+			Local info%[] = New Int[4]
 			For Local index% = 0 To CELL.ALL_CARDINAL_DIRECTIONS.Length-1
 				Local neighbor:CELL = c.move( CELL.ALL_CARDINAL_DIRECTIONS[index] )
 				If (Not in_bounds( neighbor )) Or (path_regions[ neighbor.row, neighbor.col ] = PATH_BLOCKED)
-					info[index] = True
+					info[index] = PATH_BLOCKED
+				Else
+					info[index] = PATH_PASSABLE
 				End If
 			Next
 			Return info
 		Else 'Not in_bounds( c )
-			Return [ True, True, True, True ]
+			Return [ PATH_BLOCKED, PATH_BLOCKED, PATH_BLOCKED, PATH_BLOCKED ]
 		End If
 	End Method
 	

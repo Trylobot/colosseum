@@ -48,6 +48,7 @@ SetBlend( ALPHABLEND )
 Local before%
 ?Debug
 Global last_frame_ts%, time_count%, frame_count%, fps%
+debug_draw_walls()
 'debug_load_data()
 'menu_command( COMMAND_EDIT_LEVEL )
 'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )

@@ -1,0 +1,118 @@
+{
+	name: "cyclotron",
+	width: 300,
+	height: 300,
+	row_count: 5,
+	col_count: 5,
+	horizontal_divs: [
+		0,
+		50,
+		100,
+		200,
+		250,
+		300
+	],
+	vertical_divs: [
+		0,
+		50,
+		100,
+		200,
+		250,
+		300
+	],
+	path_regions: [
+		[
+			1,
+			1,
+			1,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			1,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			1,
+			1,
+			1
+		]
+	],
+	spawners: [
+		{
+			class: 1,
+			squads: null,
+			pos: {
+				pos_x: 75,
+				pos_y: 285,
+				ang: -90,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: null,
+			alignment: 1
+		},
+		{
+			class: 1,
+			squads: [
+				[
+					8,
+					8
+				],
+				[
+					8,
+					8
+				],
+				[
+					8,
+					8
+				],
+				[
+					8,
+					8
+				]
+			],
+			pos: {
+				pos_x: 225,
+				pos_y: 15,
+				ang: 90,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [
+				0,
+				5000,
+				10000,
+				15000
+			],
+			alignment: 2
+		}
+	]
+}

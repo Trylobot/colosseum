@@ -119,7 +119,8 @@ Type ENVIRONMENT
 	End Method
 	
 	Method load_next_level()
-		load_level( core_get_next_level_id() )
+		'load_level( core_get_next_level_id() )
+		load_level( RequestFile( "Load Level Data", level_file_filter, False, data_path ))
 	End Method
 	
 	Method load_level( level_path$ )

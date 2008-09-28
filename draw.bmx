@@ -487,8 +487,11 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 				If px >= lev.width Or py >= lev.height Then Continue
 				Local neighbor_dist#[] = New Float[4]
 				For Local index% = 0 To 3
-					If Not neighbor[index] Then neighbor_dist[index] = dist[index] ..
-					Else                        neighbor_dist[index] = max_dist
+					If neighbor[index] = PATH_PASSABLE
+						neighbor_dist[index] = dist[index]
+					Else
+						neighbor_dist[index] = max_dist
+					End If
 				Next
 				Select Int( neighbor_dist[ minimum( neighbor_dist )])
 					Case 0, 2 'outermost border line with companion

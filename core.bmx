@@ -79,8 +79,8 @@ Function core_begin_new_game( archetype% )
 	game = main_game
 	profile.archetype = archetype
 	game.clear()
-	current_level_index = 0
-	game.load_level( all_levels[current_level_index] )
+	current_level_index = -1
+	game.load_next_level()
 	game.game_in_progress = True
 	game.spawn_player( profile.archetype )
 End Function

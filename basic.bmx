@@ -634,7 +634,7 @@ Type CELL
 			Case DIRECTION_SOUTHWEST
 				row :+ 1; col :- 1
 			Case DIRECTION_WEST
-				          col :+ 1
+				          col :- 1
 			Case DIRECTION_NORTHWEST
 				row :- 1; col :- 1
 		End Select
