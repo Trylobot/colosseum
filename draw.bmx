@@ -490,7 +490,7 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 					If Not neighbor[index] Then neighbor_dist[index] = dist[index] ..
 					Else                        neighbor_dist[index] = max_dist
 				Next
-				Select Int( minimum( neighbor_dist ))
+				Select Int( neighbor_dist[ minimum( neighbor_dist )])
 					Case 0, 2 'outermost border line with companion
 						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 255,255,255 ))
 					Case 1, 3 'slightly inset contrast line with companion
