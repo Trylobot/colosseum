@@ -285,18 +285,22 @@ Const COMMAND_SHOW_CHILD_MENU% = 50
 Const COMMAND_BACK_TO_PARENT_MENU% = 51
 Const COMMAND_BACK_TO_MAIN_MENU% = 53
 Const COMMAND_RESUME% = 100
-Const COMMAND_NEW_GAME% = 101
-Const COMMAND_LOAD_GAME% = 102
-Const COMMAND_SAVE_GAME% = 103
-Const COMMAND_EDIT_LEVEL% = 200
+Const COMMAND_NEW_GAME% = 200
+Const COMMAND_LOAD_GAME% = 300
+Const COMMAND_SAVE_GAME% = 400
+Const COMMAND_EDIT_LEVEL% = 500
 Const COMMAND_PLAYER_INPUT_TYPE% = 1000
-Const COMMAND_QUIT_GAME% = 10000
+Const COMMAND_PROFILE_SET_PLAYER_TANK% = 2000
+Const COMMAND_SET_NEXT_LEVEL% = 5000
+Const COMMAND_QUIT_GAME% = 65535
 
 Const COMMAND_ARGUMENT_NULL% = 0
 Const COMMAND_ARGUMENT_CREATE_NEW_SAVED_GAME% = -1
 
 Const MENU_ID_MAIN_MENU% = 10
-Const MENU_ID_NEW% = 20
+Const MENU_ID_NEW_GAME% = 20
+Const MENU_ID_SELECT_TANK% = 21
+Const MENU_ID_SELECT_LEVEL% = 22
 Const MENU_ID_LOAD% = 30
 Const MENU_ID_SAVE% = 40
 Const MENU_ID_OPTIONS% = 50
@@ -311,17 +315,24 @@ Global all_menus:MENU[] = ..
 [ ..
 	MENU.Create( "main menu", 255, 255, 127, MENU_ID_MAIN_MENU, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, False ), ..
-			MENU_OPTION.Create( "new", COMMAND_SHOW_CHILD_MENU, MENU_ID_NEW, True, True ), ..
+			MENU_OPTION.Create( "new", COMMAND_SHOW_CHILD_MENU, MENU_ID_NEW_GAME, True, True ), ..
 			MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, MENU_ID_LOAD, True, True ), ..
 			MENU_OPTION.Create( "save", COMMAND_SHOW_CHILD_MENU, MENU_ID_SAVE, True, True ), ..
 			MENU_OPTION.Create( "options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS, True, True ), ..
 			MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, MENU_ID_EDITORS, True, True ), ..
 			MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ]), ..
-	MENU.Create( "new game", 255, 255, 127, MENU_ID_NEW, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, menu_margin, 1, ..
+	MENU.Create( "new game", 255, 255, 255, MENU_ID_NEW_GAME, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 1, ..
 		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-			MENU_OPTION.Create( "light tank", COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK, True, True ), ..
-			MENU_OPTION.Create( "laser tank", COMMAND_NEW_GAME, PLAYER_INDEX_LASER_TANK, True, True ), ..
-			MENU_OPTION.Create( "medium tank", COMMAND_NEW_GAME, PLAYER_INDEX_MED_TANK, True, True ) ]), ..
+			MENU_OPTION.Create( "select tank", COMMAND_SHOW_CHILD_MENU, MENU_ID_SELECT_TANK, True, True ), ..
+			MENU_OPTION.Create( "select level", COMMAND_SHOW_CHILD_MENU, MENU_ID_SELECT_LEVEL, True, True ), ..
+			MENU_OPTION.Create( "start game", COMMAND_NEW_GAME,, True, True ) ]), ..
+	MENU.Create( "select tank", 255, 255, 127, MENU_ID_SELECT_TANK, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "light tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_LIGHT_TANK, True, True ), ..
+			MENU_OPTION.Create( "laser tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_LASER_TANK, True, True ), ..
+			MENU_OPTION.Create( "medium tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_MED_TANK, True, True ) ]), ..
+	MENU.Create( "select level", 255, 127, 127, MENU_ID_SELECT_LEVEL, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
 	MENU.Create( "load game", 255, 196, 196, MENU_ID_LOAD, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
 	MENU.Create( "save game", 127, 255, 127, MENU_ID_SAVE, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
@@ -336,7 +347,7 @@ Global all_menus:MENU[] = ..
 	MENU.Create( "editors", 196, 196, 196, MENU_ID_EDITORS, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "level editor", COMMAND_EDIT_LEVEL,, True, True ) ]), ..
-	MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST, menu_margin,, ..
+	MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD, True, True ), ..
 			MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD_MOUSE_HYBRID, True, True ), ..
@@ -370,25 +381,36 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 		Case COMMAND_SHOW_CHILD_MENU
 			current_menu :+ 1
 			menu_stack[current_menu] = command_argument
-			'special processing
+			'special processing for certain menus
+			Local file_list:TList = CreateList()
 			If one_of( command_argument, [MENU_ID_LOAD, MENU_ID_SAVE] )
-				Local file_list:TList = find_files( user_path, saved_game_file_ext )
-				If Not file_list.IsEmpty()
-					Local this_menu:MENU = get_menu( command_argument )
-					Local new_options:MENU_OPTION[] = New MENU_OPTION[this_menu.options.Length+file_list.Count()]
-					new_options[0] = this_menu.options[0]
-					If command_argument = MENU_ID_SAVE
-						new_options[new_options.Length-1] = this_menu.options[1]
-					End If
-					Local i% = 1
-					Local new_command_code%
-					If command_argument = MENU_ID_SAVE Then new_command_code = COMMAND_SAVE_GAME Else new_command_code = COMMAND_LOAD_GAME
-					For Local file$ = EachIn file_list
-						new_options[i] = MENU_OPTION.Create( file, new_command_code, i, True, True )
-						i :+ 1
-					Next
-					this_menu.options = new_options
+				file_list = find_files( user_path, saved_game_file_ext )
+			Else If one_of( command_argument, [MENU_ID_SELECT_LEVEL] )
+				file_list = find_files( data_path, level_file_ext )
+			End If
+			If Not file_list.IsEmpty()
+				Local this_menu:MENU = get_menu( command_argument )
+				Local new_options:MENU_OPTION[] = New MENU_OPTION[this_menu.options.Length+file_list.Count()]
+				new_options[0] = this_menu.options[0]
+				If command_argument = MENU_ID_SAVE
+					new_options[new_options.Length-1] = this_menu.options[1]
 				End If
+				Local i% = 1
+				Local new_command_code%
+				Local offset% = 0
+				If command_argument = MENU_ID_SAVE
+					new_command_code = COMMAND_SAVE_GAME
+				Else If command_argument = MENU_ID_LOAD
+					new_command_code = COMMAND_LOAD_GAME
+				Else If command_argument = MENU_ID_SELECT_LEVEL
+					new_command_code = COMMAND_SET_NEXT_LEVEL
+					offset = -1
+				End If
+				For Local file$ = EachIn file_list
+					new_options[i] = MENU_OPTION.Create( file, new_command_code, i + offset, True, True )
+					i :+ 1
+				Next
+				this_menu.options = new_options
 			End If
 			
 		Case COMMAND_BACK_TO_PARENT_MENU
@@ -422,6 +444,16 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			If game.player_brain <> Null
 				game.player_brain.input_type = profile.input_method
 			End If
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+			
+		Case COMMAND_PROFILE_SET_PLAYER_TANK
+			profile.archetype = command_argument
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+		
+		Case COMMAND_SET_NEXT_LEVEL
+			current_level_index = command_argument
+			all_levels = find_files( data_path, level_file_ext ).ToArray()
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			
 		Case COMMAND_EDIT_LEVEL
 			edit_level_file()

@@ -65,8 +65,7 @@ Function get_player_id%()
 End Function
 '______________________________________________________________________________
 Global current_level_index% = 0
-Global all_levels$[] = [ ..
-	"data/test.colosseum_level" ]
+Global all_levels:Object[]
 
 '______________________________________________________________________________
 Function core_resume_game()
@@ -87,10 +86,10 @@ End Function
 
 Function core_get_next_level_id$()
 	If current_level_index >= all_levels.Length-1
-		Return all_levels[all_levels.Length-1]
+		Return String(all_levels[all_levels.Length-1])
 	Else
 		current_level_index :+ 1
-		Return all_levels[current_level_index]
+		Return String(all_levels[current_level_index])
 	End If
 End Function
 
