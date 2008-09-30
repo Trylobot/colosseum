@@ -40,12 +40,12 @@ End Function
 'In-game stuff
 Function draw_game()
 	
-	'SetViewport( 0,0, arena_offset_left+arena_w+arena_offset_right,arena_offset_top+arena_h+arena_offset_bottom )
 	
 	game.origin.x = window_w/2 - game.player.pos_x
 	game.origin.y = window_h/2 - game.player.pos_y
 	
-	SetOrigin( game.origin.x, game.origin.y )
+	SetViewport( 0,0, game.lev.width,game.lev.height )
+	SetOrigin( game.origin.x,game.origin.y )
 	
 	'arena (& retained particles)
 	SetBlend( ALPHABLEND )
@@ -100,7 +100,8 @@ Function draw_game()
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
-	SetOrigin( 0, 0 )
+	SetViewport( 0,0, window_w,window_h )
+	SetOrigin( 0,0 )
 	
 	If game.human_participation
 		'hud
@@ -311,7 +312,7 @@ Function draw_arena_fg()
 	SetRotation( 0 )
 	SetColor( 0, 0, 0 )
 	SetAlpha( 0.4*time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
-	DrawRect( 0,0, window_w,window_h )
+	DrawRect( 0,0, game.lev.width,game.lev.height )
 	SetColor( 255, 255, 255 )
 	SetAlpha( 0.2*time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
 	SetBlend( LIGHTBLEND )
