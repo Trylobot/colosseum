@@ -108,13 +108,16 @@ Function draw_game()
 		draw_HUD()
 		'aiming reticle
 		If game.player.turret_list.Count() <> 0
+			Local p_tur:TURRET = TURRET( game.player.turret_list.First() )
 			If profile.input_method = INPUT_KEYBOARD
 				SetRotation( TURRET( game.player.turret_list.First() ).ang )
-				DrawImage( img_reticle, TURRET( game.player.turret_list.First() ).pos_x + 60*Cos( TURRET( game.player.turret_list.First() ).ang ), TURRET( game.player.turret_list.First() ).pos_y + 50*Sin( TURRET( game.player.turret_list.First() ).ang ) )
+				DrawImage( img_reticle, ..
+					p_tur.pos_x + 60*Cos( p_tur.ang ), ..
+					p_tur.pos_y + 50*Sin( p_tur.ang ) )
 			Else If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
 				'position the larger dot of the reticle directly at the mouse position
 				'point the ellipsis dots at the player's turret
-				SetRotation( TURRET( game.player.turret_list.First() ).ang_to_cVEC( mouse ))
+				SetRotation( p_tur.ang_to_cVEC( mouse ))
 				DrawImage( img_reticle, mouse.x, mouse.y )
 			End If
 		End If
