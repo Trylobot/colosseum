@@ -16,16 +16,20 @@ Rem
 
 EndRem
 
+?Debug
+'debug_format_number()
+?
+
 'Window / Arena size
 Const stats_panel_w% = 250
-Const window_w% = 1024
-Const window_h% = 768
+Const window_w% = 640
+Const window_h% = 480
 Const fullscreen% = False
 
 'these are here to make the old code work (before levels were data-driven)
-Const arena_offset% = 50
-Const arena_w% = 500
-Const arena_h% = 500
+'Const arena_offset% = 50
+'Const arena_w% = 500
+'Const arena_h% = 500
 
 'external data load
 load_data_files()
@@ -48,7 +52,7 @@ SetBlend( ALPHABLEND )
 Local before%
 ?Debug
 Global last_frame_ts%, time_count%, frame_count%, fps%
-debug_draw_walls()
+'debug_draw_walls()
 'debug_load_data()
 'menu_command( COMMAND_EDIT_LEVEL )
 'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )

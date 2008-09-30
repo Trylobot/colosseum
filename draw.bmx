@@ -114,7 +114,7 @@ Function draw_game()
 
 	'draw side-panel statistics and info
 	If game.human_participation
-		draw_stats()
+		draw_HUD()
 	End If
 
 	'help actual
@@ -125,15 +125,15 @@ Function draw_game()
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		If game.player_brain.input_type = INPUT_KEYBOARD
-			DrawImage( img_help_kb, arena_offset + arena_w/2 - img_help_kb.width/2, arena_offset + arena_h/2 - img_help_kb.height/2 )
+			DrawImage( img_help_kb, 0,0 ) 'arena_offset + arena_w/2 - img_help_kb.width/2, arena_offset + arena_h/2 - img_help_kb.height/2 )
 		Else If game.player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-			DrawImage( img_help_kb_mouse, arena_offset + arena_w/2 - img_help_kb_mouse.width/2, arena_offset + arena_h/2 - img_help_kb_mouse.height/2 )
+			DrawImage( img_help_kb_mouse, 0,0 ) 'arena_offset + arena_w/2 - img_help_kb_mouse.width/2, arena_offset + arena_h/2 - img_help_kb_mouse.height/2 )
 		End If
 	'help reminder
 	Else
 		SetImageFont( get_font( "consolas_12" ))
-		str = "F1 for help"
-		DrawText_with_shadow( str, game.player_spawn_point.pos_x - arena_offset - TextWidth( str ), game.player_spawn_point.pos_y - arena_offset/3 )
+		str = "[F1] help"
+		DrawText_with_shadow( str, game.player_spawn_point.pos_x + game.origin.x - TextWidth( str ) - 15, game.player_spawn_point.pos_y - GetImageFont().Height() )
 	End If
 	
 	'game over
@@ -177,11 +177,11 @@ Function draw_game()
 	Local x# = mouse.x + 5, y# = mouse.y
 	'commands to player
 	If Not game.player_engine_running
-		DrawText_with_shadow( "(E) start your engine.", x, y )
+		DrawText_with_shadow( "[E] start engine", x, y )
 	Else If game.player_in_locker And game.waiting_for_player_to_enter_arena
-		DrawText_with_shadow( "enter the arena.", x, y )
+		DrawText_with_shadow( "[W] drive forward", x, y )
 	Else If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena
-		DrawText_with_shadow( "return to gate. (R) skip", x, y )
+		DrawText_with_shadow( "[R] return home", x, y )
 	End If
 	
 End Function
@@ -314,28 +314,44 @@ Function draw_arena_fg()
 	SetBlend( LIGHTBLEND )
 	DrawImage( img_halo, game.player.pos_x, game.player.pos_y )
 	SetScale( 2, 2 )
-	DrawImage( img_halo, game.player_spawn_point.pos_x, game.player_spawn_point.pos_y+arena_offset/3 )
+	DrawImage( img_halo, game.player_spawn_point.pos_x, game.player_spawn_point.pos_y+15.0 )
 	SetBlend( ALPHABLEND )
 End Function
 '______________________________________________________________________________
-Function draw_stats()
+Const HORIZONTAL_HUD_MARGIN% = 24
+
+Function draw_HUD()
 	Local x%, y%, w%, h%
+	Local str$
+	
+	SetImageFont( get_font( "consolas_bold_12" ))
+	Local text_h% = GetImageFont().Height() + 2
+	
+	x = 3
+	y = window_h - text_h
+	
+	SetAlpha( 0.5 ); SetColor( 0, 0, 0 )
+	DrawRect( 0, y, window_w, window_h-text_h )
+	SetAlpha( 1 )
+	y :+ 2
 	
 	'level number
-	x = window_w - stats_panel_w
-	y = 25
 '	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
 '	DrawText( "level", x, y ); y :+ 12
 '	SetColor( 255, 255, 127 ); SetImageFont( get_font( "consolas_bold_50" ))
 '	DrawText( player_level + 1, x, y ); y :+ 50
 	
 	'player cash
-	y :+ 50
-	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
-	'ToDo: put some code here to comma-separate the displayed cash value
-	DrawText( "cash", x, y ); y :+ 12
-	SetColor( 50, 220, 50 ); SetImageFont( get_font( "consolas_bold_50" ))
-	DrawText( "$" + profile.cash, x, y ); y :+ 50
+'	y :+ 50
+'	SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
+'	'ToDo: put some code here to comma-separate the displayed cash value
+'	DrawText( "cash", x, y ); y :+ 12
+'	SetColor( 50, 220, 50 ); SetImageFont( get_font( "consolas_bold_50" ))
+'	DrawText( "$" + profile.cash, x, y ); y :+ 50
+	SetColor( 50, 220, 50 )
+	str = "$" + format_number( profile.cash )
+	DrawText( str, x, y )
+	x :+ TextWidth( str ) + HORIZONTAL_HUD_MARGIN
 		
 	'player health		
 	y :+ 50
@@ -390,7 +406,7 @@ Function draw_stats()
 	y :+ h
 	
 	'music icon
-	y :+ arena_offset
+	y :+ 50
 	SetColor( 255, 255, 255 )
 	DrawText( "music", x, y ); y :+ 12
 	DrawImage( img_icon_music_note, x, y ); x :+ img_icon_music_note.width + 10
@@ -471,29 +487,20 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 	Local blocking_cells:TList = lev.get_blocking_cells()
 	Local wall:BOX
 	Local neighbor%[]
-	Local max_dist% = 4
+	Local max_dist# = 100.0
 	'for each blocking region
 	For Local c:CELL = EachIn blocking_cells
 		wall = lev.get_wall( c )
 		neighbor = lev.get_cardinal_blocking_neighbor_info( c ) 'in same order as CELL.ALL_CARDINAL_DIRECTIONS
-		Local dist%[] = New Int[4] 'TOP, RIGHT, BOTTOM, LEFT
 		'for each pixel of the region to be rendered
-		dist[0] = 0 'TOP
-		dist[2] = wall.h 'BOTTOM
-		For Local px% = wall.x To wall.x + wall.w
-			dist[1] = wall.w 'RIGHT
-			dist[3] = 0 'LEFT
-			For Local py% = wall.y To wall.y + wall.h
-				If px >= lev.width Or py >= lev.height Then Continue
-				Local neighbor_dist#[] = New Float[4]
-				For Local index% = 0 To 3
-					If neighbor[index] = PATH_PASSABLE
-						neighbor_dist[index] = dist[index]
-					Else
-						neighbor_dist[index] = max_dist
-					End If
-				Next
-				Select Int( neighbor_dist[ minimum( neighbor_dist )])
+		For Local px% = wall.x To wall.x+wall.w-1
+			For Local py% = wall.y To wall.y+wall.h-1
+				Local dist#[] = [ max_dist, max_dist, max_dist, max_dist ]
+				If Not neighbor[0] Then dist[0] = py - wall.y          'TOP
+				If Not neighbor[1] Then dist[1] = wall.x+wall.w-1 - px 'RIGHT
+				If Not neighbor[2] Then dist[2] = wall.y+wall.h-1 - py 'BOTTOM
+				If Not neighbor[3] Then dist[3] = px - wall.x          'LEFT
+				Select Int( dist[ minimum( dist )])
 					Case 0, 2 'outermost border line with companion
 						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 255,255,255 ))
 					Case 1, 3 'slightly inset contrast line with companion
@@ -501,14 +508,10 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 					Default 'inner area, and any area adjacent to another wall
 						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 158,150,142 ))
 				End Select
-				dist[1] :- 1
-				dist[3] :+ 1
 			Next
-			dist[0] :+ 1
-			dist[2] :- 1
 		Next
 	Next
-	Local img:TImage = LoadImage( pixmap )
+	Local img:TImage = LoadImage( pixmap, 0 )
 	Return img
 End Function
 

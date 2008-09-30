@@ -14,7 +14,7 @@ Function update_all_objects()
 		'if waiting for player to enter arena
 		If game.waiting_for_player_to_enter_arena
 			'if player has not entered the arena
-			If Not (game.player.dist_to( game.player_spawn_point ) > SPAWN_POINT_POLITE_DISTANCE) 'game.point_inside_arena( game.player )
+			If game.player.dist_to( game.player_spawn_point ) < SPAWN_POINT_POLITE_DISTANCE 'game.point_inside_arena( game.player )
 				'if the player has started the engine
 				If game.player_engine_running
 					'open the friendly doors
@@ -39,7 +39,7 @@ Function update_all_objects()
 			game.spawn_enemies = False
 		End If
 		'if the battle is over, and waiting for player to exit arena, and player has exited the arena
-		If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena And (game.player.dist_to( game.player_spawn_point ) > SPAWN_POINT_POLITE_DISTANCE) 'game.point_inside_arena( game.player )
+		If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena And (game.player.dist_to( game.player_spawn_point ) < SPAWN_POINT_POLITE_DISTANCE) 'game.point_inside_arena( game.player )
 			game.waiting_for_player_to_exit_arena = False
 			game.player_in_locker = True
 			'FLAG_player_engine_running = False

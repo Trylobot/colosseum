@@ -281,81 +281,53 @@ Function debug_overlay()
 	
 End Function
 
-Function debug_draw_walls()
-	Local lev:LEVEL = Create_LEVEL( 100, 100 )
-	lev.add_divider( 33, LINE_TYPE_HORIZONTAL )
-	lev.add_divider( 66, LINE_TYPE_HORIZONTAL )
-	lev.add_divider( 33, LINE_TYPE_VERTICAL )
-	lev.add_divider( 66, LINE_TYPE_VERTICAL )
-	lev.set_path_region( CELL.Create( 1, 1 ), PATH_BLOCKED )
-	lev.set_path_region( CELL.Create( 1, 2 ), PATH_BLOCKED )
-	For Local row% = 0 To lev.row_count-1
-		For Local col% = 0 To lev.col_count-1
-			DebugLog "  ("+row+","+col+") blocking? "+boolean_to_string( lev.path_regions[row,col] )
-		Next
-	Next
-	Local blocking_cells:TList = lev.get_blocking_cells()
-	'DebugLog "  (row,col) -> [top,right,bottom,left]"
-	For Local c:CELL = EachIn blocking_cells
-		'Local wall:BOX = lev.get_wall( c )
-		Local neighbor%[] = lev.get_cardinal_blocking_neighbor_info( c )
-		DebugLog "  ("+c.row+","+c.col+") -> ["+boolean_to_string(neighbor[0])+","+boolean_to_string(neighbor[1])+","+boolean_to_string(neighbor[2])+","+boolean_to_string(neighbor[3])+"]"
-	Next
-	Local img:TImage = generate_level_walls_image_debug( lev )
-	Repeat
-		Cls
-		DrawImage( img, 0,0 )
-		Flip
-	Until KeyHit( KEY_ESCAPE )
+Function debug_format_number()
+	Local i% = 1, n% = 0
+	While n <= 100000000
+		DebugLog "  case "+i+" -> format_number( "+n+" ) = "+format_number( n )
+		i :+ 1
+		If n = 0 Then n :+ 1 Else n :* 10
+	End While
 	End
 End Function
 
-Function generate_level_walls_image_debug:TImage( lev:LEVEL )
-	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
-	pixmap.ClearPixels( encode_ARGB( 0.0, 0,0,0 ))
-	Local blocking_cells:TList = lev.get_blocking_cells()
-	Local wall:BOX
-	Local neighbor%[]
-	Local max_dist% = 4
-	'for each blocking region
-	For Local c:CELL = EachIn blocking_cells
-		wall = lev.get_wall( c )
-		neighbor = lev.get_cardinal_blocking_neighbor_info( c ) 'in same order as CELL.ALL_CARDINAL_DIRECTIONS
-		Local dist%[] = New Int[4] 'TOP, RIGHT, BOTTOM, LEFT
-		'for each pixel of the region to be rendered
-		dist[0] = 0 'TOP
-		dist[2] = wall.h 'BOTTOM
-		For Local px% = wall.x To wall.x + wall.w
-			dist[1] = wall.w 'RIGHT
-			dist[3] = 0 'LEFT
-			For Local py% = wall.y To wall.y + wall.h
-				If px >= lev.width Or py >= lev.height Then Continue
-				Local neighbor_dist#[] = New Float[4]
-				For Local index% = 0 To 3
-					If neighbor[index] = PATH_PASSABLE
-						neighbor_dist[index] = dist[index]
-					Else
-						neighbor_dist[index] = max_dist
-					End If
-				Next
-				Select Int( neighbor_dist[ minimum( neighbor_dist )])
-					Case 0, 2 'outermost border line with companion
-						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 255,255,255 ))
-					Case 1, 3 'slightly inset contrast line with companion
-						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 100, 80, 60 ))
-					Default 'inner area, and any area adjacent to another wall
-						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 158,150,142 ))
-				End Select
-				dist[1] :- 1
-				dist[3] :+ 1
-			Next
-			dist[0] :+ 1
-			dist[2] :- 1
-		Next
-	Next
-	Local img:TImage = LoadImage( pixmap )
-	Return img
-End Function
+'Function debug_draw_walls()
+'	Local lev:LEVEL = Create_LEVEL( 100, 100 )
+'	lev.add_divider( 33, LINE_TYPE_HORIZONTAL )
+'	lev.add_divider( 66, LINE_TYPE_HORIZONTAL )
+'	lev.add_divider( 82, LINE_TYPE_HORIZONTAL )
+'	lev.add_divider( 25, LINE_TYPE_VERTICAL )
+'	lev.add_divider( 75, LINE_TYPE_VERTICAL )
+'	lev.add_divider( 82, LINE_TYPE_VERTICAL )
+'	lev.set_path_region( CELL.Create( 1, 1 ), PATH_BLOCKED )
+'	lev.set_path_region( CELL.Create( 1, 2 ), PATH_BLOCKED )
+'	lev.set_path_region( CELL.Create( 0, 1 ), PATH_BLOCKED )
+'	lev.set_path_region( CELL.Create( 2, 1 ), PATH_BLOCKED )
+'	lev.set_path_region( CELL.Create( 2, 2 ), PATH_BLOCKED )
+'
+'	Local img:TImage = generate_level_walls_image( lev )
+'	Local scale# = 5.00
+'	SetScale( scale,scale )
+'	SetLineWidth( 1.00 )
+'	Local origin:cVEC = cVEC.Create( 0, 0 )
+'	Repeat
+'		Cls
+'
+'		SetAlpha( 1.0 )
+'		DrawImage( img, 0,0 )
+'
+'		SetAlpha( 0.333 )
+'		For Local i% = 0 To lev.horizontal_divs.length - 1
+'			DrawLine( origin.x,origin.y+scale*lev.horizontal_divs[i], origin.x+lev.width,origin.y+scale*lev.horizontal_divs[i] )
+'		Next
+'		For Local i% = 0 To lev.vertical_divs.length - 1
+'			DrawLine( origin.x+scale*lev.vertical_divs[i],origin.y, origin.x+scale*lev.vertical_divs[i],origin.y+lev.height )
+'		Next
+'		
+'		Flip
+'	Until KeyHit( KEY_ESCAPE )
+'	End
+'End Function
 
 ''______________________________________________________________________________
 'Function test_ang_wrap()

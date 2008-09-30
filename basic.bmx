@@ -115,6 +115,19 @@ Function string_to_boolean%( str$ )
 	End Select
 End Function
 
+Function format_number$( n% )
+	Local n_str$ = String.FromInt( n )
+	If n_str.Length <= 3 Then Return n_str
+	Local f_str$ = ""
+	For Local index% = 0 To n_str.Length-1
+		If index > 0 And index Mod 3 = 0
+			f_str = "," + f_str
+		End If
+		f_str = Chr(n_str[n_str.Length-1-index]) + f_str
+	Next
+	Return f_str
+End Function
+
 Function address%( obj:Object )
 	If obj <> Null
 		Return Int( Byte Ptr( obj ))
