@@ -15,6 +15,7 @@ Global str$
 'Drawing to Screen
 Function draw_all_graphics()
 	SetBlend( ALPHABLEND )
+	SetOrigin( 0, 0 )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetAlpha( 1 )
@@ -41,8 +42,9 @@ Function draw_game()
 	
 	'SetViewport( 0,0, arena_offset_left+arena_w+arena_offset_right,arena_offset_top+arena_h+arena_offset_bottom )
 	
-	game.origin.x = game.lev.width/2 + game.player.pos_x
-	game.origin.y = game.lev.height/2 + game.player.pos_y
+	game.origin.x = window_w/2 - game.player.pos_x
+	game.origin.y = window_h/2 - game.player.pos_y
+	
 	SetOrigin( game.origin.x, game.origin.y )
 	
 	'arena (& retained particles)
@@ -100,8 +102,10 @@ Function draw_game()
 	
 	SetOrigin( 0, 0 )
 	
-	'aiming reticle
 	If game.human_participation
+		'hud
+		draw_HUD()
+		'aiming reticle
 		If game.player.turret_list.Count() <> 0
 			If profile.input_method = INPUT_KEYBOARD
 				SetRotation( TURRET( game.player.turret_list.First() ).ang )
@@ -115,12 +119,6 @@ Function draw_game()
 		End If
 	End If
 	SetRotation( 0 )
-
-	SetViewport( 0,0, window_w,window_h )
-
-	If game.human_participation
-		draw_HUD()
-	End If
 
 	'help screen
 	If FLAG_draw_help
@@ -332,11 +330,11 @@ Function draw_HUD()
 	SetImageFont( get_font( "consolas_bold_12" ))
 	Local text_h% = GetImageFont().Height() + 2
 	
-	x = 3; y = window_h - text_h
+	x = game.origin.x - window_w/2 + 3; y = game.origin.y + window_h/2 - text_h
 	w = 70; h = 10
 	
 	SetAlpha( 0.5 ); SetColor( 0, 0, 0 )
-	DrawRect( 0, y, window_w, window_h-text_h )
+	DrawRect( x,y, x+window_w,y+text_h )
 	SetAlpha( 1 )
 	y :+ 3
 	

@@ -95,6 +95,7 @@ Type MENU
 	Field options:MENU_OPTION[] 'array of possible options
 	Field children%[] 'array of handles, can be 0 (no child)
 	Field focus% 'index into options[]
+	Field runtime_options_added% 'flag indicating presence of any "runtime" options, so they aren't added more than once
 	
 	Function Create:MENU( name$, red%, green%, blue%, menu_id%, menu_type%, margin%, focus% = -1, options:MENU_OPTION[] )
 		Local m:MENU = New MENU
@@ -160,22 +161,23 @@ Type MENU
 		Select menu_type
 			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
 				x :+ margin; y :+ 2*margin + text_height_factor*GetImageFont().Height()
-				For Local i% = 0 To options.Length - 1
+				For Local i% = 0 To options.Length-1
 					opt = options[i]
-					If i = focus
-						SetColor( 255, 255, 255 )
-						DrawText_with_glow( opt.name, x, y )
-					Else
-						If (opt.enabled And opt.visible)
-							SetColor( 127, 127, 127 )
-						Else If opt.visible
-							SetColor( 64, 64, 64 )
+					If opt <> Null
+						If i = focus
+							SetColor( 255, 255, 255 )
+							DrawText_with_glow( opt.name, x, y )
 						Else
-							SetColor( 0, 0, 0 )
+							If (opt.enabled And opt.visible)
+								SetColor( 127, 127, 127 )
+							Else If opt.visible
+								SetColor( 64, 64, 64 )
+							Else
+								SetColor( 0, 0, 0 )
+							End If
+							DrawText( opt.name, x, y )
 						End If
-						DrawText( opt.name, x, y )
 					End If
-					
 					y :+ text_height_factor*GetImageFont().Height() + margin
 				Next
 			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
@@ -204,7 +206,9 @@ Type MENU
 				SetColor( right_color, right_color, right_color )
 				draw_arrow( ARROW_RIGHT, x + width - 2*margin - arrow_height/2, y + margin, arrow_height )
 				SetColor( 255, 255, 255 )
-				DrawText_with_glow( options[focus].name, x + 2*margin + arrow_height/2, y + margin )
+				If options[focus] <> Null	
+					DrawText_with_glow( options[focus].name, x + 2*margin + arrow_height/2, y + margin )
+				End If
 		End Select
 		
 	End Method
@@ -383,11 +387,15 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			menu_stack[current_menu] = command_argument
 			'special processing for certain menus
 			Local file_list:TList = CreateList()
-			If one_of( command_argument, [MENU_ID_LOAD, MENU_ID_SAVE] )
-				file_list = find_files( user_path, saved_game_file_ext )
-			Else If one_of( command_argument, [MENU_ID_SELECT_LEVEL] )
-				file_list = find_files( data_path, level_file_ext )
+			If Not get_current_menu().runtime_options_added
+				If one_of( command_argument, [MENU_ID_LOAD, MENU_ID_SAVE] )
+					file_list = find_files( user_path, saved_game_file_ext )
+				Else If one_of( command_argument, [MENU_ID_SELECT_LEVEL] )
+					file_list = find_files( data_path, level_file_ext )
+				End If
+				get_current_menu().runtime_options_added = True
 			End If
+			'dynamic runtime options add
 			If Not file_list.IsEmpty()
 				Local this_menu:MENU = get_menu( command_argument )
 				Local new_options:MENU_OPTION[] = New MENU_OPTION[this_menu.options.Length+file_list.Count()]
