@@ -68,15 +68,10 @@ Global current_level_index% = 0
 Global all_levels:Object[]
 
 '______________________________________________________________________________
-Function core_resume_game()
-	FLAG_in_menu = False
-End Function
-
-Function core_begin_new_game( archetype% )
+Function core_begin_new_game()
 	main_game = Create_ENVIRONMENT( True )
 	FLAG_in_menu = False
 	game = main_game
-	profile.archetype = archetype
 	game.clear()
 	current_level_index = -1
 	game.load_next_level()

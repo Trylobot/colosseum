@@ -428,10 +428,10 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			current_menu = 0
 			
 		Case COMMAND_RESUME
-			core_resume_game()
+			FLAG_in_menu = false
 			
 		Case COMMAND_NEW_GAME
-			core_begin_new_game( command_argument )
+			core_begin_new_game()
 			
 		Case COMMAND_LOAD_GAME
 			'load_game_by_slot( command_argument )

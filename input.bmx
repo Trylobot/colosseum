@@ -11,10 +11,14 @@ Function get_all_input()
 	'mouse
 	mouse.x = MouseX()
 	mouse.y = MouseY()
-	If game <> Null And game.human_participation And game.player_brain <> Null And profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
-		HideMouse()
-	Else
-		ShowMouse()
+	If game <> Null
+		game.mouse.x = mouse.x - game.origin.x
+		game.mouse.y = mouse.y - game.origin.y
+		If game.human_participation And game.player_brain <> Null And profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
+			HideMouse()
+		Else
+			ShowMouse()
+		End If
 	End If
 	
 	'music enable/disable
@@ -42,6 +46,9 @@ Function get_all_input()
 		If KeyHit( KEY_ESCAPE ) 'show menu
 			If Not FLAG_in_menu
 				FLAG_in_menu = True
+				If engine_idle <> Null
+					SetChannelVolume( engine_idle, 0 )
+				End If
 				If game.game_in_progress
 					menu_command( COMMAND_BACK_TO_MAIN_MENU )
 					get_menu( MENU_ID_MAIN_MENU ).set_enabled( "resume", True )

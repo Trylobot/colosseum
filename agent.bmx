@@ -1099,7 +1099,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					EndIf
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 					For Local t:TURRET = EachIn game.player.turret_list
-						Local diff# = ang_wrap( t.ang - t.ang_to_cVEC( mouse ))
+						Local diff# = ang_wrap( t.ang - t.ang_to_cVEC( game.mouse ))
 						Local diff_mag# = Abs( diff )
 						If diff_mag > 5*t.max_ang_vel
 							If diff < 0

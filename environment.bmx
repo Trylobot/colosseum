@@ -15,6 +15,7 @@ End Function
 
 Type ENVIRONMENT
 	Field origin:cVEC 'drawing origin
+	Field mouse:cVEC 'mouse position relative to this environment's origin
 	Field bg_cache:TImage 'background image
 	Field fg_cache:TImage 'foreground image
 
@@ -25,13 +26,6 @@ Type ENVIRONMENT
 	Field spawn_ts%[] 'for each spawner, the timestamp of the spawn process start
 	Field last_spawned:COMPLEX_AGENT[] 'for each spawner, a reference to the last spawned enemy (so they don't overlap)
 	Field spawn_counter%[] 'for each spawner, a count of how many enemies have been spawned so far
-	
-	'Field enemy_spawn_queue:TList 'TList<COMPLEX_AGENT>
-	'Field cur_squad:TList 'TList<COMPLEX_AGENT>
-	'Field cur_turret_anchor:POINT 'turret spawn point (anchor)
-	'Field cur_spawn_point:POINT 'normal spawn point
-	'Field last_spawned_enemy:COMPLEX_AGENT 'pointer to last spawned enemy
-	'Field squad_begin_spawning_ts% 'timestamp of the first enemy spawned from the most recent squad, for timing purposes
 	
 	Global DOOR_STATUS_OPEN% = 0
 	Global DOOR_STATUS_CLOSED% = 1
@@ -75,7 +69,8 @@ Type ENVIRONMENT
 	Field player:COMPLEX_AGENT 'reference to that player object
 	
 	Method New()
-		origin = Create_cVEC( 0, 0 )
+		origin = Create_cVEC( 0.0,0.0 )
+		mouse = Create_cVEC( 0.0,0.0 )
 		walls = CreateList()
 		particle_list_background = CreateList()
 		particle_list_foreground = CreateList()
@@ -92,7 +87,6 @@ Type ENVIRONMENT
 			agent_lists.AddLast( hostile_agent_list )
 		pickup_list = CreateList()
 		control_brain_list = CreateList()
-		'enemy_spawn_queue = CreateList()
 		friendly_door_list = CreateList()
 		friendly_doors_status = DOOR_STATUS_CLOSED
 		hostile_door_list = CreateList()
@@ -103,6 +97,7 @@ Type ENVIRONMENT
 	End Method
 	
 	Method clear()
+		origin.x = 0.0; origin.y = 0.0
 		bg_cache = Null
 		fg_cache = Null
 		particle_list_background.Clear()
@@ -115,17 +110,30 @@ Type ENVIRONMENT
 		hostile_agent_list.Clear()
 		pickup_list.Clear()
 		control_brain_list.Clear()
-		player = Null
+		friendly_door_list.Clear()
+		hostile_door_list.Clear()
 	End Method
 	
 	Method load_next_level()
+		clear()
 		load_level( core_get_next_level_id() )
-		'load_level( RequestFile( "Load Level Data", level_file_filter, False, data_path ))
+		If human_participation And player <> Null
+			player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
+			player.pos_x = player_spawn_point.pos_x - 0.5
+			player.pos_y = player_spawn_point.pos_y - 0.5
+			player.ang = player_spawn_point.ang
+			player.snap_all_turrets()
+		End If
 	End Method
 	
 	Method load_level( level_path$ )
-		'needs error-checking
-		lev = Create_LEVEL_from_json( TJSON.Create( LoadString( level_path )))
+		Try
+			lev = Create_LEVEL_from_json( TJSON.Create( LoadString( level_path )))
+		Catch exception:Object
+			'.. could not load level
+			'exception.ToString()
+		End Try
+		
 		'pathing (AI bots)
 		pathing = PATHING_STRUCTURE.Create( lev )
 		'walls (Collisions)
@@ -206,21 +214,18 @@ Type ENVIRONMENT
 	End Method
 	
 	Method spawn_player( archetype_index% )
-		Local new_player_spawn_point:POINT = random_spawn_point( ALIGNMENT_FRIENDLY )
-		If new_player_spawn_point <> Null
-			player_spawn_point = new_player_spawn_point
-			If player <> Null And player.managed() Then player.unmanage()
-			player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
-			player.manage( friendly_agent_list )
-			player_brain = Create_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, profile.input_method )
-			player_brain.manage( control_brain_list )
-			player.pos_x = player_spawn_point.pos_x - 0.5
-			player.pos_y = player_spawn_point.pos_y - 0.5
-			player.ang = player_spawn_point.ang
-			player.snap_all_turrets()
-			player_engine_ignition = False
-			player_engine_running = False
-		End If
+		player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
+		If player <> Null And player.managed() Then player.unmanage()
+		player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
+		player.manage( friendly_agent_list )
+		player_brain = Create_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, profile.input_method )
+		player_brain.manage( control_brain_list )
+		player.pos_x = player_spawn_point.pos_x - 0.5
+		player.pos_y = player_spawn_point.pos_y - 0.5
+		player.ang = player_spawn_point.ang
+		player.snap_all_turrets()
+		player_engine_ignition = False
+		player_engine_running = False
 	End Method
 	
 	Method spawn_pickup( x%, y% ) 'request; depends on probability

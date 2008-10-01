@@ -22,8 +22,10 @@ Function draw_all_graphics()
 	SetScale( 1, 1 )
 
 	If Not FLAG_in_menu And Not FLAG_in_shop
+		SetClsColor( 158,150,142 )
 		draw_game()
 	Else
+		SetClsColor( 0,0,0 )
 		If FLAG_in_menu
 			draw_main_screen()
 		Else If FLAG_in_shop
@@ -40,11 +42,7 @@ End Function
 'In-game stuff
 Function draw_game()
 	
-	
-	game.origin.x = window_w/2 - game.player.pos_x
-	game.origin.y = window_h/2 - game.player.pos_y
-	
-	SetViewport( 0,0, game.lev.width,game.lev.height )
+	'SetViewport( 0,0, game.lev.width,game.lev.height )
 	SetOrigin( game.origin.x,game.origin.y )
 	
 	'arena (& retained particles)
@@ -100,7 +98,7 @@ Function draw_game()
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
-	SetViewport( 0,0, window_w,window_h )
+	'SetViewport( 0,0, window_w,window_h )
 	SetOrigin( 0,0 )
 	
 	If game.human_participation
@@ -109,16 +107,16 @@ Function draw_game()
 		'aiming reticle
 		If game.player.turret_list.Count() <> 0
 			Local p_tur:TURRET = TURRET( game.player.turret_list.First() )
-			If profile.input_method = INPUT_KEYBOARD
-				SetRotation( TURRET( game.player.turret_list.First() ).ang )
-				DrawImage( img_reticle, ..
-					p_tur.pos_x + 60*Cos( p_tur.ang ), ..
-					p_tur.pos_y + 50*Sin( p_tur.ang ) )
-			Else If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
+			If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
 				'position the larger dot of the reticle directly at the mouse position
 				'point the ellipsis dots at the player's turret
-				SetRotation( p_tur.ang_to_cVEC( mouse ))
+				SetRotation( p_tur.ang_to_cVEC( game.mouse ))
 				DrawImage( img_reticle, mouse.x, mouse.y )
+			Else If profile.input_method = INPUT_KEYBOARD
+				SetRotation( p_tur.ang )
+				DrawImage( img_reticle, ..
+					p_tur.pos_x + 50*Cos( p_tur.ang ), ..
+					p_tur.pos_y + 50*Sin( p_tur.ang ) )
 			End If
 		End If
 	End If
@@ -316,44 +314,49 @@ Function draw_arena_fg()
 	SetColor( 0, 0, 0 )
 	SetAlpha( 0.4*time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
 	DrawRect( 0,0, game.lev.width,game.lev.height )
+	
+	SetBlend( LIGHTBLEND )
 	SetColor( 255, 255, 255 )
 	SetAlpha( 0.2*time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
-	SetBlend( LIGHTBLEND )
-	DrawImage( img_halo, game.player.pos_x, game.player.pos_y )
-	SetScale( 2, 2 )
-	DrawImage( img_halo, game.player_spawn_point.pos_x, game.player_spawn_point.pos_y+15.0 )
+	If game.player <> Null
+		SetScale( 1, 1 )
+		DrawImage( img_halo, game.player.pos_x, game.player.pos_y )
+	End If
+	If game.player_spawn_point <> Null
+		SetScale( 2, 2 )
+		DrawImage( img_halo, game.player_spawn_point.pos_x, game.player_spawn_point.pos_y+15.0 )
+	End If
 	SetBlend( ALPHABLEND )
 End Function
 '______________________________________________________________________________
 Const HORIZONTAL_HUD_MARGIN% = 24
+Const CASH_WIDTH% = 120
 
 Function draw_HUD()
 	Local x%, y%, w%, h%
 	Local str$
 	
 	SetImageFont( get_font( "consolas_bold_12" ))
-	Local text_h% = GetImageFont().Height() + 2
+	Local hud_height% = GetImageFont().Height() + 3
 	
-	x = game.origin.x - window_w/2 + 3; y = game.origin.y + window_h/2 - text_h
+	x = 0; y = window_h - hud_height
 	w = 70; h = 10
 	
 	SetAlpha( 0.5 ); SetColor( 0, 0, 0 )
-	DrawRect( x,y, x+window_w,y+text_h )
+	DrawRect( x,y, x+window_w,y+hud_height )
 	SetAlpha( 1 )
-	y :+ 3
+	x :+ 2; y :+ 4
 	
 	'player cash
 	SetColor( 50, 220, 50 )
 	str = "$" + format_number( profile.cash )
 	DrawText( str, x, y )
-	x :+ TextWidth( str ) + HORIZONTAL_HUD_MARGIN
+	x :+ CASH_WIDTH	
 		
 	'player health		
-	x = 70
-	
 	draw_percentage_bar( x,y, w,h, (game.player.cur_health/game.player.max_health) )
-	x = 140
-'	
+	x :+ w + HORIZONTAL_HUD_MARGIN
+	
 '	'player ammo, overheat & charge indicators
 '	y :+ 50
 '	Local ammo_row_len% = 10
@@ -480,7 +483,8 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 	Local blocking_cells:TList = lev.get_blocking_cells()
 	Local wall:BOX
 	Local neighbor%[]
-	Local max_dist# = 100.0
+	Local max_dist# = CELL.MAXIMUM_COST
+	Local color:TColor
 	'for each blocking region
 	For Local c:CELL = EachIn blocking_cells
 		wall = lev.get_wall( c )
@@ -494,17 +498,19 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 				If Not neighbor[2] Then dist[2] = wall.y+wall.h-1 - py 'BOTTOM
 				If Not neighbor[3] Then dist[3] = px - wall.x          'LEFT
 				Select Int( dist[ minimum( dist )])
-					Case 0, 2 'outermost border line with companion
-						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 255,255,255 ))
-					Case 1, 3 'slightly inset contrast line with companion
-						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 100, 80, 60 ))
-					Default 'inner area, and any area adjacent to another wall
-						pixmap.WritePixel( px,py, encode_ARGB( 1.0, 158,150,142 ))
+					Case 0,1,  3,4,5     'outermost border line with companion
+						color = TColor.Create_by_HSL( 0.0, 0.0, 0.95 + Rnd( -0.05, 0.05 ))
+					Case     2,      6,7 'slightly inset contrast line with companion
+						color = TColor.Create_by_HSL( 120.0, 0.5, 0.50 )
+					Default 'inner area
+						color = TColor.Create_by_HSL( 240.0, 0.20, 0.50 )
 				End Select
+				color.calc_RGB()
+				pixmap.WritePixel( px,py, encode_ARGB( 1.0, color.R,color.G,color.B ))
 			Next
 		Next
 	Next
-	Local img:TImage = LoadImage( pixmap, 0 )
+	Local img:TImage = LoadImage( pixmap )
 	Return img
 End Function
 
