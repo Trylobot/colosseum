@@ -342,14 +342,20 @@ Function draw_HUD()
 	x = 0; y = window_h - hud_height
 	w = 70; h = 10
 	
-	SetAlpha( 0.5 ); SetColor( 0, 0, 0 )
-	DrawRect( x,y, x+window_w,y+hud_height )
-	SetAlpha( 1 )
+	SetAlpha( 0.50 )
+	SetColor( 0, 0, 0 )
+	DrawRect( x,y, window_w,y+hud_height )
+	SetAlpha( 0.75 )
+	SetColor( 255, 255, 255 )
+	DrawLine( x,y-1, x+window_w,y-1 )
 	x :+ 2; y :+ 4
 	
 	'player cash
-	SetColor( 50, 220, 50 )
 	str = "$" + format_number( profile.cash )
+	SetColor( 0, 0, 0 )
+	SetAlpha( 1 )
+	DrawText( str, x+1, y+1 )
+	SetColor( 50, 220, 50 )
 	DrawText( str, x, y )
 	x :+ CASH_WIDTH	
 		
