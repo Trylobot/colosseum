@@ -41,8 +41,7 @@ End Function
 Function draw_game()
 	
 	'SetViewport( 0,0, game.lev.width,game.lev.height )
-	SetOrigin( game.origin.x,game.origin.y )
-	'SetOrigin( (game.origin.x+game.mouse.x)/2,(game.origin.y+game.mouse.y)/2 )
+	SetOrigin( game.drawing_origin.x,game.drawing_origin.y )
 	
 	'arena (& retained particles)
 	SetBlend( ALPHABLEND )
@@ -97,12 +96,7 @@ Function draw_game()
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
-	'SetViewport( 0,0, window_w,window_h )
-	SetOrigin( 0,0 )
-	
 	If game.human_participation
-		'hud
-		draw_HUD()
 		'aiming reticle
 		If game.player.turret_list.Count() <> 0
 			Local p_tur:TURRET = TURRET( game.player.turret_list.First() )
@@ -110,7 +104,7 @@ Function draw_game()
 				'position the larger dot of the reticle directly at the mouse position
 				'point the ellipsis dots at the player's turret
 				SetRotation( p_tur.ang_to_cVEC( game.mouse ))
-				DrawImage( img_reticle, mouse.x, mouse.y )
+				DrawImage( img_reticle, game.mouse.x, game.mouse.y )
 			Else If profile.input_method = INPUT_KEYBOARD
 				SetRotation( p_tur.ang )
 				DrawImage( img_reticle, ..
@@ -121,44 +115,52 @@ Function draw_game()
 	End If
 	SetRotation( 0 )
 
-	'help screen
-	If FLAG_draw_help
-		SetColor( 0, 0, 0 )
-		SetAlpha( 0.550 )
-		DrawRect( 0, 0, window_w, window_h )
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		If game.player_brain.input_type = INPUT_KEYBOARD
-			DrawImage( img_help_kb, 0,0 ) 'arena_offset + arena_w/2 - img_help_kb.width/2, arena_offset + arena_h/2 - img_help_kb.height/2 )
-		Else If game.player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-			DrawImage( img_help_kb_mouse, 0,0 ) 'arena_offset + arena_w/2 - img_help_kb_mouse.width/2, arena_offset + arena_h/2 - img_help_kb_mouse.height/2 )
-		End If
-	'help on help
-	Else
-		SetImageFont( get_font( "consolas_12" ))
-		str = "[F1] help"
-		DrawText_with_shadow( str, game.player_spawn_point.pos_x + game.origin.x - TextWidth( str ) - 15, game.player_spawn_point.pos_y - GetImageFont().Height() )
+	'SetViewport( 0,0, window_w,window_h )
+	SetOrigin( 0,0 )
+	
+	If game.human_participation
+		'hud
+		draw_HUD()
 	End If
 	
-	'game over indicator (if game over)
-	If game.game_over
-		SetColor( 0, 0, 0 )
-		SetAlpha( 0.650 )
-		DrawRect( 0, 0, window_w, window_h )
-		SetRotation( -30 )
-		SetAlpha( 0.500 )
-		SetColor( 200, 255, 200 )
-		SetImageFont( get_font( "consolas_bold_150" ))
-		DrawText( "GAME OVER", 25, window_h - 150 )
-		SetAlpha( 1 )
-		SetColor( 255, 255, 255 )
-		SetImageFont( get_font( "consolas_24" ))
-		DrawText( "press ESC", 300, window_h - 150 )
-		
-	End If
-	SetRotation( 0 )
-	SetColor( 255, 255, 255 )
-	SetAlpha( 1 )
+'	'help screen
+'	If FLAG_draw_help
+'		SetColor( 0, 0, 0 )
+'		SetAlpha( 0.550 )
+'		DrawRect( 0, 0, window_w, window_h )
+'		SetColor( 255, 255, 255 )
+'		SetAlpha( 1 )
+'		If game.player_brain.input_type = INPUT_KEYBOARD
+'			DrawImage( img_help_kb, 0,0 ) 'arena_offset + arena_w/2 - img_help_kb.width/2, arena_offset + arena_h/2 - img_help_kb.height/2 )
+'		Else If game.player_brain.input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+'			DrawImage( img_help_kb_mouse, 0,0 ) 'arena_offset + arena_w/2 - img_help_kb_mouse.width/2, arena_offset + arena_h/2 - img_help_kb_mouse.height/2 )
+'		End If
+'	'help on help
+'	Else
+'		SetImageFont( get_font( "consolas_12" ))
+'		str = "[F1] help"
+'		DrawText_with_shadow( str, game.player_spawn_point.pos_x + game.origin.x - TextWidth( str ) - 15, game.player_spawn_point.pos_y - GetImageFont().Height() )
+'	End If
+	
+'	'game over indicator (if game over)
+'	If game.game_over
+'		SetColor( 0, 0, 0 )
+'		SetAlpha( 0.650 )
+'		DrawRect( 0, 0, window_w, window_h )
+'		SetRotation( -30 )
+'		SetAlpha( 0.500 )
+'		SetColor( 200, 255, 200 )
+'		SetImageFont( get_font( "consolas_bold_150" ))
+'		DrawText( "GAME OVER", 25, window_h - 150 )
+'		SetAlpha( 1 )
+'		SetColor( 255, 255, 255 )
+'		SetImageFont( get_font( "consolas_24" ))
+'		DrawText( "press ESC", 300, window_h - 150 )
+'		
+'	End If
+'	SetRotation( 0 )
+'	SetColor( 255, 255, 255 )
+'	SetAlpha( 1 )
 	
 '	'level X
 '	If (now() - game.level_passed_ts) < level_intro_time
@@ -176,17 +178,17 @@ Function draw_game()
 '		DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 )
 '	End If
 	
-	'commands to player
-	SetImageFont( get_font( "consolas_12" ))
-	SetAlpha( 0.75 )
-	Local x# = mouse.x + 5, y# = mouse.y
-	If Not game.player_engine_running
-		DrawText_with_shadow( "[E] start engine", x, y )
-	Else If game.player_in_locker And game.waiting_for_player_to_enter_arena
-		DrawText_with_shadow( "[W] drive forward", x, y )
-	Else If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena
-		DrawText_with_shadow( "[R] return home", x, y )
-	End If
+'	'commands to player
+'	SetImageFont( get_font( "consolas_12" ))
+'	SetAlpha( 0.75 )
+'	Local x# = mouse.x + 5, y# = mouse.y
+'	If Not game.player_engine_running
+'		DrawText_with_shadow( "[E] start engine", x, y )
+'	Else If game.player_in_locker And game.waiting_for_player_to_enter_arena
+'		DrawText_with_shadow( "[W] drive forward", x, y )
+'	Else If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena
+'		DrawText_with_shadow( "[R] return home", x, y )
+'	End If
 	
 End Function
 '______________________________________________________________________________
@@ -506,7 +508,7 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 					Case 0,  2,3
 						color = TColor.Create_by_HSL( 0.0, 0.0, 0.80+Rnd( 0.00, 0.20 ))
 					Case   1,    4,5
-						color = TColor.Create_by_HSL( 0.0, 0.0, 0.60+Rnd( 0.00, 0.20 ))
+						color = TColor.Create_by_HSL( 0.0, 0.0, 0.55+Rnd( 0.00, 0.10 ))
 					Default
 						color = TColor.Create_by_HSL( 0.0, 0.0, 0.30+Rnd( 0.00, 0.05 ))
 				End Select

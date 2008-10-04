@@ -21,10 +21,9 @@ EndRem
 ?
 
 'Window / Arena size
-'Const stats_panel_w% = 250
-Const window_w% = 1440
-Const window_h% = 900
-Const fullscreen% = True
+Const window_w% = 1024
+Const window_h% = 768
+Const fullscreen% = False
 
 'these are here to make the old code work (before levels were data-driven)
 'Const arena_offset% = 50
@@ -51,23 +50,26 @@ SetBlend( ALPHABLEND )
 'MAIN
 Local before%
 ?Debug
-Global last_frame_ts%, time_count%, frame_count%, fps%
-'debug_draw_walls()
-'debug_load_data()
-'menu_command( COMMAND_EDIT_LEVEL )
-'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
-'Cls
-'DrawText( "loading", window_w/2, window_h/2 )
-'Flip
-'Local lev:LEVEL = Create_LEVEL_from_json( TJSON.Create( LoadString( "data/test.colosseum_level" )))
-'Local bg:TImage = generate_sand_image( lev.width, lev.height )
-'Local fg:TImage = generate_level_walls_image( lev )
-'Repeat
-'	Cls
-'	DrawImage( bg, 0,0 )
-'	DrawImage( fg, 0,0 )
-'	Flip
-'Until KeyHit( KEY_ESCAPE )
+	Global last_frame_ts%, time_count%, frame_count%, fps%
+	profile.archetype = PLAYER_INDEX_LIGHT_TANK
+	next_level = "data/test2.colosseum_level"
+	menu_command( COMMAND_NEW_GAME )
+	'debug_draw_walls()
+	'debug_load_data()
+	'menu_command( COMMAND_EDIT_LEVEL )
+	'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
+	'Cls
+	'DrawText( "loading", window_w/2, window_h/2 )
+	'Flip
+	'Local lev:LEVEL = Create_LEVEL_from_json( TJSON.Create( LoadString( "data/test.colosseum_level" )))
+	'Local bg:TImage = generate_sand_image( lev.width, lev.height )
+	'Local fg:TImage = generate_level_walls_image( lev )
+	'Repeat
+	'	Cls
+	'	DrawImage( bg, 0,0 )
+	'	DrawImage( fg, 0,0 )
+	'	Flip
+	'Until KeyHit( KEY_ESCAPE )
 ?
 Repeat
 	
@@ -95,17 +97,21 @@ Repeat
 	play_all_audio()
 
 ?Debug
-	frame_count :+ 1
-	time_count :+ (now() - last_frame_ts)
-	last_frame_ts = now()
-	If time_count >= 1000
-		fps = frame_count
-		frame_count = 0
-		time_count = 0
-	End If
-	If game <> Null And game.player <> Null
-		debug_overlay()
-	End If
+		frame_count :+ 1
+		time_count :+ (now() - last_frame_ts)
+		last_frame_ts = now()
+		If time_count >= 1000
+			fps = frame_count
+			frame_count = 0
+			time_count = 0
+		End If
+		If KeyHit( KEY_TILDE )
+			FLAG_debug_overlay = Not FLAG_debug_overlay
+		End If
+		If game <> Null And game.player <> Null And FLAG_debug_overlay And Not FLAG_in_menu
+			'debug_overlay()
+			debug_coordinate_overlay()
+		End If
 ?
 	check_esc_held()
 	

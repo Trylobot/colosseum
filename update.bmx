@@ -15,14 +15,12 @@ Function update_all_objects()
 		If game.human_participation
 			'local origin
 			If game.player <> Null
-				'Local dist_to_mouse# = game.player.dist_to_cVEC( game.mouse )
-				'Local ang_to_mouse# = game.player.ang_to_cVEC( game.mouse )
-				'game.origin.x = Int(window_w/2 - game.player. + dist_to_mouse*Cos( ang_to_mouse ))
-				'game.origin.y = Int(window_h/2 - game.player.y + dist_to_mouse*Sin( ang_to_mouse ))
-				'game.origin.x = Int(window_w/2 - game.player.x)
-				'game.origin.y = Int(window_h/2 - game.player.y)
-				game.origin.x = 0
-				game.origin.y = 0
+				game.origin.x = window_w/2 - game.player.pos_x
+				game.origin.y = window_h/2 - game.player.pos_y
+				game.mouse.x = mouse.x - game.origin.x
+				game.mouse.y = mouse.y - game.origin.y
+				game.drawing_origin.x = Int(window_w/2 - (game.player.pos_x + mouse.x)/2)
+				game.drawing_origin.y = Int(window_h/2 - (game.player.pos_x + mouse.y)/2)
 			End If
 			'if waiting for player to enter arena
 			If game.waiting_for_player_to_enter_arena

@@ -412,7 +412,7 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 					new_command_code = COMMAND_LOAD_GAME
 				Else If command_argument = MENU_ID_SELECT_LEVEL
 					new_command_code = COMMAND_SET_NEXT_LEVEL
-					offset = -1
+					'offset = -1
 				End If
 				For Local file$ = EachIn file_list
 					new_options[i] = MENU_OPTION.Create( file, new_command_code, i + offset, True, True )
@@ -459,8 +459,7 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		
 		Case COMMAND_SET_NEXT_LEVEL
-			current_level_index = command_argument
-			all_levels = find_files( data_path, level_file_ext ).ToArray()
+			next_level = get_menu( MENU_ID_SELECT_LEVEL ).options[ command_argument ].name
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			
 		Case COMMAND_EDIT_LEVEL

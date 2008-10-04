@@ -14,8 +14,11 @@ Function Create_ENVIRONMENT:ENVIRONMENT( human_participation% )
 End Function
 
 Type ENVIRONMENT
-	Field origin:cVEC 'drawing origin
-	Field mouse:cVEC 'mouse position relative to this environment's origin
+	
+	Field origin:cVEC 'local origin
+	Field mouse:cVEC 'mouse position relative to local origin
+	Field drawing_origin:cVEC 'drawing origin (either midpoint of local origin and relative mouse, or some constant)
+	
 	Field bg_cache:TImage 'background image
 	Field fg_cache:TImage 'foreground image
 
@@ -71,6 +74,7 @@ Type ENVIRONMENT
 	Method New()
 		origin = Create_cVEC( 0.0,0.0 )
 		mouse = Create_cVEC( 0.0,0.0 )
+		drawing_origin = Create_cVEC( 0.0,0.0 )
 		walls = CreateList()
 		particle_list_background = CreateList()
 		particle_list_foreground = CreateList()
@@ -116,7 +120,7 @@ Type ENVIRONMENT
 	
 	Method load_next_level()
 		clear()
-		load_level( core_get_next_level_id() )
+		load_level( next_level )
 		If human_participation And player <> Null
 			player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
 			player.pos_x = player_spawn_point.pos_x - 0.5

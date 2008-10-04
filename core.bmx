@@ -64,8 +64,9 @@ Function get_player_id%()
 	End If
 End Function
 '______________________________________________________________________________
-Global current_level_index% = 0
-Global all_levels:Object[]
+'Global current_level_index% = 0
+'Global all_levels:Object[]
+Global next_level$
 
 '______________________________________________________________________________
 Function core_begin_new_game()
@@ -73,20 +74,20 @@ Function core_begin_new_game()
 	FLAG_in_menu = False
 	game = main_game
 	game.clear()
-	current_level_index = -1
+	'current_level_index = -1
 	game.load_next_level()
 	game.game_in_progress = True
 	game.spawn_player( profile.archetype )
 End Function
 
-Function core_get_next_level_id$()
-	If current_level_index >= all_levels.Length-1
-		Return String(all_levels[all_levels.Length-1])
-	Else
-		current_level_index :+ 1
-		Return String(all_levels[current_level_index])
-	End If
-End Function
+'Function core_get_next_level_id$()
+'	If current_level_index >= all_levels.Length-1
+'		Return String(all_levels[all_levels.Length-1])
+'	Else
+'		current_level_index :+ 1
+'		Return String(all_levels[current_level_index])
+'	End If
+'End Function
 
 '______________________________________________________________________________
 'Function init_pathing_grid_from_walls( level_walls:TList )
