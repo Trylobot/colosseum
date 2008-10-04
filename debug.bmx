@@ -62,6 +62,10 @@ Global cb:CONTROL_BRAIN = Null
 
 Function debug_overlay()
 	
+	If game <> Null And game.origin <> Null
+		'SetOrigin( game.origin.x,game.origin.y )
+	End If
+	
 	If KeyHit( KEY_TILDE )
 		FLAG_debug_overlay = Not FLAG_debug_overlay
 	End If
@@ -100,20 +104,19 @@ Function debug_overlay()
 			DrawLine( game.origin.x+game.lev.vertical_divs[i],game.origin.y, game.origin.x+game.lev.vertical_divs[i],game.origin.y+game.lev.height )
 		Next
 
-		Local mouse:POINT = Create_POINT( MouseX(),MouseY() )
 		SetColor( 255, 255, 255 )
 		
 		If KeyHit( KEY_Q )
 			cb = Null
 			For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
-				If brain.avatar.dist_to( mouse ) <= 15
+				If brain.avatar.dist_to_cVEC( mouse ) <= 15
 					cb = brain
 					Exit
 				End If
 			Next
 		Else
 			For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
-				If brain.avatar.dist_to( mouse ) <= 15
+				If brain.avatar.dist_to_cVEC( mouse ) <= 15
 					SetColor( 255, 255, 255 )
 					SetAlpha( 0.333 )
 					DrawOval( brain.avatar.pos_x-15,brain.avatar.pos_y-15, 30,30 )
@@ -123,7 +126,7 @@ Function debug_overlay()
 		
 		If cb <> Null
 			'draw info
-			sx = mouse.pos_x + 16; sy = mouse.pos_y
+			sx = mouse.x + 16; sy = mouse.y
 			debug_drawtext( cb.avatar.name )
 			If cb.target <> Null
 				debug_drawtext( "target -> " + cb.target.name )
@@ -228,7 +231,7 @@ Function debug_overlay()
 		End If
 		
 		If KeyHit( KEY_QUOTES )
-			game.spawn_pickup( mouse.pos_x, mouse.pos_y )
+			game.spawn_pickup( mouse.x, mouse.y )
 		End If
 		
 		If KeyHit( KEY_9 )
@@ -248,7 +251,7 @@ Function debug_overlay()
 				spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
 			End If
 			spawn_agent.ang = spawn_agent.ang_to( game.player ) + 180
-			spawn_agent.pos_x = mouse.pos_x; spawn_agent.pos_y = mouse.pos_y
+			spawn_agent.pos_x = mouse.x; spawn_agent.y = mouse.pos_y
 			spawn_agent.update()
 			spawn_agent.snap_all_turrets()
 			spawn_agent.draw()
@@ -276,6 +279,15 @@ Function debug_overlay()
 				
 			End If
 		End If
+		
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		DrawLine( game.player.x,game.player.y, mouse.x,mouse.y )
+		Local midpoint1:cVEC = cVEC.Create( (game.player.x+mouse.x)/2, (game.player.y+mouse.y)/2 )
+		DrawOval( midpoint1.x-3,midpoint1.y-3, 6,6 )
+		DrawLine( game.origin.x,game.origin.y,game.mouse.x,game.mouse.y )
+		Local midpoint2:cVEC = cVEC.Create( (game.origin.x+game.mouse.x)/2, (game.origin.y+game.mouse.y)/2 )
+		DrawOval( midpoint2.x-3,midpoint2.y-3, 6,6 )
 		
 	End If
 	
@@ -648,11 +660,11 @@ End Function
 ''	debug_drawtext( "hostile agents " + hostile_agent_list.Count() )
 '
 '
-''	SetColor( 127, 64, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.vel_x*length, c.pos_y + c.vel_y*length )
-''	SetColor( 64, 127, 64 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + c.acc_x*length, c.pos_y + c.acc_y*length )
-''	SetColor( 64, 64, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + Cos(c.ang)*length, c.pos_y + Sin(c.ang)*length )
-''	SetColor( 255, 127, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.driving_force.control_pct*Cos(c.driving_force.direction + c.ang), c.pos_y + length*c.driving_force.control_pct*Sin(c.driving_force.direction + c.ang) )
-''	SetColor( 127, 255, 127 ); DrawLine( c.pos_x, c.pos_y, c.pos_x + length*c.turning_force.control_pct*Cos(c.ang + 90),                        c.pos_y + length*c.turning_force.control_pct*Sin(c.ang + 90) )
+''	SetColor( 127, 64, 64 ); DrawLine( c.x, c.y, c.x + c.vel_x*length, c.y + c.vel_y*length )
+''	SetColor( 64, 127, 64 ); DrawLine( c.x, c.y, c.x + c.acc_x*length, c.y + c.acc_y*length )
+''	SetColor( 64, 64, 127 ); DrawLine( c.x, c.y, c.x + Cos(c.ang)*length, c.y + Sin(c.ang)*length )
+''	SetColor( 255, 127, 127 ); DrawLine( c.x, c.y, c.x + length*c.driving_force.control_pct*Cos(c.driving_force.direction + c.ang), c.y + length*c.driving_force.control_pct*Sin(c.driving_force.direction + c.ang) )
+''	SetColor( 127, 255, 127 ); DrawLine( c.x, c.y, c.x + length*c.turning_force.control_pct*Cos(c.ang + 90),                        c.y + length*c.turning_force.control_pct*Sin(c.ang + 90) )
 ''	px :+ speed * KeyDown( KEY_RIGHT ) - speed * KeyDown( KEY_LEFT )
 ''	py :+ speed * KeyDown( KEY_DOWN ) - speed * KeyDown( KEY_UP )
 ''	maus_x = MouseX() - arena_offset
@@ -664,9 +676,9 @@ End Function
 ''	SetLineWidth( 1 )
 ''	SetColor( 127, 255, 127 ); DrawLine( px, py, px + r*Cos(a), py + r*Sin(a) )
 ''
-''	SetColor( 255, 127, 127 ); DrawLine( px, py, px + 30*Cos(avatar.turrets[0].ang), avatar.pos_y + 30*Sin(avatar.turrets[0].ang) )
-''	SetColor( 255, 127, 127 ); DrawLine( avatar.pos_x, avatar.pos_y, avatar.pos_x + 30*Cos(avatar.turrets[0].ang), avatar.pos_y + 30*Sin(avatar.turrets[0].ang) )
-''	SetColor( 127, 255, 127 ); DrawLine( avatar.pos_x, avatar.pos_y, avatar.pos_x + dist_to_target*Cos(dist_to_target), avatar.pos_y + dist_to_target*Sin(dist_to_target) )
+''	SetColor( 255, 127, 127 ); DrawLine( px, py, px + 30*Cos(avatar.turrets[0].ang), avatar.y + 30*Sin(avatar.turrets[0].ang) )
+''	SetColor( 255, 127, 127 ); DrawLine( avatar.x, avatar.y, avatar.x + 30*Cos(avatar.turrets[0].ang), avatar.y + 30*Sin(avatar.turrets[0].ang) )
+''	SetColor( 127, 255, 127 ); DrawLine( avatar.x, avatar.y, avatar.x + dist_to_target*Cos(dist_to_target), avatar.y + dist_to_target*Sin(dist_to_target) )
 ''
 ''	SetColor( 255, 255, 255 )
 '
@@ -689,13 +701,13 @@ End Function
 ''	SetLineWidth(2)
 ''	Local x#[3], y#[3], i%
 ''	
-''	x[0] = em.parent.pos_x
-''	x[1] = em.parent.pos_x + em.offset * Cos( em.parent.ang + em.offset_ang )
-''	x[2] = em.parent.pos_x + em.offset * Cos( em.parent.ang + em.offset_ang )
+''	x[0] = em.parent.x
+''	x[1] = em.parent.x + em.offset * Cos( em.parent.ang + em.offset_ang )
+''	x[2] = em.parent.x + em.offset * Cos( em.parent.ang + em.offset_ang )
 ''	
-''	y[0] = em.parent.pos_y
-''	y[1] = em.parent.pos_y + em.offset * Sin( em.parent.ang + em.offset_ang )
-''	y[2] = em.parent.pos_y + em.offset * Sin( em.parent.ang + em.offset_ang )
+''	y[0] = em.parent.y
+''	y[1] = em.parent.y + em.offset * Sin( em.parent.ang + em.offset_ang )
+''	y[2] = em.parent.y + em.offset * Sin( em.parent.ang + em.offset_ang )
 ''	
 ''	For i = 0 To x.Length - 2
 ''		DrawLine( x[i], y[i], x[i+1], y[i+1] )
@@ -720,8 +732,8 @@ End Function
 ''		DrawText( "              C-T = " + (C-T), offset, offset + 10*line ); line :+ 1
 ''		DrawText( "          C-T > L = " + ((C-T) > L), offset, offset + 10*line ); line :+ 1
 ''	End If
-''	DrawText( display_name + ".pos_x       " + pos_x, x, line*10 + y ); line :+ 1
-''	DrawText( display_name + ".pos_y       " + pos_y, x, line*10 + y ); line :+ 1
+''	DrawText( display_name + ".x       " + x, x, line*10 + y ); line :+ 1
+''	DrawText( display_name + ".y       " + y, x, line*10 + y ); line :+ 1
 ''	DrawText( display_name + ".vel_x       " + vel_x, x, line*10 + y ); line :+ 1
 ''	DrawText( display_name + ".vel_y       " + vel_y, x, line*10 + y ); line :+ 1
 ''	DrawText( display_name + ".ang         " + ang, x, line*10 + y ); line :+ 1
@@ -732,20 +744,20 @@ End Function
 ''	For Local i% = 0 To 3
 ''		If player.tread_debris_emitter[i].alive()
 ''			DrawText( "emitter " + i + " active", offset, i * 10 + offset )
-''			DrawLine( player.pos_x, player.pos_y, player.pos_x + player.tread_debris_emitter[i].offset * Cos( player.tread_debris_emitter[i].offset_ang + player.ang ), player.pos_y + player.tread_debris_emitter[i].offset * Sin( player.tread_debris_emitter[i].offset_ang + player.ang ))
+''			DrawLine( player.x, player.y, player.x + player.tread_debris_emitter[i].offset * Cos( player.tread_debris_emitter[i].offset_ang + player.ang ), player.y + player.tread_debris_emitter[i].offset * Sin( player.tread_debris_emitter[i].offset_ang + player.ang ))
 ''		End If
 ''	Next
 ''	
 ''	SetLineWidth(2)
 ''	Local x#[3], y#[3], i%
 ''	
-''	x[0] = p.pos_x
-''	x[1] = p.pos_x + t.offset * Cos( t.offset_ang + p.ang )
-''	x[2] = p.pos_x + t.offset * Cos( t.offset_ang + p.ang ) + t.muz_offset * Cos( t.muz_offset_ang + p.ang + t.ang )
+''	x[0] = p.x
+''	x[1] = p.x + t.offset * Cos( t.offset_ang + p.ang )
+''	x[2] = p.x + t.offset * Cos( t.offset_ang + p.ang ) + t.muz_offset * Cos( t.muz_offset_ang + p.ang + t.ang )
 ''	
-''	y[0] = p.pos_y
-''	y[1] = p.pos_y + t.offset * Sin( t.offset_ang + p.ang )
-''	y[2] = p.pos_y + t.offset * Sin( t.offset_ang + p.ang ) + t.muz_offset * Sin( t.muz_offset_ang + p.ang + t.ang )
+''	y[0] = p.y
+''	y[1] = p.y + t.offset * Sin( t.offset_ang + p.ang )
+''	y[2] = p.y + t.offset * Sin( t.offset_ang + p.ang ) + t.muz_offset * Sin( t.muz_offset_ang + p.ang + t.ang )
 ''	
 ''	For i = 0 To x.Length - 2
 ''		DrawLine( x[i], y[i], x[i+1], y[i+1] )

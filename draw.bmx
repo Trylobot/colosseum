@@ -22,10 +22,8 @@ Function draw_all_graphics()
 	SetScale( 1, 1 )
 
 	If Not FLAG_in_menu And Not FLAG_in_shop
-		SetClsColor( 158,150,142 )
 		draw_game()
 	Else
-		SetClsColor( 0,0,0 )
 		If FLAG_in_menu
 			draw_main_screen()
 		Else If FLAG_in_shop
@@ -44,6 +42,7 @@ Function draw_game()
 	
 	'SetViewport( 0,0, game.lev.width,game.lev.height )
 	SetOrigin( game.origin.x,game.origin.y )
+	'SetOrigin( (game.origin.x+game.mouse.x)/2,(game.origin.y+game.mouse.y)/2 )
 	
 	'arena (& retained particles)
 	SetBlend( ALPHABLEND )
@@ -428,21 +427,21 @@ Function draw_percentage_bar( x%,y%, w%,h%, pct# )
 	DrawRect( x + 2, y + 2, pct*(w - 4.0), h - 4 )
 End Function
 
-Function DrawText_with_shadow( str$, pos_x%, pos_y% )
+Function DrawText_with_shadow( str$, x%, y% )
 	SetColor( 0, 0, 0 )
-	DrawText( str, pos_x + 1, pos_y + 1 )
+	DrawText( str, x + 1, y + 1 )
 	SetColor( 255, 255, 255 )
-	DrawText( str, pos_x, pos_y )
+	DrawText( str, x, y )
 End Function
 
-Function DrawText_with_glow( str$, pos_x%, pos_y% )
+Function DrawText_with_glow( str$, x%, y% )
 	SetAlpha( 0.2 )
-	DrawText( str, pos_x-1, pos_y-1 )
-	DrawText( str, pos_x+1, pos_y-1 )
-	DrawText( str, pos_x+1, pos_y+1 )
-	DrawText( str, pos_x-1, pos_y-1 )
+	DrawText( str, x-1, y-1 )
+	DrawText( str, x+1, y-1 )
+	DrawText( str, x+1, y+1 )
+	DrawText( str, x-1, y-1 )
 	SetAlpha( 1 )
-	DrawText( str, pos_x, pos_y )
+	DrawText( str, x, y )
 End Function
 
 Function screenshot()
@@ -504,12 +503,12 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 				If Not neighbor[2] Then dist[2] = wall.y+wall.h-1 - py 'BOTTOM
 				If Not neighbor[3] Then dist[3] = px - wall.x          'LEFT
 				Select Int( dist[ minimum( dist )])
-					Case 0,1,  3,4,5     'outermost border line with companion
-						color = TColor.Create_by_HSL( 0.0, 0.0, 0.95 + Rnd( -0.05, 0.05 ))
-					Case     2,      6,7 'slightly inset contrast line with companion
-						color = TColor.Create_by_HSL( 120.0, 0.5, 0.50 )
-					Default 'inner area
-						color = TColor.Create_by_HSL( 240.0, 0.20, 0.50 )
+					Case 0,  2,3
+						color = TColor.Create_by_HSL( 0.0, 0.0, 0.80+Rnd( 0.00, 0.20 ))
+					Case   1,    4,5
+						color = TColor.Create_by_HSL( 0.0, 0.0, 0.60+Rnd( 0.00, 0.20 ))
+					Default
+						color = TColor.Create_by_HSL( 0.0, 0.0, 0.30+Rnd( 0.00, 0.05 ))
 				End Select
 				color.calc_RGB()
 				pixmap.WritePixel( px,py, encode_ARGB( 1.0, color.R,color.G,color.B ))

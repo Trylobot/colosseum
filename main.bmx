@@ -21,10 +21,10 @@ EndRem
 ?
 
 'Window / Arena size
-Const stats_panel_w% = 250
-Const window_w% = 640
-Const window_h% = 480
-Const fullscreen% = False
+'Const stats_panel_w% = 250
+Const window_w% = 1440
+Const window_h% = 900
+Const fullscreen% = True
 
 'these are here to make the old code work (before levels were data-driven)
 'Const arena_offset% = 50
