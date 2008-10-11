@@ -17,13 +17,16 @@ Rem
 EndRem
 
 ?Debug
+Global FLAG_debug_overlay% = False
 'debug_format_number()
 ?
 
 'Window / Arena size
-Const window_w% = 1024
-Const window_h% = 768
-Const fullscreen% = False
+Global window_w% = 1024
+Global window_w_half% = window_w/2
+Global window_h% = 768
+Global window_h_half% = window_h/2
+Global fullscreen% = False
 
 'these are here to make the old code work (before levels were data-driven)
 'Const arena_offset% = 50
@@ -52,7 +55,7 @@ Local before%
 ?Debug
 	Global last_frame_ts%, time_count%, frame_count%, fps%
 	profile.archetype = PLAYER_INDEX_LIGHT_TANK
-	next_level = "data/test2.colosseum_level"
+	next_level = "data/test.colosseum_level"
 	menu_command( COMMAND_NEW_GAME )
 	'debug_draw_walls()
 	'debug_load_data()
@@ -109,8 +112,8 @@ Repeat
 			FLAG_debug_overlay = Not FLAG_debug_overlay
 		End If
 		If game <> Null And game.player <> Null And FLAG_debug_overlay And Not FLAG_in_menu
-			'debug_overlay()
-			debug_coordinate_overlay()
+			debug_overlay()
+			'debug_coordinate_overlay()
 		End If
 ?
 	check_esc_held()

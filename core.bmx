@@ -105,7 +105,7 @@ End Function
 '	End If
 'End Function
 '______________________________________________________________________________
-'Quit from anywhere; "instaquit", hold ESC to do it
+'Quit instantly from anywhere; hold ESC for a few seconds
 Global esc_held% = False, esc_press_ts% = now()
 Global esc_held_progress_bar_show_time_required% = 200, instaquit_time_required% = 1000
 

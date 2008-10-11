@@ -15,12 +15,10 @@ Function update_all_objects()
 		If game.human_participation
 			'local origin
 			If game.player <> Null
-				game.origin.x = window_w/2 - game.player.pos_x
-				game.origin.y = window_h/2 - game.player.pos_y
-				game.mouse.x = mouse.x - game.origin.x
-				game.mouse.y = mouse.y - game.origin.y
-				game.drawing_origin.x = Int(window_w/2 - (game.player.pos_x + mouse.x)/2)
-				game.drawing_origin.y = Int(window_h/2 - (game.player.pos_x + mouse.y)/2)
+				game.mouse.x = game.player.pos_x + (2 * (mouse.x - window_w_half))
+				game.mouse.y = game.player.pos_y + (2 * (mouse.y - window_h_half))
+				game.drawing_origin.x = window_w_half - Int((game.player.pos_x + game.mouse.x)/2)
+				game.drawing_origin.y = window_h_half - Int((game.player.pos_y + game.mouse.y)/2)
 			End If
 			'if waiting for player to enter arena
 			If game.waiting_for_player_to_enter_arena

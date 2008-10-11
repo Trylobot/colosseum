@@ -7,6 +7,8 @@ EndRem
 'This entire file is ignored if not in debug mode
 ?Debug
 ''______________________________________________________________________________
+Global debug_origin:cVEC = cVEC.Create( 0, 0 )
+Global real_origin:cVEC = cVEC.Create( 0, 0 )
 Const SPAWN_OFF% = 0, SPAWN_HOSTILES% = 1, SPAWN_FRIENDLIES% = 2
 Global FLAG_spawn_mode% = SPAWN_OFF
 Global spawn_archetype% = enemy_index_start, spawn_agent:COMPLEX_AGENT
@@ -55,9 +57,9 @@ Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = "", b_msg$ = "", m_m
 	m.y = (a.y+b.y)/2
 	'draw
 	DrawLine( a.x,a.y, b.x,b.y )
-	DrawOval( a.x-2,a.y-2, 4,4 )
-	DrawOval( b.x-2,b.y-2, 4,4 )
-	DrawOval( m.x-2,m.y-2, 4,4 )
+	DrawOval( a.x-2,a.y-2, 5,5 )
+	DrawOval( b.x-2,b.y-2, 5,5 )
+	DrawOval( m.x-2,m.y-2, 5,5 )
 	'messages
 	SetImageFont( get_font( "consolas_10" ))
 	DrawText( a_msg, Int(a.x+2),Int(a.y+2) )
@@ -65,23 +67,41 @@ Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = "", b_msg$ = "", m_m
 	DrawText( m_msg, Int(m.x+2),Int(m.y+2) )
 End Function
 
-Function debug_coordinate_overlay()
-	SetScale( 1, 1 )
-	SetRotation( 0 )
-	SetColor( 255, 255, 255 )
-	SetAlpha( 0.5 )
-	
-	SetColor( 127, 127, 255 ) 'blue
-	SetOrigin( 0, 0 )
-	debug_drawline( game.player, remove_origin_cVEC( mouse ), "game.player", "mouse", "" )
-	debug_drawline( game.origin, game.mouse, "game.origin", "game.mouse", "" )
-	
-	SetColor( 127, 255, 127 ) 'green
-	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
-	debug_drawline( game.player, remove_origin_cVEC( mouse ), "game.player", "mouse - origin", "" )
-	debug_drawline( game.origin, game.mouse, "game.origin", "game.mouse", "" )
-	
-End Function
+''______________________________________________________________________________
+'Function debug_coordinate_overlay()
+'	Local move_speed% = 1
+'	If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT ) Then move_speed = 5
+'	If      KeyDown( KEY_LEFT )  Then debug_origin.x :+ move_speed ..
+'	Else If KeyDown( KEY_RIGHT ) Then debug_origin.x :- move_speed
+'	If      KeyDown( KEY_UP )    Then debug_origin.y :+ move_speed ..
+'	Else If KeyDown( KEY_DOWN )  Then debug_origin.y :- move_speed
+'	
+'	SetScale( 1, 1 )
+'	SetRotation( 0 )
+'	
+'	'real origin -> game origin
+'	SetOrigin( 0, 0 )
+'	SetColor( 255, 255, 255 )
+'	SetAlpha( 0.5 )
+'	debug_drawline( real_origin, game.drawing_origin,, "("+Int(game.drawing_origin.x)+","+Int(game.drawing_origin.y)+")" )
+'	''real origin -> player
+'	'debug_drawline( real_origin, game.player )
+'	''game origin -> player
+'	'debug_drawline( game.drawing_origin, game.player )
+'	
+'	'crosshairs (show real screen center)
+'	SetColor( 127, 127, 127 )
+'	SetAlpha( 0.25 )
+'	debug_drawline( cVEC.Create( window_w_half, 0 ), cVEC.Create( window_w_half, window_h ),,, "("+Int(debug_origin.x)+","+Int(debug_origin.y)+")")
+'	debug_drawline( cVEC.Create( 0, window_h_half ), cVEC.Create( window_w, window_h_half ))
+'	
+'	'player -> mouse
+'	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+'	SetColor( 127, 255, 255 )
+'	SetAlpha( 0.5 )
+'	debug_drawline( game.player, game.mouse, "P", "M", "CENTER ME!" )
+'
+'End Function
 
 ''______________________________________________________________________________
 ''Function debug_load_data()
@@ -105,49 +125,32 @@ End Function
 ''	Next
 ''End Function
 '______________________________________________________________________________
-Global FLAG_debug_overlay% = True
 Global sx%, sy%
 Global cb:CONTROL_BRAIN = Null
 
 Function debug_overlay()
-	
 	SetRotation( 0 )
 	SetScale( 1, 1 )
+	SetColor( 0, 0, 0 )
+	SetAlpha( 1 )
+	SetOrigin( 0, 0 )
 	
-	If game <> Null And game.origin <> Null
+	sx = 3; sy = 3
+	'fps
+	debug_drawtext( String.FromInt( fps ))
+	'debug_drawtext( "enemies -> "+hostile_agent_list.Count() )
+
+	If game <> Null
 		SetOrigin( game.drawing_origin.x,game.drawing_origin.y )
 	End If
 	
-	sx = game.origin.x+game.lev.width	
-	sy = 0
-	
-	'erase stats
-	SetColor( 0, 0, 0 )
-	SetAlpha( 1 )
-	DrawRect( sx,sy, 2000,2000 )
-	
-	'fps
-	sx :+ 3; sy :+ 3
-	debug_drawtext( "fps -> "+fps )
-	'debug_drawtext( "enemies -> "+hostile_agent_list.Count() )
-	
-	'show pathing grid
-	'Local cursor:CELL = New CELL
-	'For cursor.row = 0 To pathing_grid_h - 1
-	'	For cursor.col = 0 To pathing_grid_w - 1
-	'		'blockable/passing grid
-	'		SetColor( 255, 255, 255 ); SetAlpha( 0.333 )
-	'		If pathing.grid( cursor ) = PATH_BLOCKED
-	'			DrawRect( cursor.col*cell_size + pathing_grid_origin.x + 1, cursor.row*cell_size + pathing_grid_origin.y + 1, cell_size - 2, cell_size - 2 )
-	'		End If
-	'	Next
-	'Next
+	'show pathing grid divisions
 	SetAlpha( 0.20 )
 	For Local i% = 0 To game.lev.horizontal_divs.length - 1
-		DrawLine( game.origin.x,game.origin.y+game.lev.horizontal_divs[i], game.origin.x+game.lev.width,game.origin.y+game.lev.horizontal_divs[i] )
+		DrawLine( 0,0+game.lev.horizontal_divs[i], 0+game.lev.width,0+game.lev.horizontal_divs[i] )
 	Next
 	For Local i% = 0 To game.lev.vertical_divs.length - 1
-		DrawLine( game.origin.x+game.lev.vertical_divs[i],game.origin.y, game.origin.x+game.lev.vertical_divs[i],game.origin.y+game.lev.height )
+		DrawLine( 0+game.lev.vertical_divs[i],0, 0+game.lev.vertical_divs[i],0+game.lev.height )
 	Next
 
 	SetColor( 255, 255, 255 )
@@ -155,14 +158,14 @@ Function debug_overlay()
 	If KeyHit( KEY_Q )
 		cb = Null
 		For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
-			If brain.avatar.dist_to_cVEC( mouse ) <= 15
+			If brain.avatar.dist_to_cVEC( game.mouse ) <= 15
 				cb = brain
 				Exit
 			End If
 		Next
 	Else
 		For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
-			If brain.avatar.dist_to_cVEC( mouse ) <= 15
+			If brain.avatar.dist_to_cVEC( game.mouse ) <= 15
 				SetColor( 255, 255, 255 )
 				SetAlpha( 0.333 )
 				DrawOval( brain.avatar.pos_x-15,brain.avatar.pos_y-15, 30,30 )

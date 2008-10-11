@@ -1477,40 +1477,43 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method friendly_blocking%()
-		If target <> Null
-			last_look_target_ts = now()
-			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
-			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
-			'for each allied agent
-			Local allied_agent_list:TList = CreateList()
-			Select avatar.political_alignment
-				Case ALIGNMENT_FRIENDLY
-					allied_agent_list = game.friendly_agent_list
-				Case ALIGNMENT_HOSTILE
-					allied_agent_list = game.hostile_agent_list
-			End Select
-			Local ally_offset#, ally_offset_ang#
-			Local scalar_projection#
-			For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
-				'if the line of sight of the avatar is too close to the ally
-				ally_offset = TURRET( avatar.turret_list.First() ).dist_to( ally )
-				ally_offset_ang = TURRET( avatar.turret_list.First() ).ang_to( ally )
-				scalar_projection = ally_offset*Cos( ally_offset_ang - TURRET( avatar.turret_list.First() ).ang )
-				
-				If vector_length( ..
-				(ally.pos_x - av.x+scalar_projection*Cos(TURRET( avatar.turret_list.First() ).ang)), ..
-				(ally.pos_y - av.y+scalar_projection*Sin(TURRET( avatar.turret_list.First() ).ang)) ) ..
-				< friendly_blocking_scalar_projection_distance
-					'then the avatar's shot is blocked by this ally
-					Return True
-				End If
-			Next
-			'after checking all the allies, none are blocking
-			Return False
-		Else 'target == Null, thus no blockers
-			Return False
-		End If
+		Return False
 	End Method
+'	Method friendly_blocking%()
+'		If target <> Null
+'			last_look_target_ts = now()
+'			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
+'			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
+'			'for each allied agent
+'			Local allied_agent_list:TList = CreateList()
+'			Select avatar.political_alignment
+'				Case ALIGNMENT_FRIENDLY
+'					allied_agent_list = game.friendly_agent_list
+'				Case ALIGNMENT_HOSTILE
+'					allied_agent_list = game.hostile_agent_list
+'			End Select
+'			Local ally_offset#, ally_offset_ang#
+'			Local scalar_projection#
+'			For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
+'				'if the line of sight of the avatar is too close to the ally
+'				ally_offset = TURRET( avatar.turret_list.First() ).dist_to( ally )
+'				ally_offset_ang = TURRET( avatar.turret_list.First() ).ang_to( ally )
+'				scalar_projection = ally_offset*Cos( ally_offset_ang - TURRET( avatar.turret_list.First() ).ang )
+'				
+'				If vector_length( ..
+'				(ally.pos_x - av.x+scalar_projection*Cos(TURRET( avatar.turret_list.First() ).ang)), ..
+'				(ally.pos_y - av.y+scalar_projection*Sin(TURRET( avatar.turret_list.First() ).ang)) ) ..
+'				< friendly_blocking_scalar_projection_distance
+'					'then the avatar's shot is blocked by this ally
+'					Return True
+'				End If
+'			Next
+'			'after checking all the allies, none are blocking
+'			Return False
+'		Else 'target == Null, thus no blockers
+'			Return False
+'		End If
+'	End Method
 
 	Method get_path_to_target:TList()
 		If target <> Null

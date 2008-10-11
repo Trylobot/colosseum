@@ -40,8 +40,8 @@ End Function
 'In-game stuff
 Function draw_game()
 	
-	'SetViewport( 0,0, game.lev.width,game.lev.height )
-	SetOrigin( game.drawing_origin.x,game.drawing_origin.y )
+	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+	SetViewport( game.drawing_origin.x, game.drawing_origin.y, game.lev.width, game.lev.height )
 	
 	'arena (& retained particles)
 	SetBlend( ALPHABLEND )
@@ -96,8 +96,10 @@ Function draw_game()
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
+	SetViewport( 0, 0, window_w, window_h )
+
+	'mouse/aiming dot
 	If game.human_participation
-		'aiming reticle
 		If game.player.turret_list.Count() <> 0
 			Local p_tur:TURRET = TURRET( game.player.turret_list.First() )
 			If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
@@ -115,11 +117,10 @@ Function draw_game()
 	End If
 	SetRotation( 0 )
 
-	'SetViewport( 0,0, window_w,window_h )
-	SetOrigin( 0,0 )
+	SetOrigin( 0, 0 )
 	
+	'hud
 	If game.human_participation
-		'hud
 		draw_HUD()
 	End If
 	
@@ -361,7 +362,8 @@ Function draw_HUD()
 	x :+ CASH_WIDTH	
 		
 	'player health		
-	draw_percentage_bar( x,y, w,h, (game.player.cur_health/game.player.max_health) )
+	Local pct# = game.player.cur_health/game.player.max_health
+	draw_percentage_bar( x,y, w,h, pct ) ', (1 - (0.5*pct)) )
 	x :+ w + HORIZONTAL_HUD_MARGIN
 	
 '	'player ammo, overheat & charge indicators
@@ -418,14 +420,16 @@ Function draw_HUD()
 	
 End Function
 '______________________________________________________________________________
-Function draw_percentage_bar( x%,y%, w%,h%, pct# )
-	SetColor( 255, 255, 255 )
-	DrawRect( x, y, w, h )
-	SetColor( 64, 64, 64 )
-	DrawRect( x + 1, y + 1, w - 2, h - 2 )
+Function draw_percentage_bar( x%,y%, w%,h%, pct#, a# = 1.0, r% = 255, g% = 255, b% = 255 )
+	SetAlpha( a )
+	SetColor( r, g, b )
+	SetLineWidth( 1 )
+	DrawLine( x,     y,     x+w-1, y,     False )
+	DrawLine( x+w-1, y,     x+w-1, y+h-1, False )
+	DrawLine( x+w-1, y+h-1, x,     y+h-1, False )
+	DrawLine( x,     y+h-1, x,     y,     False )
 	If      pct > 1.0 Then pct = 1.0 ..
 	Else If pct < 0.0 Then pct = 0.0
-	SetColor( 255, 255, 255 )
 	DrawRect( x + 2, y + 2, pct*(w - 4.0), h - 4 )
 End Function
 
