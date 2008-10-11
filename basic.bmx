@@ -144,6 +144,18 @@ Function encode_ARGB%( alpha#, red%, green%, blue% )
 	argb :+ Int(alpha*255) Shl 24
 	Return argb
 End Function
+
+Function remove_origin_cVEC:cVEC( v:cVEC )
+	Local ox#, oy#
+	GetOrigin( ox, oy )
+	Return cVEC.Create( v.x - ox, v.y - oy )
+End Function
+
+Function remove_origin:POINT( p:POINT )
+	Local ox#, oy#
+	GetOrigin( ox, oy )
+	Return POINT( Create_POINT( p.pos_x - ox, p.pos_y - oy ))
+End Function
 '______________________________________________________________________________
 Function time_alpha_pct#( ts%, time%, in% = True )
 	If in 'fade in

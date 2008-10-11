@@ -71,14 +71,16 @@ Function debug_coordinate_overlay()
 	SetColor( 255, 255, 255 )
 	SetAlpha( 0.5 )
 	
+	SetColor( 127, 127, 255 ) 'blue
 	SetOrigin( 0, 0 )
-	debug_drawline( game.player, mouse, "game.player", "mouse", "" )
+	debug_drawline( game.player, remove_origin_cVEC( mouse ), "game.player", "mouse", "" )
 	debug_drawline( game.origin, game.mouse, "game.origin", "game.mouse", "" )
-
+	
+	SetColor( 127, 255, 127 ) 'green
 	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
-	debug_drawline( game.player, cVEC.Create( mouse.x - game.drawing_origin.x, mouse.y - game.drawing_origin.y ), "game.player", "mouse - origin", "" )
+	debug_drawline( game.player, remove_origin_cVEC( mouse ), "game.player", "mouse - origin", "" )
 	debug_drawline( game.origin, game.mouse, "game.origin", "game.mouse", "" )
-		
+	
 End Function
 
 ''______________________________________________________________________________

@@ -24,6 +24,7 @@ profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
 Global FLAG_in_menu% = True
 Global FLAG_in_shop% = False
 Global FLAG_bg_music_on% = False
+Global FLAG_no_sound% = False
 Global FLAG_draw_help% = False
 Global FLAG_console% = False
 
