@@ -53,26 +53,26 @@ SetBlend( ALPHABLEND )
 'MAIN
 Local before%
 ?Debug
-	Global last_frame_ts%, time_count%, frame_count%, fps%
-	profile.archetype = PLAYER_INDEX_LIGHT_TANK
-	next_level = "data/test.colosseum_level"
-	menu_command( COMMAND_NEW_GAME )
-	'debug_draw_walls()
-	'debug_load_data()
-	'menu_command( COMMAND_EDIT_LEVEL )
-	'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
-	'Cls
-	'DrawText( "loading", window_w/2, window_h/2 )
-	'Flip
-	'Local lev:LEVEL = Create_LEVEL_from_json( TJSON.Create( LoadString( "data/test.colosseum_level" )))
-	'Local bg:TImage = generate_sand_image( lev.width, lev.height )
-	'Local fg:TImage = generate_level_walls_image( lev )
-	'Repeat
-	'	Cls
-	'	DrawImage( bg, 0,0 )
-	'	DrawImage( fg, 0,0 )
-	'	Flip
-	'Until KeyHit( KEY_ESCAPE )
+Global last_frame_ts%, time_count%, frame_count%, fps%
+profile.archetype = PLAYER_INDEX_LIGHT_TANK
+next_level = "data/test.colosseum_level"
+menu_command( COMMAND_NEW_GAME )
+'debug_draw_walls()
+'debug_load_data()
+'menu_command( COMMAND_EDIT_LEVEL )
+'menu_command( COMMAND_NEW_GAME, PLAYER_INDEX_LIGHT_TANK )
+'Cls
+'DrawText( "loading", window_w/2, window_h/2 )
+'Flip
+'Local lev:LEVEL = Create_LEVEL_from_json( TJSON.Create( LoadString( "data/test.colosseum_level" )))
+'Local bg:TImage = generate_sand_image( lev.width, lev.height )
+'Local fg:TImage = generate_level_walls_image( lev )
+'Repeat
+'	Cls
+'	DrawImage( bg, 0,0 )
+'	DrawImage( fg, 0,0 )
+'	Flip
+'Until KeyHit( KEY_ESCAPE )
 ?
 Repeat
 	
