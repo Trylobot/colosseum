@@ -22,9 +22,9 @@ Global FLAG_debug_overlay% = False
 ?
 
 'Window / Arena size
-Global window_w% = 1024
+Global window_w% = 640
 Global window_w_half% = window_w/2
-Global window_h% = 768
+Global window_h% = 480
 Global window_h_half% = window_h/2
 Global fullscreen% = False
 

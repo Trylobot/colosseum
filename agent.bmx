@@ -1464,7 +1464,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					Return False
 				End If
 			Next
-If KeyDown( KEY_G ) Then DebugStop
+'If KeyDown( KEY_G ) Then DebugStop
 			'after checking all the walls, still haven't returned; avatar can therefore see its target
 			'however, the shot might be blocked by a friendly
 			If avatar.turret_list.Count() > 0
