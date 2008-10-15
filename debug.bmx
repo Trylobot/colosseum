@@ -137,7 +137,7 @@ Function debug_overlay()
 	
 	sx = 3; sy = 3
 	'fps
-	debug_drawtext( String.FromInt( fps ))
+	debug_drawtext( "fps " + fps )
 	'debug_drawtext( "enemies -> "+hostile_agent_list.Count() )
 
 	If game <> Null
@@ -174,8 +174,24 @@ Function debug_overlay()
 	End If
 	
 	If cb <> Null
+		'keyboard help
+		debug_drawtext( "[1]: target = player" )
+		debug_drawtext( "[2]: get path" )
+		debug_drawtext( "[3]: sight target" )
+		
+		'manipulate by keyboard
+		If KeyDown( KEY_1 )
+			cb.target = game.player
+		End If
+		If KeyDown( KEY_2 )
+			cb.path = cb.get_path_to_target()
+		End If
+		If KeyDown( KEY_3 )
+			cb.see_target()
+		End If
+		
 		'draw info
-		sx = mouse.x + 16; sy = mouse.y
+		sx = game.mouse.x + 16; sy = game.mouse.y
 		debug_drawtext( cb.avatar.name )
 		If cb.target <> Null
 			debug_drawtext( "target -> " + cb.target.name )
@@ -251,17 +267,6 @@ Function debug_overlay()
 			Next
 		End If
 			
-		'manipulate by keyboard
-		If KeyDown( KEY_1 )
-			cb.target = game.player
-		End If
-		If KeyDown( KEY_2 )
-			cb.path = cb.get_path_to_target()
-		End If
-		If KeyDown( KEY_3 )
-			cb.see_target()
-		End If
-		
 	End If
 	
 	''turret anchors

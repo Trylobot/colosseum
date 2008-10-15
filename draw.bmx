@@ -98,23 +98,7 @@ Function draw_game()
 	
 	SetViewport( 0, 0, window_w, window_h )
 
-	'mouse/aiming dot
-	If game.human_participation
-		If game.player.turret_list.Count() <> 0
-			Local p_tur:TURRET = TURRET( game.player.turret_list.First() )
-			If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
-				'position the larger dot of the reticle directly at the mouse position
-				'point the ellipsis dots at the player's turret
-				SetRotation( p_tur.ang_to_cVEC( game.mouse ))
-				DrawImage( img_reticle, game.mouse.x, game.mouse.y )
-			Else If profile.input_method = INPUT_KEYBOARD
-				SetRotation( p_tur.ang )
-				DrawImage( img_reticle, ..
-					p_tur.pos_x + 50*Cos( p_tur.ang ), ..
-					p_tur.pos_y + 50*Sin( p_tur.ang ) )
-			End If
-		End If
-	End If
+	draw_reticle()
 	SetRotation( 0 )
 
 	SetOrigin( 0, 0 )
@@ -330,6 +314,35 @@ Function draw_arena_fg()
 	End If
 	SetBlend( ALPHABLEND )
 End Function
+
+'______________________________________________________________________________
+Global last_lag_aimer:cVEC = New cVEC
+
+Function draw_reticle()
+	If game.human_participation
+		If game.player.turret_list.Count() <> 0
+			Local p_tur:TURRET = TURRET( game.player.turret_list.First() )
+			If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
+				'lag-behind reticle
+				
+				SetRotation( p_tur.ang )
+				SetAlpha( 0.5 )
+				DrawImage( img_reticle, , )
+				'position the larger dot of the reticle directly at the mouse position
+				'point the ellipsis dots at the player's turret
+				SetRotation( p_tur.ang_to_cVEC( game.mouse ))
+				SetAlpha( 1.0 )
+				DrawImage( img_reticle, game.mouse.x, game.mouse.y )
+			Else If profile.input_method = INPUT_KEYBOARD
+				SetRotation( p_tur.ang )
+				DrawImage( img_reticle, ..
+					p_tur.pos_x + 50*Cos( p_tur.ang ), ..
+					p_tur.pos_y + 50*Sin( p_tur.ang ) )
+			End If
+		End If
+	End If
+End Function
+
 '______________________________________________________________________________
 Const HORIZONTAL_HUD_MARGIN% = 24
 Const CASH_WIDTH% = 120
