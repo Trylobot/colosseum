@@ -316,7 +316,7 @@ Function draw_arena_fg()
 End Function
 
 '______________________________________________________________________________
-Global lag_aimer:cVEC = New cVEC
+Global lag_aimer:cVEC
 
 Function draw_reticle()
 	If game.human_participation
@@ -324,13 +324,12 @@ Function draw_reticle()
 			Local p_tur:TURRET = TURRET( game.player.turret_list.First() )
 			If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
 				'lag-behind reticle
-				Local m_rail# = (lag_aimer.y - game.mouse.y)/(lag_aimer.x - game.mouse.x)
-				Local b_rail# = lag_aimer.y - m_rail*lag_aimer.x
-				Local ptur_pointer:cVEC = cVEC.Create( Cos( p_tur.ang ), Sin( p_tur.ang ))
-				Local m_ptur# = (p_tur.pos_y - ptur_pointer.y)/(p_tur.pos_x - ptur_pointer.x)
-				Local b_ptur# = p_tur.pos_y - m_ptur*p_tur.pos_x
-				lag_aimer.x = (b_ptur - b_rail)/(m_rail - m_ptur)
-				lag_aimer.y = m_rail*lag_aimer.x + b_rail
+				If lag_aimer = Null Then lag_aimer = cVEC.Create( p_tur.pos_x, p_tur.pos_y - 50 )
+				If POINT( Create_POINT( lag_aimer.x, lag_aimer.y )).dist_to_cVEC( game.mouse ) <= 2
+					lag_aimer = mouse.clone()
+				Else
+					lag_aimer = intersection( lag_aimer, game.mouse, cVEC.Create( p_tur.pos_x, p_tur.pos_y ), cVEC.Create( p_tur.pos_x + Cos( p_tur.ang ), p_tur.pos_y + Sin( p_tur.ang )))
+				End If
 				SetRotation( p_tur.ang )
 				SetAlpha( 0.5 )
 				DrawImage( img_reticle, lag_aimer.x, lag_aimer.y )
@@ -338,9 +337,6 @@ Function draw_reticle()
 				SetRotation( p_tur.ang_to_cVEC( game.mouse ))
 				SetAlpha( 1.0 )
 				DrawImage( img_reticle, game.mouse.x, game.mouse.y )
-?Debug
-DrawLine( lag_aimer.x, lag_aimer.y, game.mouse.x, game.mouse.y )
-?
 			Else If profile.input_method = INPUT_KEYBOARD
 				SetRotation( p_tur.ang )
 				DrawImage( img_reticle, ..

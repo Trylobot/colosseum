@@ -429,6 +429,32 @@ Function line_intersects_rect%( v1:cVEC, v2:cVEC, r:cVEC, r_dim:cVEC )
 	End If
 End Function
 '______________________________________________________________________________
+rem
+	If lag_aimer = Null Then lag_aimer = cVEC.Create( p_tur.pos_x - 20, p_tur.pos_y - 20 )
+	Local m_rail# = (lag_aimer.y - game.mouse.y)/(lag_aimer.x - game.mouse.x)
+	Local b_rail# = lag_aimer.y - m_rail*lag_aimer.x
+	Local ptur_pointer:cVEC = cVEC.Create( Cos( p_tur.ang ), Sin( p_tur.ang ))
+	Local m_ptur# = (p_tur.pos_y - ptur_pointer.y)/(p_tur.pos_x - ptur_pointer.x)
+	Local b_ptur# = p_tur.pos_y - m_ptur*p_tur.pos_x
+	lag_aimer.x = (b_ptur - b_rail)/(m_rail - m_ptur)
+	lag_aimer.y = m_rail*lag_aimer.x + b_rail
+	SetRotation( p_tur.ang )
+	SetAlpha( 0.5 )
+	DrawImage( img_reticle, lag_aimer.x, lag_aimer.y )
+End rem
+Function intersection:cVEC( j1:cVEC, j2:cVEC, k1:cVEC, k2:cVEC ) 'return the point of intersection between two lines, j & k, given by four points
+	Local mj#, bj#
+	Local mk#, bk#
+	mj = (j1.y - j2.y)/(j1.x - j2.x)
+	bj = j1.y - (mj * j1.x)
+	mk = (k1.y - k2.y)/(k1.x - k2.x)
+	bk = k1.y - (mk * k1.x)
+	Local i:cVEC = New cVEC
+	i.x = (bk - bj)/(mj - mk)
+	i.y = (mj * i.x) + bj
+	Return i
+End Function
+'______________________________________________________________________________
 Function Create_BOX:BOX( x#, y#, w#, h# )
 	Local b:BOX = New BOX
 	b.x = x; b.y = y
