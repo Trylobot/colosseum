@@ -334,7 +334,7 @@ Global all_menus:MENU[] = ..
 		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "light tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_LIGHT_TANK, True, True ), ..
 			MENU_OPTION.Create( "laser tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_LASER_TANK, True, True ), ..
-			MENU_OPTION.Create( "medium tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_MED_TANK, True, True ) ]), ..
+			MENU_OPTION.Create( "medium tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_MEDIUM_TANK, True, True ) ]), ..
 	MENU.Create( "select level", 255, 127, 127, MENU_ID_SELECT_LEVEL, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
 	MENU.Create( "load game", 255, 196, 196, MENU_ID_LOAD, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
@@ -470,5 +470,6 @@ Function menu_command( command_code%, command_argument% = COMMAND_ARGUMENT_NULL 
 			
 	End Select
 End Function
+
 
 

@@ -187,7 +187,8 @@ Function debug_overlay()
 			cb.path = cb.get_path_to_target()
 		End If
 		If KeyDown( KEY_3 )
-			cb.see_target()
+			cb.sighted_target = cb.see_target()
+			'cb.see_target_DEBUG()
 		End If
 		
 		'draw info

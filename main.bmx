@@ -22,9 +22,9 @@ Global FLAG_debug_overlay% = False
 ?
 
 'Window / Arena size
-Global window_w% = 640
+Global window_w% = 1280
 Global window_w_half% = window_w/2
-Global window_h% = 480
+Global window_h% = 960
 Global window_h_half% = window_h/2
 Global fullscreen% = False
 
@@ -48,14 +48,15 @@ Else 'fullscreen
 End If
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )
+glEnable( GL_LINE_SMOOTH )
 
 '______________________________________________________________________________
 'MAIN
 Local before%
 ?Debug
 Global last_frame_ts%, time_count%, frame_count%, fps%
-profile.archetype = PLAYER_INDEX_LIGHT_TANK
-next_level = "data/test.colosseum_level"
+profile.archetype = PLAYER_INDEX_MEDIUM_TANK
+next_level = "data/debug.colosseum_level"
 menu_command( COMMAND_NEW_GAME )
 'debug_draw_walls()
 'debug_load_data()

@@ -316,32 +316,42 @@ Function draw_arena_fg()
 End Function
 
 '______________________________________________________________________________
+Global last_pos:POINT
 Global lag_aimer:cVEC
 
 Function draw_reticle()
 	If game.human_participation
 		If game.player.turret_list.Count() <> 0
 			Local p_tur:TURRET = TURRET( game.player.turret_list.First() )
+			
 			If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
 				'lag-behind reticle
-				If lag_aimer = Null Then lag_aimer = cVEC.Create( p_tur.pos_x, p_tur.pos_y - 50 )
-				If POINT( Create_POINT( lag_aimer.x, lag_aimer.y )).dist_to_cVEC( game.mouse ) <= 2
-					lag_aimer = mouse.clone()
-				Else
+				'initialization
+				If last_pos = Null Then last_pos = Copy_POINT( p_tur )
+				If lag_aimer = Null Then lag_aimer = cVEC.Create( p_tur.pos_x + 50*Cos( p_tur.ang ), p_tur.pos_y + 50*Sin( p_tur.ang ) )
+				Local ang_to_mouse# = p_tur.ang_to_cVEC( game.mouse )
+				Local dist_to_mouse# = vector_diff_length( lag_aimer.x, lag_aimer.y, game.mouse.x, game.mouse.y )
+				lag_aimer.x :+ p_tur.pos_x - last_pos.pos_x
+				lag_aimer.y :+ p_tur.pos_y - last_pos.pos_y
+				last_pos = Copy_POINT( p_tur )
+				'if angle of separation is not too close to zero
+				If Abs( ang_wrap( p_tur.ang - ang_to_mouse )) > (40.0 / dist_to_mouse)
 					lag_aimer = intersection( lag_aimer, game.mouse, cVEC.Create( p_tur.pos_x, p_tur.pos_y ), cVEC.Create( p_tur.pos_x + Cos( p_tur.ang ), p_tur.pos_y + Sin( p_tur.ang )))
+					SetAlpha( 0.01 * dist_to_mouse - 0.1 )
+					SetRotation( p_tur.ang )
+					DrawImage( img_reticle, lag_aimer.x, lag_aimer.y )
+				Else
+					lag_aimer = game.mouse.clone()
 				End If
-				SetRotation( p_tur.ang )
-				SetAlpha( 0.5 )
-				DrawImage( img_reticle, lag_aimer.x, lag_aimer.y )
-				'mouse reticle
+				'actual mouse reticle
 				SetRotation( p_tur.ang_to_cVEC( game.mouse ))
 				SetAlpha( 1.0 )
 				DrawImage( img_reticle, game.mouse.x, game.mouse.y )
+			
 			Else If profile.input_method = INPUT_KEYBOARD
 				SetRotation( p_tur.ang )
-				DrawImage( img_reticle, ..
-					p_tur.pos_x + 50*Cos( p_tur.ang ), ..
-					p_tur.pos_y + 50*Sin( p_tur.ang ) )
+				DrawImage( img_reticle, p_tur.pos_x + 50*Cos( p_tur.ang ), p_tur.pos_y + 50*Sin( p_tur.ang ))
+			
 			End If
 		End If
 	End If

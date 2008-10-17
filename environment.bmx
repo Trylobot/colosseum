@@ -122,11 +122,7 @@ Type ENVIRONMENT
 		clear()
 		load_level( next_level )
 		If human_participation And player <> Null
-			player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
-			player.pos_x = player_spawn_point.pos_x - 0.5
-			player.pos_y = player_spawn_point.pos_y - 0.5
-			player.ang = player_spawn_point.ang
-			player.snap_all_turrets()
+			respawn_player()
 		End If
 	End Method
 	
@@ -230,6 +226,18 @@ Type ENVIRONMENT
 		player.snap_all_turrets()
 		player_engine_ignition = False
 		player_engine_running = False
+	End Method
+	
+	Method respawn_player()
+		If player <> Null
+			player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
+			player.manage( friendly_agent_list )
+			player_brain.manage( control_brain_list )
+			player.pos_x = player_spawn_point.pos_x - 0.5
+			player.pos_y = player_spawn_point.pos_y - 0.5
+			player.ang = player_spawn_point.ang
+			player.snap_all_turrets()
+		End If
 	End Method
 	
 	Method spawn_pickup( x%, y% ) 'request; depends on probability
