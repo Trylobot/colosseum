@@ -14,6 +14,7 @@ Global level_intro_time% = 2000
 
 'environmental objects
 Global mouse:cVEC = New cVEC
+Global mouse_delta:cVEC = New cVEC
 Global main_game:ENVIRONMENT 'game in which player participates
 Global ai_menu_game:ENVIRONMENT 'menu ai demo environment
 Global game:ENVIRONMENT 'current game environment

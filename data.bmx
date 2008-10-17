@@ -71,12 +71,14 @@ Function save_screenshot_to_file( screen:TImage, filename$ = "" )
 End Function
 
 Function edit_level_file( file_path$ = "" )
-	Local json:TJSON, lev:LEVEL
+	Local file:TStream, json:TJSON, lev:LEVEL
 	
 	'selecting a level to load needs to be a function of the level editor, and it needs to use *my* menu class, not the operating system's
-	If file_path = "" Then file_path = RequestFile( "Load Level Data", level_file_filter, False, user_path )
+	If file_path = "" Then file_path = RequestFile( "Load Level Data", level_file_filter, False, data_path )
 	If file_path <> ""
-		json = TJSON.Create( LoadString( file_path ))
+		file = ReadFile( file_path )
+		json = TJSON.Create( file )
+		file.Close()
 		DebugLog "read from "+file_path+"~n" + json.ToSource()
 		lev = Create_LEVEL_from_json( json )
 	Else
@@ -84,7 +86,9 @@ Function edit_level_file( file_path$ = "" )
 		lev.name = "new level"
 	End If
 	
-	'the level editor needs to be an object controlled by main, not a "sub-main" as it is now.
+	'I don't like the way this works.
+	'the level editor needs to be an object, enabled/disabled and controlled by the main loop
+	'currently, it suspends main and has its own loop.
 	edit_level( lev )
 	
 	'selecting a file to save to needs to be a function of the level editor, and it needs to use *my* menu class, not the operating system's
@@ -92,7 +96,9 @@ Function edit_level_file( file_path$ = "" )
 	If file_path <> ""
 		json = TJSON.Create( lev.to_json() )
 		DebugLog "saving to "+file_path+"~n" + json.ToSource()
-		json.Write( WriteFile( file_path )) 
+		file = WriteFile( file_path )
+		json.Write( file )
+		file.Close()
 	End If
 End Function
 

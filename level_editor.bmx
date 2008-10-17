@@ -17,6 +17,10 @@ Const EDIT_LEVEL_MODE_SPAWNER_EDIT% = 5
 
 Function edit_level:LEVEL( lev:LEVEL )
 	
+	Local gridsnap_mouse:cVEC = New cVEC
+	Local drag_mouse_start:cVEC = New cVEC
+	Local drag_pos_start:POINT = New POINT
+	
 	Local gridsnap% = 5
 	Local mode% = EDIT_LEVEL_MODE_RESIZE
 	Local FLAG_text_mode% = False
@@ -24,6 +28,7 @@ Function edit_level:LEVEL( lev:LEVEL )
 	Local info_x%, info_y%
 	Local mouse_down_1% = False, mouse_down_2% = False
 	Local new_spawner:SPAWNER = New SPAWNER
+	
 	Local cursor% = 0
 	Local cursor_archetype% = enemy_index_start
 	Local kb_handler:CONSOLE = New CONSOLE
@@ -38,9 +43,17 @@ Function edit_level:LEVEL( lev:LEVEL )
 	Repeat
 		Cls
 		
-		'draw the gridsnap lines
+		'copied from input.bmx
+		mouse.x = MouseX()
+		mouse.y = MouseY()
+
 		SetColor( 255, 255, 255 )
 		SetLineWidth( 1 )
+		SetAlpha( 0.5 )
+		'mouse delta line
+		DrawLine( mouse.x - mouse_delta.x, mouse.y - mouse_delta.y, mouse.x, mouse.y )		
+		
+		'draw the gridsnap lines
 		SetAlpha( 0.25 )
 		Local grid_rows% = lev.height / gridsnap
 		Local grid_cols% = lev.width / gridsnap
@@ -107,9 +120,6 @@ Function edit_level:LEVEL( lev:LEVEL )
 			End If
 		End If
 		
-		'mouse init
-		Local mouse:cVEC = cVEC( cVEC.Create( MouseX(),MouseY() ))
-		
 		'unconditionally draw level info panel and editor help
 		info_x = round_to_nearest( window_w, gridsnap ) - 300; info_y = 0;
 		SetAlpha( 0.75 )
@@ -131,25 +141,26 @@ Function edit_level:LEVEL( lev:LEVEL )
 		Select mode
 			Case EDIT_LEVEL_MODE_RESIZE
 				DrawText( "mode "+EDIT_LEVEL_MODE_RESIZE+" -> camera pan", info_x,info_y )
-				DrawText( "click and drag to resize", mouse.x+10,mouse.y )
-				DrawText( "right-click and drag to pan", mouse.x+10,mouse.y+10 )
-				DrawText( "enter to edit level title", mouse.x+10,mouse.y+20 )
+				DrawText( "click and drag to resize level", mouse.x+10,mouse.y )
+				DrawText( "right-click & drag to pan view", mouse.x+10,mouse.y+10 )
+				DrawText( "enter to edit level name", mouse.x+10,mouse.y+20 )
 			Case EDIT_LEVEL_MODE_DIVIDER
-				DrawText( "mode "+EDIT_LEVEL_MODE_DIVIDER+" -> dividers vertical/horizontal", info_x,info_y )
+				DrawText( "mode "+EDIT_LEVEL_MODE_DIVIDER+" -> dividers", info_x,info_y )
 				DrawText( "click to split vertically", mouse.x+10,mouse.y )
 				DrawText( "right-click to split horizontally", mouse.x+10,mouse.y+10 )
-				DrawText( "(+ctrl) to un-split", mouse.x+10,mouse.y+20 )
+				DrawText( "ctrl+click to un-split", mouse.x+10,mouse.y+20 )
 			Case EDIT_LEVEL_MODE_PATHING
-				DrawText( "mode "+EDIT_LEVEL_MODE_PATHING+" -> pathing blocked/passable", info_x,info_y )
+				DrawText( "mode "+EDIT_LEVEL_MODE_PATHING+" -> pathing regions", info_x,info_y )
 				DrawText( "click block out area", mouse.x+10,mouse.y )
 				DrawText( "right-click to clear area", mouse.x+10,mouse.y+10 )
 			Case EDIT_LEVEL_MODE_SPAWNER_NEW
-				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_NEW+" -> spawners add/remove", info_x,info_y )
-				DrawText( "click to add spawner", mouse.x+10,mouse.y )
-				DrawText( "(+ctrl) to delete", mouse.x+10,mouse.y+10 )
-				DrawText( "left/right to change angle", mouse.x+10,mouse.y+20 )
+				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_NEW+" -> spawner system", info_x,info_y )
+				DrawText( "click to add new", mouse.x+10,mouse.y )
+				DrawText( "ctrl+click & drag to move", mouse.x+10,mouse.y+10 )
+				DrawText( "alt+click to delete", mouse.x+10,mouse.y+20 )
+				DrawText( "shift+click to set angle", mouse.x+10,mouse.y+30 )
 			Case EDIT_LEVEL_MODE_SPAWNER_EDIT
-				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_EDIT+" -> spawners edit", info_x,info_y )
+				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_EDIT+" -> spawner details", info_x,info_y )
 				DrawText( "hover to edit nearest spawner", mouse.x+10,mouse.y )
 				DrawText( "up/down to select squad", mouse.x+10,mouse.y+10 )
 				DrawText( "left/right to change enemy type", mouse.x+10,mouse.y+20 )
@@ -158,7 +169,7 @@ Function edit_level:LEVEL( lev:LEVEL )
 				DrawText( "pgup/pgdn to change alignment", mouse.x+10,mouse.y+50 )
 				DrawText( "enter to edit wait time", mouse.x+10,mouse.y+60 )
 		End Select; info_y :+ line_h
-		DrawText( "numpad +/- to change grid size", info_x,info_y ); info_y :+ 2*line_h
+		DrawText( "numpad +/- gridsnap zoom", info_x,info_y ); info_y :+ 2*line_h
 		
 		SetImageFont( bigger_font )
 		DrawText_with_glow( lev.name, info_x, info_y )
@@ -204,40 +215,40 @@ Function edit_level:LEVEL( lev:LEVEL )
 			
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_DIVIDER
-				mouse.x = round_to_nearest( mouse.x, gridsnap )
-				mouse.y = round_to_nearest( mouse.y, gridsnap )
+				gridsnap_mouse.x = round_to_nearest( mouse.x, gridsnap )
+				gridsnap_mouse.y = round_to_nearest( mouse.y, gridsnap )
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
 				If mouse_down_1 And Not MouseDown( 1 )
 					If Not KeyDown( KEY_LCONTROL ) And Not KeyDown( KEY_RCONTROL )
-						lev.add_divider( mouse.x-x, LINE_TYPE_VERTICAL )
+						lev.add_divider( gridsnap_mouse.x-x, LINE_TYPE_VERTICAL )
 					Else 
-						lev.remove_divider( mouse.x-x, LINE_TYPE_VERTICAL )
+						lev.remove_divider( gridsnap_mouse.x-x, LINE_TYPE_VERTICAL )
 					End If
 				End If
 				If mouse_down_2 And Not MouseDown( 2 )
 					If Not KeyDown( KEY_LCONTROL ) And Not KeyDown( KEY_RCONTROL )
-						lev.add_divider( mouse.y-y, LINE_TYPE_HORIZONTAL )
+						lev.add_divider( gridsnap_mouse.y-y, LINE_TYPE_HORIZONTAL )
 					Else 
-						lev.remove_divider( mouse.y-y, LINE_TYPE_HORIZONTAL )
+						lev.remove_divider( gridsnap_mouse.y-y, LINE_TYPE_HORIZONTAL )
 					End If
 				End If
 				SetAlpha( 0.60 )
 				If MouseDown( 1 )
 					mouse_down_1 = True
 					SetLineWidth( 3 )
-					DrawLine( mouse.x,y, mouse.x,y+lev.height )
+					DrawLine( gridsnap_mouse.x,y, gridsnap_mouse.x,y+lev.height )
 					SetLineWidth( 1 )
-					DrawLine( mouse.x,y, mouse.x,y+lev.height )
+					DrawLine( gridsnap_mouse.x,y, gridsnap_mouse.x,y+lev.height )
 				Else
 					mouse_down_1 = False
 				End If
 				If MouseDown( 2 )
 					mouse_down_2 = True
 					SetLineWidth( 3 )
-					DrawLine( x,mouse.y, x+lev.width,mouse.y )
+					DrawLine( x,gridsnap_mouse.y, x+lev.width,gridsnap_mouse.y )
 					SetLineWidth( 1 )
-					DrawLine( x,mouse.y, x+lev.width,mouse.y )
+					DrawLine( x,gridsnap_mouse.y, x+lev.width,gridsnap_mouse.y )
 				Else
 					mouse_down_2 = False
 				End If
@@ -254,10 +265,10 @@ Function edit_level:LEVEL( lev:LEVEL )
 				
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_SPAWNER_NEW
-				mouse.x = round_to_nearest( mouse.x-x, gridsnap )
-				mouse.y = round_to_nearest( mouse.y-y, gridsnap )
-				new_spawner.pos.pos_x = mouse.x
-				new_spawner.pos.pos_y = mouse.y
+				gridsnap_mouse.x = round_to_nearest( mouse.x-x, gridsnap )
+				gridsnap_mouse.y = round_to_nearest( mouse.y-y, gridsnap )
+				new_spawner.pos.pos_x = gridsnap_mouse.x
+				new_spawner.pos.pos_y = gridsnap_mouse.y
 				Select new_spawner.alignment
 					Case ALIGNMENT_NONE
 						SetColor( 255, 255, 255 )
@@ -266,17 +277,25 @@ Function edit_level:LEVEL( lev:LEVEL )
 					Case ALIGNMENT_HOSTILE
 						SetColor( 255, 64, 64 )
 				End Select
-				If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
+				If Not (KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL ) Or KeyDown( KEY_LALT ) Or KeyDown( KEY_RALT ) Or KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT ))
+					If mouse_down_1 And Not MouseDown( 1 )
+						lev.add_spawner( new_spawner.clone() )
+					End If
+				Else
 					Local closest_sp:SPAWNER = Null
 					For Local sp:SPAWNER = EachIn lev.spawners
 						If closest_sp = Null Or ..
-						closest_sp.pos.dist_to( Create_POINT( mouse.x, mouse.y )) > sp.pos.dist_to( Create_POINT( mouse.x, mouse.y ))
+						closest_sp.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y )) > sp.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y ))
 							closest_sp = sp
 						End If
 					Next
 					If closest_sp <> Null
+						If MouseDown( 1 )
+							SetAlpha( 0.70 )
+						Else
+							SetAlpha( 0.35 )
+						End If
 						SetLineWidth( 2 )
-						SetAlpha( 0.6 )
 						Select closest_sp.alignment
 							Case ALIGNMENT_NONE
 								SetColor( 255, 255, 255 )
@@ -286,13 +305,25 @@ Function edit_level:LEVEL( lev:LEVEL )
 								SetColor( 255, 64, 64 )
 						End Select
 						DrawLine( MouseX(),MouseY(), closest_sp.pos.pos_x+x,closest_sp.pos.pos_y+y )
-						If mouse_down_1 And Not MouseDown( 1 )
-							lev.remove_spawner( closest_sp )
+
+						If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
+							If Not mouse_down_1 And MouseDown( 1 )
+								drag_mouse_start = mouse.clone()
+								drag_pos_start = Copy_POINT( closest_sp.pos )
+							End If
+							If MouseDown( 1 )
+								closest_sp.pos.pos_x = round_to_nearest( drag_pos_start.pos_x + (mouse.x - drag_mouse_start.x), gridsnap )
+								closest_sp.pos.pos_y = round_to_nearest( drag_pos_start.pos_y + (mouse.y - drag_mouse_start.y), gridsnap )
+							End If
+						Else If KeyDown( KEY_LALT ) Or KeyDown( KEY_RALT )
+							If mouse_down_1 And Not MouseDown( 1 )
+								lev.remove_spawner( closest_sp )
+							End If
+						Else If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
+							If MouseDown( 1 )
+								closest_sp.pos.ang = round_to_nearest( ang_wrap( closest_sp.pos.ang_to_cVEC( mouse )), 45 )
+							End If
 						End If
-					End If
-				Else
-					If mouse_down_1 And Not MouseDown( 1 )
-						lev.add_spawner( new_spawner.clone() )
 					End If
 				End If
 				Local alpha_mod#
@@ -303,7 +334,7 @@ Function edit_level:LEVEL( lev:LEVEL )
 					mouse_down_1 = False
 					alpha_mod = 0.50
 				End If
-				If Not (KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL ))
+				If Not (KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL ) Or KeyDown( KEY_LALT ) Or KeyDown( KEY_RALT ) Or KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT ))
 					Local p:POINT = new_spawner.pos
 					SetAlpha( 0.50*alpha_mod )
 					DrawOval( x+p.pos_x-spawn_point_preview_radius,y+p.pos_y-spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
