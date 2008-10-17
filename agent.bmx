@@ -1472,7 +1472,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			'after checking all the walls, still haven't returned; avatar can therefore see its target
 			'however, the shot might be blocked by a friendly
 			If avatar.turret_list.Count() > 0
-				Return Not friendly_blocking()
+				'Return Not friendly_blocking()
+				Return True 'disable friendly fire check temporarily, until function can be debugged
 			Else 'avatar.turret_count <= 0
 				Return True
 			End If
@@ -1480,37 +1481,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Return False
 		End If
 	End Method
-?Debug
-'	Method see_target_DEBUG%()
-'		If target <> Null
-'			last_look_target_ts = now()
-'			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
-'			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
-'			'for each wall in the level
-'			For Local wall:BOX = EachIn game.walls
-'				'if the line connecting this brain's avatar with its target intersects the wall
-'				If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall.x, wall.y)), cVEC( cVEC.Create(wall.w, wall.h)) )
-'SetColor( 255, 255, 255 )
-'SetAlpha( 0.5 )
-'DrawLine( av.x, av.y, targ.x, targ.y )
-'DrawRect( wall.x, wall.y, wall.w, wall.h )
-'					'then the avatar cannot see its target
-'					Return False
-'				End If
-'			Next
-'			'after checking all the walls, still haven't returned; avatar can therefore see its target
-'			'however, the shot might be blocked by a friendly
-'			If avatar.turret_list.Count() > 0
-'				Return Not friendly_blocking()
-'			Else 'avatar.turret_count <= 0
-'				Return True
-'			End If
-'		Else 'target == Null
-'			debug_drawtext( "target -> null" )
-'			Return False
-'		End If
-'	End Method
-?
 	
 	Method friendly_blocking%()
 		If target <> Null
