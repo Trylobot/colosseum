@@ -159,7 +159,7 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 		If game.player.dead() 'player just died? (omgwtf)
 			game.game_over = True
 		Else If ag.political_alignment = ALIGNMENT_HOSTILE
-			PARTICLE( PARTICLE.Create( PARTICLE_TYPE_STR,,,, ("$" + ag.cash_value), get_font( "consolas_24" ), LAYER_FOREGROUND, False, 0.1, 0.333, 1.000, 0.3333,,,, 1000, ag.pos_x, ag.pos_y, 0.0, -2.0, 0.0, 0.0, 0.5, -0.016, 1.0, 0.01 )).auto_manage()
+			PARTICLE( PARTICLE.Create( PARTICLE_TYPE_STR,,,, ("$" + ag.cash_value), get_font( "consolas_24" ), LAYER_FOREGROUND, False, 0.1, 0.333, 1.000, 0.3333,,,, 1000, ag.pos_x, ag.pos_y-5, 0.0, -2.0, 0.0, 0.0, 0.5, -0.016, 1.0, 0.01 )).auto_manage()
 		End If
 		If ag.political_alignment = ALIGNMENT_HOSTILE
 			game.level_enemies_killed :+ 1
@@ -197,7 +197,7 @@ Function collision_agent_agent( ag:COMPLEX_AGENT, other:COMPLEX_AGENT )
 		'collision force/torque
 		Local collision_force_mag# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*vel.r()
 		ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, collision_force_mag*Cos( ang - other.ang ), 50 )))
-		ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, dist*(collision_force_mag/3.0)*Sin( ang - other.ang ), 50 )))
+		ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, dist*(collision_force_mag/6.0)*Sin( ang - other.ang ), 50 )))
 	End If
 End Function
 

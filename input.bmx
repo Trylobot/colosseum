@@ -13,12 +13,10 @@ Function get_all_input()
 	mouse_delta.y = MouseY() - mouse.y
 	mouse.x = MouseX()
 	mouse.y = MouseY()
-	If game <> Null
-		If game.human_participation And game.player_brain <> Null And profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
-			HideMouse()
-		Else
-			ShowMouse()
-		End If
+	If Not FLAG_in_menu And game <> Null And game.human_participation And game.player_brain <> Null And profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
+		HideMouse()
+	Else
+		ShowMouse()
 	End If
 	
 	'music enable/disable

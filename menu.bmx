@@ -100,6 +100,8 @@ Type MENU
 	Field options:MENU_OPTION[] 'array of options in this menu
 	Field focus% 'index of currently focused option
 	
+	Field runtime_options_added% 'DELETE ME PLEASE
+	
 	Field path$ 'current directory; this menu will display files from it (if applicable)
 	Field preferred_file_extension$ 'files of this type will be more visible to the user (if applicable)
 	Field files:TList 'list of files from the current directory, updated often (if applicable)
