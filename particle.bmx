@@ -7,7 +7,7 @@ EndRem
 '______________________________________________________________________________
 Const PARTICLE_PRUNE_ACTION_ADD_TO_BG_CACHE% = 1
 Const PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT% = 2
-Global global_particle_prune_action% = PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
+Global global_particle_prune_action% = PARTICLE_PRUNE_ACTION_ADD_TO_BG_CACHE 'PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
 
 Const LAYER_UNSPECIFIED% = 0
 Const LAYER_FOREGROUND% = 1
@@ -57,7 +57,7 @@ Type PARTICLE Extends POINT
 	layer% = LAYER_UNSPECIFIED, ..
 	retain% = False, ..
 	frictional_coefficient# = 0.0, ..
-	red# = 255, green# = 255, blue# = 255, ..
+	red# = 1.0, green# = 1.0, blue# = 1.0, ..
 	red_delta# = 0.0, green_delta# = 0.0, blue_delta# = 0.0, ..
 	life_time% = 0, ..
 	pos_x# = 0.0, pos_y# = 0.0, ..
@@ -143,12 +143,13 @@ Type PARTICLE Extends POINT
 				End If
 			Case PARTICLE_TYPE_STR
 				If font <> Null And str <> Null
+					SetImageFont( font )
 					If parent <> Null
 						SetRotation( ang + parent.ang )
-						DrawText( str, parent.pos_x + offset*Cos( offset_ang + parent.ang ) - text_width, parent.pos_y + offset*Sin( offset_ang + parent.ang ) - text_height )
+						DrawText( str, parent.pos_x + offset*Cos( offset_ang + parent.ang ) - text_width/2, parent.pos_y + offset*Sin( offset_ang + parent.ang ) - text_height/2 )
 					Else
 						SetRotation( ang )
-						DrawText( str, pos_x - text_width, pos_y - text_height )
+						DrawText( str, pos_x - scale*text_width/2, pos_y - scale*text_height/2 )
 					End If
 				End If
 		End Select

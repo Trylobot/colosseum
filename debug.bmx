@@ -302,6 +302,10 @@ Function debug_overlay()
 		End If
 	End If
 	
+	If KeyHit( KEY_8 )
+		
+	End If
+	
 	If KeyHit( KEY_P )
 		FLAG_spawn_mode :+ 1
 		If FLAG_spawn_mode > 2 Then FLAG_spawn_mode = 0

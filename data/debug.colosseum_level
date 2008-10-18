@@ -60,7 +60,15 @@
 	spawners: [
 		{
 			class: 2,
-			squads: [ [ 9 ] ],
+			squads: [ [
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3
+				] ],
 			pos: {
 				pos_x: 130,
 				pos_y: 125,

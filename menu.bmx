@@ -85,22 +85,27 @@ Global menu_font:TImageFont = get_font( "consolas_24" )
 Type MENU
 	Global MENU_TYPE_SELECT_ONE_VERTICAL_LIST% = 10
 	Global MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST% = 11
-	Global MENU_TYPE_LOAD% = 20
-	Global MENU_TYPE_SAVE% = 21
-	Global MENU_TYPE_DIALOG% = 50
+	Global MENU_TYPE_CHOOSE_FILE% = 20
+	Global MENU_TYPE_CREATE_NEW_FILE% = 21
+	Global MENU_TYPE_INPUT_DIALOG% = 50
+	Global MENU_TYPE_INFORMATION_DIALOG% = 51
 	
-	Field menu_id%
-	Field menu_type%
+	Field menu_id% 'unique menu id
+	Field menu_type% 'menu class
 	
-	Field name$ 'menu title string to display
-	Field red%, green%, blue% 'title bar color (name background)
-	Field margin% 'visual margin in pixels
+	Field name$ 'menu title string
+	Field red%, green%, blue% 'title bar color
+	Field margin% 'visual margin (pixels)
 	
-	Field options:MENU_OPTION[] 'array of possible options
-	Field children%[] 'array of handles, can be 0 (no child)
-	Field focus% 'index into options[]
+	Field options:MENU_OPTION[] 'array of options in this menu
+	Field focus% 'index of currently focused option
 	
-	Field runtime_options_added% 'flag indicating presence of any "runtime" options, so they aren't added more than once
+	Field path$ 'current directory; this menu will display files from it (if applicable)
+	Field preferred_file_extension$ 'files of this type will be more visible to the user (if applicable)
+	Field files:TList 'list of files from the current directory, updated often (if applicable)
+	
+	Field input_box$ 'user input string (if applicable)
+	Field input_listener:CONSOLE 'input controller/listener (if applicable)
 	
 	Function Create:MENU( name$, red%, green%, blue%, menu_id%, menu_type%, margin%, focus% = -1, options:MENU_OPTION[] )
 		Local m:MENU = New MENU
@@ -125,10 +130,11 @@ Type MENU
 		Local text_height_factor# = 0.70
 		Local width% = 0, height% = 0
 		
-		SetImageFont( get_font( "consolas_bold_24" ))
-		
+		'determine dimensions of this menu
 		Select menu_type
+			
 			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
+				SetImageFont( get_font( "consolas_bold_24" ))
 				For Local opt:MENU_OPTION = EachIn options
 					opt = opt.clone()
 					If (2*margin + TextWidth( opt.name ) + 2*border_width) > width
@@ -139,7 +145,9 @@ Type MENU
 					width = (2*margin + TextWidth( name ) + 2*border_width)
 				End If
 				height = (margin + (1 + options.Length)*(text_height_factor*GetImageFont().Height() + margin) + 2*border_width)
+			
 			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
+				SetImageFont( get_font( "consolas_bold_24" ))
 				For Local opt:MENU_OPTION = EachIn options
 					opt = opt.clone()
 					If (4*margin + TextWidth( opt.name ) + 2*arrow_height/2 + 2*border_width) > width
@@ -150,8 +158,10 @@ Type MENU
 					width = (4*margin + TextWidth( name ) + 2*arrow_height/2 + 2*border_width)
 				End If
 				height = (2*margin + 2*(text_height_factor*GetImageFont().Height() + margin) + 2*border_width)
+				
 		End Select
 		
+		'draw the borders and backgrounds
 		If border
 			SetColor( 64, 64, 64 )
 			DrawRect( x-border_width,y-border_width, width,height )
@@ -163,7 +173,9 @@ Type MENU
 			DrawText( name, x+margin,y+margin/2 )
 		End If
 		
+		'draw the options
 		Select menu_type
+			
 			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
 				x :+ margin; y :+ 2*margin + text_height_factor*GetImageFont().Height()
 				For Local i% = 0 To options.Length-1
@@ -185,6 +197,7 @@ Type MENU
 					End If
 					y :+ text_height_factor*GetImageFont().Height() + margin
 				Next
+			
 			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
 				y :+ 2*margin + text_height_factor*GetImageFont().Height()
 				Local left_color%, right_color%
@@ -214,8 +227,8 @@ Type MENU
 				If options[focus] <> Null	
 					DrawText_with_glow( options[focus].name, x + 2*margin + arrow_height/2, y + margin )
 				End If
+				
 		End Select
-		
 	End Method
 	
 	Method get_focus:MENU_OPTION()
@@ -330,34 +343,34 @@ Global all_menus:MENU[] = ..
 			MENU_OPTION.Create( "options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS, True, True ), ..
 			MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, MENU_ID_EDITORS, True, True ), ..
 			MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ]), ..
-	MENU.Create( "new game", 255, 255, 255, MENU_ID_NEW_GAME, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 1, ..
-		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+	MENU.Create( "new game", 255, 255, 255, MENU_ID_NEW_GAME, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 3, ..
+		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "select tank", COMMAND_SHOW_CHILD_MENU, MENU_ID_SELECT_TANK, True, True ), ..
 			MENU_OPTION.Create( "select level", COMMAND_SHOW_CHILD_MENU, MENU_ID_SELECT_LEVEL, True, True ), ..
 			MENU_OPTION.Create( "start game", COMMAND_NEW_GAME,, True, True ) ]), ..
-	MENU.Create( "select tank", 255, 255, 127, MENU_ID_SELECT_TANK, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
-		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-			MENU_OPTION.Create( "light tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_LIGHT_TANK, True, True ), ..
-			MENU_OPTION.Create( "laser tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_LASER_TANK, True, True ), ..
-			MENU_OPTION.Create( "medium tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_MEDIUM_TANK, True, True ) ]), ..
-	MENU.Create( "select level", 255, 127, 127, MENU_ID_SELECT_LEVEL, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
-		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
 	MENU.Create( "load game", 255, 196, 196, MENU_ID_LOAD, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
-		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
+		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
 	MENU.Create( "save game", 127, 255, 127, MENU_ID_SAVE, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
-		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "create new", COMMAND_SAVE_GAME, COMMAND_ARGUMENT_CREATE_NEW_SAVED_GAME, True, True ) ]), ..
 	MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
-		[	MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_VIDEO, True, False ), ..
 			MENU_OPTION.Create( "audio options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_AUDIO, True, False ), ..
 			MENU_OPTION.Create( "control options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_CONTROLS, True, True ), ..
 			MENU_OPTION.Create( "game options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_GAME, True, False ) ]), ..
 	MENU.Create( "editors", 196, 196, 196, MENU_ID_EDITORS, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
-		[	MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "level editor", COMMAND_EDIT_LEVEL,, True, True ) ]), ..
+	MENU.Create( "select tank", 255, 255, 127, MENU_ID_SELECT_TANK, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 1, ..
+		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "light tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_LIGHT_TANK, True, True ), ..
+			MENU_OPTION.Create( "laser tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_LASER_TANK, True, True ), ..
+			MENU_OPTION.Create( "medium tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_MEDIUM_TANK, True, True ) ]), ..
+	MENU.Create( "select level", 255, 127, 127, MENU_ID_SELECT_LEVEL, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 1, ..
+		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
 	MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
-		[	MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD, True, True ), ..
 			MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD_MOUSE_HYBRID, True, True ), ..
 			MENU_OPTION.Create( "xbox 360 controller", COMMAND_PLAYER_INPUT_TYPE, INPUT_XBOX_360_CONTROLLER, True, False ) ]) ..

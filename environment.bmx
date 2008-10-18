@@ -16,13 +16,14 @@ End Function
 Type ENVIRONMENT
 	Field mouse:cVEC 'mouse position relative to local origin
 	Field drawing_origin:cVEC 'drawing origin (either midpoint of local origin and relative mouse, or some constant)
-	Field origin_min_x% 'constraint
-	Field origin_min_y% 'constraint
-	Field origin_max_x% 'constraint
-	Field origin_max_y% 'constraint
+'	Field origin_min_x% 'constraint
+'	Field origin_min_y% 'constraint
+'	Field origin_max_x% 'constraint
+'	Field origin_max_y% 'constraint
 	
-	Field bg_cache:TImage 'background image
-	Field fg_cache:TImage 'foreground image
+	Field background_clean:TImage
+	Field background_dynamic:TImage
+	Field foreground:TImage
 
 	Field lev:LEVEL 'level object from which to build the environment, read-only
 	Field pathing:PATHING_STRUCTURE 'pathfinding object for this level
@@ -102,8 +103,9 @@ Type ENVIRONMENT
 	End Method
 	
 	Method clear()
-		bg_cache = Null
-		fg_cache = Null
+		background_clean = Null
+		background_dynamic = Null
+		foreground = Null
 		particle_list_background.Clear()
 		particle_list_foreground.Clear()
 		retained_particle_list.Clear()
@@ -141,8 +143,12 @@ Type ENVIRONMENT
 			walls.AddLast( lev.get_wall( cursor ))
 		Next
 		'images (Drawing)
-		bg_cache = generate_sand_image( lev.width, lev.height )
-		fg_cache = generate_level_walls_image( lev )
+		background_clean = generate_sand_image( lev.width, lev.height )
+		foreground = generate_level_walls_image( lev )
+		'initialize dynamic background texture with same pixels as background clean
+		background_dynamic = TImage.Create( lev.width, lev.height, 1, DYNAMICIMAGE, 0, 0, 0 )
+		SetOrigin( 0, 0 ); SetColor( 255, 255, 255 ); SetAlpha( 1 ); SetRotation( 0 ); SetScale( 1, 1 )
+		DrawImage( background_clean, 0, 0 ); GrabImage( background_dynamic, 0, 0 )
 		'doors
 		For Local sp:SPAWNER = EachIn lev.spawners
 			If sp.class = SPAWNER.class_GATED_FACTORY
@@ -173,20 +179,20 @@ Type ENVIRONMENT
 	End Method
 	
 	Method calculate_camera_constraints()
-		If lev.width <= window_w
-			origin_min_x = window_w/2 - lev.width/2
-			origin_max_x = origin_min_x
-		Else 'lev.width > window_w
-			origin_min_x = -20
-			origin_max_x = 20 + lev.width - window_w
-		End If
-		If lev.height <= window_h
-			origin_min_y = window_h/2 - lev.height/2
-			origin_max_y = origin_min_y
-		Else 'lev.height > window_h
-			origin_min_y = -20
-			origin_max_y = 20 + lev.height - window_h
-		End If
+'		If lev.width <= window_w
+'			origin_min_x = window_w/2 - lev.width/2
+'			origin_max_x = origin_min_x
+'		Else 'lev.width > window_w
+'			origin_min_x = -20
+'			origin_max_x = 20 + lev.width - window_w
+'		End If
+'		If lev.height <= window_h
+'			origin_min_y = window_h/2 - lev.height/2
+'			origin_max_y = origin_min_y
+'		Else 'lev.height > window_h
+'			origin_min_y = -20
+'			origin_max_y = 20 + lev.height - window_h
+'		End If
 	End Method
 	
 	Method spawning_system_update()

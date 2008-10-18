@@ -55,9 +55,9 @@ Local before%
 ?Debug
 Global last_frame_ts%, time_count%, frame_count%, fps%
 
-profile.archetype = PLAYER_INDEX_MEDIUM_TANK
+profile.archetype = PLAYER_INDEX_LIGHT_TANK
 next_level = "data/debug.colosseum_level"
-menu_command( COMMAND_NEW_GAME )
+'menu_command( COMMAND_NEW_GAME )
 ?
 Repeat
 	

@@ -41,7 +41,7 @@ End Function
 Function draw_game()
 	
 	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
-	SetViewport( game.drawing_origin.x, game.drawing_origin.y, game.lev.width, game.lev.height )
+	'SetViewport( game.drawing_origin.x, game.drawing_origin.y, game.lev.width, game.lev.height )
 	
 	'arena (& retained particles)
 	SetBlend( ALPHABLEND )
@@ -96,7 +96,7 @@ Function draw_game()
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
-	SetViewport( 0, 0, window_w, window_h )
+	'SetViewport( 0, 0, window_w, window_h )
 
 	draw_reticle()
 	SetRotation( 0 )
@@ -237,17 +237,21 @@ Function draw_arena_bg()
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 	SetRotation( 0 )
-	DrawImage( game.bg_cache, 0,0 )
+	DrawImage( game.background_clean, 0, 0 )
+	DrawImage( game.background_dynamic, 0, 0 )
 
-	'incorporate retained particles into bg_cache and remove them from the managed list
+	'draw particles to be retained
 	For Local part:PARTICLE = EachIn game.retained_particle_list
 		part.draw()
 	Next
 	
+	'if an arbitrary performance threshold is reached, ..
+	' save backbuffer to dynamic texture, and delete retained particles
 	If FLAG_retain_particles
 		Select global_particle_prune_action
 			
 			Case PARTICLE_PRUNE_ACTION_ADD_TO_BG_CACHE
+				'delete retained particles
 				FLAG_retain_particles = False
 				game.retained_particle_list.Clear()
 				game.retained_particle_list_count = 0
@@ -256,9 +260,10 @@ Function draw_arena_bg()
 				SetAlpha( 1 )
 				SetScale( 1, 1 )
 				SetRotation( 0 )
+				'save backbuffer to dynamic texture
+				GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y ) '0, 0 )
 				
-				GrabImage( game.bg_cache, 0,0 )
-				
+				'fade-out particles if desired, by blending backbuffer with the "clean" background
 				If FLAG_dim_bg
 					FLAG_dim_bg = False
 					
@@ -266,12 +271,15 @@ Function draw_arena_bg()
 					SetAlpha( 0.3333 )
 					SetScale( 1, 1 )
 					SetRotation( 0 )
+					'redraw the clean background
+					DrawImage( game.background_clean, 0, 0 )
 					
-					DrawImage( img_arena_bg, 0,0 )
-					GrabImage( game.bg_cache, 0,0 )
+					'save backbuffer to dynamic texture
+					GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y ) '0, 0 )
 				End If
 				
 			Case PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
+				'merely remove old particles as the queue fills up.
 				While game.retained_particle_list_count >= retained_particle_limit
 					game.retained_particle_list.FirstLink().Remove()
 					game.retained_particle_list_count :- 1
@@ -288,7 +296,7 @@ Function draw_arena_fg()
 	SetScale( 1, 1 )
 	SetRotation( 0 )
 	
-	DrawImage( game.fg_cache, 0,0 )
+	DrawImage( game.foreground, 0,0 )
 
 	For Local w:WIDGET = EachIn game.environmental_widget_list
 		w.draw()
