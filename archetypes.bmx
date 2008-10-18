@@ -368,7 +368,7 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -6, 0 )
 		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 		
-	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun quad", img_enemy_quad_chassis, img_quad_gibs, AI_BRAIN_TANK, 100, 50, 400, 25.0, 35.0, 55.0 ))
+	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun quad", img_enemy_quad_chassis, img_quad_gibs, AI_BRAIN_VEHICLE, 100, 50, 400, 25.0, 35.0, 55.0 ))
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN] ).attach_at( -6, 0 )
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 3, -4, 0, 2, -45, 45, 0.3, 0.6 )
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 3, 4, 0, 2, -45, 45, 0.3, 0.6 )
@@ -381,11 +381,12 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 
 	complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] ))
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].ai_type = AI_BRAIN_TANK
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].cash_value = 300
-		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].max_health :* (3/10)
-		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].driving_force.magnitude_max :* (2/3)
-		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turning_force.magnitude_max :* (2/3)
-		'complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].add_widget( widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT], WIDGET_CONSTANT ).attach_at( -10.5, 0 )
-		'complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -10.5, 0 )
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].max_health = 175
+		TURRET( complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turret_list.First() ).turret_barrel_array[0].reload_time = 1500
+		TURRET( complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turret_list.First() ).max_heat = 20.0
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].driving_force.magnitude_max = 66.0
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turning_force.magnitude_max = 75.0
 		
 End Function

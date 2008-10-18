@@ -205,15 +205,8 @@ Type ENVIRONMENT
 				If now() - ts >= sp.delay_time[cur.row]
 					'if this squad is just started, or the last spawned enemy is far enough away
 					If cur.col = 0 Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
-						'spawn the enemy
-						last_spawned[i] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[sp.squads[cur.row][cur.col]], ALIGNMENT_HOSTILE ))
-						last = last_spawned[i]
-						Create_CONTROL_BRAIN( last, CONTROL_TYPE_AI,, 10, 1000, 1000 ).manage( control_brain_list )
-						last.manage( hostile_agent_list )
-						last.pos_x = sp.pos.pos_x
-						last.pos_y = sp.pos.pos_y
-						last.ang = sp.pos.ang
-						last.snap_all_turrets()
+						Local brain:CONTROL_BRAIN = spawn_agent( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
+						last_spawned[i] = brain.avatar
 						'counter
 						spawn_counter[i] :+ 1
 						cur.col :+ 1
@@ -229,6 +222,23 @@ Type ENVIRONMENT
 				End If
 			End If
 		Next
+	End Method
+	
+	Method spawn_agent:CONTROL_BRAIN( archetype_index%, alignment%, spawn_point:POINT )
+		Local this_agent:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], alignment ))
+		Select alignment
+			Case ALIGNMENT_HOSTILE
+				this_agent.manage( hostile_agent_list )
+			Case ALIGNMENT_FRIENDLY
+				this_agent.manage( friendly_agent_list )
+		End Select
+		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( this_agent, CONTROL_TYPE_AI,, 10, 1000, 1000 )
+		brain.manage( control_brain_list )
+		this_agent.pos_x = spawn_point.pos_x
+		this_agent.pos_y = spawn_point.pos_y
+		this_agent.ang = spawn_point.ang
+		this_agent.snap_all_turrets
+		Return brain
 	End Method
 	
 	Method spawn_player( archetype_index% )

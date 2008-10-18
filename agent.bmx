@@ -990,7 +990,8 @@ Const INPUT_XBOX_360_CONTROLLER% = 3
 Const AI_BRAIN_MR_THE_BOX% = 1
 Const AI_BRAIN_TURRET% = 2
 Const AI_BRAIN_SEEKER% = 3
-Const AI_BRAIN_TANK% = 4
+Const AI_BRAIN_VEHICLE% = 4
+const AI_BRAIN_TANK% = 5
 '___________________________________________
 Function Create_CONTROL_BRAIN:CONTROL_BRAIN( ..
 avatar:COMPLEX_AGENT, ..
@@ -1288,7 +1289,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					target = acquire_target()
 				End If
 				
-			Case AI_BRAIN_TANK
+			Case AI_BRAIN_VEHICLE
 				If Not game.point_inside_arena( avatar )
 					avatar.drive( 1.0 )
 					Return
@@ -1366,6 +1367,105 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					avatar.turn( 0.0 )
 					target = acquire_target()
 				End If				
+				
+			Case AI_BRAIN_TANK
+				If Not game.point_inside_arena( avatar )
+					avatar.drive( 1.0 )
+					Return
+				Else If target <> Null And Not target.dead()
+					'if it's okay to try and see the target..
+					If (now() - last_look_target_ts >= look_target_delay)
+						sighted_target = see_target()
+					End If
+					'if it can see the target, then..
+					If sighted_target
+						enable_seek_lights()
+						path = Null
+						ang_to_target = avatar.ang_to( target )
+						dist_to_target = avatar.dist_to( target )
+						Local diff# = ang_wrap( TURRET( avatar.turret_list.First() ).ang - ang_to_target )
+						'stop moving
+						avatar.drive( 0.0 )
+						avatar.turn( 0.0 )
+						'if its turret is pointing at the target, then..
+						If Abs(diff) <= 3.000
+							'fire turret(s)
+							'switch weapon preference based on range; short -> m.gun, long -> cannon
+							If dist_to_target <= 250
+								'wait for cooldown
+								If FLAG_waiting And TURRET( avatar.turret_list.First() ).cur_heat <= 0.25*TURRET( avatar.turret_list.First() ).max_heat
+									FLAG_waiting = False
+								Else If TURRET( avatar.turret_list.First() ).overheated()
+									FLAG_waiting = True
+								End If
+								If Not FLAG_waiting Then avatar.fire( 1 )
+							Else 'dist_to_target > 250
+								avatar.fire( 0 )
+							End If
+							'stop aiming turrets
+							avatar.turn_turret( 0, 0.0 )
+							avatar.turn_turret( 1, 0.0 )
+						'else (not pointing at target)..
+						Else
+							'aim the turret at the target
+							If diff >= 0
+								avatar.turn_turret( 0, -1.0 )
+								avatar.turn_turret( 1, -1.0 )
+							Else
+								avatar.turn_turret( 0, 1.0 )
+								avatar.turn_turret( 1, 1.0 )
+							End If
+						End If
+					'else (can't see the target) -- if it has a path to the target, then..
+					Else
+						enable_wander_lights()
+						'return the turret to its resting angle
+						Local diff# = ang_wrap( avatar.ang - TURRET( avatar.turret_list.First() ).ang )
+						If Abs(diff) <= 3.000
+							avatar.turn_turret( 0, 0.0 )
+						Else
+							If diff >= 0
+								avatar.turn_turret( 0, -1.0 )
+								avatar.turn_turret( 1, -1.0 )
+							Else
+								avatar.turn_turret( 0, 1.0 )
+								avatar.turn_turret( 1, 1.0 )
+							End If
+						End If
+
+						If path <> Null And Not path.IsEmpty() And waypoint <> Null
+							ang_to_target = avatar.ang_to_cVEC( waypoint )
+							Local diff# = ang_wrap( avatar.ang - ang_to_target )
+							'if it is pointed toward the path's next waypoint, then..
+							If Abs(diff) <= 3.000
+								'drive forward
+								avatar.drive( 1.0 )
+								avatar.turn( 0.0 )
+							'else (not pointed toward next waypoint)..
+							Else
+								'turn towards the next waypoint and drive at 1/3 speed
+								avatar.drive( 0.3333 )
+								If diff >= 0 Then avatar.turn( -1.0 ) ..
+								Else              avatar.turn( 1.0 )
+							End If
+						'else (can't see the target, no path to the target)
+						Else
+							'attempt to get a path to the target (which will not be used until the next "think cycle"
+							If (now() - last_find_path_ts >= find_path_delay)
+								path = get_path_to_target()
+								If path <> Null And Not path.IsEmpty() Then waypoint = cVEC( path.First())
+							End If
+							'stop driving
+							avatar.drive( 0.0 )
+							avatar.turn( 0.0 )
+						End If
+					End If
+				Else
+					'attempt to acquire a new target
+					avatar.drive( 0.0 )
+					avatar.turn( 0.0 )
+					target = acquire_target()
+				End If
 				
 		End Select
 	End Method
