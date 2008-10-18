@@ -82,19 +82,24 @@ End Function
 '______________________________________________________________________________
 Global menu_font:TImageFont = get_font( "consolas_24" )
 
-Const MENU_TYPE_SELECT_ONE_VERTICAL_LIST% = 1
-Const MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST% = 2
-Const MENU_TYPE_FILE_SELECTOR% = 3
-
 Type MENU
-	Field name$ 'display to user
-	Field red%, green%, blue% 'title bar color
-	Field menu_id% 'handle
-	Field menu_type% 'controls display and input
-	Field margin% 'visual margin
+	Global MENU_TYPE_SELECT_ONE_VERTICAL_LIST% = 10
+	Global MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST% = 11
+	Global MENU_TYPE_LOAD% = 20
+	Global MENU_TYPE_SAVE% = 21
+	Global MENU_TYPE_DIALOG% = 50
+	
+	Field menu_id%
+	Field menu_type%
+	
+	Field name$ 'menu title string to display
+	Field red%, green%, blue% 'title bar color (name background)
+	Field margin% 'visual margin in pixels
+	
 	Field options:MENU_OPTION[] 'array of possible options
 	Field children%[] 'array of handles, can be 0 (no child)
 	Field focus% 'index into options[]
+	
 	Field runtime_options_added% 'flag indicating presence of any "runtime" options, so they aren't added more than once
 	
 	Function Create:MENU( name$, red%, green%, blue%, menu_id%, menu_type%, margin%, focus% = -1, options:MENU_OPTION[] )
@@ -317,7 +322,7 @@ Const MENU_ID_EDITORS% = 60
 Global menu_margin% = 8
 Global all_menus:MENU[] = ..
 [ ..
-	MENU.Create( "main menu", 255, 255, 127, MENU_ID_MAIN_MENU, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "main menu", 255, 255, 127, MENU_ID_MAIN_MENU, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, False ), ..
 			MENU_OPTION.Create( "new", COMMAND_SHOW_CHILD_MENU, MENU_ID_NEW_GAME, True, True ), ..
 			MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, MENU_ID_LOAD, True, True ), ..
@@ -325,33 +330,33 @@ Global all_menus:MENU[] = ..
 			MENU_OPTION.Create( "options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS, True, True ), ..
 			MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, MENU_ID_EDITORS, True, True ), ..
 			MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ]), ..
-	MENU.Create( "new game", 255, 255, 255, MENU_ID_NEW_GAME, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 1, ..
+	MENU.Create( "new game", 255, 255, 255, MENU_ID_NEW_GAME, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 1, ..
 		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "select tank", COMMAND_SHOW_CHILD_MENU, MENU_ID_SELECT_TANK, True, True ), ..
 			MENU_OPTION.Create( "select level", COMMAND_SHOW_CHILD_MENU, MENU_ID_SELECT_LEVEL, True, True ), ..
 			MENU_OPTION.Create( "start game", COMMAND_NEW_GAME,, True, True ) ]), ..
-	MENU.Create( "select tank", 255, 255, 127, MENU_ID_SELECT_TANK, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "select tank", 255, 255, 127, MENU_ID_SELECT_TANK, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "light tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_LIGHT_TANK, True, True ), ..
 			MENU_OPTION.Create( "laser tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_LASER_TANK, True, True ), ..
 			MENU_OPTION.Create( "medium tank", COMMAND_PROFILE_SET_PLAYER_TANK, PLAYER_INDEX_MEDIUM_TANK, True, True ) ]), ..
-	MENU.Create( "select level", 255, 127, 127, MENU_ID_SELECT_LEVEL, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "select level", 255, 127, 127, MENU_ID_SELECT_LEVEL, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
-	MENU.Create( "load game", 255, 196, 196, MENU_ID_LOAD, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "load game", 255, 196, 196, MENU_ID_LOAD, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
-	MENU.Create( "save game", 127, 255, 127, MENU_ID_SAVE, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "save game", 127, 255, 127, MENU_ID_SAVE, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[ MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "create new", COMMAND_SAVE_GAME, COMMAND_ARGUMENT_CREATE_NEW_SAVED_GAME, True, True ) ]), ..
-	MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_VIDEO, True, False ), ..
 			MENU_OPTION.Create( "audio options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_AUDIO, True, False ), ..
 			MENU_OPTION.Create( "control options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_CONTROLS, True, True ), ..
 			MENU_OPTION.Create( "game options", COMMAND_SHOW_CHILD_MENU, MENU_ID_OPTIONS_GAME, True, False ) ]), ..
-	MENU.Create( "editors", 196, 196, 196, MENU_ID_EDITORS, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "editors", 196, 196, 196, MENU_ID_EDITORS, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "level editor", COMMAND_EDIT_LEVEL,, True, True ) ]), ..
-	MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD, True, True ), ..
 			MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INPUT_KEYBOARD_MOUSE_HYBRID, True, True ), ..
