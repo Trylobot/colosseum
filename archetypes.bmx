@@ -176,7 +176,7 @@ Global PICKUP_INDEX_CANNON_AMMO% = postfix_index()
 Global PICKUP_INDEX_COOLDOWN% = postfix_index()
 
 Function set_pickup_archetypes()
-	pickup_archetype[PICKUP_INDEX_HEALTH] = PICKUP( PICKUP.Create( img_pickup_health, HEALTH_PICKUP, 100, 20000 ))
+	pickup_archetype[PICKUP_INDEX_HEALTH] = PICKUP( PICKUP.Create( img_pickup_health, HEALTH_PICKUP, 200, 20000 ))
 	pickup_archetype[PICKUP_INDEX_CANNON_AMMO] = PICKUP( PICKUP.Create( img_pickup_ammo_main_5, AMMO_PICKUP, 5, 20000 ))
 	pickup_archetype[PICKUP_INDEX_COOLDOWN] = PICKUP( PICKUP.Create( img_pickup_cooldown, COOLDOWN_PICKUP, 4000, 20000 ))
 End Function

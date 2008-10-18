@@ -176,27 +176,27 @@ Function collision_agent_agent( ag:COMPLEX_AGENT, other:COMPLEX_AGENT )
 	'Local total_force# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*Sqr( Pow(other.vel_x,2) + Pow(other.vel_y,2) )
 	'ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - other.ang ), 100 )))
 	'ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*(total_force/3.0)*Sin( offset_ang - other.ang ), 100 )))
-	
-	Local dist# = other.dist_to( ag )
-	Local ang# = other.ang_to( ag )
-	'nudge
-	ag.pos_x :+ WALL_NUDGE_DIST*Cos( ang )
-	ag.pos_y :+ WALL_NUDGE_DIST*Sin( ang )
-	'velocity cancellation
-	Local vel:cVEC = Create_cVEC( ag.vel_x, ag.vel_y )
-	Local vel_projection# = vel.r()*Cos( ang - vel.a() )
-	ag.vel_x :- vel_projection*Cos( ang )
-	ag.vel_y :- vel_projection*Sin( ang )
-	'acceleration cancellation
-	Local acc:cVEC = Create_cVEC( ag.acc_x, ag.acc_y )
-	Local acc_projection# = acc.r()*Cos( ang - acc.a() )
-	ag.acc_x :- acc_projection*Cos( ang )
-	ag.acc_y :- acc_projection*Sin( ang )
-	'collision force/torque
-	Local collision_force_mag# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*vel.r()
-	ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, collision_force_mag*Cos( ang - other.ang ), 50 )))
-	ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, dist*(collision_force_mag/3.0)*Sin( ang - other.ang ), 50 )))
-	
+	If Not ag.physics_disabled
+		Local dist# = other.dist_to( ag )
+		Local ang# = other.ang_to( ag )
+		'nudge
+		ag.pos_x :+ WALL_NUDGE_DIST*Cos( ang )
+		ag.pos_y :+ WALL_NUDGE_DIST*Sin( ang )
+		'velocity cancellation
+		Local vel:cVEC = Create_cVEC( ag.vel_x, ag.vel_y )
+		Local vel_projection# = vel.r()*Cos( ang - vel.a() )
+		ag.vel_x :- vel_projection*Cos( ang )
+		ag.vel_y :- vel_projection*Sin( ang )
+		'acceleration cancellation
+		Local acc:cVEC = Create_cVEC( ag.acc_x, ag.acc_y )
+		Local acc_projection# = acc.r()*Cos( ang - acc.a() )
+		ag.acc_x :- acc_projection*Cos( ang )
+		ag.acc_y :- acc_projection*Sin( ang )
+		'collision force/torque
+		Local collision_force_mag# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*vel.r()
+		ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, collision_force_mag*Cos( ang - other.ang ), 50 )))
+		ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, dist*(collision_force_mag/3.0)*Sin( ang - other.ang ), 50 )))
+	End If
 End Function
 
 Function collision_agent_wall( ag:COMPLEX_AGENT, wall:BOX )

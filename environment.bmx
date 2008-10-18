@@ -14,10 +14,12 @@ Function Create_ENVIRONMENT:ENVIRONMENT( human_participation% )
 End Function
 
 Type ENVIRONMENT
-	
-	Field origin:cVEC 'local origin
 	Field mouse:cVEC 'mouse position relative to local origin
 	Field drawing_origin:cVEC 'drawing origin (either midpoint of local origin and relative mouse, or some constant)
+	Field origin_min_x% 'constraint
+	Field origin_min_y% 'constraint
+	Field origin_max_x% 'constraint
+	Field origin_max_y% 'constraint
 	
 	Field bg_cache:TImage 'background image
 	Field fg_cache:TImage 'foreground image
@@ -72,9 +74,8 @@ Type ENVIRONMENT
 	Field player:COMPLEX_AGENT 'reference to that player object
 	
 	Method New()
-		origin = Create_cVEC( 0.0,0.0 )
-		mouse = Create_cVEC( 0.0,0.0 )
-		drawing_origin = Create_cVEC( 0.0,0.0 )
+		mouse = Create_cVEC( 0, 0 )
+		drawing_origin = Create_cVEC( 0, 0 )
 		walls = CreateList()
 		particle_list_background = CreateList()
 		particle_list_foreground = CreateList()
@@ -101,7 +102,6 @@ Type ENVIRONMENT
 	End Method
 	
 	Method clear()
-		origin.x = 0.0; origin.y = 0.0
 		bg_cache = Null
 		fg_cache = Null
 		particle_list_background.Clear()
@@ -131,8 +131,9 @@ Type ENVIRONMENT
 			lev = Create_LEVEL_from_json( TJSON.Create( LoadString( level_path )))
 		Catch exception:Object
 			'.. could not load level
-			'exception.ToString()
+			DebugLog exception.ToString()
 		End Try
+		calculate_camera_constraints()
 		
 		'pathing (AI bots)
 		pathing = PATHING_STRUCTURE.Create( lev )
@@ -170,6 +171,23 @@ Type ENVIRONMENT
 		level_enemy_count = lev.enemy_count()
 		level_enemies_killed = 0
 		'more..?
+	End Method
+	
+	Method calculate_camera_constraints()
+		If lev.width <= window_w
+			origin_min_x = window_w_half - lev.width/2
+			origin_max_x = origin_min_x
+		Else 'lev.width > window_w
+			origin_min_x = -20
+			origin_max_x = 20 + lev.width - window_w
+		End If
+		If lev.height <= window_h
+			origin_min_y = window_h_half - lev.height/2
+			origin_max_y = origin_min_y
+		Else 'lev.height > window_h
+			origin_min_y = -20
+			origin_max_y = 20 + lev.height - window_h
+		End If
 	End Method
 	
 	Method spawning_system_update()

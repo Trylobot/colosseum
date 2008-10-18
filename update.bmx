@@ -19,6 +19,10 @@ Function update_all_objects()
 				game.mouse.y = game.player.pos_y + (2 * (mouse.y - window_h_half))
 				game.drawing_origin.x = window_w_half - Int((game.player.pos_x + game.mouse.x)/2)
 				game.drawing_origin.y = window_h_half - Int((game.player.pos_y + game.mouse.y)/2)
+				'If game.drawing_origin.x < game.origin_min_x Then game.drawing_origin.x = game.origin_min_x
+				'If game.drawing_origin.y < game.origin_min_y Then game.drawing_origin.y = game.origin_min_y
+				'If game.drawing_origin.x > game.origin_max_x Then game.drawing_origin.x = game.origin_max_x
+				'If game.drawing_origin.y > game.origin_max_y Then game.drawing_origin.y = game.origin_max_y
 			End If
 			'if waiting for player to enter arena
 			If game.waiting_for_player_to_enter_arena

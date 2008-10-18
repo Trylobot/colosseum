@@ -419,6 +419,7 @@ Global img_glow:TImage = LoadImage_SetHandle( "glow.png", 7.5, 7.5 )
 Global img_pickup_ammo_main_5:TImage = LoadImage_SetHandle( "pickup_ammo_main_5.png", 16, 9 )
 Global img_pickup_health:TImage = LoadImage_SetHandle( "pickup_health.png", 16, 9 )
 Global img_pickup_cooldown:TImage = LoadImage_SetHandle( "pickup_cooldown.png", 16, 9 )
+Global img_health_mini:TImage = loadimage_sethandle( "health_mini.png", 0, 0 )
 
 Global img_help_kb:TImage = LoadImage_SetHandle( "help_kb.png", 0, 0 )
 Global img_help_kb_mouse:TImage = LoadImage_SetHandle( "help_kb_and_mouse.png", 0, 0 )

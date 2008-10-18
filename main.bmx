@@ -23,10 +23,10 @@ Global FLAG_debug_overlay% = False
 
 'Window / Arena size
 Global window_w% = 640
-Global window_w_half% = window_w/2
 Global window_h% = 480
-Global window_h_half% = window_h/2
 Global fullscreen% = False
+Global window_w_half% = window_w/2
+Global window_h_half% = window_h/2
 
 'these are here to make the old code work (before levels were data-driven)
 'Const arena_offset% = 50

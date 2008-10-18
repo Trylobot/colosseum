@@ -774,7 +774,7 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
-	Method draw( red_override% = -1, green_override% = -1, blue_override% = -1, alpha_override# = -1.0, scale_override# = -1.0 )
+	Method draw( hide_widgets% = False, red_override% = -1, green_override% = -1, blue_override% = -1, alpha_override# = -1.0, scale_override# = -1.0 )
 		If red_override   <> -1   Then red   = red_override   Else red   = 255
 		If green_override <> -1   Then green = green_override Else green = 255
 		If blue_override  <> -1.0 Then blue  = blue_override  Else blue  = 255
@@ -795,7 +795,12 @@ Type COMPLEX_AGENT Extends AGENT
 		SetRotation( ang )
 		'tracks
 		If right_track <> Null And left_track <> Null
+			left_track.scale = scale
+			left_track.alpha = alpha
 			left_track.draw()
+			
+			right_track.scale = scale
+			right_track.alpha = alpha
 			right_track.draw()
 		End If
 		'chassis
@@ -805,13 +810,15 @@ Type COMPLEX_AGENT Extends AGENT
 		SetRotation( ang )
 		If img <> Null Then DrawImage( img, pos_x, pos_y )
 		'chassis widgets
-		For Local widget_list:TList = EachIn all_widgets
-			For Local w:WIDGET = EachIn widget_list
-				If w.layer = LAYER_IN_FRONT_OF_PARENT
-					w.draw()
-				End If
+		If Not hide_widgets
+			For Local widget_list:TList = EachIn all_widgets
+				For Local w:WIDGET = EachIn widget_list
+					If w.layer = LAYER_IN_FRONT_OF_PARENT
+						w.draw()
+					End If
+				Next
 			Next
-		Next
+		End If
 		'turrets
 		For Local t:TURRET = EachIn turret_list
 			t.draw()
@@ -972,7 +979,7 @@ Type COMPLEX_AGENT Extends AGENT
 End Type
 
 '______________________________________________________________________________
-Const waypoint_radius# = 20.0
+Const waypoint_radius# = 30.0
 Const friendly_blocking_scalar_projection_distance# = 20.0
 
 Const CONTROL_TYPE_HUMAN% = 1
@@ -1269,6 +1276,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 							'attempt to get a path to the target (which will not be used until the next "think cycle"
 							If (now() - last_find_path_ts >= find_path_delay)
 								path = get_path_to_target()
+								If path <> Null And Not path.IsEmpty() Then waypoint = cVEC( path.First())
 							End If
 							blindly_wander()
 						End If
@@ -1345,6 +1353,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 							'attempt to get a path to the target (which will not be used until the next "think cycle"
 							If (now() - last_find_path_ts >= find_path_delay)
 								path = get_path_to_target()
+								If path <> Null And Not path.IsEmpty() Then waypoint = cVEC( path.First())
 							End If
 							'stop driving
 							avatar.drive( 0.0 )
@@ -1361,56 +1370,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
-	Method track( t:TURRET, p:POINT )
-		Local diff# = ang_wrap( t.ang - t.ang_to( p ))
-		Local diff_mag# = Abs( diff )
-		
-'		If diff_mag > 5*t.max_ang_vel
-'			If diff < 0
-'				avatar.turn_turret( 0, 1.0  )
-'				avatar.turn_turret( 1, 1.0  )
-'			Else 'diff > 0
-'				avatar.turn_turret( 0, -1.0 )
-'				avatar.turn_turret( 1, -1.0 )
-'			End If
-'		Else If diff_mag > 2.5*t.max_ang_vel
-'			If diff < 0
-'				avatar.turn_turret( 0, 0.5  )
-'				avatar.turn_turret( 1, 0.5  )
-'			Else 'diff > 0
-'				avatar.turn_turret( 0, -0.5 )
-'				avatar.turn_turret( 1, -0.5 )
-'			End If
-'		Else If diff_mag > 1.25*t.max_ang_vel
-'			If diff < 0
-'				player.turn_turret( 0, 0.25 )
-'				player.turn_turret( 1, 0.25 )
-'			Else 'diff > 0
-'				player.turn_turret( 0, -0.25 )
-'				player.turn_turret( 1, -0.25 )
-'			End If
-'		Else If diff_mag > 0.75*t.max_ang_vel
-'			If diff < 0
-'				player.turn_turret( 0, 0.125 )
-'				player.turn_turret( 1, 0.125 )
-'			Else 'diff > 0
-'				player.turn_turret( 0, -0.125 )
-'				player.turn_turret( 1, -0.125 )
-'			End If
-'		Else If diff_mag > 0.375*t.max_ang_vel
-'			If diff < 0
-'				player.turn_turret( 0, 0.0625 )
-'				player.turn_turret( 1, 0.0625 )
-'			Else 'diff > 0
-'				player.turn_turret( 0, -0.0625 )
-'				player.turn_turret( 1, -0.0625 )
-'			End If
-'		Else
-'			player.turn_turret( 0, 0.0 )
-'			player.turn_turret( 1, 0.0 )
-'		End If
-	End Method
-	
 	Method waypoint_reached%()
 		If waypoint <> Null And avatar.dist_to_cVEC( waypoint ) <= waypoint_radius
 			Return True
@@ -1421,8 +1380,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method get_next_waypoint%()
 		If path <> Null And Not path.IsEmpty()
-			waypoint = cVEC( path.First())
 			path.RemoveFirst()
+			If path <> Null And Not path.IsEmpty() Then waypoint = cVEC( path.First())
 			Return True 'course locked!
 		Else
 			Return False 'no seriously.. like, where the hell are we... ;_;

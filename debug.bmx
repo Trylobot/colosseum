@@ -138,6 +138,13 @@ Function debug_overlay()
 	sx = 3; sy = 3
 	'fps
 	debug_drawtext( "fps " + fps )
+	If cb <> Null
+		'keyboard help
+		debug_drawtext( "[1]: set target to player" )
+		debug_drawtext( "[2]: get path to target" )
+		debug_drawtext( "[3]: see target" )
+		debug_drawtext( "[4]: player path to mouse" )
+	End If
 	'debug_drawtext( "enemies -> "+hostile_agent_list.Count() )
 
 	If game <> Null
@@ -174,10 +181,6 @@ Function debug_overlay()
 	End If
 	
 	If cb <> Null
-		'keyboard help
-		debug_drawtext( "[1]: target = player" )
-		debug_drawtext( "[2]: get path" )
-		debug_drawtext( "[3]: sight target" )
 		
 		'manipulate by keyboard
 		If KeyDown( KEY_1 )
@@ -189,6 +192,9 @@ Function debug_overlay()
 		If KeyDown( KEY_3 )
 			cb.sighted_target = cb.see_target()
 			'cb.see_target_DEBUG()
+		End If
+		If KeyDown( KEY_4 )
+			game.player_brain.path = game.find_path( game.player.pos_x, game.player.pos_y, game.mouse.x, game.mouse.y )
 		End If
 		
 		'draw info
@@ -214,11 +220,11 @@ Function debug_overlay()
 			SetAlpha( 1 )
 		End If
 		
-		If cb.path <> Null
+		If cb.path <> Null And Not cb.path.IsEmpty()
 			debug_drawtext( "path to target displayed" )
 			'start and goal
 			Local cell_size% = 8
-			Local start:cVEC = cVEC( cb.path.First() )
+			Local START:cVEC = cVEC( cb.path.First() )
 			Local goal:cVEC = cVEC( cb.path.Last() )
 			SetColor( 64, 255, 64 ); SetAlpha( 0.5 )
 			DrawRect( start.x - cell_size/2 + 1, start.y - cell_size/2 + 1, cell_size - 2, cell_size - 2 )
