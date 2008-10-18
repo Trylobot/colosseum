@@ -1393,7 +1393,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 							'switch weapon preference based on range; short -> m.gun, long -> cannon
 							If dist_to_target <= 250
 								'wait for cooldown
-								If FLAG_waiting And TURRET( avatar.turret_list.First() ).cur_heat <= 0.25*TURRET( avatar.turret_list.First() ).max_heat
+								If FLAG_waiting And TURRET( avatar.turret_list.ValueAtIndex( 1 )).cur_heat <= 0.25*TURRET( avatar.turret_list.ValueAtIndex( 1 )).max_heat
 									FLAG_waiting = False
 								Else If TURRET( avatar.turret_list.First() ).overheated()
 									FLAG_waiting = True
@@ -1425,11 +1425,11 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 							avatar.turn_turret( 0, 0.0 )
 						Else
 							If diff >= 0
-								avatar.turn_turret( 0, -1.0 )
-								avatar.turn_turret( 1, -1.0 )
-							Else
 								avatar.turn_turret( 0, 1.0 )
 								avatar.turn_turret( 1, 1.0 )
+							Else
+								avatar.turn_turret( 0, -1.0 )
+								avatar.turn_turret( 1, -1.0 )
 							End If
 						End If
 

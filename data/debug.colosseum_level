@@ -1,0 +1,96 @@
+{
+	name: "debug",
+	width: 650,
+	height: 650,
+	row_count: 5,
+	col_count: 5,
+	horizontal_divs: [
+		0,
+		50,
+		250,
+		400,
+		600,
+		650
+	],
+	vertical_divs: [
+		0,
+		50,
+		250,
+		400,
+		600,
+		650
+	],
+	path_regions: [
+		[
+			1,
+			1,
+			1,
+			1,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			1,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			1,
+			1,
+			1,
+			1
+		]
+	],
+	spawners: [
+		{
+			class: 2,
+			squads: [ [ 9 ] ],
+			pos: {
+				pos_x: 130,
+				pos_y: 125,
+				ang: 90,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [ 0 ],
+			alignment: 2
+		},
+		{
+			class: 2,
+			squads: null,
+			pos: {
+				pos_x: 375,
+				pos_y: 455,
+				ang: 180,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: null,
+			alignment: 1
+		}
+	]
+}

@@ -127,12 +127,11 @@ Type ENVIRONMENT
 	End Method
 	
 	Method load_level( level_path$ )
-		Try
-			lev = Create_LEVEL_from_json( TJSON.Create( LoadString( level_path )))
-		Catch exception:Object
-			'.. could not load level
-			DebugLog exception.ToString()
-		End Try
+		Local file:TStream = ReadFile( level_path )
+		If Not file Return
+		Local json:TJSON = TJSON.Create( file )
+		file.Close()
+		lev = Create_LEVEL_from_json( json )
 		calculate_camera_constraints()
 		
 		'pathing (AI bots)
