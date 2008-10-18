@@ -25,15 +25,11 @@ Global FLAG_debug_overlay% = False
 Global window_w% = 640
 Global window_h% = 480
 Global fullscreen% = False
-Global window_w_half% = window_w/2
-Global window_h_half% = window_h/2
-
-'these are here to make the old code work (before levels were data-driven)
-'Const arena_offset% = 50
-'Const arena_w% = 500
-'Const arena_h% = 500
+Global bit_depth% = 32
+Global refresh_rate% = 60
 
 'external data load
+If Not load_settings() Then save_settings()
 load_data_files()
 load_all_archetypes() 'this will be in data files, eventually
 
@@ -44,7 +40,7 @@ SetGraphicsDriver GLMax2DDriver()
 If Not fullscreen
 	Graphics( window_w, window_h,,, GRAPHICS_BACKBUFFER )
 Else 'fullscreen
-	Graphics( window_w, window_h, 32, 85, GRAPHICS_BACKBUFFER )
+	Graphics( window_w, window_h, bit_depth, refresh_rate, GRAPHICS_BACKBUFFER )
 End If
 SetClsColor( 0, 0, 0 )
 SetBlend( ALPHABLEND )

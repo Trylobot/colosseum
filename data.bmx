@@ -27,22 +27,39 @@ Global pickup_prototype_map:TMap = CreateMap()
 Global turret_prototype_map:TMap = CreateMap()
 Global complex_agent_prototype_map:TMap = CreateMap()
 
-Const DIRECTIVE_LOAD_FILE$ = "[load_data]"
-Const DIRECTIVE_LOAD_CONFIG$ = "[load_config]"
+'______________________________________________________________________________
+Function make_filename$( str$ ) 'this needs to replace invalid characters with valid ones
+	Return str
+End Function
 
-Const DIRECTIVE_ADD_FONT$ = "[add_font]"
-Const DIRECTIVE_ADD_SOUND$ = "[add_sound]"
-Const DIRECTIVE_ADD_IMAGE$ = "[add_image]"
-Const DIRECTIVE_ADD_LEVEL$ = "[add_level]"
-Const DIRECTIVE_ADD_MULTI_FRAME_IMAGE$ = "[add_multi_frame_image]"
-Const DIRECTIVE_ADD_PARTICLE_PROTOTYPE$ = "[add_particle]"
-Const DIRECTIVE_ADD_PARTICLE_EMITTER_PROTOTYPE$ = "[add_particle_emitter]"
-Const DIRECTIVE_ADD_PROJECTILE_PROTOTYPE$ = "[add_projectile]"
-Const DIRECTIVE_ADD_PROJECTILE_LAUNCHER_PROTOTYPE$ = "[add_projectile_emitter]"
-Const DIRECTIVE_ADD_WIDGET_PROTOTYPE$ = "[add_widget]"
-Const DIRECTIVE_ADD_PICKUP_PROTOTYPE$ = "[add_pickup]"
-Const DIRECTIVE_ADD_TURRET_PROTOTYPE$ = "[add_turret]"
-Const DIRECTIVE_ADD_COMPLEX_AGENT_PROTOTYPE$ = "[add_complex_agent]"
+'______________________________________________________________________________
+Function load_settings%()
+	Local file:TStream = ReadFile( data_path + "settings" + "." + "colosseum_settings" )
+	If Not file Return False
+	Local json:TJSON = TJSON.Create( file )
+	file.Close()
+	
+	window_w = json.GetNumber( "window_w" )
+	window_h = json.GetNumber( "window_h" )
+	fullscreen = json.GetBoolean( "fullscreen" )
+	bit_depth = json.GetNumber( "bit_depth" )
+	refresh_rate = json.GetNumber( "refresh_rate" )
+End Function
+
+Function save_settings%()
+	Local this_json:TJSONObject = New TJSONObject
+	this_json.SetByName( "window_w", TJSONNumber.Create( window_w ))
+	this_json.SetByName( "window_h", TJSONNumber.Create( window_h ))
+	this_json.SetByName( "fullscreen", TJSONBoolean.Create( fullscreen ))
+	this_json.SetByName( "bit_depth", TJSONNumber.Create( bit_depth ))
+	this_json.SetByName( "refresh_rate", TJSONNumber.Create( refresh_rate ))
+	
+	Local json:TJSON = TJSON.Create( this_json )
+	Local file:TStream = WriteFile( data_path + "settings" + "." + "colosseum_settings" )
+	If Not file Return False
+	json.Write( file )
+	file.Close()
+End Function
 
 '______________________________________________________________________________
 Function get_font:TImageFont( key$ )
@@ -61,14 +78,8 @@ Function get_level:LEVEL( key$ )
 	Return LEVEL( level_map.ValueForKey( key ))
 End Function
 
-Function make_filename$( str$ ) 'this needs to replace invalid characters with valid ones
-	Return str
-End Function
 '______________________________________________________________________________
 '[ SAVE ] functions
-Function save_screenshot_to_file( screen:TImage, filename$ = "" )
-	
-End Function
 
 Function edit_level_file( file_path$ = "" )
 	Local file:TStream, json:TJSON, lev:LEVEL
@@ -124,6 +135,49 @@ Function find_files:TList( path$, ext$ = "" )
 		Return list
 	End If
 End Function
+
+Function save_screenshot_to_file( screen:TImage, filename$ = "" )
+	
+End Function
+
+'##############################################################################
+'##############################################################################
+'#####                                                                   ######
+'#####   DELETION LINE                                                   ######
+'#####     everything below this line needs to be GONE SOON.   -Tyler    ######
+'#####                                                                   ######
+'##############################################################################
+'##############################################################################
+
+'______________________________________________________________________________
+Function load_all_archetypes()
+	set_particle_archetypes()
+	set_particle_emitter_archetypes()
+	set_projectile_archetypes()
+	set_projectile_launcher_archetypes()
+	set_widget_archetypes()
+	set_pickup_archetypes()
+	set_turret_barrel_archetypes()
+	set_turret_archetypes()
+	set_complex_agent_archetypes()
+End Function
+
+Const DIRECTIVE_LOAD_FILE$ = "[load_data]"
+Const DIRECTIVE_LOAD_CONFIG$ = "[load_config]"
+
+Const DIRECTIVE_ADD_FONT$ = "[add_font]"
+Const DIRECTIVE_ADD_SOUND$ = "[add_sound]"
+Const DIRECTIVE_ADD_IMAGE$ = "[add_image]"
+Const DIRECTIVE_ADD_LEVEL$ = "[add_level]"
+Const DIRECTIVE_ADD_MULTI_FRAME_IMAGE$ = "[add_multi_frame_image]"
+Const DIRECTIVE_ADD_PARTICLE_PROTOTYPE$ = "[add_particle]"
+Const DIRECTIVE_ADD_PARTICLE_EMITTER_PROTOTYPE$ = "[add_particle_emitter]"
+Const DIRECTIVE_ADD_PROJECTILE_PROTOTYPE$ = "[add_projectile]"
+Const DIRECTIVE_ADD_PROJECTILE_LAUNCHER_PROTOTYPE$ = "[add_projectile_emitter]"
+Const DIRECTIVE_ADD_WIDGET_PROTOTYPE$ = "[add_widget]"
+Const DIRECTIVE_ADD_PICKUP_PROTOTYPE$ = "[add_pickup]"
+Const DIRECTIVE_ADD_TURRET_PROTOTYPE$ = "[add_turret]"
+Const DIRECTIVE_ADD_COMPLEX_AGENT_PROTOTYPE$ = "[add_complex_agent]"
 
 '______________________________________________________________________________
 '[ LOAD ] functions
@@ -339,19 +393,6 @@ Function add_image$( file:TStream, map:TMap, multi_frame% = False )
 End Function
 
 '______________________________________________________________________________
-Function load_all_archetypes()
-	set_particle_archetypes()
-	set_particle_emitter_archetypes()
-	set_projectile_archetypes()
-	set_projectile_launcher_archetypes()
-	set_widget_archetypes()
-	set_pickup_archetypes()
-	set_turret_barrel_archetypes()
-	set_turret_archetypes()
-	set_complex_agent_archetypes()
-End Function
-
-'##############################################################################
 'Images
 AutoImageFlags( FILTEREDIMAGE | MIPMAPPEDIMAGE )
 

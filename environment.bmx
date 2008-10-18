@@ -175,14 +175,14 @@ Type ENVIRONMENT
 	
 	Method calculate_camera_constraints()
 		If lev.width <= window_w
-			origin_min_x = window_w_half - lev.width/2
+			origin_min_x = window_w/2 - lev.width/2
 			origin_max_x = origin_min_x
 		Else 'lev.width > window_w
 			origin_min_x = -20
 			origin_max_x = 20 + lev.width - window_w
 		End If
 		If lev.height <= window_h
-			origin_min_y = window_h_half - lev.height/2
+			origin_min_y = window_h/2 - lev.height/2
 			origin_max_y = origin_min_y
 		Else 'lev.height > window_h
 			origin_min_y = -20
