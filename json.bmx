@@ -797,7 +797,6 @@ Type TJSON
 		Return 0.0
 	EndMethod
 	
-
 	Method GetString:String( path:String)
 		Local val:TJSONValue = Lookup( path)
 		If val And val.Class = JSON_STRING Then Return TJSONString(val).Value

@@ -182,7 +182,7 @@ Function set_pickup_archetypes()
 End Function
 
 '______________________________________________________________________________
-'[ TURRETS ]
+'[ TURRET BARRELS ]
 Global turret_barrel_archetype:TURRET_BARREL[20]; reset_index()
 
 Global TURRET_BARREL_INDEX_LIGHT_CANNON% = postfix_index()
@@ -262,22 +262,22 @@ Global TURRET_INDEX_LIGHT_MACHINE_GUN% = postfix_index()
 Function set_turret_archetypes()
 	turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON] = TURRET( TURRET.Create( "105mm cannon", TURRET_CLASS_AMMUNITION, img_player_tank_turret_base, get_sound( "cannon" ), 1, [[0]], 2.25, 40 ))
 		turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CANNON], 0 ).attach_at( 0, 0 )
-	turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN] = TURRET( TURRET.Create( "0.50 machine gun", TURRET_CLASS_AMMUNITION, Null, get_sound( "mgun" ), 1, [[0]], 2.25, INFINITY, 25.0, 1.50, 2.75, 0.0210, 1500 ))
+	turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN] = TURRET( TURRET.Create( "0.50 machine-gun", TURRET_CLASS_AMMUNITION, Null, get_sound( "mgun" ), 1, [[0]], 2.25, INFINITY, 25.0, 1.50, 2.75, 0.0210, 1500 ))
 		turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN], 0 ).attach_at( 0, 0 )
-	turret_archetype[TURRET_INDEX_TANK_LASER] = TURRET( TURRET.Create( "10 mw laser", TURRET_CLASS_ENERGY, img_laser_turret, get_sound( "laser" ), 1, [[0]], 2.25, INFINITY, 50.0, 5.50, 5.75, 0.0090, 3000 ))
+	turret_archetype[TURRET_INDEX_TANK_LASER] = TURRET( TURRET.Create( "10 Mw laser", TURRET_CLASS_ENERGY, img_laser_turret, get_sound( "laser" ), 1, [[0]], 2.25, INFINITY, 50.0, 5.50, 5.75, 0.0090, 3000 ))
 		turret_archetype[TURRET_INDEX_TANK_LASER].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_LASER], 0 ).attach_at( 0, 0 )
-	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON] = TURRET( TURRET.Create( "105mm paired cannons", TURRET_CLASS_AMMUNITION, img_player_tank_turret_med_base, get_sound( "cannon" ), 2, [[0],[1]], 2.00, 40 ))
+	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON] = TURRET( TURRET.Create( "105mm cannon (2x)", TURRET_CLASS_AMMUNITION, img_player_tank_turret_med_base, get_sound( "cannon" ), 2, [[0],[1]], 2.00, 40 ))
 		turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_DUAL_LIGHT_CANNON_LEFT], 0 ).attach_at( 0, 0 )
 		turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_DUAL_LIGHT_CANNON_RIGHT], 1 ).attach_at( 0, 0 )
-	turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN] = TURRET( TURRET.Create( "0.50 machine gun", TURRET_CLASS_AMMUNITION, Null, get_sound( "mgun" ), 1, [[0]], 2.00, INFINITY, 25.0, 1.50, 2.50, 0.0210, 1500 ))
+	turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN] = TURRET( TURRET.Create( "0.50 machine-gun", TURRET_CLASS_AMMUNITION, Null, get_sound( "mgun" ), 1, [[0]], 2.00, INFINITY, 25.0, 1.50, 2.50, 0.0210, 1500 ))
 		turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN_2], 0 ).attach_at( 0, 0 )
-	turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET] = TURRET( TURRET.Create( "", TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, get_sound( "mgun" ), 1, [[0]], 0.80, INFINITY, 25.0, 2.0, 3.0, 0.0175, 2000 ))
+	turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET] = TURRET( TURRET.Create( "0.50 machine-gun", TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, get_sound( "mgun" ), 1, [[0]], 0.80, INFINITY, 25.0, 2.0, 3.0, 0.0175, 2000 ))
 		turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_EMPLACEMENT_LIGHT_MACHINE_GUN], 0 ).attach_at( 0, 0 )
-	turret_archetype[TURRET_INDEX_CANNON_TURRET] = TURRET( TURRET.Create( "", TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, get_sound( "cannon" ), 1, [[0]], 0.50, INFINITY ))
+	turret_archetype[TURRET_INDEX_CANNON_TURRET] = TURRET( TURRET.Create( "0.50 machine-gun", TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, get_sound( "cannon" ), 1, [[0]], 0.50, INFINITY ))
 		turret_archetype[TURRET_INDEX_CANNON_TURRET].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_EMPLACEMENT_LIGHT_CANNON], 0 ).attach_at( 0, 0 )
-	turret_archetype[TURRET_INDEX_ROCKET_TURRET] = TURRET( TURRET.Create( "", TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, Null, 1, [[0]], 0.50, INFINITY ))
+	turret_archetype[TURRET_INDEX_ROCKET_TURRET] = TURRET( TURRET.Create( "105mm cannon", TURRET_CLASS_AMMUNITION, img_enemy_stationary_emplacement_1_turret_base, Null, 1, [[0]], 0.50, INFINITY ))
 		turret_archetype[TURRET_INDEX_ROCKET_TURRET].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_EMPLACEMENT_ROCKET_LAUNCHER], 0 ).attach_at( 0, 0 )
-	turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN] = TURRET( TURRET.Create( "", TURRET_CLASS_AMMUNITION, img_enemy_light_mgun_turret_base, get_sound( "mgun" ), 1, [[0]], 2.00, INFINITY, 25.0, 5.0, 5.5, 0.0175, 2000 ))
+	turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN] = TURRET( TURRET.Create( "rocket launcher", TURRET_CLASS_AMMUNITION, img_enemy_light_mgun_turret_base, get_sound( "mgun" ), 1, [[0]], 2.00, INFINITY, 25.0, 5.0, 5.5, 0.0175, 2000 ))
 		turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_MACHINE_GUN], 0 ).attach_at( 0, 0 )
 End Function
 

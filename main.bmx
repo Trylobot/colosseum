@@ -11,8 +11,8 @@ Rem
 	You play a hero driving a tank, fighting for your life in a futuristic Colosseum setting.
 	Enemy robots come at you in waves, which you must destroy before advancing.
 	Between levels, you may visit the shop for repairs and to buy new items with cash gained from kills.
-	After making it past the initial few levels, you unlock "Veteran" difficulty, which allows you to play difficult randomly-generated levels and to unlock for purchase the most prestigious and powerful of the shop items.
-	Because of the persistent elements, you may save and load your progress to/from files on disk; these files are not encrypted.
+	After making it past the initial few levels, you unlock Veteran difficulty. This allows you to play larger randomly-generated levels and unlocks the most powerful items.
+	Because of the persistent elements, you may save and load your progress to/from files on disk; these files are not encoded or encrypted.
 
 EndRem
 
@@ -29,7 +29,10 @@ Global bit_depth% = 32
 Global refresh_rate% = 60
 
 'external data load
-If Not load_settings() Then save_settings()
+If Not load_settings()
+	save_settings()
+	load_settings()
+End If
 load_data_files()
 load_all_archetypes() 'this will be in data files, eventually
 
@@ -52,9 +55,9 @@ Local before%
 ?Debug
 Global last_frame_ts%, time_count%, frame_count%, fps%
 
-'profile.archetype = PLAYER_INDEX_MEDIUM_TANK
-'next_level = "data/debug.colosseum_level"
-'menu_command( COMMAND_NEW_GAME )
+profile.archetype = PLAYER_INDEX_MEDIUM_TANK
+next_level = "data/debug.colosseum_level"
+menu_command( COMMAND_NEW_GAME )
 
 'debug_draw_walls()
 'debug_load_data()

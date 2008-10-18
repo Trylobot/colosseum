@@ -370,7 +370,7 @@ Function draw_HUD()
 	Local hud_height% = GetImageFont().Height() + 3
 	
 	x = 0; y = window_h - hud_height
-	w = 70; h = 10
+	w = 85; h = 12
 	
 	SetAlpha( 0.50 )
 	SetColor( 0, 0, 0 )
@@ -378,78 +378,77 @@ Function draw_HUD()
 	SetAlpha( 0.75 )
 	SetColor( 255, 255, 255 )
 	DrawLine( x,y-1, x+window_w,y-1 )
-	x :+ 2; y :+ 4
+	x :+ 2; y :+ 3
 	
 	'player cash
 	str = "$" + format_number( profile.cash )
 	SetColor( 0, 0, 0 )
 	SetAlpha( 1 )
-	DrawText( str, x+1, y+1 )
+	DrawText( str, x+1, y+2 )
 	SetColor( 50, 220, 50 )
-	DrawText( str, x, y )
+	DrawText( str, x, y+1 )
 	x :+ CASH_WIDTH	
 		
 	'player health		
 	SetColor( 255, 255, 255 )
-	DrawImage( img_health_mini, x, y-1 )
+	DrawImage( img_health_mini, x, y )
 	x :+ img_health_mini.width + 3
 	Local pct# = game.player.cur_health/game.player.max_health
 	draw_percentage_bar( x,y, w,h, pct ) ', (1 - (0.5*pct)) )
 	x :+ w + HORIZONTAL_HUD_MARGIN
 	
-	
-	
-'	'player ammo, overheat & charge indicators
-'	y :+ 50
-'	Local ammo_row_len% = 10
-'	Local temp_x%, temp_y%
-'	For Local t:TURRET = EachIn game.player.turret_list
-'		If t.name <> Null And t.name <> ""
-'			SetColor( 255, 255, 255 ); SetImageFont( get_font( "consolas_12" ))
-'			DrawText( t.name, x, y ); y :+ 12
-'		End If
-'		temp_x = x; temp_y = y
-'		If t.max_ammo <> INFINITY
-'		For Local i% = 0 To t.cur_ammo - 1
-'			If ((i Mod ammo_row_len) = 0) And (i > 0)
-'				temp_x = x
-'				If ((i / ammo_row_len) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width / 2
-'				temp_y :+ img_icon_player_cannon_ammo.height / 3
-'			End If
-'			DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
-'			temp_x :+ img_icon_player_cannon_ammo.width - 1
-'		Next; y :+ (t.max_ammo / ammo_row_len)*img_icon_player_cannon_ammo.height - 4
-'		End If
-'		If t.max_heat <> INFINITY
-'			w = 125; h = 14
-'			Local heat_pct# = (t.cur_heat / t.max_heat)
-'			SetColor( 255, 255, 255 )
-'			DrawRect( x, y, w, h )
-'			SetColor( 32, 32, 32 )
-'			DrawRect( x + 1, y + 1, w - 2, h - 2 )
-'			If (now() - t.bonus_cooling_start_ts) < t.bonus_cooling_time
-'				SetColor( 32, 32, 255 )
-'				DrawRect( x + 2, y + 2, w - 4, h - 4 )
-'				SetViewport( x + 2, y + 2, w - 4, h - 4 )
-'				SetColor( 255, 255, 255 )
-'				Local x_offset# = (now()/4) Mod (w+20)
-'				DrawImage( img_shine, x-10+Abs(x_offset), y + 2 )
-'				SetViewport( 0,0, window_w,window_h )
-'			Else
-'				SetColor( 255*heat_pct, 0, 255*(1 - heat_pct) )
-'				DrawRect( x + 2, y + 2, (Double(w) - 4.0)*heat_pct, h - 4 )
-'			End If
-'		End If
-'	Next
-'	y :+ h
+	'player ammo, overheat & charge indicators
+	Local ammo_row_len% = w / img_icon_player_cannon_ammo.width
+	Local temp_x%, temp_y%
+	For Local t:TURRET = EachIn game.player.turret_list
+		If t.name <> Null And t.name <> ""
+			SetColor( 196, 196, 196 );
+			DrawText( t.name, x, y+1 ); x :+ TextWidth( t.name ) + 3
+		End If
+		temp_x = x; temp_y = y
+		If t.max_ammo <> INFINITY
+			For Local i% = 0 To t.cur_ammo - 1
+				If ((i Mod ammo_row_len) = 0) And (i > 0)
+					temp_x = x
+					If ((i / ammo_row_len) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width / 2
+					temp_y :+ img_icon_player_cannon_ammo.height / 2
+				End If
+				DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
+				temp_x :+ img_icon_player_cannon_ammo.width
+			Next
+			x :+ w + HORIZONTAL_HUD_MARGIN
+		End If
+		If t.max_heat <> INFINITY
+			Local heat_pct# = (t.cur_heat / t.max_heat)
+			SetColor( 255, 255, 255 )
+			DrawRect( x, y, w, h )
+			SetColor( 32, 32, 32 )
+			DrawRect( x + 1, y + 1, w - 2, h - 2 )
+			If (now() - t.bonus_cooling_start_ts) < t.bonus_cooling_time
+				SetColor( 32, 32, 255 )
+				DrawRect( x + 2, y + 2, w - 4, h - 4 )
+				SetViewport( x + 2, y + 2, w - 4, h - 4 )
+				SetColor( 255, 255, 255 )
+				Local x_offset# = (now()/4) Mod (w+20)
+				DrawImage( img_shine, x-10+Abs(x_offset), y + 2 )
+				SetViewport( 0, 0, window_w,window_h )
+			Else
+				SetColor( 255*heat_pct, 0, 255*(1 - heat_pct) )
+				DrawRect( x + 2, y + 2, (Double(w) - 4.0)*heat_pct, h - 4 )
+			End If
+			x :+ w + HORIZONTAL_HUD_MARGIN
+		End If
+	Next
 	
 	'music icon
-'	y :+ 50
-'	SetColor( 255, 255, 255 )
-'	DrawText( "music", x, y ); y :+ 12
-'	DrawImage( img_icon_music_note, x, y ); x :+ img_icon_music_note.width + 10
-'	If FLAG_bg_music_on Then DrawImage( img_icon_speaker_on, x, y ) ..
-'	Else                     DrawImage( img_icon_speaker_off, x, y )
+	SetAlpha( 0.5 )
+	Local music_str$ = "[m]usic"
+	x = window_w - 55 - TextWidth( music_str )
+	SetColor( 255, 255, 255 )
+	DrawText( music_str, x, y ); x :+ TextWidth( music_str ) + 8
+	DrawImage( img_icon_music_note, x, y ); x :+ img_icon_music_note.width + 5
+	If FLAG_bg_music_on Then DrawImage( img_icon_speaker_on, x, y ) ..
+	Else                     DrawImage( img_icon_speaker_off, x, y )
 	
 End Function
 '______________________________________________________________________________

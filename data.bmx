@@ -44,6 +44,10 @@ Function load_settings%()
 	fullscreen = json.GetBoolean( "fullscreen" )
 	bit_depth = json.GetNumber( "bit_depth" )
 	refresh_rate = json.GetNumber( "refresh_rate" )
+	
+	If window_w = 0 Or window_h = 0 Or bit_depth = 0 Or refresh_rate = 0 ..
+	Then Return False ..
+	Else Return True
 End Function
 
 Function save_settings%()
@@ -143,8 +147,8 @@ End Function
 '##############################################################################
 '##############################################################################
 '#####                                                                   ######
-'#####   DELETION LINE                                                   ######
-'#####     everything below this line needs to be GONE SOON.   -Tyler    ######
+'#####   THE LINE OF DOOM                                                ######
+'#####     everything below this line needs to be deleted.   -Tyler      ######
 '#####                                                                   ######
 '##############################################################################
 '##############################################################################
