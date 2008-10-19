@@ -15,7 +15,7 @@ Const EDIT_LEVEL_MODE_PATHING% = 3
 Const EDIT_LEVEL_MODE_SPAWNER_NEW% = 4
 Const EDIT_LEVEL_MODE_SPAWNER_EDIT% = 5
 
-Function edit_level:LEVEL( lev:LEVEL )
+Function level_editor( lev:LEVEL )
 	
 	Local gridsnap_mouse:cVEC = New cVEC
 	Local drag_mouse_start:cVEC = New cVEC
@@ -486,7 +486,6 @@ Function edit_level:LEVEL( lev:LEVEL )
 		Flip( 1 )
 	Until KeyHit( KEY_ESCAPE )
 	
-	Return lev
 End Function
 
 Function class_to_string$( class% )

@@ -130,7 +130,7 @@ Const COORDINATE_INVALID% = -1
 
 Function Create_LEVEL:LEVEL( width%, height% )
 	Local lev:LEVEL = New LEVEL
-	lev.name = "unsaved level"
+	lev.name = "new level"
 	lev.width = width; lev.height = height
 	lev.row_count = 1; lev.col_count = 1
 	lev.horizontal_divs = [ 0, lev.height ]

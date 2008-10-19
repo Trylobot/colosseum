@@ -49,7 +49,7 @@ Function load_settings%()
 	Then Return False ..
 	Else Return True
 End Function
-
+'______________________________________________________________________________
 Function save_settings%()
 	Local this_json:TJSONObject = New TJSONObject
 	this_json.SetByName( "window_w", TJSONNumber.Create( window_w ))
@@ -83,40 +83,34 @@ Function get_level:LEVEL( key$ )
 End Function
 
 '______________________________________________________________________________
-'[ SAVE ] functions
-
-Function edit_level_file( file_path$ = "" )
-	Local file:TStream, json:TJSON, lev:LEVEL
-	
-	'selecting a level to load needs to be a function of the level editor, and it needs to use *my* menu class, not the operating system's
-	If file_path = "" Then file_path = RequestFile( "Load Level Data", level_file_filter, False, data_path )
-	If file_path <> ""
-		file = ReadFile( file_path )
+Function load_level:LEVEL( path$ )
+	Local file:TStream, json:TJSON
+	file = ReadFile( path )
+	If file
 		json = TJSON.Create( file )
 		file.Close()
-		DebugLog "read from "+file_path+"~n" + json.ToSource()
-		lev = Create_LEVEL_from_json( json )
+		Return Create_LEVEL_from_json( json )
 	Else
-		lev = Create_LEVEL( 300, 300 )
-		lev.name = "new level"
-	End If
-	
-	'I don't like the way this works.
-	'the level editor needs to be an object, enabled/disabled and controlled by the main loop
-	'currently, it suspends main and has its own loop.
-	edit_level( lev )
-	
-	'selecting a file to save to needs to be a function of the level editor, and it needs to use *my* menu class, not the operating system's
-	file_path = RequestFile( "Save Level Data", level_file_filter, True, ExtractDir( file_path ) + "/" + lev.name )
-	If file_path <> ""
-		json = TJSON.Create( lev.to_json() )
-		DebugLog "saving to "+file_path+"~n" + json.ToSource()
-		file = WriteFile( file_path )
-		json.Write( file )
-		file.Close()
+		Return Null
 	End If
 End Function
-
+'______________________________________________________________________________
+Function save_level%( path$, lev:LEVEL )
+	If lev <> Null
+		Local file:TStream, json:TJSON
+		json = TJSON.Create( lev.to_json() )
+		file = WriteFile( path )
+		If file
+			json.Write( file )
+			file.Close()
+		Else
+			Return False
+		End If
+	Else
+		Return False
+	End If
+End Function
+'______________________________________________________________________________
 Function find_files:TList( path$, ext$ = "" )
 	Local list:TList = CreateList()
 	Local dir% = ReadDir( path ) 'if directory exists, assign integer handle
@@ -139,11 +133,11 @@ Function find_files:TList( path$, ext$ = "" )
 		Return list
 	End If
 End Function
-
+'______________________________________________________________________________
 Function save_screenshot_to_file( screen:TImage, filename$ = "" )
 	
 End Function
-
+'______________________________________________________________________________
 '##############################################################################
 '##############################################################################
 '#####                                                                   ######
@@ -153,7 +147,6 @@ End Function
 '##############################################################################
 '##############################################################################
 
-'______________________________________________________________________________
 Function load_all_archetypes()
 	set_particle_archetypes()
 	set_particle_emitter_archetypes()

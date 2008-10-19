@@ -208,8 +208,8 @@ Type ENVIRONMENT
 			If counter < sp.size
 				'if it is time to spawn this spawner's current squad
 				If now() - ts >= sp.delay_time[cur.row]
-					'if this squad is just started, or the last spawned enemy is far enough away
-					If cur.col = 0 Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
+					'if this squad is just started, or the last spawned enemy is far enough away, or dead or null
+					If cur.col = 0 Or last = Null Or last.dead() Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
 						Local brain:CONTROL_BRAIN = spawn_agent( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
 						last_spawned[i] = brain.avatar
 						'counter

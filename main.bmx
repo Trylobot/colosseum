@@ -34,7 +34,8 @@ If Not load_settings()
 	load_settings()
 End If
 load_data_files()
-load_all_archetypes() 'this will be in data files, eventually
+load_all_archetypes() 'REMOVE this function call by externalizing this data, please.
+menu_command( COMMAND_NEW_LEVEL ) 'initialize the level editor's cached level
 
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo
