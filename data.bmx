@@ -7,12 +7,11 @@ EndRem
 '______________________________________________________________________________
 Global data_path$ = "data/"
 Global user_path$ = "user/"
+Global settings_file_ext$ = "colosseum_settings"
+Global default_settings_file_name$ = "settings."+settings_file_ext
 Global data_file_ext$ = "colosseum_data"
-Global data_file_filter$ = "Data Files:"+data_file_ext+";All Files:*"
 Global level_file_ext$ = "colosseum_level"
-Global level_file_filter$ = "Level Files:"+level_file_ext+";All Files:*"
 Global saved_game_file_ext$ = "colosseum_saved_game"
-Global saved_game_file_filter$ = "Saved Game Files:"+saved_game_file_ext+";All Files:*"
 
 Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
@@ -34,7 +33,7 @@ End Function
 
 '______________________________________________________________________________
 Function load_settings%()
-	Local file:TStream = ReadFile( data_path + "settings" + "." + "colosseum_settings" )
+	Local file:TStream = ReadFile( data_path + default_settings_file_name )
 	If Not file Return False
 	Local json:TJSON = TJSON.Create( file )
 	file.Close()
@@ -59,7 +58,7 @@ Function save_settings%()
 	this_json.SetByName( "refresh_rate", TJSONNumber.Create( refresh_rate ))
 	
 	Local json:TJSON = TJSON.Create( this_json )
-	Local file:TStream = WriteFile( data_path + "settings" + "." + "colosseum_settings" )
+	Local file:TStream = WriteFile( data_path + default_settings_file_name )
 	If Not file Return False
 	json.Write( file )
 	file.Close()

@@ -194,7 +194,7 @@ Type MENU
 		
 		'draw each option
 		SetImageFont( menu_font )
-		cx :+ margin; cy :+ 2*margin + text_height_factor*GetImageFont().Height()
+		cx :+ border + margin; cy :+ border + 2*margin + text_height_factor*GetImageFont().Height()
 		For Local i% = 0 To options.Length-1
 			'set font for option
 			If menu_type = VERTICAL_LIST_WITH_FILES And i >= static_option_count
@@ -249,19 +249,21 @@ Type MENU
 		Select menu_type
 			
 			Case VERTICAL_LIST_WITH_FILES
-				files = find_files( path, preferred_file_extension )
-				Local new_options:MENU_OPTION[] = New MENU_OPTION[static_option_count + files.Count()]
-				For i = 0 To static_option_count - 1
-					new_options[i] = options[i]
-				Next
-				i = static_option_count
-				For Local file$ = EachIn files
-					new_options[i] = ..
-						MENU_OPTION.Create( StripDir( file ), default_command, file, True, True )
-					i :+ 1
-				Next
-				options = new_options
-				focus = 0
+				If initial_update
+					files = find_files( path, preferred_file_extension )
+					Local new_options:MENU_OPTION[] = New MENU_OPTION[static_option_count + files.Count()]
+					For i = 0 To static_option_count - 1
+						new_options[i] = options[i]
+					Next
+					i = static_option_count
+					For Local file$ = EachIn files
+						new_options[i] = ..
+							MENU_OPTION.Create( StripDir( file ), default_command, file, True, True )
+						i :+ 1
+					Next
+					options = new_options
+					focus = 0
+				End If
 				
 			Case TEXT_INPUT_DIALOG
 				If initial_update
@@ -271,10 +273,11 @@ Type MENU
 				options[0].argument = path + enforce_suffix( input_box, "." + preferred_file_extension )
 				
 			Case CONFIRMATION_DIALOG
-				If options = Null
+				If initial_update
 					options = ..
 						[	MENU_OPTION.Create( "OK", default_command, default_argument, True, True ), ..
 							MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True )]
+					focus = 1
 				End If
 			
 		End Select
@@ -361,9 +364,10 @@ Const MENU_ID_SELECT_LEVEL% = 22
 Const MENU_ID_LOAD_GAME% = 30
 Const MENU_ID_LOAD_LEVEL% = 31
 Const MENU_ID_SAVE_GAME% = 40
-Const MENU_ID_SAVE_LEVEL% = 41
-Const MENU_ID_INPUT_LEVEL_FILE_NAME% = 42
-Const MENU_ID_CONFIRM_ERASE_LEVEL% = 43
+Const MENU_ID_INPUT_GAME_FILE_NAME% = 41
+Const MENU_ID_SAVE_LEVEL% = 45
+Const MENU_ID_INPUT_LEVEL_FILE_NAME% = 46
+Const MENU_ID_CONFIRM_ERASE_LEVEL% = 47
 Const MENU_ID_OPTIONS% = 50
 Const MENU_ID_OPTIONS_VIDEO% = 51
 Const MENU_ID_OPTIONS_AUDIO% = 52
@@ -395,10 +399,14 @@ Global all_menus:MENU[] = ..
 				MENU_OPTION.Create( "medium tank", COMMAND_PROFILE_SET_PLAYER_TANK, INTEGER.Create(PLAYER_INDEX_MEDIUM_TANK), True, True ) ]), ..
 		MENU.Create( "select level", 255, 127, 127, MENU_ID_SELECT_LEVEL, MENU.VERTICAL_LIST, menu_margin, 1, ..
 			[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
-	MENU.Create( "save game", 127, 255, 127, MENU_ID_SAVE_GAME, MENU.VERTICAL_LIST, menu_margin,, ..
-		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
-	MENU.Create( "load game", 255, 196, 196, MENU_ID_LOAD_GAME, MENU.VERTICAL_LIST, menu_margin,, ..
-		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
+	MENU.Create( "save game", 255, 96, 127, MENU_ID_SAVE_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
+		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "[new file]", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_GAME_FILE_NAME), True, True )], ..
+			user_path, saved_game_file_ext, COMMAND_SAVE_GAME ), ..
+		MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_GAME_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,,, user_path, saved_game_file_ext, COMMAND_SAVE_GAME,, 60, "%%CURRENT SAVED GAME FILENAME%%"  ), ..
+	MENU.Create( "load game", 96, 255, 127, MENU_ID_LOAD_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
+		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ], ..
+			user_path, saved_game_file_ext, COMMAND_LOAD_GAME ), ..
 	MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU.VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_VIDEO), True, False ), ..

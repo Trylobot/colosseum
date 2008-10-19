@@ -230,7 +230,10 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 				cx :+ w-border
 			Else 'i == current_menu
 				cx = x
-				cy = y + h-border
+				cy = y
+				If i > 0
+					cy :+ h-border
+				End If
 				m.draw( cx, cy )
 			End If
 		Next
