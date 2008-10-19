@@ -17,10 +17,14 @@ Function update_all_objects()
 			If game.player <> Null
 				game.mouse.x = game.player.pos_x + (2.0 * (mouse.x - window_w/2))
 				game.mouse.y = game.player.pos_y + (2.0 * (mouse.y - window_h/2))
-				game.drawing_origin.x = window_w/2 - Int((game.player.pos_x + game.mouse.x)/2)
-				game.drawing_origin.y = window_h/2 - Int((game.player.pos_y + game.mouse.y)/2)
-'				game.drawing_origin.x = window_w/2 - ((game.player.pos_x + game.mouse.x)/2.0)
-'				game.drawing_origin.y = window_h/2 - ((game.player.pos_y + game.mouse.y)/2.0)
+				Select game.player_brain.input_type
+					Case INPUT_KEYBOARD_MOUSE_HYBRID
+						game.drawing_origin.x = window_w/2 - Int((game.player.pos_x + game.mouse.x)/2)
+						game.drawing_origin.y = window_h/2 - Int((game.player.pos_y + game.mouse.y)/2)
+					Case INPUT_KEYBOARD
+						game.drawing_origin.x = window_w/2 - Int(game.player.pos_x)
+						game.drawing_origin.y = window_h/2 - Int(game.player.pos_y)
+				End Select
 '				If game.drawing_origin.x < game.origin_min_x Then game.drawing_origin.x = game.origin_min_x
 '				If game.drawing_origin.y < game.origin_min_y Then game.drawing_origin.y = game.origin_min_y
 '				If game.drawing_origin.x > game.origin_max_x Then game.drawing_origin.x = game.origin_max_x

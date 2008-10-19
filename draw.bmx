@@ -216,14 +216,11 @@ End Function
 '______________________________________________________________________________
 Function draw_menus( x%, y% )
 	For Local i% = 0 To current_menu
-		SetAlpha( 0.5 )
-		SetColor( 0, 0, 0 )
-		DrawRect( x-3,y-3, 300, 500 )
-
 		SetAlpha( 1 )
 		SetColor( 255, 255, 255 )
-		get_menu( menu_stack[i] ).draw( x + i*20, y + i*20, True )
+		get_menu( menu_stack[i] ).draw( x + i*20, y + i*20,, Pow( (2.0/3.0), (current_menu - i )))
 	Next
+	SetAlpha( 1 )
 End Function
 '______________________________________________________________________________
 Function draw_AI_demo()
@@ -359,7 +356,7 @@ Function draw_reticle()
 			
 			Else If profile.input_method = INPUT_KEYBOARD
 				SetRotation( p_tur.ang )
-				DrawImage( img_reticle, p_tur.pos_x + 50*Cos( p_tur.ang ), p_tur.pos_y + 50*Sin( p_tur.ang ))
+				DrawImage( img_reticle, p_tur.pos_x + 85*Cos( p_tur.ang ), p_tur.pos_y + 85*Sin( p_tur.ang ))
 			
 			End If
 		End If

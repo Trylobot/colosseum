@@ -5,15 +5,8 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const MENU_OPTION_CLASS_LABEL% = 1
-Const MENU_OPTION_CLASS_HORIZONTAL_SELECT_ONE% = 2
-Const MENU_OPTION_CLASS_VERTICAL_SELECT_ONE% = 3
-Const MENU_OPTION_CLASS_INPUT% = 4
-Const MENU_OPTION_CLASS_SLIDER% = 5
-
 Type MENU_OPTION
 	Field name$ 'display this to user
-	Field class% 'option class
 	Field command_code% 'command to execute when this option is selected
 	Field argument:Object 'parameter, has meaning only in combination with command_code
 	Field visible% 'draw this option? {true|false}
@@ -35,13 +28,13 @@ Type MENU_OPTION
 		Return Create( name, command_code, argument, visible, enabled )
 	End Method
 	
-	Method draw( x%,y%, glow% = False, red% = 255, green% = 255, blue% = 255 )
-		last_x = x; last_y = y
+	Method draw( display_name$, x%, y%, glow% = False, red% = 255, green% = 255, blue% = 255 )
+		'last_x = x; last_y = y
 		SetColor( red, green, blue )
 		If glow
-			
+			DrawText_with_glow( display_name, x, y )
 		Else
-			
+			DrawText( display_name, x, y )
 		End If
 	End Method
 	
@@ -115,6 +108,7 @@ Type MENU
 	Field files:TList 'list of files from the current directory, updated often (if applicable)
 	
 	Field input_box$ 'user input string (if applicable)
+	Field input_box_size% 'size of user input box
 	Field input_listener:CONSOLE 'input controller/listener (if applicable)
 	Field input_auto_suffix$ 'automatic suffix to append to input, such as in the case of filename extensions
 	
@@ -125,7 +119,7 @@ Type MENU
 	Function Create:MENU( ..
 	name$, red%, green%, blue%, menu_id%, menu_type%, margin%, focus% = -1, options:MENU_OPTION[] = Null, ..
 	path$ = "", preferred_file_extension$ = "", default_command% = -1, default_argument:Object = Null, ..
-	input_auto_suffix$ = "" )
+	input_box_size% = 0, input_auto_suffix$ = "" )
 		Local m:MENU = New MENU
 		m.name = name
 		m.red = red; m.green = green; m.blue = blue
@@ -143,6 +137,7 @@ Type MENU
 		m.default_command = default_command
 		m.default_argument = default_argument
 		m.input_box = ""
+		m.input_box_size = input_box_size
 		m.input_listener = New CONSOLE
 		m.input_auto_suffix = input_auto_suffix
 		Return m
@@ -153,85 +148,94 @@ Type MENU
 		menu_command( opt.command_code, opt.argument )
 	End Method
 	
-	Method draw( x%, y%, border% = False )
+	Method draw( x%, y%, border% = True, dark_overlay_alpha# = 0 )
 		Local cx% = x, cy% = y, opt:MENU_OPTION
 		
 		Local arrow_height% = 20
 		Local border_width% = 3
 		Local text_height_factor# = 0.70
+		
 		Local width% = 0, height% = 0
 		
-		'determine dimensions of this menu
-		Select menu_type
-			
-			Case VERTICAL_LIST, VERTICAL_LIST_WITH_FILES
-				Local i% = 0
-				For Local opt:MENU_OPTION = EachIn options
-					If menu_type = VERTICAL_LIST_WITH_FILES And i >= static_option_count
-						SetImageFont( menu_font_small )
-					Else
-						SetImageFont( menu_font )
-					End If
-					Local opt_name_dynamic$ = resolve_meta_variables( opt.name )
-					If (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width) > width
-						width = (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width)
-					End If
-					i :+ 1
-				Next
+		'calculate dimensions
+		Local i% = 0
+		For Local opt:MENU_OPTION = EachIn options
+			If menu_type = VERTICAL_LIST_WITH_FILES And i >= static_option_count
+				SetImageFont( menu_font_small )
+			Else
 				SetImageFont( menu_font )
-				If (2*margin + TextWidth( name ) + 2*border_width) > width
-					width = (2*margin + TextWidth( name ) + 2*border_width)
-				End If
-				height = (margin + (1 + options.Length)*(text_height_factor*GetImageFont().Height() + margin) + 2*border_width)
-			
-		End Select
-		
-		'draw the borders and backgrounds
+			End If
+			Local opt_name_dynamic$ = resolve_meta_variables( opt.name )
+			If (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width) > width
+				width = (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width)
+			End If
+			height :+ (text_height_factor*GetImageFont().Height() + margin)
+			i :+ 1
+		Next
+		SetImageFont( menu_font )
+		If (2*margin + TextWidth( name ) + 2*border_width) > width
+			width = (2*margin + TextWidth( name ) + 2*border_width)
+		End If
+		height :+ (margin + (text_height_factor*GetImageFont().Height() + margin) + 2*border_width)
+
+		'draw the borders, backgrounds and title text
 		SetImageFont( title_font )
 		If border
 			SetColor( 64, 64, 64 )
-			DrawRect( x-border_width,y-border_width, width,height )
+			DrawRect( cx-border_width,cy-border_width, width,height )
 			SetColor( 0, 0, 0 )
-			DrawRect( x,y, width-2*border_width,height-2*border_width )
+			DrawRect( cx,cy, width-2*border_width,height-2*border_width )
 			SetColor( red/4, green/4, blue/4 )
-			DrawRect( x,y, width-2*border_width,text_height_factor*GetImageFont().Height() + margin )
+			DrawRect( cx,cy, width-2*border_width,text_height_factor*GetImageFont().Height() + margin )
 			SetColor( red, green, blue )
-			DrawText( name, x+margin,y+margin/2 )
+			DrawText( name, cx+margin,cy+margin/2 )
 		End If
 		
-		'draw the options
-		Select menu_type
-			
-			Case VERTICAL_LIST, VERTICAL_LIST_WITH_FILES
+		'draw each option
+		SetImageFont( menu_font )
+		cx :+ margin; cy :+ 2*margin + text_height_factor*GetImageFont().Height()
+		For Local i% = 0 To options.Length-1
+			'set font for option
+			If menu_type = VERTICAL_LIST_WITH_FILES And i >= static_option_count
+				SetImageFont( menu_font_small )
+			Else
 				SetImageFont( menu_font )
-				x :+ margin; y :+ 2*margin + text_height_factor*GetImageFont().Height()
-				For Local i% = 0 To options.Length-1
-					If menu_type = VERTICAL_LIST_WITH_FILES And i >= static_option_count
-						SetImageFont( menu_font_small )
-					Else
-						SetImageFont( menu_font )
-					End If
-					opt = options[i]
-					If opt <> Null
-						Local opt_name_dynamic$ = resolve_meta_variables( opt.name )
-						If i = focus
-							SetColor( 255, 255, 255 )
-							DrawText_with_glow( opt_name_dynamic, x, y )
-						Else
-							If (opt.enabled And opt.visible)
-								SetColor( 127, 127, 127 )
-							Else If opt.visible
-								SetColor( 64, 64, 64 )
-							Else
-								SetColor( 0, 0, 0 )
-							End If
-							DrawText( opt_name_dynamic, x, y )
-						End If
-					End If
-					y :+ text_height_factor*GetImageFont().Height() + margin
-				Next
-			
-		End Select
+			End If
+			opt = options[i]
+			If opt <> Null
+				Local rgb_val%, glow% = False
+				If i = focus
+					rgb_val = 255
+					glow = True
+				Else If opt.enabled And opt.visible
+					rgb_val = 127
+				Else If opt.visible
+					rgb_val = 64
+				Else
+					rgb_val = 0
+				End If
+				'draw the option
+				opt.draw( resolve_meta_variables( opt.name ), cx, cy, glow, rgb_val, rgb_val,rgb_val ) 
+			End If
+			cy :+ text_height_factor*GetImageFont().Height() + margin
+		Next
+		
+		cx = x + margin
+		cy = y + 2*margin + text_height_factor*title_font.Height()
+		If menu_type = TEXT_INPUT_DIALOG
+			'draw input box
+			DrawText( input_box, cx, cy )
+			cx :+ TextWidth( input_box )
+			'draw input cursor
+			SetAlpha( 0.5 + Sin(now() Mod 360) )
+			DrawText( "|", cx, cy )
+		End If
+		
+		'fade-out (used for menus which are "in the background")
+		'SetAlpha( 1 / (1 - dark_overlay_alpha ))
+		'SetColor( 0, 0, 0 )
+		'DrawRect( x-border_width,y-border_width, width,height )
+
 	End Method
 	
 	Method update()
@@ -252,6 +256,11 @@ Type MENU
 				Next
 				options = new_options
 				focus = 0
+				
+			Case TEXT_INPUT_DIALOG
+				If options = Null
+					options = [ MENU_OPTION.Create( str_repeat( " ", input_box_size ), default_command, input_box, True, True )]
+				End If
 			
 		End Select
 	End Method
@@ -398,7 +407,7 @@ Global all_menus:MENU[] = ..
 				[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 					MENU_OPTION.Create( "[new file]", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_LEVEL_FILE_NAME), True, True )], ..
 					data_path, level_file_ext, COMMAND_SAVE_LEVEL ), ..
-				MENU.Create( "input filename", 255, 127, 127, MENU_ID_INPUT_LEVEL_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,,,, "." + level_file_ext ), ..
+				MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_LEVEL_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,,COMMAND_SAVE_LEVEL,, 55, "." + level_file_ext ), ..
 			MENU.Create( "load level", 96, 255, 127, MENU_ID_LOAD_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
 				[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ], ..
 					data_path, level_file_ext, COMMAND_LOAD_LEVEL ) ..
@@ -461,12 +470,12 @@ Function menu_command( command_code%, argument:Object = Null )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		
 		Case COMMAND_SAVE_LEVEL
-			save_level( String(argument), level_editor_cache )
+			save_level( enforce_suffix( String(argument), level_file_ext ), level_editor_cache )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			
 		Case COMMAND_PLAYER_INPUT_TYPE
 			profile.input_method = INTEGER(argument).value
-			If game.player_brain <> Null
+			If game <> Null And game.player_brain <> Null
 				game.player_brain.input_type = profile.input_method
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )

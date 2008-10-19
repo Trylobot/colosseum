@@ -190,8 +190,14 @@ Function level_editor( lev:LEVEL )
 				SetAlpha( 1 )
 				If MouseDown( 2 )
 					'pan
-					x = round_to_nearest( mouse.x - lev.width, gridsnap )
-					y = round_to_nearest( mouse.y - lev.height, gridsnap )
+					If Not mouse_down_2 And MouseDown( 2 )
+						drag_mouse_start = mouse.clone()
+						drag_pos_start = Create_POINT( x, y )
+					End If
+					If MouseDown( 2 )
+						x = round_to_nearest( drag_pos_start.pos_x + (mouse.x - drag_mouse_start.x), gridsnap )
+						y = round_to_nearest( drag_pos_start.pos_y + (mouse.y - drag_mouse_start.y), gridsnap )
+					End If
 				Else If MouseDown( 1 )
 					'resize
 					Local width% = round_to_nearest( mouse.x - x, gridsnap )
@@ -211,6 +217,16 @@ Function level_editor( lev:LEVEL )
 					DrawText( "|", info_x + TextWidth( lev.name ) - 2, title_y )
 					SetImageFont( normal_font )
 					SetAlpha( 1 )
+				End If
+				If MouseDown( 1 )
+					mouse_down_1 = True
+				Else 'Not MouseDown( 1 )
+					mouse_down_1 = False
+				End If
+				If MouseDown( 2 )
+					mouse_down_2 = True
+				Else 'Not MouseDown( 2 )
+					mouse_down_2 = False
 				End If
 			
 			'____________________________________________________________________________________________________

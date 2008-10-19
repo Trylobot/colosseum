@@ -128,6 +128,14 @@ Function format_number$( n% )
 	Return f_str
 End Function
 
+Function str_repeat$( str$, count% )
+	Local result$ = str[..]
+	For Local i% = 0 To count - 1
+		result :+ str
+	Next
+	Return str
+End Function
+
 Function address%( obj:Object )
 	If obj <> Null
 		Return Int( Byte Ptr( obj ))

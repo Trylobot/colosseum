@@ -19,27 +19,33 @@ Function get_all_input()
 		ShowMouse()
 	End If
 	
-	'music enable/disable
-	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
-	
 	'navigate menu and select option
 	If FLAG_in_menu
+		'menu navigation controls
 		If KeyHit( KEY_ESCAPE ) And current_menu <> 0
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		End If
-		If KeyHit( KEY_DOWN ) Or KeyHit( KEY_RIGHT )
+		If KeyHit( KEY_DOWN ) 'Or KeyHit( KEY_RIGHT )
 			get_current_menu().increment_focus()
-		Else If KeyHit( KEY_UP ) Or KeyHit( KEY_LEFT )
+		Else If KeyHit( KEY_UP ) 'Or KeyHit( KEY_LEFT )
 			get_current_menu().decrement_focus()
 		End If
 		If KeyHit( KEY_ENTER )
 			get_current_menu().execute_current_option()
+		End If
+		'text input controls
+		Local m:MENU = get_current_menu()
+		If m.menu_type = MENU.TEXT_INPUT_DIALOG
+			m.input_box = m.input_listener.update( m.input_box, (m.options[0].name.Length - m.input_auto_suffix.Length) )
 		End If
 	Else 'show in-game help
 		If KeyHit( KEY_F1 )
 			FLAG_draw_help = Not FLAG_draw_help
 		End If
 	End If
+	
+	'music enable/disable
+	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
 	
 	'game-specific input
 	If game <> Null

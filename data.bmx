@@ -28,7 +28,7 @@ Global turret_prototype_map:TMap = CreateMap()
 Global complex_agent_prototype_map:TMap = CreateMap()
 
 '______________________________________________________________________________
-Function make_filename$( str$ ) 'this needs to replace invalid characters with valid ones
+Function enforce_suffix$( str$, suffix$ )
 	Return str
 End Function
 
