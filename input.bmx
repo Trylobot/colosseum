@@ -24,7 +24,7 @@ Function get_all_input()
 	
 	'navigate menu and select option
 	If FLAG_in_menu
-		If KeyHit( KEY_ESCAPE ) And current_menu = 0
+		If KeyHit( KEY_ESCAPE ) And current_menu <> 0
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		End If
 		If KeyHit( KEY_DOWN ) Or KeyHit( KEY_RIGHT )

@@ -34,6 +34,7 @@ If Not load_settings()
 	load_settings()
 End If
 load_data_files()
+MENU.load_fonts()
 load_all_archetypes() 'REMOVE this function call by externalizing this data, please.
 menu_command( COMMAND_NEW_LEVEL ) 'initialize the level editor's cached level
 

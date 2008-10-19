@@ -81,16 +81,22 @@ Function draw_arrow( arrow_type%, x#, y#, height% )
 	End Select
 End Function
 '______________________________________________________________________________
-Global menu_font:TImageFont = get_font( "consolas_24" )
-
 Type MENU
-	Global MENU_TYPE_SELECT_ONE_VERTICAL_LIST% = 10
-	'Global MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST% = 11
-	Global MENU_TYPE_CHOOSE_FILE% = 20
-	Global MENU_TYPE_CREATE_NEW_FILE% = 21
-	Global MENU_TYPE_INPUT_DIALOG% = 50
-	Global MENU_TYPE_INFORMATION_DIALOG% = 51
+	Global VERTICAL_LIST% = 10
+	Global VERTICAL_LIST_WITH_FILES% = 11
+	Global TEXT_INPUT_DIALOG% = 20
+	Global NOTIFICATION_DIALOG% = 30
 	
+	Global title_font:TImagefont
+	Global menu_font:TImageFont
+	Global menu_font_small:TImageFont
+	
+	Function load_fonts()
+		title_font = get_font( "consolas_bold_24" )
+		menu_font = get_font( "consolas_bold_24" )
+		menu_font_small = get_font( "consolas_bold_18" )
+	End Function
+
 	Field menu_id% 'unique menu id
 	Field menu_type% 'menu class
 	
@@ -99,6 +105,7 @@ Type MENU
 	Field margin% 'visual margin (pixels)
 	
 	Field options:MENU_OPTION[] 'array of options in this menu
+	Field static_option_count% 'number of static options (applicable for menus with dynamic lists, such as file chooser)
 	Field focus% 'index of currently focused option
 	
 	Field path$ 'current directory; this menu will display files from it (if applicable)
@@ -109,10 +116,16 @@ Type MENU
 	
 	Field input_box$ 'user input string (if applicable)
 	Field input_listener:CONSOLE 'input controller/listener (if applicable)
+	Field input_auto_suffix$ 'automatic suffix to append to input, such as in the case of filename extensions
+	
+	Method New()
+		files = CreateList()
+	End Method
 	
 	Function Create:MENU( ..
 	name$, red%, green%, blue%, menu_id%, menu_type%, margin%, focus% = -1, options:MENU_OPTION[] = Null, ..
-	path$ = "", preferred_file_extension$ = "", default_command% = -1, default_argument:Object = Null )
+	path$ = "", preferred_file_extension$ = "", default_command% = -1, default_argument:Object = Null, ..
+	input_auto_suffix$ = "" )
 		Local m:MENU = New MENU
 		m.name = name
 		m.red = red; m.green = green; m.blue = blue
@@ -121,6 +134,7 @@ Type MENU
 		m.margin = margin
 		m.focus = focus
 		m.options = options[..]
+		m.static_option_count = options.Length
 		If m.focus = -1
 			m.increment_focus()
 		End If
@@ -130,8 +144,14 @@ Type MENU
 		m.default_argument = default_argument
 		m.input_box = ""
 		m.input_listener = New CONSOLE
+		m.input_auto_suffix = input_auto_suffix
 		Return m
 	End Function
+	
+	Method execute_current_option()
+		Local opt:MENU_OPTION = get_focus()
+		menu_command( opt.command_code, opt.argument )
+	End Method
 	
 	Method draw( x%, y%, border% = False )
 		Local cx% = x, cy% = y, opt:MENU_OPTION
@@ -144,34 +164,30 @@ Type MENU
 		'determine dimensions of this menu
 		Select menu_type
 			
-			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
-				SetImageFont( get_font( "consolas_bold_24" ))
+			Case VERTICAL_LIST, VERTICAL_LIST_WITH_FILES
+				Local i% = 0
 				For Local opt:MENU_OPTION = EachIn options
+					If menu_type = VERTICAL_LIST_WITH_FILES And i >= static_option_count
+						SetImageFont( menu_font_small )
+					Else
+						SetImageFont( menu_font )
+					End If
 					Local opt_name_dynamic$ = resolve_meta_variables( opt.name )
 					If (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width) > width
 						width = (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width)
 					End If
+					i :+ 1
 				Next
+				SetImageFont( menu_font )
 				If (2*margin + TextWidth( name ) + 2*border_width) > width
 					width = (2*margin + TextWidth( name ) + 2*border_width)
 				End If
 				height = (margin + (1 + options.Length)*(text_height_factor*GetImageFont().Height() + margin) + 2*border_width)
 			
-'			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
-'				SetImageFont( get_font( "consolas_bold_24" ))
-'				For Local opt:MENU_OPTION = EachIn options
-'					If (4*margin + TextWidth( opt.name ) + 2*arrow_height/2 + 2*border_width) > width
-'						width = (4*margin + TextWidth( opt.name ) + 2*arrow_height/2 + 2*border_width)
-'					End If
-'				Next
-'				If (4*margin + TextWidth( name ) + 2*arrow_height/2 + 2*border_width) > width
-'					width = (4*margin + TextWidth( name ) + 2*arrow_height/2 + 2*border_width)
-'				End If
-'				height = (2*margin + 2*(text_height_factor*GetImageFont().Height() + margin) + 2*border_width)
-				
 		End Select
 		
 		'draw the borders and backgrounds
+		SetImageFont( title_font )
 		If border
 			SetColor( 64, 64, 64 )
 			DrawRect( x-border_width,y-border_width, width,height )
@@ -186,9 +202,15 @@ Type MENU
 		'draw the options
 		Select menu_type
 			
-			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
+			Case VERTICAL_LIST, VERTICAL_LIST_WITH_FILES
+				SetImageFont( menu_font )
 				x :+ margin; y :+ 2*margin + text_height_factor*GetImageFont().Height()
 				For Local i% = 0 To options.Length-1
+					If menu_type = VERTICAL_LIST_WITH_FILES And i >= static_option_count
+						SetImageFont( menu_font_small )
+					Else
+						SetImageFont( menu_font )
+					End If
 					opt = options[i]
 					If opt <> Null
 						Local opt_name_dynamic$ = resolve_meta_variables( opt.name )
@@ -209,99 +231,37 @@ Type MENU
 					y :+ text_height_factor*GetImageFont().Height() + margin
 				Next
 			
-'			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
-'				y :+ 2*margin + text_height_factor*GetImageFont().Height()
-'				Local left_color%, right_color%
-'				If focus = 0
-'					left_color = 96
-'					If options.Length > 1
-'						right_color = 255
-'					Else
-'						right_color = 96
-'					End If
-'				Else If focus = options.Length - 1
-'					right_color = 96
-'					If options.Length > 1
-'						left_color = 255
-'					Else
-'						left_color = 96
-'					End If
-'				Else
-'					left_color = 255
-'					right_color = 255
-'				End If
-'				SetColor( left_color, left_color, left_color )
-'				draw_arrow( ARROW_LEFT, x + margin + arrow_height/2, y + margin, arrow_height )
-'				SetColor( right_color, right_color, right_color )
-'				draw_arrow( ARROW_RIGHT, x + width - 2*margin - arrow_height/2, y + margin, arrow_height )
-'				SetColor( 255, 255, 255 )
-'				If options[focus] <> Null	
-'					DrawText_with_glow( options[focus].name, x + 2*margin + arrow_height/2, y + margin )
-'				End If
-				
 		End Select
 	End Method
 	
 	Method update()
+		Local i%
 		Select menu_type
 			
-			Case MENU_TYPE_CHOOSE_FILE, MENU_TYPE_CREATE_NEW_FILE
+			Case VERTICAL_LIST_WITH_FILES
 				files = find_files( path, preferred_file_extension )
-				options = New MENU_OPTION[files.Count() + 1]
-				options[0] = MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True )
-				Local i% = 1
+				Local new_options:MENU_OPTION[] = New MENU_OPTION[static_option_count + files.Count()]
+				For i = 0 To static_option_count - 1
+					new_options[i] = options[i]
+				Next
+				i = static_option_count
 				For Local file$ = EachIn files
-					options[i] = ..
+					new_options[i] = ..
 						MENU_OPTION.Create( StripDir( file ), default_command, file, True, True )
 					i :+ 1
 				Next
+				options = new_options
 				focus = 0
 			
 		End Select
-		
-		''special processing for certain menus
-		'Local file_list:TList = CreateList()
-		'If Not get_current_menu().runtime_options_added
-		'	If one_of( command_argument, [MENU_ID_LOAD, MENU_ID_SAVE] )
-		'		file_list = find_files( user_path, saved_game_file_ext )
-		'	Else If one_of( command_argument, [MENU_ID_SELECT_LEVEL] )
-		'		file_list = find_files( data_path, level_file_ext )
-		'	End If
-		'	get_current_menu().runtime_options_added = True
-		'End If
-		''dynamic runtime options add
-		'If Not file_list.IsEmpty()
-		'	Local this_menu:MENU = get_menu( command_argument )
-		'	Local new_options:MENU_OPTION[] = New MENU_OPTION[this_menu.options.Length+file_list.Count()]
-		'	new_options[0] = this_menu.options[0]
-		'	If command_argument = MENU_ID_SAVE
-		'		new_options[new_options.Length-1] = this_menu.options[1]
-		'	End If
-		'	Local i% = 1
-		'	Local new_command_code%
-		'	Local offset% = 0
-		'	If command_argument = MENU_ID_SAVE
-		'		new_command_code = COMMAND_SAVE_GAME
-		'	Else If command_argument = MENU_ID_LOAD
-		'		new_command_code = COMMAND_LOAD_GAME
-		'	Else If command_argument = MENU_ID_SELECT_LEVEL
-		'		new_command_code = COMMAND_SET_NEXT_LEVEL
-		'		'offset = -1
-		'	End If
-		'	For Local file$ = EachIn file_list
-		'		new_options[i] = MENU_OPTION.Create( file, new_command_code, i + offset, True, True )
-		'		i :+ 1
-		'	Next
-		'	this_menu.options = new_options
-		'End If
 	End Method
 	
 	Method get_focus:MENU_OPTION()
-		'if current menu is normal
+		If focus >= 0 And focus < options.Length
 			Return options[focus]
-		'else if current menu includes a dynamic list
-		'then an option will have to be built dynamically to return
-		
+		Else
+			Return Null
+		End If
 	End Method
 	
 	Method set_focus( key$ )
@@ -325,50 +285,23 @@ Type MENU
 	End Method
 	
 	Method increment_focus()
-		Select menu_type
-			
-			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
-				Local last_focus% = focus
-				focus :+ 1; wrap_focus()
-				While focus <> last_focus And Not options[focus].enabled
-					focus :+ 1; wrap_focus()
-				End While
-			
-'			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
-'				For Local f% = focus + 1 To options.Length - 1 Step 1
-'					If options[f].visible And options[f].enabled
-'						focus = f
-'						Return
-'					End If
-'				Next
-				
-		End Select
+		Local last_focus% = focus
+		focus :+ 1
+		wrap_focus()
+		While focus <> last_focus And get_focus() <> Null And Not get_focus().enabled
+			focus :+ 1
+			wrap_focus()
+		End While
 	End Method
 	
 	Method decrement_focus()
-		Select menu_type
-			
-			Case MENU_TYPE_SELECT_ONE_VERTICAL_LIST
-				Local last_focus% = focus
-				focus :- 1; wrap_focus()
-				While focus <> last_focus And Not options[focus].enabled
-					focus :- 1; wrap_focus()
-				End While
-			
-'			Case MENU_TYPE_SELECT_ONE_HORIZONTAL_ROTATING_LIST
-'				For Local f% = focus - 1 To 0 Step -1
-'					If options[f].visible And options[f].enabled
-'						focus = f
-'						Return
-'					End If
-'				Next
-				
-		End Select
-	End Method
-	
-	Method execute_current_option()
-		Local opt:MENU_OPTION = get_focus()
-		menu_command( opt.command_code, opt.argument )
+		Local last_focus% = focus
+		focus :- 1
+		wrap_focus()
+		While focus <> last_focus And get_focus() <> Null And Not get_focus().enabled
+			focus :- 1
+			wrap_focus()
+		End While
 	End Method
 	
 	Method wrap_focus()
@@ -405,6 +338,7 @@ Const MENU_ID_LOAD_GAME% = 30
 Const MENU_ID_LOAD_LEVEL% = 31
 Const MENU_ID_SAVE_GAME% = 40
 Const MENU_ID_SAVE_LEVEL% = 41
+Const MENU_ID_INPUT_LEVEL_FILE_NAME% = 42
 Const MENU_ID_OPTIONS% = 50
 Const MENU_ID_OPTIONS_VIDEO% = 51
 Const MENU_ID_OPTIONS_AUDIO% = 52
@@ -416,55 +350,62 @@ Const MENU_ID_LEVEL_EDITOR% = 61
 Global menu_margin% = 8
 Global all_menus:MENU[] = ..
 [ ..
-	MENU.Create( "main menu", 255, 255, 127, MENU_ID_MAIN_MENU, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "main menu", 255, 255, 127, MENU_ID_MAIN_MENU, MENU.VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, False ), ..
 			MENU_OPTION.Create( "new", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_NEW_GAME), True, True ), ..
-			MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_GAME), True, True ), ..
 			MENU_OPTION.Create( "save", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_GAME), True, True ), ..
+			MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_GAME), True, True ), ..
 			MENU_OPTION.Create( "options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS), True, True ), ..
 			MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_EDITORS), True, True ), ..
 			MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ]), ..
-	MENU.Create( "new game", 255, 255, 255, MENU_ID_NEW_GAME, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 3, ..
+	MENU.Create( "new game", 255, 255, 255, MENU_ID_NEW_GAME, MENU.VERTICAL_LIST, menu_margin, 3, ..
 		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "select tank", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SELECT_TANK), True, True ), ..
 			MENU_OPTION.Create( "select level", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SELECT_LEVEL), True, True ), ..
 			MENU_OPTION.Create( "start game", COMMAND_NEW_GAME,, True, True ) ]), ..
-		MENU.Create( "select tank", 255, 255, 127, MENU_ID_SELECT_TANK, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 1, ..
+		MENU.Create( "select tank", 255, 255, 127, MENU_ID_SELECT_TANK, MENU.VERTICAL_LIST, menu_margin, 1, ..
 			[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 				MENU_OPTION.Create( "light tank", COMMAND_PROFILE_SET_PLAYER_TANK, INTEGER.Create(PLAYER_INDEX_LIGHT_TANK), True, True ), ..
 				MENU_OPTION.Create( "laser tank", COMMAND_PROFILE_SET_PLAYER_TANK, INTEGER.Create(PLAYER_INDEX_LASER_TANK), True, True ), ..
 				MENU_OPTION.Create( "medium tank", COMMAND_PROFILE_SET_PLAYER_TANK, INTEGER.Create(PLAYER_INDEX_MEDIUM_TANK), True, True ) ]), ..
-		MENU.Create( "select level", 255, 127, 127, MENU_ID_SELECT_LEVEL, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 1, ..
+		MENU.Create( "select level", 255, 127, 127, MENU_ID_SELECT_LEVEL, MENU.VERTICAL_LIST, menu_margin, 1, ..
 			[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
-	MENU.Create( "load game", 255, 196, 196, MENU_ID_LOAD_GAME, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "save game", 127, 255, 127, MENU_ID_SAVE_GAME, MENU.VERTICAL_LIST, menu_margin,, ..
 		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
-	MENU.Create( "save game", 127, 255, 127, MENU_ID_SAVE_GAME, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "load game", 255, 196, 196, MENU_ID_LOAD_GAME, MENU.VERTICAL_LIST, menu_margin,, ..
 		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
-	MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU.VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_VIDEO), True, False ), ..
 			MENU_OPTION.Create( "audio options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_AUDIO), True, False ), ..
 			MENU_OPTION.Create( "control options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_CONTROLS), True, True ), ..
 			MENU_OPTION.Create( "game options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_GAME), True, False ) ]), ..
-		MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+		MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU.VERTICAL_LIST, menu_margin,, ..
 			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 				MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(INPUT_KEYBOARD), True, True ), ..
 				MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(INPUT_KEYBOARD_MOUSE_HYBRID), True, True ), ..
 				MENU_OPTION.Create( "xbox 360 controller", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(INPUT_XBOX_360_CONTROLLER), True, False ) ]), ..
-	MENU.Create( "editors", 196, 196, 196, MENU_ID_EDITORS, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin,, ..
+	MENU.Create( "editors", 196, 196, 196, MENU_ID_EDITORS, MENU.VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "level editor", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LEVEL_EDITOR), True, True ) ]), ..
-		MENU.Create( "level editor", 96, 127, 255, MENU_ID_LEVEL_EDITOR, MENU.MENU_TYPE_SELECT_ONE_VERTICAL_LIST, menu_margin, 1, ..
+		MENU.Create( "level editor", 96, 127, 255, MENU_ID_LEVEL_EDITOR, MENU.VERTICAL_LIST, menu_margin, 1, ..
 			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-				MENU_OPTION.Create( "edit [%%level_editor_cache.name%%]", COMMAND_EDIT_LEVEL, level_editor_cache, True, True ), ..
+				MENU_OPTION.Create( "create new", COMMAND_NEW_LEVEL,, True, True ), ..
 				MENU_OPTION.Create( "save current", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_LEVEL), True, True ), ..
 				MENU_OPTION.Create( "load level", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_LEVEL), True, True ), ..
-				MENU_OPTION.Create( "create new", COMMAND_NEW_LEVEL,, True, True ) ]), ..
-			MENU.Create( "load level", 96, 127, 255, MENU_ID_LOAD_LEVEL, MENU.MENU_TYPE_CHOOSE_FILE, menu_margin,,, "colosseum_level", COMMAND_LOAD_LEVEL ) ..
+				MENU_OPTION.Create( "edit [%%level_editor_cache.name%%]", COMMAND_EDIT_LEVEL, level_editor_cache, True, True ) ]), ..
+			MENU.Create( "save level", 255, 96, 127, MENU_ID_SAVE_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
+				[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+					MENU_OPTION.Create( "[new file]", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_LEVEL_FILE_NAME), True, True )], ..
+					data_path, level_file_ext, COMMAND_SAVE_LEVEL ), ..
+				MENU.Create( "input filename", 255, 127, 127, MENU_ID_INPUT_LEVEL_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,,,, "." + level_file_ext ), ..
+			MENU.Create( "load level", 96, 255, 127, MENU_ID_LOAD_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
+				[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ], ..
+					data_path, level_file_ext, COMMAND_LOAD_LEVEL ) ..
 ]
 
 '______________________________________________________________________________
-Global menu_stack%[] = New Int[25]
+Global menu_stack%[] = New Int[255]
 	menu_stack[0] = MENU_ID_MAIN_MENU
 Global current_menu% = 0
 
@@ -508,8 +449,20 @@ Function menu_command( command_code%, argument:Object = Null )
 			level_editor_cache = Create_LEVEL( 300, 300 )
 			
 		Case COMMAND_LOAD_GAME
+			profile = load_game( String(argument) )
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+				
+		Case COMMAND_LOAD_LEVEL
+			level_editor_cache = load_level( String(argument) )
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			
 		Case COMMAND_SAVE_GAME
+			
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+		
+		Case COMMAND_SAVE_LEVEL
+			save_level( String(argument), level_editor_cache )
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			
 		Case COMMAND_PLAYER_INPUT_TYPE
 			profile.input_method = INTEGER(argument).value
@@ -533,6 +486,10 @@ Function menu_command( command_code%, argument:Object = Null )
 			End
 			
 	End Select
+End Function
+
+Function status( msg$ )
+	
 End Function
 
 Type INTEGER

@@ -83,29 +83,6 @@ Function core_begin_new_game()
 	game.spawn_player( profile.archetype )
 End Function
 
-'Function core_get_next_level_id$()
-'	If current_level_index >= all_levels.Length-1
-'		Return String(all_levels[all_levels.Length-1])
-'	Else
-'		current_level_index :+ 1
-'		Return String(all_levels[current_level_index])
-'	End If
-'End Function
-
-'______________________________________________________________________________
-'Function init_pathing_grid_from_walls( level_walls:TList )
-'	If pathing <> Null
-'		For Local wall%[] = EachIn level_walls
-'			pathing.set_area( containing_cell( wall[1], wall[2] ), containing_cell( wall[1]+wall[3], wall[2]+wall[4] ), wall[0] )
-'		Next
-'	End If
-'End Function
-'
-'Function clear_pathing_grid_center_walls()
-'	If pathing <> Null
-'		pathing.set_area( containing_cell( arena_offset, arena_offset ), containing_cell( arena_offset+arena_w-1, arena_offset+arena_h-1 ), PATH_PASSABLE )
-'	End If
-'End Function
 '______________________________________________________________________________
 'Quit instantly from anywhere; hold ESC for a few seconds
 Global esc_held% = False, esc_press_ts% = now()
