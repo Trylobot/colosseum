@@ -36,7 +36,8 @@ Function get_all_input()
 		'text input controls
 		Local m:MENU = get_current_menu()
 		If m.menu_type = MENU.TEXT_INPUT_DIALOG
-			m.input_box = m.input_listener.update( m.input_box, (m.options[0].name.Length - m.input_auto_suffix.Length) )
+			m.input_box = m.input_listener.update( m.input_box )
+			m.update()
 		End If
 	Else 'show in-game help
 		If KeyHit( KEY_F1 )

@@ -78,7 +78,8 @@ Type MENU
 	Global VERTICAL_LIST% = 10
 	Global VERTICAL_LIST_WITH_FILES% = 11
 	Global TEXT_INPUT_DIALOG% = 20
-	Global NOTIFICATION_DIALOG% = 30
+	Global CONFIRMATION_DIALOG% = 21
+	Global NOTIFICATION_DIALOG% = 22
 	
 	Global title_font:TImagefont
 	Global menu_font:TImageFont
@@ -110,7 +111,7 @@ Type MENU
 	Field input_box$ 'user input string (if applicable)
 	Field input_box_size% 'size of user input box
 	Field input_listener:CONSOLE 'input controller/listener (if applicable)
-	Field input_auto_suffix$ 'automatic suffix to append to input, such as in the case of filename extensions
+	Field input_initial_value$ 'automatic suffix to append to input, such as in the case of filename extensions
 	
 	Method New()
 		files = CreateList()
@@ -119,7 +120,7 @@ Type MENU
 	Function Create:MENU( ..
 	name$, red%, green%, blue%, menu_id%, menu_type%, margin%, focus% = -1, options:MENU_OPTION[] = Null, ..
 	path$ = "", preferred_file_extension$ = "", default_command% = -1, default_argument:Object = Null, ..
-	input_box_size% = 0, input_auto_suffix$ = "" )
+	input_box_size% = 0, input_initial_value$ = "" )
 		Local m:MENU = New MENU
 		m.name = name
 		m.red = red; m.green = green; m.blue = blue
@@ -139,7 +140,7 @@ Type MENU
 		m.input_box = ""
 		m.input_box_size = input_box_size
 		m.input_listener = New CONSOLE
-		m.input_auto_suffix = input_auto_suffix
+		m.input_initial_value = input_initial_value
 		Return m
 	End Function
 	
@@ -182,13 +183,13 @@ Type MENU
 		SetImageFont( title_font )
 		If border
 			SetColor( 64, 64, 64 )
-			DrawRect( cx-border_width,cy-border_width, width,height )
+			DrawRect( cx,cy, width,height )
 			SetColor( 0, 0, 0 )
-			DrawRect( cx,cy, width-2*border_width,height-2*border_width )
+			DrawRect( cx+border_width,cy+border_width, width-2*border_width,height-2*border_width )
 			SetColor( red/4, green/4, blue/4 )
-			DrawRect( cx,cy, width-2*border_width,text_height_factor*GetImageFont().Height() + margin )
+			DrawRect( cx+border_width,cy+border_width, width-2*border_width,text_height_factor*GetImageFont().Height() + margin )
 			SetColor( red, green, blue )
-			DrawText( name, cx+margin,cy+margin/2 )
+			DrawText( name, cx+border_width+margin,cy+border_width+margin/2 )
 		End If
 		
 		'draw each option
@@ -223,22 +224,27 @@ Type MENU
 		cx = x + margin
 		cy = y + 2*margin + text_height_factor*title_font.Height()
 		If menu_type = TEXT_INPUT_DIALOG
-			'draw input box
+			'draw input box contents
+			SetColor( 255, 255, 255 )
 			DrawText( input_box, cx, cy )
 			cx :+ TextWidth( input_box )
+			'draw implicit filename extension
+			SetColor( 127, 127, 127 )
+			DrawText( "." + preferred_file_extension, cx, cy )
 			'draw input cursor
+			SetColor( 255, 255, 255 )
 			SetAlpha( 0.5 + Sin(now() Mod 360) )
-			DrawText( "|", cx, cy )
+			DrawText( "|", cx - Int(TextWidth( "|" )/3), cy )
 		End If
 		
 		'fade-out (used for menus which are "in the background")
-		'SetAlpha( 1 / (1 - dark_overlay_alpha ))
-		'SetColor( 0, 0, 0 )
-		'DrawRect( x-border_width,y-border_width, width,height )
+		SetAlpha( dark_overlay_alpha )
+		SetColor( 0, 0, 0 )
+		DrawRect( x-border_width,y-border_width, width,height )
 
 	End Method
 	
-	Method update()
+	Method update( initial_update% = False )
 		Local i%
 		Select menu_type
 			
@@ -258,8 +264,17 @@ Type MENU
 				focus = 0
 				
 			Case TEXT_INPUT_DIALOG
-				If options = Null
+				If initial_update
 					options = [ MENU_OPTION.Create( str_repeat( " ", input_box_size ), default_command, input_box, True, True )]
+					input_box = resolve_meta_variables( input_initial_value )
+				End If
+				options[0].argument = path + enforce_suffix( input_box, "." + preferred_file_extension )
+				
+			Case CONFIRMATION_DIALOG
+				If options = Null
+					options = ..
+						[	MENU_OPTION.Create( "OK", default_command, default_argument, True, True ), ..
+							MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True )]
 				End If
 			
 		End Select
@@ -348,6 +363,7 @@ Const MENU_ID_LOAD_LEVEL% = 31
 Const MENU_ID_SAVE_GAME% = 40
 Const MENU_ID_SAVE_LEVEL% = 41
 Const MENU_ID_INPUT_LEVEL_FILE_NAME% = 42
+Const MENU_ID_CONFIRM_ERASE_LEVEL% = 43
 Const MENU_ID_OPTIONS% = 50
 Const MENU_ID_OPTIONS_VIDEO% = 51
 Const MENU_ID_OPTIONS_AUDIO% = 52
@@ -399,18 +415,19 @@ Global all_menus:MENU[] = ..
 			MENU_OPTION.Create( "level editor", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LEVEL_EDITOR), True, True ) ]), ..
 		MENU.Create( "level editor", 96, 127, 255, MENU_ID_LEVEL_EDITOR, MENU.VERTICAL_LIST, menu_margin, 1, ..
 			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-				MENU_OPTION.Create( "create new", COMMAND_NEW_LEVEL,, True, True ), ..
+				MENU_OPTION.Create( "edit [%%level_editor_cache.name%%]", COMMAND_EDIT_LEVEL, level_editor_cache, True, True ), ..
 				MENU_OPTION.Create( "save current", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_LEVEL), True, True ), ..
 				MENU_OPTION.Create( "load level", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_LEVEL), True, True ), ..
-				MENU_OPTION.Create( "edit [%%level_editor_cache.name%%]", COMMAND_EDIT_LEVEL, level_editor_cache, True, True ) ]), ..
+				MENU_OPTION.Create( "new level", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CONFIRM_ERASE_LEVEL), True, True ) ]), ..
 			MENU.Create( "save level", 255, 96, 127, MENU_ID_SAVE_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
 				[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 					MENU_OPTION.Create( "[new file]", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_LEVEL_FILE_NAME), True, True )], ..
 					data_path, level_file_ext, COMMAND_SAVE_LEVEL ), ..
-				MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_LEVEL_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,,COMMAND_SAVE_LEVEL,, 55, "." + level_file_ext ), ..
+				MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_LEVEL_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,,, data_path, level_file_ext, COMMAND_SAVE_LEVEL,, 60, "%%level_editor_cache.name%%"  ), ..
 			MENU.Create( "load level", 96, 255, 127, MENU_ID_LOAD_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
 				[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ], ..
-					data_path, level_file_ext, COMMAND_LOAD_LEVEL ) ..
+					data_path, level_file_ext, COMMAND_LOAD_LEVEL ), ..
+			MENU.Create( "abandon current level?", 255, 64, 64, MENU_ID_CONFIRM_ERASE_LEVEL, MENU.CONFIRMATION_DIALOG, menu_margin, 1,,,, COMMAND_NEW_LEVEL ) ..
 ]
 
 '______________________________________________________________________________
@@ -440,13 +457,15 @@ Function menu_command( command_code%, argument:Object = Null )
 		Case COMMAND_SHOW_CHILD_MENU
 			current_menu :+ 1
 			menu_stack[current_menu] = INTEGER(argument).value
-			get_current_menu().update()
+			get_current_menu().update( True )
 			
 		Case COMMAND_BACK_TO_PARENT_MENU
 			If current_menu > 0 Then current_menu :- 1
+			get_current_menu().update()
 			
 		Case COMMAND_BACK_TO_MAIN_MENU
 			current_menu = 0
+			get_current_menu().update()
 			
 		Case COMMAND_RESUME
 			FLAG_in_menu = false
@@ -456,7 +475,8 @@ Function menu_command( command_code%, argument:Object = Null )
 			
 		Case COMMAND_NEW_LEVEL
 			level_editor_cache = Create_LEVEL( 300, 300 )
-			
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+
 		Case COMMAND_LOAD_GAME
 			profile = load_game( String(argument) )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
@@ -470,7 +490,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		
 		Case COMMAND_SAVE_LEVEL
-			save_level( enforce_suffix( String(argument), level_file_ext ), level_editor_cache )
+			save_level( String(argument), level_editor_cache )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			
 		Case COMMAND_PLAYER_INPUT_TYPE

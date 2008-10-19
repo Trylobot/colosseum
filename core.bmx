@@ -33,6 +33,7 @@ Global FLAG_console% = False
 '______________________________________________________________________________
 Type PLAYER_PROFILE
 	Field archetype%
+	Field inventory%[]
 	Field input_method%
 	Field current_level$
 	Field cash%

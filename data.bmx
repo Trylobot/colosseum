@@ -29,7 +29,7 @@ Global complex_agent_prototype_map:TMap = CreateMap()
 
 '______________________________________________________________________________
 Function enforce_suffix$( str$, suffix$ )
-	Return str
+	Return str + suffix
 End Function
 
 '______________________________________________________________________________

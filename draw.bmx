@@ -214,13 +214,42 @@ Function draw_shop()
 	
 End Function
 '______________________________________________________________________________
-Function draw_menus( x%, y% )
-	For Local i% = 0 To current_menu
+Function draw_menus( x%, y%, tabbed_view% = True )
+	If tabbed_view 'new "tabbed" menu drawing method
 		SetAlpha( 1 )
-		SetColor( 255, 255, 255 )
-		get_menu( menu_stack[i] ).draw( x + i*20, y + i*20,, Pow( (2.0/3.0), (current_menu - i )))
-	Next
-	SetAlpha( 1 )
+		Local cx% = x, cy% = y
+		Local w% = 20, h% = 14
+		Local border% = 3
+		For Local i% = 0 To current_menu
+			Local m:MENU = get_menu( menu_stack[i] )
+			If i < current_menu
+				SetColor( 64, 64, 64 )
+				DrawRect( cx, cy, w, h )
+				SetColor( m.red/2, m.green/2, m.blue/2 )
+				DrawRect( cx+border, cy+border, w-border*2, h-border*2 )
+				cx :+ w-border
+			Else 'i == current_menu
+				cx = x
+				cy = y + h-border
+				m.draw( cx, cy )
+			End If
+		Next
+	Else 'older "menu stack" menu drawing method
+		'calculate menu overlay alphas
+		Local menu_overlay_alpha#[] = New Float[current_menu+1]
+		Local alpha# = 0.0
+		For Local i% = current_menu To 0 Step -1
+			menu_overlay_alpha[i] = alpha
+			alpha :+ 0.5 * (1 - alpha)
+		Next
+		'draw menus
+		For Local i% = 0 To current_menu
+			SetAlpha( 1 )
+			SetColor( 255, 255, 255 )
+			get_menu( menu_stack[i] ).draw( x + i*20, y + i*20,, menu_overlay_alpha[i])
+		Next
+		SetAlpha( 1 )
+	End If
 End Function
 '______________________________________________________________________________
 Function draw_AI_demo()

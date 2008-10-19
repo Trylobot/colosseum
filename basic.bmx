@@ -133,7 +133,7 @@ Function str_repeat$( str$, count% )
 	For Local i% = 0 To count - 1
 		result :+ str
 	Next
-	Return str
+	Return result
 End Function
 
 Function address%( obj:Object )
