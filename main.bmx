@@ -22,11 +22,21 @@ Global FLAG_debug_overlay% = False
 ?
 
 'Window / Arena size
-Global window_w% = 640
-Global window_h% = 480
-Global fullscreen% = False
-Global bit_depth% = 32
-Global refresh_rate% = 60
+Global window_w%
+Global window_h%
+Global fullscreen%
+Global bit_depth%
+Global refresh_rate%
+
+Function apply_default_settings()
+	window_w = 640
+	window_h = 480
+	fullscreen = False
+	bit_depth = 32
+	refresh_rate = 60
+End Function
+
+apply_default_settings()
 
 'external data load
 If Not load_settings()
@@ -42,24 +52,25 @@ menu_command( COMMAND_NEW_LEVEL ) 'initialize the level editor's cached level
 AppTitle = My.Application.AssemblyInfo
 If My.Application.DebugOn Then AppTitle :+ " " + My.Application.Platform + " (Debug)"
 SetGraphicsDriver GLMax2DDriver()
-If Not fullscreen
-	Graphics( window_w, window_h,,, GRAPHICS_BACKBUFFER )
-Else 'fullscreen
-	Graphics( window_w, window_h, bit_depth, refresh_rate, GRAPHICS_BACKBUFFER )
-End If
-SetClsColor( 0, 0, 0 )
-SetBlend( ALPHABLEND )
-glEnable( GL_LINE_SMOOTH )
+
+Function init_graphics()
+	If Not fullscreen
+		Graphics( window_w, window_h,,, GRAPHICS_BACKBUFFER )
+	Else 'fullscreen
+		Graphics( window_w, window_h, bit_depth, refresh_rate, GRAPHICS_BACKBUFFER )
+	End If
+	SetClsColor( 0, 0, 0 )
+	SetBlend( ALPHABLEND )
+	glEnable( GL_LINE_SMOOTH )
+End Function
+
+init_graphics()
 
 '______________________________________________________________________________
 'MAIN
 Local before%
 ?Debug
 Global last_frame_ts%, time_count%, frame_count%, fps%
-
-profile.archetype = PLAYER_INDEX_LIGHT_TANK
-next_level = "data/debug.colosseum_level"
-'menu_command( COMMAND_NEW_GAME )
 ?
 Repeat
 	

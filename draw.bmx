@@ -195,7 +195,7 @@ Function draw_main_screen()
 	SetColor( 157, 157, 157 )
 	SetImageFont( get_font( "consolas_10" ))
 	h = GetImageFont().Height() - 1
-	x = 25; y = window_h - h*9
+	x = 25; y = window_h - h*9 '10
 	DrawText( "Colosseum (c) 2008 Tyler W.R. Cole", x, y ); y :+ h
 	DrawText( "  aka ~qTylerbot~q", x, y ); y :+ h
 	DrawText( "music by ~qNickPerrin~q", x, y ); y :+ h
@@ -203,10 +203,8 @@ Function draw_main_screen()
 	DrawText( "special thanks to", x, y ); y :+ h
 	DrawText( "  ~qKaze~q", x, y ); y :+ h
 	DrawText( "  ~qSniperAceX~q", x, y ); y :+ h
+	'DrawText( "  ~qFirelord88~q", x, y ); y :+ h
 	DrawText( "written in 100% BlitzMax", x, y ); y :+ h
-	
-	'draw auto-AI demo area
-	draw_AI_demo()
 	
 End Function
 '______________________________________________________________________________
@@ -253,10 +251,6 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 		Next
 		SetAlpha( 1 )
 	End If
-End Function
-'______________________________________________________________________________
-Function draw_AI_demo()
-	
 End Function
 '______________________________________________________________________________
 Function draw_arena_bg()

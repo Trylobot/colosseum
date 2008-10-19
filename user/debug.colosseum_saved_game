@@ -1,0 +1,11 @@
+{
+	profile_name: "debug"
+	inventory:
+	[
+		0
+	],
+	input_method: 2,
+	current_level: "",
+	cash: 1000000,
+	kills: 0
+}

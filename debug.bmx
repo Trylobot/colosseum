@@ -284,12 +284,12 @@ Function debug_overlay()
 	'Next
 	
 	'manipulate by keyboard
-	If KeyHit( KEY_EQUALS )
-		game.load_next_level()
+	'If KeyHit( KEY_EQUALS )
+  '	game.load_next_level()
 	'Else If KeyHit( KEY_MINUS ) And player_level >= 1
 	'	player_level :- 1
 	'	load_level( player_level )
-	End If
+	'End If
 	
 	If KeyHit( KEY_QUOTES )
 		game.spawn_pickup( mouse.x, mouse.y )

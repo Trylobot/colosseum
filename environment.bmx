@@ -120,20 +120,17 @@ Type ENVIRONMENT
 		hostile_door_list.Clear()
 	End Method
 	
-	Method load_next_level()
-		clear()
-		load_level( next_level )
-		If human_participation And player <> Null
-			respawn_player()
+	Method load_level%( path$ )
+		Local file:TStream = ReadFile( path )
+		If Not file
+			Return False 'indicate failure
 		End If
-	End Method
-	
-	Method load_level( level_path$ )
-		Local file:TStream = ReadFile( level_path )
-		If Not file Return
 		Local json:TJSON = TJSON.Create( file )
 		file.Close()
 		lev = Create_LEVEL_from_json( json )
+		If lev = Null
+			Return False 'indicate failure
+		End If
 		calculate_camera_constraints()
 		
 		'pathing (AI bots)
@@ -175,7 +172,8 @@ Type ENVIRONMENT
 		waiting_for_player_to_enter_arena = True
 		level_enemy_count = lev.enemy_count()
 		level_enemies_killed = 0
-		'more..?
+		'indicate success to caller
+		Return True
 	End Method
 	
 	Method calculate_camera_constraints()
@@ -246,23 +244,24 @@ Type ENVIRONMENT
 		Return brain
 	End Method
 	
-	Method spawn_player( archetype_index% )
+	Method spawn_player( p:COMPLEX_AGENT, b:CONTROL_BRAIN )
+		'insert given player to environment
 		player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
-		If player <> Null And player.managed() Then player.unmanage()
-		player = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], ALIGNMENT_FRIENDLY ))
+		If player <> Null Or player.managed()
+			player.unmanage()
+		End If
+		player = p
 		player.manage( friendly_agent_list )
-		player_brain = Create_CONTROL_BRAIN( player, CONTROL_TYPE_HUMAN, profile.input_method )
+		player_brain = b
 		player_brain.manage( control_brain_list )
-		player.pos_x = player_spawn_point.pos_x - 0.5
-		player.pos_y = player_spawn_point.pos_y - 0.5
-		player.ang = player_spawn_point.ang
-		player.snap_all_turrets()
 		player_engine_ignition = False
 		player_engine_running = False
+
+		respawn_player()
 	End Method
 	
 	Method respawn_player()
-		If player <> Null
+		If player <> Null And player_brain <> Null
 			player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
 			player.manage( friendly_agent_list )
 			player_brain.manage( control_brain_list )

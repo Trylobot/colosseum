@@ -229,8 +229,10 @@ Type MENU
 			DrawText( input_box, cx, cy )
 			cx :+ TextWidth( input_box )
 			'draw implicit filename extension
-			SetColor( 127, 127, 127 )
-			DrawText( "." + preferred_file_extension, cx, cy )
+			If preferred_file_extension.Length > 0
+				SetColor( 127, 127, 127 )
+				DrawText( "." + preferred_file_extension, cx, cy )
+			End If
 			'draw input cursor
 			SetColor( 255, 255, 255 )
 			SetAlpha( 0.5 + Sin(now() Mod 360) )
@@ -249,19 +251,19 @@ Type MENU
 		Select menu_type
 			
 			Case VERTICAL_LIST_WITH_FILES
+				files = find_files( path, preferred_file_extension )
+				Local new_options:MENU_OPTION[] = New MENU_OPTION[static_option_count + files.Count()]
+				For i = 0 To static_option_count - 1
+					new_options[i] = options[i]
+				Next
+				i = static_option_count
+				For Local file$ = EachIn files
+					new_options[i] = ..
+						MENU_OPTION.Create( StripDir( file ), default_command, file, True, True )
+					i :+ 1
+				Next
+				options = new_options
 				If initial_update
-					files = find_files( path, preferred_file_extension )
-					Local new_options:MENU_OPTION[] = New MENU_OPTION[static_option_count + files.Count()]
-					For i = 0 To static_option_count - 1
-						new_options[i] = options[i]
-					Next
-					i = static_option_count
-					For Local file$ = EachIn files
-						new_options[i] = ..
-							MENU_OPTION.Create( StripDir( file ), default_command, file, True, True )
-						i :+ 1
-					Next
-					options = new_options
 					focus = 0
 				End If
 				
@@ -270,7 +272,11 @@ Type MENU
 					options = [ MENU_OPTION.Create( str_repeat( " ", input_box_size ), default_command, input_box, True, True )]
 					input_box = resolve_meta_variables( input_initial_value )
 				End If
-				options[0].argument = path + enforce_suffix( input_box, "." + preferred_file_extension )
+				If preferred_file_extension.Length > 0
+					options[0].argument = path + enforce_suffix( input_box, "." + preferred_file_extension )
+				Else
+					options[0].argument = path + input_box
+				End If
 				
 			Case CONFIRMATION_DIALOG
 				If initial_update
@@ -341,6 +347,7 @@ Type MENU
 	
 End Type
 '______________________________________________________________________________
+Const COMMAND_NULL% = 0
 Const COMMAND_SHOW_CHILD_MENU% = 50
 Const COMMAND_BACK_TO_PARENT_MENU% = 51
 Const COMMAND_BACK_TO_MAIN_MENU% = 53
@@ -353,28 +360,32 @@ Const COMMAND_SAVE_GAME% = 400
 Const COMMAND_SAVE_LEVEL% = 401
 Const COMMAND_EDIT_LEVEL% = 500
 Const COMMAND_PLAYER_INPUT_TYPE% = 1000
-Const COMMAND_PROFILE_SET_PLAYER_TANK% = 2000
-Const COMMAND_SET_NEXT_LEVEL% = 5000
+Const COMMAND_SETTINGS_FULLSCREEN% = 1010
+Const COMMAND_SETTINGS_RESOLUTION% = 1020
+Const COMMAND_SETTINGS_REFRESH_RATE% = 1030
+Const COMMAND_SETTINGS_BIT_DEPTH% = 1040
+Const COMMAND_SETTINGS_APPLY_ALL% = 1100
 Const COMMAND_QUIT_GAME% = 65535
 
-Const MENU_ID_MAIN_MENU% = 10
-Const MENU_ID_NEW_GAME% = 20
-Const MENU_ID_SELECT_TANK% = 21
-Const MENU_ID_SELECT_LEVEL% = 22
-Const MENU_ID_LOAD_GAME% = 30
-Const MENU_ID_LOAD_LEVEL% = 31
-Const MENU_ID_SAVE_GAME% = 40
-Const MENU_ID_INPUT_GAME_FILE_NAME% = 41
-Const MENU_ID_SAVE_LEVEL% = 45
-Const MENU_ID_INPUT_LEVEL_FILE_NAME% = 46
-Const MENU_ID_CONFIRM_ERASE_LEVEL% = 47
-Const MENU_ID_OPTIONS% = 50
-Const MENU_ID_OPTIONS_VIDEO% = 51
-Const MENU_ID_OPTIONS_AUDIO% = 52
-Const MENU_ID_OPTIONS_CONTROLS% = 53
-Const MENU_ID_OPTIONS_GAME% = 54
-Const MENU_ID_EDITORS% = 60
-Const MENU_ID_LEVEL_EDITOR% = 61
+Const MENU_ID_MAIN_MENU% = 100
+Const MENU_ID_NEW_GAME% = 200
+Const MENU_ID_LOAD_GAME% = 300
+Const MENU_ID_LOAD_LEVEL% = 310
+Const MENU_ID_SAVE_GAME% = 400
+Const MENU_ID_INPUT_GAME_FILE_NAME% = 410
+Const MENU_ID_SAVE_LEVEL% = 450
+Const MENU_ID_INPUT_LEVEL_FILE_NAME% = 460
+Const MENU_ID_CONFIRM_ERASE_LEVEL% = 470
+Const MENU_ID_OPTIONS% = 500
+Const MENU_ID_OPTIONS_VIDEO% = 510
+Const MENU_ID_INPUT_RESOLUTION% = 511
+Const MENU_ID_INPUT_REFRESH_RATE% = 512
+Const MENU_ID_INPUT_BIT_DEPTH% = 513
+Const MENU_ID_OPTIONS_AUDIO% = 520
+Const MENU_ID_OPTIONS_CONTROLS% = 530
+Const MENU_ID_OPTIONS_GAME% = 540
+Const MENU_ID_EDITORS% = 600
+Const MENU_ID_LEVEL_EDITOR% = 610
 
 Global menu_margin% = 8
 Global all_menus:MENU[] = ..
@@ -387,18 +398,8 @@ Global all_menus:MENU[] = ..
 			MENU_OPTION.Create( "options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS), True, True ), ..
 			MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_EDITORS), True, True ), ..
 			MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ]), ..
-	MENU.Create( "new game", 255, 255, 255, MENU_ID_NEW_GAME, MENU.VERTICAL_LIST, menu_margin, 3, ..
-		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-			MENU_OPTION.Create( "select tank", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SELECT_TANK), True, True ), ..
-			MENU_OPTION.Create( "select level", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SELECT_LEVEL), True, True ), ..
-			MENU_OPTION.Create( "start game", COMMAND_NEW_GAME,, True, True ) ]), ..
-		MENU.Create( "select tank", 255, 255, 127, MENU_ID_SELECT_TANK, MENU.VERTICAL_LIST, menu_margin, 1, ..
-			[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-				MENU_OPTION.Create( "light tank", COMMAND_PROFILE_SET_PLAYER_TANK, INTEGER.Create(PLAYER_INDEX_LIGHT_TANK), True, True ), ..
-				MENU_OPTION.Create( "laser tank", COMMAND_PROFILE_SET_PLAYER_TANK, INTEGER.Create(PLAYER_INDEX_LASER_TANK), True, True ), ..
-				MENU_OPTION.Create( "medium tank", COMMAND_PROFILE_SET_PLAYER_TANK, INTEGER.Create(PLAYER_INDEX_MEDIUM_TANK), True, True ) ]), ..
-		MENU.Create( "select level", 255, 127, 127, MENU_ID_SELECT_LEVEL, MENU.VERTICAL_LIST, menu_margin, 1, ..
-			[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
+	MENU.Create( "new game", 255, 255, 255, MENU_ID_NEW_GAME, MENU.VERTICAL_LIST, menu_margin,, ..
+		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ]), ..
 	MENU.Create( "save game", 255, 96, 127, MENU_ID_SAVE_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "[new file]", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_GAME_FILE_NAME), True, True )], ..
@@ -409,10 +410,20 @@ Global all_menus:MENU[] = ..
 			user_path, saved_game_file_ext, COMMAND_LOAD_GAME ), ..
 	MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU.VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-			MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_VIDEO), True, False ), ..
+			MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_VIDEO), True, True ), ..
 			MENU_OPTION.Create( "audio options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_AUDIO), True, False ), ..
 			MENU_OPTION.Create( "control options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_CONTROLS), True, True ), ..
 			MENU_OPTION.Create( "game options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_GAME), True, False ) ]), ..
+		MENU.Create( "video options", 96, 96, 255, MENU_ID_OPTIONS_VIDEO, MENU.VERTICAL_LIST, menu_margin,, ..
+			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+				MENU_OPTION.Create( "fullscreen    %%fullscreen%%", COMMAND_SETTINGS_FULLSCREEN,, True, True ), ..
+				MENU_OPTION.Create( "resolution    %%window_w%% x %%window_h%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_RESOLUTION), True, True ), ..
+				MENU_OPTION.Create( "refresh rate  %%refresh_rate%% Hz", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_REFRESH_RATE), True, True ), ..
+				MENU_OPTION.Create( "bit depth     %%bit_depth%% bpp", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_BIT_DEPTH), True, True ), ..
+				MENU_OPTION.Create( "apply", COMMAND_SETTINGS_APPLY_ALL,, False, True ) ]), ..
+			MENU.Create( "input resolution", 255, 255, 255, MENU_ID_INPUT_RESOLUTION, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,, COMMAND_SETTINGS_RESOLUTION,, 20, "%%window_w%% x %%window_h%%"  ), ..
+			MENU.Create( "input refresh rate", 255, 255, 255, MENU_ID_INPUT_REFRESH_RATE, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,, COMMAND_SETTINGS_REFRESH_RATE,, 10, "%%refresh_rate%%"  ), ..
+			MENU.Create( "input bit depth", 255, 255, 255, MENU_ID_INPUT_BIT_DEPTH, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,, COMMAND_SETTINGS_BIT_DEPTH,, 10, "%%bit depth%%"  ), ..
 		MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU.VERTICAL_LIST, menu_margin,, ..
 			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 				MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(INPUT_KEYBOARD), True, True ), ..
@@ -479,7 +490,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			FLAG_in_menu = false
 			
 		Case COMMAND_NEW_GAME
-			core_begin_new_game()
+			'core_begin_new_game()
 			
 		Case COMMAND_NEW_LEVEL
 			level_editor_cache = Create_LEVEL( 300, 300 )
@@ -494,7 +505,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			
 		Case COMMAND_SAVE_GAME
-			
+			save_game( String(argument), profile )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		
 		Case COMMAND_SAVE_LEVEL
@@ -507,15 +518,48 @@ Function menu_command( command_code%, argument:Object = Null )
 				game.player_brain.input_type = profile.input_method
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+		
+		Case COMMAND_SETTINGS_FULLSCREEN
+			fullscreen = Not fullscreen
+			save_settings()
+			init_graphics()
 			
-		Case COMMAND_PROFILE_SET_PLAYER_TANK
-			profile.archetype = INTEGER(argument).value
+		Case COMMAND_SETTINGS_RESOLUTION
+			Local user_input$[] = String(argument).Split("x")
+			If user_input.Length = 2
+				Local new_window_w% = user_input[0].ToInt()
+				Local new_window_h% = user_input[1].ToInt()
+				If GraphicsModeExists( new_window_w, new_window_h, bit_depth, refresh_rate )
+					window_w = new_window_w
+					window_h = new_window_h
+					save_settings()
+					init_graphics()
+				End If
+			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		
-		Case COMMAND_SET_NEXT_LEVEL
-			next_level = String(argument)
+		Case COMMAND_SETTINGS_REFRESH_RATE
+			Local new_refresh_rate% = String(argument).ToInt()
+			If GraphicsModeExists( window_w, window_h, bit_depth, new_refresh_rate )
+				refresh_rate = new_refresh_rate
+				save_settings()
+				init_graphics()
+			End If
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+		
+		Case COMMAND_SETTINGS_BIT_DEPTH
+			Local new_bit_depth% = String(argument).ToInt()
+			If GraphicsModeExists( window_w, window_h, new_bit_depth, refresh_rate )
+				bit_depth = new_bit_depth
+				save_settings()
+				init_graphics()
+			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			
+		Case COMMAND_SETTINGS_APPLY_ALL
+			save_settings()
+			init_graphics()
+		
 		Case COMMAND_EDIT_LEVEL
 			level_editor( level_editor_cache )
 			
@@ -544,6 +588,16 @@ Function resolve_meta_variables$( str$ )
 			Select tokens[i]
 				Case "level_editor_cache.name"
 					result :+ level_editor_cache.name
+				Case "fullscreen"
+					result :+ boolean_to_string( fullscreen )
+				Case "window_w"
+					result :+ window_w
+				Case "window_h"
+					result :+ window_h
+				Case "refresh_rate"
+					result :+ refresh_rate
+				Case "bit_depth"
+					result :+ bit_depth
 			End Select
 		Else 'even (string literal)
 			result :+ tokens[i]

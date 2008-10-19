@@ -19,11 +19,11 @@ Global main_game:ENVIRONMENT 'game in which player participates
 Global ai_menu_game:ENVIRONMENT 'menu ai demo environment
 Global game:ENVIRONMENT 'current game environment
 Global profile:PLAYER_PROFILE = New PLAYER_PROFILE
-	profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
 Global level_editor_cache:LEVEL = Null
 	
-'screen state flags
+'app state flags
 Global FLAG_in_menu% = True
+Global FLAG_game_loaded% = False
 Global FLAG_in_shop% = False
 Global FLAG_bg_music_on% = False
 Global FLAG_no_sound% = False
@@ -32,16 +32,21 @@ Global FLAG_console% = False
 
 '______________________________________________________________________________
 Type PLAYER_PROFILE
-	Field archetype%
+	Field profile_name$
 	Field inventory%[]
 	Field input_method%
 	Field current_level$
 	Field cash%
 	Field kills%
 	
+	Method New()
+		input_method = INPUT_KEYBOARD_MOUSE_HYBRID
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
-		this_json.SetByName( "archetype", TJSONNumber.Create( archetype ))
+		
+		
 		this_json.SetByName( "input_method", TJSONNumber.Create( input_method ))
 		this_json.SetByName( "current_level", TJSONString.Create( current_level ))
 		this_json.SetByName( "cash", TJSONNumber.Create( cash ))
@@ -52,14 +57,39 @@ End Type
 
 Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 	Local prof:PLAYER_PROFILE = New PLAYER_PROFILE
-	prof.archetype = json.GetNumber( "archetype" )
+	
+	
 	prof.input_method = json.GetNumber( "input_method" )
 	prof.current_level = json.GetString( "current_level" )
 	prof.cash = json.GetNumber( "cash" )
 	prof.kills = json.GetNumber( "kills" )
 	Return prof
 End Function
-
+'______________________________________________________________________________
+Function play_level( level_file_path$, player_archetype% )
+	main_game = Create_ENVIRONMENT( True )
+	Local success% = main_game.load_level( level_file_path )
+	If success
+		main_game.game_in_progress = True
+		Local player:COMPLEX_AGENT = create_player( player_archetype )
+		Local player_brain:CONTROL_BRAIN = create_player_brain( player )
+		main_game.spawn_player( player, player_brain )
+		FLAG_in_menu = False
+		FLAG_in_shop = False
+		game = main_game
+	Else
+		main_game = Null
+	End If
+End Function
+'______________________________________________________________________________
+Function create_player:COMPLEX_AGENT( archetype% )
+	
+End Function
+'______________________________________________________________________________
+Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
+	
+End Function
+'______________________________________________________________________________
 Function get_player_id%()
 	If game <> Null And game.player <> Null
 		Return game.player.id
@@ -68,24 +98,7 @@ Function get_player_id%()
 	End If
 End Function
 '______________________________________________________________________________
-'Global current_level_index% = 0
-'Global all_levels:Object[]
-Global next_level$
-
-'______________________________________________________________________________
-Function core_begin_new_game()
-	main_game = Create_ENVIRONMENT( True )
-	FLAG_in_menu = False
-	game = main_game
-	game.clear()
-	'current_level_index = -1
-	game.load_next_level()
-	game.game_in_progress = True
-	game.spawn_player( profile.archetype )
-End Function
-
-'______________________________________________________________________________
-'Quit instantly from anywhere; hold ESC for a few seconds
+'Instaquit: quit instantly from anywhere, just hold ESC for a few seconds
 Global esc_held% = False, esc_press_ts% = now()
 Global esc_held_progress_bar_show_time_required% = 200, instaquit_time_required% = 1000
 
