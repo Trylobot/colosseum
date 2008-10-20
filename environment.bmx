@@ -320,8 +320,8 @@ Type ENVIRONMENT
 		right_door.parent = p
 		left_door.attach_at( 25 + 50/3 - widget_archetype[WIDGET_INDEX_ARENA_DOOR].img.height/2 + 1, 0, 90, True )
 		right_door.attach_at( 25 + 50/3 - widget_archetype[WIDGET_INDEX_ARENA_DOOR].img.height/2 + 1, 0, -90, True )
-		left_door.auto_manage()
-		right_door.auto_manage()
+		left_door.manage( environmental_widget_list )
+		right_door.manage( environmental_widget_list )
 		door_list.AddLast( left_door )
 		door_list.AddLast( right_door )
 	End Method
