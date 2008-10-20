@@ -70,7 +70,7 @@ init_graphics()
 'MAIN
 Local before%
 ?Debug
-Global last_frame_ts%, time_count%, frame_count%, fps%
+Global fps%, last_frame_ts%, time_count%, frame_count%
 
 play_level( data_path + "debug" + "." + level_file_ext, 0 )
 ?
@@ -85,7 +85,7 @@ Repeat
 		game = main_game
 	End If
 
-	'throttle game speed
+	'decouple simulation speed from draw speed
 	If (now() - before) > (1000/60) ' = 60 hertz
 		before = now()
 		
@@ -100,23 +100,24 @@ Repeat
 	play_all_audio()
 
 ?Debug
-		frame_count :+ 1
-		time_count :+ (now() - last_frame_ts)
-		last_frame_ts = now()
-		If time_count >= 1000
-			fps = frame_count
-			frame_count = 0
-			time_count = 0
-		End If
-		If KeyHit( KEY_TILDE )
-			FLAG_debug_overlay = Not FLAG_debug_overlay
-		End If
-		If game <> Null And game.player <> Null And FLAG_debug_overlay And Not FLAG_in_menu
-			debug_overlay()
-			'debug_coordinate_overlay()
-		End If
+	frame_count :+ 1
+	time_count :+ (now() - last_frame_ts)
+	last_frame_ts = now()
+	If time_count >= 1000
+		fps = frame_count
+		frame_count = 0
+		time_count = 0
+	End If
+	If KeyHit( KEY_TILDE )
+		FLAG_debug_overlay = Not FLAG_debug_overlay
+	End If
+	If game <> Null And game.player <> Null And FLAG_debug_overlay And Not FLAG_in_menu
+		debug_overlay()
+		debug_fps()
+		debug_agent_lists()
+	End If
 ?
-	check_esc_held()
+	check_instaquit()
 	
 	If KeyHit( KEY_F12 )
 		screenshot()
@@ -125,4 +126,3 @@ Repeat
 	Flip( 1 )
 	
 Until AppTerminate()
-If AppTerminate() Then End

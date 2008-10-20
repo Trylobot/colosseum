@@ -4,7 +4,6 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-'This entire file is ignored if not in debug mode
 ?Debug
 ''______________________________________________________________________________
 Global debug_origin:cVEC = cVEC.Create( 0, 0 )
@@ -27,6 +26,9 @@ Global global_start:CELL, global_goal:CELL
 '	DebugLog "" + now() + " :: " + message
 'End Function
 '
+'______________________________________________________________________________
+Global sx%, sy%
+
 Function debug_drawtext( message$ )
 	SetImageFont( get_font( "consolas_10" ))
 	SetAlpha( 1 )
@@ -36,7 +38,7 @@ Function debug_drawtext( message$ )
 	DrawText( message, sx, sy )
 	sy :+ 10
 End Function
-
+'______________________________________________________________________________
 Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = "", b_msg$ = "", m_msg$ = "" )
 	'decl.
 	Local a:cVEC = New cVEC, b:cVEC = New cVEC, m:cVEC = New cVEC
@@ -66,66 +68,36 @@ Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = "", b_msg$ = "", m_m
 	DrawText( b_msg, Int(b.x+2),Int(b.y+2) )
 	DrawText( m_msg, Int(m.x+2),Int(m.y+2) )
 End Function
-
-''______________________________________________________________________________
-'Function debug_coordinate_overlay()
-'	Local move_speed% = 1
-'	If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT ) Then move_speed = 5
-'	If      KeyDown( KEY_LEFT )  Then debug_origin.x :+ move_speed ..
-'	Else If KeyDown( KEY_RIGHT ) Then debug_origin.x :- move_speed
-'	If      KeyDown( KEY_UP )    Then debug_origin.y :+ move_speed ..
-'	Else If KeyDown( KEY_DOWN )  Then debug_origin.y :- move_speed
-'	
-'	SetScale( 1, 1 )
-'	SetRotation( 0 )
-'	
-'	'real origin -> game origin
-'	SetOrigin( 0, 0 )
-'	SetColor( 255, 255, 255 )
-'	SetAlpha( 0.5 )
-'	debug_drawline( real_origin, game.drawing_origin,, "("+Int(game.drawing_origin.x)+","+Int(game.drawing_origin.y)+")" )
-'	''real origin -> player
-'	'debug_drawline( real_origin, game.player )
-'	''game origin -> player
-'	'debug_drawline( game.drawing_origin, game.player )
-'	
-'	'crosshairs (show real screen center)
-'	SetColor( 127, 127, 127 )
-'	SetAlpha( 0.25 )
-'	debug_drawline( cVEC.Create( window_w_half, 0 ), cVEC.Create( window_w_half, window_h ),,, "("+Int(debug_origin.x)+","+Int(debug_origin.y)+")")
-'	debug_drawline( cVEC.Create( 0, window_h_half ), cVEC.Create( window_w, window_h_half ))
-'	
-'	'player -> mouse
-'	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
-'	SetColor( 127, 255, 255 )
-'	SetAlpha( 0.5 )
-'	debug_drawline( game.player, game.mouse, "P", "M", "CENTER ME!" )
-'
-'End Function
-
-''______________________________________________________________________________
-''Function debug_load_data()
-''	DebugLog( " debug load_data" )
-''	For Local file_path$ = EachIn file_paths
-''		DebugLog( " file_path -> "+file_path )
-''	Next
-''	For Local key$ = EachIn font_map.Keys()
-''		Local font:TImageFont = get_font( key )
-''		DebugLog( " font_map -> "+key+" -> { CountGlyphs():"+font.CountGlyphs()+", Height():"+font.Height()+" }" )
-''	Next
-''	For Local key$ = EachIn sound_map.Keys()
-''		Local sound:TSound = get_sound( key )
-''		Local db_str$ = "null"
-''		If sound <> Null Then db_str = "loaded"
-''		DebugLog( " sound_map -> "+key+" -> "+db_str )
-''	Next
-''	For Local key$ = EachIn image_map.Keys()
-''		Local image:TImage = get_image( key )
-''		DebugLog( " image_map -> "+key+" -> { size("+image.width+","+image.height+"), handle("+Int(image.handle_x)+","+Int(image.handle_y)+"), frames:"+image.frames.Length )
-''	Next
-''End Function
 '______________________________________________________________________________
-Global sx%, sy%
+Function debug_fps()
+	SetOrigin( 0, 0 )
+	SetImageFont( get_font( "consolas_bold_24" ))
+	sx = window_w - TextWidth( String.FromInt( fps ))
+	sy = window_h - GetImageFont().Height()
+	SetColor( 255, 255, 127 )
+	DrawText( String.FromInt( fps ), sx, sy )
+End Function
+'______________________________________________________________________________
+Function debug_agent_lists( to_console% = False )
+	SetOrigin( 0, 0 )
+	sx = 2; sy = 2
+	For Local list:TList = EachIn main_game.agent_lists
+		For Local ag:COMPLEX_AGENT = EachIn list
+			If Not to_console
+				debug_drawtext( ag.name + ":" + ag.id )
+			Else
+				DebugLog( ag.name + ":" + ag.id )
+			End If
+		Next
+		If list <> main_game.agent_lists.Last()
+			sy :+ 5
+			SetColor( 127, 127, 127 )
+			DrawLine( sx, sy, sx + 80, sy )
+			sy :+ 5
+		End If
+	Next
+End Function
+'______________________________________________________________________________
 Global cb:CONTROL_BRAIN = Null
 
 Function debug_overlay()
@@ -135,9 +107,6 @@ Function debug_overlay()
 	SetAlpha( 1 )
 	SetOrigin( 0, 0 )
 	
-	sx = 3; sy = 3
-	'fps
-	debug_drawtext( "fps " + fps )
 	If cb <> Null
 		'keyboard help
 		debug_drawtext( "[1]: set target to player" )
@@ -346,16 +315,74 @@ Function debug_overlay()
 	End If
 	
 End Function
+'______________________________________________________________________________
+'Function debug_format_number()
+'	Local i% = 1, n% = 0
+'	While n <= 100000000
+'		DebugLog "  case "+i+" -> format_number( "+n+" ) = "+format_number( n )
+'		i :+ 1
+'		If n = 0 Then n :+ 1 Else n :* 10
+'	End While
+'	End
+'End Function
+''______________________________________________________________________________
+'Function debug_coordinate_overlay()
+'	Local move_speed% = 1
+'	If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT ) Then move_speed = 5
+'	If      KeyDown( KEY_LEFT )  Then debug_origin.x :+ move_speed ..
+'	Else If KeyDown( KEY_RIGHT ) Then debug_origin.x :- move_speed
+'	If      KeyDown( KEY_UP )    Then debug_origin.y :+ move_speed ..
+'	Else If KeyDown( KEY_DOWN )  Then debug_origin.y :- move_speed
+'	
+'	SetScale( 1, 1 )
+'	SetRotation( 0 )
+'	
+'	'real origin -> game origin
+'	SetOrigin( 0, 0 )
+'	SetColor( 255, 255, 255 )
+'	SetAlpha( 0.5 )
+'	debug_drawline( real_origin, game.drawing_origin,, "("+Int(game.drawing_origin.x)+","+Int(game.drawing_origin.y)+")" )
+'	''real origin -> player
+'	'debug_drawline( real_origin, game.player )
+'	''game origin -> player
+'	'debug_drawline( game.drawing_origin, game.player )
+'	
+'	'crosshairs (show real screen center)
+'	SetColor( 127, 127, 127 )
+'	SetAlpha( 0.25 )
+'	debug_drawline( cVEC.Create( window_w_half, 0 ), cVEC.Create( window_w_half, window_h ),,, "("+Int(debug_origin.x)+","+Int(debug_origin.y)+")")
+'	debug_drawline( cVEC.Create( 0, window_h_half ), cVEC.Create( window_w, window_h_half ))
+'	
+'	'player -> mouse
+'	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+'	SetColor( 127, 255, 255 )
+'	SetAlpha( 0.5 )
+'	debug_drawline( game.player, game.mouse, "P", "M", "CENTER ME!" )
+'
+'End Function
 
-Function debug_format_number()
-	Local i% = 1, n% = 0
-	While n <= 100000000
-		DebugLog "  case "+i+" -> format_number( "+n+" ) = "+format_number( n )
-		i :+ 1
-		If n = 0 Then n :+ 1 Else n :* 10
-	End While
-	End
-End Function
+''______________________________________________________________________________
+''Function debug_load_data()
+''	DebugLog( " debug load_data" )
+''	For Local file_path$ = EachIn file_paths
+''		DebugLog( " file_path -> "+file_path )
+''	Next
+''	For Local key$ = EachIn font_map.Keys()
+''		Local font:TImageFont = get_font( key )
+''		DebugLog( " font_map -> "+key+" -> { CountGlyphs():"+font.CountGlyphs()+", Height():"+font.Height()+" }" )
+''	Next
+''	For Local key$ = EachIn sound_map.Keys()
+''		Local sound:TSound = get_sound( key )
+''		Local db_str$ = "null"
+''		If sound <> Null Then db_str = "loaded"
+''		DebugLog( " sound_map -> "+key+" -> "+db_str )
+''	Next
+''	For Local key$ = EachIn image_map.Keys()
+''		Local image:TImage = get_image( key )
+''		DebugLog( " image_map -> "+key+" -> { size("+image.width+","+image.height+"), handle("+Int(image.handle_x)+","+Int(image.handle_y)+"), frames:"+image.frames.Length )
+''	Next
+''End Function
+'______________________________________________________________________________
 
 'Function debug_draw_walls()
 '	Local lev:LEVEL = Create_LEVEL( 100, 100 )

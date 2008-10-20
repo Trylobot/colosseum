@@ -245,6 +245,20 @@ Type ENVIRONMENT
 	End Method
 	
 	Method insert_player( new_player:COMPLEX_AGENT, new_player_brain:CONTROL_BRAIN )
+		'if player already exists in this environment, it must be removed
+		If player <> Null
+			If player.managed()
+				player.unmanage()
+			End If
+			player = Null
+		End If
+		If player_brain <> Null
+			If player_brain.managed()
+				player_brain.unmanage()
+			End If
+			player_brain = Null
+		End If
+		'add new player
 		player = new_player
 		player.manage( friendly_agent_list )
 		player_brain = new_player_brain
@@ -254,10 +268,8 @@ Type ENVIRONMENT
 	End Method
 	
 	Method respawn_player()
-		If player <> Null And player_brain <> Null
+		If player <> Null And player_brain <> Null And player.managed() And player_brain.managed()
 			player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
-			player.manage( friendly_agent_list )
-			player_brain.manage( control_brain_list )
 			player.pos_x = player_spawn_point.pos_x - 0.5
 			player.pos_y = player_spawn_point.pos_y - 0.5
 			player.ang = player_spawn_point.ang

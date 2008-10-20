@@ -189,11 +189,13 @@ Function pad$( str$, width%, pad$ = " " )
 End Function
 
 '______________________________________________________________________________
+Const NULL_ID% = -1 'this should be a static member of MANAGED_OBJECT
+Global next_managed_object_id% = 0 'this should be a static member of MANAGED_OBJECT
+
 Type MANAGED_OBJECT
-	
-	Field name$ 'name of this object
-	Field id% 'unique identification number
-	Field link:TLink 'back-reference to the list which contains this object
+	Field id% 'unique integer id
+	Field name$ 'optional name
+	Field link:TLink 'back-reference to the list link which points to this object
 	
 	Method New()
 		id = get_new_id()
@@ -204,6 +206,7 @@ Type MANAGED_OBJECT
 	End Method
 	
 	Method manage( list:TList )
+		If managed() Then unmanage()
 		link = ( list.AddLast( Self ))
 	End Method
 	
@@ -214,16 +217,12 @@ Type MANAGED_OBJECT
 		End If
 	End Method
 	
+	Function get_new_id%()
+		next_managed_object_id :+ 1
+		Return next_managed_object_id
+	End Function
+	
 End Type
-'______________________________________________________________________________
-Global next_managed_object_id% = 0
-'this should be a global member of the MANAGED_OBJECT class
-Const NULL_ID% = -1
-
-Function get_new_id%()
-	next_managed_object_id :+ 1
-	Return next_managed_object_id
-End Function
 '______________________________________________________________________________
 'Function combine_lists:TList( list1:TList, list2:TList )
 '	Local newlist:TList = list1.Copy()

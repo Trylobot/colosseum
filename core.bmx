@@ -77,7 +77,6 @@ Function play_level( level_file_path$, player_archetype% )
 		main_game.respawn_player()
 		FLAG_in_menu = False
 		FLAG_in_shop = False
-		game = main_game
 	Else
 		main_game = Null
 	End If
@@ -103,7 +102,7 @@ End Function
 Global esc_held% = False, esc_press_ts% = now()
 Global esc_held_progress_bar_show_time_required% = 200, instaquit_time_required% = 1000
 
-Function check_esc_held()
+Function check_instaquit()
 	If KeyDown( KEY_ESCAPE ) And Not esc_held
 		esc_press_ts = now()
 		esc_held = True

@@ -74,6 +74,7 @@ Function draw_game()
 
 	'arena foreground
 	draw_arena_fg()
+	draw_lighting_and_effects()
 	SetColor( 255, 255, 255 )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
@@ -249,8 +250,8 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 			SetColor( 255, 255, 255 )
 			get_menu( menu_stack[i] ).draw( x + i*20, y + i*20,, menu_overlay_alpha[i])
 		Next
-		SetAlpha( 1 )
 	End If
+	SetAlpha( 1 )
 End Function
 '______________________________________________________________________________
 Function draw_arena_bg()
@@ -324,7 +325,9 @@ Function draw_arena_fg()
 	For Local w:WIDGET = EachIn game.environmental_widget_list
 		w.draw()
 	Next
-	
+End Function
+
+Function draw_lighting_and_effects()
 	'use battle_toggle_ts and arena_lights_fade_time to set alpha
 	SetScale( 1, 1 )
 	SetRotation( 0 )
