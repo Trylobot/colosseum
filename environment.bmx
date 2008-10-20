@@ -244,20 +244,13 @@ Type ENVIRONMENT
 		Return brain
 	End Method
 	
-	Method spawn_player( p:COMPLEX_AGENT, b:CONTROL_BRAIN )
-		'insert given player to environment
-		player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
-		If player <> Null Or player.managed()
-			player.unmanage()
-		End If
-		player = p
+	Method insert_player( new_player:COMPLEX_AGENT, new_player_brain:CONTROL_BRAIN )
+		player = new_player
 		player.manage( friendly_agent_list )
-		player_brain = b
+		player_brain = new_player_brain
 		player_brain.manage( control_brain_list )
 		player_engine_ignition = False
 		player_engine_running = False
-
-		respawn_player()
 	End Method
 	
 	Method respawn_player()

@@ -73,7 +73,8 @@ Function play_level( level_file_path$, player_archetype% )
 		main_game.game_in_progress = True
 		Local player:COMPLEX_AGENT = create_player( player_archetype )
 		Local player_brain:CONTROL_BRAIN = create_player_brain( player )
-		main_game.spawn_player( player, player_brain )
+		main_game.insert_player( player, player_brain )
+		main_game.respawn_player()
 		FLAG_in_menu = False
 		FLAG_in_shop = False
 		game = main_game
@@ -83,11 +84,11 @@ Function play_level( level_file_path$, player_archetype% )
 End Function
 '______________________________________________________________________________
 Function create_player:COMPLEX_AGENT( archetype% )
-	
+	Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype], ALIGNMENT_FRIENDLY ))
 End Function
 '______________________________________________________________________________
 Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
-	
+	Return Create_CONTROL_BRAIN( avatar, CONTROL_TYPE_HUMAN, profile.input_method )
 End Function
 '______________________________________________________________________________
 Function get_player_id%()

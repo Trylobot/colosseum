@@ -420,7 +420,7 @@ Global all_menus:MENU[] = ..
 				MENU_OPTION.Create( "resolution    %%window_w%% x %%window_h%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_RESOLUTION), True, True ), ..
 				MENU_OPTION.Create( "refresh rate  %%refresh_rate%% Hz", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_REFRESH_RATE), True, True ), ..
 				MENU_OPTION.Create( "bit depth     %%bit_depth%% bpp", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_BIT_DEPTH), True, True ), ..
-				MENU_OPTION.Create( "apply", COMMAND_SETTINGS_APPLY_ALL,, False, True ) ]), ..
+				MENU_OPTION.Create( "apply", COMMAND_SETTINGS_APPLY_ALL,, False, False ) ]), ..
 			MENU.Create( "input resolution", 255, 255, 255, MENU_ID_INPUT_RESOLUTION, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,, COMMAND_SETTINGS_RESOLUTION,, 20, "%%window_w%% x %%window_h%%"  ), ..
 			MENU.Create( "input refresh rate", 255, 255, 255, MENU_ID_INPUT_REFRESH_RATE, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,, COMMAND_SETTINGS_REFRESH_RATE,, 10, "%%refresh_rate%%"  ), ..
 			MENU.Create( "input bit depth", 255, 255, 255, MENU_ID_INPUT_BIT_DEPTH, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,, COMMAND_SETTINGS_BIT_DEPTH,, 10, "%%bit depth%%"  ), ..

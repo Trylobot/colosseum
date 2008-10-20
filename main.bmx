@@ -71,6 +71,8 @@ init_graphics()
 Local before%
 ?Debug
 Global last_frame_ts%, time_count%, frame_count%, fps%
+
+play_level( data_path + "debug" + "." + level_file_ext, 0 )
 ?
 Repeat
 	
@@ -83,7 +85,7 @@ Repeat
 		game = main_game
 	End If
 
-	'physics update speed throttle
+	'throttle game speed
 	If (now() - before) > (1000/60) ' = 60 hertz
 		before = now()
 		
