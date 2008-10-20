@@ -39,6 +39,7 @@ End Function
 apply_default_settings()
 
 'external data load
+create_dirs()
 If Not load_settings()
 	save_settings()
 	load_settings()
@@ -72,7 +73,7 @@ Local before%
 ?Debug
 Global fps%, last_frame_ts%, time_count%, frame_count%
 
-play_level( data_path + "debug" + "." + level_file_ext, 0 )
+'play_level( data_path + "debug" + "." + level_file_ext, 0 )
 ?
 Repeat
 	
@@ -114,7 +115,7 @@ Repeat
 	If game <> Null And game.player <> Null And FLAG_debug_overlay And Not FLAG_in_menu
 		debug_overlay()
 		debug_fps()
-		debug_agent_lists()
+		'debug_agent_lists()
 	End If
 ?
 	check_instaquit()

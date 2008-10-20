@@ -152,7 +152,6 @@ Type MENU
 	Method draw( x%, y%, border% = True, dark_overlay_alpha# = 0 )
 		Local cx% = x, cy% = y, opt:MENU_OPTION
 		
-		Local arrow_height% = 20
 		Local border_width% = 3
 		Local text_height_factor# = 0.70
 		
@@ -163,6 +162,9 @@ Type MENU
 		For Local opt:MENU_OPTION = EachIn options
 			If menu_type = VERTICAL_LIST_WITH_FILES And i >= static_option_count
 				SetImageFont( menu_font_small )
+				If i = static_option_count
+					height :+ 0.5*( text_height_factor*GetImageFont().Height() + margin )
+				End If
 			Else
 				SetImageFont( menu_font )
 			End If
@@ -194,11 +196,17 @@ Type MENU
 		
 		'draw each option
 		SetImageFont( menu_font )
-		cx :+ border + margin; cy :+ border + 2*margin + text_height_factor*GetImageFont().Height()
+		cx :+ border_width + margin; cy :+ border_width + 2*margin + text_height_factor*GetImageFont().Height()
 		For Local i% = 0 To options.Length-1
 			'set font for option
 			If menu_type = VERTICAL_LIST_WITH_FILES And i >= static_option_count
 				SetImageFont( menu_font_small )
+				If i = static_option_count
+					SetColor( 64, 64, 64 )
+					SetLineWidth( border_width )
+					DrawLine( cx - border_width - margin, cy, cx - 2*border_width - margin + width, cy )
+					cy :+ 0.5*( text_height_factor*GetImageFont().Height() + margin )
+				End If
 			Else
 				SetImageFont( menu_font )
 			End If
@@ -247,12 +255,21 @@ Type MENU
 	End Method
 	
 	Method update( initial_update% = False )
-		Local i%
+		If menu_id = MENU_ID_MAIN_MENU
+			If profile <> Null
+				set_enabled( "quarters", True )
+				set_enabled( "save", True )
+			Else 'profile == Null
+				set_enabled( "quarters", False )
+				set_enabled( "save", False )
+			End If
+		End If
 		Select menu_type
 			
 			Case VERTICAL_LIST_WITH_FILES
 				files = find_files( path, preferred_file_extension )
 				Local new_options:MENU_OPTION[] = New MENU_OPTION[static_option_count + files.Count()]
+				Local i%
 				For i = 0 To static_option_count - 1
 					new_options[i] = options[i]
 				Next
@@ -352,6 +369,7 @@ Const COMMAND_SHOW_CHILD_MENU% = 50
 Const COMMAND_BACK_TO_PARENT_MENU% = 51
 Const COMMAND_BACK_TO_MAIN_MENU% = 53
 Const COMMAND_RESUME% = 100
+Const COMMAND_SHOP% = 150
 Const COMMAND_NEW_GAME% = 200
 Const COMMAND_NEW_LEVEL% = 201
 Const COMMAND_LOAD_GAME% = 300
@@ -370,6 +388,7 @@ Const COMMAND_QUIT_GAME% = 65535
 Const MENU_ID_MAIN_MENU% = 100
 Const MENU_ID_NEW_GAME% = 200
 Const MENU_ID_LOAD_GAME% = 300
+Const MENU_ID_CONFIRM_LOAD_GAME% = 310
 Const MENU_ID_LOAD_LEVEL% = 310
 Const MENU_ID_SAVE_GAME% = 400
 Const MENU_ID_INPUT_GAME_FILE_NAME% = 410
@@ -393,26 +412,26 @@ reset_index()
 
 all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MAIN_MENU, MENU.VERTICAL_LIST, menu_margin,, ..
 [	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, False ), ..
-	MENU_OPTION.Create( "new", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_NEW_GAME), True, True ), ..
-	MENU_OPTION.Create( "save", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_GAME), True, True ), ..
+	MENU_OPTION.Create( "quarters", COMMAND_SHOP,, True, False ), ..
+	MENU_OPTION.Create( "new", COMMAND_NEW_GAME,, True, True ), ..
+	MENU_OPTION.Create( "save", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_GAME), True, False ), ..
 	MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_GAME), True, True ), ..
 	MENU_OPTION.Create( "options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS), True, True ), ..
 	MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_EDITORS), True, True ), ..
 	MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ])
-	
-	all_menus[postfix_index()] = MENU.Create( "new game", 255, 255, 255, MENU_ID_NEW_GAME, MENU.VERTICAL_LIST, menu_margin,, ..
-	[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ])
 	
 	all_menus[postfix_index()] = MENU.Create( "save game", 255, 96, 127, MENU_ID_SAVE_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 		MENU_OPTION.Create( "[new file]", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_GAME_FILE_NAME), True, True )], ..
 		user_path, saved_game_file_ext, COMMAND_SAVE_GAME )
 
-		all_menus[postfix_index()] = MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_GAME_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,,, user_path, saved_game_file_ext, COMMAND_SAVE_GAME,, 60, "%%CURRENT SAVED GAME FILENAME%%"  )
+		all_menus[postfix_index()] = MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_GAME_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,,, user_path, saved_game_file_ext, COMMAND_SAVE_GAME,, 60, "%%profile.profile_name%%"  )
 	
 	all_menus[postfix_index()] = MENU.Create( "load game", 96, 255, 127, MENU_ID_LOAD_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ], ..
-		user_path, saved_game_file_ext, COMMAND_LOAD_GAME )
+		user_path, saved_game_file_ext, COMMAND_LOAD_GAME ) 'COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CONFIRM_LOAD_GAME) )
+
+		'all_menus[postfix_index()] = MENU.Create( "abandon current game?", 255, 64, 64, MENU_ID_CONFIRM_LOAD_GAME, MENU.CONFIRMATION_DIALOG, menu_margin, 1,,,, COMMAND_LOAD_GAME )
 
 	all_menus[postfix_index()] = MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU.VERTICAL_LIST, menu_margin,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
@@ -435,7 +454,6 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 			
 			all_menus[postfix_index()] = MENU.Create( "input bit depth", 255, 255, 255, MENU_ID_INPUT_BIT_DEPTH, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,, COMMAND_SETTINGS_BIT_DEPTH,, 10, "%%bit depth%%"  )
 		
-		
 		all_menus[postfix_index()] = MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU.VERTICAL_LIST, menu_margin,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(INPUT_KEYBOARD), True, True ), ..
@@ -448,7 +466,7 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 		
 		all_menus[postfix_index()] = MENU.Create( "level editor", 96, 127, 255, MENU_ID_LEVEL_EDITOR, MENU.VERTICAL_LIST, menu_margin, 1, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-			MENU_OPTION.Create( "edit [%%level_editor_cache.name%%]", COMMAND_EDIT_LEVEL, level_editor_cache, True, True ), ..
+			MENU_OPTION.Create( "edit ~q%%level_editor_cache.name%%~q", COMMAND_EDIT_LEVEL, level_editor_cache, True, True ), ..
 			MENU_OPTION.Create( "save current", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_LEVEL), True, True ), ..
 			MENU_OPTION.Create( "load level", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_LEVEL), True, True ), ..
 			MENU_OPTION.Create( "new level", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CONFIRM_ERASE_LEVEL), True, True ) ])
@@ -472,6 +490,10 @@ Global current_menu% = 0
 
 Function get_current_menu:MENU()
 	Return get_menu( menu_stack[current_menu] )
+End Function
+
+Function get_main_menu:MENU()
+	Return get_menu( menu_stack[0] )
 End Function
 
 Function get_menu:MENU( menu_id% )
@@ -500,40 +522,50 @@ Function menu_command( command_code%, argument:Object = Null )
 			
 		Case COMMAND_BACK_TO_MAIN_MENU
 			current_menu = 0
-			get_current_menu().update()
+			get_main_menu().update()
 			
+		
 		Case COMMAND_RESUME
-			FLAG_in_menu = false
+			FLAG_in_menu = False
 			
+		Case COMMAND_SHOP
+			FLAG_in_menu = False
+			FLAG_in_shop = True
+		
 		Case COMMAND_NEW_GAME
-			'core_begin_new_game()
+			profile = New PLAYER_PROFILE
+			get_main_menu().update()
 			
-		Case COMMAND_NEW_LEVEL
-			level_editor_cache = Create_LEVEL( 300, 300 )
-			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-
 		Case COMMAND_LOAD_GAME
 			profile = load_game( String(argument) )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+			get_main_menu().update()
 				
-		Case COMMAND_LOAD_LEVEL
-			level_editor_cache = load_level( String(argument) )
-			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-			
 		Case COMMAND_SAVE_GAME
 			save_game( String(argument), profile )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		
+		
+		Case COMMAND_NEW_LEVEL
+			level_editor_cache = Create_LEVEL( 300, 300 )
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+
+		Case COMMAND_LOAD_LEVEL
+			level_editor_cache = load_level( String(argument) )
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+			
 		Case COMMAND_SAVE_LEVEL
 			save_level( String(argument), level_editor_cache )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			
+		
 		Case COMMAND_PLAYER_INPUT_TYPE
 			profile.input_method = INTEGER(argument).value
 			If game <> Null And game.player_brain <> Null
 				game.player_brain.input_type = profile.input_method
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+		
 		
 		Case COMMAND_SETTINGS_FULLSCREEN
 			fullscreen = Not fullscreen
@@ -576,9 +608,11 @@ Function menu_command( command_code%, argument:Object = Null )
 			save_settings()
 			init_graphics()
 		
+		
 		Case COMMAND_EDIT_LEVEL
 			level_editor( level_editor_cache )
 			
+		
 		Case COMMAND_QUIT_GAME
 			End
 			
@@ -604,6 +638,8 @@ Function resolve_meta_variables$( str$ )
 			Select tokens[i]
 				Case "level_editor_cache.name"
 					result :+ level_editor_cache.name
+				Case "profile.profile_name"
+					result :+ profile.profile_name
 				Case "fullscreen"
 					result :+ boolean_to_string( fullscreen )
 				Case "window_w"

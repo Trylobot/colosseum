@@ -27,6 +27,11 @@ Global turret_prototype_map:TMap = CreateMap()
 Global complex_agent_prototype_map:TMap = CreateMap()
 
 '______________________________________________________________________________
+Function create_dirs()
+	CreateDir( data_path )
+	CreateDir( user_path )
+End Function
+'______________________________________________________________________________
 Function enforce_suffix$( str$, suffix$ )
 	Return str + suffix
 End Function
@@ -118,12 +123,14 @@ Function save_level%( path$, lev:LEVEL )
 End Function
 '______________________________________________________________________________
 Function load_game:PLAYER_PROFILE( path$ )
-	Local file:TStream, json:TJSON
+	Local file:TStream, json:TJSON, prof:PLAYER_PROFILE
 	file = ReadFile( path )
 	If file
 		json = TJSON.Create( file )
 		file.Close()
-		Return Create_PLAYER_PROFILE_from_json( json )
+		prof = Create_PLAYER_PROFILE_from_json( json )
+		prof.src_path = path
+		Return prof
 	Else
 		Return Null
 	End If
@@ -169,8 +176,21 @@ Function find_files:TList( path$, ext$ = "" )
 	End If
 End Function
 '______________________________________________________________________________
-Function save_screenshot_to_file( screen:TImage, filename$ = "" )
-	
+Function save_pixmap_to_file( px:TPixmap )
+	Local file_prefix$ = "screenshot"
+	Local dir$[] = LoadDir( user_path )
+	'find the highest unused screenshot number
+	Local high% = 1
+	For Local file$ = EachIn dir
+		If file.Find( file_prefix ) >= 0
+			Local current% = StripAll(file)[(file_prefix.length)..].ToInt()
+			If high <= current Then high = current + 1
+		EndIf
+	Next
+	'build path
+	Local path$ = user_path + file_prefix + pad( high, 4, "0" ) + ".png"
+	'save png
+	SavePixmapPNG( px, path )
 End Function
 '______________________________________________________________________________
 '##############################################################################

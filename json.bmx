@@ -240,7 +240,7 @@ Type TJSONObject Extends TJSONValue
 			lines :+ 1
 		Next
 		If lines > 1 Then Return "{~n"+ RepeatString( "~t", level + 1) + s + "~n" + RepeatString( "~t", level) + "}"
-		Return "{ "+ s +" }"
+		Return "{ "+ s +" }~n"
 	EndMethod		
 	
 	Method GetByName:TJSONValue( name:Object)
@@ -975,6 +975,15 @@ Function Create_TJSONArray_from_Int_array_array:TJSONArray( arr%[][] )
 		this_json.SetByIndex( index, Create_TJSONArray_from_Int_array( arr[index] ))
 	Next
 	Return this_json
+End Function
+
+Function Create_Int_array_from_TJSONArray:Int[]( json:TJSONArray )
+	Local index%
+	Local arr%[] = New Int[json.Size()]
+	For index = 0 To json.Size() - 1
+		arr[index] = TJSONNumber( json.GetByIndex( index )).Value
+	Next
+	Return arr
 End Function
 
 Function Create_Int_array_array_from_TJSONArray:Int[][]( json:TJSONArray )

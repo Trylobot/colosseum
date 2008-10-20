@@ -163,6 +163,7 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 		End If
 		If ag.political_alignment = ALIGNMENT_HOSTILE
 			game.level_enemies_killed :+ 1
+			profile.kills :+ 1
 		End If
 	End If
 	'activate projectile impact emitter

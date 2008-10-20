@@ -18,12 +18,11 @@ Global mouse_delta:cVEC = New cVEC
 Global main_game:ENVIRONMENT 'game in which player participates
 Global ai_menu_game:ENVIRONMENT 'menu ai demo environment
 Global game:ENVIRONMENT 'current game environment
-Global profile:PLAYER_PROFILE = New PLAYER_PROFILE
-Global level_editor_cache:LEVEL = Null
+Global profile:PLAYER_PROFILE
+Global level_editor_cache:LEVEL
 	
 'app state flags
 Global FLAG_in_menu% = True
-Global FLAG_game_loaded% = False
 Global FLAG_in_shop% = False
 Global FLAG_bg_music_on% = False
 Global FLAG_no_sound% = False
@@ -38,15 +37,21 @@ Type PLAYER_PROFILE
 	Field current_level$
 	Field cash%
 	Field kills%
-	
+
+	Field src_path$
+	Field selected_inventory_index%
+		
 	Method New()
+		profile_name = "new_profile"
 		input_method = INPUT_KEYBOARD_MOUSE_HYBRID
+		inventory = [ 0 ]
+		src_path = ""
 	End Method
 	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
-		
-		
+		this_json.SetByName( "profile_name", TJSONString.Create( profile_name ))
+		this_json.SetByName( "inventory", Create_TJSONArray_from_Int_array( inventory ))
 		this_json.SetByName( "input_method", TJSONNumber.Create( input_method ))
 		this_json.SetByName( "current_level", TJSONString.Create( current_level ))
 		this_json.SetByName( "cash", TJSONNumber.Create( cash ))
@@ -57,8 +62,8 @@ End Type
 
 Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 	Local prof:PLAYER_PROFILE = New PLAYER_PROFILE
-	
-	
+	prof.profile_name = json.GetString( "profile_name" )
+	prof.inventory = Create_Int_array_from_TJSONArray( json.GetArray( "inventory" ))
 	prof.input_method = json.GetNumber( "input_method" )
 	prof.current_level = json.GetString( "current_level" )
 	prof.cash = json.GetNumber( "cash" )

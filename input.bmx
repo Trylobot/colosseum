@@ -39,9 +39,16 @@ Function get_all_input()
 			m.input_box = m.input_listener.update( m.input_box )
 			m.update()
 		End If
-'	Else If FLAG_in_shop
-'		'shop navigation
-'		
+
+	Else If FLAG_in_shop
+		'shop navigation
+		If KeyHit( KEY_ESCAPE )
+			FLAG_in_menu = True
+			FLAG_in_shop = False
+		End If
+		'delegate
+		get_shop_input()
+
 	Else 'show in-game help
 		If KeyHit( KEY_F1 )
 			FLAG_draw_help = Not FLAG_draw_help

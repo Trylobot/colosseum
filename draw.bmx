@@ -188,10 +188,6 @@ Function draw_main_screen()
 	SetImageFont( get_font( "consolas_bold_50" ))
 	DrawText_with_glow( My.Application.AssemblyInfo, x, y )
 	
-	'menu options
-	x :+ 5; y :+ 70
-	draw_menus( x, y )
-	
 	'copyright stuff
 	SetColor( 157, 157, 157 )
 	SetImageFont( get_font( "consolas_10" ))
@@ -207,9 +203,9 @@ Function draw_main_screen()
 	DrawText( "  ~qFirelord88~q", x, y ); y :+ h
 	DrawText( "written in 100% BlitzMax", x, y ); y :+ h
 	
-End Function
-'______________________________________________________________________________
-Function draw_shop()
+	'menu options
+	x = 30; y = 95
+	draw_menus( x, y )
 	
 End Function
 '______________________________________________________________________________
@@ -490,13 +486,17 @@ Function draw_percentage_bar( x%,y%, w%,h%, pct#, a# = 1.0, r% = 255, g% = 255, 
 	SetAlpha( a )
 	SetColor( r, g, b )
 	SetLineWidth( 1 )
+	DrawRectLines( x,y, w,h )
+	If      pct > 1.0 Then pct = 1.0 ..
+	Else If pct < 0.0 Then pct = 0.0
+	DrawRect( x + 2, y + 2, pct*(w - 4.0), h - 4 )
+End Function
+
+Function DrawRectLines( x%,y%, w%,h% )
 	DrawLine( x,     y,     x+w-1, y,     False )
 	DrawLine( x+w-1, y,     x+w-1, y+h-1, False )
 	DrawLine( x+w-1, y+h-1, x,     y+h-1, False )
 	DrawLine( x,     y+h-1, x,     y,     False )
-	If      pct > 1.0 Then pct = 1.0 ..
-	Else If pct < 0.0 Then pct = 0.0
-	DrawRect( x + 2, y + 2, pct*(w - 4.0), h - 4 )
 End Function
 
 Function DrawText_with_shadow( str$, x%, y% )
@@ -517,9 +517,8 @@ Function DrawText_with_glow( str$, x%, y% )
 End Function
 
 Function screenshot()
-'	Local screen:TImage = TImage.Create( window_w,window_h, 0, DYNAMICIMAGE )
-'	GrabImage( screen, 0,0 )
-'	save_screenshot_to_file( screen )
+	SetOrigin( 0, 0 )
+	save_pixmap_to_file( GrabPixmap( 0, 0, window_w, window_h ))
 End Function
 
 '______________________________________________________________________________

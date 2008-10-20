@@ -71,10 +71,13 @@ End Function
 '______________________________________________________________________________
 Function debug_fps()
 	SetOrigin( 0, 0 )
+	SetScale( 1, 1 )
+	SetRotation( 0 )
+	SetAlpha( 1 )
+	SetColor( 255, 255, 127 )
 	SetImageFont( get_font( "consolas_bold_24" ))
 	sx = window_w - TextWidth( String.FromInt( fps ))
-	sy = window_h - GetImageFont().Height()
-	SetColor( 255, 255, 127 )
+	sy = window_h - GetImageFont().Height() - 24
 	DrawText( String.FromInt( fps ), sx, sy )
 End Function
 '______________________________________________________________________________
