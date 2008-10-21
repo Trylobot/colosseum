@@ -1,9 +1,0 @@
-{
-	profile_name: "dev2",
-	inventory: null,
-	input_method: 2,
-	current_level: "data/maze.colosseum_level",
-	cash: 9998000,
-	kills: 1687,
-	selected_inventory_index: 0
-}

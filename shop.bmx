@@ -17,6 +17,9 @@ Global shop_option% = SHOP_OPTION_GO
 Global shop_option_font_name_title$ = "consolas_bold_50"
 Global shop_option_font_name_selected$ = "consolas_bold_24"
 Global shop_option_font_name_not_selected$ = "consolas_12"
+'shop items
+Global shop_items%[] =       [     0,     1,     2 ]
+Global shop_item_prices%[] = [   500,  2500, 10000 ]
 'input
 Global shop_console:CONSOLE = New CONSOLE
 Global text_input_mode% = False
@@ -35,7 +38,7 @@ Function draw_shop()
 	SetScale( 1, 1 )
 	
 	x = shop_margin; y = shop_margin
-	SetColor( 127, 255, 127 )
+	SetColor( 255, 255, 255 )
 	SetImageFont( get_font( shop_option_font_name_title )); h = GetImageFont().Height() - 1
 	DrawText_with_glow( "Quarters", x, y ); y :+ 1.25*h
 	
@@ -140,6 +143,8 @@ Function get_shop_input()
 			Case SHOP_OPTION_INVENTORY_SELECT
 				If Not (profile.inventory = Null Or profile.inventory.Length = 0)
 					inventory_select()
+				Else
+					display_error( "inventory is empty;~nbuy stuff at the shop" )
 				End If
 					
 			Case SHOP_OPTION_LEVEL_SELECT
@@ -148,6 +153,8 @@ Function get_shop_input()
 			Case SHOP_OPTION_BUY_STUFF
 				If shop_items_left_to_purchase()
 					buy_stuff()
+				Else
+					display_error( "you own everything" )
 				End If
 			
 		End Select
@@ -310,9 +317,6 @@ Function level_select()
 	
 End Function
 '______________________________________________________________________________
-Global shop_items%[] =       [     0,     1,     2 ]
-Global shop_item_prices%[] = [  2000, 10000, 25000 ]
-
 Function buy_stuff()
 	Local bg:TPixmap = GrabPixmap( 0, 0, window_w, window_h )
 	Local selected_shop_item_index%
@@ -418,8 +422,8 @@ End Function
 Function display_error( error$ )
 	Local bg:TPixmap = GrabPixmap( 0, 0, window_w, window_h )
 	Local error_lines$[] = error.Split( "~n" )
-	Local widths#[] = New Float[error_lines.Length]
 	SetImageFont( get_font( shop_option_font_name_selected ))
+	Local widths#[] = New Float[error_lines.Length]
 	For Local i% = 0 To widths.Length - 1
 		widths[i] = TextWidth( error_lines[i] )
 	Next
