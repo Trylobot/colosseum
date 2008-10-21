@@ -43,8 +43,9 @@ Type PLAYER_PROFILE
 		
 	Method New()
 		profile_name = "new_profile"
+		inventory = Null
 		input_method = INPUT_KEYBOARD_MOUSE_HYBRID
-		inventory = [ 0 ]
+		cash = shop_item_prices[0]
 		src_path = ""
 	End Method
 	

@@ -1,5 +1,5 @@
 {
-	name: "3 gates",
+	name: "three_gates",
 	width: 650,
 	height: 650,
 	row_count: 11,
@@ -183,7 +183,7 @@
 			squads: null,
 			pos: {
 				pos_x: 325,
-				pos_y: 610,
+				pos_y: 615,
 				ang: -90,
 				vel_x: 0,
 				vel_y: 0,
@@ -214,21 +214,10 @@
 		},
 		{
 			class: 1,
-			squads: [
-				[
-					8,
-					8,
-					8,
-					8
-				],
-				[
-					3,
-					3
-				]
-			],
+			squads: null,
 			pos: {
 				pos_x: 325,
-				pos_y: 40,
+				pos_y: 35,
 				ang: 90,
 				vel_x: 0,
 				vel_y: 0,
@@ -237,26 +226,12 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: [
-				100,
-				2000
-			],
+			delay_time: null,
 			alignment: 2
 		},
 		{
 			class: 1,
-			squads: [
-				[
-					8,
-					8,
-					8,
-					8
-				],
-				[
-					3,
-					3
-				]
-			],
+			squads: null,
 			pos: {
 				pos_x: 615,
 				pos_y: 325,
@@ -268,28 +243,14 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: [
-				100,
-				2000
-			],
+			delay_time: null,
 			alignment: 2
 		},
 		{
 			class: 1,
-			squads: [
-				[
-					8,
-					8,
-					8,
-					8
-				],
-				[
-					3,
-					3
-				]
-			],
+			squads: null,
 			pos: {
-				pos_x: 40,
+				pos_x: 35,
 				pos_y: 325,
 				ang: 0,
 				vel_x: 0,
@@ -299,10 +260,7 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: [
-				100,
-				2000
-			],
+			delay_time: null,
 			alignment: 2
 		},
 		{

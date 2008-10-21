@@ -795,16 +795,16 @@ Type COMPLEX_AGENT Extends AGENT
 		SetRotation( ang )
 		'tracks
 		If right_track <> Null And left_track <> Null
-			left_track.red = red
-			left_track.green = green
-			left_track.blue = blue
+			left_track.red = Float(red)/255.0
+			left_track.green = Float(green)/255.0
+			left_track.blue = Float(blue)/255.0
 			left_track.alpha = alpha
 			left_track.scale = scale
 			left_track.draw()
 			
-			right_track.red = red
-			right_track.green = green
-			right_track.blue = blue
+			right_track.red = Float(red)/255.0
+			right_track.green = Float(green)/255.0
+			right_track.blue = Float(blue)/255.0
 			right_track.alpha = alpha
 			right_track.scale = scale
 			right_track.draw()

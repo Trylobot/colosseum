@@ -1,9 +1,9 @@
 {
-	profile_name: "Tylerbot",
+	profile_name: "tylerbot",
 	inventory: [ 0 ],
 	input_method: 2,
-	current_level: "data/debug.colosseum_level",
-	cash: 2150,
-	kills: 14,
+	current_level: "data/three_gates.colosseum_level",
+	cash: 2650,
+	kills: 19,
 	selected_inventory_index: 0
 }
