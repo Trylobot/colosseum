@@ -81,11 +81,11 @@ Function draw_game()
 	
 	'hostile agents
 	For Local hostile:COMPLEX_AGENT = EachIn game.hostile_agent_list
-		hostile.draw()
+		hostile.draw( False, 255, 212, 212 )
 	Next
 	'friendly agents
 	For Local friendly:COMPLEX_AGENT = EachIn game.friendly_agent_list
-		friendly.draw()
+		friendly.draw( False, 212, 212, 255 )
 	Next
 	
 	'foreground particles
@@ -258,7 +258,9 @@ Function draw_arena_bg()
 	SetScale( 1, 1 )
 	SetRotation( 0 )
 	DrawImage( game.background_clean, 0, 0 )
+	'DrawPixmap( game.background_clean, 0, 0 )
 	DrawImage( game.background_dynamic, 0, 0 )
+	'DrawPixmap( game.background_dynamic, 0, 0 )
 
 	'draw particles to be retained
 	For Local part:PARTICLE = EachIn game.retained_particle_list
@@ -281,7 +283,8 @@ Function draw_arena_bg()
 				SetScale( 1, 1 )
 				SetRotation( 0 )
 				'save backbuffer to dynamic texture
-				GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y ) '0, 0 )
+				GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y )
+				'game.background_dynamic = GrabPixmap( game.drawing_origin.x, game.drawing_origin.y, game.lev.width, game.lev.height )
 				
 				'fade-out particles if desired, by blending backbuffer with the "clean" background
 				If FLAG_dim_bg
@@ -291,11 +294,13 @@ Function draw_arena_bg()
 					SetAlpha( 0.3333 )
 					SetScale( 1, 1 )
 					SetRotation( 0 )
-					'redraw the clean background
+					'draw the clean background, again
 					DrawImage( game.background_clean, 0, 0 )
+					'DrawPixmap( game.background_clean, 0, 0 )
 					
-					'save backbuffer to dynamic texture
-					GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y ) '0, 0 )
+					'save backbuffer to dynamic texture, again
+					GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y )
+					'game.background_dynamic = GrabPixmap( game.drawing_origin.x, game.drawing_origin.y, game.lev.width, game.lev.height )
 				End If
 				
 			Case PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
@@ -316,7 +321,8 @@ Function draw_arena_fg()
 	SetScale( 1, 1 )
 	SetRotation( 0 )
 	
-	DrawImage( game.foreground, 0,0 )
+	DrawImage( game.foreground, 0, 0 )
+	'DrawPixmap( game.foreground, 0, 0 )
 
 	For Local w:WIDGET = EachIn game.environmental_widget_list
 		w.draw()
@@ -524,6 +530,7 @@ End Function
 '______________________________________________________________________________
 'Procedural drawing methods
 Function generate_sand_image:TImage( w%, h% )
+'Function generate_sand_image:TPixmap( w%, h% )
 	Local pixmap:TPixmap = CreatePixmap( w,h, PF_RGB888 )
 	Local max_dist# = Sqr( Pow( w/2, 2 ) + Pow( h/2, 2 ))
 	Local ratio# 'distance from point to center compared with max_dist, range [0.0,1.0]
@@ -551,9 +558,11 @@ Function generate_sand_image:TImage( w%, h% )
 	Next
 	Local img:TImage = LoadImage( pixmap )
 	Return img
+	'Return pixmap
 End Function
 '______________________________________________________________________________
 Function generate_level_walls_image:TImage( lev:LEVEL )
+'Function generate_level_walls_image:TPixmap( lev:LEVEL )
 	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
 	pixmap.ClearPixels( encode_ARGB( 0.0, 0,0,0 ))
 	Local blocking_cells:TList = lev.get_blocking_cells()
@@ -588,5 +597,6 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 	Next
 	Local img:TImage = LoadImage( pixmap )
 	Return img
+	'Return pixmap
 End Function
 

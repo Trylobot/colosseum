@@ -177,7 +177,7 @@ Function find_files:TList( path$, ext$ = "" )
 End Function
 '______________________________________________________________________________
 Function save_pixmap_to_file( px:TPixmap )
-	Local file_prefix$ = "screenshot"
+	Local file_prefix$ = "screenshot_"
 	Local dir$[] = LoadDir( user_path )
 	'find the highest unused screenshot number
 	Local high% = 1
@@ -188,7 +188,7 @@ Function save_pixmap_to_file( px:TPixmap )
 		EndIf
 	Next
 	'build path
-	Local path$ = user_path + file_prefix + pad( high, 4, "0" ) + ".png"
+	Local path$ = user_path + file_prefix + pad( high, 3, "0" ) + ".png"
 	'save png
 	SavePixmapPNG( px, path )
 End Function

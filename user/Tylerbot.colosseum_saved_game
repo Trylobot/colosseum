@@ -1,0 +1,9 @@
+{
+	profile_name: "Tylerbot",
+	inventory: [ 0 ],
+	input_method: 2,
+	current_level: "data/debug.colosseum_level",
+	cash: 2150,
+	kills: 14,
+	selected_inventory_index: 0
+}

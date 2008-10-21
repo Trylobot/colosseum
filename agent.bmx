@@ -795,12 +795,18 @@ Type COMPLEX_AGENT Extends AGENT
 		SetRotation( ang )
 		'tracks
 		If right_track <> Null And left_track <> Null
-			left_track.scale = scale
+			left_track.red = red
+			left_track.green = green
+			left_track.blue = blue
 			left_track.alpha = alpha
+			left_track.scale = scale
 			left_track.draw()
 			
-			right_track.scale = scale
+			right_track.red = red
+			right_track.green = green
+			right_track.blue = blue
 			right_track.alpha = alpha
+			right_track.scale = scale
 			right_track.draw()
 		End If
 		'chassis
@@ -1391,16 +1397,16 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						If Abs(diff) <= 3.000
 							'fire turret(s)
 							'switch weapon preference based on range; short -> m.gun, long -> cannon
-							If dist_to_target <= 250
+							If dist_to_target > 250
+								avatar.fire( 0 )
+							Else 'dist_to_target <= 250
 								'wait for cooldown
 								If FLAG_waiting And TURRET( avatar.turret_list.ValueAtIndex( 1 )).cur_heat <= 0.25*TURRET( avatar.turret_list.ValueAtIndex( 1 )).max_heat
 									FLAG_waiting = False
-								Else If TURRET( avatar.turret_list.First() ).overheated()
+								Else If TURRET( avatar.turret_list.ValueAtIndex( 1 )).overheated()
 									FLAG_waiting = True
 								End If
 								If Not FLAG_waiting Then avatar.fire( 1 )
-							Else 'dist_to_target > 250
-								avatar.fire( 0 )
 							End If
 							'stop aiming turrets
 							avatar.turn_turret( 0, 0.0 )
@@ -1423,6 +1429,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						Local diff# = ang_wrap( avatar.ang - TURRET( avatar.turret_list.First() ).ang )
 						If Abs(diff) <= 3.000
 							avatar.turn_turret( 0, 0.0 )
+							avatar.turn_turret( 1, 0.0 )
 						Else
 							If diff >= 0
 								avatar.turn_turret( 0, 1.0 )

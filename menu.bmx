@@ -256,6 +256,11 @@ Type MENU
 	
 	Method update( initial_update% = False )
 		If menu_id = MENU_ID_MAIN_MENU
+			If game <> Null And game.battle_in_progress
+				set_enabled( "resume", True )
+			Else
+				set_enabled( "resume", False )
+			End If
 			If profile <> Null
 				set_enabled( "quarters", True )
 				set_enabled( "save", True )
@@ -288,6 +293,7 @@ Type MENU
 				If initial_update
 					options = [ MENU_OPTION.Create( str_repeat( " ", input_box_size ), default_command, input_box, True, True )]
 					input_box = resolve_meta_variables( input_initial_value )
+					FlushKeys()
 				End If
 				If preferred_file_extension.Length > 0
 					options[0].argument = path + enforce_suffix( input_box, "." + preferred_file_extension )

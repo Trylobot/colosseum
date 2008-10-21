@@ -56,6 +56,7 @@ Type PLAYER_PROFILE
 		this_json.SetByName( "current_level", TJSONString.Create( current_level ))
 		this_json.SetByName( "cash", TJSONNumber.Create( cash ))
 		this_json.SetByName( "kills", TJSONNumber.Create( kills ))
+		this_json.SetByName( "selected_inventory_index", TJSONNumber.Create( selected_inventory_index ))
 		Return this_json
 	End Method
 End Type
@@ -68,6 +69,7 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 	prof.current_level = json.GetString( "current_level" )
 	prof.cash = json.GetNumber( "cash" )
 	prof.kills = json.GetNumber( "kills" )
+	prof.selected_inventory_index = json.GetNumber( "selected_inventory_index" )
 	Return prof
 End Function
 '______________________________________________________________________________

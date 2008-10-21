@@ -24,6 +24,9 @@ Type ENVIRONMENT
 	Field background_clean:TImage
 	Field background_dynamic:TImage
 	Field foreground:TImage
+	'Field background_clean:TPixmap
+	'Field background_dynamic:TPixmap
+	'Field foreground:TPixmap
 
 	Field lev:LEVEL 'level object from which to build the environment, read-only
 	Field pathing:PATHING_STRUCTURE 'pathfinding object for this level
@@ -145,7 +148,10 @@ Type ENVIRONMENT
 		'initialize dynamic background texture with same pixels as background clean
 		background_dynamic = TImage.Create( lev.width, lev.height, 1, DYNAMICIMAGE, 0, 0, 0 )
 		SetOrigin( 0, 0 ); SetColor( 255, 255, 255 ); SetAlpha( 1 ); SetRotation( 0 ); SetScale( 1, 1 )
-		DrawImage( background_clean, 0, 0 ); GrabImage( background_dynamic, 0, 0 )
+		DrawImage( background_clean, 0, 0 )
+		'DrawPixmap( background_clean, 0, 0 )
+		GrabImage( background_dynamic, 0, 0 )
+		'background_dynamic = GrabPixmap( 0, 0, lev.width, lev.height )
 		'doors
 		For Local sp:SPAWNER = EachIn lev.spawners
 			If sp.class = SPAWNER.class_GATED_FACTORY

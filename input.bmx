@@ -69,17 +69,11 @@ Function get_all_input()
 				End If
 				If game.game_in_progress
 					menu_command( COMMAND_BACK_TO_MAIN_MENU )
-					get_menu( MENU_ID_MAIN_MENU ).set_enabled( "resume", True )
-					get_menu( MENU_ID_MAIN_MENU ).set_focus( "resume" )
 					'clear keystate listeners
 					KeyHit( KEY_DOWN )
 					KeyHit( KEY_RIGHT )
 					KeyHit( KEY_UP )
 					KeyHit( KEY_LEFT )
-				Else	
-					'this branch cannot be reached with the current game logic.. I think
-					'it would imply the user is not in a menu and not in a game.
-					'if that's the case.. then where is the user? limbo? idk
 				End If
 			Else 'FLAG_in_menu
 				menu_command( COMMAND_BACK_TO_PARENT_MENU )

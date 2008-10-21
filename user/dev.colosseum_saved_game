@@ -1,0 +1,14 @@
+{
+	profile_name: "dev"
+	inventory:
+	[
+		0,
+		1,
+		2
+	],
+	input_method: 2,
+	current_level: "",
+	cash: 10000000,
+	kills: 1687,
+	selected_inventory_index: 2
+}

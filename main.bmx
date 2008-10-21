@@ -4,7 +4,7 @@ Rem
 	
 	author: Tyler W Cole, aka "Tylerbot"
 	email: mailto:tylerbot@gmail.com
-	site: http://colosseum.devjav.com
+	site: http://colosseum.devjavu.com
 	
 	-- project description --
 	This is a retro-style video game with a few modern elements, in the genre of Asteroids.
@@ -127,3 +127,4 @@ Repeat
 	Flip( 1 )
 	
 Until AppTerminate()
+If AppTerminate() Then End

@@ -248,21 +248,6 @@ Function debug_overlay()
 			
 	End If
 	
-	''turret anchors
-	'SetColor( 255, 255, 255 )
-	'SetAlpha( 0.3333 )
-	'For Local p:POINT = EachIn enemy_turret_anchors
-	'	DrawOval( p.pos_x - 4,p.pos_y - 4, 8,8 )
-	'Next
-	
-	'manipulate by keyboard
-	'If KeyHit( KEY_EQUALS )
-  '	game.load_next_level()
-	'Else If KeyHit( KEY_MINUS ) And player_level >= 1
-	'	player_level :- 1
-	'	load_level( player_level )
-	'End If
-	
 	If KeyHit( KEY_QUOTES )
 		game.spawn_pickup( mouse.x, mouse.y )
 	End If
@@ -272,10 +257,6 @@ Function debug_overlay()
 		If KeyDown( KEY_0 )
 			FLAG_dim_bg = True
 		End If
-	End If
-	
-	If KeyHit( KEY_8 )
-		
 	End If
 	
 	If KeyHit( KEY_P )
@@ -296,12 +277,13 @@ Function debug_overlay()
 		If KeyHit( KEY_ENTER )
 			If FLAG_spawn_mode = SPAWN_HOSTILES
 				spawn_agent.manage( game.hostile_agent_list )
-				spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
+				'spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
 			Else 'FLAG_spawn_mode = SPAWN_FRIENDLIES
 				spawn_agent.manage( game.friendly_agent_list )
-				spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
+				'spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
 			End If
-			Create_CONTROL_BRAIN( spawn_agent, CONTROL_TYPE_AI,, 10, 1000, 1000 ).manage( game.control_brain_list )
+			Local agent_brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( spawn_agent, CONTROL_TYPE_AI,, 10, 1000, 1000 )
+			agent_brain.manage( game.control_brain_list )
 			spawn_agent = Null
 			
 		Else If KeyHit( KEY_OPENBRACKET )
