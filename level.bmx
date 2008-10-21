@@ -89,7 +89,7 @@ Type SPAWNER
 	
 	Method count_all_squadmembers%()
 		Local count% = 0
-		For Local index% = 0 To squads.Length-1
+		For Local index% = 0 To count_squads%()-1
 			count :+ count_squadmembers( index )
 		Next
 		Return count
@@ -285,13 +285,13 @@ Type LEVEL Extends MANAGED_OBJECT
 	Method get_cell:CELL( x%, y% )
 		Local c:CELL = CELL.Create_INVALID()
 		For Local i% = 0 To vertical_divs.Length - 2
-			If x > vertical_divs[i] And x < vertical_divs[i+1]
+			If x >= vertical_divs[i] And x <= vertical_divs[i+1]
 				c.col = i
 				Exit
 			End If
 		Next
 		For Local i% = 0 To horizontal_divs.Length - 2
-			If y > horizontal_divs[i] And y < horizontal_divs[i+1]
+			If y >= horizontal_divs[i] And y <= horizontal_divs[i+1]
 				c.row = i
 				Exit
 			End If

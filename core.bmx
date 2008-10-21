@@ -77,6 +77,7 @@ End Function
 Function play_level( level_file_path$, player_archetype% )
 	main_game = Create_ENVIRONMENT( True )
 	Local success% = main_game.load_level( level_file_path )
+	main_game.level_enemies_killed = 0
 	If success
 		main_game.game_in_progress = True
 		Local player:COMPLEX_AGENT = create_player( player_archetype )
@@ -85,6 +86,7 @@ Function play_level( level_file_path$, player_archetype% )
 		main_game.respawn_player()
 		FLAG_in_menu = False
 		FLAG_in_shop = False
+		main_game.waiting_for_player_to_enter_arena = True
 	Else
 		main_game = Null
 	End If

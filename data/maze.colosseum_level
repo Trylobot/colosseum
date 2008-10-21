@@ -369,18 +369,15 @@
 		},
 		{
 			class: 1,
-			squads: [
-				[
+			squads: [ [
+					8,
+					8,
+					8,
 					8,
 					8
-				],
-				[
-					8,
-					8
-				]
-			],
+				] ],
 			pos: {
-				pos_x: 50,
+				pos_x: 65,
 				pos_y: 285,
 				ang: 0,
 				vel_x: 0,
@@ -390,32 +387,23 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: [
-				1000,
-				2000
-			],
+			delay_time: [ 15000 ],
 			alignment: 2
 		},
 		{
 			class: 1,
-			squads: [
-				[
-					8,
-					8
-				],
-				[
-					8,
-					8,
-					8,
-					8
-				],
-				[
-					3,
-					3
-				]
-			],
+			squads: [ [
+					7,
+					7,
+					7,
+					7,
+					7,
+					7,
+					7,
+					7
+				] ],
 			pos: {
-				pos_x: 360,
+				pos_x: 350,
 				pos_y: 560,
 				ang: -180,
 				vel_x: 0,
@@ -425,31 +413,18 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: [
-				2000,
-				5000,
-				500
-			],
+			delay_time: [ 0 ],
 			alignment: 2
 		},
 		{
 			class: 1,
-			squads: [
-				[
-					7,
-					7
-				],
-				[
-					7,
-					7
-				],
-				[
-					3,
-					3
-				]
-			],
+			squads: [ [
+					9,
+					9,
+					9
+				] ],
 			pos: {
-				pos_x: 570,
+				pos_x: 555,
 				pos_y: 265,
 				ang: -180,
 				vel_x: 0,
@@ -459,11 +434,7 @@
 				acc_y: 0,
 				ang_acc: 0
 			},
-			delay_time: [
-				0,
-				1000,
-				5000
-			],
+			delay_time: [ 25000 ],
 			alignment: 2
 		},
 		{

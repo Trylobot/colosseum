@@ -175,9 +175,7 @@ Type ENVIRONMENT
 			spawn_counter[i] = 0
 		Next
 		'flags
-		waiting_for_player_to_enter_arena = True
 		level_enemy_count = lev.enemy_count()
-		level_enemies_killed = 0
 		'indicate success to caller
 		Return True
 	End Method
