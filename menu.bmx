@@ -256,17 +256,26 @@ Type MENU
 	
 	Method update( initial_update% = False )
 		If menu_id = MENU_ID_MAIN_MENU
-			If game <> Null And game.battle_in_progress
+			'profile dependent options
+			If profile <> Null 'loaded
+				set_enabled( "loading bay", True )
+				set_enabled( "save", True )
+			Else 'not loaded
+				set_enabled( "loading bay", False )
+				set_enabled( "save", False )
+			End If
+			'main_game dependent options
+			If main_game <> Null 'main_game started
 				set_enabled( "resume", True )
+				set_enabled( "loading bay", False ) 'Overwrite previous "loading bay" setting
 			Else
 				set_enabled( "resume", False )
+				'option "loading bay" setting unchanged
 			End If
-			If profile <> Null
-				set_enabled( "quarters", True )
-				set_enabled( "save", True )
-			Else 'profile == Null
-				set_enabled( "quarters", False )
-				set_enabled( "save", False )
+			
+			If( initial_update )
+				focus = -1
+				increment_focus()
 			End If
 		End If
 		Select menu_type
@@ -418,7 +427,7 @@ reset_index()
 
 all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MAIN_MENU, MENU.VERTICAL_LIST, menu_margin,, ..
 [	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, False ), ..
-	MENU_OPTION.Create( "quarters", COMMAND_SHOP,, True, False ), ..
+	MENU_OPTION.Create( "loading bay", COMMAND_SHOP,, True, False ), ..
 	MENU_OPTION.Create( "new", COMMAND_NEW_GAME,, True, True ), ..
 	MENU_OPTION.Create( "save", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_GAME), True, False ), ..
 	MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_GAME), True, True ), ..

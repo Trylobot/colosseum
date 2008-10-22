@@ -21,14 +21,15 @@ Function draw_all_graphics()
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 
-	If Not FLAG_in_menu And Not FLAG_in_shop
-		draw_game()
-	Else
-		If FLAG_in_menu
-			draw_main_screen()
-		Else If FLAG_in_shop
-			draw_shop()
+	If FLAG_in_menu
+		draw_main_screen()
+		If game <> Null
+			draw_game()
 		End If
+	Else If FLAG_in_shop
+		draw_shop()
+	Else If game <> Null
+		draw_game()
 	End If
 	
 End Function
@@ -81,15 +82,11 @@ Function draw_game()
 	
 	'hostile agents
 	For Local hostile:COMPLEX_AGENT = EachIn game.hostile_agent_list
-		hostile.draw( False, 255, 212, 212 ) 'red tint for enemies
+		hostile.draw()
 	Next
 	'friendly agents
 	For Local friendly:COMPLEX_AGENT = EachIn game.friendly_agent_list
-		If get_player_id() = friendly.id
-			friendly.draw() 'player has no tint
-		Else
-			friendly.draw( False, 212, 212, 255 ) 'blue tint for non-player friendlies
-		End If
+		friendly.draw()
 	Next
 	
 	'foreground particles

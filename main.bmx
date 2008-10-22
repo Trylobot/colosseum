@@ -77,15 +77,17 @@ Global fps%, last_frame_ts%, time_count%, frame_count%
 ?
 Repeat
 	
-	get_all_input()
-	
 	'game object
 	If FLAG_in_menu
 		game = ai_menu_game
+	Else If FLAG_in_shop
+		game = Null
 	Else
 		game = main_game
 	End If
 
+	get_all_input()
+	
 	'decouple simulation speed from draw speed
 	If (now() - before) > (1000/60) ' = 60 hertz
 		before = now()

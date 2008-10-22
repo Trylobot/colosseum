@@ -121,6 +121,10 @@ Type ENVIRONMENT
 		control_brain_list.Clear()
 		friendly_door_list.Clear()
 		hostile_door_list.Clear()
+		player_engine_running = False
+		player_spawn_point = Null
+		player_brain = Null
+		player = Null
 	End Method
 	
 	Method load_level%( path$ )

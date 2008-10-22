@@ -11,6 +11,57 @@ Function update_all_objects()
 	'update body
 	If game <> Null
 		
+		update_flags()
+		
+		'spawner system
+		If game.spawn_enemies
+			game.spawning_system_update()
+		End If
+		
+		'pickups
+		For Local pkp:PICKUP = EachIn game.pickup_list
+			pkp.update()
+		Next
+		'projectiles
+		For Local proj:PROJECTILE = EachIn game.projectile_list
+			proj.update()
+		Next	
+		'particles
+		For Local list:TList = EachIn game.particle_lists
+			For Local part:PARTICLE = EachIn list
+				part.update()
+				part.prune()
+			Next
+		Next
+
+		'control brains
+		For Local cb:CONTROL_BRAIN = EachIn game.control_brain_list
+			cb.update()
+		Next
+		'agents
+		For Local list:TList = EachIn game.agent_lists
+			For Local ag:COMPLEX_AGENT = EachIn list
+				ag.update()
+			Next
+		Next
+		
+		'environmental widgets
+		For Local w:WIDGET = EachIn game.environmental_widget_list
+			w.update()
+		Next
+		
+		'retain particles (?)
+		If game.retained_particle_list_count > retained_particle_limit
+			FLAG_retain_particles = True
+		End If
+		
+	End If
+	
+End Function
+'______________________________________________________________________________
+'Game State Flags, Mouse, and Drawing Origin Update
+Function update_flags()
+	If game <> Null
 		'player-related stuff
 		If game.human_participation
 			'local origin
@@ -59,58 +110,11 @@ Function update_all_objects()
 			End If
 			'if the battle is over, and player has exited the arena
 			If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena And (game.player.dist_to( game.player_spawn_point ) < SPAWN_POINT_POLITE_DISTANCE) 'game.point_inside_arena( game.player )
-				game.waiting_for_player_to_exit_arena = False
-				game.player_in_locker = True
-				'FLAG_player_engine_running = False
-				game.level_passed_ts = now()
-				'go back to shop
 				FLAG_in_shop = True
+				game.clear()
 			End If
 		End If
-		
-		'spawner system
-		If game.spawn_enemies
-			game.spawning_system_update()
-		End If
-		
-		'pickups
-		For Local pkp:PICKUP = EachIn game.pickup_list
-			pkp.update()
-		Next
-		'projectiles
-		For Local proj:PROJECTILE = EachIn game.projectile_list
-			proj.update()
-		Next	
-		'particles
-		For Local list:TList = EachIn game.particle_lists
-			For Local part:PARTICLE = EachIn list
-				part.update()
-				part.prune()
-			Next
-		Next
-
-		'control brains
-		For Local cb:CONTROL_BRAIN = EachIn game.control_brain_list
-			cb.update()
-		Next
-		'agents
-		For Local list:TList = EachIn game.agent_lists
-			For Local ag:COMPLEX_AGENT = EachIn list
-				ag.update()
-			Next
-		Next
-		
-		'environmental widgets
-		For Local w:WIDGET = EachIn game.environmental_widget_list
-			w.update()
-		Next
-		
-		'retain particles (?)
-		If game.retained_particle_list_count > retained_particle_limit
-			FLAG_retain_particles = True
-		End If
-		
 	End If
-	
 End Function
+
 

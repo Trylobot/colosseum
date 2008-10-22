@@ -40,7 +40,7 @@ Function draw_shop()
 	x = shop_margin; y = shop_margin
 	SetColor( 255, 255, 255 )
 	SetImageFont( get_font( shop_option_font_name_title )); h = GetImageFont().Height() - 1
-	DrawText_with_glow( "Quarters", x, y ); y :+ 1.25*h
+	DrawText_with_glow( "Loading Bay", x, y ); y :+ 1.25*h
 	
 	SetImageFont( get_font( shop_option_font_name_selected )); h = GetImageFont().Height() - 1
 	SetColor( 96, 255, 96 )
@@ -108,19 +108,6 @@ Function draw_shop_option( str$, selected% = False, x%, y% Var )
 End Function
 '______________________________________________________________________________
 Function get_shop_input()
-	'choose option
-	If KeyHit( KEY_DOWN )
-		shop_option :+ 1
-		If shop_option >= shop_option_count
-			shop_option = 0
-		End If
-	End If
-	If KeyHit( KEY_UP )
-		shop_option :- 1
-		If shop_option < 0
-			shop_option = shop_option_count - 1
-		End If
-	End If
 	'execute option
 	If KeyHit( KEY_ENTER )
 		Select shop_option
@@ -159,8 +146,21 @@ Function get_shop_input()
 			
 		End Select
 	End If
-	'text input
-	If text_input_mode
+	If Not text_input_mode
+		'choose option
+		If KeyHit( KEY_DOWN )
+			shop_option :+ 1
+			If shop_option >= shop_option_count
+				shop_option = 0
+			End If
+		End If
+		If KeyHit( KEY_UP )
+			shop_option :- 1
+			If shop_option < 0
+				shop_option = shop_option_count - 1
+			End If
+		End If
+	Else 'text_input_mode
 		profile.profile_name = shop_console.update( profile.profile_name )
 	End If
 	
