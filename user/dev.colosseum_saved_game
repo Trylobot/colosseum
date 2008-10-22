@@ -1,9 +1,13 @@
 {
 	profile_name: "dev",
-	inventory: null,
+	inventory: [
+		0,
+		1,
+		2
+	],
 	input_method: 2,
-	current_level: null,
-	cash: 10000000,
+	current_level: "data/debug.colosseum_level",
+	cash: 9987000,
 	kills: 1000,
-	selected_inventory_index: 0
+	selected_inventory_index: 2
 }

@@ -121,6 +121,9 @@ Type ENVIRONMENT
 		control_brain_list.Clear()
 		friendly_door_list.Clear()
 		hostile_door_list.Clear()
+		
+		battle_in_progress = False
+		game_in_progress = False
 		player_engine_running = False
 		player_spawn_point = Null
 		player_brain = Null

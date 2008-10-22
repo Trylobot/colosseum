@@ -58,8 +58,8 @@ Function get_all_input()
 	'music enable/disable
 	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
 	
-	'game-specific input
-	If game <> Null
+	'player's game specific input
+	If game <> Null And game.human_participation
 
 		If KeyHit( KEY_ESCAPE ) 'show menu
 			If Not FLAG_in_menu

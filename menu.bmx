@@ -100,6 +100,7 @@ Type MENU
 	
 	Field options:MENU_OPTION[] 'array of options in this menu
 	Field static_option_count% 'number of static options (applicable for menus with dynamic lists, such as file chooser)
+	Field default_focus% 'index of default option
 	Field focus% 'index of currently focused option
 	
 	Field path$ 'current directory; this menu will display files from it (if applicable)
@@ -118,7 +119,7 @@ Type MENU
 	End Method
 	
 	Function Create:MENU( ..
-	name$, red%, green%, blue%, menu_id%, menu_type%, margin%, focus% = -1, options:MENU_OPTION[] = Null, ..
+	name$, red%, green%, blue%, menu_id%, menu_type%, margin%, default_focus% = -1, options:MENU_OPTION[] = Null, ..
 	path$ = "", preferred_file_extension$ = "", default_command% = -1, default_argument:Object = Null, ..
 	input_box_size% = 0, input_initial_value$ = "" )
 		Local m:MENU = New MENU
@@ -127,12 +128,9 @@ Type MENU
 		m.menu_id = menu_id
 		m.menu_type = menu_type
 		m.margin = margin
-		m.focus = focus
+		m.focus = default_focus
 		m.options = options[..]
 		m.static_option_count = options.Length
-		If m.focus = -1
-			m.increment_focus()
-		End If
 		m.path = path
 		m.preferred_file_extension = preferred_file_extension
 		m.default_command = default_command
@@ -255,6 +253,10 @@ Type MENU
 	End Method
 	
 	Method update( initial_update% = False )
+		If initial_update
+			focus = default_focus
+		End If
+		
 		If menu_id = MENU_ID_MAIN_MENU
 			'profile dependent options
 			If profile <> Null 'loaded
@@ -265,19 +267,22 @@ Type MENU
 				set_enabled( "save", False )
 			End If
 			'main_game dependent options
-			If main_game <> Null 'main_game started
+			If main_game <> Null And main_game.game_in_progress 'main_game started
 				set_enabled( "resume", True )
-				set_enabled( "loading bay", False ) 'Overwrite previous "loading bay" setting
+				set_enabled( "loading bay", False )
 			Else
 				set_enabled( "resume", False )
 				'option "loading bay" setting unchanged
 			End If
-			
-			If( initial_update )
-				focus = -1
+		End If
+
+		If Not focus_is_valid()
+			focus = default_focus
+			If Not focus_is_valid()
 				increment_focus()
 			End If
 		End If
+
 		Select menu_type
 			
 			Case VERTICAL_LIST_WITH_FILES
@@ -294,9 +299,6 @@ Type MENU
 					i :+ 1
 				Next
 				options = new_options
-				If initial_update
-					focus = 0
-				End If
 				
 			Case TEXT_INPUT_DIALOG
 				If initial_update
@@ -319,6 +321,11 @@ Type MENU
 				End If
 			
 		End Select
+	End Method
+	
+	Method focus_is_valid%()
+		Local f_opt:MENU_OPTION = get_focus()
+		Return f_opt <> Null And f_opt.visible And f_opt.enabled
 	End Method
 	
 	Method get_focus:MENU_OPTION()
@@ -350,25 +357,22 @@ Type MENU
 	End Method
 	
 	Method increment_focus()
-		Local last_focus% = focus
-		focus :+ 1
-		wrap_focus()
-		While focus <> last_focus And get_focus() <> Null And Not get_focus().enabled
-			focus :+ 1
-			wrap_focus()
-		End While
+		move_focus( 1 )
 	End Method
 	
 	Method decrement_focus()
-		Local last_focus% = focus
-		focus :- 1
-		wrap_focus()
-		While focus <> last_focus And get_focus() <> Null And Not get_focus().enabled
-			focus :- 1
-			wrap_focus()
-		End While
+		move_focus( -1 )
 	End Method
 	
+	Method move_focus( direction% = 0 )
+		Local count% = 0
+		Repeat
+			focus :+ Sgn( direction )
+			wrap_focus()
+			count :+ 1
+		Until count >= options.Length Or focus_is_valid()
+	End Method
+
 	Method wrap_focus()
 		If focus > (options.Length - 1)
 			focus = 0
