@@ -62,13 +62,20 @@ Type MENU_OPTION
 End Type
 
 '______________________________________________________________________________
+Const ARROW_UP% = 0
 Const ARROW_RIGHT% = 1
-Const ARROW_LEFT% = 2
+Const ARROW_DOWN% = 2
+Const ARROW_LEFT% = 3
+Global border_width% = 3
 
 Function draw_arrow( arrow_type%, x#, y#, height% )
 	Select arrow_type
+		Case ARROW_UP
+			DrawPoly( [ x,y, x,y+height, x+height/2,y+height/2 ])
 		Case ARROW_RIGHT
 			DrawPoly( [ x,y, x,y+height, x+height/2,y+height/2 ])
+		Case ARROW_DOWN
+			DrawPoly( [ x,y, x,y+height, x-height/2,y+height/2 ])
 		Case ARROW_LEFT
 			DrawPoly( [ x,y, x,y+height, x-height/2,y+height/2 ])
 	End Select
@@ -76,7 +83,8 @@ End Function
 '______________________________________________________________________________
 Type MENU
 	Global VERTICAL_LIST% = 10
-	Global VERTICAL_LIST_WITH_FILES% = 11
+	Global VERTICAL_LIST_WITH_SUBSECTION% = 11
+	Global VERTICAL_LIST_WITH_FILES% = 12
 	Global TEXT_INPUT_DIALOG% = 20
 	Global CONFIRMATION_DIALOG% = 21
 	Global NOTIFICATION_DIALOG% = 22
@@ -102,6 +110,8 @@ Type MENU
 	Field static_option_count% 'number of static options (applicable for menus with dynamic lists, such as file chooser)
 	Field default_focus% 'index of default option
 	Field focus% 'index of currently focused option
+	Field scroll_offset% 'index of element at top of dynamic scroll window (if applicable)
+	Field dynamic_options_displayed% 'size of dynamic scroll window
 	
 	Field path$ 'current directory; this menu will display files from it (if applicable)
 	Field preferred_file_extension$ 'files of this type will be more visible to the user (if applicable)
@@ -119,9 +129,14 @@ Type MENU
 	End Method
 	
 	Function Create:MENU( ..
-	name$, red%, green%, blue%, menu_id%, menu_type%, margin%, default_focus% = -1, options:MENU_OPTION[] = Null, ..
+	name$, ..
+	red%, green%, blue%, ..
+	menu_id%, menu_type%, ..
+	margin%, default_focus% = -1, ..
 	path$ = "", preferred_file_extension$ = "", default_command% = -1, default_argument:Object = Null, ..
-	input_box_size% = 0, input_initial_value$ = "" )
+	input_box_size% = 0, input_initial_value$ = "", ..
+	dynamic_options_displayed% = 1, ..
+	options:MENU_OPTION[] = Null )
 		Local m:MENU = New MENU
 		m.name = name
 		m.red = red; m.green = green; m.blue = blue
@@ -129,7 +144,7 @@ Type MENU
 		m.menu_type = menu_type
 		m.margin = margin
 		m.focus = default_focus
-		m.options = options[..]
+		m.dynamic_options_displayed = dynamic_options_displayed
 		m.static_option_count = options.Length
 		m.path = path
 		m.preferred_file_extension = preferred_file_extension
@@ -139,6 +154,7 @@ Type MENU
 		m.input_box_size = input_box_size
 		m.input_listener = New CONSOLE
 		m.input_initial_value = input_initial_value
+		m.options = options[..]
 		Return m
 	End Function
 	
@@ -147,18 +163,21 @@ Type MENU
 		menu_command( opt.command_code, opt.argument )
 	End Method
 	
+	Method add_option( opt:MENU_OPTION )
+		options = options[..options.Length+1]
+		options[options.Length-1] = opt
+	End Method
+	
 	Method draw( x%, y%, border% = True, dark_overlay_alpha# = 0 )
 		Local cx% = x, cy% = y, opt:MENU_OPTION
 		
-		Local border_width% = 3
 		Local text_height_factor# = 0.70
-		
 		Local width% = 0, height% = 0
 		
 		'calculate dimensions
 		Local i% = 0
 		For Local opt:MENU_OPTION = EachIn options
-			If menu_type = VERTICAL_LIST_WITH_FILES And i >= static_option_count
+			If is_scrollable( menu_type ) And i >= static_option_count
 				SetImageFont( menu_font_small )
 				If i = static_option_count
 					height :+ 0.5*( text_height_factor*GetImageFont().Height() + margin )
@@ -170,7 +189,9 @@ Type MENU
 			If (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width) > width
 				width = (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width)
 			End If
-			height :+ (text_height_factor*GetImageFont().Height() + margin)
+			If opt.visible And option_is_in_window( i )
+				height :+ (text_height_factor*GetImageFont().Height() + margin)
+			End If
 			i :+ 1
 		Next
 		SetImageFont( menu_font )
@@ -197,7 +218,7 @@ Type MENU
 		cx :+ border_width + margin; cy :+ border_width + 2*margin + text_height_factor*GetImageFont().Height()
 		For Local i% = 0 To options.Length-1
 			'set font for option
-			If menu_type = VERTICAL_LIST_WITH_FILES And i >= static_option_count
+			If is_scrollable( menu_type ) And i >= static_option_count
 				SetImageFont( menu_font_small )
 				If i = static_option_count
 					SetColor( 64, 64, 64 )
@@ -209,27 +230,43 @@ Type MENU
 				SetImageFont( menu_font )
 			End If
 			opt = options[i]
-			If opt <> Null
-				Local rgb_val%, glow% = False
-				If i = focus
-					rgb_val = 255
-					glow = True
-				Else If opt.enabled And opt.visible
-					rgb_val = 127
-				Else If opt.visible
-					rgb_val = 64
-				Else
-					rgb_val = 0
+			If opt.visible And option_is_in_window( i )
+				If opt <> Null
+					Local rgb_val%, glow% = False
+					If i = focus
+						rgb_val = 255
+						glow = True
+					Else If opt.enabled And opt.visible
+						rgb_val = 127
+					Else If opt.visible
+						rgb_val = 64
+					End If
+					'draw the option
+					opt.draw( resolve_meta_variables( opt.name ), cx,cy, glow, rgb_val,rgb_val,rgb_val ) 
 				End If
-				'draw the option
-				opt.draw( resolve_meta_variables( opt.name ), cx, cy, glow, rgb_val, rgb_val,rgb_val ) 
+				cy :+ text_height_factor*GetImageFont().Height() + margin
 			End If
-			cy :+ text_height_factor*GetImageFont().Height() + margin
 		Next
 		
-		cx = x + margin
-		cy = y + 2*margin + text_height_factor*title_font.Height()
+		'draw scrollable subsection visual cues
+		If is_scrollable( menu_type )
+			cx = width
+			cy = y + 2*margin + text_height_factor*title_font.Height()
+			Local w% = 20
+			Local h% = height
+			Local offset# = (h-2*border_width)*Float(scroll_offset)/Float(options.Length-static_option_count)
+			Local size# = (h-2*border_width)*Float(dynamic_options_displayed)/Float(options.Length-static_option_count)
+			SetColor( 64, 64, 64 )
+			DrawRect( cx, cy, w, h )
+			SetColor( 0, 0, 0 )
+			DrawRect( cx+border_width, cy+border_width, w-2*border_width, h-2*border_width )
+			SetColor( 64, 64, 64 )
+			DrawRect( cx+border_width, cy+border_width + offset, w-2*border_width, size )
+		End If
+		
 		If menu_type = TEXT_INPUT_DIALOG
+			cx = x + margin
+			cy = y + 2*margin + text_height_factor*title_font.Height()
 			'draw input box contents
 			SetColor( 255, 255, 255 )
 			DrawText( input_box, cx, cy )
@@ -356,12 +393,24 @@ Type MENU
 		Return -1
 	End Method
 	
+	Method option_is_in_window%( index% )
+		Return ..
+			index < static_option_count ..
+			Or (index >= static_option_count + scroll_offset And index <= static_option_count + scroll_offset + dynamic_options_displayed-1)
+	End Method
+	
 	Method increment_focus()
 		move_focus( 1 )
+		If focus > static_option_count + scroll_offset
+			scroll_offset :+ 1
+		End If
 	End Method
 	
 	Method decrement_focus()
 		move_focus( -1 )
+		If focus <= static_option_count + scroll_offset + dynamic_options_displayed-1
+			scroll_offset :- 1
+		End If
 	End Method
 	
 	Method move_focus( direction% = 0 )
@@ -382,6 +431,11 @@ Type MENU
 	End Method
 	
 End Type
+
+Function is_scrollable%( menu_type% )
+	Return (menu_type = MENU.VERTICAL_LIST_WITH_FILES Or menu_type = MENU.VERTICAL_LIST_WITH_SUBSECTION)
+End Function
+
 '______________________________________________________________________________
 Const COMMAND_NULL% = 0
 Const COMMAND_SHOW_CHILD_MENU% = 50
@@ -416,7 +470,7 @@ Const MENU_ID_INPUT_LEVEL_FILE_NAME% = 460
 Const MENU_ID_CONFIRM_ERASE_LEVEL% = 470
 Const MENU_ID_OPTIONS% = 500
 Const MENU_ID_OPTIONS_VIDEO% = 510
-Const MENU_ID_INPUT_RESOLUTION% = 511
+Const MENU_ID_CHOOSE_RESOLUTION% = 511
 Const MENU_ID_INPUT_REFRESH_RATE% = 512
 Const MENU_ID_INPUT_BIT_DEPTH% = 513
 Const MENU_ID_OPTIONS_AUDIO% = 520
@@ -426,10 +480,11 @@ Const MENU_ID_EDITORS% = 600
 Const MENU_ID_LEVEL_EDITOR% = 610
 
 Global menu_margin% = 8
+Global dynamic_subsection_window_size% = 8
 Global all_menus:MENU[50]
 reset_index()
 
-all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MAIN_MENU, MENU.VERTICAL_LIST, menu_margin,, ..
+all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MAIN_MENU, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 [	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, False ), ..
 	MENU_OPTION.Create( "loading bay", COMMAND_SHOP,, True, False ), ..
 	MENU_OPTION.Create( "new", COMMAND_NEW_GAME,, True, True ), ..
@@ -439,69 +494,88 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 	MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_EDITORS), True, True ), ..
 	MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ])
 	
-	all_menus[postfix_index()] = MENU.Create( "save game", 255, 96, 127, MENU_ID_SAVE_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
+	all_menus[postfix_index()] = MENU.Create( "save game", 255, 96, 127, MENU_ID_SAVE_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, user_path, saved_game_file_ext, COMMAND_SAVE_GAME,,,, dynamic_subsection_window_size, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-		MENU_OPTION.Create( "[new file]", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_GAME_FILE_NAME), True, True )], ..
-		user_path, saved_game_file_ext, COMMAND_SAVE_GAME )
+		MENU_OPTION.Create( "[new file]", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_GAME_FILE_NAME), True, True )])
 
-		all_menus[postfix_index()] = MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_GAME_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,,, user_path, saved_game_file_ext, COMMAND_SAVE_GAME,, 60, "%%profile.profile_name%%"  )
+		all_menus[postfix_index()] = MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_GAME_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,, user_path, saved_game_file_ext, COMMAND_SAVE_GAME,, 60, "%%profile.profile_name%%"  )
 	
-	all_menus[postfix_index()] = MENU.Create( "load game", 96, 255, 127, MENU_ID_LOAD_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
-	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ], ..
-		user_path, saved_game_file_ext, COMMAND_LOAD_GAME ) 'COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CONFIRM_LOAD_GAME) )
+	all_menus[postfix_index()] = MENU.Create( "load game", 96, 255, 127, MENU_ID_LOAD_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, user_path, saved_game_file_ext, COMMAND_LOAD_GAME,,,, dynamic_subsection_window_size, ..
+	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ])
 
 		'all_menus[postfix_index()] = MENU.Create( "abandon current game?", 255, 64, 64, MENU_ID_CONFIRM_LOAD_GAME, MENU.CONFIRMATION_DIALOG, menu_margin, 1,,,, COMMAND_LOAD_GAME )
 
-	all_menus[postfix_index()] = MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU.VERTICAL_LIST, menu_margin,, ..
+	all_menus[postfix_index()] = MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 		MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_VIDEO), True, True ), ..
 		MENU_OPTION.Create( "audio options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_AUDIO), True, False ), ..
 		MENU_OPTION.Create( "control options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_CONTROLS), True, True ), ..
 		MENU_OPTION.Create( "game options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_GAME), True, False ) ])
 
-		all_menus[postfix_index()] = MENU.Create( "video options", 96, 96, 255, MENU_ID_OPTIONS_VIDEO, MENU.VERTICAL_LIST, menu_margin,, ..
+		all_menus[postfix_index()] = MENU.Create( "video options", 212, 96, 226, MENU_ID_OPTIONS_VIDEO, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "fullscreen    %%fullscreen%%", COMMAND_SETTINGS_FULLSCREEN,, True, True ), ..
-			MENU_OPTION.Create( "resolution    %%window_w%% x %%window_h%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_RESOLUTION), True, True ), ..
+			MENU_OPTION.Create( "resolution    %%window_w%% x %%window_h%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CHOOSE_RESOLUTION), True, True ), ..
 			MENU_OPTION.Create( "refresh rate  %%refresh_rate%% Hz", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_REFRESH_RATE), True, True ), ..
 			MENU_OPTION.Create( "bit depth     %%bit_depth%% bpp", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_BIT_DEPTH), True, True ), ..
 			MENU_OPTION.Create( "apply", COMMAND_SETTINGS_APPLY_ALL,, False, False ) ])
 			
-			all_menus[postfix_index()] = MENU.Create( "input resolution", 255, 255, 255, MENU_ID_INPUT_RESOLUTION, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,, COMMAND_SETTINGS_RESOLUTION,, 20, "%%window_w%% x %%window_h%%"  )
+			all_menus[postfix_index()] = MENU.Create( "choose resolution", 255, 255, 255, MENU_ID_CHOOSE_RESOLUTION, MENU.VERTICAL_LIST_WITH_SUBSECTION, menu_margin,,,,,,,, dynamic_subsection_window_size, ..
+			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ])
+			Local m:MENU = get_menu(MENU_ID_CHOOSE_RESOLUTION)
+			m.static_option_count = 1
+			Local modes:TGraphicsMode[] = GraphicsModes()
+			For Local i% = 0 To modes.Length-1
+				Local unique% = True
+				For Local j% = 0 To m.options.Length-1
+					Local opt:MENU_OPTION = m.options[j]
+					If i > 0
+						Local arg%[]
+						If Int[](opt.argument)
+							arg = Int[](opt.argument)
+							If arg[0] = modes[i].width And arg[1] = modes[i].height
+								unique = False
+								Exit
+							End If
+						End If
+					End If
+				Next
+				If i = 0 Or unique
+					m.add_option( MENU_OPTION.Create( "" + modes[i].width + " x " + modes[i].height, COMMAND_SETTINGS_RESOLUTION, [ modes[i].width, modes[i].height ], True, True ))
+				End If
+			Next
 			
-			all_menus[postfix_index()] = MENU.Create( "input refresh rate", 255, 255, 255, MENU_ID_INPUT_REFRESH_RATE, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,, COMMAND_SETTINGS_REFRESH_RATE,, 10, "%%refresh_rate%%"  )
+			all_menus[postfix_index()] = MENU.Create( "input refresh rate", 255, 255, 255, MENU_ID_INPUT_REFRESH_RATE, MENU.TEXT_INPUT_DIALOG, menu_margin,,,, COMMAND_SETTINGS_REFRESH_RATE,, 10, "%%refresh_rate%%"  )
 			
-			all_menus[postfix_index()] = MENU.Create( "input bit depth", 255, 255, 255, MENU_ID_INPUT_BIT_DEPTH, MENU.TEXT_INPUT_DIALOG, menu_margin,,,,, COMMAND_SETTINGS_BIT_DEPTH,, 10, "%%bit depth%%"  )
+			all_menus[postfix_index()] = MENU.Create( "input bit depth", 255, 255, 255, MENU_ID_INPUT_BIT_DEPTH, MENU.TEXT_INPUT_DIALOG, menu_margin,,,, COMMAND_SETTINGS_BIT_DEPTH,, 10, "%%bit_depth%%"  )
 		
-		all_menus[postfix_index()] = MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU.VERTICAL_LIST, menu_margin,, ..
+		all_menus[postfix_index()] = MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(INPUT_KEYBOARD), True, True ), ..
 			MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(INPUT_KEYBOARD_MOUSE_HYBRID), True, True ), ..
 			MENU_OPTION.Create( "xbox 360 controller", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(INPUT_XBOX_360_CONTROLLER), True, False ) ])
 	
-	all_menus[postfix_index()] = MENU.Create( "editors", 196, 196, 196, MENU_ID_EDITORS, MENU.VERTICAL_LIST, menu_margin,, ..
+	all_menus[postfix_index()] = MENU.Create( "editors", 196, 196, 196, MENU_ID_EDITORS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 		MENU_OPTION.Create( "level editor", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LEVEL_EDITOR), True, True ) ])
 		
-		all_menus[postfix_index()] = MENU.Create( "level editor", 96, 127, 255, MENU_ID_LEVEL_EDITOR, MENU.VERTICAL_LIST, menu_margin, 1, ..
+		all_menus[postfix_index()] = MENU.Create( "level editor", 96, 127, 255, MENU_ID_LEVEL_EDITOR, MENU.VERTICAL_LIST, menu_margin, 1,,,,,,,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "edit ~q%%level_editor_cache.name%%~q", COMMAND_EDIT_LEVEL, level_editor_cache, True, True ), ..
 			MENU_OPTION.Create( "save current", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_LEVEL), True, True ), ..
 			MENU_OPTION.Create( "load level", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_LEVEL), True, True ), ..
 			MENU_OPTION.Create( "new level", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CONFIRM_ERASE_LEVEL), True, True ) ])
 			
-			all_menus[postfix_index()] = MENU.Create( "save level", 255, 96, 127, MENU_ID_SAVE_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
+			all_menus[postfix_index()] = MENU.Create( "save level", 255, 96, 127, MENU_ID_SAVE_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, data_path, level_file_ext, COMMAND_SAVE_LEVEL,,,, dynamic_subsection_window_size, ..
 			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-				MENU_OPTION.Create( "[new file]", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_LEVEL_FILE_NAME), True, True )], ..
-				data_path, level_file_ext, COMMAND_SAVE_LEVEL )
+				MENU_OPTION.Create( "[new file]", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_LEVEL_FILE_NAME), True, True )])
 				
-				all_menus[postfix_index()] = MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_LEVEL_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,,, data_path, level_file_ext, COMMAND_SAVE_LEVEL,, 60, "%%level_editor_cache.name%%"  )
+				all_menus[postfix_index()] = MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_LEVEL_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,, data_path, level_file_ext, COMMAND_SAVE_LEVEL,, 60, "%%level_editor_cache.name%%"  )
 			
-			all_menus[postfix_index()] = MENU.Create( "load level", 96, 255, 127, MENU_ID_LOAD_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, ..
-			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ], ..
-				data_path, level_file_ext, COMMAND_LOAD_LEVEL )
+			all_menus[postfix_index()] = MENU.Create( "load level", 96, 255, 127, MENU_ID_LOAD_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, data_path, level_file_ext, COMMAND_LOAD_LEVEL,,,, dynamic_subsection_window_size, ..
+			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ])
 			
-			all_menus[postfix_index()] = MENU.Create( "abandon current level?", 255, 64, 64, MENU_ID_CONFIRM_ERASE_LEVEL, MENU.CONFIRMATION_DIALOG, menu_margin, 1,,,, COMMAND_NEW_LEVEL )
+			all_menus[postfix_index()] = MENU.Create( "abandon current level?", 255, 64, 64, MENU_ID_CONFIRM_ERASE_LEVEL, MENU.CONFIRMATION_DIALOG, menu_margin, 1,,, COMMAND_NEW_LEVEL )
 '______________________________________________________________________________
 Global menu_stack%[] = New Int[255]
 	menu_stack[0] = MENU_ID_MAIN_MENU
@@ -592,17 +666,10 @@ Function menu_command( command_code%, argument:Object = Null )
 			init_graphics()
 			
 		Case COMMAND_SETTINGS_RESOLUTION
-			Local user_input$[] = String(argument).Split("x")
-			If user_input.Length = 2
-				Local new_window_w% = user_input[0].ToInt()
-				Local new_window_h% = user_input[1].ToInt()
-				If GraphicsModeExists( new_window_w, new_window_h, bit_depth, refresh_rate )
-					window_w = new_window_w
-					window_h = new_window_h
-					save_settings()
-					init_graphics()
-				End If
-			End If
+			window_w = Int[](argument)[0]
+			window_h = Int[](argument)[1]
+			save_settings()
+			init_graphics()
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		
 		Case COMMAND_SETTINGS_REFRESH_RATE

@@ -6,7 +6,7 @@ EndRem
 'Program: Colosseum
 'Version: 0
 'Subversion: 2
-'Revision: 9
+'Revision: 10
 '#EndRegion &HFF
 
 
@@ -52,7 +52,7 @@ TYPE z_blide_bge2f17149_9a68_460c_a3de_03fd0d792659 Abstract
     Const Name:string = "Colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
     Const MinorVersion:Int = 2  'This Const contains the minor version number of the program
-    Const Revision:Int =  9  'This Const contains the revision number of the current program version
+    Const Revision:Int =  10  'This Const contains the revision number of the current program version
     Const VersionString:String = MajorVersion + "." + MinorVersion + "." + Revision   'This string contains the assembly version in format (MAJOR.MINOR.REVISION)
     Const AssemblyInfo:String = Name + " " + MajorVersion + "." + MinorVersion + "." + Revision   'This string represents the available assembly info.
     ?win32

@@ -109,7 +109,7 @@ Function update_flags()
 				game.spawn_enemies = False
 			End If
 			'if the battle is over, and player has exited the arena
-			If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena And (game.player.dist_to( game.player_spawn_point ) < SPAWN_POINT_POLITE_DISTANCE) 'game.point_inside_arena( game.player )
+			If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena And ( KeyDown( KEY_R ) Or (game.player.dist_to( game.player_spawn_point ) < SPAWN_POINT_POLITE_DISTANCE))
 				FLAG_in_shop = True
 				game.clear()
 			End If

@@ -75,16 +75,7 @@ Function get_all_input()
 					KeyHit( KEY_UP )
 					KeyHit( KEY_LEFT )
 				End If
-			Else 'FLAG_in_menu
-				menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			End If
-		End If
-
-		If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena And KeyDown( KEY_R )
-			game.player.pos_x = game.player_spawn_point.pos_x
-			game.player.pos_y = game.player_spawn_point.pos_y
-			game.player.ang = game.player_spawn_point.ang
-			game.player.snap_all_turrets()
 		End If
 
 	End If

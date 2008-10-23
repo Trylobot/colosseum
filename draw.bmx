@@ -112,7 +112,7 @@ Function draw_game()
 		Else If game.player_in_locker And game.waiting_for_player_to_enter_arena
 			player_msg = "[W] drive forward"
 		Else If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena
-			player_msg = "[R] return home"
+			player_msg = "[R] return to loading bay"
 		End If
 		If player_msg <> Null
 			DrawText_with_shadow( player_msg, game.player.pos_x - TextWidth( player_msg )/2, game.player.pos_y + game.player.img.height + 3 )
@@ -137,49 +137,29 @@ Function draw_game()
 			Else If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
 				DrawImage( img_help_kb_mouse, window_w/2 - img_help_kb_mouse.width/2, window_h/2 - img_help_kb_mouse.height/2 )
 			End If
-'		'help to display help
-'		Else
-'			SetImageFont( get_font( "consolas_12" ))
-'			str = "[F1] help"
-'			DrawText_with_shadow( str, game.player_spawn_point.pos_x + game.origin.x - TextWidth( str ) - 15, game.player_spawn_point.pos_y - GetImageFont().Height() )
 		End If
 	End If
 
-'	'game over indicator (if game over)
-'	If game.game_over
-'		SetColor( 0, 0, 0 )
-'		SetAlpha( 0.650 )
-'		DrawRect( 0, 0, window_w, window_h )
-'		SetRotation( -30 )
-'		SetAlpha( 0.500 )
-'		SetColor( 200, 255, 200 )
-'		SetImageFont( get_font( "consolas_bold_150" ))
-'		DrawText( "GAME OVER", 25, window_h - 150 )
-'		SetAlpha( 1 )
-'		SetColor( 255, 255, 255 )
-'		SetImageFont( get_font( "consolas_24" ))
-'		DrawText( "press ESC", 300, window_h - 150 )
-'		
-'	End If
-'	SetRotation( 0 )
-'	SetColor( 255, 255, 255 )
-'	SetAlpha( 1 )
-	
-'	'level X
-'	If (now() - game.level_passed_ts) < level_intro_time
-'		SetImageFont( get_font( "consolas_bold_100" ))
-'		SetColor( 255, 255, 127 )
-'		Local pct# = Float(now() - game.level_passed_ts)/Float(level_intro_time)
-'		If pct < 0.25 'fade in
-'			SetAlpha( pct / 0.25 )
-'		Else If pct < 0.75 'hold
-'			SetAlpha( 1 )
-'		Else 'fade out
-'			SetAlpha( 1 - (( pct - 0.75) / 0.25 ))
-'		End If
-'		str = "LEVEL " + (profile.player_level + 1)
-'		DrawText( str, arena_offset + arena_w/2 - TextWidth( str )/2, arena_offset + arena_h/2 - TextHeight( str )/2 )
-'	End If
+	'game over indicator (if game over)
+	If game.game_over
+		SetColor( 0, 0, 0 )
+		SetAlpha( 0.65 )
+		DrawRect( 0, 0, window_w, window_h )
+		SetAlpha( 1 )
+		SetColor( 0, 0, 0 )
+		SetScale( 1, 1 )
+		SetImageFont( get_font( "consolas_bold_100" ))
+		Local w% = TextWidth( "GAME OVER" )
+		Local h% = GetImageFont().Height()
+		DrawText( "GAME OVER", window_w/2 - w/2, window_h/2 - h/2 )
+		SetColor( 255, 0, 0 )
+		Local scale# = 0.85
+		SetScale( scale, scale )
+		DrawText( "GAME OVER", window_w/2 - scale*w/2, window_h/2 - scale*h/2 )
+	End If
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
 	
 End Function
 '______________________________________________________________________________
@@ -400,52 +380,59 @@ Function draw_reticle()
 End Function
 
 '______________________________________________________________________________
-Const HORIZONTAL_HUD_MARGIN% = 24
+Const HORIZONTAL_HUD_MARGIN% = 35
 Const CASH_WIDTH% = 120
 
 Function draw_HUD()
-	Local x%, y%, w%, h%
+	Local x%, y%, y1%, y2%, w%, h%
 	Local str$
 	
 	SetImageFont( get_font( "consolas_bold_12" ))
-	Local hud_height% = GetImageFont().Height() + 3
+	Local hud_height% = 2*(GetImageFont().Height() + 3)
 	
-	x = 0; y = window_h - hud_height
-	w = 85; h = 12
+	x = 0
+	y1 = window_h - hud_height
+	y2 = window_h - hud_height/2
+	w = 85
+	h = 12
 	
+	'hud "chrome"
+	y = y1
 	SetAlpha( 0.50 )
 	SetColor( 0, 0, 0 )
 	DrawRect( x,y, window_w,y+hud_height )
 	SetAlpha( 0.75 )
 	SetColor( 255, 255, 255 )
 	DrawLine( x,y-1, x+window_w,y-1 )
-	x :+ 2; y :+ 3
+	x :+ 2
+	y1 :+ 3; y2 :+ 3
 	
-	'player cash
-	str = "$" + format_number( profile.cash )
-	SetColor( 0, 0, 0 )
-	SetAlpha( 1 )
-	DrawText( str, x+1, y+2 )
-	SetColor( 50, 220, 50 )
-	DrawText( str, x, y+1 )
-	x :+ CASH_WIDTH	
-		
+	y = y1
 	'player health		
 	SetColor( 255, 255, 255 )
 	DrawImage( img_health_mini, x, y )
-	x :+ img_health_mini.width + 3
 	Local pct# = game.player.cur_health/game.player.max_health
-	draw_percentage_bar( x,y, w,h, pct ) ', (1 - (0.5*pct)) )
+	draw_percentage_bar( x + img_health_mini.width + 3,y, w,h, pct ) ', (1 - (0.5*pct)) )
+	
+	y = y2
+	'player cash
+	SetImageFont( get_font( "consolas_14" ))
+	str = "$" + format_number( profile.cash )
+	SetColor( 50, 220, 50 )
+	DrawText_with_shadow( str, x, y+1-3 )
 	x :+ w + HORIZONTAL_HUD_MARGIN
+	SetImageFont( get_font( "consolas_bold_12" ))
 	
 	'player ammo, overheat & charge indicators
 	Local ammo_row_len% = w / img_icon_player_cannon_ammo.width
 	Local temp_x%, temp_y%
 	For Local t:TURRET = EachIn game.player.turret_list
+		y = y1
 		If t.name <> Null And t.name <> ""
 			SetColor( 196, 196, 196 );
-			DrawText( t.name, x, y+1 ); x :+ TextWidth( t.name ) + 3
+			DrawText( t.name, x, y+1 ); 'x :+ TextWidth( t.name ) + 3
 		End If
+		y = y2
 		temp_x = x; temp_y = y
 		If t.max_ammo <> INFINITY
 			For Local i% = 0 To t.cur_ammo - 1
@@ -484,12 +471,21 @@ Function draw_HUD()
 	'music icon
 	SetAlpha( 0.5 )
 	Local music_str$ = "[m]usic"
-	x = window_w - 55 - TextWidth( music_str )
+	x = window_w - 10 - TextWidth( music_str )
+	y = y1
 	SetColor( 255, 255, 255 )
-	DrawText( music_str, x, y ); x :+ TextWidth( music_str ) + 8
+	DrawText( music_str, x, y )
+	y = y2
+	Local img_spkr:TImage
+	If FLAG_bg_music_on
+		SetAlpha( 1 )
+		img_spkr = img_icon_speaker_on
+	Else
+		SetAlpha( 0.5 )
+		img_spkr = img_icon_speaker_off
+	End If
 	DrawImage( img_icon_music_note, x, y ); x :+ img_icon_music_note.width + 5
-	If FLAG_bg_music_on Then DrawImage( img_icon_speaker_on, x, y ) ..
-	Else                     DrawImage( img_icon_speaker_off, x, y )
+	DrawImage( img_spkr, x, y )
 	
 End Function
 '______________________________________________________________________________
@@ -511,9 +507,12 @@ Function DrawRectLines( x%,y%, w%,h% )
 End Function
 
 Function DrawText_with_shadow( str$, x%, y% )
+	Local r%, g%, b%
+	GetColor( r%, g%, b% )
 	SetColor( 0, 0, 0 )
 	DrawText( str, x + 1, y + 1 )
-	SetColor( 255, 255, 255 )
+	DrawText( str, x + 2, y + 2 )
+	SetColor( r, g, b )
 	DrawText( str, x, y )
 End Function
 

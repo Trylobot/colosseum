@@ -86,6 +86,7 @@ Function play_level( level_file_path$, player_archetype% )
 		main_game.respawn_player()
 		FLAG_in_menu = False
 		FLAG_in_shop = False
+		main_game.player_in_locker = True
 		main_game.waiting_for_player_to_enter_arena = True
 	Else
 		main_game = Null
