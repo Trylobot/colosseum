@@ -250,6 +250,7 @@ Type MENU
 		
 		'draw scrollable subsection visual cues
 		If is_scrollable( menu_type )
+			SetLineWidth( 1 )
 			cx = width
 			cy = y + 2*margin + text_height_factor*title_font.Height()
 			Local w% = 20
@@ -258,10 +259,14 @@ Type MENU
 			Local size# = (h-2*border_width)*Float(dynamic_options_displayed)/Float(options.Length-static_option_count)
 			SetColor( 64, 64, 64 )
 			DrawRect( cx, cy, w, h )
+			SetColor( 84, 84, 84 )
+			DrawRectLines( cx+1, cy+1, w-2, h-2 )
 			SetColor( 0, 0, 0 )
 			DrawRect( cx+border_width, cy+border_width, w-2*border_width, h-2*border_width )
 			SetColor( 64, 64, 64 )
 			DrawRect( cx+border_width, cy+border_width + offset, w-2*border_width, size )
+			SetColor( 84, 84, 84 )
+			DrawRectLines( cx+border_width, cy+border_width + offset, w-2*border_width, size )
 		End If
 		
 		If menu_type = TEXT_INPUT_DIALOG
@@ -299,9 +304,11 @@ Type MENU
 			If profile <> Null 'loaded
 				set_enabled( "loading bay", True )
 				set_enabled( "save", True )
+				set_enabled( "preferences", True )
 			Else 'not loaded
 				set_enabled( "loading bay", False )
 				set_enabled( "save", False )
+				set_enabled( "preferences", False )
 			End If
 			'main_game dependent options
 			If main_game <> Null And main_game.game_in_progress 'main_game started
@@ -401,25 +408,27 @@ Type MENU
 	
 	Method increment_focus()
 		move_focus( 1 )
-		If focus > static_option_count + scroll_offset
-			scroll_offset :+ 1
-		End If
 	End Method
 	
 	Method decrement_focus()
 		move_focus( -1 )
-		If focus <= static_option_count + scroll_offset + dynamic_options_displayed-1
-			scroll_offset :- 1
-		End If
 	End Method
 	
 	Method move_focus( direction% = 0 )
+		'focused element (skip + wrap)
 		Local count% = 0
 		Repeat
 			focus :+ Sgn( direction )
 			wrap_focus()
 			count :+ 1
 		Until count >= options.Length Or focus_is_valid()
+		'scrollable, dynamic window auto-scroll with focus change
+		While focus > static_option_count + scroll_offset + dynamic_options_displayed-1
+			scroll_offset :+ 1
+		End While
+		While focus <= static_option_count + scroll_offset
+			scroll_offset :- 1
+		End While
 	End Method
 
 	Method wrap_focus()
@@ -468,7 +477,8 @@ Const MENU_ID_INPUT_GAME_FILE_NAME% = 410
 Const MENU_ID_SAVE_LEVEL% = 450
 Const MENU_ID_INPUT_LEVEL_FILE_NAME% = 460
 Const MENU_ID_CONFIRM_ERASE_LEVEL% = 470
-Const MENU_ID_OPTIONS% = 500
+Const MENU_ID_SETTINGS% = 500
+Const MENU_ID_PREFERENCES% = 505
 Const MENU_ID_OPTIONS_VIDEO% = 510
 Const MENU_ID_CHOOSE_RESOLUTION% = 511
 Const MENU_ID_INPUT_REFRESH_RATE% = 512
@@ -490,7 +500,8 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 	MENU_OPTION.Create( "new", COMMAND_NEW_GAME,, True, True ), ..
 	MENU_OPTION.Create( "save", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_GAME), True, False ), ..
 	MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_GAME), True, True ), ..
-	MENU_OPTION.Create( "options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS), True, True ), ..
+	MENU_OPTION.Create( "settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SETTINGS), True, True ), ..
+	MENU_OPTION.Create( "preferences", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_PREFERENCES), True, False ), ..
 	MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_EDITORS), True, True ), ..
 	MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ])
 	
@@ -505,14 +516,16 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 
 		'all_menus[postfix_index()] = MENU.Create( "abandon current game?", 255, 64, 64, MENU_ID_CONFIRM_LOAD_GAME, MENU.CONFIRMATION_DIALOG, menu_margin, 1,,,, COMMAND_LOAD_GAME )
 
-	all_menus[postfix_index()] = MENU.Create( "options", 127, 127, 255, MENU_ID_OPTIONS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
+	all_menus[postfix_index()] = MENU.Create( "settings", 127, 127, 255, MENU_ID_SETTINGS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-		MENU_OPTION.Create( "video options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_VIDEO), True, True ), ..
-		MENU_OPTION.Create( "audio options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_AUDIO), True, False ), ..
-		MENU_OPTION.Create( "control options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_CONTROLS), True, True ), ..
-		MENU_OPTION.Create( "game options", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_GAME), True, False ) ])
+		MENU_OPTION.Create( "video settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_VIDEO), True, True ), ..
+		MENU_OPTION.Create( "audio settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_AUDIO), True, False ) ])
 
-		all_menus[postfix_index()] = MENU.Create( "video options", 212, 96, 226, MENU_ID_OPTIONS_VIDEO, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
+	all_menus[postfix_index()] = MENU.Create( "preferences", 64, 64, 212, MENU_ID_PREFERENCES, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
+	[	MENU_OPTION.Create( "controls", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_CONTROLS), True, True ), ..
+		MENU_OPTION.Create( "gameplay", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_GAME), True, False ) ])
+
+		all_menus[postfix_index()] = MENU.Create( "video settings", 212, 96, 226, MENU_ID_OPTIONS_VIDEO, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "fullscreen    %%fullscreen%%", COMMAND_SETTINGS_FULLSCREEN,, True, True ), ..
 			MENU_OPTION.Create( "resolution    %%window_w%% x %%window_h%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CHOOSE_RESOLUTION), True, True ), ..
@@ -653,7 +666,9 @@ Function menu_command( command_code%, argument:Object = Null )
 			
 		
 		Case COMMAND_PLAYER_INPUT_TYPE
-			profile.input_method = INTEGER(argument).value
+			If profile <> Null
+				profile.input_method = INTEGER(argument).value
+			End If
 			If game <> Null And game.player_brain <> Null
 				game.player_brain.input_type = profile.input_method
 			End If

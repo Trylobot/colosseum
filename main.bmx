@@ -29,8 +29,8 @@ Global bit_depth%
 Global refresh_rate%
 
 Function apply_default_settings()
-	window_w = 640
-	window_h = 480
+	window_w = 800
+	window_h = 600
 	fullscreen = False
 	bit_depth = 32
 	refresh_rate = 60
