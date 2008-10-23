@@ -66,7 +66,7 @@ Const ARROW_UP% = 0
 Const ARROW_RIGHT% = 1
 Const ARROW_DOWN% = 2
 Const ARROW_LEFT% = 3
-Global border_width% = 3
+Const border_width% = 3
 
 Function draw_arrow( arrow_type%, x#, y#, height% )
 	Select arrow_type
@@ -250,23 +250,23 @@ Type MENU
 		
 		'draw scrollable subsection visual cues
 		If is_scrollable( menu_type )
-			SetLineWidth( 1 )
-			cx = width
-			cy = y + 2*margin + text_height_factor*title_font.Height()
-			Local w% = 20
-			Local h% = height
-			Local offset# = (h-2*border_width)*Float(scroll_offset)/Float(options.Length-static_option_count)
-			Local size# = (h-2*border_width)*Float(dynamic_options_displayed)/Float(options.Length-static_option_count)
-			SetColor( 64, 64, 64 )
-			DrawRect( cx, cy, w, h )
-			SetColor( 84, 84, 84 )
-			DrawRectLines( cx+1, cy+1, w-2, h-2 )
-			SetColor( 0, 0, 0 )
-			DrawRect( cx+border_width, cy+border_width, w-2*border_width, h-2*border_width )
-			SetColor( 64, 64, 64 )
-			DrawRect( cx+border_width, cy+border_width + offset, w-2*border_width, size )
-			SetColor( 84, 84, 84 )
-			DrawRectLines( cx+border_width, cy+border_width + offset, w-2*border_width, size )
+			Local all_options_in_window% = True
+			For Local i% = 0 To options.Length
+				If Not option_is_in_window( i )
+					all_options_in_window = False
+					Exit
+				End If
+			Next
+			If Not all_options_in_window
+				draw_scrollbar( ..
+					x + width, ..
+					y + 2*margin + text_height_factor*title_font.Height(), ..
+					20, ..
+					height, ..
+					options.Length - static_option_count, ..
+					scroll_offset, ..
+					dynamic_options_displayed )
+			End If
 		End If
 		
 		If menu_type = TEXT_INPUT_DIALOG
@@ -371,7 +371,6 @@ Type MENU
 		Local f_opt:MENU_OPTION = get_focus()
 		Return f_opt <> Null And f_opt.visible And f_opt.enabled
 	End Method
-	
 	Method get_focus:MENU_OPTION()
 		If focus >= 0 And focus < options.Length
 			Return options[focus]
@@ -379,17 +378,14 @@ Type MENU
 			Return Null
 		End If
 	End Method
-	
 	Method set_focus( key$ )
 		Local i% = find_option( key )
 		If i <> -1 Then focus = i
 	End Method
-	
 	Method set_enabled( key$, value% )
 		Local i% = find_option( key )
 		If i <> -1 Then options[i].enabled = value
 	End Method
-	
 	Method find_option%( key$ )
 		key = key.ToLower()
 		For Local i% = 0 To options.Length - 1
@@ -401,19 +397,21 @@ Type MENU
 	End Method
 	
 	Method option_is_in_window%( index% )
-		Return ..
-			index < static_option_count ..
-			Or (index >= static_option_count + scroll_offset And index <= static_option_count + scroll_offset + dynamic_options_displayed-1)
+		Return Not option_above_window( index ) And Not option_below_window( index )
+	End Method
+	Method option_above_window%( index% )
+		Return index >= static_option_count And index < static_option_count + scroll_offset
+	End Method
+	Method option_below_window%( index% )
+		Return index > static_option_count + scroll_offset + dynamic_options_displayed-1
 	End Method
 	
 	Method increment_focus()
 		move_focus( 1 )
 	End Method
-	
 	Method decrement_focus()
 		move_focus( -1 )
 	End Method
-	
 	Method move_focus( direction% = 0 )
 		'focused element (skip + wrap)
 		Local count% = 0
@@ -423,14 +421,13 @@ Type MENU
 			count :+ 1
 		Until count >= options.Length Or focus_is_valid()
 		'scrollable, dynamic window auto-scroll with focus change
-		While focus > static_option_count + scroll_offset + dynamic_options_displayed-1
+		While option_below_window( focus )
 			scroll_offset :+ 1
 		End While
-		While focus <= static_option_count + scroll_offset
+		While option_above_window( focus )
 			scroll_offset :- 1
 		End While
 	End Method
-
 	Method wrap_focus()
 		If focus > (options.Length - 1)
 			focus = 0

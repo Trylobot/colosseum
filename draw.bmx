@@ -499,6 +499,22 @@ Function draw_percentage_bar( x%,y%, w%,h%, pct#, a# = 1.0, r% = 255, g% = 255, 
 	DrawRect( x + 2, y + 2, pct*(w - 4.0), h - 4 )
 End Function
 
+Function draw_scrollbar( cx%, cy%, w%, h%, total_size%, window_offset%, window_size% )
+	SetLineWidth( 1 )
+	Local offset# = (h-2*border_width)*Float(window_offset)/Float(window_size)
+	Local size# = (h-2*border_width)*Float(window_size)/Float(total_size)
+	SetColor( 64, 64, 64 )
+	DrawRect( cx, cy, w, h )
+	SetColor( 96, 96, 96 )
+	DrawRectLines( cx, cy, w, h )
+	SetColor( 0, 0, 0 )
+	DrawRect( cx+border_width, cy+border_width, w-2*border_width, h-2*border_width )
+	SetColor( 64, 64, 64 )
+	DrawRect( cx+border_width, cy+border_width + offset, w-2*border_width, size )
+	SetColor( 96, 96, 96 )
+	DrawRectLines( cx+border_width, cy+border_width + offset, w-2*border_width, size )
+End Function
+
 Function DrawRectLines( x%,y%, w%,h% )
 	DrawLine( x,     y,     x+w-1, y,     False )
 	DrawLine( x+w-1, y,     x+w-1, y+h-1, False )
