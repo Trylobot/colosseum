@@ -66,8 +66,6 @@ Const ARROW_UP% = 0
 Const ARROW_RIGHT% = 1
 Const ARROW_DOWN% = 2
 Const ARROW_LEFT% = 3
-Const border_width% = 3
-
 Function draw_arrow( arrow_type%, x#, y#, height% )
 	Select arrow_type
 		Case ARROW_UP
@@ -81,6 +79,9 @@ Function draw_arrow( arrow_type%, x#, y#, height% )
 	End Select
 End Function
 '______________________________________________________________________________
+Const border_width% = 3
+Const scrollbar_width% = 20
+
 Type MENU
 	Global VERTICAL_LIST% = 10
 	Global VERTICAL_LIST_WITH_SUBSECTION% = 11
@@ -198,6 +199,9 @@ Type MENU
 		If (2*margin + TextWidth( name ) + 2*border_width) > width
 			width = (2*margin + TextWidth( name ) + 2*border_width)
 		End If
+		If is_scrollable( menu_type )
+			width :+ scrollbar_width
+		End If
 		height :+ (margin + (text_height_factor*GetImageFont().Height() + margin) + 2*border_width)
 
 		'draw the borders, backgrounds and title text
@@ -259,10 +263,10 @@ Type MENU
 			Next
 			If Not all_options_in_window
 				draw_scrollbar( ..
-					x + width, ..
-					y + 2*margin + text_height_factor*title_font.Height(), ..
-					20, ..
-					height, ..
+					x + width - scrollbar_width, ..
+					y + 3*margin + 2*(text_height_factor*title_font.Height()) + 1, ..
+					scrollbar_width, ..
+					height - (3*margin + 2*(text_height_factor*title_font.Height())), ..
 					options.Length - static_option_count, ..
 					scroll_offset, ..
 					dynamic_options_displayed )

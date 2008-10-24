@@ -176,17 +176,11 @@ Function draw_main_screen()
 	'copyright stuff
 	SetColor( 157, 157, 157 )
 	SetImageFont( get_font( "consolas_10" ))
-	h = GetImageFont().Height() - 1
-	x = 25; y = window_h - h*10
-	DrawText( "Colosseum (c) 2008 Tyler W.R. Cole", x, y ); y :+ h
-	DrawText( "  aka ~qTylerbot~q", x, y ); y :+ h
-	DrawText( "music by ~qNickPerrin~q", x, y ); y :+ h
-	DrawText( "json binding by ~qgrable~q", x, y ); y :+ h
-	DrawText( "special thanks to", x, y ); y :+ h
-	DrawText( "  ~qKaze~q", x, y ); y :+ h
-	DrawText( "  ~qSniperAceX~q", x, y ); y :+ h
-	DrawText( "  ~qFirelord88~q", x, y ); y :+ h
-	DrawText( "written in 100% BlitzMax", x, y ); y :+ h
+	h = 0.75*GetImageFont().Height()
+	x = 1
+	y = window_h - h*2 - 1
+	DrawText( "Colosseum (c) 2008 Tyler W.R. Cole, aka Tylerbot; music by NickPerrin; json binding by grable", x, y ); y :+ h
+	DrawText( "special thanks to Kaze, SniperAceX, Firelord88; written in 100% BlitzMax", x, y ); y :+ h
 	
 	'menu options
 	x = 30; y = 95
@@ -499,20 +493,26 @@ Function draw_percentage_bar( x%,y%, w%,h%, pct#, a# = 1.0, r% = 255, g% = 255, 
 	DrawRect( x + 2, y + 2, pct*(w - 4.0), h - 4 )
 End Function
 
-Function draw_scrollbar( cx%, cy%, w%, h%, total_size%, window_offset%, window_size% )
+Function draw_scrollbar( x%, y%, w%, h%, total_size%, window_offset%, window_size% )
 	SetLineWidth( 1 )
-	Local offset# = (h-2*border_width)*Float(window_offset)/Float(window_size)
+	Local offset# = (h-2*border_width)*Float(window_offset)/Float(total_size)
 	Local size# = (h-2*border_width)*Float(window_size)/Float(total_size)
 	SetColor( 64, 64, 64 )
-	DrawRect( cx, cy, w, h )
-	SetColor( 96, 96, 96 )
-	DrawRectLines( cx, cy, w, h )
+	DrawRect( x, y, w, h )
+	'SetColor( 96, 96, 96 )
+	'DrawRectLines( x, y, w, h )
 	SetColor( 0, 0, 0 )
-	DrawRect( cx+border_width, cy+border_width, w-2*border_width, h-2*border_width )
+	DrawRect( ..
+		x+border_width, y+border_width, ..
+		w-2*border_width, h-2*border_width )
 	SetColor( 64, 64, 64 )
-	DrawRect( cx+border_width, cy+border_width + offset, w-2*border_width, size )
-	SetColor( 96, 96, 96 )
-	DrawRectLines( cx+border_width, cy+border_width + offset, w-2*border_width, size )
+	DrawRect( ..
+		x+border_width, y+border_width + offset, ..
+		w-2*border_width, size )
+	'SetColor( 96, 96, 96 )
+	'DrawRectLines( ..
+	'	x+border_width, y+border_width + offset, ..
+	'	w-2*border_width, size )
 End Function
 
 Function DrawRectLines( x%,y%, w%,h% )
