@@ -119,6 +119,20 @@ Repeat
 		debug_fps()
 		'debug_agent_lists()
 	End If
+	If Not FLAG_in_menu And Not FLAG_in_shop
+		If KeyDown( KEY_LEFT )
+			debug_origin.x :- 1
+		End If
+		If KeyDown( KEY_RIGHT )
+			debug_origin.x :+ 1
+		End If
+		If KeyDown( KEY_UP )
+			debug_origin.y :- 1
+		End If
+		If KeyDown( KEY_DOWN )
+			debug_origin.y :+ 1
+		End If
+	End If
 ?
 	check_instaquit()
 	

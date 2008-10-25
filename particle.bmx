@@ -5,10 +5,6 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const PARTICLE_PRUNE_ACTION_ADD_TO_BG_CACHE% = 1
-Const PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT% = 2
-Global global_particle_prune_action% = PARTICLE_PRUNE_ACTION_ADD_TO_BG_CACHE 'PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
-
 Const LAYER_UNSPECIFIED% = 0
 Const LAYER_FOREGROUND% = 1
 Const LAYER_BACKGROUND% = 2
@@ -179,12 +175,9 @@ Type PARTICLE Extends POINT
 			If retain
 				manage( game.retained_particle_list )
 				game.retained_particle_list_count :+ 1
-				If global_particle_prune_action = PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
-					alpha_delta :- 0.100
-				End If
 			End If
 		End If
-	End Method	
+	End Method
 	
 	Method auto_manage()
 		If layer = LAYER_BACKGROUND

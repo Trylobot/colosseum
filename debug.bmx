@@ -29,14 +29,16 @@ Global global_start:CELL, global_goal:CELL
 '______________________________________________________________________________
 Global sx%, sy%
 
-Function debug_drawtext( message$ )
+Function debug_drawtext( message$, h% = 10 )
 	SetImageFont( get_font( "consolas_10" ))
 	SetAlpha( 1 )
+	Local r%, g%, b%
+	GetColor( r, g, b )
 	SetColor( 0, 0, 0 )
 	DrawText( message, sx+1, sy+1 )
-	SetColor( 255, 255, 255 )
+	SetColor( r, g, b )
 	DrawText( message, sx, sy )
-	sy :+ 10
+	sy :+ h
 End Function
 '______________________________________________________________________________
 Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = "", b_msg$ = "", m_msg$ = "" )
@@ -77,7 +79,7 @@ Function debug_fps()
 	SetColor( 255, 255, 127 )
 	SetImageFont( get_font( "consolas_bold_24" ))
 	sx = window_w - TextWidth( String.FromInt( fps ))
-	sy = window_h - GetImageFont().Height() - 24
+	sy = window_h - GetImageFont().Height() - 30
 	DrawText( String.FromInt( fps ), sx, sy )
 End Function
 '______________________________________________________________________________
@@ -106,23 +108,46 @@ Global cb:CONTROL_BRAIN = Null
 Function debug_overlay()
 	SetRotation( 0 )
 	SetScale( 1, 1 )
-	SetColor( 0, 0, 0 )
+	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	SetOrigin( 0, 0 )
 	
-	If cb <> Null
-		'keyboard help
-		debug_drawtext( "[1]: set target to player" )
-		debug_drawtext( "[2]: get path to target" )
-		debug_drawtext( "[3]: see target" )
-		debug_drawtext( "[4]: player path to mouse" )
-	End If
-	'debug_drawtext( "enemies -> "+hostile_agent_list.Count() )
-
+	sx = 2; sy = 2
+	
+'	If cb <> Null
+'		'keyboard help
+'		debug_drawtext( "[1]: set target to player" )
+'		debug_drawtext( "[2]: get path to target" )
+'		debug_drawtext( "[3]: see target" )
+'		debug_drawtext( "[4]: player path to mouse" )
+'	End If
+	debug_drawtext( "("+debug_origin.x+","+debug_origin.y+")", 18 )
+	debug_drawtext( "enemies "+game.hostile_agent_list.Count() )
+	Local sp:SPAWNER, cur:CELL, ts%, last:COMPLEX_AGENT, counter%, str$
+	debug_drawtext( "spawners "+game.lev.spawners.Length )
+	For Local i% = 0 To game.lev.spawners.Length-1
+		sp = game.lev.spawners[i]
+		cur = game.spawn_cursor[i]
+		ts = game.spawn_ts[i]
+		last = game.last_spawned[i]
+		counter = game.spawn_counter[i]
+		If     ( sp.alignment = ALIGNMENT_FRIENDLY ) SetColor( 127, 127, 255 ) ..
+		Else If( sp.alignment = ALIGNMENT_HOSTILE )  SetColor( 255, 127, 127 )
+		str = " sp["+i+"] "+counter+"/"+sp.size+" "
+		'if this spawner has more enemies to spawn
+		If counter < sp.size
+			str :+ "ACTIVE"
+'		Else
+'			str :+ ""
+		End If
+		debug_drawtext( str )
+	Next
+	
 	If game <> Null
-		SetOrigin( game.drawing_origin.x,game.drawing_origin.y )
+		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
 	End If
 	
+	SetColor( 255, 255, 255 )
 	'show pathing grid divisions
 	SetAlpha( 0.20 )
 	For Local i% = 0 To game.lev.horizontal_divs.length - 1

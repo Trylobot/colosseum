@@ -156,12 +156,9 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 		game.spawn_pickup( ag.pos_x, ag.pos_y )
 		'agent death
 		ag.die()
-		If game.human_participation And game.player.dead() 'player just died? (omgwtf)
-			game.game_over = True
-		Else If ag.political_alignment = ALIGNMENT_HOSTILE
-			PARTICLE( PARTICLE.Create( PARTICLE_TYPE_STR,,,, ("$" + ag.cash_value), get_font( "consolas_24" ), LAYER_FOREGROUND, False, 0.1, 0.333, 1.000, 0.3333,,,, 1000, ag.pos_x, ag.pos_y-5, 0.0, -2.0, 0.0, 0.0, 0.5, -0.016, 1.0, 0.01 )).auto_manage()
-		End If
+		
 		If ag.political_alignment = ALIGNMENT_HOSTILE
+			PARTICLE( PARTICLE.Create( PARTICLE_TYPE_STR,,,, ("$" + ag.cash_value), get_font( "consolas_24" ), LAYER_FOREGROUND, False, 0.1, 0.333, 1.000, 0.3333,,,, 1000, ag.pos_x, ag.pos_y-5, 0.0, -2.0, 0.0, 0.0, 0.5, -0.016, 1.0, 0.01 )).auto_manage()
 			game.level_enemies_killed :+ 1
 			profile.kills :+ 1
 		End If
@@ -173,6 +170,8 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 End Function
 
 Function collision_agent_agent( ag:COMPLEX_AGENT, other:COMPLEX_AGENT )
+	'register the collision (for self-destruct agents)
+	ag.last_collided_agent_id = other.id
 	'activate collision response for affected entity(ies)
 	'Local offset#, offset_ang#
 	'cartesian_to_polar( ag.pos_x - other.pos_x, ag.pos_y - other.pos_y, offset, offset_ang )
@@ -235,11 +234,13 @@ Function collision_agent_wall( ag:COMPLEX_AGENT, wall:BOX )
 End Function
 
 Function collision_agent_door( ag:COMPLEX_AGENT, door:WIDGET )
-	
+	DebugLog " collision_agent_door"
+
 End Function
 
 Function collision_projectile_door( proj:PROJECTILE, door:WIDGET )
-	
+	DebugLog " collision_projectile_door"
+
 End Function
 
 Function collision_projectile_wall( proj:PROJECTILE, wall:BOX )

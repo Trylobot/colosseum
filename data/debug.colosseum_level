@@ -89,7 +89,8 @@
 			1
 		]
 	],
-	spawners: [ {
+	spawners: [
+		{
 			class: 2,
 			squads: null,
 			pos: {
@@ -105,5 +106,23 @@
 			},
 			delay_time: null,
 			alignment: 1
-		} ]
+		},
+		{
+			class: 2,
+			squads: [ [ 3 ] ],
+			pos: {
+				pos_x: 40,
+				pos_y: 210,
+				ang: 90,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [ 0 ],
+			alignment: 2
+		}
+	]
 }

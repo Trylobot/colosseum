@@ -6,7 +6,7 @@ EndRem
 
 'Background cached texture
 Global FLAG_retain_particles% = False
-Const retained_particle_limit% = 1500
+Const retained_particle_limit% = 500
 Global FLAG_dim_bg% = False
 Const cursor_blink% = 500
 Global str$
@@ -230,66 +230,59 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 End Function
 '______________________________________________________________________________
 Function draw_arena_bg()
+	'this first check tweaks the origin, if the retain_particles flag is set.
+	'it is necessary because GrabImage only operates on integer coordinates.
+	'so, if it will be called, the origin for this frame only will be truncated to the nearest integer.
+	'this may result in a bit of a "skip" onscreen, but I can live with that.
+	'the alternative is that GrabImage will get a fucked-up version of the canvas and look horrible ever after. 
+	If FLAG_retain_particles
+		Local x#, y#
+		GetOrigin( x, y )
+		SetOrigin( Int(x), Int(y) )
+	End If
 
 	'draw arena background cache image
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 	SetRotation( 0 )
-	DrawImage( game.background_clean, 0, 0 )
-	'DrawPixmap( game.background_clean, 0, 0 )
-	DrawImage( game.background_dynamic, 0, 0 )
-	'DrawPixmap( game.background_dynamic, 0, 0 )
+	DrawImage( game.background_clean, 0.0, 0.0 )
+	DrawImage( game.background_dynamic, 0.0, 0.0 )
 
 	'draw particles to be retained
 	For Local part:PARTICLE = EachIn game.retained_particle_list
 		part.draw()
 	Next
-	
+
 	'if an arbitrary performance threshold is reached, ..
 	' save backbuffer to dynamic texture, and delete retained particles
 	If FLAG_retain_particles
-		Select global_particle_prune_action
+		'delete retained particles
+		FLAG_retain_particles = False
+		game.retained_particle_list.Clear()
+		game.retained_particle_list_count = 0
+		
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetScale( 1, 1 )
+		SetRotation( 0 )
+		'save backbuffer to dynamic texture
+		GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y )
+		
+		'fade-out particles if desired, by blending backbuffer with the "clean" background
+		If FLAG_dim_bg
+			FLAG_dim_bg = False
 			
-			Case PARTICLE_PRUNE_ACTION_ADD_TO_BG_CACHE
-				'delete retained particles
-				FLAG_retain_particles = False
-				game.retained_particle_list.Clear()
-				game.retained_particle_list_count = 0
-				
-				SetColor( 255, 255, 255 )
-				SetAlpha( 1 )
-				SetScale( 1, 1 )
-				SetRotation( 0 )
-				'save backbuffer to dynamic texture
-				GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y )
-				'game.background_dynamic = GrabPixmap( game.drawing_origin.x, game.drawing_origin.y, game.lev.width, game.lev.height )
-				
-				'fade-out particles if desired, by blending backbuffer with the "clean" background
-				If FLAG_dim_bg
-					FLAG_dim_bg = False
-					
-					SetColor( 255, 255, 255 )
-					SetAlpha( 0.3333 )
-					SetScale( 1, 1 )
-					SetRotation( 0 )
-					'draw the clean background, again
-					DrawImage( game.background_clean, 0, 0 )
-					'DrawPixmap( game.background_clean, 0, 0 )
-					
-					'save backbuffer to dynamic texture, again
-					GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y )
-					'game.background_dynamic = GrabPixmap( game.drawing_origin.x, game.drawing_origin.y, game.lev.width, game.lev.height )
-				End If
-				
-			Case PARTICLE_PRUNE_ACTION_FORCED_FADE_OUT
-				'merely remove old particles as the queue fills up.
-				While game.retained_particle_list_count >= retained_particle_limit
-					game.retained_particle_list.FirstLink().Remove()
-					game.retained_particle_list_count :- 1
-				End While
+			SetColor( 255, 255, 255 )
+			SetAlpha( 0.3333 )
+			SetScale( 1, 1 )
+			SetRotation( 0 )
+			'draw the clean background, again
+			DrawImage( game.background_clean, 0.0, 0.0 )
 			
-		End Select
+			'save backbuffer to dynamic texture, again
+			GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y )
+		End If
 	End If
 		
 End Function
@@ -522,7 +515,7 @@ Function DrawRectLines( x%,y%, w%,h% )
 	DrawLine( x,     y+h-1, x,     y,     False )
 End Function
 
-Function DrawText_with_shadow( str$, x%, y% )
+Function DrawText_with_shadow( str$, x#, y# )
 	Local r%, g%, b%
 	GetColor( r%, g%, b% )
 	SetColor( 0, 0, 0 )
@@ -550,7 +543,6 @@ End Function
 '______________________________________________________________________________
 'Procedural drawing methods
 Function generate_sand_image:TImage( w%, h% )
-'Function generate_sand_image:TPixmap( w%, h% )
 	Local pixmap:TPixmap = CreatePixmap( w,h, PF_RGB888 )
 	Local max_dist# = Sqr( Pow( w/2, 2 ) + Pow( h/2, 2 ))
 	Local ratio# 'distance from point to center compared with max_dist, range [0.0,1.0]
@@ -576,13 +568,10 @@ Function generate_sand_image:TImage( w%, h% )
 			pixmap.WritePixel( px,py, encode_ARGB( 1.0, color.R,color.G,color.B ))
 		Next
 	Next
-	Local img:TImage = LoadImage( pixmap )
-	Return img
-	'Return pixmap
+	Return LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
 End Function
 '______________________________________________________________________________
 Function generate_level_walls_image:TImage( lev:LEVEL )
-'Function generate_level_walls_image:TPixmap( lev:LEVEL )
 	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
 	pixmap.ClearPixels( encode_ARGB( 0.0, 0,0,0 ))
 	Local blocking_cells:TList = lev.get_blocking_cells()
@@ -615,8 +604,6 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 			Next
 		Next
 	Next
-	Local img:TImage = LoadImage( pixmap )
-	Return img
-	'Return pixmap
+	Return LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
 End Function
 

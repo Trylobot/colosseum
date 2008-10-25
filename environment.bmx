@@ -153,7 +153,7 @@ Type ENVIRONMENT
 		background_clean = generate_sand_image( lev.width, lev.height )
 		foreground = generate_level_walls_image( lev )
 		'initialize dynamic background texture with same pixels as background clean
-		background_dynamic = TImage.Create( lev.width, lev.height, 1, DYNAMICIMAGE, 0, 0, 0 )
+		background_dynamic = TImage.Create( lev.width, lev.height, 1, FILTEREDIMAGE|DYNAMICIMAGE, 0, 0, 0 )
 		SetOrigin( 0, 0 ); SetColor( 255, 255, 255 ); SetAlpha( 1 ); SetRotation( 0 ); SetScale( 1, 1 )
 		DrawImage( background_clean, 0, 0 )
 		'DrawPixmap( background_clean, 0, 0 )

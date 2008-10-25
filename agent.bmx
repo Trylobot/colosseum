@@ -10,8 +10,9 @@ Type AGENT Extends PHYSICAL_OBJECT
 	Field img:TImage 'image to be drawn
 	Field gibs:TImage 'gib image(s)
 	Field max_health# 'maximum health
-	Field cash_value% 'cash to be awarded player on this agent's death
-	Field death_emitters:TList
+	Field cash_value% 'cash to be awarded player on death
+	Field death_emitters:TList 'emitters to be activated on death
+	Field last_collided_agent_id% 'id of last agent collided with (for self-destructing agents)
 
 	Field cur_health# 'current health
 	
@@ -1075,9 +1076,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				'If engine is running
 				If game.player_engine_running
 					'velocity
-					If KeyDown( KEY_W ) Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
+					If KeyDown( KEY_W )' Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
 						avatar.drive( 1.0 )
-					ElseIf KeyDown( KEY_S ) Or KeyDown( KEY_K ) Or KeyDown( KEY_DOWN )
+					ElseIf KeyDown( KEY_S )' Or KeyDown( KEY_K ) Or KeyDown( KEY_DOWN )
 						avatar.drive( -1.0 )
 					Else
 						avatar.drive( 0.0 )
@@ -1260,7 +1261,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 							avatar.turn( 0 )
 						End If
 						dist_to_target = avatar.dist_to( target )
-						If dist_to_target <= 20 Then avatar.self_destruct( target )
+						If avatar.last_collided_agent_id = target.id Then avatar.self_destruct( target )
 					Else 'cannot see target
 						enable_wander_lights()
 						If path <> Null And Not path.IsEmpty() And waypoint <> Null
