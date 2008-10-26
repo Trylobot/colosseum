@@ -293,8 +293,8 @@ Function debug_overlay()
 		If spawn_agent = Null
 			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
 		End If
-		spawn_agent.ang = spawn_agent.ang_to( game.player ) + 180
 		spawn_agent.pos_x = game.mouse.x; spawn_agent.pos_y = game.mouse.y
+		spawn_agent.ang = spawn_agent.ang_to( game.player ) + 180
 		spawn_agent.update()
 		spawn_agent.snap_all_turrets()
 		spawn_agent.draw()
@@ -322,6 +322,13 @@ Function debug_overlay()
 			spawn_agent = Null
 			
 		End If
+	End If
+	
+	If KeyHit( KEY_C )
+		Local prop:COMPLEX_AGENT = ..
+			COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "crate", img_crate, Null, 0, 0, 200, 400, 80, 0, 0 ))
+		prop.pos_x = game.mouse.x; prop.pos_y = game.mouse.y
+		prop.manage( game.hostile_agent_list )
 	End If
 	
 End Function

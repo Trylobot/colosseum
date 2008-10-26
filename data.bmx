@@ -523,6 +523,7 @@ Global img_icon_player_cannon_ammo:TImage = LoadImage_SetHandle( "icon_player_ca
 Global img_shine:TImage = LoadImage_SetHandle( "bar_shine.png", 15, 0 )
 
 Global img_door:TImage = LoadImage_SetHandle( "door.png", 1, 7 )
+Global img_crate:TImage = LoadImage_SetHandle( "crate.png", 16, 16 )
 Global img_reticle:TImage = LoadImage_SetHandle( "reticle.png", 22.5, 2.5 )
 
 
