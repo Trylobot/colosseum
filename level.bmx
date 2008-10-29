@@ -176,8 +176,9 @@ Type LEVEL Extends MANAGED_OBJECT
 						For Local j% = i+1 To old_horizontal_divs.Length - 1
 							horizontal_divs[j+1] = old_horizontal_divs[j]
 						Next
-						row_count :+ 1
-						path_regions = New Int[row_count,col_count]
+						'row_count :+ 1
+						'path_regions = New Int[row_count,col_count]
+						path_regions_insert_row( i )
 						Return
 					End If
 				Next
@@ -198,8 +199,9 @@ Type LEVEL Extends MANAGED_OBJECT
 						For Local j% = i+1 To old_vertical_divs.Length - 1
 							vertical_divs[j+1] = old_vertical_divs[j]
 						Next
-						col_count :+ 1
-						path_regions = New Int[row_count,col_count]
+						'col_count :+ 1
+						'path_regions = New Int[row_count,col_count]
+						path_regions_insert_col( i )
 						Return
 					End If
 				Next
@@ -224,8 +226,9 @@ Type LEVEL Extends MANAGED_OBJECT
 						For Local j% = i+1 To old_horizontal_divs.Length - 1
 							horizontal_divs[j-1] = old_horizontal_divs[j]
 						Next
-						row_count :- 1
-						path_regions = New Int[row_count,col_count]
+						'row_count :- 1
+						'path_regions = New Int[row_count,col_count]
+						path_regions_remove_row( i )
 						Return
 					End If
 				Next
@@ -244,8 +247,9 @@ Type LEVEL Extends MANAGED_OBJECT
 						For Local j% = i+1 To old_vertical_divs.Length - 1
 							vertical_divs[j-1] = old_vertical_divs[j]
 						Next
-						col_count :- 1
-						path_regions = New Int[row_count,col_count]
+						'col_count :- 1
+						'path_regions = New Int[row_count,col_count]
+						path_regions_remove_col( i )
 						Return
 					End If
 				Next
@@ -253,6 +257,58 @@ Type LEVEL Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
+	Method path_regions_insert_row( index% )
+		row_count :+ 1
+		Local new_path_regions%[,] = New Int[row_count,col_count]
+		For Local r% = 0 To row_count - 1
+			For Local c% = 0 To col_count - 1
+				Local k% = 0
+				If r > index Then k = -1
+				new_path_regions[r,c] = path_regions[r+k,c]
+			Next
+		Next
+		path_regions = new_path_regions
+	End Method
+	
+	Method path_regions_insert_col( index% )
+		col_count :+ 1
+		Local new_path_regions%[,] = New Int[row_count,col_count]
+		For Local r% = 0 To row_count - 1
+			For Local c% = 0 To col_count - 1
+				Local k% = 0
+				If c > index Then k = -1
+				new_path_regions[r,c] = path_regions[r,c+k]
+			Next
+		Next
+		path_regions = new_path_regions
+	End Method
+
+	Method path_regions_remove_row( index% )
+		row_count :- 1
+		Local new_path_regions%[,] = New Int[row_count,col_count]
+		For Local r% = 0 To row_count - 1
+			For Local c% = 0 To col_count - 1
+				Local k% = 0
+				If r >= index Then k = 1
+				new_path_regions[r,c] = path_regions[r+k,c]
+			Next
+		Next
+		path_regions = new_path_regions
+	End Method
+	
+	Method path_regions_remove_col( index% )
+		col_count :- 1
+		Local new_path_regions%[,] = New Int[row_count,col_count]
+		For Local r% = 0 To row_count - 1
+			For Local c% = 0 To col_count - 1
+				Local k% = 0
+				If c >= index Then k = 1
+				new_path_regions[r,c] = path_regions[r,c+k]
+			Next
+		Next
+		path_regions = new_path_regions
+	End Method
+
 	Method set_path_region( c:CELL, value% )
 		If c.is_valid()
 			path_regions[ c.row, c.col ] = value

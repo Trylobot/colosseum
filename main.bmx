@@ -74,6 +74,7 @@ Local before%
 Global fps%, last_frame_ts%, time_count%, frame_count%
 
 'play_level( data_path + "debug" + "." + level_file_ext, 0 )
+menu_command( COMMAND_EDIT_LEVEL )
 ?
 Repeat
 	
