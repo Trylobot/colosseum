@@ -257,6 +257,24 @@ Type LEVEL Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
+	Method set_divider( line_type%, index%, value% )
+		Select line_type
+			
+			Case LINE_TYPE_HORIZONTAL
+				Local delta% = value - horizontal_divs[index]
+				For local i% = index To horizontal_divs.Length - 1
+					horizontal_divs[i] :+ delta
+				Next
+			
+			Case LINE_TYPE_VERTICAL
+				Local delta% = value - vertical_divs[index]
+				For local i% = index To vertical_divs.Length - 1
+					vertical_divs[i] :+ delta
+				Next
+				
+		End Select
+	End Method
+	
 	Method path_regions_insert_row( index% )
 		row_count :+ 1
 		Local new_path_regions%[,] = New Int[row_count,col_count]

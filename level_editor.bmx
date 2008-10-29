@@ -9,11 +9,11 @@ Const spawn_point_preview_radius% = 10
 Const max_level_name_length% = 22
 
 Const EDIT_LEVEL_MODE_NONE% = 0
-Const EDIT_LEVEL_MODE_RESIZE% = 1
-Const EDIT_LEVEL_MODE_DIVIDER% = 2
-Const EDIT_LEVEL_MODE_PATHING% = 3
-Const EDIT_LEVEL_MODE_SPAWNER_NEW% = 4
-Const EDIT_LEVEL_MODE_SPAWNER_EDIT% = 5
+Const EDIT_LEVEL_MODE_BASIC% = 1
+Const EDIT_LEVEL_MODE_DIVIDERS% = 2
+Const EDIT_LEVEL_MODE_PATH_REGIONS% = 3
+Const EDIT_LEVEL_MODE_SPAWNER_SYSTEM% = 4
+Const EDIT_LEVEL_MODE_SPAWNER_DETAILS% = 5
 
 Function level_editor( lev:LEVEL )
 	
@@ -28,6 +28,8 @@ Function level_editor( lev:LEVEL )
 	Local info_x%, info_y%
 	Local mouse_down_1% = False, mouse_down_2% = False
 	Local new_spawner:SPAWNER = New SPAWNER
+	
+	Local divider_axis% = LINE_TYPE_VERTICAL
 	
 	Local cursor% = 0
 	Local cursor_archetype% = enemy_index_start
@@ -104,11 +106,11 @@ Function level_editor( lev:LEVEL )
 		
 		'change modes detection
 		If Not FLAG_text_mode
-			If      KeyHit( KEY_1 ) Then mode = EDIT_LEVEL_MODE_RESIZE ..
-			Else If KeyHit( KEY_2 ) Then mode = EDIT_LEVEL_MODE_DIVIDER ..
-			Else If KeyHit( KEY_3 ) Then mode = EDIT_LEVEL_MODE_PATHING ..
-			Else If KeyHit( KEY_4 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_NEW ..
-			Else If KeyHit( KEY_5 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_EDIT
+			If      KeyHit( KEY_1 ) Then mode = EDIT_LEVEL_MODE_BASIC ..
+			Else If KeyHit( KEY_2 ) Then mode = EDIT_LEVEL_MODE_DIVIDERS ..
+			Else If KeyHit( KEY_3 ) Then mode = EDIT_LEVEL_MODE_PATH_REGIONS ..
+			Else If KeyHit( KEY_4 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_SYSTEM ..
+			Else If KeyHit( KEY_5 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_DETAILS
 			If KeyHit( KEY_NUMADD )
 				gridsnap :+ 5
 				x = gridsnap
@@ -132,35 +134,35 @@ Function level_editor( lev:LEVEL )
 		info_x :+ 6; info_y :+ 3
 		
 		DrawText( ""+..
-			EDIT_LEVEL_MODE_RESIZE+":resize/pan "+..
-			EDIT_LEVEL_MODE_DIVIDER+":split "+..
-			EDIT_LEVEL_MODE_PATHING+":block "+..
-			EDIT_LEVEL_MODE_SPAWNER_NEW+","+EDIT_LEVEL_MODE_SPAWNER_EDIT+":spawners",..
+			EDIT_LEVEL_MODE_BASIC+":pan "+..
+			EDIT_LEVEL_MODE_DIVIDERS+":split "+..
+			EDIT_LEVEL_MODE_PATH_REGIONS+":fill "+..
+			EDIT_LEVEL_MODE_SPAWNER_SYSTEM+","+EDIT_LEVEL_MODE_SPAWNER_DETAILS+":spawners",..
 			info_x,info_y ); info_y :+ line_h
 		
 		Select mode
-			Case EDIT_LEVEL_MODE_RESIZE
-				DrawText( "mode "+EDIT_LEVEL_MODE_RESIZE+" -> camera pan", info_x,info_y )
-				DrawText( "click and drag to resize level", mouse.x+10,mouse.y )
-				DrawText( "right-click & drag to pan view", mouse.x+10,mouse.y+10 )
-				DrawText( "enter to edit level name", mouse.x+10,mouse.y+20 )
-			Case EDIT_LEVEL_MODE_DIVIDER
-				DrawText( "mode "+EDIT_LEVEL_MODE_DIVIDER+" -> dividers", info_x,info_y )
-				DrawText( "click to split vertically", mouse.x+10,mouse.y )
-				DrawText( "right-click to split horizontally", mouse.x+10,mouse.y+10 )
-				DrawText( "ctrl+click to un-split", mouse.x+10,mouse.y+20 )
-			Case EDIT_LEVEL_MODE_PATHING
-				DrawText( "mode "+EDIT_LEVEL_MODE_PATHING+" -> pathing regions", info_x,info_y )
+			Case EDIT_LEVEL_MODE_BASIC
+				DrawText( "mode "+EDIT_LEVEL_MODE_BASIC+" -> camera pan", info_x,info_y )
+				DrawText( "click and drag to pan", mouse.x+10,mouse.y )
+				DrawText( "enter to edit level name", mouse.x+10,mouse.y+10 )
+			Case EDIT_LEVEL_MODE_DIVIDERS
+				DrawText( "mode "+EDIT_LEVEL_MODE_DIVIDERS+" -> dividers", info_x,info_y )
+				DrawText( "click to split", mouse.x+10,mouse.y )
+				DrawText( "right-click to toggle axis", mouse.x+10,mouse.y+10 )
+				DrawText( "ctrl+click to drag", mouse.x+10,mouse.y+20 )
+				DrawText( "alt+click to join", mouse.x+10,mouse.y+20 )
+			Case EDIT_LEVEL_MODE_PATH_REGIONS
+				DrawText( "mode "+EDIT_LEVEL_MODE_PATH_REGIONS+" -> path regions", info_x,info_y )
 				DrawText( "click block out area", mouse.x+10,mouse.y )
 				DrawText( "right-click to clear area", mouse.x+10,mouse.y+10 )
-			Case EDIT_LEVEL_MODE_SPAWNER_NEW
-				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_NEW+" -> spawner system", info_x,info_y )
+			Case EDIT_LEVEL_MODE_SPAWNER_SYSTEM
+				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_SYSTEM+" -> spawner system", info_x,info_y )
 				DrawText( "click to add new", mouse.x+10,mouse.y )
 				DrawText( "ctrl+click & drag to move", mouse.x+10,mouse.y+10 )
 				DrawText( "alt+click to delete", mouse.x+10,mouse.y+20 )
 				DrawText( "shift+click to set angle", mouse.x+10,mouse.y+30 )
-			Case EDIT_LEVEL_MODE_SPAWNER_EDIT
-				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_EDIT+" -> spawner details", info_x,info_y )
+			Case EDIT_LEVEL_MODE_SPAWNER_DETAILS
+				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_DETAILS+" -> spawner details", info_x,info_y )
 				DrawText( "hover to edit nearest spawner", mouse.x+10,mouse.y )
 				DrawText( "up/down to select squad", mouse.x+10,mouse.y+10 )
 				DrawText( "left/right to change enemy type", mouse.x+10,mouse.y+20 )
@@ -185,26 +187,19 @@ Function level_editor( lev:LEVEL )
 		Select mode
 			
 			'____________________________________________________________________________________________________
-			Case EDIT_LEVEL_MODE_RESIZE
+			Case EDIT_LEVEL_MODE_BASIC
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
-				If MouseDown( 2 )
+				If MouseDown( 1 )
 					'pan
-					If Not mouse_down_2 And MouseDown( 2 )
+					If Not mouse_down_1 And MouseDown( 1 )
 						drag_mouse_start = mouse.clone()
 						drag_pos_start = Create_POINT( x, y )
 					End If
-					If MouseDown( 2 )
+					If MouseDown( 1 )
 						x = round_to_nearest( drag_pos_start.pos_x + (mouse.x - drag_mouse_start.x), gridsnap )
 						y = round_to_nearest( drag_pos_start.pos_y + (mouse.y - drag_mouse_start.y), gridsnap )
 					End If
-				Else If MouseDown( 1 )
-					'resize
-					Local width% = round_to_nearest( mouse.x - x, gridsnap )
-					If width < gridsnap Then width = gridsnap
-					Local height% = round_to_nearest( mouse.y - y, gridsnap )
-					If height < gridsnap Then height = gridsnap
-					lev.resize( width, height )
 				End If
 				If KeyHit( KEY_ENTER )
 					FLAG_text_mode = Not FLAG_text_mode
@@ -223,14 +218,9 @@ Function level_editor( lev:LEVEL )
 				Else 'Not MouseDown( 1 )
 					mouse_down_1 = False
 				End If
-				If MouseDown( 2 )
-					mouse_down_2 = True
-				Else 'Not MouseDown( 2 )
-					mouse_down_2 = False
-				End If
 			
 			'____________________________________________________________________________________________________
-			Case EDIT_LEVEL_MODE_DIVIDER
+			Case EDIT_LEVEL_MODE_DIVIDERS
 				gridsnap_mouse.x = round_to_nearest( mouse.x, gridsnap )
 				gridsnap_mouse.y = round_to_nearest( mouse.y, gridsnap )
 				SetColor( 255, 255, 255 )
@@ -270,7 +260,7 @@ Function level_editor( lev:LEVEL )
 				End If
 									
 			'____________________________________________________________________________________________________
-			Case EDIT_LEVEL_MODE_PATHING
+			Case EDIT_LEVEL_MODE_PATH_REGIONS
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
 				If MouseDown( 1 )
@@ -280,7 +270,7 @@ Function level_editor( lev:LEVEL )
 				End If
 				
 			'____________________________________________________________________________________________________
-			Case EDIT_LEVEL_MODE_SPAWNER_NEW
+			Case EDIT_LEVEL_MODE_SPAWNER_SYSTEM
 				gridsnap_mouse.x = round_to_nearest( mouse.x-x, gridsnap )
 				gridsnap_mouse.y = round_to_nearest( mouse.y-y, gridsnap )
 				new_spawner.pos.pos_x = gridsnap_mouse.x
@@ -366,7 +356,7 @@ Function level_editor( lev:LEVEL )
 				End If
 				
 			'____________________________________________________________________________________________________
-			Case EDIT_LEVEL_MODE_SPAWNER_EDIT
+			Case EDIT_LEVEL_MODE_SPAWNER_DETAILS
 				Local closest_sp:SPAWNER = Null
 				For Local sp:SPAWNER = EachIn lev.spawners
 					If closest_sp = Null Or ..
