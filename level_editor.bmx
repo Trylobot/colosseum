@@ -20,17 +20,18 @@ Function level_editor( lev:LEVEL )
 	Local gridsnap_mouse:cVEC = New cVEC
 	Local drag_mouse_start:cVEC = New cVEC
 	Local drag_pos_start:POINT = New POINT
-	
-	Local gridsnap% = 5
-	Local mode% = EDIT_LEVEL_MODE_RESIZE
-	Local FLAG_text_mode% = False
-	Local x% = gridsnap, y% = gridsnap
-	Local info_x%, info_y%
-	Local mouse_down_1% = False, mouse_down_2% = False
 	Local new_spawner:SPAWNER = New SPAWNER
 	
+	Local gridsnap% = 5
+	Local mode% = EDIT_LEVEL_MODE_BASIC
+	Local FLAG_text_mode%
+	Local x% = gridsnap, y% = gridsnap
+	Local info_x%, info_y%
+	Local mouse_down_1%, mouse_down_2%
+	Local control%, alt%, shift%, any_modifiers%
 	Local divider_axis% = LINE_TYPE_VERTICAL
 	
+	Local line_h% = GetImageFont().Height() - 1
 	Local cursor% = 0
 	Local cursor_archetype% = enemy_index_start
 	Local kb_handler:CONSOLE = New CONSOLE
@@ -38,9 +39,7 @@ Function level_editor( lev:LEVEL )
 	
 	Local normal_font:TImageFont = get_font( "consolas_12" )
 	Local bigger_font:TImageFont = get_font( "consolas_bold_24" )
-	
 	SetImageFont( normal_font )
-	Local line_h% = GetImageFont().Height() - 1
 	
 	Repeat
 		Cls
@@ -133,6 +132,7 @@ Function level_editor( lev:LEVEL )
 		SetColor( 255, 255, 255 )
 		info_x :+ 6; info_y :+ 3
 		
+		'mode help
 		DrawText( ""+..
 			EDIT_LEVEL_MODE_BASIC+":pan "+..
 			EDIT_LEVEL_MODE_DIVIDERS+":split "+..
@@ -140,6 +140,7 @@ Function level_editor( lev:LEVEL )
 			EDIT_LEVEL_MODE_SPAWNER_SYSTEM+","+EDIT_LEVEL_MODE_SPAWNER_DETAILS+":spawners",..
 			info_x,info_y ); info_y :+ line_h
 		
+		'mode help (context-specific)
 		Select mode
 			Case EDIT_LEVEL_MODE_BASIC
 				DrawText( "mode "+EDIT_LEVEL_MODE_BASIC+" -> camera pan", info_x,info_y )
@@ -150,7 +151,7 @@ Function level_editor( lev:LEVEL )
 				DrawText( "click to split", mouse.x+10,mouse.y )
 				DrawText( "right-click to toggle axis", mouse.x+10,mouse.y+10 )
 				DrawText( "ctrl+click to drag", mouse.x+10,mouse.y+20 )
-				DrawText( "alt+click to join", mouse.x+10,mouse.y+20 )
+				DrawText( "alt+click to join", mouse.x+10,mouse.y+30 )
 			Case EDIT_LEVEL_MODE_PATH_REGIONS
 				DrawText( "mode "+EDIT_LEVEL_MODE_PATH_REGIONS+" -> path regions", info_x,info_y )
 				DrawText( "click block out area", mouse.x+10,mouse.y )
@@ -173,17 +174,24 @@ Function level_editor( lev:LEVEL )
 		End Select; info_y :+ line_h
 		DrawText( "numpad +/- gridsnap zoom", info_x,info_y ); info_y :+ 2*line_h
 		
+		'level name/title
 		SetImageFont( bigger_font )
 		DrawText_with_glow( lev.name, info_x, info_y )
 		Local title_y% = info_y
 		info_y :+ GetImageFont().Height() - 1
 		
+		'level info
 		SetImageFont( normal_font )
 		DrawText( "pathing regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
 		DrawText( "spawners: "+lev.spawners.Length, info_x,info_y ); info_y :+ line_h
 		
-		'____________________________________________
-		'behavioral switch based on current mode
+		'modifier keys
+		control = KeyDown( KEY_LCONTROL ) | KeyDown( KEY_RCONTROL )
+		alt =     KeyDown( KEY_LALT )     | KeyDown( KEY_RALT )
+		shift =   KeyDown( KEY_LSHIFT )   | KeyDown( KEY_RSHIFT )
+		any_modifiers = control | alt | shift
+		
+		'mode code (LOL! I rhymed) <-- WTF
 		Select mode
 			
 			'____________________________________________________________________________________________________
@@ -213,50 +221,58 @@ Function level_editor( lev:LEVEL )
 					SetImageFont( normal_font )
 					SetAlpha( 1 )
 				End If
-				If MouseDown( 1 )
-					mouse_down_1 = True
-				Else 'Not MouseDown( 1 )
-					mouse_down_1 = False
-				End If
 			
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_DIVIDERS
 				gridsnap_mouse.x = round_to_nearest( mouse.x, gridsnap )
 				gridsnap_mouse.y = round_to_nearest( mouse.y, gridsnap )
 				SetColor( 255, 255, 255 )
-				SetAlpha( 1 )
-				If mouse_down_1 And Not MouseDown( 1 )
-					If Not KeyDown( KEY_LCONTROL ) And Not KeyDown( KEY_RCONTROL )
-						lev.add_divider( gridsnap_mouse.x-x, LINE_TYPE_VERTICAL )
-					Else 
-						lev.remove_divider( gridsnap_mouse.x-x, LINE_TYPE_VERTICAL )
+				'toggle divider_axis
+				If MouseHit( 2 )'mouse_down_2 And Not MouseDown( 2 )
+					If divider_axis = LINE_TYPE_VERTICAL
+						divider_axis = LINE_TYPE_HORIZONTAL
+					Else 'divider_axis <> LINE_TYPE_VERTICAL
+						divider_axis = LINE_TYPE_VERTICAL
 					End If
 				End If
-				If mouse_down_2 And Not MouseDown( 2 )
-					If Not KeyDown( KEY_LCONTROL ) And Not KeyDown( KEY_RCONTROL )
-						lev.add_divider( gridsnap_mouse.y-y, LINE_TYPE_HORIZONTAL )
-					Else 
-						lev.remove_divider( gridsnap_mouse.y-y, LINE_TYPE_HORIZONTAL )
+				If alt Or control
+					Local nearest_div%
+					Local nearest_div_axis%
+					'populate these
+					
+					If alt
+						'remove
+						If divider_axis = LINE_TYPE_VERTICAL
+							lev.remove_divider( gridsnap_mouse.x-x, LINE_TYPE_VERTICAL )
+						Else If divider_axis = LINE_TYPE_HORIZONTAL
+							lev.remove_divider( gridsnap_mouse.y-y, LINE_TYPE_HORIZONTAL )
+						End If
+					Else If control
+						'drag
+						
 					End If
-				End If
-				SetAlpha( 0.60 )
-				If MouseDown( 1 )
-					mouse_down_1 = True
-					SetLineWidth( 3 )
-					DrawLine( gridsnap_mouse.x,y, gridsnap_mouse.x,y+lev.height )
-					SetLineWidth( 1 )
-					DrawLine( gridsnap_mouse.x,y, gridsnap_mouse.x,y+lev.height )
 				Else
-					mouse_down_1 = False
-				End If
-				If MouseDown( 2 )
-					mouse_down_2 = True
-					SetLineWidth( 3 )
-					DrawLine( x,gridsnap_mouse.y, x+lev.width,gridsnap_mouse.y )
-					SetLineWidth( 1 )
-					DrawLine( x,gridsnap_mouse.y, x+lev.width,gridsnap_mouse.y )
-				Else
-					mouse_down_2 = False
+					'add/remove divider
+					If mouse_down_1 And Not MouseDown( 1 )
+						If divider_axis = LINE_TYPE_VERTICAL
+							lev.add_divider( gridsnap_mouse.x-x, LINE_TYPE_VERTICAL )
+						Else If divider_axis = LINE_TYPE_HORIZONTAL
+							lev.add_divider( gridsnap_mouse.y-y, LINE_TYPE_HORIZONTAL )
+						End If
+					End If
+					'insert div cursor
+					If MouseDown( 1 )
+						SetAlpha( 0.75 + 0.5*Sin(now() Mod 360) )
+					Else
+						SetAlpha( 0.25 )
+					End If
+					If divider_axis = LINE_TYPE_VERTICAL
+						SetLineWidth( 3 )
+						DrawLine( gridsnap_mouse.x,y, gridsnap_mouse.x,y+lev.height )
+					Else If divider_axis = LINE_TYPE_HORIZONTAL
+						SetLineWidth( 3 )
+						DrawLine( x,gridsnap_mouse.y, x+lev.width,gridsnap_mouse.y )
+					End If
 				End If
 									
 			'____________________________________________________________________________________________________
@@ -283,7 +299,7 @@ Function level_editor( lev:LEVEL )
 					Case ALIGNMENT_HOSTILE
 						SetColor( 255, 64, 64 )
 				End Select
-				If Not (KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL ) Or KeyDown( KEY_LALT ) Or KeyDown( KEY_RALT ) Or KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT ))
+				If Not any_modifiers
 					If mouse_down_1 And Not MouseDown( 1 )
 						lev.add_spawner( new_spawner.clone() )
 					End If
@@ -312,7 +328,7 @@ Function level_editor( lev:LEVEL )
 						End Select
 						DrawLine( MouseX(),MouseY(), closest_sp.pos.pos_x+x,closest_sp.pos.pos_y+y )
 
-						If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
+						If control
 							If Not mouse_down_1 And MouseDown( 1 )
 								drag_mouse_start = mouse.clone()
 								drag_pos_start = Copy_POINT( closest_sp.pos )
@@ -321,11 +337,11 @@ Function level_editor( lev:LEVEL )
 								closest_sp.pos.pos_x = round_to_nearest( drag_pos_start.pos_x + (mouse.x - drag_mouse_start.x), gridsnap )
 								closest_sp.pos.pos_y = round_to_nearest( drag_pos_start.pos_y + (mouse.y - drag_mouse_start.y), gridsnap )
 							End If
-						Else If KeyDown( KEY_LALT ) Or KeyDown( KEY_RALT )
+						Else If alt
 							If mouse_down_1 And Not MouseDown( 1 )
 								lev.remove_spawner( closest_sp )
 							End If
-						Else If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
+						Else If shift
 							If MouseDown( 1 )
 								closest_sp.pos.ang = round_to_nearest( ang_wrap( closest_sp.pos.ang_to_cVEC( mouse )), 45 )
 							End If
@@ -334,13 +350,11 @@ Function level_editor( lev:LEVEL )
 				End If
 				Local alpha_mod#
 				If MouseDown( 1 )
-					mouse_down_1 = True
 					alpha_mod = 1.0
 				Else
-					mouse_down_1 = False
 					alpha_mod = 0.50
 				End If
-				If Not (KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL ) Or KeyDown( KEY_LALT ) Or KeyDown( KEY_RALT ) Or KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT ))
+				If Not any_modifiers
 					Local p:POINT = new_spawner.pos
 					SetAlpha( 0.50*alpha_mod )
 					DrawOval( x+p.pos_x-spawn_point_preview_radius,y+p.pos_y-spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
@@ -489,6 +503,18 @@ Function level_editor( lev:LEVEL )
 				
 		End Select
 		
+		'mouse states (these have to be updated after they are used, since what I'm really trying to capture is the time diff
+		If MouseDown( 1 )
+			mouse_down_1 = True
+		Else 'Not MouseDown( 1 )
+			mouse_down_1 = False
+		End If
+		If MouseDown( 2 )
+			mouse_down_2 = True
+		Else 'Not MouseDown( 2 )
+			mouse_down_2 = False
+		End If
+
 		Flip( 1 )
 	Until KeyHit( KEY_ESCAPE )
 	
