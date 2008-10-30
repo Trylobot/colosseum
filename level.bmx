@@ -209,65 +209,61 @@ Type LEVEL Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
-	Method remove_divider( pos%, line_type% )
+	Method remove_divider( i%, line_type% )
 		Select line_type
 			
 			Case LINE_TYPE_HORIZONTAL
-				If pos <= 0 Or pos >= height Then Return
-				For Local i% = 0 To horizontal_divs.Length - 1
-					If pos = horizontal_divs[i]
-						Local old_horizontal_divs%[] = horizontal_divs
-						horizontal_divs = New Int[old_horizontal_divs.Length-1]
-						'all old divs up to the removed one's spot
-						For Local j% = 0 To i
-							horizontal_divs[j] = old_horizontal_divs[j]
-						Next
-						'all old divs after the removed one's spot
-						For Local j% = i+1 To old_horizontal_divs.Length - 1
-							horizontal_divs[j-1] = old_horizontal_divs[j]
-						Next
-						'row_count :- 1
-						'path_regions = New Int[row_count,col_count]
-						path_regions_remove_row( i )
-						Return
-					End If
-				Next
+				If i > 0 And i < horizontal_divs.Length
+					Local old_horizontal_divs%[] = horizontal_divs
+					horizontal_divs = New Int[old_horizontal_divs.Length-1]
+					'all old divs up to the removed one's spot
+					For Local j% = 0 To i
+						horizontal_divs[j] = old_horizontal_divs[j]
+					Next
+					'all old divs after the removed one's spot
+					For Local j% = i+1 To old_horizontal_divs.Length - 1
+						horizontal_divs[j-1] = old_horizontal_divs[j]
+					Next
+					'row_count :- 1
+					'path_regions = New Int[row_count,col_count]
+					path_regions_remove_row( i )
+				End If
 			
 			Case LINE_TYPE_VERTICAL
-				If pos <= 0 Or pos >= width Then Return
-				For Local i% = 0 To vertical_divs.Length - 1
-					If pos = vertical_divs[i]
-						Local old_vertical_divs%[] = vertical_divs
-						vertical_divs = New Int[old_vertical_divs.Length-1]
-						'all old divs up to the removed one's spot
-						For Local j% = 0 To i
-							vertical_divs[j] = old_vertical_divs[j]
-						Next
-						'all old divs after the removed one's spot
-						For Local j% = i+1 To old_vertical_divs.Length - 1
-							vertical_divs[j-1] = old_vertical_divs[j]
-						Next
-						'col_count :- 1
-						'path_regions = New Int[row_count,col_count]
-						path_regions_remove_col( i )
-						Return
-					End If
-				Next
+				If i > 0 And i < vertical_divs.Length
+					Local old_vertical_divs%[] = vertical_divs
+					vertical_divs = New Int[old_vertical_divs.Length-1]
+					'all old divs up to the removed one's spot
+					For Local j% = 0 To i
+						vertical_divs[j] = old_vertical_divs[j]
+					Next
+					'all old divs after the removed one's spot
+					For Local j% = i+1 To old_vertical_divs.Length - 1
+						vertical_divs[j-1] = old_vertical_divs[j]
+					Next
+					'col_count :- 1
+					'path_regions = New Int[row_count,col_count]
+					path_regions_remove_col( i )
+				End If
 			
 		End Select
 	End Method
 	
 	Method set_divider( line_type%, index%, value% )
+		If index = 0 Then Return
+		
 		Select line_type
 			
 			Case LINE_TYPE_HORIZONTAL
 				Local delta% = value - horizontal_divs[index]
+				height :+ delta
 				For local i% = index To horizontal_divs.Length - 1
 					horizontal_divs[i] :+ delta
 				Next
 			
 			Case LINE_TYPE_VERTICAL
 				Local delta% = value - vertical_divs[index]
+				width :+ delta
 				For local i% = index To vertical_divs.Length - 1
 					vertical_divs[i] :+ delta
 				Next

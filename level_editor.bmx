@@ -21,6 +21,10 @@ Function level_editor( lev:LEVEL )
 	Local drag_mouse_start:cVEC = New cVEC
 	Local drag_pos_start:POINT = New POINT
 	Local new_spawner:SPAWNER = New SPAWNER
+
+	Local nearest_div%
+	Local nearest_div_dist%
+	Local nearest_div_axis%
 	
 	Local gridsnap% = 5
 	Local mode% = EDIT_LEVEL_MODE_BASIC
@@ -198,13 +202,12 @@ Function level_editor( lev:LEVEL )
 			Case EDIT_LEVEL_MODE_BASIC
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
+				'pan
 				If MouseDown( 1 )
-					'pan
-					If Not mouse_down_1 And MouseDown( 1 )
+					If Not mouse_down_1
 						drag_mouse_start = mouse.clone()
 						drag_pos_start = Create_POINT( x, y )
-					End If
-					If MouseDown( 1 )
+					Else
 						x = round_to_nearest( drag_pos_start.pos_x + (mouse.x - drag_mouse_start.x), gridsnap )
 						y = round_to_nearest( drag_pos_start.pos_y + (mouse.y - drag_mouse_start.y), gridsnap )
 					End If
@@ -227,6 +230,7 @@ Function level_editor( lev:LEVEL )
 				gridsnap_mouse.x = round_to_nearest( mouse.x, gridsnap )
 				gridsnap_mouse.y = round_to_nearest( mouse.y, gridsnap )
 				SetColor( 255, 255, 255 )
+				SetLineWidth( 3 )
 				'toggle divider_axis
 				If MouseHit( 2 )'mouse_down_2 And Not MouseDown( 2 )
 					If divider_axis = LINE_TYPE_VERTICAL
@@ -236,23 +240,53 @@ Function level_editor( lev:LEVEL )
 					End If
 				End If
 				If alt Or control
-					Local nearest_div%
-					Local nearest_div_axis%
-					'populate these
-					
-					If alt
-						'remove
-						If divider_axis = LINE_TYPE_VERTICAL
-							lev.remove_divider( gridsnap_mouse.x-x, LINE_TYPE_VERTICAL )
-						Else If divider_axis = LINE_TYPE_HORIZONTAL
-							lev.remove_divider( gridsnap_mouse.y-y, LINE_TYPE_HORIZONTAL )
+					If alt And mouse_down_1 And Not MouseDown( 1 )
+						'remove nearest div (do not recalculate)
+						lev.remove_divider( nearest_div, nearest_div_axis )
+					Else If control And MouseDown( 1 )
+						If Not mouse_down_1
+							'no need to record this event
+						Else
+							'drag nearest div (do not recalculate)
+							If nearest_div_axis = LINE_TYPE_VERTICAL
+								lev.set_divider( LINE_TYPE_VERTICAL, nearest_div, gridsnap_mouse.x-x - nearest_div_dist )
+							Else If nearest_div_axis = LINE_TYPE_HORIZONTAL
+								lev.set_divider( LINE_TYPE_HORIZONTAL, nearest_div, gridsnap_mouse.y-y - nearest_div_dist )
+							End If
 						End If
-					Else If control
-						'drag
-						
+					Else
+						'recalculate nearest div
+						nearest_div = 0
+						nearest_div_dist = CELL.MAXIMUM_COST
+						nearest_div_axis = LINE_TYPE_VERTICAL
+						For Local i% = 0 To lev.vertical_divs.Length - 1
+							Local this_dist% = gridsnap_mouse.x-x - lev.vertical_divs[i]
+							If Abs(this_dist) < Abs(nearest_div_dist)
+								nearest_div = i
+								nearest_div_dist = this_dist
+								nearest_div_axis = LINE_TYPE_VERTICAL
+							End If
+						Next
+						For Local i% = 0 To lev.horizontal_divs.Length - 1
+							Local this_dist% = gridsnap_mouse.y-y - lev.horizontal_divs[i]
+							If Abs(this_dist) < Abs(nearest_div_dist)
+								nearest_div = i
+								nearest_div_dist = this_dist
+								nearest_div_axis = LINE_TYPE_HORIZONTAL
+							End If
+						Next
+					End If
+					'draw nearest div
+					SetAlpha( 0.25 + 0.25*Sin(now() Mod 360) )
+					If nearest_div_axis = LINE_TYPE_VERTICAL
+						DrawLine( lev.vertical_divs[nearest_div]+x,y, lev.vertical_divs[nearest_div]+x,y+lev.height )
+						DrawLine( gridsnap_mouse.x,gridsnap_mouse.y, lev.vertical_divs[nearest_div]+x,gridsnap_mouse.y )
+					Else If nearest_div_axis = LINE_TYPE_HORIZONTAL
+						DrawLine( x,lev.horizontal_divs[nearest_div]+y, x+lev.width,lev.horizontal_divs[nearest_div]+y )
+						DrawLine( gridsnap_mouse.x,gridsnap_mouse.y, gridsnap_mouse.x,lev.horizontal_divs[nearest_div]+y )
 					End If
 				Else
-					'add/remove divider
+					'insert div
 					If mouse_down_1 And Not MouseDown( 1 )
 						If divider_axis = LINE_TYPE_VERTICAL
 							lev.add_divider( gridsnap_mouse.x-x, LINE_TYPE_VERTICAL )
@@ -267,10 +301,8 @@ Function level_editor( lev:LEVEL )
 						SetAlpha( 0.25 )
 					End If
 					If divider_axis = LINE_TYPE_VERTICAL
-						SetLineWidth( 3 )
 						DrawLine( gridsnap_mouse.x,y, gridsnap_mouse.x,y+lev.height )
 					Else If divider_axis = LINE_TYPE_HORIZONTAL
-						SetLineWidth( 3 )
 						DrawLine( x,gridsnap_mouse.y, x+lev.width,gridsnap_mouse.y )
 					End If
 				End If
