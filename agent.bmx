@@ -14,16 +14,32 @@ max_health# = 1, ..
 mass# = 1, ..
 frictional_coefficient# = 0, ..
 physics_disabled% = False )
-	Local a:AGENT = New AGENT
-	a.name = name
-	a.img = img
-	a.gibs = gibs
-	a.cash_value = cash_value
-	a.max_health = max_health
-	a.mass = mass
-	a.frictional_coefficient = frictional_coefficient
-	a.physics_disabled = physics_disabled
-	Return a
+	Local ag:AGENT = New AGENT
+	ag.name = name
+	ag.img = img
+	ag.gibs = gibs
+	ag.cash_value = cash_value
+	ag.max_health = max_health
+	ag.mass = mass
+	ag.frictional_coefficient = frictional_coefficient
+	ag.physics_disabled = physics_disabled
+	Return ag
+End Function
+
+Function Copy_AGENT:AGENT( other:AGENT )
+	Local ag:AGENT = New AGENT
+	ag.name = other.name
+	ag.img = other.img
+	ag.gibs = other.gibs
+	ag.cash_value = other.cash_value
+	For Local other_em:EMITTER = EachIn other.death_emitters
+		ag.add_emitter( other_em, other_em.trigger_event )
+	Next
+	ag.max_health = other.max_health
+	ag.mass = other.mass
+	ag.frictional_coefficient = other.frictional_coefficient
+	ag.physics_disabled = other.physics_disabled
+	Return ag
 End Function
 
 Type AGENT Extends PHYSICAL_OBJECT
@@ -40,6 +56,10 @@ Type AGENT Extends PHYSICAL_OBJECT
 	Method New()
 		force_list = CreateList()
 		death_emitters = CreateList()
+	End Method
+	
+	Method draw( red_override% = -1, green_override% = -1, blue_override% = -1, alpha_override# = -1.0, scale_override# = -1.0, UNUSED% = False )
+		DrawImage( img, pos_x, pos_y )
 	End Method
 	
 	Method dead%()
@@ -97,6 +117,18 @@ Type AGENT Extends PHYSICAL_OBJECT
 		'delete self
 		cur_health = 0
 		unmanage()
+	End Method
+	
+	'___________________________________________
+	Method add_emitter:EMITTER(	other_em:EMITTER, event% )
+		Local em:EMITTER = Copy_EMITTER( other_em )
+		em.parent = Self
+		em.trigger_event = event
+		Select event
+			Case EVENT_DEATH
+				em.manage( death_emitters )
+		End Select
+		Return em
 	End Method
 	
 End Type
@@ -796,10 +828,10 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
-	Method draw( hide_widgets% = False, red_override% = -1, green_override% = -1, blue_override% = -1, alpha_override# = -1.0, scale_override# = -1.0 )
+	Method draw( red_override% = -1, green_override% = -1, blue_override% = -1, alpha_override# = -1.0, scale_override# = -1.0, hide_widgets% = False )
 		If red_override   <> -1   Then red   = red_override   Else red   = 255
 		If green_override <> -1   Then green = green_override Else green = 255
-		If blue_override  <> -1.0 Then blue  = blue_override  Else blue  = 255
+		If blue_override  <> -1   Then blue  = blue_override  Else blue  = 255
 		If alpha_override <> -1.0 Then alpha = alpha_override Else alpha = 1.0
 		If scale_override <> -1.0 Then scale = scale_override Else scale = 1.0
 		

@@ -14,6 +14,7 @@ Const EDIT_LEVEL_MODE_DIVIDERS% = 2
 Const EDIT_LEVEL_MODE_PATH_REGIONS% = 3
 Const EDIT_LEVEL_MODE_SPAWNER_SYSTEM% = 4
 Const EDIT_LEVEL_MODE_SPAWNER_DETAILS% = 5
+Const EDIT_LEVEL_MODE_PROPS% = 6
 
 Function level_editor( lev:LEVEL )
 	
@@ -21,6 +22,7 @@ Function level_editor( lev:LEVEL )
 	Local drag_mouse_start:cVEC = New cVEC
 	Local drag_pos_start:POINT = New POINT
 	Local new_spawner:SPAWNER = New SPAWNER
+	Local new_prop:PROP_DATA = New PROP_DATA
 
 	Local nearest_div%
 	Local nearest_div_dist%
@@ -107,6 +109,16 @@ Function level_editor( lev:LEVEL )
 			DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )
 		Next
 		
+		'draw the props
+		For Local pd:PROP_DATA = EachIn lev.props
+			Local prop:AGENT = get_prop( pd.archetype )
+			prop.pos_x = pd.pos.pos_x
+			prop.pos_y = pd.pos.pos_y
+			prop.ang = pd.pos.ang
+			SetAlpha( 0.35 )
+			prop.draw()
+		Next
+		
 		'change modes detection
 		If Not FLAG_text_mode
 			If      KeyHit( KEY_1 ) Then mode = EDIT_LEVEL_MODE_BASIC ..
@@ -141,7 +153,8 @@ Function level_editor( lev:LEVEL )
 			EDIT_LEVEL_MODE_BASIC+":pan "+..
 			EDIT_LEVEL_MODE_DIVIDERS+":split "+..
 			EDIT_LEVEL_MODE_PATH_REGIONS+":fill "+..
-			EDIT_LEVEL_MODE_SPAWNER_SYSTEM+","+EDIT_LEVEL_MODE_SPAWNER_DETAILS+":spawners",..
+			EDIT_LEVEL_MODE_SPAWNER_SYSTEM+","+EDIT_LEVEL_MODE_SPAWNER_DETAILS+":spawners"+..
+			EDIT_LEVEL_MODE_PROPS+":props",..
 			info_x,info_y ); info_y :+ line_h
 		
 		'mode help (context-specific)
@@ -175,6 +188,10 @@ Function level_editor( lev:LEVEL )
 				DrawText( "home/end to change class", mouse.x+10,mouse.y+40 )
 				DrawText( "pgup/pgdn to change alignment", mouse.x+10,mouse.y+50 )
 				DrawText( "enter to edit wait time", mouse.x+10,mouse.y+60 )
+			Case EDIT_LEVEL_MODE_PROPS
+				DrawText( "mode "+EDIT_LEVEL_MODE_PROPS+" -> props", info_x,info_y )
+				DrawText( "click to add new", mouse.x+10,mouse.y )
+				'...
 		End Select; info_y :+ line_h
 		DrawText( "numpad +/- gridsnap zoom", info_x,info_y ); info_y :+ 2*line_h
 		
@@ -442,7 +459,7 @@ Function level_editor( lev:LEVEL )
 								ag.ang = -90
 								ag.snap_all_turrets()
 								ag.update()
-								ag.draw( True,,,,, 0.75 )
+								ag.draw( ,,,, 0.75, True )
 							Next
 						Next
 						SetRotation( 0 )
@@ -485,7 +502,7 @@ Function level_editor( lev:LEVEL )
 						ag.ang = -90
 						ag.snap_all_turrets()
 						ag.update()
-						ag.draw( True,,,, 0.5 + Sin(now() Mod 360), 0.75 )
+						ag.draw( ,,, 0.5 + Sin(now() Mod 360), 0.75, True )
 						SetRotation( 0 )
 						SetScale( 1, 1 )
 						
@@ -532,6 +549,14 @@ Function level_editor( lev:LEVEL )
 						End If
 					End If
 				End If
+			
+			'____________________________________________________________________________________________________
+			Case EDIT_LEVEL_MODE_PROPS
+				gridsnap_mouse.x = round_to_nearest( mouse.x-x, gridsnap )
+				gridsnap_mouse.y = round_to_nearest( mouse.y-y, gridsnap )
+				new_prop.pos.pos_x = gridsnap_mouse.x
+				new_prop.pos.pos_y = gridsnap_mouse.y
+				
 				
 		End Select
 		

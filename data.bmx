@@ -501,7 +501,7 @@ Global img_laser:TImage = LoadImage_SetHandle( "laser.png", 13.5, 2.5 )
 Global img_rocket:TImage = LoadImage_SetHandle( "rocket.png", 10.5, 3.5 )
 
 Global img_debris:TImage = LoadAnimImage_SetHandle( "debris.png", 2.5, 2.5, 5, 5, 5 )
-Global img_trail_small:TImage = LoadAnimImage_SetHandle( "trail_3.png", 2.5, 3.5, 4, 7, 5 )
+Global img_trail_small:TImage = LoadAnimImage_SetHandle( "trail_3.png", 2.5, 3.5, 4, 5, 5 )
 Global img_trail_medium:TImage = LoadAnimImage_SetHandle( "trail_5.png", 2.5, 3.5, 4, 7, 5 )
 Global img_box_gib:TImage = LoadAnimImage_SetHandle( "box_gib.png", 8.5, 8.5, 17, 17, 6 )
 Global img_tower_gibs:TImage = LoadAnimImage_SetHandle( "tower_gibs.png", 11.5, 11.5, 23, 23, 11 )
@@ -525,6 +525,7 @@ Global img_shine:TImage = LoadImage_SetHandle( "bar_shine.png", 15, 0 )
 
 Global img_door:TImage = LoadImage_SetHandle( "door.png", 1, 7 )
 Global img_crate:TImage = LoadImage_SetHandle( "crate.png", 16, 16 )
+Global img_crate_small:TImage = LoadImage_SetHandle( "crate_small.png", 10, 10 )
 Global img_reticle:TImage = LoadImage_SetHandle( "reticle.png", 22.5, 2.5 )
 
 

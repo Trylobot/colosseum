@@ -124,7 +124,7 @@ Type PROP_DATA
 	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
-		this_json.SetByName( "archetype", TJSONNumber.Create( archetype_index ))
+		this_json.SetByName( "archetype", TJSONNumber.Create( archetype ))
 		this_json.SetByName( "pos", pos.to_json() )
 		Return this_json
 	End Method
@@ -132,7 +132,7 @@ End Type
 
 Function Create_PROP_DATA_from_json:PROP_DATA( json:TJSON )
 	Local pd:PROP_DATA = New PROP_DATA
-	pd.archetype_index = json.GetNumber( "archetype" )
+	pd.archetype = json.GetNumber( "archetype" )
 	pd.pos = Create_POINT_from_json( TJSON.Create( json.GetObject( "pos" )))
 	Return pd
 End Function
@@ -374,13 +374,23 @@ Type LEVEL Extends MANAGED_OBJECT
 		Next
 	End Method
 	
-	Method add_prop( prop_archetype_index%, prop_location:POINT )
-		props = props[..props.Length+1]
-		props[props.Length-1] = Create_PROP_DATA( prop_archetype_index, prop_location )
+	Method add_prop( pd:PROP_DATA )
+		If props = Null
+			props = New PROP_DATA[1]
+		Else
+			props = props[..props.Length+1]
+		End If
+		props[props.Length-1] = pd
 	End Method
 	
-	Method remove_prop( index% )
-		
+	Method remove_prop( pd:PROP_DATA )
+		For Local index% = 0 To props.Length
+			If props[index] = pd
+				props[index] = props[props.Length-1]
+				props = props[..props.Length-1]
+				Exit
+			End If
+		Next
 	End Method
 	
 	Method get_cell:CELL( x%, y% )
@@ -532,9 +542,9 @@ Function Create_LEVEL_from_json:LEVEL( json:TJSON )
 	End If
 	Local props_json:TJSONArray = json.GetArray( "props" )
 	If props_json <> Null And props_json.Size() > 0
-		lev.spawners = New SPAWNER[spawners_json.Size()]
-		For Local index% = 0 To spawners_json.Size() - 1
-			lev.spawners[index] = Create_SPAWNER_from_json( TJSON.Create( spawners_json.GetByIndex( index )))
+		lev.props = New PROP_DATA[props_json.Size()]
+		For Local index% = 0 To props_json.Size() - 1
+			lev.props[index] = Create_PROP_DATA_from_json( TJSON.Create( props_json.GetByIndex( index )))
 		Next
 	End If
 	Return lev

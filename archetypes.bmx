@@ -22,8 +22,12 @@ Global PROP_INDEX_CRATE_MEDIUM% = postfix_index()
 Global PROP_INDEX_CRATE_SMALL% = postfix_index()
 
 Function set_prop_archetypes()
-	prop_archetype[PROP_INDEX_CRATE_MEDIUM] = Archetype_AGENT( "medium crate", img_crate, img_wood_pieces,, 400, 400, 160 )
-	prop_archetype[PROP_INDEX_CRATE_SMALL] = Archetype_AGENT( "small crate", img_crate_small, img_wood_pieces_small,, 400, 400, 160 )
+	prop_archetype[PROP_INDEX_CRATE_MEDIUM] = Archetype_AGENT( "medium crate", img_crate,,, 400, 400, 160 )
+	prop_archetype[PROP_INDEX_CRATE_SMALL] = Archetype_AGENT( "small crate", img_crate_small,,, 400, 400, 160 )
+End Function
+
+Function get_prop:AGENT( archetype_index% )
+	Return Copy_AGENT( prop_archetype[archetype_index] )
 End Function
 
 '______________________________________________________________________________
@@ -117,7 +121,7 @@ Function set_particle_emitter_archetypes()
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_THRUST] = EMITTER( EMITTER.Archetype( "thrust", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_ROCKET_THRUST, MODE_ENABLED_FOREVER,,,,,, 10, 15,,, 10, 15, 0.50, 0.75, 0, 0, 0.25, 1.00, 0, 0 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] = EMITTER( EMITTER.Archetype( "smoke", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_ROCKET_SMOKE_TRAIL, MODE_ENABLED_FOREVER,,,,,, 0, 30, 0, 0, 250, 500, 0.06, 0.12, -0.002, -0.020, 0.10, 0.70, 0.0008, 0.0300 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS] = EMITTER( EMITTER.Archetype( "debris", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_DEBRIS,,, True,,,, 100, 150, 0, 0, 200, 350, 0.75, 0.75, -0.0012, -0.0025 ))
-	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL] = EMITTER( EMITTER.Archetype( "trail", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_TRAIL,,,,,,, 100, 100,,, 50, 50,,,,, 0.60, 0.60, 0.0, 0.0 ))
+	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL] = EMITTER( EMITTER.Archetype( "trail", EMITTER_TYPE_PARTICLE, PARTICLE_INDEX_TANK_TREAD_TRAIL_SMALL,,,,,,, 100, 100,,, 50, 50,,,,, 0.60, 0.60, 0.0, 0.0 ))
 End Function
 
 '______________________________________________________________________________
@@ -326,10 +330,10 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 12, 7, 0, 2, -45, 45, 0.3, 0.6 )
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, -7, 0, 2, 135, 225, 0.3, 0.6 )
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, 7, 0, 2, 135, 225, 0.3, 0.6 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_FORWARD ).attach_at( 12, -7, 1, 1 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_FORWARD ).attach_at( 12, 7, 1, 1 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, -7, 1, 1 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, 7, 1, 1 )
+		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_FORWARD ).attach_at( 12, -6, 1, 1 )
+		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_FORWARD ).attach_at( 12, 6, 1, 1 )
+		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, -6, 1, 1 )
+		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, 6, 1, 1 )
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track = particle_archetype[PARTICLE_INDEX_LIGHT_TANK_TRACK].clone()
 			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track.parent = complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK]
 			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track.attach_at( 0, -6.5 )
