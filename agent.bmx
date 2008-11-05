@@ -5,6 +5,27 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Function Archetype_AGENT:AGENT( ..
+name$ = Null, ..
+img:TImage = Null, ..
+gibs:TImage = Null, ..
+cash_value% = 0, ..
+max_health# = 1, ..
+mass# = 1, ..
+frictional_coefficient# = 0, ..
+physics_disabled% = False )
+	Local a:AGENT = New AGENT
+	a.name = name
+	a.img = img
+	a.gibs = gibs
+	a.cash_value = cash_value
+	a.max_health = max_health
+	a.mass = mass
+	a.frictional_coefficient = frictional_coefficient
+	a.physics_disabled = physics_disabled
+	Return a
+End Function
+
 Type AGENT Extends PHYSICAL_OBJECT
 	
 	Field img:TImage 'image to be drawn
@@ -12,9 +33,9 @@ Type AGENT Extends PHYSICAL_OBJECT
 	Field max_health# 'maximum health
 	Field cash_value% 'cash to be awarded player on death
 	Field death_emitters:TList 'emitters to be activated on death
-	Field last_collided_agent_id% 'id of last agent collided with (for self-destructing agents)
 
 	Field cur_health# 'current health
+	Field last_collided_agent_id% 'id of last agent collided with (for self-destructing agents)
 	
 	Method New()
 		force_list = CreateList()

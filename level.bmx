@@ -118,6 +118,26 @@ Function Create_SPAWNER_from_json:SPAWNER( json:TJSON )
 End Function
 
 '______________________________________________________________________________
+Type PROP_DATA
+	Field archetype%
+	Field pos:POINT
+	
+	Method to_json:TJSONObject()
+		Local this_json:TJSONObject = New TJSONObject
+		this_json.SetByName( "archetype", TJSONNumber.Create( archetype_index ))
+		this_json.SetByName( "pos", pos.to_json() )
+		Return this_json
+	End Method
+End Type
+
+Function Create_PROP_DATA_from_json:PROP_DATA( json:TJSON )
+	Local pd:PROP_DATA = New PROP_DATA
+	pd.archetype_index = json.GetNumber( "archetype" )
+	pd.pos = Create_POINT_from_json( TJSON.Create( json.GetObject( "pos" )))
+	Return pd
+End Function
+
+'______________________________________________________________________________
 Const LINE_TYPE_HORIZONTAL% = 1
 Const LINE_TYPE_VERTICAL% = 2
 
@@ -137,6 +157,7 @@ Function Create_LEVEL:LEVEL( width%, height% )
 	lev.vertical_divs = [ 0, lev.width ]
 	lev.path_regions = New Int[ lev.row_count, lev.col_count ]
 	lev.spawners = Null
+	lev.props = Null
 	Return lev
 End Function
 
@@ -146,6 +167,7 @@ Type LEVEL Extends MANAGED_OBJECT
 	Field horizontal_divs%[], vertical_divs%[] 'dividers
 	Field path_regions%[,] '{PASSABLE|BLOCKED}[w,h]
 	Field spawners:SPAWNER[]
+	Field props:PROP_DATA[]
 	
 	Method resize( new_width%, new_height% )
 		width = new_width
@@ -352,6 +374,15 @@ Type LEVEL Extends MANAGED_OBJECT
 		Next
 	End Method
 	
+	Method add_prop( prop_archetype_index%, prop_location:POINT )
+		props = props[..props.Length+1]
+		props[props.Length-1] = Create_PROP_DATA( prop_archetype_index, prop_location )
+	End Method
+	
+	Method remove_prop( index% )
+		
+	End Method
+	
 	Method get_cell:CELL( x%, y% )
 		Local c:CELL = CELL.Create_INVALID()
 		For Local i% = 0 To vertical_divs.Length - 2
@@ -468,6 +499,15 @@ Type LEVEL Extends MANAGED_OBJECT
 		Else
 			this_json.SetByName( "spawners", TJSON.NIL )
 		End If
+		If props <> Null And props.Length > 0
+			Local props_json:TJSONArray = TJSONArray.Create( props.Length )
+			For Local index% = 0 To props.Length - 1
+				props_json.SetByIndex( index, props[index].to_json() )
+			Next
+			this_json.SetByName( "props", props_json )
+		Else
+			this_json.SetByName( "props", TJSON.NIL )
+		End If
 		Return this_json
 	End Method
 	
@@ -485,6 +525,13 @@ Function Create_LEVEL_from_json:LEVEL( json:TJSON )
 	lev.path_regions = Create_2D_Int_array_from_TJSONArray( json.GetArray( "path_regions" ))
 	Local spawners_json:TJSONArray = json.GetArray( "spawners" )
 	If spawners_json <> Null And spawners_json.Size() > 0
+		lev.spawners = New SPAWNER[spawners_json.Size()]
+		For Local index% = 0 To spawners_json.Size() - 1
+			lev.spawners[index] = Create_SPAWNER_from_json( TJSON.Create( spawners_json.GetByIndex( index )))
+		Next
+	End If
+	Local props_json:TJSONArray = json.GetArray( "props" )
+	If props_json <> Null And props_json.Size() > 0
 		lev.spawners = New SPAWNER[spawners_json.Size()]
 		For Local index% = 0 To spawners_json.Size() - 1
 			lev.spawners[index] = Create_SPAWNER_from_json( TJSON.Create( spawners_json.GetByIndex( index )))
