@@ -322,7 +322,7 @@ Global ENEMY_INDEX_LIGHT_TANK% = postfix_index()
 
 Function set_complex_agent_archetypes()
 	
-	' max speed = 1.0
+	'max speed = 1.0
 	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "light tank", img_player_tank_chassis, img_quad_gibs, AI_BRAIN_TANK, 0, 500, 800.0, 75.0, 75.0, 100.0 ))
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON] ).attach_at( -5, 0 )
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN] ).attach_at( -5, 0 )
@@ -347,7 +347,7 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[PLAYER_INDEX_LASER_TANK].turret_list = CreateList()
 		complex_agent_archetype[PLAYER_INDEX_LASER_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_LASER] ).attach_at( -5, 0 )
 	
-	' max speed = 0.8
+	'max speed = 0.8
 	complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "medium tank", img_player_tank_chassis_med, img_quad_gibs, AI_BRAIN_TANK, 0, 750, 1200, 125.0, 100.0, 125.0 ))
 		complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON] ).attach_at( -9, 0 )
 		complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK].add_turret( turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN] ).attach_at( -9, 0 )

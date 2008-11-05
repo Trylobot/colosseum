@@ -44,12 +44,13 @@ Type ENVIRONMENT
 	Field hostile_doors_status% 'flag indicating state of all hostile doors
 	Field all_door_lists:TList 'list of all door lists
 	
+	Field prop_list:TList 'TList<AGENT>
 	Field particle_list_background:TList 'TList<PARTICLE>
 	Field particle_list_foreground:TList 'TList<PARTICLE>
 	Field particle_lists:TList 'TList<TList<PARTICLE>>
 	Field retained_particle_list:TList 'TList<PARTICLE>
 	Field retained_particle_list_count% 'number of particles currently retained, cached for speed
-	Field environmental_widget_list:TList
+	Field environmental_widget_list:TList 'TList<WIDGET>
 	Field projectile_list:TList 'TList<PROJECTILE>
 	Field friendly_agent_list:TList 'TList<COMPLEX_AGENT>
 	Field hostile_agent_list:TList 'TList<COMPLEX_AGENT>
@@ -81,6 +82,7 @@ Type ENVIRONMENT
 		mouse = Create_cVEC( 0, 0 )
 		drawing_origin = Create_cVEC( 0, 0 )
 		walls = CreateList()
+		prop_list = CreateList()
 		particle_list_background = CreateList()
 		particle_list_foreground = CreateList()
 		particle_lists = CreateList()
@@ -109,6 +111,7 @@ Type ENVIRONMENT
 		background_clean = Null
 		background_dynamic = Null
 		foreground = Null
+		prop_list.Clear()
 		particle_list_background.Clear()
 		particle_list_foreground.Clear()
 		retained_particle_list.Clear()
@@ -143,6 +146,7 @@ Type ENVIRONMENT
 		End If
 		calculate_camera_constraints()
 		
+		'props
 		'pathing (AI bots)
 		pathing = PATHING_STRUCTURE.Create( lev )
 		'walls (Collisions)
