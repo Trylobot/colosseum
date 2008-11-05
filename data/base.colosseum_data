@@ -1,0 +1,16 @@
+{
+	fonts: "data/fonts.colosseum_data",
+	sounds: "data/sounds.colosseum_data",
+	images: "data/images.colosseum_data",
+	props: "data/props.colosseum_data",
+	particles: "data/particles.colosseum_data",
+	particle_emitters: "data/particle_emitters.colosseum_data",
+	projectiles: "data/projectiles.colosseum_data",
+	projectile_launchers: "data/props.colosseum_data",
+	widgets: "data/props.colosseum_data",
+	pickups: "data/props.colosseum_data",
+	turret_barrels: "data/props.colosseum_data",
+	turrets: "data/props.colosseum_data",
+	complex_agents: "data/props.colosseum_data",
+	levels: "data/levels.colosseum_data"
+}
