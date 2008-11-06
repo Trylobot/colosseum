@@ -5,26 +5,45 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global data_path$ = "data/"
-Global user_path$ = "user/"
 Global settings_file_ext$ = "colosseum_settings"
-Global default_settings_file_name$ = "settings."+settings_file_ext
 Global data_file_ext$ = "colosseum_data"
 Global level_file_ext$ = "colosseum_level"
 Global saved_game_file_ext$ = "colosseum_saved_game"
 
+Global data_path$ = "data/"
+Global user_path$ = "user/"
+Global default_settings_file_name$ = "settings."+settings_file_ext
+Global default_assets_file_name$ = "assets."+data_file_ext
+
+Global asset_identifiers$[] = ..
+[	"fonts", ..
+	"sounds", ..
+	"images", ..
+	"props", ..
+	"particles", ..
+	"particle_emitters", ..
+	"projectiles", ..
+	"projectile_launchers", ..
+	"widgets", ..
+	"pickups", ..
+	"turret_barrels", ..
+	"turrets", ..
+	"complex_agents", ..
+	"levels" ]
+
 Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
 Global image_map:TMap = CreateMap()
+Global prop_map:TMap = CreateMap()
+Global particle_map:TMap = CreateMap()
+Global particle_emitter_map:TMap = CreateMap()
+Global projectile_map:TMap = CreateMap()
+Global projectile_launcher_map:TMap = CreateMap()
+Global widget_map:TMap = CreateMap()
+Global pickup_map:TMap = CreateMap()
+Global turret_map:TMap = CreateMap()
+Global complex_agent_map:TMap = CreateMap()
 Global level_map:TMap = CreateMap()
-Global particle_prototype_map:TMap = CreateMap()
-Global particle_emitter_prototype_map:TMap = CreateMap()
-Global projectile_prototype_map:TMap = CreateMap()
-Global projectile_launcher_prototype_map:TMap = CreateMap()
-Global widget_prototype_map:TMap = CreateMap()
-Global pickup_prototype_map:TMap = CreateMap()
-Global turret_prototype_map:TMap = CreateMap()
-Global complex_agent_prototype_map:TMap = CreateMap()
 
 '______________________________________________________________________________
 Function create_dirs()
@@ -191,6 +210,31 @@ Function save_pixmap_to_file( px:TPixmap )
 	Local path$ = user_path + file_prefix + pad( high, 3, "0" ) + ".png"
 	'save png
 	SavePixmapPNG( px, path )
+End Function
+'_____________________________________________________________________________
+Function load_assets%()
+	Local file:TStream = ReadFile( data_path + default_assets_file_name )
+	If Not file Then Return False
+	Local json:TJSON = TJSON.Create( file )
+	file.Close()
+	Local asset_path$, asset_file:TStream, asset_json:TJSON
+	For Local asset_type$ = EachIn asset_identifiers
+		
+	Next
+
+
+	asset_path = json.GetString( "fonts" )
+	
+	load_fonts( )
+	load_sounds( json.GetString( "sounds" ))
+	'load_images( json.GetString( "images" ))
+	'...
+
+	Return True
+End Function
+'_____________________________________________________________________________
+Function load_fonts%( json:TJSON )
+	
 End Function
 '_____________________________________________________________________________
 '#############################################################################

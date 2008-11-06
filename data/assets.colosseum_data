@@ -6,11 +6,11 @@
 	particles: "data/particles.colosseum_data",
 	particle_emitters: "data/particle_emitters.colosseum_data",
 	projectiles: "data/projectiles.colosseum_data",
-	projectile_launchers: "data/props.colosseum_data",
-	widgets: "data/props.colosseum_data",
-	pickups: "data/props.colosseum_data",
-	turret_barrels: "data/props.colosseum_data",
-	turrets: "data/props.colosseum_data",
-	complex_agents: "data/props.colosseum_data",
+	projectile_launchers: "data/projectile_launchers.colosseum_data",
+	widgets: "data/widgets.colosseum_data",
+	pickups: "data/pickups.colosseum_data",
+	turret_barrels: "data/turret_barrels.colosseum_data",
+	turrets: "data/turrets.colosseum_data",
+	complex_agents: "data/complex_agents.colosseum_data",
 	levels: "data/levels.colosseum_data"
 }
