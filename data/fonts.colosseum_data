@@ -1,0 +1,57 @@
+{
+	data:
+	[
+		{
+			path: "fonts/consolas.ttf",
+			size: 8
+		},
+		{
+			path: "fonts/consolas.ttf",
+			size: 10
+		},
+		{
+			path: "fonts/consolas.ttf",
+			size: 12
+		},
+		{
+			path: "fonts/consolas.ttf",
+			size: 14
+		},
+		{
+			path: "fonts/consolas.ttf",
+			size: 18
+		},
+		{
+			path: "fonts/consolas.ttf",
+			size: 24
+		},
+		{
+			path: "fonts/consolas_bold.ttf",
+			size: 12
+		},
+		{
+			path: "fonts/consolas_bold.ttf",
+			size: 14
+		},
+		{
+			path: "fonts/consolas_bold.ttf",
+			size: 18
+		},
+		{
+			path: "fonts/consolas_bold.ttf",
+			size: 24
+		},
+		{
+			path: "fonts/consolas_bold.ttf",
+			size: 50
+		},
+		{
+			path: "fonts/consolas_bold.ttf",
+			size: 100
+		},
+		{
+			path: "fonts/consolas_bold.ttf",
+			size: 150
+		}
+	]
+}

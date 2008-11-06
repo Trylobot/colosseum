@@ -45,6 +45,50 @@ Global turret_map:TMap = CreateMap()
 Global complex_agent_map:TMap = CreateMap()
 Global level_map:TMap = CreateMap()
 
+'_____________________________________________________________________________
+Function load_assets%()
+	Local file:TStream = ReadFile( data_path + default_assets_file_name )
+	If Not file Then Return False
+	Local json:TJSON = TJSON.Create( file )
+	file.Close()
+	'test successful creation of json object (somehow)
+	Local asset_path$, asset_file:TStream, asset_json:TJSON
+	For Local asset_id$ = EachIn asset_identifiers
+		asset_path = json.GetString( asset_id )
+		asset_file = ReadFile( asset_path )
+		If Not file Then Continue
+		asset_json = TJSON.Create( asset_file )
+		'test successful creation of asset_json object (somehow)
+		Select asset_id
+			Case "fonts"
+				load_fonts( asset_json )
+			Case "sounds"
+				load_sounds( asset_json )
+			'Case "images"
+			'	load_images( asset_json )
+			Default
+				'unrecognized asset
+		End Select
+	Next
+	Return True
+End Function
+'_____________________________________________________________________________
+Function load_fonts%( json:TJSON )
+	Local data:TJSONArray = json.GetArray( "data" )
+	Local index%, obj:TJSONObject
+	Local path$, size%
+	Local font:TImageFont
+	For index = 0 To data.Size()-1
+		obj = data.GetByIndex( index )
+		path = obj.GetString( "path" )
+		size = obj.GetNumber( "size" )
+		font = LoadImageFont( path, size, SMOOTHFONT )
+		If font <> Null
+  			font_map.Insert( StripAll( path )+"_"+size, font )
+		End If
+	Next
+End Function
+
 '______________________________________________________________________________
 Function create_dirs()
 	CreateDir( data_path )
@@ -210,31 +254,6 @@ Function save_pixmap_to_file( px:TPixmap )
 	Local path$ = user_path + file_prefix + pad( high, 3, "0" ) + ".png"
 	'save png
 	SavePixmapPNG( px, path )
-End Function
-'_____________________________________________________________________________
-Function load_assets%()
-	Local file:TStream = ReadFile( data_path + default_assets_file_name )
-	If Not file Then Return False
-	Local json:TJSON = TJSON.Create( file )
-	file.Close()
-	Local asset_path$, asset_file:TStream, asset_json:TJSON
-	For Local asset_type$ = EachIn asset_identifiers
-		
-	Next
-
-
-	asset_path = json.GetString( "fonts" )
-	
-	load_fonts( )
-	load_sounds( json.GetString( "sounds" ))
-	'load_images( json.GetString( "images" ))
-	'...
-
-	Return True
-End Function
-'_____________________________________________________________________________
-Function load_fonts%( json:TJSON )
-	
 End Function
 '_____________________________________________________________________________
 '#############################################################################
@@ -478,7 +497,7 @@ Function add_image$( file:TStream, map:TMap, multi_frame% = False )
   
 	If multi_frame
 		img = LoadAnimImage( path, cell_width, cell_height, 0, cell_count, (filtered & FILTEREDIMAGE) | (mipmapped & MIPMAPPEDIMAGE) | (dynamic & DYNAMICIMAGE) )
-	else
+	Else
 		img = LoadImage( path, (filtered & FILTEREDIMAGE) | (mipmapped & MIPMAPPEDIMAGE) | (dynamic & DYNAMICIMAGE) )
 	End If
 	If img = Null Then Return "error: "+StripDir( path )+" could not be loaded."
