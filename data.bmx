@@ -65,8 +65,8 @@ Function load_assets%()
 			Case "sounds"
 				load_sounds( asset_json )
 			'Case "images"
-			'	load_images( asset_json )
-			Default
+				'load_images( asset_json )
+			'Default
 				'unrecognized asset
 		End Select
 	Next
@@ -79,12 +79,26 @@ Function load_fonts%( json:TJSON )
 	Local path$, size%
 	Local font:TImageFont
 	For index = 0 To data.Size()-1
-		obj = data.GetByIndex( index )
-		path = obj.GetString( "path" )
-		size = obj.GetNumber( "size" )
+		path = json.GetString( "data."+index+".path" )
+		size = json.GetNumber( "data."+index+".size" )
 		font = LoadImageFont( path, size, SMOOTHFONT )
 		If font <> Null
   			font_map.Insert( StripAll( path )+"_"+size, font )
+		End If
+	Next
+End Function
+'_____________________________________________________________________________
+Function load_sounds%( json:TJSON )
+	Local data:TJSONArray = json.GetArray( "data" )
+	Local index%, obj:TJSONObject
+	Local path$, looping%
+	Local sound:TSound
+	For index = 0 To data.Size()-1
+		path = json.GetString( "data."+index+".path" )
+		looping = json.GetBoolean( "data."+index+".looping" )
+		sound = LoadSound( path, (looping & SOUND_LOOP) )
+		If sound <> Null
+			sound_map.Insert( StripAll( path ), sound )
 		End If
 	Next
 End Function
@@ -266,6 +280,7 @@ End Function
 '#############################################################################
 
 Function load_all_archetypes()
+	set_prop_archetypes()
 	set_particle_archetypes()
 	set_particle_emitter_archetypes()
 	set_projectile_archetypes()
@@ -275,236 +290,6 @@ Function load_all_archetypes()
 	set_turret_barrel_archetypes()
 	set_turret_archetypes()
 	set_complex_agent_archetypes()
-End Function
-
-Const DIRECTIVE_LOAD_FILE$ = "[load_data]"
-Const DIRECTIVE_LOAD_CONFIG$ = "[load_config]"
-
-Const DIRECTIVE_ADD_FONT$ = "[add_font]"
-Const DIRECTIVE_ADD_SOUND$ = "[add_sound]"
-Const DIRECTIVE_ADD_IMAGE$ = "[add_image]"
-Const DIRECTIVE_ADD_LEVEL$ = "[add_level]"
-Const DIRECTIVE_ADD_MULTI_FRAME_IMAGE$ = "[add_multi_frame_image]"
-Const DIRECTIVE_ADD_PARTICLE_PROTOTYPE$ = "[add_particle]"
-Const DIRECTIVE_ADD_PARTICLE_EMITTER_PROTOTYPE$ = "[add_particle_emitter]"
-Const DIRECTIVE_ADD_PROJECTILE_PROTOTYPE$ = "[add_projectile]"
-Const DIRECTIVE_ADD_PROJECTILE_LAUNCHER_PROTOTYPE$ = "[add_projectile_emitter]"
-Const DIRECTIVE_ADD_WIDGET_PROTOTYPE$ = "[add_widget]"
-Const DIRECTIVE_ADD_PICKUP_PROTOTYPE$ = "[add_pickup]"
-Const DIRECTIVE_ADD_TURRET_PROTOTYPE$ = "[add_turret]"
-Const DIRECTIVE_ADD_COMPLEX_AGENT_PROTOTYPE$ = "[add_complex_agent]"
-
-'______________________________________________________________________________
-'[ LOAD ] functions
-Function is_directive%( str$ )
-  Return str.StartsWith( "[" ) And str.EndsWith( "]" )
-End Function
-
-Function is_comment%( str$ )
-  Return str.StartsWith( ";" )
-End Function
-
-'______________________________________________________________________________
-Function load_data_files()
-  Local line$, directive$, token$[], variable$, value$
-  Local path$
-  Local file_paths:TList = CreateList()
-
-  Local base:TStream = ReadFile( data_path + "base.ini" )
-  If Not base Then append_load_data_error( " error: base.ini not found." )
-  While Not Eof( base )
-    line = ((ReadLine( base )).Trim()).ToLower()
-    If (Not is_comment( line )) And is_directive( line )
-      directive = line
-      Select directive
-        Case DIRECTIVE_LOAD_FILE
-          line = ((ReadLine( base )).Trim()).ToLower()
-          If is_directive( line ) Then append_load_data_error( " base.ini "+directive+" -> error: 0 variables found of 1 variables required." )
-          token = line.Split( "=" )
-          variable = token[0].Trim()
-          value = token[1].Trim()
-          Select variable
-            
-						Case "path$"
-              path = value
-              file_paths.AddLast( path )
-			      
-						Default
-			        append_load_data_error( " base.ini -> error: "+variable+" is not a recognized variable for this directive." )
-          End Select
-        Default
-          append_load_data_error( " base.ini -> error: "+directive+" is not a recognized directive." )
-      End Select
-    End If
-  End While
-  CloseStream( base )
-	
-	Local result$
-	For Local file$ = EachIn file_paths
-		result = load_file( file )
-		If result <> "success" Then append_load_data_error( " "+StripDir( file )+" -> "+result )
-	Next
-	
-	output_load_data_errors()
-End Function
-'______________________________________________________________________________
-Global load_data_errors$ = ""
-
-Function append_load_data_error( error_str$ )
-	load_data_errors :+ error_str + "~n"
-End Function
-
-Function output_load_data_errors()
-	If load_data_errors.Length > 0
-		DebugLog load_data_errors
-		Notify load_data_errors
-	End If
-End Function
-'______________________________________________________________________________
-Function load_file$( file_path$ )
-  Local line$, directive$, result$
-  
-  Local file:TStream = ReadFile( file_path )
-  While Not Eof( file )
-		result = "success"
-    line = ((ReadLine( file )).Trim()).ToLower()
-    If (Not is_comment( line )) And is_directive( line )
-      directive = line
-      Select directive
-				
-				Case DIRECTIVE_ADD_FONT
-					result = add_font( file, font_map )
-				Case DIRECTIVE_ADD_SOUND
-					result = add_sound( file, sound_map )
-        Case DIRECTIVE_ADD_IMAGE
-          result = add_image( file, image_map, False )
-				Case DIRECTIVE_ADD_MULTI_FRAME_IMAGE
-					result = add_image( file, image_map, True )
-        
-				Default
-          result = "error: "+directive+" is not a recognized directive."
-      End Select
-			If result <> "success" Then Return result
-    End If
-  End While
-  CloseStream( file )
-	
-	Return "success"
-End Function
-'______________________________________________________________________________
-Function add_font$( file:TStream, map:TMap )
-  Local line$, token$[], variable$, value$
-  Local font:TImageFont, path$, size%
-  Local variable_count% = 2
-
-  For Local i% = 0 To variable_count - 1
-		If Eof( file ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
-    line = ((ReadLine( file )).Trim()).ToLower()
-    If is_directive( line ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
-    token = line.Split( "=" )
-    variable = token[0].Trim()
-    value = token[1].Trim()
-    Select variable
-      
-			Case "path$"
-        path = value
-      Case "size%"
-        size = value.ToInt()
-      
-			Default
-        Return "error: "+variable+" is not a recognized variable for this directive."
-    End Select
-  Next
-  
-	font = LoadImageFont( path, size, SMOOTHFONT )
-	If font = Null Then Return "error: "+StripDir( path )+" could not be loaded."
-  map.Insert( StripAll( path )+"_"+size, font )
-  
-  Return "success"
-End Function
-'______________________________________________________________________________
-Function add_sound$( file:TStream, map:TMap )
-  Local line$, token$[], variable$, value$
-  Local sound:TSound, path$, looped%
-  Local variable_count% = 2
-
-  For Local i% = 0 To variable_count - 1
-		If Eof( file ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
-    line = ((ReadLine( file )).Trim()).ToLower()
-    If is_directive( line ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
-    token = line.Split( "=" )
-    variable = token[0].Trim()
-    value = token[1].Trim()
-		Select variable
-      
-			Case "path$"
-        path = value
-      Case "looped@"
-        looped = string_to_boolean( value )
-      
-			Default
-        Return "error: "+variable+" is not a recognized variable for this directive."
-    End Select
-  Next
-  
-	sound = LoadSound( path, (looped & SOUND_LOOP) )
-	If sound = Null Then Return "error: "+StripDir( path )+" could not be loaded."
-  map.Insert( StripAll( path ), sound )
-  
-  Return "success"
-End Function
-'______________________________________________________________________________
-Function add_image$( file:TStream, map:TMap, multi_frame% = False )
-  Local line$, token$[], variable$, value$
-  Local img:TImage, path$, handle_x#, handle_y#, cell_width%, cell_height%, cell_count%, filtered%, mipmapped%, dynamic%
-  Local variable_count% = 6
-	If multi_frame
-		variable_count :+ 3
-	End If
-
-  For Local i% = 0 To variable_count - 1
-		If Eof( file ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
-    line = ((ReadLine( file )).Trim()).ToLower()
-    If is_directive( line ) Then Return "error: "+i+" variables found of "+variable_count+" variables required."
-    token = line.Split( "=" )
-    variable = token[0].Trim()
-    value = token[1].Trim()
-    Select variable
-      
-			Case "path$"
-        path = value
-      Case "handle_x#"
-        handle_x = value.ToFloat()
-      Case "handle_y#"
-        handle_y = value.ToFloat()
-      Case "cell_width%"
-        cell_width = value.ToInt()
-      Case "cell_height%"
-        cell_height = value.ToInt()
-      Case "cell_count%"
-        cell_count = value.ToInt()
-			Case "filtered@"
-				filtered = string_to_boolean( value )
-			Case "mipmapped@"
-				mipmapped = string_to_boolean( value )
-			Case "dynamic@"
-				dynamic = string_to_boolean( value )
-      
-			Default
-        Return "error: "+variable+" is not a recognized variable for this directive."
-    End Select
-  Next
-  
-	If multi_frame
-		img = LoadAnimImage( path, cell_width, cell_height, 0, cell_count, (filtered & FILTEREDIMAGE) | (mipmapped & MIPMAPPEDIMAGE) | (dynamic & DYNAMICIMAGE) )
-	Else
-		img = LoadImage( path, (filtered & FILTEREDIMAGE) | (mipmapped & MIPMAPPEDIMAGE) | (dynamic & DYNAMICIMAGE) )
-	End If
-	If img = Null Then Return "error: "+StripDir( path )+" could not be loaded."
-  SetImageHandle( img, handle_x, handle_y )
-  map.Insert( StripAll( path ), img )
-  
-  Return "success"
 End Function
 
 '______________________________________________________________________________

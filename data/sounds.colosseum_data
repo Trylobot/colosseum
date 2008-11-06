@@ -1,0 +1,41 @@
+{
+	data:
+	[
+		{
+			path: "sound/victory_8-bit.ogg",
+			looping: true
+		},
+		{
+			path: "sound/engine_start.ogg",
+			looping: false
+		},
+		{
+			path: "sound/engine_idle_looping.ogg",
+			looping: true
+		},
+		{
+			path: "sound/cannon.ogg",
+			looping: false
+		},
+		{
+			path: "sound/mgun.ogg",
+			looping: false
+		},
+		{
+			path: "sound/laser.ogg",
+			looping: false
+		},
+		{
+			path: "sound/cannon_hit.ogg",
+			looping: false
+		},
+		{
+			path: "sound/mgun_hit.ogg",
+			looping: false
+		},
+		{
+			path: "sound/laser_hit.ogg",
+			looping: false
+		}
+	]
+}

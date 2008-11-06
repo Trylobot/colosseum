@@ -44,10 +44,10 @@ If Not load_settings()
 	save_settings()
 	load_settings()
 End If
-load_data_files()
+load_assets()
 MENU.load_fonts()
 load_all_archetypes() 'REMOVE this function call by externalizing this data, please.
-menu_command( COMMAND_NEW_LEVEL ) 'initialize the level editor's cached level
+menu_command( COMMAND_NEW_LEVEL ) 'initialize the level editor data
 
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo
