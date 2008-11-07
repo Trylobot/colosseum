@@ -30,6 +30,8 @@ Global asset_identifiers$[] = ..
 	"turrets", ..
 	"complex_agents", ..
 	"levels" ]
+	
+Global asset_data_heading$ = "data"
 
 Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
@@ -44,6 +46,20 @@ Global pickup_map:TMap = CreateMap()
 Global turret_map:TMap = CreateMap()
 Global complex_agent_map:TMap = CreateMap()
 Global level_map:TMap = CreateMap()
+'______________________________________________________________________________
+Function get_font:TImageFont( key$ )
+	Return TImageFont( font_map.ValueForKey( key ))
+End Function
+Function get_sound:TSound( key$ )
+	Return TSound( sound_map.ValueForKey( key ))
+End Function
+Function get_image:TImage( key$ )
+	Return TImage( image_map.ValueForKey( key ))
+End Function
+
+Function get_level:LEVEL( key$ )
+	Return LEVEL( level_map.ValueForKey( key ))
+End Function
 
 '_____________________________________________________________________________
 Function load_assets%()
@@ -74,12 +90,15 @@ Function load_assets%()
 End Function
 '_____________________________________________________________________________
 Function load_fonts%( json:TJSON )
-	Local data:TJSONArray = json.GetArray( "data" )
+	Local data:TJSONArray = json.GetArray( asset_data_heading )
+	'test successful creation of data object (somehow)
+	Local asset_json_path$
 	Local path$, size%
 	Local font:TImageFont
 	For Local index% = 0 To data.Size()-1
-		path = json.GetString( "data."+index+".path" )
-		size = json.GetNumber( "data."+index+".size" )
+		asset_json_path = asset_data_heading + "." + index + "."
+		path = json.GetString( asset_json_path + "path" )
+		size = json.GetNumber( asset_json_path + "size" )
 		font = LoadImageFont( path, size, SMOOTHFONT )
 		If font <> Null
   			font_map.Insert( StripAll( path )+"_"+size, font )
@@ -88,13 +107,16 @@ Function load_fonts%( json:TJSON )
 End Function
 '_____________________________________________________________________________
 Function load_sounds%( json:TJSON )
-	Local data:TJSONArray = json.GetArray( "data" )
+	Local data:TJSONArray = json.GetArray( asset_data_heading )
+	'test successful creation of data object (somehow)
+	Local asset_json_path$
 	Local path$, looping%
 	Local sound:TSound
 	For Local index% = 0 To data.Size()-1
-		path = json.GetString( "data."+index+".path" )
-		looping = json.GetBoolean( "data."+index+".looping" )
-		sound = LoadSound( path, (looping & SOUND_LOOP) )
+		asset_json_path = asset_data_heading + "." + index + "."
+		path = json.GetString( asset_json_path + "path" )
+		looping = json.GetBoolean( asset_json_path + "looping" )
+		sound = LoadSound( path, (looping&SOUND_LOOP) )
 		If sound <> Null
 			sound_map.Insert( StripAll( path ), sound )
 		End If
@@ -102,15 +124,30 @@ Function load_sounds%( json:TJSON )
 End Function
 '_____________________________________________________________________________
 Function load_images%( json:TJSON )
-	Local data:TJSONArray = json.GetArray( "data" )
-	Local path$, looping%
+	Local data:TJSONArray = json.GetArray( asset_data_heading )
+	'test successful creation of data object (somehow)
+	Local asset_json_path$
+	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%
 	Local img:TImage
+	AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
 	For Local index% = 0 To data.Size()-1
-		path = json.GetString( "data."+index+".path" )
-		looping = json.GetBoolean( "data."+index+".looping" )
-		sound = LoadSound( path, (looping & SOUND_LOOP) )
-		If sound <> Null
-			sound_map.Insert( StripAll( path ), sound )
+		asset_json_path = asset_data_heading + "." + index + "."
+		path = json.GetString( asset_json_path + "path" )
+		handle_x = json.GetNumber( asset_json_path + "handle_x" )
+		handle_y = json.GetNumber( asset_json_path + "handle_y" )
+		frames = json.GetNumber( asset_json_path + "frames" )
+		If frames >= 1
+			If frames = 1
+				img = LoadImage( path )
+			Else 'frames > 1
+				frame_width = json.GetNumber( asset_json_path + "frame_width" )
+				frame_height = json.GetNumber( asset_json_path + "frame_height" )
+				img = LoadAnimImage( path, frame_width, frame_height, 0, frames )
+			End If
+			If img <> Null
+				SetImageHandle( img, handle_x, handle_y )
+				image_map.Insert( StripAll( path ), img )
+			End If
 		End If
 	Next
 End Function
@@ -162,23 +199,6 @@ Function save_settings%()
 	If Not file Return False
 	json.Write( file )
 	file.Close()
-End Function
-
-'______________________________________________________________________________
-Function get_font:TImageFont( key$ )
-	Return TImageFont( font_map.ValueForKey( key ))
-End Function
-
-Function get_sound:TSound( key$ )
-	Return TSound( sound_map.ValueForKey( key ))
-End Function
-
-Function get_image:TImage( key$ )
-	Return TImage( image_map.ValueForKey( key ))
-End Function
-
-Function get_level:LEVEL( key$ )
-	Return LEVEL( level_map.ValueForKey( key ))
 End Function
 
 '______________________________________________________________________________
