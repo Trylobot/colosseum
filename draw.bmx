@@ -59,6 +59,7 @@ Function draw_game()
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 	SetColor( 255, 255, 255 )
+	
 	'props
 	For Local prop:AGENT = EachIn game.prop_list
 		prop.draw()
@@ -71,6 +72,7 @@ Function draw_game()
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	SetColor( 255, 255, 255 )
+	
 	'pickups
 	For Local pkp:PICKUP = EachIn game.pickup_list
 		pkp.draw()
@@ -84,13 +86,11 @@ Function draw_game()
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
-	'hostile agents
-	For Local hostile:COMPLEX_AGENT = EachIn game.hostile_agent_list
-		hostile.draw()
-	Next
-	'friendly agents
-	For Local friendly:COMPLEX_AGENT = EachIn game.friendly_agent_list
-		friendly.draw()
+	'complex agents
+	For Local list:TList = EachIn game.complex_agent_lists
+		For Local ag_cmp:COMPLEX_AGENT = EachIn list
+			ag_cmp.draw()
+		Next
 	Next
 	
 	'foreground particles

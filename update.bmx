@@ -38,13 +38,17 @@ Function update_all_objects()
 		For Local cb:CONTROL_BRAIN = EachIn game.control_brain_list
 			cb.update()
 		Next
-		'agents
-		For Local list:TList = EachIn game.agent_lists
-			For Local ag:COMPLEX_AGENT = EachIn list
-				ag.update()
+		'complex agents
+		For Local list:TList = EachIn game.complex_agent_lists
+			For Local ag_cmp:COMPLEX_AGENT = EachIn list
+				ag_cmp.update()
 			Next
 		Next
 		
+		'props
+		For Local prop:AGENT = EachIn game.prop_list
+			prop.update()
+		Next
 		'environmental widgets
 		For Local w:WIDGET = EachIn game.environmental_widget_list
 			w.update()

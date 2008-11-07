@@ -53,8 +53,9 @@ Type ENVIRONMENT
 	Field projectile_list:TList 'TList<PROJECTILE>
 	Field friendly_agent_list:TList 'TList<COMPLEX_AGENT>
 	Field hostile_agent_list:TList 'TList<COMPLEX_AGENT>
+	Field complex_agent_lists:TList 'TList<TList<COMPLEX_AGENT>>
 	Field prop_list:TList 'TList<AGENT>
-	Field agent_lists:TList 'TList<TList<COMPLEX_AGENT>>
+	Field agent_lists:TList 'TList<TList<AGENT>>
 	Field pickup_list:TList 'TList<PICKUP>
 	Field control_brain_list:TList 'TList<CONTROL_BRAIN>
 	
@@ -92,6 +93,9 @@ Type ENVIRONMENT
 		projectile_list = CreateList()
 		friendly_agent_list = CreateList()
 		hostile_agent_list = CreateList()
+		complex_agent_lists = CreateList()
+			complex_agent_lists.AddLast( friendly_agent_list )
+			complex_agent_lists.AddLast( hostile_agent_list )
 		prop_list = CreateList()
 		agent_lists = CreateList()
 			agent_lists.AddLast( friendly_agent_list )
