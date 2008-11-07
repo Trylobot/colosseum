@@ -62,6 +62,18 @@ Type AGENT Extends PHYSICAL_OBJECT
 		DrawImage( img, pos_x, pos_y )
 	End Method
 	
+	Method move_to( pos:POINT )
+		pos_x = pos.pos_x
+		pos_y = pos.pos_y
+		ang = pos.ang
+		vel_x = pos.vel_x
+		vel_y = pos.vel_y
+		vel_ang = pos.vel_ang
+		acc_x = pos.acc_x
+		acc_y = pos.acc_y
+		acc_ang = pos.acc_ang
+	End Method
+	
 	Method dead%()
 		Return (cur_health <= 0)
 	End Method
@@ -1051,7 +1063,7 @@ Const AI_BRAIN_MR_THE_BOX% = 1
 Const AI_BRAIN_TURRET% = 2
 Const AI_BRAIN_SEEKER% = 3
 Const AI_BRAIN_VEHICLE% = 4
-const AI_BRAIN_TANK% = 5
+Const AI_BRAIN_TANK% = 5
 '___________________________________________
 Function Create_CONTROL_BRAIN:CONTROL_BRAIN( ..
 avatar:COMPLEX_AGENT, ..

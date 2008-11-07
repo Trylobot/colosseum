@@ -59,6 +59,10 @@ Function draw_game()
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 	SetColor( 255, 255, 255 )
+	'props
+	For Local prop:AGENT = EachIn game.prop_list
+		prop.draw()
+	Next
 	
 	'projectiles
 	For Local proj:PROJECTILE = EachIn game.projectile_list

@@ -26,10 +26,11 @@ Const WALL_NUDGE_DIST# = 0.2
 Function collide_all_objects()
 	
 	'collision detection & resolution body
-	If game <> null
+	If game <> Null
 	
 		Local list:TList
-		Local ag:COMPLEX_AGENT, other:COMPLEX_AGENT
+		Local ag:AGENT, other:AGENT
+		Local ag_cmp:COMPLEX_AGENT, other_cmp:COMPLEX_AGENT
 		Local proj:PROJECTILE
 		Local pkp:PICKUP
 		Local result:Object[]
@@ -122,7 +123,7 @@ Function collide_all_objects()
 	End If
 End Function
 
-Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
+Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 	'activate collision response for affected entity(ies)
 	Local offset#, offset_ang#
 	cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
@@ -170,7 +171,7 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:COMPLEX_AGENT )
 	proj.unmanage()
 End Function
 
-Function collision_agent_agent( ag:COMPLEX_AGENT, other:COMPLEX_AGENT )
+Function collision_agent_agent( ag:AGENT, other:AGENT )
 	'register the collision (for self-destruct agents)
 	ag.last_collided_agent_id = other.id
 	'activate collision response for affected entity(ies)
@@ -202,7 +203,7 @@ Function collision_agent_agent( ag:COMPLEX_AGENT, other:COMPLEX_AGENT )
 	End If
 End Function
 
-Function collision_agent_wall( ag:COMPLEX_AGENT, wall:BOX )
+Function collision_agent_wall( ag:AGENT, wall:BOX )
 	Local offset#, offset_ang#
 	cartesian_to_polar( ag.pos_x - average([wall.x,wall.x+wall.w]), ag.pos_y - average([wall.y,wall.y+wall.h]), offset, offset_ang )
 	Local ang# = clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )
@@ -234,7 +235,7 @@ Function collision_agent_wall( ag:COMPLEX_AGENT, wall:BOX )
 	End Select
 End Function
 
-Function collision_agent_door( ag:COMPLEX_AGENT, door:WIDGET )
+Function collision_agent_door( ag:AGENT, door:WIDGET )
 	DebugLog " collision_agent_door"
 
 End Function

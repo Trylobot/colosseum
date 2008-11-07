@@ -44,7 +44,6 @@ Type ENVIRONMENT
 	Field hostile_doors_status% 'flag indicating state of all hostile doors
 	Field all_door_lists:TList 'list of all door lists
 	
-	Field prop_list:TList 'TList<AGENT>
 	Field particle_list_background:TList 'TList<PARTICLE>
 	Field particle_list_foreground:TList 'TList<PARTICLE>
 	Field particle_lists:TList 'TList<TList<PARTICLE>>
@@ -54,6 +53,7 @@ Type ENVIRONMENT
 	Field projectile_list:TList 'TList<PROJECTILE>
 	Field friendly_agent_list:TList 'TList<COMPLEX_AGENT>
 	Field hostile_agent_list:TList 'TList<COMPLEX_AGENT>
+	Field prop_list:TList 'TList<AGENT>
 	Field agent_lists:TList 'TList<TList<COMPLEX_AGENT>>
 	Field pickup_list:TList 'TList<PICKUP>
 	Field control_brain_list:TList 'TList<CONTROL_BRAIN>
@@ -82,7 +82,6 @@ Type ENVIRONMENT
 		mouse = Create_cVEC( 0, 0 )
 		drawing_origin = Create_cVEC( 0, 0 )
 		walls = CreateList()
-		prop_list = CreateList()
 		particle_list_background = CreateList()
 		particle_list_foreground = CreateList()
 		particle_lists = CreateList()
@@ -93,9 +92,11 @@ Type ENVIRONMENT
 		projectile_list = CreateList()
 		friendly_agent_list = CreateList()
 		hostile_agent_list = CreateList()
+		prop_list = CreateList()
 		agent_lists = CreateList()
 			agent_lists.AddLast( friendly_agent_list )
 			agent_lists.AddLast( hostile_agent_list )
+			agent_lists.AddLast( prop_list )
 		pickup_list = CreateList()
 		control_brain_list = CreateList()
 		friendly_door_list = CreateList()
@@ -111,7 +112,6 @@ Type ENVIRONMENT
 		background_clean = Null
 		background_dynamic = Null
 		foreground = Null
-		prop_list.Clear()
 		particle_list_background.Clear()
 		particle_list_foreground.Clear()
 		retained_particle_list.Clear()
@@ -120,6 +120,7 @@ Type ENVIRONMENT
 		projectile_list.Clear()
 		friendly_agent_list.Clear()
 		hostile_agent_list.Clear()
+		prop_list.Clear()
 		pickup_list.Clear()
 		control_brain_list.Clear()
 		friendly_door_list.Clear()
@@ -146,7 +147,6 @@ Type ENVIRONMENT
 		End If
 		calculate_camera_constraints()
 		
-		'props
 		'pathing (AI bots)
 		pathing = PATHING_STRUCTURE.Create( lev )
 		'walls (Collisions)
@@ -156,13 +156,17 @@ Type ENVIRONMENT
 		'images (Drawing)
 		background_clean = generate_sand_image( lev.width, lev.height )
 		foreground = generate_level_walls_image( lev )
-		'initialize dynamic background texture with same pixels as background clean
+		'initialize dynamic background texture with same data as background clean
 		background_dynamic = TImage.Create( lev.width, lev.height, 1, FILTEREDIMAGE|DYNAMICIMAGE, 0, 0, 0 )
 		SetOrigin( 0, 0 ); SetColor( 255, 255, 255 ); SetAlpha( 1 ); SetRotation( 0 ); SetScale( 1, 1 )
 		DrawImage( background_clean, 0, 0 )
-		'DrawPixmap( background_clean, 0, 0 )
 		GrabImage( background_dynamic, 0, 0 )
-		'background_dynamic = GrabPixmap( 0, 0, lev.width, lev.height )
+		'props
+		For Local pd:PROP_DATA = EachIn lev.props
+			Local prop:AGENT = get_prop( pd.archetype )
+			prop.manage( prop_list )
+			prop.move_to( pd.pos )
+		Next
 		'doors
 		For Local sp:SPAWNER = EachIn lev.spawners
 			If sp.class = SPAWNER.class_GATED_FACTORY
@@ -252,10 +256,8 @@ Type ENVIRONMENT
 		End Select
 		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( this_agent, CONTROL_TYPE_AI,, 10, 1000, 1000 )
 		brain.manage( control_brain_list )
-		this_agent.pos_x = spawn_point.pos_x
-		this_agent.pos_y = spawn_point.pos_y
-		this_agent.ang = spawn_point.ang
-		this_agent.snap_all_turrets
+		this_agent.move_to( spawn_point )
+		this_agent.snap_all_turrets()
 		Return brain
 	End Method
 	
@@ -285,9 +287,7 @@ Type ENVIRONMENT
 	Method respawn_player()
 		If player <> Null And player_brain <> Null And player.managed() And player_brain.managed()
 			player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
-			player.pos_x = player_spawn_point.pos_x - 0.5
-			player.pos_y = player_spawn_point.pos_y - 0.5
-			player.ang = player_spawn_point.ang
+			player.move_to( player_spawn_point )
 			player.snap_all_turrets()
 		End If
 	End Method
