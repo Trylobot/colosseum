@@ -1,0 +1,390 @@
+{
+	[
+		{
+			path: "art/player_tank_chassis.png",
+			handle_x: 11.5,
+			handle_y: 6.5,
+			frames: 1
+		},
+		{
+			path: "art/light_tank_track.png",
+			handle_x: 12.5,
+			handle_y: 3.0,
+			frames: 8,
+			frame_width: 25,
+			frame_height: 6
+		},
+		{
+			path: "art/player_tank_turret_base.png",
+			handle_x: 6.5,
+			handle_y: 6.5,
+			frames: 1
+		},
+		{
+			path: "art/player_tank_turret_barrel.png",
+			handle_x: 3.5,
+			handle_y: 3.5,
+			frames: 1
+		},
+		{
+			path: "art/player_tank_mgun_turret.png",
+			handle_x: 3.5,
+			handle_y: 3.5,
+			frames: 1
+		},
+		{
+			path: "art/player_tank_chassis_med.png",
+			handle_x: 16.5,
+			handle_y: 11.5,
+			frames: 1
+		},
+		{
+			path: "art/med_tank_track.png",
+			handle_x: 16.5,
+			handle_y: 4.0,
+			frames: 8,
+			frame_width: 33,
+			frame_height: 8
+		},
+		{
+			path: "art/player_tank_turret_med_base.png",
+			handle_x: 7.5,
+			handle_y: 11.5,
+			frames: 1
+		},
+		{
+			path: "art/player_tank_turret_med_barrel_right.png",
+			handle_x: 7.5,
+			handle_y: 11.5,
+			frames: 1
+		},
+		{
+			path: "art/player_tank_turret_med_barrel_left.png",
+			handle_x: 7.5,
+			handle_y: 11.5,
+			frames: 1
+		},
+		{
+			path: "art/player_tank_med_mgun_turret_barrel.png",
+			handle_x: 7.5,
+			handle_y: 11.5,
+			frames: 1
+		},
+		{
+			path: "art/laser_turret_base-barrel.png",
+			handle_x: 6.5,
+			handle_y: 6.5,
+			frames: 1
+		},
+		{
+			path: "art/box.png",
+			handle_x: 8.5,
+			handle_y: 8.5,
+			frames: 1
+		},
+		{
+			path: "art/enemy_stationary-emplacement-1_chassis.png",
+			handle_x: 13.5,
+			handle_y: 13.5,
+			frames: 1
+		},
+		{
+			path: "art/enemy_stationary-emplacement-1_turret-base.png",
+			handle_x: 11.5,
+			handle_y: 11.5,
+			frames: 1
+		},
+		{
+			path: "art/enemy_stationary-emplacement-1_turret-barrel.png",
+			handle_x: 11.5,
+			handle_y: 11.5,
+			frames: 1
+		},
+		{
+			path: "art/enemy_machine-gun_emplacement_turret-barrel.png",
+			handle_x: 2.5,
+			handle_y: 2.5,
+			frames: 1
+		},
+		{
+			path: "art/nme_mobile_bomb.png",
+			handle_x: 7.5,
+			handle_y: 7.5,
+			frames: 1
+		},
+		{
+			path: "art/limb.png",
+			handle_x: 2.5,
+			handle_y: 3.5,
+			frames: 1
+		},
+		{
+			path: "art/enemy_quad_chassis.png",
+			handle_x: 9.5,
+			handle_y: 7.5,
+			frames: 1
+		},
+		{
+			path: "art/enemy_light_mgun_turret_base.png",
+			handle_x: 3.5,
+			handle_y: 2.5,
+			frames: 1
+		},
+		{
+			path: "art/enemy_light_mgun_turret_barrel.png",
+			handle_x: 3.5,
+			handle_y: 2.5,
+			frames: 1
+		},
+		{
+			path: "art/muzzle_flash.png",
+			handle_x: 0.5,
+			handle_y: 12.5,
+			frames: 1
+		},
+		{
+			path: "art/mgun_muzzle_flash.png",
+			handle_x: 0.5,
+			handle_y: 7.5,
+			frames: 1
+		},
+		{
+			path: "art/muzzle_smoke.png",
+			handle_x: 15.5,
+			handle_y: 15.5,
+			frames: 1
+		},
+		{
+			path: "art/mgun_muzzle_smoke.png",
+			handle_x: 8.5,
+			handle_y: 8.5,
+			frames: 1
+		},
+		{
+			path: "art/mgun_shell_casing.png",
+			handle_x: 3.5,
+			handle_y: 2.5,
+			frames: 1
+		},
+		{
+			path: "art/projectile_shell_casing.png",
+			handle_x: 5.5,
+			handle_y: 3.5,
+			frames: 1
+		},
+		{
+			path: "art/rocket_thrust.png",
+			handle_x: 16.5,
+			handle_y: 6.5,
+			frames: 1
+		},
+		{
+			path: "art/halo.png",
+			handle_x: 100.0,
+			handle_y: 100.0,
+			frames: 1
+		},
+		{
+			path: "art/spark.png",
+			handle_x: 0.5,
+			handle_y: 2.5,
+			frames: 1
+		},
+		{
+			path: "art/laser_muzzle_flare.png",
+			handle_x: 1.5,
+			handle_y: 7.5,
+			frames: 1
+		},
+		{
+			path: "art/white_circle.png",
+			handle_x: 25.0,
+			handle_y: 25.0,
+			frames: 1
+		},
+		{
+			path: "art/projectile.png",
+			handle_x: 6.5,
+			handle_y: 3.5,
+			frames: 1
+		},
+		{
+			path: "art/mgun.png",
+			handle_x: 4.5,
+			handle_y: 1.5,
+			frames: 1
+		},
+		{
+			path: "art/laser.png",
+			handle_x: 13.5,
+			handle_y: 2.5,
+			frames: 1
+		},
+		{
+			path: "art/rocket.png",
+			handle_x: 10.5,
+			handle_y: 3.5,
+			frames: 1
+		},
+		{
+			path: "art/debris.png",
+			handle_x: 2.5,
+			handle_y: 2.5,
+			frames: 5,
+			frame_width: 5,
+			frame_height: 5
+		},
+		{
+			path: "art/trail_3.png",
+			handle_x: 2.5,
+			handle_y: 3.5,
+			frames: 5,
+			frame_width: 4,
+			frame_height: 5
+		},
+		{
+			path: "art/trail_5.png",
+			handle_x: 2.5,
+			handle_y: 3.5,
+			frames: 5,
+			frame_width: 4,
+			frame_height: 7
+		},
+		{
+			path: "art/box_gib.png",
+			handle_x: 8.5,
+			handle_y: 8.5,
+			frames: 6,
+			frame_width: 17,
+			frame_height: 17
+		},
+		{
+			path: "art/tower_gibs.png",
+			handle_x: 11.5,
+			handle_y: 11.5,
+			frames: 11,
+			frame_width: 23,
+			frame_height: 23
+		},
+		{
+			path: "art/bomb_gibs.png",
+			handle_x: 7.5,
+			handle_y: 7.5,
+			frames: 7,
+			frame_width: 15,
+			frame_height: 15
+		},
+		{
+			path: "art/quad_gibs.png",
+			handle_x: 9.5,
+			handle_y: 7.5,
+			frames: 9,
+			frame_width: 19,
+			frame_height: 15
+		},
+		{
+			path: "art/stickies.png",
+			handle_x: 7.5,
+			handle_y: 7.5,
+			frames: 5,
+			frame_width: 16,
+			frame_height: 16
+		},
+		{
+			path: "art/glow.png",
+			handle_x: 7.5,
+			handle_y: 7.5,
+			frames: 1
+		},
+		{
+			path: "art/pickup_ammo_main_5.png",
+			handle_x: 16.0,
+			handle_y: 9.0,
+			frames: 1
+		},
+		{
+			path: "art/pickup_health.png",
+			handle_x: 16.0,
+			handle_y: 9.0,
+			frames: 1
+		},
+		{
+			path: "art/pickup_cooldown.png",
+			handle_x: 16.0,
+			handle_y: 9.0,
+			frames: 1
+		},
+		{
+			path: "art/health_mini.png",
+			handle_x: 0.0,
+			handle_y: 0.0,
+			frames: 1
+		},
+		{
+			path: "art/help_kb.png",
+			handle_x: 0.0,
+			handle_y: 0.0,
+			frames: 1
+		},
+		{
+			path: "art/help_kb_and_mouse.png",
+			handle_x: 0.0,
+			handle_y: 0.0,
+			frames: 1
+		},
+		{
+			path: "art/icon_music_note.png",
+			handle_x: 0.0,
+			handle_y: 0.0,
+			frames: 1
+		},
+		{
+			path: "art/icon_speaker_on.png",
+			handle_x: 0.0,
+			handle_y: 0.0,
+			frames: 1
+		},
+		{
+			path: "art/icon_speaker_off.png",
+			handle_x: 0.0,
+			handle_y: 0.0,
+			frames: 1
+		},
+		{
+			path: "art/icon_player_cannon_ammo.png",
+			handle_x: 0.0,
+			handle_y: 0.0,
+			frames: 1
+		},
+		{
+			path: "art/bar_shine.png",
+			handle_x: 15.0,
+			handle_y: 0.0,
+			frames: 1
+		},
+		{
+			path: "art/door.png",
+			handle_x: 1.0,
+			handle_y: 7.0,
+			frames: 1
+		},
+		{
+			path: "art/crate.png",
+			handle_x: 16.0,
+			handle_y: 16.0,
+			frames: 1
+		},
+		{
+			path: "art/crate_small.png",
+			handle_x: 10.0,
+			handle_y: 10.0,
+			frames: 1
+		},
+		{
+			path: "art/reticle.png",
+			handle_x: 22.5,
+			handle_y: 2.5,
+			frames: 1
+		}
+	]
+}

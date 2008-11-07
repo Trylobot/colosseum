@@ -64,8 +64,8 @@ Function load_assets%()
 				load_fonts( asset_json )
 			Case "sounds"
 				load_sounds( asset_json )
-			'Case "images"
-				'load_images( asset_json )
+			Case "images"
+				load_images( asset_json )
 			'Default
 				'unrecognized asset
 		End Select
@@ -75,10 +75,9 @@ End Function
 '_____________________________________________________________________________
 Function load_fonts%( json:TJSON )
 	Local data:TJSONArray = json.GetArray( "data" )
-	Local index%, obj:TJSONObject
 	Local path$, size%
 	Local font:TImageFont
-	For index = 0 To data.Size()-1
+	For Local index% = 0 To data.Size()-1
 		path = json.GetString( "data."+index+".path" )
 		size = json.GetNumber( "data."+index+".size" )
 		font = LoadImageFont( path, size, SMOOTHFONT )
@@ -90,10 +89,23 @@ End Function
 '_____________________________________________________________________________
 Function load_sounds%( json:TJSON )
 	Local data:TJSONArray = json.GetArray( "data" )
-	Local index%, obj:TJSONObject
 	Local path$, looping%
 	Local sound:TSound
-	For index = 0 To data.Size()-1
+	For Local index% = 0 To data.Size()-1
+		path = json.GetString( "data."+index+".path" )
+		looping = json.GetBoolean( "data."+index+".looping" )
+		sound = LoadSound( path, (looping & SOUND_LOOP) )
+		If sound <> Null
+			sound_map.Insert( StripAll( path ), sound )
+		End If
+	Next
+End Function
+'_____________________________________________________________________________
+Function load_images%( json:TJSON )
+	Local data:TJSONArray = json.GetArray( "data" )
+	Local path$, looping%
+	Local img:TImage
+	For Local index% = 0 To data.Size()-1
 		path = json.GetString( "data."+index+".path" )
 		looping = json.GetBoolean( "data."+index+".looping" )
 		sound = LoadSound( path, (looping & SOUND_LOOP) )

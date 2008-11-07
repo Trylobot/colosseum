@@ -10,7 +10,7 @@
 			looping: false
 		},
 		{
-			path: "sound/engine_idle_looping.ogg",
+			path: "sound/engine_idle_loop.ogg",
 			looping: true
 		},
 		{
