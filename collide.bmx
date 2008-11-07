@@ -30,7 +30,6 @@ Function collide_all_objects()
 	
 		Local list:TList
 		Local ag:AGENT, other:AGENT
-		Local ag_cmp:COMPLEX_AGENT, other_cmp:COMPLEX_AGENT
 		Local proj:PROJECTILE
 		Local pkp:PICKUP
 		Local result:Object[]
@@ -159,10 +158,12 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 		'agent death
 		ag.die()
 		
-		If ag.political_alignment = ALIGNMENT_HOSTILE
-			PARTICLE( PARTICLE.Create( PARTICLE_TYPE_STR,,,, ("$" + ag.cash_value), get_font( "consolas_24" ), LAYER_FOREGROUND, False, 0.1, 0.333, 1.000, 0.3333,,,, 1000, ag.pos_x, ag.pos_y-5, 0.0, -2.0, 0.0, 0.0, 0.5, -0.016, 1.0, 0.01 )).auto_manage()
-			game.level_enemies_killed :+ 1
-			profile.kills :+ 1
+		If COMPLEX_AGENT( ag )
+			If COMPLEX_AGENT( ag ).political_alignment = ALIGNMENT_HOSTILE
+				PARTICLE( PARTICLE.Create( PARTICLE_TYPE_STR,,,, ("$" + ag.cash_value), get_font( "consolas_24" ), LAYER_FOREGROUND, False, 0.1, 0.333, 1.000, 0.3333,,,, 1000, ag.pos_x, ag.pos_y-5, 0.0, -2.0, 0.0, 0.0, 0.5, -0.016, 1.0, 0.01 )).auto_manage()
+				game.level_enemies_killed :+ 1
+				profile.kills :+ 1
+			End If
 		End If
 	End If
 	'activate projectile impact emitter

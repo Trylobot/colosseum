@@ -122,6 +122,10 @@ Type PROP_DATA
 	Field archetype%
 	Field pos:POINT
 	
+	Method New()
+		pos = New POINT
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "archetype", TJSONNumber.Create( archetype ))
@@ -279,14 +283,14 @@ Type LEVEL Extends MANAGED_OBJECT
 			Case LINE_TYPE_HORIZONTAL
 				Local delta% = value - horizontal_divs[index]
 				height :+ delta
-				For local i% = index To horizontal_divs.Length - 1
+				For Local i% = index To horizontal_divs.Length - 1
 					horizontal_divs[i] :+ delta
 				Next
 			
 			Case LINE_TYPE_VERTICAL
 				Local delta% = value - vertical_divs[index]
 				width :+ delta
-				For local i% = index To vertical_divs.Length - 1
+				For Local i% = index To vertical_divs.Length - 1
 					vertical_divs[i] :+ delta
 				Next
 				

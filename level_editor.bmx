@@ -115,7 +115,8 @@ Function level_editor( lev:LEVEL )
 			prop.pos_x = pd.pos.pos_x
 			prop.pos_y = pd.pos.pos_y
 			prop.ang = pd.pos.ang
-			SetAlpha( 0.35 )
+			SetColor( 255, 255, 255 )
+			SetAlpha( 0.5 )
 			prop.draw()
 		Next
 		
@@ -125,7 +126,9 @@ Function level_editor( lev:LEVEL )
 			Else If KeyHit( KEY_2 ) Then mode = EDIT_LEVEL_MODE_DIVIDERS ..
 			Else If KeyHit( KEY_3 ) Then mode = EDIT_LEVEL_MODE_PATH_REGIONS ..
 			Else If KeyHit( KEY_4 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_SYSTEM ..
-			Else If KeyHit( KEY_5 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_DETAILS
+			Else If KeyHit( KEY_5 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_DETAILS ..
+			Else If KeyHit( KEY_6 ) Then mode = EDIT_LEVEL_MODE_PROPS
+			
 			If KeyHit( KEY_NUMADD )
 				gridsnap :+ 5
 				x = gridsnap
@@ -153,8 +156,8 @@ Function level_editor( lev:LEVEL )
 			EDIT_LEVEL_MODE_BASIC+":pan "+..
 			EDIT_LEVEL_MODE_DIVIDERS+":split "+..
 			EDIT_LEVEL_MODE_PATH_REGIONS+":fill "+..
-			EDIT_LEVEL_MODE_SPAWNER_SYSTEM+","+EDIT_LEVEL_MODE_SPAWNER_DETAILS+":spawners"+..
-			EDIT_LEVEL_MODE_PROPS+":props",..
+			EDIT_LEVEL_MODE_SPAWNER_SYSTEM+","+EDIT_LEVEL_MODE_SPAWNER_DETAILS+":spawners "+..
+			EDIT_LEVEL_MODE_PROPS+":props ",..
 			info_x,info_y ); info_y :+ line_h
 		
 		'mode help (context-specific)
@@ -556,7 +559,18 @@ Function level_editor( lev:LEVEL )
 				gridsnap_mouse.y = round_to_nearest( mouse.y-y, gridsnap )
 				new_prop.pos.pos_x = gridsnap_mouse.x
 				new_prop.pos.pos_y = gridsnap_mouse.y
-				
+				If Not any_modifiers
+					If mouse_down_1 And Not MouseDown( 1 )
+						lev.add_prop( new_prop )
+						new_prop = New PROP_DATA
+					End If
+				End If
+				Local prop:AGENT = get_prop( new_prop.archetype )
+				prop.pos_x = gridsnap_mouse.x
+				prop.pos_y = gridsnap_mouse.y
+				SetColor( 255, 255, 255 )
+				SetAlpha( 0.33333 )
+				prop.draw()
 				
 		End Select
 		

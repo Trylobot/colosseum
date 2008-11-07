@@ -68,10 +68,10 @@ Type AGENT Extends PHYSICAL_OBJECT
 		ang = pos.ang
 		vel_x = pos.vel_x
 		vel_y = pos.vel_y
-		vel_ang = pos.vel_ang
+		ang_vel = pos.ang_vel
 		acc_x = pos.acc_x
 		acc_y = pos.acc_y
-		acc_ang = pos.acc_ang
+		ang_acc = pos.ang_acc
 	End Method
 	
 	Method dead%()
@@ -246,7 +246,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		manage( game.projectile_list )
 	End Method
 	
-	Method impact( other:COMPLEX_AGENT = Null )
+	Method impact( other:AGENT = Null )
 		'payload emitters
 		For Local em:EMITTER = EachIn emitter_list_payload
 			em.enable( MODE_ENABLED_WITH_COUNTER )

@@ -125,5 +125,34 @@
 			alignment: 2
 		}
 	],
-	props: null
+	props: [
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 100,
+				pos_y: 250,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 70,
+				pos_y: 160,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		}
+	]
 }
