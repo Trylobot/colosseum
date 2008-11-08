@@ -25,7 +25,7 @@ Function update_all_objects()
 		'projectiles
 		For Local proj:PROJECTILE = EachIn game.projectile_list
 			proj.update()
-		Next	
+		Next
 		'particles
 		For Local list:TList = EachIn game.particle_lists
 			For Local part:PARTICLE = EachIn list
@@ -74,13 +74,9 @@ Function update_flags()
 				game.mouse.y = game.player.pos_y + (2.0 * (mouse.y - window_h/2.0))
 				Select game.player_brain.input_type
 					Case INPUT_KEYBOARD_MOUSE_HYBRID
-'						game.drawing_origin.x = window_w/2 - Int((game.player.pos_x + game.mouse.x)/2)
-'						game.drawing_origin.y = window_h/2 - Int((game.player.pos_y + game.mouse.y)/2)
 						game.drawing_origin.x = window_w/2.0 - (game.player.pos_x + game.mouse.x)/2.0
 						game.drawing_origin.y = window_h/2.0 - (game.player.pos_y + game.mouse.y)/2.0
 					Case INPUT_KEYBOARD
-'						game.drawing_origin.x = window_w/2 - Int(game.player.pos_x)
-'						game.drawing_origin.y = window_h/2 - Int(game.player.pos_y)
 						game.drawing_origin.x = window_w/2 - game.player.pos_x
 						game.drawing_origin.y = window_h/2 - game.player.pos_y
 				End Select
@@ -93,6 +89,7 @@ Function update_flags()
 			If game.player.dead() 'player just died? (omgwtf)
 				game.game_over = True
 				game.game_in_progress = False
+				game.player_engine_running = False
 			End If
 			'if waiting for player to enter arena
 			If game.waiting_for_player_to_enter_arena
