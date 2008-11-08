@@ -59,6 +59,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 	End Method
 	
 	Method draw( red_override% = -1, green_override% = -1, blue_override% = -1, alpha_override# = -1.0, scale_override# = -1.0, UNUSED% = False )
+		SetRotation( ang )
 		DrawImage( img, pos_x, pos_y )
 	End Method
 	

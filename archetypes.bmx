@@ -27,7 +27,9 @@ Function set_prop_archetypes()
 End Function
 
 Function get_prop:AGENT( archetype_index% )
-	Return Copy_AGENT( prop_archetype[archetype_index] )
+	Local prop:AGENT = Copy_AGENT( prop_archetype[archetype_index] )
+	prop.cur_health = prop.max_health
+	Return prop
 End Function
 
 '______________________________________________________________________________
