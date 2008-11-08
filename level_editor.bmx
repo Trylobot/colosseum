@@ -37,7 +37,6 @@ Function level_editor( lev:LEVEL )
 	Local control%, alt%, shift%, any_modifiers%
 	Local divider_axis% = LINE_TYPE_VERTICAL
 	
-	Local line_h% = GetImageFont().Height() - 1
 	Local cursor% = 0
 	Local cursor_archetype% = enemy_index_start
 	Local kb_handler:CONSOLE = New CONSOLE
@@ -46,6 +45,7 @@ Function level_editor( lev:LEVEL )
 	Local normal_font:TImageFont = get_font( "consolas_12" )
 	Local bigger_font:TImageFont = get_font( "consolas_bold_24" )
 	SetImageFont( normal_font )
+	Local line_h% = GetImageFont().Height() - 1
 	
 	Repeat
 		Cls
@@ -563,6 +563,14 @@ Function level_editor( lev:LEVEL )
 					If mouse_down_1 And Not MouseDown( 1 )
 						lev.add_prop( new_prop )
 						new_prop = New PROP_DATA
+					End If
+					If KeyHit( KEY_LEFT )
+						new_prop.archetype :- 1
+						If new_prop.archetype < 0 Then new_prop.archetype = prop_archetype.Length-1
+					End If
+					If KeyHit( KEY_RIGHT )
+						new_prop.archetype :+ 1
+						If new_prop.archetype > prop_archetype.Length-1 Then new_prop.archetype = 0
 					End If
 				End If
 				Local prop:AGENT = get_prop( new_prop.archetype )

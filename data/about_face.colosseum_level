@@ -1,0 +1,735 @@
+{
+	name: "about_face",
+	width: 690,
+	height: 660,
+	row_count: 14,
+	col_count: 15,
+	horizontal_divs: [
+		0,
+		15,
+		80,
+		150,
+		180,
+		210,
+		240,
+		330,
+		410,
+		440,
+		470,
+		500,
+		575,
+		645,
+		660
+	],
+	vertical_divs: [
+		0,
+		15,
+		85,
+		160,
+		190,
+		220,
+		250,
+		305,
+		385,
+		445,
+		475,
+		505,
+		535,
+		605,
+		675,
+		690
+	],
+	path_regions: [
+		[
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			1,
+			0,
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			0,
+			1,
+			1,
+			0,
+			1,
+			1,
+			0,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			1,
+			1,
+			1,
+			0,
+			1,
+			1,
+			1,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			1,
+			1,
+			1,
+			0,
+			1,
+			1,
+			1,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			0,
+			1,
+			1,
+			0,
+			1,
+			1,
+			0,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			1,
+			0,
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1,
+			1
+		]
+	],
+	spawners: [
+		{
+			class: 1,
+			squads: null,
+			pos: {
+				pos_x: 345,
+				pos_y: 200,
+				ang: -90,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: null,
+			alignment: 1
+		},
+		{
+			class: 1,
+			squads: [
+				[
+					7,
+					7,
+					7,
+					7
+				],
+				[
+					8,
+					8
+				],
+				[
+					8,
+					8
+				],
+				[
+					9,
+					9
+				]
+			],
+			pos: {
+				pos_x: 345,
+				pos_y: 450,
+				ang: 90,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [
+				3000,
+				2000,
+				2000,
+				2000
+			],
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: [ [ 6 ] ],
+			pos: {
+				pos_x: 50,
+				pos_y: 275,
+				ang: -45,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [ 0 ],
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: [ [ 4 ] ],
+			pos: {
+				pos_x: 95,
+				pos_y: 285,
+				ang: -45,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [ 0 ],
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: [ [ 4 ] ],
+			pos: {
+				pos_x: 45,
+				pos_y: 200,
+				ang: -45,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [ 0 ],
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: [ [ 4 ] ],
+			pos: {
+				pos_x: 610,
+				pos_y: 195,
+				ang: -135,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [ 0 ],
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: [ [ 5 ] ],
+			pos: {
+				pos_x: 640,
+				pos_y: 165,
+				ang: -135,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [ 0 ],
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: [ [ 5 ] ],
+			pos: {
+				pos_x: 415,
+				pos_y: 630,
+				ang: -45,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [ 0 ],
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: [ [ 5 ] ],
+			pos: {
+				pos_x: 280,
+				pos_y: 630,
+				ang: -135,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [ 0 ],
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: [ [ 4 ] ],
+			pos: {
+				pos_x: 220,
+				pos_y: 630,
+				ang: -135,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [ 0 ],
+			alignment: 2
+		},
+		{
+			class: 0,
+			squads: [ [ 4 ] ],
+			pos: {
+				pos_x: 635,
+				pos_y: 610,
+				ang: -90,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			},
+			delay_time: [ 0 ],
+			alignment: 2
+		}
+	],
+	props: [
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 555,
+				pos_y: 320,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 585,
+				pos_y: 325,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 595,
+				pos_y: 290,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 615,
+				pos_y: 320,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 645,
+				pos_y: 365,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 640,
+				pos_y: 325,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 585,
+				pos_y: 360,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 665,
+				pos_y: 395,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 145,
+				pos_y: 405,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 140,
+				pos_y: 365,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 110,
+				pos_y: 355,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 105,
+				pos_y: 385,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 80,
+				pos_y: 355,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 70,
+				pos_y: 380,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 40,
+				pos_y: 380,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 85,
+				pos_y: 325,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 55,
+				pos_y: 345,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		}
+	]
+}

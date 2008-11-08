@@ -16,7 +16,7 @@ End Function
 
 '______________________________________________________________________________
 '[ PROPS ]
-Global prop_archetype:AGENT[10]; reset_index()
+Global prop_archetype:AGENT[2]; reset_index()
 
 Global PROP_INDEX_CRATE_MEDIUM% = postfix_index()
 Global PROP_INDEX_CRATE_SMALL% = postfix_index()
