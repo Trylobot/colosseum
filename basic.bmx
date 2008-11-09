@@ -320,6 +320,18 @@ Type POINT Extends MANAGED_OBJECT
 		Return p
 	End Method
 	
+	Method move_to( pos:POINT )
+		pos_x = pos.pos_x
+		pos_y = pos.pos_y
+		ang = pos.ang
+		vel_x = pos.vel_x
+		vel_y = pos.vel_y
+		ang_vel = pos.ang_vel
+		acc_x = pos.acc_x
+		acc_y = pos.acc_y
+		ang_acc = pos.ang_acc
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "pos_x", TJSONNumber.Create( pos_x ))
@@ -436,7 +448,7 @@ Function line_intersects_rect%( v1:cVEC, v2:cVEC, r:cVEC, r_dim:cVEC )
 	End If
 End Function
 '______________________________________________________________________________
-rem
+Rem
 	If lag_aimer = Null Then lag_aimer = cVEC.Create( p_tur.pos_x - 20, p_tur.pos_y - 20 )
 	Local m_rail# = (lag_aimer.y - game.mouse.y)/(lag_aimer.x - game.mouse.x)
 	Local b_rail# = lag_aimer.y - m_rail*lag_aimer.x

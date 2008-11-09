@@ -22,7 +22,9 @@ Function level_editor( lev:LEVEL )
 	Local drag_mouse_start:cVEC = New cVEC
 	Local drag_pos_start:POINT = New POINT
 	Local new_spawner:SPAWNER = New SPAWNER
+	Local closest_sp:SPAWNER = Null
 	Local new_prop:PROP_DATA = New PROP_DATA
+	Local closest_pd:PROP_DATA = Null
 
 	Local nearest_div%
 	Local nearest_div_dist%
@@ -112,8 +114,8 @@ Function level_editor( lev:LEVEL )
 		'draw the props
 		For Local pd:PROP_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )
-			prop.pos_x = pd.pos.pos_x
-			prop.pos_y = pd.pos.pos_y
+			prop.pos_x = pd.pos.pos_x+x
+			prop.pos_y = pd.pos.pos_y+y
 			prop.ang = pd.pos.ang
 			SetColor( 255, 255, 255 )
 			SetAlpha( 0.5 )
@@ -356,13 +358,17 @@ Function level_editor( lev:LEVEL )
 						lev.add_spawner( new_spawner.clone() )
 					End If
 				Else
-					Local closest_sp:SPAWNER = Null
-					For Local sp:SPAWNER = EachIn lev.spawners
-						If closest_sp = Null Or ..
-						closest_sp.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y )) > sp.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y ))
-							closest_sp = sp
-						End If
-					Next
+					If Not MouseDown( 1 )
+						closest_sp = Null
+					End If
+					If closest_sp = Null
+						For Local sp:SPAWNER = EachIn lev.spawners
+							If closest_sp = Null Or ..
+							closest_sp.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y )) > sp.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y ))
+								closest_sp = sp
+							End If
+						Next
+					End If
 					If closest_sp <> Null
 						If MouseDown( 1 )
 							SetAlpha( 0.70 )
@@ -379,7 +385,6 @@ Function level_editor( lev:LEVEL )
 								SetColor( 255, 64, 64 )
 						End Select
 						DrawLine( MouseX(),MouseY(), closest_sp.pos.pos_x+x,closest_sp.pos.pos_y+y )
-
 						If control
 							If Not mouse_down_1 And MouseDown( 1 )
 								drag_mouse_start = mouse.clone()
@@ -572,13 +577,49 @@ Function level_editor( lev:LEVEL )
 						new_prop.archetype :+ 1
 						If new_prop.archetype > prop_archetype.Length-1 Then new_prop.archetype = 0
 					End If
+					Local prop:AGENT = get_prop( new_prop.archetype )
+					prop.pos_x = gridsnap_mouse.x+x
+					prop.pos_y = gridsnap_mouse.y+y
+					SetColor( 255, 255, 255 )
+					SetAlpha( 0.33333 )
+					prop.draw()
+				Else
+					If Not MouseDown( 1 )
+						closest_pd = Null
+					End If
+					If closest_pd = Null
+						For Local pd:PROP_DATA = EachIn lev.props
+							If closest_pd = Null Or ..
+							closest_pd.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y )) > pd.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y ))
+								closest_pd = pd
+							End If
+						Next
+					End If
+					If closest_pd <> Null
+						If MouseDown( 1 )
+							SetAlpha( 0.70 )
+						Else
+							SetAlpha( 0.35 )
+						End If
+						SetLineWidth( 2 )
+						SetColor( 255, 255, 255 )
+						DrawLine( MouseX(),MouseY(), closest_pd.pos.pos_x+x,closest_pd.pos.pos_y+y )
+						If control
+							If Not mouse_down_1 And MouseDown( 1 )
+								drag_mouse_start = mouse.clone()
+								drag_pos_start = Copy_POINT( closest_pd.pos )
+							End If
+							If MouseDown( 1 )
+								closest_pd.pos.pos_x = round_to_nearest( drag_pos_start.pos_x + (mouse.x - drag_mouse_start.x), gridsnap )
+								closest_pd.pos.pos_y = round_to_nearest( drag_pos_start.pos_y + (mouse.y - drag_mouse_start.y), gridsnap )
+							End If
+						Else If alt
+							If mouse_down_1 And Not MouseDown( 1 )
+								lev.remove_prop( closest_pd )
+							End If
+						End If
+					End If
 				End If
-				Local prop:AGENT = get_prop( new_prop.archetype )
-				prop.pos_x = gridsnap_mouse.x
-				prop.pos_y = gridsnap_mouse.y
-				SetColor( 255, 255, 255 )
-				SetAlpha( 0.33333 )
-				prop.draw()
 				
 		End Select
 		

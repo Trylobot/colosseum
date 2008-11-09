@@ -6,16 +6,15 @@ EndRem
 
 '______________________________________________________________________________
 Function Archetype_AGENT:AGENT( ..
-name$ = Null, ..
 img:TImage = Null, ..
 gibs:TImage = Null, ..
 cash_value% = 0, ..
 max_health# = 1, ..
 mass# = 1, ..
 frictional_coefficient# = 0, ..
-physics_disabled% = False )
+physics_disabled% = False, ..
+destruct_on_contact% = False )
 	Local ag:AGENT = New AGENT
-	ag.name = name
 	ag.img = img
 	ag.gibs = gibs
 	ag.cash_value = cash_value
@@ -23,12 +22,12 @@ physics_disabled% = False )
 	ag.mass = mass
 	ag.frictional_coefficient = frictional_coefficient
 	ag.physics_disabled = physics_disabled
+	ag.destruct_on_contact = destruct_on_contact
 	Return ag
 End Function
 
 Function Copy_AGENT:AGENT( other:AGENT )
 	Local ag:AGENT = New AGENT
-	ag.name = other.name
 	ag.img = other.img
 	ag.gibs = other.gibs
 	ag.cash_value = other.cash_value
@@ -39,6 +38,7 @@ Function Copy_AGENT:AGENT( other:AGENT )
 	ag.mass = other.mass
 	ag.frictional_coefficient = other.frictional_coefficient
 	ag.physics_disabled = other.physics_disabled
+	ag.destruct_on_contact = other.destruct_on_contact
 	Return ag
 End Function
 
@@ -61,18 +61,6 @@ Type AGENT Extends PHYSICAL_OBJECT
 	Method draw( red_override% = -1, green_override% = -1, blue_override% = -1, alpha_override# = -1.0, scale_override# = -1.0, UNUSED% = False )
 		SetRotation( ang )
 		DrawImage( img, pos_x, pos_y )
-	End Method
-	
-	Method move_to( pos:POINT )
-		pos_x = pos.pos_x
-		pos_y = pos.pos_y
-		ang = pos.ang
-		vel_x = pos.vel_x
-		vel_y = pos.vel_y
-		ang_vel = pos.ang_vel
-		acc_x = pos.acc_x
-		acc_y = pos.acc_y
-		ang_acc = pos.ang_acc
 	End Method
 	
 	Method dead%()

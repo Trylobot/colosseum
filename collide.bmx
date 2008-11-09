@@ -237,12 +237,12 @@ Function collision_agent_wall( ag:AGENT, wall:BOX )
 End Function
 
 Function collision_agent_door( ag:AGENT, door:WIDGET )
-	DebugLog " collision_agent_door"
+	'DebugLog " collision_agent_door"
 
 End Function
 
 Function collision_projectile_door( proj:PROJECTILE, door:WIDGET )
-	DebugLog " collision_projectile_door"
+	'DebugLog " collision_projectile_door"
 
 End Function
 

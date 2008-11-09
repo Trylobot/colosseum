@@ -107,7 +107,7 @@ Function draw_game()
 	draw_reticle()
 	SetRotation( 0 )
 
-	If game.human_participation
+	If game.human_participation And Not game.game_over
 		'player tips
 		Local player_msg$ = Null
 		SetImageFont( get_font( "consolas_12" ))
