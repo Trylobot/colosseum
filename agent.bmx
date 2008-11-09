@@ -49,6 +49,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 	Field max_health# 'maximum health
 	Field cash_value% 'cash to be awarded player on death
 	Field death_emitters:TList 'emitters to be activated on death
+	Field destruct_on_contact% 'whether this agent should die on contact with any complex agents
 
 	Field cur_health# 'current health
 	Field last_collided_agent_id% 'id of last agent collided with (for self-destructing agents)
@@ -81,6 +82,8 @@ Type AGENT Extends PHYSICAL_OBJECT
 		Local total_force# = 100.0
 		other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - ang ), 100 )))
 		other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - ang ), 100 )))
+		'self-destruct explosion sound
+		play_sound( get_sound( "cannon_hit" ),, 0.25 )
 		'death effects
 		die()
 	End Method
@@ -250,14 +253,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	End Method
 	
 	Method play_impact_sound( volume# )
-		If snd_impact <> Null
-			Local ch:TChannel = AllocChannel()
-			CueSound( snd_impact, ch )
-			SetChannelVolume( ch, volume )
-			SetChannelRate( ch, Rnd( 0.75, 1.25 ))
-			ResumeChannel( ch )
-			audio_channels.AddLast( ch )
-		End If
+		play_sound( snd_impact, volume, 0.25 )
 	End Method
 	
 	Method add_emitter:EMITTER( other_em:EMITTER, category% )

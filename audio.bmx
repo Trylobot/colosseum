@@ -101,4 +101,15 @@ Function tweak_engine_idle()
 	End If
 End Function
 
+Function play_sound( sound:TSound, volume# = 1.0, pitch_variance# = 0.0 )
+	If sound <> Null
+		Local ch:TChannel = AllocChannel()
+		CueSound( sound, ch )
+		SetChannelVolume( ch, volume )
+		SetChannelRate( ch, Rnd( 1.0 - pitch_variance, 1.0 + pitch_variance ))
+		ResumeChannel( ch )
+		audio_channels.AddLast( ch )
+	End If
+End Function
+
 
