@@ -65,11 +65,21 @@ Function start_player_engine()
 	SetChannelVolume( engine_start, 0.5 )
 	ResumeChannel( engine_start )
 	game.player_engine_ignition = False
-	game.player_engine_running = False
 End Function
 
 Function tweak_engine_idle()
-	If game.player_engine_running	
+	If Not game.player_engine_running	
+		If engine_start <> Null
+			If Not ChannelPlaying( engine_start )
+				game.player_engine_running = True
+			End If
+		End If
+		If engine_idle <> Null
+			StopChannel( engine_idle )
+			engine_idle = Null
+		End If
+	End If
+	If game.player_engine_running
 		If engine_start <> Null
 			If Not ChannelPlaying( engine_start )
 				'stop engine_start
@@ -81,7 +91,8 @@ Function tweak_engine_idle()
 				SetChannelVolume( engine_idle, 0.5 )
 				ResumeChannel( engine_idle )
 			End If
-		Else 'engine_start == Null
+		End If
+		If engine_start = Null
 			If engine_idle = Null
 				'start engine_idle
 				engine_idle = AllocChannel()
@@ -91,16 +102,6 @@ Function tweak_engine_idle()
 			Local p_speed# = Sqr( Pow(game.player.vel_x,2) + Pow(game.player.vel_y,2) )
 			SetChannelVolume( engine_idle, 0.5 + ( 0.5 * (p_speed / 2.0) ))
 			SetChannelRate( engine_idle, 1.0 + (p_speed / 2.0) )
-		End If
-	Else 'Not FLAG_playing_engine_running
-		If engine_start <> Null
-			If Not ChannelPlaying( engine_start )
-				game.player_engine_running = True
-			End If
-		End If
-		If engine_idle <> Null
-			StopChannel( engine_idle )
-			engine_idle = Null
 		End If
 	End If
 End Function
