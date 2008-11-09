@@ -224,7 +224,6 @@ Type EMITTER extends MANAGED_OBJECT
 	End Method
 		
 	Function Archetype:Object( ..
-	name$ = Null, ..
 	emitter_type%, ..
 	archetype_index%, ..
 	mode% = MODE_DISABLED, ..
@@ -245,7 +244,6 @@ Type EMITTER extends MANAGED_OBJECT
 		Local em:EMITTER = New EMITTER
 		
 		'static fields
-		em.name = name
 		em.emitter_type = emitter_type
 		em.archetype_index = archetype_index
 		em.mode = mode
@@ -278,7 +276,6 @@ Type EMITTER extends MANAGED_OBJECT
 		If other = Null Then Return em
 		
 		'argument fields
-		em.name = other.name
 		em.parent = new_parent
 		em.source_id = source_id
 

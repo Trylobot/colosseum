@@ -324,12 +324,6 @@ Function debug_overlay()
 		End If
 	End If
 	
-	If KeyHit( KEY_C )
-		Local prop:AGENT = get_prop( 0 ) 'COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "crate", img_crate, Null, 0, 0, 200, 400, 160, 0, 0 ))
-		prop.pos_x = game.mouse.x; prop.pos_y = game.mouse.y
-		prop.manage( game.prop_list )
-	End If
-	
 End Function
 '______________________________________________________________________________
 'Function debug_format_number()
