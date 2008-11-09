@@ -64,9 +64,6 @@ Function get_all_input()
 		If KeyHit( KEY_ESCAPE ) 'show menu
 			If Not FLAG_in_menu
 				FLAG_in_menu = True
-				If engine_idle <> Null
-					SetChannelVolume( engine_idle, 0 )
-				End If
 				If game.game_in_progress
 					menu_command( COMMAND_BACK_TO_MAIN_MENU )
 					'clear keystate listeners

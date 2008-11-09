@@ -180,6 +180,12 @@
 			frames: 1
 		},
 		{
+			path: "art/rocket_casing.png",
+			handle_x: 6.5,
+			handle_y: 3.5,
+			frames: 1
+		},
+		{
 			path: "art/halo.png",
 			handle_x: 100.0,
 			handle_y: 100.0,

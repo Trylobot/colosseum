@@ -184,7 +184,7 @@ Function draw_main_screen()
 	x = 1
 	y = window_h - h*2 - 1
 	DrawText( "Colosseum (c) 2008 Tyler W.R. Cole, aka Tylerbot; music by NickPerrin; json binding by grable", x, y ); y :+ h
-	DrawText( "special thanks to Kaze, SniperAceX, Firelord88; written in 100% BlitzMax", x, y ); y :+ h
+	DrawText( "special thanks to Kaze, SniperAceX, Firelord88, ZieramsFolly; written in BlitzMax", x, y ); y :+ h
 	
 	'menu options
 	x = 30; y = 95

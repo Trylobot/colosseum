@@ -94,7 +94,7 @@
 			class: 2,
 			squads: null,
 			pos: {
-				pos_x: 170,
+				pos_x: 235,
 				pos_y: 210,
 				ang: 180,
 				vel_x: 0,
@@ -109,11 +109,11 @@
 		},
 		{
 			class: 2,
-			squads: [ [ 3 ] ],
+			squads: [ [ 6 ] ],
 			pos: {
-				pos_x: 40,
-				pos_y: 210,
-				ang: 90,
+				pos_x: 45,
+				pos_y: 150,
+				ang: 45,
 				vel_x: 0,
 				vel_y: 0,
 				ang_vel: 0,
@@ -125,34 +125,5 @@
 			alignment: 2
 		}
 	],
-	props: [
-		{
-			archetype: 1,
-			pos: {
-				pos_x: 100,
-				pos_y: 250,
-				ang: 0,
-				vel_x: 0,
-				vel_y: 0,
-				ang_vel: 0,
-				acc_x: 0,
-				acc_y: 0,
-				ang_acc: 0
-			}
-		},
-		{
-			archetype: 0,
-			pos: {
-				pos_x: 70,
-				pos_y: 160,
-				ang: 0,
-				vel_x: 0,
-				vel_y: 0,
-				ang_vel: 0,
-				acc_x: 0,
-				acc_y: 0,
-				ang_acc: 0
-			}
-		}
-	]
+	props: null
 }

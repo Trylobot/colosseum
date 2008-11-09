@@ -15,7 +15,11 @@ Function play_all_audio()
 		If game.player_engine_ignition
 			start_player_engine()
 		End If
-		tweak_engine_idle()
+		If Not FLAG_in_menu And Not FLAG_in_shop
+			tweak_engine_idle()
+		Else
+			SetChannelVolume( engine_idle, 0 )
+		End If
 	End If
 	
 	Local ch:TChannel

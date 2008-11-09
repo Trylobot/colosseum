@@ -37,5 +37,9 @@
 			path: "sound/laser_hit.ogg",
 			looping: false
 		}
+		{
+			path: "sound/rocket_launch.ogg",
+			looping: false
+		}
 	]
 }

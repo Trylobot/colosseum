@@ -326,7 +326,7 @@ End Function
 
 '______________________________________________________________________________
 'Images
-AutoImageFlags( FILTEREDIMAGE | MIPMAPPEDIMAGE )
+AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
 
 Function LoadImage_SetHandle:TImage( path$, x# = 0, y# = 0 )
 	Local img:TImage = LoadImage( "art/" + path )
@@ -370,6 +370,7 @@ Global img_mgun_muzzle_smoke:TImage = LoadImage_SetHandle( "mgun_muzzle_smoke.pn
 Global img_mgun_shell_casing:TImage = LoadImage_SetHandle( "mgun_shell_casing.png", 3.5, 2.5 )
 Global img_projectile_shell_casing:TImage = LoadImage_SetHandle( "projectile_shell_casing.png", 5.5, 3.5 )
 Global img_rocket_thrust:TImage = LoadImage_SetHandle( "rocket_thrust.png", 16.5, 6.5 )
+Global img_rocket_casing:TImage = LoadImage_SetHandle( "rocket_casing.png", 6.5, 3.5 )
 Global img_halo:TImage = LoadImage_SetHandle( "halo.png", 100, 100 )
 Global img_spark:TImage = LoadImage_SetHandle( "spark.png", 0.5, 2.5 )
 Global img_laser_muzzle_flare:TImage = LoadImage_SetHandle( "laser_muzzle_flare.png", 1.5, 7.5 )

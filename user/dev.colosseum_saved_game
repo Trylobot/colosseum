@@ -6,8 +6,8 @@
 		2
 	],
 	input_method: 1,
-	current_level: "data/debug_rocket.colosseum_level",
-	cash: 9991275,
-	kills: 1039,
+	current_level: "data/debug.colosseum_level",
+	cash: 9993150,
+	kills: 1060,
 	selected_inventory_index: 2
 }
