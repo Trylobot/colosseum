@@ -17,7 +17,7 @@ Function play_all_audio()
 		End If
 		If Not FLAG_in_menu And Not FLAG_in_shop
 			tweak_engine_idle()
-		Else
+		Else If engine_idle <> Null And engine_idle.Playing()
 			SetChannelVolume( engine_idle, 0 )
 		End If
 	End If
