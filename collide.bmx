@@ -175,13 +175,9 @@ End Function
 Function collision_agent_agent( ag:AGENT, other:AGENT )
 	'register the collision (for self-destruct agents)
 	ag.last_collided_agent_id = other.id
-	'activate collision response for affected entity(ies)
-	'Local offset#, offset_ang#
-	'cartesian_to_polar( ag.pos_x - other.pos_x, ag.pos_y - other.pos_y, offset, offset_ang )
-	'Local total_force# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*Sqr( Pow(other.vel_x,2) + Pow(other.vel_y,2) )
-	'ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - other.ang ), 100 )))
-	'ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*(total_force/3.0)*Sin( offset_ang - other.ang ), 100 )))
-	If Not ag.physics_disabled
+	If ag.destruct_on_contact And COMPLEX_AGENT( other )
+		ag.die()
+	Else If Not ag.physics_disabled
 		Local dist# = other.dist_to( ag )
 		Local ang# = other.ang_to( ag )
 		'nudge

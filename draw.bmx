@@ -131,6 +131,8 @@ Function draw_game()
 	
 		'help screen
 		If FLAG_draw_help
+			Local img_help_kb:TImage = get_image( "help_kb" )
+			Local img_help_kb_mouse:TImage = get_image( "help_kb_and_mouse" )
 			SetColor( 0, 0, 0 )
 			SetAlpha( 0.550 )
 			DrawRect( 0, 0, window_w, window_h )
@@ -318,11 +320,11 @@ Function draw_lighting_and_effects()
 	SetAlpha( 0.2*time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
 	If game.player <> Null
 		SetScale( 1, 1 )
-		DrawImage( img_halo, game.player.pos_x, game.player.pos_y )
+		DrawImage( get_image( "halo" ), game.player.pos_x, game.player.pos_y )
 	End If
 	If game.player_spawn_point <> Null
 		SetScale( 2, 2 )
-		DrawImage( img_halo, game.player_spawn_point.pos_x, game.player_spawn_point.pos_y+15.0 )
+		DrawImage( get_image( "halo" ), game.player_spawn_point.pos_x, game.player_spawn_point.pos_y+15.0 )
 	End If
 	SetBlend( ALPHABLEND )
 End Function
@@ -335,6 +337,7 @@ Function draw_reticle()
 	If game.human_participation
 		If game.player.turret_list.Count() <> 0
 			Local p_tur:TURRET = TURRET( game.player.turret_list.First() )
+			Local img_reticle:TImage = get_image( "reticle" )
 			
 			If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
 				'lag-behind reticle
@@ -399,7 +402,8 @@ Function draw_HUD()
 	y1 :+ 3; y2 :+ 3
 	
 	y = y1
-	'player health		
+	'player health
+	Local img_health_mini:TImage = get_image( "health_mini" )
 	SetColor( 255, 255, 255 )
 	DrawImage( img_health_mini, x, y )
 	Local pct# = game.player.cur_health/game.player.max_health
@@ -415,6 +419,8 @@ Function draw_HUD()
 	SetImageFont( get_font( "consolas_bold_12" ))
 	
 	'player ammo, overheat & charge indicators
+	Local img_icon_player_cannon_ammo:TImage = get_image( "icon_player_cannon_ammo" )
+	Local img_shine:TImage = get_image( "bar_shine" )
 	Local ammo_row_len% = w / img_icon_player_cannon_ammo.width
 	Local temp_x%, temp_y%
 	For Local t:TURRET = EachIn game.player.turret_list
@@ -460,6 +466,9 @@ Function draw_HUD()
 	Next
 	
 	'music icon
+	Local img_icon_music_note:TImage = get_image( "icon_music_note" )
+	Local img_icon_speaker_on:TImage = get_image( "icon_speaker_on" )
+	Local img_icon_speaker_off:TImage = get_image( "icon_speaker_off" )
 	SetAlpha( 0.5 )
 	Local music_str$ = "[m]usic"
 	x = window_w - 10 - TextWidth( music_str )

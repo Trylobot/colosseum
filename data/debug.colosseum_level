@@ -125,5 +125,90 @@
 			alignment: 2
 		}
 	],
-	props: null
+	props: [
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 200,
+				pos_y: 135,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 250,
+				pos_y: 150,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 245,
+				pos_y: 115,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 210,
+				pos_y: 90,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 1,
+			pos: {
+				pos_x: 235,
+				pos_y: 80,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		},
+		{
+			archetype: 0,
+			pos: {
+				pos_x: 205,
+				pos_y: 65,
+				ang: 0,
+				vel_x: 0,
+				vel_y: 0,
+				ang_vel: 0,
+				acc_x: 0,
+				acc_y: 0,
+				ang_acc: 0
+			}
+		}
+	]
 }
