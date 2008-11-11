@@ -290,6 +290,14 @@
 			frame_height: 15
 		},
 		{
+			path: "art/crate_gibs.png",
+			handle_x: 16.0,
+			handle_y: 16.0,
+			frames: 26,
+			frame_width: 32,
+			frame_height: 32
+		},
+		{
 			path: "art/crate_small_gibs.png",
 			handle_x: 10.0,
 			handle_y: 10.0,
