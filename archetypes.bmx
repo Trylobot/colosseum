@@ -23,7 +23,7 @@ Global PROP_INDEX_CRATE_SMALL% = postfix_index()
 
 Function set_prop_archetypes()
 	prop_archetype[PROP_INDEX_CRATE_MEDIUM] = Archetype_AGENT( get_image( "crate" ), Null, 0, 200, 400, 160,, True )
-	prop_archetype[PROP_INDEX_CRATE_SMALL] = Archetype_AGENT( get_image( "crate_small" ), Null, 0, 75, 300, 160,, True )
+	prop_archetype[PROP_INDEX_CRATE_SMALL] = Archetype_AGENT( get_image( "crate_small" ), get_image( "crate_small_gibs" ), 0, 75, 300, 160,, True )
 End Function
 
 Function get_prop:AGENT( archetype_index% )
