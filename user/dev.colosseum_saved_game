@@ -5,9 +5,9 @@
 		1,
 		2
 	],
-	input_method: 1,
+	input_method: 2,
 	current_level: "data/debug.colosseum_level",
 	cash: 9993150,
 	kills: 1060,
-	selected_inventory_index: 2
+	selected_inventory_index: 1
 }

@@ -88,29 +88,36 @@ Type AGENT Extends PHYSICAL_OBJECT
 		die()
 	End Method
 	
-	Method die()
-		'spawn halo particle
-		Local halo:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "halo" ),,,,, LAYER_BACKGROUND, False,,,,,,,, 200, pos_x, pos_y, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 1.0, -0.1000 ))
-		halo.auto_manage()
-		'spawn gibs
-		If gibs <> Null
-			For Local i% = 0 To gibs.frames.Length - 1
-				Local gib:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, gibs, i,,,, LAYER_BACKGROUND, True, 0.100,,,,,,, 750 ))
-				Local gib_offset#, gib_offset_ang#
-				cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
-				gib.pos_x = pos_x + gib_offset*Cos( gib_offset_ang + ang )
-				gib.pos_y = pos_y + gib_offset*Sin( gib_offset_ang + ang )
-				Local gib_vel#, gib_vel_ang#
-				gib_vel = Rnd( -2.0, 2.0 )
-				gib_vel_ang = Rnd( 0.0, 359.9999 )
-				gib.vel_x = vel_x + gib_vel*Cos( gib_vel_ang + ang )
-				gib.vel_y = vel_y + gib_vel*Sin( gib_vel_ang + ang )
-				gib.ang = ang
-				gib.update()
-				gib.created_ts = now()
-				gib.auto_manage()
-			Next
+	'these boolean switches need to go.
+	Method die( show_halo% = True, show_gibs% = True )
+		If show_halo
+			'this should be part of the agent's death emitters, not hard coded.
+			Local halo:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "halo" ),,,,, LAYER_BACKGROUND, False,,,,,,,, 200, pos_x, pos_y, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 1.0, -0.1000 ))
+			halo.auto_manage()
 		End If
+		If show_gibs
+			'this should also be controlled by a death emitter, albeit a more complex one.
+			'perhaps a special type of emitter that takes a multi-frame image and a series of data to specify initial conditions for each of the gibs.
+			If gibs <> Null
+				For Local i% = 0 To gibs.frames.Length - 1
+					Local gib:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, gibs, i,,,, LAYER_BACKGROUND, True, 0.100,,,,,,, 750 ))
+					Local gib_offset#, gib_offset_ang#
+					cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
+					gib.pos_x = pos_x + gib_offset*Cos( gib_offset_ang + ang )
+					gib.pos_y = pos_y + gib_offset*Sin( gib_offset_ang + ang )
+					Local gib_vel#, gib_vel_ang#
+					gib_vel = Rnd( -2.0, 2.0 )
+					gib_vel_ang = Rnd( 0.0, 359.9999 )
+					gib.vel_x = vel_x + gib_vel*Cos( gib_vel_ang + ang )
+					gib.vel_y = vel_y + gib_vel*Sin( gib_vel_ang + ang )
+					gib.ang = ang
+					gib.update()
+					gib.created_ts = now()
+					gib.auto_manage()
+				Next
+			End If
+		End If
+		'death emitters
 		For Local em:EMITTER = EachIn death_emitters
 			em.enable( MODE_ENABLED_WITH_COUNTER )
 			While em.ready() And em.is_enabled()
@@ -236,6 +243,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		manage( game.projectile_list )
 	End Method
 	
+	'Method impact( material%, hit_player% = False )
 	Method impact( other:AGENT = Null )
 		'payload emitters
 		For Local em:EMITTER = EachIn emitter_list_payload
@@ -247,7 +255,13 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		Next
 		Local volume# = 0.3333
 		If other <> Null And other.id = get_player_id() Then volume = 1.00
-		play_impact_sound( volume )
+		'this should be dependent on a property of the other agent, not the class of the object. like, "materials" and stuff.
+		'even walls could potentially have materials.
+		If other = Null Or COMPLEX_AGENT( other )
+			play_impact_sound( volume )
+		Else
+			play_sound( get_sound( "wood_hit" ), volume, 0.25 )
+		End If
 	End Method
 	
 	Method play_impact_sound( volume# )

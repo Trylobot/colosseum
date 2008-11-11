@@ -293,7 +293,7 @@
 			path: "art/crate_small_gibs.png",
 			handle_x: 10.0,
 			handle_y: 10.0,
-			frames: 9,
+			frames: 18,
 			frame_width: 20,
 			frame_height: 20
 		},

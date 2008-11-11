@@ -176,8 +176,11 @@ Function collision_agent_agent( ag:AGENT, other:AGENT )
 	'register the collision (for self-destruct agents)
 	ag.last_collided_agent_id = other.id
 	If ag.destruct_on_contact And COMPLEX_AGENT( other )
-		ag.die()
-	Else If Not ag.physics_disabled
+		'this extra parameter to the following call is appropriate only for wooden crates and other non-volatile objects.
+		ag.die( False )
+		'this sound also applies only to crates
+		play_sound( get_sound( "wood_hit" ), 0.5, 0.25 )
+	Else If Not ag.physics_disabled And COMPLEX_AGENT( other ) 'this second condition is also only applicable to crates and such, really. it gives the impression that the crate had such little mass, that the total force of the collision went into deforming the object (shattering), and so the complex_agent does not even get affected by the collision.
 		Local dist# = other.dist_to( ag )
 		Local ang# = other.ang_to( ag )
 		'nudge
