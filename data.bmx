@@ -301,28 +301,5 @@ Function save_pixmap_to_file( px:TPixmap )
 	'save png
 	SavePixmapPNG( px, path )
 End Function
-'_____________________________________________________________________________
-'#############################################################################
-'#############################################################################
-'#####                                                                   #####
-'#####   THE LINE OF DOOM                                                #####
-'#####     everything below this line needs to be deleted.   -Tyler      #####
-'#####                                                                   #####
-'#############################################################################
-'#############################################################################
-
-Function load_all_archetypes()
-	set_prop_archetypes()
-	set_particle_archetypes()
-	set_particle_emitter_archetypes()
-	set_projectile_archetypes()
-	set_projectile_launcher_archetypes()
-	set_widget_archetypes()
-	set_pickup_archetypes()
-	set_turret_barrel_archetypes()
-	set_turret_archetypes()
-	set_complex_agent_archetypes()
-End Function
-
 
 

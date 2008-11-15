@@ -548,6 +548,23 @@ Function DrawText_with_glow( str$, x%, y% )
 	DrawText( str, x, y )
 End Function
 
+Const ARROW_UP% = 0
+Const ARROW_RIGHT% = 1
+Const ARROW_DOWN% = 2
+Const ARROW_LEFT% = 3
+Function draw_arrow( arrow_type%, x#, y#, height% )
+	Select arrow_type
+		Case ARROW_UP
+			DrawPoly( [ x,y, x,y+height, x+height/2,y+height/2 ])
+		Case ARROW_RIGHT
+			DrawPoly( [ x,y, x,y+height, x+height/2,y+height/2 ])
+		Case ARROW_DOWN
+			DrawPoly( [ x,y, x,y+height, x-height/2,y+height/2 ])
+		Case ARROW_LEFT
+			DrawPoly( [ x,y, x,y+height, x-height/2,y+height/2 ])
+	End Select
+End Function
+
 Function screenshot()
 	SetOrigin( 0, 0 )
 	save_pixmap_to_file( GrabPixmap( 0, 0, window_w, window_h ))
