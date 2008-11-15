@@ -320,6 +320,17 @@ Type LEVEL Extends MANAGED_OBJECT
 		End If
 	End Method
 	
+	Method get_random_contained_point:cVEC( c:CELL )
+		If in_bounds( c )
+			Local m:cVEC = New cVEC
+			m.x = Float(vertical_divs[c.col])   + (RndFloat() * (Float(vertical_divs[c.col+1])   - Float(vertical_divs[c.col])))
+			m.y = Float(horizontal_divs[c.row]) + (RndFloat() * (Float(horizontal_divs[c.row+1]) - Float(horizontal_divs[c.row])))
+			Return m
+		Else
+			Return Null
+		End If
+	End Method
+	
 	Method enemy_count%()
 		Local count% = 0
 		For Local index% = 0 To spawners.Length-1

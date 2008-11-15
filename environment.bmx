@@ -371,20 +371,23 @@ Type ENVIRONMENT
 		hostile_doors_status = DOOR_STATUS_CLOSED
 	End Method
 	
-	Method find_path:TList( start_x#, start_y#, goal_x#, goal_y# )
+	Method find_path:TList( start_x#, start_y#, goal_x#, goal_y#, per_waypoint_chaotic_nudging% = False )
 		Local start_cell:CELL = pathing.containing_cell( start_x, start_y )
 		Local goal_cell:CELL = pathing.containing_cell( goal_x, goal_y )
 		If pathing.grid( start_cell ) = PATH_BLOCKED Or pathing.grid( goal_cell ) = PATH_BLOCKED
 			Return Null
 		End If
-		
 		pathing.reset()
-		Local cell_list:TList = pathing.find_CELL_path( start_cell, goal_cell )
-	
+		Local cell_list:TList = ..
+			pathing.find_CELL_path( start_cell, goal_cell )
 		Local list:TList = CreateList()
 		If cell_list <> Null And Not cell_list.IsEmpty()
 			For Local cursor:CELL = EachIn cell_list
-				list.AddLast( pathing.lev.get_midpoint( cursor ))
+				If per_waypoint_chaotic_nudging
+					list.AddLast( lev.get_random_contained_point( cursor ))
+				Else
+					list.AddLast( lev.get_midpoint( cursor ))
+				End If
 			Next
 		End If
 		Return list

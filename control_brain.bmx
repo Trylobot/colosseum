@@ -4,7 +4,6 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-
 '______________________________________________________________________________
 Const waypoint_radius# = 30.0
 Const friendly_blocking_scalar_projection_distance# = 20.0
@@ -45,177 +44,104 @@ find_path_delay% = 0 )
 	cb.last_think_ts = now()
 	cb.last_look_target_ts = now()
 	cb.last_find_path_ts = now()
+	
+	'gather information from ai_type
 
 	Return cb
 End Function
 '_________________________________________
 Type CONTROL_BRAIN Extends MANAGED_OBJECT
+
+	' *** Indented fields are questionable, and might be removed/modified.
 	
 	Field avatar:COMPLEX_AGENT 'this brain's "body"
+	Field control_type% 'control type indicator (human/AI)
+	Field input_type% 'for human-controlled brains, the input device
+	Field ai_type% 'for AI-controlled brains, the specific AI "style"
+	Field has_turrets% 'whether the avatar has any turrets
+	Field can_move% 'whether the avatar can move
+	Field can_self_destruct% 'whether the avatar has the built-in ability to self-destruct
+	Field is_carrier% 'whether the avatar has the built-in ability to launch drones
+	
+	Field path:TList 'TList<cVEC> current path
 	Field target:AGENT 'current target
-	Field control_type% 'control type indicator
-	Field input_type% 'for human-based controllers, the input device
-	Field ai_type% 'for AI-based controllers, the specific AI "style"
-	Field think_delay% 'mandatory delay between think cycles
-	Field look_target_delay% 'mandatory delay between "see_target" calls
-	Field find_path_delay% 'mandatory delay between "find_path" calls
+	Field can_see_target%
+	Field ally_blocking%
+	Field ang_to_target#
+	Field dist_to_target#
 	
-	Field path:TList 'path to some destination
-	Field waypoint:cVEC 'next waypoint
-	Field ang_to_target# '(private)
-	Field dist_to_target# '(private)
-	Field sighted_target% '(private)
-	Field last_think_ts% '(private)
-	Field last_look_target_ts% '(private)
-	Field last_find_path_ts% '(private)
-	Field FLAG_waiting% '(private)
+	'all of the following fields need to go.
+		Field waypoint:cVEC
+		Field sighted_target%
+		Field think_delay%
+		Field look_target_delay%
+		Field find_path_delay%
+		Field last_think_ts%
+		Field last_look_target_ts%
+		Field last_find_path_ts%
+		Field FLAG_waiting%
 	
-	Method New()
-	End Method
-	
-	Method update()
+	Method update() 'this function needs some TLC
+		
 		prune()
+		
 		If control_type = CONTROL_TYPE_HUMAN
 			input_control()
+		
 		Else If control_type = CONTROL_TYPE_AI
-			'how often this brain gets processing time
 			If (now() - last_think_ts) > think_delay
+				
 				last_think_ts = now()
+				
 				If waypoint = Null Or waypoint_reached()
 					get_next_waypoint()
 				End If
+				
 				AI_control()
+				
 			End If
 		End If
-	End Method
-	
-	Method input_control()
-		Select input_type
-			
-			Case INPUT_KEYBOARD, INPUT_KEYBOARD_MOUSE_HYBRID
-				'If engine is running
-				If game.player_engine_running
-					'velocity
-					If KeyDown( KEY_W )' Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
-						avatar.drive( 1.0 )
-					ElseIf KeyDown( KEY_S )' Or KeyDown( KEY_K ) Or KeyDown( KEY_DOWN )
-						avatar.drive( -1.0 )
-					Else
-						avatar.drive( 0.0 )
-					EndIf
-					'angular velocity
-					If KeyDown( KEY_D )
-						avatar.turn( 1.0 )
-					ElseIf KeyDown( KEY_A )
-						avatar.turn( -1.0 )
-					Else
-						avatar.turn( 0.0 )
-					EndIf
-				Else
-					avatar.drive( 0.0 )
-					avatar.turn( 0.0 )
-					'start engine
-					If KeyHit( KEY_E ) And Not game.player_engine_ignition
-						game.player_engine_ignition = True
-					End If
-				End If
-				
-				If input_type = INPUT_KEYBOARD
-					'turret(s) angular velocity
-					If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
-						avatar.turn_turret( 0, 1.0  )
-						avatar.turn_turret( 1, 1.0  )
-					ElseIf KeyDown( KEY_LEFT ) Or KeyDown( KEY_J )
-						avatar.turn_turret( 0, -1.0 )
-						avatar.turn_turret( 1, -1.0 )
-					Else
-						avatar.turn_turret( 0, 0.0 )
-						avatar.turn_turret( 1, 0.0 )
-					EndIf
-				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-					For Local t:TURRET = EachIn game.player.turret_list
-						Local diff# = ang_wrap( t.ang - t.ang_to_cVEC( game.mouse ))
-						Local diff_mag# = Abs( diff )
-						If diff_mag > 5*t.max_ang_vel
-							If diff < 0
-								avatar.turn_turret( 0, 1.0  )
-								avatar.turn_turret( 1, 1.0  )
-							Else 'diff > 0
-								avatar.turn_turret( 0, -1.0 )
-								avatar.turn_turret( 1, -1.0 )
-							End If
-						Else If diff_mag > 2.5*t.max_ang_vel
-							If diff < 0
-								avatar.turn_turret( 0, 0.5  )
-								avatar.turn_turret( 1, 0.5  )
-							Else 'diff > 0
-								avatar.turn_turret( 0, -0.5 )
-								avatar.turn_turret( 1, -0.5 )
-							End If
-						Else If diff_mag > 1.25*t.max_ang_vel
-							If diff < 0
-								avatar.turn_turret( 0, 0.25 )
-								avatar.turn_turret( 1, 0.25 )
-							Else 'diff > 0
-								avatar.turn_turret( 0, -0.25 )
-								avatar.turn_turret( 1, -0.25 )
-							End If
-						Else If diff_mag > 0.75*t.max_ang_vel
-							If diff < 0
-								avatar.turn_turret( 0, 0.125 )
-								avatar.turn_turret( 1, 0.125 )
-							Else 'diff > 0
-								avatar.turn_turret( 0, -0.125 )
-								avatar.turn_turret( 1, -0.125 )
-							End If
-						Else If diff_mag > 0.375*t.max_ang_vel
-							If diff < 0
-								avatar.turn_turret( 0, 0.0625 )
-								avatar.turn_turret( 1, 0.0625 )
-							Else 'diff > 0
-								avatar.turn_turret( 0, -0.0625 )
-								avatar.turn_turret( 1, -0.0625 )
-							End If
-						Else
-							If diff < 0
-								avatar.turn_turret( 0, 0.03125 )
-								avatar.turn_turret( 1, 0.03125 )
-							Else 'diff > 0
-								avatar.turn_turret( 0, -0.03125 )
-								avatar.turn_turret( 1, -0.03125 )
-							End If
-						End If
-					Next
-				End If
-				
-				If input_type = INPUT_KEYBOARD
-					'turret(s) fire
-					If KeyDown( KEY_SPACE )
-						avatar.fire( 0 )
-					End If
-					If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
-						avatar.fire( 1 )
-					End If
-'					If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
-'						avatar.fire_turret_group( 2 )
-'					End If
-				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-					'turret(s) fire
-					If MouseDown( 1 )
-						avatar.fire( 0 )
-					End If
-					If MouseDown( 2 )
-						avatar.fire( 1 )
-					End If
-				End If
-					
-			Case INPUT_XBOX_360_CONTROLLER
-				'..?
-			
-		End Select
+		
 	End Method
 	
 	Method AI_control()
+		'update dynamic data
+		
+		'chassis movement
+		If can_move
+			'target availability
+			If can_see_target
+				'dance with target
+				
+			Else 'Not can_see_target
+				'move toward waypoint
+				
+			End If
+		End If
+		'turrets rotate/fire
+		If has_turrets
+			'target availability
+			If can_see_target
+				'point turrets at target
+				If Not ally_blocking
+					
+				End If
+			Else 'Not can_see_target
+				'return turrets to their default orientations
+				
+			End If
+		End If
+		'self-destruct
+		If can_self_destruct
+			
+		End If
+		'deploy
+		If can_deploy
+			
+		End If
+	End Method
+	
+	Method DEPRECATED__AI_control()
 		Select ai_type
 
 			Case AI_BRAIN_MR_THE_BOX
@@ -497,6 +423,136 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				
 		End Select
 	End Method
+	
+	Method input_control()
+		Select input_type
+			
+			Case INPUT_KEYBOARD, INPUT_KEYBOARD_MOUSE_HYBRID
+				'If engine is running
+				If game.player_engine_running
+					'velocity
+					If KeyDown( KEY_W )' Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
+						avatar.drive( 1.0 )
+					ElseIf KeyDown( KEY_S )' Or KeyDown( KEY_K ) Or KeyDown( KEY_DOWN )
+						avatar.drive( -1.0 )
+					Else
+						avatar.drive( 0.0 )
+					EndIf
+					'angular velocity
+					If KeyDown( KEY_D )
+						avatar.turn( 1.0 )
+					ElseIf KeyDown( KEY_A )
+						avatar.turn( -1.0 )
+					Else
+						avatar.turn( 0.0 )
+					EndIf
+				Else
+					avatar.drive( 0.0 )
+					avatar.turn( 0.0 )
+					'start engine
+					If KeyHit( KEY_E ) And Not game.player_engine_ignition
+						game.player_engine_ignition = True
+					End If
+				End If
+				
+				If input_type = INPUT_KEYBOARD
+					'turret(s) angular velocity
+					If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
+						avatar.turn_turret( 0, 1.0  )
+						avatar.turn_turret( 1, 1.0  )
+					ElseIf KeyDown( KEY_LEFT ) Or KeyDown( KEY_J )
+						avatar.turn_turret( 0, -1.0 )
+						avatar.turn_turret( 1, -1.0 )
+					Else
+						avatar.turn_turret( 0, 0.0 )
+						avatar.turn_turret( 1, 0.0 )
+					EndIf
+				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+					For Local t:TURRET = EachIn game.player.turret_list
+						Local diff# = ang_wrap( t.ang - t.ang_to_cVEC( game.mouse ))
+						Local diff_mag# = Abs( diff )
+						If diff_mag > 5*t.max_ang_vel
+							If diff < 0
+								avatar.turn_turret( 0, 1.0 )
+								avatar.turn_turret( 1, 1.0 )
+							Else 'diff > 0
+								avatar.turn_turret( 0, -1.0 )
+								avatar.turn_turret( 1, -1.0 )
+							End If
+						Else If diff_mag > 2.5*t.max_ang_vel
+							If diff < 0
+								avatar.turn_turret( 0, 0.5 )
+								avatar.turn_turret( 1, 0.5 )
+							Else 'diff > 0
+								avatar.turn_turret( 0, -0.5 )
+								avatar.turn_turret( 1, -0.5 )
+							End If
+						Else If diff_mag > 1.25*t.max_ang_vel
+							If diff < 0
+								avatar.turn_turret( 0, 0.25 )
+								avatar.turn_turret( 1, 0.25 )
+							Else 'diff > 0
+								avatar.turn_turret( 0, -0.25 )
+								avatar.turn_turret( 1, -0.25 )
+							End If
+						Else If diff_mag > 0.75*t.max_ang_vel
+							If diff < 0
+								avatar.turn_turret( 0, 0.125 )
+								avatar.turn_turret( 1, 0.125 )
+							Else 'diff > 0
+								avatar.turn_turret( 0, -0.125 )
+								avatar.turn_turret( 1, -0.125 )
+							End If
+						Else If diff_mag > 0.375*t.max_ang_vel
+							If diff < 0
+								avatar.turn_turret( 0, 0.0625 )
+								avatar.turn_turret( 1, 0.0625 )
+							Else 'diff > 0
+								avatar.turn_turret( 0, -0.0625 )
+								avatar.turn_turret( 1, -0.0625 )
+							End If
+						Else
+							If diff < 0
+								avatar.turn_turret( 0, 0.03125 )
+								avatar.turn_turret( 1, 0.03125 )
+							Else 'diff > 0
+								avatar.turn_turret( 0, -0.03125 )
+								avatar.turn_turret( 1, -0.03125 )
+							End If
+						End If
+					Next
+				End If
+				
+				If input_type = INPUT_KEYBOARD
+					'turret(s) fire
+					If KeyDown( KEY_SPACE )
+						avatar.fire( 0 )
+					End If
+					If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
+						avatar.fire( 1 )
+					End If
+'					If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
+'						avatar.fire_turret_group( 2 )
+'					End If
+				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+					'turret(s) fire
+					If MouseDown( 1 )
+						avatar.fire( 0 )
+					End If
+					If MouseDown( 2 )
+						avatar.fire( 1 )
+					End If
+				End If
+					
+			Case INPUT_XBOX_360_CONTROLLER
+				'..?
+			
+		End Select
+	End Method
+	
+	'_______________________________________________________________________________
+	'LINE OF DOOM
+	' *** everything below this line is questionable, and might be removed/modified
 	
 	Method waypoint_reached%()
 		If waypoint <> Null And avatar.dist_to_cVEC( waypoint ) <= waypoint_radius

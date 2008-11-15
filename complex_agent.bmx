@@ -27,7 +27,10 @@ Type COMPLEX_AGENT Extends AGENT
 	Field political_alignment% '{friendly|hostile}
 	Field ai_type% 'artificial intelligence subroutine index (only used for AI-controlled agents)
 
-	Field turret_list:TList 'list of turret groups attached to this agent
+	Field turret_anchors:cVEC[] 'discrete anchor points where it is valid to attach a turret
+	Field turret_systems%[][] 'for each anchor point, a list of the attached turrets (composing a turret_system)
+	Field turrets:TURRET[] 'all of this agent's actual turret objects
+	Field DEPRECATED__turret_list:TList 'list of turrets attached to this agent
 
 	Field driving_force:FORCE 'permanent force for this object; also added to the general force list
 	Field turning_force:FORCE 'permanent torque for this object; also added to the general force list
@@ -307,11 +310,15 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 	End Method
 	'___________________________________________
-	Method turn_turret( index%, control_pct# )
+	Method DEPRECATED__turn_turret( index%, control_pct# )
 		If index < turret_list.Count()
 			Local t:TURRET = TURRET( turret_list.ValueAtIndex( index ))
 			If t <> Null Then t.turn( control_pct )
 		End If
+	End Method
+	
+	Method turn_turret_system( index%, control_pct# )
+		
 	End Method
 	'___________________________________________
 	Method snap_all_turrets()
