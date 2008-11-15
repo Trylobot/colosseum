@@ -293,32 +293,45 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method drive( pct# )
 		driving_force.control_pct = pct
-		If      pct > 0 Then enable_only_rear_emitters() ..
-		Else If pct < 0 Then enable_only_forward_emitters() ..
-		Else                 disable_all_emitters()
+		If pct > 0
+			enable_only_rear_emitters()
+		Else If pct < 0
+			enable_only_forward_emitters()
+		Else
+			disable_all_emitters()
+		End If
 	End Method
 	'___________________________________________
 	Method turn( pct# )
 		turning_force.control_pct = pct
 	End Method
-	
 	'___________________________________________
 	Method fire( index% )
-		If index < turret_list.Count()
-			Local t:TURRET = TURRET( turret_list.ValueAtIndex( index ))
-			If t <> Null Then t.fire()
-		End If
-	End Method
-	'___________________________________________
-	Method DEPRECATED__turn_turret( index%, control_pct# )
-		If index < turret_list.Count()
-			Local t:TURRET = TURRET( turret_list.ValueAtIndex( index ))
-			If t <> Null Then t.turn( control_pct )
+		If index < turrets.Length
+			turrets[index].fire()
 		End If
 	End Method
 	
+	'___________________________________________
+	Method DEPRECATED__turn_turret( index%, control_pct# )
+'		If index < turret_list.Count()
+'			Local t:TURRET = TURRET( turret_list.ValueAtIndex( index ))
+'			If t <> Null Then t.turn( control_pct )
+'		End If
+	End Method
+	'___________________________________________
 	Method turn_turret_system( index%, control_pct# )
-		
+		If index < turret_systems.Length
+			For Local sub_index% = 0 To turret_systems[index].Length - 1
+				Local t:TURRET = turrets[turret_systems[index][sub_index]]
+				'all turrets will turn at the speed of the primary turret
+				If sub_index = 0
+					t.turn( control_pct )
+				Else
+					
+				End If
+			Next
+		End If
 	End Method
 	'___________________________________________
 	Method snap_all_turrets()
@@ -400,10 +413,24 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
-	Method add_turret:TURRET( other_t:TURRET )
+	Method add_turret_anchor:cVEC( other_a:cVEC )
+		Local a:cVEC = other_a.clone()
+		'add the cloned anchor to the turret anchors array
+		?
+		'and also resize the turret systems array to match the turret anchors' size
+		?
+		Return a
+	End Method
+	'___________________________________________
+	Method add_turret:TURRET( other_t:TURRET, anchor_index% )
 		Local t:TURRET = other_t.clone()
 		t.set_parent( Self )
 		t.manage( turret_list )
+		'if this turret is not the primary turret for this anchor, ...
+		'  then set the max_ang_vel of the turret to the specified anchor's primary turret
+		t.max_ang_vel = ?
+		'call the turret's attach_at() method using the specified anchor
+		t.attach_at( ?, ? )
 		Return t
 	End Method
 	'___________________________________________

@@ -64,44 +64,46 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field is_carrier% 'whether the avatar has the built-in ability to launch drones
 	
 	Field path:TList 'TList<cVEC> current path
+	Field waypoint:cVEC 'current waypoint (can come from path or from tactical analyzer)
 	Field target:AGENT 'current target
-	Field can_see_target%
-	Field ally_blocking%
-	Field ang_to_target#
-	Field dist_to_target#
+	Field can_see_target% 'indicator
+	Field ally_blocking% 'indicator
+	Field ang_to_target# 'measurement
+	Field dist_to_target# 'measurement
 	
 	'all of the following fields need to go.
-		Field waypoint:cVEC
-		Field sighted_target%
-		Field think_delay%
-		Field look_target_delay%
-		Field find_path_delay%
-		Field last_think_ts%
-		Field last_look_target_ts%
-		Field last_find_path_ts%
-		Field FLAG_waiting%
+	Field DEPRECATED__sighted_target%
+	Field DEPRECATED__think_delay%
+	Field DEPRECATED__look_target_delay%
+	Field DEPRECATED__find_path_delay%
+	Field DEPRECATED__last_think_ts%
+	Field DEPRECATED__last_look_target_ts%
+	Field DEPRECATED__last_find_path_ts%
+	Field DEPRECATED__FLAG_waiting%
 	
 	Method update() 'this function needs some TLC
-		
 		prune()
-		
 		If control_type = CONTROL_TYPE_HUMAN
 			input_control()
-		
 		Else If control_type = CONTROL_TYPE_AI
-			If (now() - last_think_ts) > think_delay
-				
-				last_think_ts = now()
-				
-				If waypoint = Null Or waypoint_reached()
-					get_next_waypoint()
-				End If
-				
-				AI_control()
-				
-			End If
+			AI_control()
+'			If (now() - last_think_ts) > think_delay
+'				last_think_ts = now()
+'				If waypoint = Null Or waypoint_reached()
+'					get_next_waypoint()
+'				End If
+'				AI_control()
+'			End If
 		End If
-		
+	End Method
+	
+	Method prune()
+		If avatar = Null
+			unmanage()
+		Else If avatar.dead()
+			avatar.unmanage()
+			unmanage()
+		End If
 	End Method
 	
 	Method AI_control()
@@ -111,24 +113,27 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		If can_move
 			'target availability
 			If can_see_target
-				'dance with target
+				'move to best tactical position
 				
 			Else 'Not can_see_target
-				'move toward waypoint
+				'move to waypoint
 				
 			End If
 		End If
-		'turrets rotate/fire
+		'turrets aim/fire
 		If has_turrets
 			'target availability
 			If can_see_target
 				'point turrets at target
+				aim_turrets()
+				'friendly fire prevention
 				If Not ally_blocking
-					
+					'fire appropriate turrets
+					fire_turrets()
 				End If
 			Else 'Not can_see_target
 				'return turrets to their default orientations
-				
+				reset_turrets_to_neutral()
 			End If
 		End If
 		'self-destruct
@@ -141,6 +146,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
+	Rem
 	Method DEPRECATED__AI_control()
 		Select ai_type
 
@@ -423,6 +429,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				
 		End Select
 	End Method
+	EndRem
 	
 	Method input_control()
 		Select input_type
@@ -744,15 +751,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			If      w.name = "AI seek light"   Then w.visible = False ..
 			Else If w.name = "AI wander light" Then w.visible = True
 		Next
-	End Method
-	
-	Method prune()
-		If avatar = Null
-			unmanage()
-		Else If avatar.dead()
-			avatar.unmanage()
-			unmanage()
-		End If
 	End Method
 	
 End Type
