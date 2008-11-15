@@ -1,3 +1,8 @@
+Rem
+	projectile.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
 
 '______________________________________________________________________________
 Const PROJECTILE_MEMBER_EMITTER_CONSTANT% = 0

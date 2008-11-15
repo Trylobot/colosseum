@@ -1,3 +1,9 @@
+Rem
+	managed_object.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Const NULL_ID% = -1 'this should be a static member of MANAGED_OBJECT
 Global next_managed_object_id% = 0 'this should be a static member of MANAGED_OBJECT

@@ -1,3 +1,9 @@
+Rem
+	range.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Type RANGE
 	Global RANGE_DISTRIBUTION_FLAT% = 0

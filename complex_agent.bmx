@@ -1,3 +1,8 @@
+Rem
+	complex_agent.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
 
 '______________________________________________________________________________
 Const EVENT_ALL_STOP% = 0

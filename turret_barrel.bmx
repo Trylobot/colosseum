@@ -1,3 +1,9 @@
+Rem
+	turret_barrel.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 
 '______________________________________________________________________________
 Function Create_TURRET_BARREL:TURRET_BARREL( ..

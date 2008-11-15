@@ -4,7 +4,6 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-
 '______________________________________________________________________________
 Type PHYSICAL_OBJECT Extends POINT
 	

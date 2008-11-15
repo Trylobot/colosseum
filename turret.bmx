@@ -1,3 +1,9 @@
+Rem
+	turret.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Const TURRET_CLASS_ENERGY% = 0
 Const TURRET_CLASS_AMMUNITION% = 1

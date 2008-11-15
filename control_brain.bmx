@@ -1,3 +1,9 @@
+Rem
+	control_brain.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 
 '______________________________________________________________________________
 Const waypoint_radius# = 30.0

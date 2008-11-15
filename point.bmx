@@ -1,3 +1,9 @@
+Rem
+	point.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Function Create_POINT:POINT( ..
 pos_x# = 0.0, pos_y# = 0.0, ..

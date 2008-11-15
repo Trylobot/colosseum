@@ -1,3 +1,9 @@
+Rem
+	box.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Function Create_BOX:BOX( x#, y#, w#, h# )
 	Local b:BOX = New BOX

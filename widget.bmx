@@ -1,3 +1,9 @@
+Rem
+	widget.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Const REPEAT_MODE_CYCLIC_WRAP% = 0
 Const REPEAT_MODE_LOOP_BACK% = 1

@@ -1,3 +1,9 @@
+Rem
+	pvec.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Function Create_pVEC:pVEC( r#, a# )
 	Local v:pVEC = New pVEC

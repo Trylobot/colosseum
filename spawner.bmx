@@ -1,3 +1,9 @@
+Rem
+	spawner.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Type SPAWNER
 	Global class_GATED_FACTORY% = 1

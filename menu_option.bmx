@@ -1,3 +1,9 @@
+Rem
+	menu_option.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Type MENU_OPTION
 	Field name$ 'display this to user

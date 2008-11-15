@@ -1,3 +1,9 @@
+Rem
+	pathing_structure.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Type PATHING_STRUCTURE
 	Field row_count%, col_count% 'dimensions in CELLs

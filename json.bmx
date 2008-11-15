@@ -1,4 +1,9 @@
 Rem
+	json.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+Rem
 
 ; ID: 2066
 ; Author: grable

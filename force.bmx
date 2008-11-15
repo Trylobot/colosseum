@@ -1,3 +1,9 @@
+Rem
+	force.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Const PHYSICS_FORCE% = 0
 Const PHYSICS_TORQUE% = 1

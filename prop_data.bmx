@@ -1,3 +1,9 @@
+Rem
+	prop_data.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Type PROP_DATA
 	Field archetype%

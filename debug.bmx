@@ -1,5 +1,5 @@
 Rem
-	test.bmx
+	debug.bmx
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem

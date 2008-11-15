@@ -1,3 +1,9 @@
+Rem
+	cell.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Type CELL
 	Global MAXIMUM_COST% = 2147483647

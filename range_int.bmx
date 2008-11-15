@@ -1,3 +1,9 @@
+Rem
+	range_int.bmx
+	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
+EndRem
+
 '______________________________________________________________________________
 Type RANGE_Int
 	Field low%, high%
