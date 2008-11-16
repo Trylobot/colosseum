@@ -322,22 +322,23 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method turn_turret_system( index%, control_pct# )
 		If index < turret_systems.Length
-			For Local sub_index% = 0 To turret_systems[index].Length - 1
-				Local t:TURRET = turrets[turret_systems[index][sub_index]]
-				'all turrets will turn at the speed of the primary turret
-				If sub_index = 0
-					t.turn( control_pct )
-				Else
-					
-				End If
+			For Local tur_index% = EachIn turret_systems[index]
+				turrets[tur_index].turn( control_pct )
 			Next
 		End If
 	End Method
 	'___________________________________________
 	Method snap_all_turrets()
-		For Local t:TURRET = EachIn turret_list
+		For Local t:TURRET = EachIn turrets
 			t.ang = ang
 		Next
+	End Method
+	'___________________________________________
+	Method get_turret_system_ang#( index% )
+		If index < turret_systems.Length
+			Return turrets[turret_systems[index][0]].ang
+		End If
+		Return Null
 	End Method
 	
 	'___________________________________________

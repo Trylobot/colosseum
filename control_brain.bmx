@@ -69,7 +69,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field can_see_target% 'indicator
 	Field ally_blocking% 'indicator
 	Field ang_to_target# 'measurement
+	Field ang_to_waypoint# 'measurement
 	Field dist_to_target# 'measurement
+	Field dist_to_waypoint# 'measurement
 	
 	'all of the following fields need to go.
 	Field DEPRECATED__sighted_target%
@@ -86,6 +88,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		If control_type = CONTROL_TYPE_HUMAN
 			input_control()
 		Else If control_type = CONTROL_TYPE_AI
+			AI_update()
 			AI_control()
 '			If (now() - last_think_ts) > think_delay
 '				last_think_ts = now()
@@ -106,18 +109,44 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method AI_control()
-		'update dynamic data
+	Method AI_update()
+		If target = Null Or target.dead()
 		
+		End If
+		If path = Null Or path.IsEmpty()
+			
+		End If
+		
+		ang_to_target = avatar.ang_to( target )
+		ang_to_waypoint = avatar.ang_to_cVEC( waypoint )
+		dist_to_target = avatar.dist_to( target )
+		dist_to_waypoint = avatar.dist_to_cVEC( waypoint )
+	End Method
+	
+	Method AI_control()
 		'chassis movement
 		If can_move
 			'target availability
 			If can_see_target
 				'move to best tactical position
-				
+				'.. which would be where, exactly?
 			Else 'Not can_see_target
-				'move to waypoint
-				
+				Local waypoint_diff# = ang_wrap( avatar.ang - ang_to_waypoint )
+				Local threshold# = ATan2( waypoint_radius, dist_to_waypoint )
+				'if the avatar is pointed at the waypoint
+				If Abs( waypoint_diff ) <= threshold
+					'go!
+					avatar.turn( 0.0 )
+					avatar.drive( 1.0 )
+				Else 'not pointed at the waypoint
+					'turn towards the waypoint, while driving at 1/3 throttle
+					If waypoint_diff >= 0
+						avatar.turn( -1.0 )
+					Else
+						avatar.turn( 1.0 )
+					End If
+					avatar.drive( 0.3333 )
+				End If
 			End If
 		End If
 		'turrets aim/fire
@@ -138,12 +167,26 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 		'self-destruct
 		If can_self_destruct
-			
+			If avatar.last_collided_agent_id = target.id
+				avatar.self_destruct( target )
+			End If
 		End If
 		'deploy
 		If can_deploy
 			
 		End If
+	End Method
+	
+	Method aim_turrets()
+		
+	End Method
+	
+	Method fire_turrets()
+		
+	End Method
+	
+	Method reset_turrets_to_neutral()
+		
 	End Method
 	
 	Rem
@@ -581,29 +624,24 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method acquire_target:AGENT()
 		Local ag:AGENT = Null, dist#
+		Local rival_agent_list:TList
 		Local closest_rival_agent:AGENT = Null, dist_to_ag# = -1
 		Select avatar.political_alignment
 			Case ALIGNMENT_NONE
 				Return Null
 			Case ALIGNMENT_FRIENDLY
-				For ag = EachIn game.hostile_agent_list
-					dist = avatar.dist_to( ag )
-					If dist_to_ag < 0 Or dist < dist_to_ag
-						dist_to_ag = dist
-						closest_rival_agent = ag
-					End If
-				Next
-				Return closest_rival_agent 'TARGET ACQUIRED!
+				rival_agent_list =  game.hostile_agent_list
 			Case ALIGNMENT_HOSTILE
-				For ag = EachIn game.friendly_agent_list
-					dist = avatar.dist_to( ag )
-					If dist_to_ag < 0 Or dist < dist_to_ag
-						dist_to_ag = dist
-						closest_rival_agent = ag
-					End If
-				Next
-				Return closest_rival_agent 'TARGET ACQUIRED!
+				rival_agent_list = game.friendly_agent_list
 		End Select
+		For ag = EachIn rival_agent_list
+			dist = avatar.dist_to( ag )
+			If dist_to_ag < 0 Or dist < dist_to_ag
+				dist_to_ag = dist
+				closest_rival_agent = ag
+			End If
+		Next
+		Return closest_rival_agent
 	End Method
 	
 	Method see_target%()
@@ -693,22 +731,22 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		turn_toward_target()
 	End Method
 	
-	Method follow_path()
-		ang_to_target = avatar.ang_to_cVEC( waypoint )
-		Local diff# = ang_wrap( avatar.ang - ang_to_target )
-		'if it is pointed toward the path's next waypoint, then..
-		If Abs(diff) <= 15.000
-			'drive forward
-			avatar.drive( 1.0 )
-			avatar.turn( 0.0 )
-		'else (not pointed toward next waypoint)..
-		Else
-			'turn towards the next waypoint and drive at 1/3 speed
-			avatar.drive( 0.3333 )
-			If diff >= 0 Then avatar.turn( -1.0 ) ..
-			Else               avatar.turn( 1.0 )
-		End If
-	End Method
+'	Method follow_path()
+'		ang_to_target = avatar.ang_to_cVEC( waypoint )
+'		Local diff# = ang_wrap( avatar.ang - ang_to_target )
+'		'if it is pointed toward the path's next waypoint, then..
+'		If Abs(diff) <= 15.000
+'			'drive forward
+'			avatar.drive( 1.0 )
+'			avatar.turn( 0.0 )
+'		'else (not pointed toward next waypoint)..
+'		Else
+'			'turn towards the next waypoint and drive at 1/3 speed
+'			avatar.drive( 0.3333 )
+'			If diff >= 0 Then avatar.turn( -1.0 ) ..
+'			Else               avatar.turn( 1.0 )
+'		End If
+'	End Method
 	
 	Method turn_toward_target()
 		ang_to_target = avatar.ang_to( target )
