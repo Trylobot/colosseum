@@ -28,6 +28,7 @@ Global asset_identifiers$[] = ..
 	"pickups", ..
 	"turret_barrels", ..
 	"turrets", ..
+	"ai_types", ..
 	"complex_agents", ..
 	"levels" ]
 	
@@ -44,6 +45,7 @@ Global projectile_launcher_map:TMap = CreateMap()
 Global widget_map:TMap = CreateMap()
 Global pickup_map:TMap = CreateMap()
 Global turret_map:TMap = CreateMap()
+Global ai_type_map:TMap = CreateMap()
 Global complex_agent_map:TMap = CreateMap()
 Global level_map:TMap = CreateMap()
 '______________________________________________________________________________
@@ -56,7 +58,11 @@ End Function
 Function get_image:TImage( key$ )
 	Return TImage( image_map.ValueForKey( key ))
 End Function
-
+'...
+Function get_ai_type:AI_TYPE( key$ )
+	Return AI_TYPE( ai_type_map.ValueForKey( key ))
+End Function
+'...
 Function get_level:LEVEL( key$ )
 	Return LEVEL( level_map.ValueForKey( key ))
 End Function
@@ -101,7 +107,7 @@ Function load_fonts%( json:TJSON )
 		size = json.GetNumber( asset_json_path + "size" )
 		font = LoadImageFont( path, size, SMOOTHFONT )
 		If font <> Null
-  			font_map.Insert( StripAll( path )+"_"+size, font )
+  		font_map.Insert( StripAll( path )+"_"+size, font )
 		End If
 	Next
 End Function

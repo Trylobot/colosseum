@@ -25,7 +25,7 @@ Const ALIGNMENT_HOSTILE% = 2
 Type COMPLEX_AGENT Extends AGENT
 	
 	Field political_alignment% '{friendly|hostile}
-	Field ai_type% 'artificial intelligence subroutine index (only used for AI-controlled agents)
+	Field ai_name$ 'artificial intelligence variant identifier (only used for AI-controlled agents)
 
 	Field turret_anchors:cVEC[] 'discrete anchor points where it is valid to attach a turret
 	Field turret_systems%[][] 'for each anchor point, a list of the attached turrets (composing a turret_system)
@@ -76,7 +76,7 @@ Type COMPLEX_AGENT Extends AGENT
 	name$, ..
 	img:TImage, ..
 	gibs:TImage, ..
-	ai_type%, ..
+	ai_name$ = Null, ..
 	cash_value%, ..
 	max_health#, ..
 	mass#, ..
@@ -90,7 +90,7 @@ Type COMPLEX_AGENT Extends AGENT
 		c.name = name
 		c.img = img
 		c.gibs = gibs
-		c.ai_type = ai_type
+		c.ai_name = ai_name
 		c.max_health = max_health
 		c.mass = mass
 		c.frictional_coefficient = frictional_coefficient
@@ -119,7 +119,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		c.img = other.img
 		c.gibs = other.gibs
-		c.ai_type = other.ai_type
+		c.ai_name = other.ai_name
 		c.max_health = other.max_health
 		c.mass = other.mass
 		c.frictional_coefficient = other.frictional_coefficient

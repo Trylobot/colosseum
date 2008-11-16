@@ -32,9 +32,9 @@ find_path_delay% = 0 )
 	cb.control_type = control_type
 	cb.input_type = input_type
 	If control_type = CONTROL_TYPE_AI
-		cb.ai_type = avatar.ai_type
+		cb.ai = get_ai_type( avatar.ai_name )
 	Else
-		cb.ai_type = UNSPECIFIED
+		cb.ai = UNSPECIFIED
 	End If
 	cb.think_delay = think_delay
 	cb.look_target_delay = look_target_delay
@@ -45,23 +45,14 @@ find_path_delay% = 0 )
 	cb.last_look_target_ts = now()
 	cb.last_find_path_ts = now()
 	
-	'gather information from ai_type
-
 	Return cb
 End Function
 '_________________________________________
 Type CONTROL_BRAIN Extends MANAGED_OBJECT
-
-	' *** Indented fields are questionable, and might be removed/modified.
-	
 	Field avatar:COMPLEX_AGENT 'this brain's "body"
 	Field control_type% 'control type indicator (human/AI)
 	Field input_type% 'for human-controlled brains, the input device
-	Field ai_type% 'for AI-controlled brains, the specific AI "style"
-	Field has_turrets% 'whether the avatar has any turrets
-	Field can_move% 'whether the avatar can move
-	Field can_self_destruct% 'whether the avatar has the built-in ability to self-destruct
-	Field is_carrier% 'whether the avatar has the built-in ability to launch drones
+	Field ai:AI_TYPE 'for AI-controlled brains, the specific AI "style"
 	
 	Field path:TList 'TList<cVEC> current path
 	Field waypoint:cVEC 'current waypoint (can come from path or from tactical analyzer)
@@ -111,12 +102,13 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method AI_update()
 		If target = Null Or target.dead()
-		
+			?
 		End If
 		If path = Null Or path.IsEmpty()
-			
+			?
 		End If
-		
+		can_see_target = ?
+		ally_blocking = ?
 		ang_to_target = avatar.ang_to( target )
 		ang_to_waypoint = avatar.ang_to_cVEC( waypoint )
 		dist_to_target = avatar.dist_to( target )
@@ -125,40 +117,25 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method AI_control()
 		'chassis movement
-		If can_move
+		If ai.can_move
 			'target availability
 			If can_see_target
 				'move to best tactical position
 				'.. which would be where, exactly?
 			Else 'Not can_see_target
-				Local waypoint_diff# = ang_wrap( avatar.ang - ang_to_waypoint )
-				Local threshold# = ATan2( waypoint_radius, dist_to_waypoint )
-				'if the avatar is pointed at the waypoint
-				If Abs( waypoint_diff ) <= threshold
-					'go!
-					avatar.turn( 0.0 )
-					avatar.drive( 1.0 )
-				Else 'not pointed at the waypoint
-					'turn towards the waypoint, while driving at 1/3 throttle
-					If waypoint_diff >= 0
-						avatar.turn( -1.0 )
-					Else
-						avatar.turn( 1.0 )
-					End If
-					avatar.drive( 0.3333 )
-				End If
+				drive_to_waypoint()
 			End If
 		End If
 		'turrets aim/fire
-		If has_turrets
+		If ai.has_turrets
 			'target availability
 			If can_see_target
 				'point turrets at target
-				aim_turrets()
+				aim_turrets_at_target()
 				'friendly fire prevention
 				If Not ally_blocking
 					'fire appropriate turrets
-					fire_turrets()
+					fire_turrets_at_target()
 				End If
 			Else 'Not can_see_target
 				'return turrets to their default orientations
@@ -166,22 +143,41 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			End If
 		End If
 		'self-destruct
-		If can_self_destruct
+		If ai.can_self_destruct
 			If avatar.last_collided_agent_id = target.id
 				avatar.self_destruct( target )
 			End If
 		End If
 		'deploy
-		If can_deploy
+		If ai.can_deploy
 			
 		End If
 	End Method
 	
-	Method aim_turrets()
+	Method drive_to_waypoint()
+		Local waypoint_diff# = ang_wrap( avatar.ang - ang_to_waypoint )
+		Local threshold# = ATan2( waypoint_radius, dist_to_waypoint )
+		'if the avatar is pointed at the waypoint
+		If Abs( waypoint_diff ) <= threshold
+			'go!
+			avatar.turn( 0.0 )
+			avatar.drive( 1.0 )
+		Else 'not pointed at the waypoint
+			'turn towards the waypoint, while driving at 1/3 throttle
+			If waypoint_diff >= 0
+				avatar.turn( -1.0 )
+			Else
+				avatar.turn( 1.0 )
+			End If
+			avatar.drive( 0.3333 )
+		End If
+	End Method
+	
+	Method aim_turrets_at_target()
 		
 	End Method
 	
-	Method fire_turrets()
+	Method fire_turrets_at_target()
 		
 	End Method
 	

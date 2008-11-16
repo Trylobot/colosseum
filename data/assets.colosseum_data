@@ -11,6 +11,7 @@
 	pickups: "data/pickups.colosseum_data",
 	turret_barrels: "data/turret_barrels.colosseum_data",
 	turrets: "data/turrets.colosseum_data",
+	ai_types: "data/ai_types.colosseum_data",
 	complex_agents: "data/complex_agents.colosseum_data",
 	levels: "data/levels.colosseum_data"
 }

@@ -43,7 +43,6 @@ Function Copy_AGENT:AGENT( other:AGENT )
 End Function
 
 Type AGENT Extends PHYSICAL_OBJECT
-	
 	Field img:TImage 'image to be drawn
 	Field gibs:TImage 'gib image(s)
 	Field max_health# 'maximum health
