@@ -6,6 +6,7 @@ EndRem
 
 '______________________________________________________________________________
 Const waypoint_radius# = 30.0
+Const targeting_radius# = 15.0
 Const friendly_blocking_scalar_projection_distance# = 20.0
 
 Const CONTROL_TYPE_HUMAN% = 1
@@ -174,7 +175,18 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method aim_turrets_at_target()
-		
+		For Local index% = 0 To avatar.turret_systems.Length-1
+			Local target_diff# = ang_wrap( get_turret_system_ang( index ) - ang_to_target )
+			Local threshold# = ATan2( targeting_radius, dist_to_target )
+			'if the turret system is not pointed at the target
+			If Abs( target_diff ) > threshold
+				If target_diff >= 0
+					avatar.turn_turret_system( index, -1.0 )
+				Else 'target_diff < 0
+					avatar.turn_turret_system( index, 1.0 )
+				End If
+			End If
+		Next
 	End Method
 	
 	Method fire_turrets_at_target()
