@@ -258,7 +258,7 @@ Type ENVIRONMENT
 			Case ALIGNMENT_FRIENDLY
 				this_agent.manage( friendly_agent_list )
 		End Select
-		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( this_agent, CONTROL_TYPE_AI,, 10, 1000, 1000 )
+		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( this_agent, CONTROL_BRAIN.CONTROL_TYPE_AI,, 10, 1000, 1000 )
 		brain.manage( control_brain_list )
 		this_agent.move_to( spawn_point )
 		this_agent.snap_all_turrets()

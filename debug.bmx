@@ -187,7 +187,7 @@ Function debug_overlay()
 			cb.path = cb.get_path_to_target()
 		End If
 		If KeyDown( KEY_3 )
-			cb.sighted_target = cb.see_target()
+			'cb.sighted_target = cb.see_target()
 			'cb.see_target_DEBUG()
 		End If
 		If KeyDown( KEY_4 )
@@ -202,13 +202,13 @@ Function debug_overlay()
 		Else 'cb.target == Null
 			debug_drawtext( "no target" )
 		End If
-		If cb.sighted_target
-			debug_drawtext( "can see target" )
-			SetColor( 255, 255, 255 )
-		Else
-			debug_drawtext( "no line-of-sight to target" )
-			SetColor( 255, 32, 32 )
-		End If
+'		If cb.sighted_target
+'			debug_drawtext( "can see target" )
+'			SetColor( 255, 255, 255 )
+'		Else
+'			debug_drawtext( "no line-of-sight to target" )
+'			SetColor( 255, 32, 32 )
+'		End If
 		If cb.target <> Null
 			SetLineWidth( 1 )
 			SetAlpha( 0.5 )
@@ -239,7 +239,7 @@ Function debug_overlay()
 		End If
 		
 		'friendly fire
-		If cb.target <> Null And cb.avatar.turret_list.Count() > 0
+		If cb.target <> Null And cb.avatar.turrets <> Null
 			SetLineWidth( 1 )
 			SetColor( 196, 196, 196 )
 			SetAlpha( 0.20 )
@@ -255,19 +255,19 @@ Function debug_overlay()
 			Local scalar_projection#
 			For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
 				'if the line of sight of the avatar is too close to the ally
-				ally_offset = TURRET( cb.avatar.turret_list.First() ).dist_to( ally )
-				ally_offset_ang = TURRET( cb.avatar.turret_list.First() ).ang_to( ally )
-				scalar_projection = ally_offset*Cos( ally_offset_ang - TURRET( cb.avatar.turret_list.First() ).ang )
+				ally_offset = cb.avatar.turrets[0].dist_to( ally )
+				ally_offset_ang = cb.avatar.turrets[0].ang_to( ally )
+				scalar_projection = ally_offset*Cos( ally_offset_ang - cb.avatar.turrets[0].ang )
 				SetColor( 196, 196, 196 )
-				DrawLine( av.x,av.y, av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang),av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang) )
+				DrawLine( av.x,av.y, av.x+scalar_projection*Cos(cb.avatar.turrets[0].ang),av.y+scalar_projection*Sin(cb.avatar.turrets[0].ang) )
 				
 				If vector_length( ..
-				(ally.pos_x - av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang)), ..
-				(ally.pos_y - av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang)) ) ..
-				< friendly_blocking_scalar_projection_distance
+				(ally.pos_x - av.x+scalar_projection*Cos(cb.avatar.turrets[0].ang)), ..
+				(ally.pos_y - av.y+scalar_projection*Sin(cb.avatar.turrets[0].ang)) ) ..
+				< CONTROL_BRAIN.friendly_blocking_scalar_projection_distance
 					SetColor( 255, 127, 127 )
 				End If
-				DrawLine( ally.pos_x,ally.pos_y, av.x+scalar_projection*Cos(TURRET( cb.avatar.turret_list.First() ).ang),av.y+scalar_projection*Sin(TURRET( cb.avatar.turret_list.First() ).ang) )
+				DrawLine( ally.pos_x,ally.pos_y, av.x+scalar_projection*Cos(cb.avatar.turrets[0].ang),av.y+scalar_projection*Sin(cb.avatar.turrets[0].ang) )
 			Next
 		End If
 			
@@ -307,7 +307,7 @@ Function debug_overlay()
 				spawn_agent.manage( game.friendly_agent_list )
 				'spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
 			End If
-			Local agent_brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( spawn_agent, CONTROL_TYPE_AI,, 10, 1000, 1000 )
+			Local agent_brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( spawn_agent, CONTROL_BRAIN.CONTROL_TYPE_AI,, 10, 1000, 1000 )
 			agent_brain.manage( game.control_brain_list )
 			spawn_agent = Null
 			

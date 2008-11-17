@@ -16,12 +16,12 @@ find_path_delay% = 0 )
 	cb.avatar = avatar
 	cb.control_type = control_type
 	cb.input_type = input_type
-	If control_type = CONTROL_TYPE_AI
+	If control_type = CONTROL_BRAIN.CONTROL_TYPE_AI
 		cb.ai = get_ai_type( avatar.ai_name )
 	Else
-		cb.ai = UNSPECIFIED
+		cb.ai = Null
 	End If
-	turret_overheated = New Int[avatar.turrets.Length]
+	cb.turret_overheated = New Int[avatar.turrets.Length]
 	Return cb
 End Function
 '_________________________________________
@@ -66,7 +66,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		If control_type = CONTROL_TYPE_HUMAN
 			input_control()
 		Else If control_type = CONTROL_TYPE_AI
-			AI_update()
 			AI_control()
 		End If
 	End Method
@@ -80,7 +79,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method AI_update()
+	Method AI_control()
+		'AI state
 		If target = Null Or target.dead()
 			'acquire new target if possible
 			target = acquire_target()
@@ -99,15 +99,14 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		ang_to_waypoint = avatar.ang_to_cVEC( waypoint )
 		dist_to_target = avatar.dist_to( target )
 		dist_to_waypoint = avatar.dist_to_cVEC( waypoint )
-	End Method
-	
-	Method AI_control()
+
 		'chassis movement
 		If ai.can_move
 			'target availability
 			If can_see_target
 				'move to best tactical position
 				'.. which would be where, exactly?
+				drive_to_waypoint()
 			Else 'Not can_see_target
 				drive_to_waypoint()
 			End If
@@ -128,14 +127,14 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				aim_turrets( Null )
 			End If
 		End If
-		'self-destruct
+		'self-destruct ability
 		If ai.can_self_destruct
 			If avatar.last_collided_agent_id = target.id
 				avatar.self_destruct( target )
 			End If
 		End If
-		'deploy
-		If ai.can_deploy
+		'carrier launch ability
+		If ai.is_carrier
 			'...?
 		End If
 	End Method
@@ -176,7 +175,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Method fire_turrets()
 		Local t:TURRET
 		For Local system_index% = 0 To avatar.turret_systems.Length-1
-			Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - ang_to_target )
+			Local diff# = ang_wrap( avatar.get_turret_system_ang( system_index ) - ang_to_target )
 			Local threshold# = ATan2( targeting_radius, dist_to_target )
 			For Local turret_index% = 0 To avatar.turret_systems[system_index].Length-1
 				t = avatar.turrets[turret_index]
@@ -352,7 +351,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method see_target%()
 		If target <> Null
-			last_look_target_ts = now()
+			'last_look_target_ts = now()
 			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
 			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
 			'for each wall in the level
@@ -363,24 +362,17 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					Return False
 				End If
 			Next
-			'after checking all the walls, still haven't returned; avatar can therefore see its target
-			'however, the shot might be blocked by a friendly
-			If avatar.turret_list.Count() > 0
-				'Return Not friendly_blocking()
-				Return True 'disable friendly fire check temporarily, until function can be debugged
-			Else 'avatar.turret_count <= 0
-				Return True
-			End If
-		Else 'target == Null
+			'shot is not blocked by a wall
+			Return True
+		Else 'target = Null
 			Return False
 		End If
 	End Method
 	
 	Method friendly_blocking%()
 		If target <> Null
-			last_look_target_ts = now()
+			'last_look_target_ts = now()
 			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
-			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
 			'for each allied agent
 			Local allied_agent_list:TList = CreateList()
 			Select avatar.political_alignment
@@ -393,13 +385,13 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Local scalar_projection#
 			For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
 				'if the line of sight of the avatar is too close to the ally
-				ally_offset = TURRET( avatar.turret_list.First() ).dist_to( ally )
-				ally_offset_ang = TURRET( avatar.turret_list.First() ).ang_to( ally )
-				scalar_projection = ally_offset*Cos( ally_offset_ang - TURRET( avatar.turret_list.First() ).ang )
-				
-				If vector_length( ..
-				(ally.pos_x - av.x+scalar_projection*Cos(TURRET( avatar.turret_list.First() ).ang)), ..
-				(ally.pos_y - av.y+scalar_projection*Sin(TURRET( avatar.turret_list.First() ).ang)) ) ..
+				ally_offset = avatar.turrets[0].dist_to( ally )
+				ally_offset_ang = avatar.turrets[0].ang_to( ally )
+				scalar_projection = ally_offset*Cos( ally_offset_ang - avatar.turrets[0].ang )
+				If ..
+				vector_length( ..
+					(ally.pos_x - av.x+scalar_projection*Cos(avatar.turrets[0].ang)), ..
+					(ally.pos_y - av.y+scalar_projection*Sin(avatar.turrets[0].ang)) ) ..
 				< friendly_blocking_scalar_projection_distance
 					'then the avatar's shot is blocked by this ally
 					Return True
@@ -414,41 +406,25 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 
 	Method get_path_to_target:TList()
 		If target <> Null
-			last_find_path_ts = now()
+			'last_find_path_ts = now()
 			Return game.find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y )
 		Else
 			Return Null
 		End If
 	End Method
 	
-	Method get_path_to_somewhere:TList()
-		last_find_path_ts = now()
-		Local somewhere:cVEC = cVEC( cVEC.Create( Rnd( 0, game.lev.width-1 ), Rnd( 0, game.lev.height-1 )))
-		Return game.find_path( avatar.pos_x,avatar.pos_y, somewhere.x,somewhere.y )
-	End Method
+'	Method enable_seek_lights()
+'		For Local w:WIDGET = EachIn avatar.constant_widgets
+'			If      w.name = "AI seek light"   Then w.visible = True ..
+'			Else If w.name = "AI wander light" Then w.visible = False
+'		Next
+'	End Method
 	
-	Method blindly_wander()
-		avatar.drive( 0.333 )
-		avatar.turn( Rnd( -0.5, 0.5 ))
-	End Method
-	
-	Method seek_target()
-		avatar.drive( 1.0 )
-		turn_toward_target()
-	End Method
-	
-	Method enable_seek_lights()
-		For Local w:WIDGET = EachIn avatar.constant_widgets
-			If      w.name = "AI seek light"   Then w.visible = True ..
-			Else If w.name = "AI wander light" Then w.visible = False
-		Next
-	End Method
-	
-	Method enable_wander_lights()
-		For Local w:WIDGET = EachIn avatar.constant_widgets
-			If      w.name = "AI seek light"   Then w.visible = False ..
-			Else If w.name = "AI wander light" Then w.visible = True
-		Next
-	End Method
+'	Method enable_wander_lights()
+'		For Local w:WIDGET = EachIn avatar.constant_widgets
+'			If      w.name = "AI seek light"   Then w.visible = False ..
+'			Else If w.name = "AI wander light" Then w.visible = True
+'		Next
+'	End Method
 	
 End Type

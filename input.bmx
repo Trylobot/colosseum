@@ -13,7 +13,7 @@ Function get_all_input()
 	mouse_delta.y = MouseY() - mouse.y
 	mouse.x = MouseX()
 	mouse.y = MouseY()
-	If Not FLAG_in_menu And game <> Null And game.human_participation And game.player_brain <> Null And profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
+	If Not FLAG_in_menu And game <> Null And game.human_participation And game.player_brain <> Null And profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
 		HideMouse()
 	Else
 		ShowMouse()

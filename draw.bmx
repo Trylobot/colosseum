@@ -138,9 +138,9 @@ Function draw_game()
 			DrawRect( 0, 0, window_w, window_h )
 			SetColor( 255, 255, 255 )
 			SetAlpha( 1 )
-			If profile.input_method = INPUT_KEYBOARD
+			If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD
 				DrawImage( img_help_kb, window_w/2 - img_help_kb.width/2, window_h/2 - img_help_kb.height/2 )
-			Else If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
+			Else If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
 				DrawImage( img_help_kb_mouse, window_w/2 - img_help_kb_mouse.width/2, window_h/2 - img_help_kb_mouse.height/2 )
 			End If
 		End If
@@ -335,11 +335,11 @@ Global lag_aimer:cVEC
 
 Function draw_reticle()
 	If game.human_participation
-		If game.player.turret_list.Count() <> 0
-			Local p_tur:TURRET = TURRET( game.player.turret_list.First() )
+		If game.player.turrets <> Null
+			Local p_tur:TURRET = game.player.turrets[0]
 			Local img_reticle:TImage = get_image( "reticle" )
 			
-			If profile.input_method = INPUT_KEYBOARD_MOUSE_HYBRID
+			If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
 				'lag-behind reticle
 				'initialization
 				If last_pos = Null Then last_pos = Copy_POINT( p_tur )
@@ -364,7 +364,7 @@ Function draw_reticle()
 				SetAlpha( 1.0 )
 				DrawImage( img_reticle, game.mouse.x, game.mouse.y )
 			
-			Else If profile.input_method = INPUT_KEYBOARD
+			Else If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD
 				SetRotation( p_tur.ang )
 				DrawImage( img_reticle, p_tur.pos_x + 85*Cos( p_tur.ang ), p_tur.pos_y + 85*Sin( p_tur.ang ))
 			
@@ -423,7 +423,7 @@ Function draw_HUD()
 	Local img_shine:TImage = get_image( "bar_shine" )
 	Local ammo_row_len% = w / img_icon_player_cannon_ammo.width
 	Local temp_x%, temp_y%
-	For Local t:TURRET = EachIn game.player.turret_list
+	For Local t:TURRET = EachIn game.player.turrets
 		y = y1
 		If t.name <> Null And t.name <> ""
 			SetColor( 196, 196, 196 );

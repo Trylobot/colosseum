@@ -27,10 +27,9 @@ Type COMPLEX_AGENT Extends AGENT
 	Field political_alignment% '{friendly|hostile}
 	Field ai_name$ 'artificial intelligence variant identifier (only used for AI-controlled agents)
 
+	Field turrets:TURRET[] 'all of this agent's actual turret objects
 	Field turret_anchors:cVEC[] 'discrete anchor points where it is valid to attach a turret
 	Field turret_systems%[][] 'for each anchor point, a list of the attached turrets (composing a turret_system)
-	Field turrets:TURRET[] 'all of this agent's actual turret objects
-	Field DEPRECATED__turret_list:TList 'list of turrets attached to this agent
 
 	Field driving_force:FORCE 'permanent force for this object; also added to the general force list
 	Field turning_force:FORCE 'permanent torque for this object; also added to the general force list
@@ -53,7 +52,6 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	'___________________________________________
 	Method New()
-		turret_list = CreateList()
 		drive_forward_emitters = CreateList()
 		drive_backward_emitters = CreateList()
 		all_emitters = CreateList()
@@ -130,10 +128,15 @@ Type COMPLEX_AGENT Extends AGENT
 		c.ang = other.ang
 		c.cur_health = c.max_health
 		
-		For Local other_t:TURRET = EachIn other.turret_list
-			c.add_turret( other_t ).attach_at( other_t.off_x, other_t.off_y )
+		For Local a:cVEC = EachIn other.turret_anchors
+			c.add_turret_anchor( a )
 		Next
-		
+		For Local sys_index% = 0 To other.turret_systems.Length-1
+			For Local tur_index% = 0 To other.turret_systems[sys_index].Length-1
+				c.add_turret( other.turrets[other.turret_systems[sys_index][tur_index]], sys_index )
+			Next
+		Next
+
 		For Local list:TList = EachIn other.all_emitters
 			For Local other_em:EMITTER = EachIn list
 				c.add_emitter( other_em, other_em.trigger_event )
@@ -178,7 +181,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		
 		'turret groups
-		For Local t:TURRET = EachIn turret_list
+		For Local t:TURRET = EachIn turrets
 			t.update()
 		Next
 		'widgets
@@ -281,7 +284,7 @@ Type COMPLEX_AGENT Extends AGENT
 			Next
 		End If
 		'turrets
-		For Local t:TURRET = EachIn turret_list
+		For Local t:TURRET = EachIn turrets
 			t.draw()
 		Next
 		'sticky particles (damage)
@@ -375,7 +378,7 @@ Type COMPLEX_AGENT Extends AGENT
 			
 			Case AMMO_PICKUP
 				Local tur_list:TList = CreateList()
-				For Local t:TURRET = EachIn turret_list
+				For Local t:TURRET = EachIn turrets
 					If t.class = TURRET_CLASS_AMMUNITION And t.max_ammo <> INFINITY Then tur_list.AddLast( t )
 				Next
 				Local lowest_cur_ammo% = -1, lowest_cur_ammo_turret:TURRET
@@ -393,7 +396,7 @@ Type COMPLEX_AGENT Extends AGENT
 			
 			Case PICKUP_INDEX_COOLDOWN
 				Local tur_list:TList = CreateList()
-				For Local t:TURRET = EachIn turret_list
+				For Local t:TURRET = EachIn turrets
 					If t.max_heat <> INFINITY Then tur_list.AddLast( t )
 				Next
 				Local highest_cur_heat% = -1, highest_cur_heat_turret:TURRET
@@ -416,23 +419,55 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method add_turret_anchor:cVEC( other_a:cVEC )
 		Local a:cVEC = other_a.clone()
-		'add the cloned anchor to the turret anchors array
-		?
-		'and also resize the turret systems array to match the turret anchors' size
-		?
+		'add the anchor to the array
+		If turret_anchors = Null
+			turret_anchors = New cVEC[1]
+		Else 'turret_anchors <> Null
+			turret_anchors = turret_anchors[..turret_anchors.Length+1]
+		End If
+		turret_anchors[turret_anchors.Length-1] = a
+		'.. and provide a new turret system slot
+		If turret_systems = Null
+			turret_systems = New Int[][1]
+		Else 'turret_systems <> null
+			turret_systems = turret_systems[..turret_systems.Length+1]
+		End If
 		Return a
 	End Method
 	'___________________________________________
 	Method add_turret:TURRET( other_t:TURRET, anchor_index% )
-		Local t:TURRET = other_t.clone()
-		t.set_parent( Self )
-		t.manage( turret_list )
-		'if this turret is not the primary turret for this anchor, ...
-		'  then set the max_ang_vel of the turret to the specified anchor's primary turret
-		t.max_ang_vel = ?
-		'call the turret's attach_at() method using the specified anchor
-		t.attach_at( ?, ? )
-		Return t
+		If anchor_index > 0 And anchor_index < turret_anchors.Length
+			Local t:TURRET = other_t.clone()
+			t.set_parent( Self )
+			If turrets = Null
+				turrets = New TURRET[1]
+			Else 'turrets <> null
+				turrets = turrets[..turrets.Length+1]
+			End If
+			Local turret_index% = turrets.Length-1
+			turrets[turret_index] = t
+			Local sys%[] = turret_systems[anchor_index]
+			If sys = Null
+				sys = New Int[1]
+			Else 'sys <> Null
+				sys = sys[..sys.Length+1]
+			End If
+			Local turret_system_index% = sys.Length-1
+			sys[turret_system_index] = turret_index
+			If turret_system_index > 0
+				t.max_ang_vel = turrets[sys[0]].max_ang_vel
+			End If
+			Local a:cVEC = turret_anchors[anchor_index]
+			t.attach_at( a.x, a.y )
+			Return t
+		Else
+			Return Null
+		End If
+	End Method
+	'___________________________________________
+	Method remove_all_turrets()
+		turrets = Null
+		turret_systems = New Int[][turret_anchors.Length]
 	End Method
 	'___________________________________________
 	Method add_emitter:EMITTER(	other_em:EMITTER, event% )

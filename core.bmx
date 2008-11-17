@@ -44,7 +44,7 @@ Type PLAYER_PROFILE
 	Method New()
 		profile_name = "new_profile"
 		inventory = Null
-		input_method = INPUT_KEYBOARD_MOUSE_HYBRID
+		input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
 		cash = shop_item_prices[0]
 		src_path = ""
 	End Method
@@ -98,7 +98,7 @@ Function create_player:COMPLEX_AGENT( archetype% )
 End Function
 '______________________________________________________________________________
 Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
-	Return Create_CONTROL_BRAIN( avatar, CONTROL_TYPE_HUMAN, profile.input_method )
+	Return Create_CONTROL_BRAIN( avatar, CONTROL_BRAIN.CONTROL_TYPE_HUMAN, profile.input_method )
 End Function
 '______________________________________________________________________________
 Function get_player_id%()
@@ -265,9 +265,9 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 		
 		all_menus[postfix_index()] = MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-			MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(INPUT_KEYBOARD), True, True ), ..
-			MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(INPUT_KEYBOARD_MOUSE_HYBRID), True, True ), ..
-			MENU_OPTION.Create( "xbox 360 controller", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(INPUT_XBOX_360_CONTROLLER), True, False ) ])
+			MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(CONTROL_BRAIN.INPUT_KEYBOARD), True, True ), ..
+			MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID), True, True ), ..
+			MENU_OPTION.Create( "xbox 360 controller", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(CONTROL_BRAIN.INPUT_XBOX_360_CONTROLLER), True, False ) ])
 	
 	all_menus[postfix_index()] = MENU.Create( "editors", 196, 196, 196, MENU_ID_EDITORS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
