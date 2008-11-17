@@ -85,6 +85,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			'acquire new target if possible
 			target = acquire_target()
 		End If
+		If target <> Null
+			ang_to_target = avatar.ang_to( target )
+		dist_to_target = avatar.dist_to( target )
+		End If
 		If path = Null Or path.IsEmpty()
 			'acquire new path if needed
 			path = get_path_to_target()
@@ -93,13 +97,12 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			'acquire new waypoint
 			get_next_waypoint()
 		End If
+		If waypoint <> Null
+			ang_to_waypoint = avatar.ang_to_cVEC( waypoint )
+			dist_to_waypoint = avatar.dist_to_cVEC( waypoint )
+		End If
 		can_see_target = see_target()
 		ally_blocking = False 'friendly_blocking()
-		ang_to_target = avatar.ang_to( target )
-		ang_to_waypoint = avatar.ang_to_cVEC( waypoint )
-		dist_to_target = avatar.dist_to( target )
-		dist_to_waypoint = avatar.dist_to_cVEC( waypoint )
-
 		'chassis movement
 		If ai.can_move
 			'target availability
@@ -127,15 +130,17 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				aim_turrets( Null )
 			End If
 		End If
-		'self-destruct ability
-		If ai.can_self_destruct
-			If avatar.last_collided_agent_id = target.id
-				avatar.self_destruct( target )
+		If target <> Null
+			'self-destruct ability
+			If ai.can_self_destruct
+				If avatar.last_collided_agent_id = target.id
+					avatar.self_destruct( target )
+				End If
 			End If
-		End If
-		'carrier launch ability
-		If ai.is_carrier
-			'...?
+			'carrier launch ability
+			If ai.is_carrier
+				'...?
+			End If
 		End If
 	End Method
 	
@@ -160,14 +165,14 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			If targ <> Null
 				diff = ang_wrap( avatar.get_turret_system_ang( index ) - ang_to_target )
 			Else
-				diff = ang_wrap( avatar.get_turret_system_ang( index ))
+				diff = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.ang )
 			End If
 			Local threshold# = ATan2( targeting_radius, dist_to_target )
 			'if the turret system is not pointed at the target
 			If targ <> Null And Abs( diff ) > threshold
 				avatar.turn_turret_system( index, -1.0*Sgn( diff ))
 			Else 'turret system is pointed at the target
-				avatar.turn_turret_system( index, -1.0*(diff/threshold) )
+				avatar.turn_turret_system( index, 0.0 ) '-1.0*Sgn( diff ))
 			End If
 		Next
 	End Method
@@ -196,6 +201,126 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		Next
 	End Method
 	
+	Method waypoint_reached%()
+		If waypoint <> Null And avatar.dist_to_cVEC( waypoint ) <= waypoint_radius
+			Return True
+		Else
+			Return False 'sir, where are we going? LOL :D
+		End If
+	End Method
+	
+	Method get_next_waypoint%()
+		If path <> Null And Not path.IsEmpty()
+			path.RemoveFirst()
+			If path <> Null And Not path.IsEmpty()
+				waypoint = cVEC( path.First())
+			End If
+			Return True 'course locked!
+		Else
+			Return False 'no seriously.. like, where the hell are we... ;_;
+		End If
+	End Method
+	
+	Method acquire_target:AGENT()
+		Local ag:AGENT = Null, dist#
+		Local rival_agent_list:TList
+		Local closest_rival_agent:AGENT = Null, dist_to_ag# = -1
+		Select avatar.political_alignment
+			Case ALIGNMENT_NONE
+				Return Null
+			Case ALIGNMENT_FRIENDLY
+				rival_agent_list =  game.hostile_agent_list
+			Case ALIGNMENT_HOSTILE
+				rival_agent_list = game.friendly_agent_list
+		End Select
+		For ag = EachIn rival_agent_list
+			dist = avatar.dist_to( ag )
+			If dist_to_ag < 0 Or dist < dist_to_ag
+				dist_to_ag = dist
+				closest_rival_agent = ag
+			End If
+		Next
+		Return closest_rival_agent
+	End Method
+	
+	Method see_target%()
+		If target <> Null
+			'last_look_target_ts = now()
+			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
+			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
+			'for each wall in the level
+			For Local wall:BOX = EachIn game.walls
+				'if the line connecting this brain's avatar with its target intersects the wall
+				If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall.x, wall.y)), cVEC( cVEC.Create(wall.w, wall.h)) )
+					'then the avatar cannot see its target
+					Return False
+				End If
+			Next
+			'shot is not blocked by a wall
+			Return True
+		Else 'target = Null
+			Return False
+		End If
+	End Method
+	
+	Method friendly_blocking%()
+		If target <> Null
+			'last_look_target_ts = now()
+			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
+			'for each allied agent
+			Local allied_agent_list:TList = CreateList()
+			Select avatar.political_alignment
+				Case ALIGNMENT_FRIENDLY
+					allied_agent_list = game.friendly_agent_list
+				Case ALIGNMENT_HOSTILE
+					allied_agent_list = game.hostile_agent_list
+			End Select
+			Local ally_offset#, ally_offset_ang#
+			Local scalar_projection#
+			For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
+				'if the line of sight of the avatar is too close to the ally
+				ally_offset = avatar.turrets[0].dist_to( ally )
+				ally_offset_ang = avatar.turrets[0].ang_to( ally )
+				scalar_projection = ally_offset*Cos( ally_offset_ang - avatar.turrets[0].ang )
+				If ..
+				vector_length( ..
+					(ally.pos_x - av.x+scalar_projection*Cos(avatar.turrets[0].ang)), ..
+					(ally.pos_y - av.y+scalar_projection*Sin(avatar.turrets[0].ang)) ) ..
+				< friendly_blocking_scalar_projection_distance
+					'then the avatar's shot is blocked by this ally
+					Return True
+				End If
+			Next
+			'after checking all the allies, none are blocking
+			Return False
+		Else 'target == Null, thus no blockers
+			Return False
+		End If
+	End Method
+
+	Method get_path_to_target:TList()
+		If target <> Null
+			'last_find_path_ts = now()
+			Return game.find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y, True )
+		Else
+			Return Null
+		End If
+	End Method
+	
+'	Method enable_seek_lights()
+'		For Local w:WIDGET = EachIn avatar.constant_widgets
+'			If      w.name = "AI seek light"   Then w.visible = True ..
+'			Else If w.name = "AI wander light" Then w.visible = False
+'		Next
+'	End Method
+	
+'	Method enable_wander_lights()
+'		For Local w:WIDGET = EachIn avatar.constant_widgets
+'			If      w.name = "AI seek light"   Then w.visible = False ..
+'			Else If w.name = "AI wander light" Then w.visible = True
+'		Next
+'	End Method
+
 	Method input_control()
 		Select input_type
 			
@@ -306,125 +431,5 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			
 		End Select
 	End Method
-	
-	Method waypoint_reached%()
-		If waypoint <> Null And avatar.dist_to_cVEC( waypoint ) <= waypoint_radius
-			Return True
-		Else
-			Return False 'sir, where are we going? LOL :D
-		End If
-	End Method
-	
-	Method get_next_waypoint%()
-		If path <> Null And Not path.IsEmpty()
-			path.RemoveFirst()
-			If path <> Null And Not path.IsEmpty()
-				waypoint = cVEC( path.First())
-			End If
-			Return True 'course locked!
-		Else
-			Return False 'no seriously.. like, where the hell are we... ;_;
-		End If
-	End Method
-	
-	Method acquire_target:AGENT()
-		Local ag:AGENT = Null, dist#
-		Local rival_agent_list:TList
-		Local closest_rival_agent:AGENT = Null, dist_to_ag# = -1
-		Select avatar.political_alignment
-			Case ALIGNMENT_NONE
-				Return Null
-			Case ALIGNMENT_FRIENDLY
-				rival_agent_list =  game.hostile_agent_list
-			Case ALIGNMENT_HOSTILE
-				rival_agent_list = game.friendly_agent_list
-		End Select
-		For ag = EachIn rival_agent_list
-			dist = avatar.dist_to( ag )
-			If dist_to_ag < 0 Or dist < dist_to_ag
-				dist_to_ag = dist
-				closest_rival_agent = ag
-			End If
-		Next
-		Return closest_rival_agent
-	End Method
-	
-	Method see_target%()
-		If target <> Null
-			'last_look_target_ts = now()
-			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
-			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
-			'for each wall in the level
-			For Local wall:BOX = EachIn game.walls
-				'if the line connecting this brain's avatar with its target intersects the wall
-				If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall.x, wall.y)), cVEC( cVEC.Create(wall.w, wall.h)) )
-					'then the avatar cannot see its target
-					Return False
-				End If
-			Next
-			'shot is not blocked by a wall
-			Return True
-		Else 'target = Null
-			Return False
-		End If
-	End Method
-	
-	Method friendly_blocking%()
-		If target <> Null
-			'last_look_target_ts = now()
-			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
-			'for each allied agent
-			Local allied_agent_list:TList = CreateList()
-			Select avatar.political_alignment
-				Case ALIGNMENT_FRIENDLY
-					allied_agent_list = game.friendly_agent_list
-				Case ALIGNMENT_HOSTILE
-					allied_agent_list = game.hostile_agent_list
-			End Select
-			Local ally_offset#, ally_offset_ang#
-			Local scalar_projection#
-			For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
-				'if the line of sight of the avatar is too close to the ally
-				ally_offset = avatar.turrets[0].dist_to( ally )
-				ally_offset_ang = avatar.turrets[0].ang_to( ally )
-				scalar_projection = ally_offset*Cos( ally_offset_ang - avatar.turrets[0].ang )
-				If ..
-				vector_length( ..
-					(ally.pos_x - av.x+scalar_projection*Cos(avatar.turrets[0].ang)), ..
-					(ally.pos_y - av.y+scalar_projection*Sin(avatar.turrets[0].ang)) ) ..
-				< friendly_blocking_scalar_projection_distance
-					'then the avatar's shot is blocked by this ally
-					Return True
-				End If
-			Next
-			'after checking all the allies, none are blocking
-			Return False
-		Else 'target == Null, thus no blockers
-			Return False
-		End If
-	End Method
-
-	Method get_path_to_target:TList()
-		If target <> Null
-			'last_find_path_ts = now()
-			Return game.find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y )
-		Else
-			Return Null
-		End If
-	End Method
-	
-'	Method enable_seek_lights()
-'		For Local w:WIDGET = EachIn avatar.constant_widgets
-'			If      w.name = "AI seek light"   Then w.visible = True ..
-'			Else If w.name = "AI wander light" Then w.visible = False
-'		Next
-'	End Method
-	
-'	Method enable_wander_lights()
-'		For Local w:WIDGET = EachIn avatar.constant_widgets
-'			If      w.name = "AI seek light"   Then w.visible = False ..
-'			Else If w.name = "AI wander light" Then w.visible = True
-'		Next
-'	End Method
 	
 End Type

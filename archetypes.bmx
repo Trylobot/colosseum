@@ -15,6 +15,7 @@ Function load_all_archetypes()
 	set_pickup_archetypes()
 	set_turret_barrel_archetypes()
 	set_turret_archetypes()
+	set_ai_type_archetypes()
 	set_complex_agent_archetypes()
 End Function
 

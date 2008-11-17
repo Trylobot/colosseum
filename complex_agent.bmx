@@ -436,7 +436,7 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	'___________________________________________
 	Method add_turret:TURRET( other_t:TURRET, anchor_index% )
-		If anchor_index > 0 And anchor_index < turret_anchors.Length
+		If anchor_index >= 0 And anchor_index < turret_anchors.Length
 			Local t:TURRET = other_t.clone()
 			t.set_parent( Self )
 			If turrets = Null
@@ -446,16 +446,15 @@ Type COMPLEX_AGENT Extends AGENT
 			End If
 			Local turret_index% = turrets.Length-1
 			turrets[turret_index] = t
-			Local sys%[] = turret_systems[anchor_index]
-			If sys = Null
-				sys = New Int[1]
-			Else 'sys <> Null
-				sys = sys[..sys.Length+1]
+			If turret_systems[anchor_index] = Null
+				turret_systems[anchor_index] = New Int[1]
+			Else 'turret_systems[anchor_index] <> Null
+				turret_systems[anchor_index] = turret_systems[anchor_index][..turret_systems[anchor_index].Length+1]
 			End If
-			Local turret_system_index% = sys.Length-1
-			sys[turret_system_index] = turret_index
+			Local turret_system_index% = turret_systems[anchor_index].Length-1
+			turret_systems[anchor_index][turret_system_index] = turret_index
 			If turret_system_index > 0
-				t.max_ang_vel = turrets[sys[0]].max_ang_vel
+				t.max_ang_vel = turrets[turret_systems[anchor_index][0]].max_ang_vel
 			End If
 			Local a:cVEC = turret_anchors[anchor_index]
 			t.attach_at( a.x, a.y )
