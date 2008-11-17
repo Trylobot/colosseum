@@ -57,7 +57,7 @@ Type TURRET Extends POINT
 	heat_per_shot_min# = 0.0, heat_per_shot_max# = 0.0, ..
 	cooling_coefficient# = 0.0, ..
 	overheat_delay% = 0, ..
-	effective_range# )
+	effective_range# = 0.0 )
 		Local t:TURRET = New TURRET
 		'static fields
 		t.name = name
