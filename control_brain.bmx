@@ -37,14 +37,16 @@ find_path_delay% = 0 )
 	Else
 		cb.ai = UNSPECIFIED
 	End If
-	cb.think_delay = think_delay
-	cb.look_target_delay = look_target_delay
-	cb.find_path_delay = find_path_delay
+	turret_overheated = New Int[avatar.turrets.Length]
 	
-	cb.sighted_target = False
-	cb.last_think_ts = now()
-	cb.last_look_target_ts = now()
-	cb.last_find_path_ts = now()
+'	cb.think_delay = think_delay
+'	cb.look_target_delay = look_target_delay
+'	cb.find_path_delay = find_path_delay
+'	
+'	cb.sighted_target = False
+'	cb.last_think_ts = now()
+'	cb.last_look_target_ts = now()
+'	cb.last_find_path_ts = now()
 	
 	Return cb
 End Function
@@ -58,6 +60,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field path:TList 'TList<cVEC> current path
 	Field waypoint:cVEC 'current waypoint (can come from path or from tactical analyzer)
 	Field target:AGENT 'current target
+	Field turret_overheated%[] 'flags for AI turret control
 	Field can_see_target% 'indicator
 	Field ally_blocking% 'indicator
 	Field ang_to_target# 'measurement
@@ -103,9 +106,15 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method AI_update()
 		If target = Null Or target.dead()
+			'acquire new target if possible
 			?
 		End If
 		If path = Null Or path.IsEmpty()
+			'acquire new path if needed
+			?
+		End If
+		If waypoint = Null Or waypoint_reached()
+			'acquire new waypoint
 			?
 		End If
 		can_see_target = ?
@@ -129,18 +138,18 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 		'turrets aim/fire
 		If ai.has_turrets
-			'target availability
+			'target availability (includes whether target is null or dead)
 			If can_see_target
 				'point turrets at target
-				aim_turrets_at_target()
+				aim_turrets( target )
 				'friendly fire prevention
 				If Not ally_blocking
 					'fire appropriate turrets
-					fire_turrets_at_target()
+					fire_turrets()
 				End If
 			Else 'Not can_see_target
 				'return turrets to their default orientations
-				reset_turrets_to_neutral()
+				aim_turrets( Null )
 			End If
 		End If
 		'self-destruct
@@ -156,45 +165,60 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method drive_to_waypoint()
-		Local waypoint_diff# = ang_wrap( avatar.ang - ang_to_waypoint )
+		Local diff# = ang_wrap( avatar.ang - ang_to_waypoint )
 		Local threshold# = ATan2( waypoint_radius, dist_to_waypoint )
-		'if the avatar is pointed at the waypoint
-		If Abs( waypoint_diff ) <= threshold
-			'go!
-			avatar.turn( 0.0 )
-			avatar.drive( 1.0 )
-		Else 'not pointed at the waypoint
+		'if the avatar is not pointed at the waypoint
+		If Abs( diff ) > threshold
 			'turn towards the waypoint, while driving at 1/3 throttle
-			If waypoint_diff >= 0
-				avatar.turn( -1.0 )
-			Else
-				avatar.turn( 1.0 )
-			End If
 			avatar.drive( 0.3333 )
+			avatar.turn( -1.0*Sgn( diff ))
+		Else 'avatar is pointed at the waypoint
+			'full speed ahead!
+			avatar.drive( 1.0 )
+			avatar.turn( -1.0*(diff/threshold) )
 		End If
 	End Method
 	
-	Method aim_turrets_at_target()
+	Method aim_turrets( targ:AGENT = Null )
 		For Local index% = 0 To avatar.turret_systems.Length-1
-			Local target_diff# = ang_wrap( get_turret_system_ang( index ) - ang_to_target )
+			Local diff#
+			If targ <> Null
+				diff = ang_wrap( avatar.get_turret_system_ang( index ) - ang_to_target )
+			Else
+				diff = ang_wrap( avatar.get_turret_system_ang( index ))
+			End If
 			Local threshold# = ATan2( targeting_radius, dist_to_target )
 			'if the turret system is not pointed at the target
-			If Abs( target_diff ) > threshold
-				If target_diff >= 0
-					avatar.turn_turret_system( index, -1.0 )
-				Else 'target_diff < 0
-					avatar.turn_turret_system( index, 1.0 )
-				End If
+			If targ <> Null And Abs( diff ) > threshold
+				avatar.turn_turret_system( index, -1.0*Sgn( diff ))
+			Else 'turret system is pointed at the target
+				avatar.turn_turret_system( index, -1.0*(diff/threshold) )
 			End If
 		Next
 	End Method
 	
-	Method fire_turrets_at_target()
-		
-	End Method
-	
-	Method reset_turrets_to_neutral()
-		
+	Method fire_turrets()
+		Local t:TURRET
+		For Local system_index% = 0 To avatar.turret_systems.Length-1
+			Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - ang_to_target )
+			Local threshold# = ATan2( targeting_radius, dist_to_target )
+			For Local turret_index% = 0 To avatar.turret_systems[system_index].Length-1
+				t = avatar.turrets[turret_index]
+				'overheat-wait system update
+				If t.overheated()
+					turret_overheated[turret_index] = True
+				Else If turret_overheated[turret_index] And t.cur_heat <= 0.25*t.max_heat
+					turret_overheated[turret_index] = False
+				End If
+				'firing checklist
+				If Not turret_overheated[turret_index] ..
+				And dist_to_target <= t.effective_range ..
+				And Abs( diff ) <= threshold
+					'OMG Fire!
+					t.fire()
+				End If
+			Next
+		Next
 	End Method
 	
 	Rem

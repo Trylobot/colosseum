@@ -27,6 +27,7 @@ Type TURRET Extends POINT
 	Field heat_per_shot_max#
 	Field cooling_coefficient#
 	Field overheat_delay%
+	Field effective_range# 'effective range of turret (mostly for AI)
 	Field emitter_list:TList 'list of all emitters to be enabled (with count) when turret fires
 
 	Field off_x#
@@ -55,9 +56,9 @@ Type TURRET Extends POINT
 	max_heat# = INFINITY, ..
 	heat_per_shot_min# = 0.0, heat_per_shot_max# = 0.0, ..
 	cooling_coefficient# = 0.0, ..
-	overheat_delay% = 0 )
+	overheat_delay% = 0, ..
+	effective_range# )
 		Local t:TURRET = New TURRET
-		
 		'static fields
 		t.name = name
 		t.class = class
@@ -71,15 +72,29 @@ Type TURRET Extends POINT
 		t.heat_per_shot_min = heat_per_shot_min; t.heat_per_shot_max = heat_per_shot_max
 		t.cooling_coefficient = cooling_coefficient
 		t.overheat_delay = overheat_delay
+		t.effective_range = effective_range
 		'dynamic fields
 		t.cur_ammo = max_ammo
 		t.last_overheat_ts = now() - t.overheat_delay
-	
 		Return t
 	End Function
 	
 	Method clone:TURRET()
-		Local t:TURRET = TURRET( TURRET.Create( name, class, img, snd_fire, turret_barrel_array.Length, firing_sequence, max_ang_vel, max_ammo, max_heat, heat_per_shot_min, heat_per_shot_max, cooling_coefficient, overheat_delay ))
+		Local t:TURRET = TURRET( TURRET.Create( ..
+			name, ..
+			class, ..
+			img, ..
+			snd_fire, ..
+			turret_barrel_array.Length, ..
+			firing_sequence, ..
+			max_ang_vel, ..
+			max_ammo, ..
+			max_heat, ..
+			heat_per_shot_min, ..
+			heat_per_shot_max, ..
+			cooling_coefficient, ..
+			overheat_delay, ..
+			effective_range ))
 		'turret barrels
 		For Local tb% = 0 To turret_barrel_array.Length - 1
 			t.add_turret_barrel( turret_barrel_array[tb], tb )
