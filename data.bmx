@@ -88,6 +88,8 @@ Function load_assets%()
 				load_sounds( asset_json )
 			Case "images"
 				load_images( asset_json )
+			Case "props"
+				load_props( asset_json )
 			'Default
 				'unrecognized asset
 		End Select
@@ -156,6 +158,10 @@ Function load_images%( json:TJSON )
 			End If
 		End If
 	Next
+End Function
+'______________________________________________________________________________
+Function load_props%( json:TJSON )
+	
 End Function
 
 '______________________________________________________________________________

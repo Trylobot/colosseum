@@ -1,0 +1,25 @@
+{
+	data:
+	[
+		{
+			img: "images|crate",
+			gibs: "images|crate_gibs",
+			cash_value: 0,
+			max_health: 200,
+			mass: 400,
+			frictional_coefficient: 160,
+			physics_disabled: false,
+			destruct_on_contact: true
+		},
+		{
+			img: "images|crate_small",
+			gibs: "images|crate_small_gibs",
+			cash_value: 0,
+			max_health: 75,
+			mass: 300,
+			frictional_coefficient: 160,
+			physics_disabled: false,
+			destruct_on_contact: true
+		}
+	]
+}
