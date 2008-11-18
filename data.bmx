@@ -159,6 +159,36 @@ Function load_images%( json:TJSON )
 End Function
 
 '______________________________________________________________________________
+Function load_level:LEVEL( path$ )
+	Local file:TStream, json:TJSON
+	file = ReadFile( path )
+	If file
+		json = TJSON.Create( file )
+		file.Close()
+		Return Create_LEVEL_from_json( json )
+	Else
+		Return Null
+	End If
+End Function
+'______________________________________________________________________________
+Function save_level%( path$, lev:LEVEL )
+	If lev <> Null
+		Local file:TStream, json:TJSON
+		json = TJSON.Create( lev.to_json() )
+		file = WriteFile( path )
+		If file
+			json.Write( file )
+			file.Close()
+			Return True
+		Else
+			Return False
+		End If
+	Else
+		Return False
+	End If
+End Function
+
+'______________________________________________________________________________
 Function create_dirs()
 	CreateDir( data_path )
 	CreateDir( user_path )
@@ -207,35 +237,6 @@ Function save_settings%()
 	file.Close()
 End Function
 
-'______________________________________________________________________________
-Function load_level:LEVEL( path$ )
-	Local file:TStream, json:TJSON
-	file = ReadFile( path )
-	If file
-		json = TJSON.Create( file )
-		file.Close()
-		Return Create_LEVEL_from_json( json )
-	Else
-		Return Null
-	End If
-End Function
-'______________________________________________________________________________
-Function save_level%( path$, lev:LEVEL )
-	If lev <> Null
-		Local file:TStream, json:TJSON
-		json = TJSON.Create( lev.to_json() )
-		file = WriteFile( path )
-		If file
-			json.Write( file )
-			file.Close()
-			Return True
-		Else
-			Return False
-		End If
-	Else
-		Return False
-	End If
-End Function
 '______________________________________________________________________________
 Function load_game:PLAYER_PROFILE( path$ )
 	Local file:TStream, json:TJSON, prof:PLAYER_PROFILE

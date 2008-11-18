@@ -202,13 +202,13 @@ Function debug_overlay()
 		Else 'cb.target == Null
 			debug_drawtext( "no target" )
 		End If
-'		If cb.sighted_target
-'			debug_drawtext( "can see target" )
-'			SetColor( 255, 255, 255 )
-'		Else
-'			debug_drawtext( "no line-of-sight to target" )
-'			SetColor( 255, 32, 32 )
-'		End If
+		If cb.can_see_target
+			debug_drawtext( "can see target" )
+			SetColor( 255, 255, 255 )
+		Else
+			debug_drawtext( "no line-of-sight to target" )
+			SetColor( 255, 32, 32 )
+		End If
 		If cb.target <> Null
 			SetLineWidth( 1 )
 			SetAlpha( 0.5 )
@@ -289,7 +289,6 @@ Function debug_overlay()
 		If FLAG_spawn_mode > 2 Then FLAG_spawn_mode = 0
 	End If
 	If FLAG_spawn_mode <> SPAWN_OFF
-		
 		If spawn_agent = Null
 			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
 		End If
@@ -297,30 +296,28 @@ Function debug_overlay()
 		spawn_agent.ang = spawn_agent.ang_to( game.player ) + 180
 		spawn_agent.update()
 		spawn_agent.snap_all_turrets()
-		spawn_agent.draw()
-		
+		If FLAG_spawn_mode = SPAWN_HOSTILES
+			spawn_agent.draw( 255, 127, 127 )
+		Else 'FLAG_spawn_mode = SPAWN_FRIENDLIES
+			spawn_agent.draw( 127, 127, 255 )
+		End If
 		If KeyHit( KEY_ENTER )
 			If FLAG_spawn_mode = SPAWN_HOSTILES
 				spawn_agent.manage( game.hostile_agent_list )
-				'spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
 			Else 'FLAG_spawn_mode = SPAWN_FRIENDLIES
 				spawn_agent.manage( game.friendly_agent_list )
-				'spawn_agent.add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -3, 0 )
 			End If
 			Local agent_brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( spawn_agent, CONTROL_BRAIN.CONTROL_TYPE_AI,, 10, 1000, 1000 )
 			agent_brain.manage( game.control_brain_list )
 			spawn_agent = Null
-			
 		Else If KeyHit( KEY_OPENBRACKET )
 			spawn_archetype :- 1
 			If spawn_archetype < enemy_index_start Then spawn_archetype = complex_agent_archetype.Length - 1
 			spawn_agent = Null
-			
 		Else If KeyHit( KEY_CLOSEBRACKET )
 			spawn_archetype :+ 1
 			If spawn_archetype > complex_agent_archetype.Length - 1 Then spawn_archetype = enemy_index_start
 			spawn_agent = Null
-			
 		End If
 	End If
 	

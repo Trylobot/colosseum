@@ -31,7 +31,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Global INPUT_KEYBOARD% = 1
 	Global INPUT_KEYBOARD_MOUSE_HYBRID% = 2
 	Global INPUT_XBOX_360_CONTROLLER% = 3
-	Global waypoint_radius# = 30.0
+	Global waypoint_radius# = 15.0
 	Global targeting_radius# = 15.0
 	Global friendly_blocking_scalar_projection_distance# = 20.0
 	
@@ -89,9 +89,15 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			ang_to_target = avatar.ang_to( target )
 		dist_to_target = avatar.dist_to( target )
 		End If
-		If path = Null Or path.IsEmpty()
-			'acquire new path if needed
-			path = get_path_to_target()
+		can_see_target = see_target()
+		ally_blocking = False 'friendly_blocking()
+		If can_see_target
+			path = Null
+		Else 'Not can_see_target
+			If path = Null Or path.IsEmpty()
+				'acquire new path if needed
+				path = get_path_to_target()
+			End If
 		End If
 		If waypoint = Null Or waypoint_reached()
 			'acquire new waypoint
@@ -101,17 +107,19 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			ang_to_waypoint = avatar.ang_to_cVEC( waypoint )
 			dist_to_waypoint = avatar.dist_to_cVEC( waypoint )
 		End If
-		can_see_target = see_target()
-		ally_blocking = False 'friendly_blocking()
 		'chassis movement
 		If ai.can_move
 			'target availability
 			If can_see_target
-				'move to best tactical position
-				'.. which would be where, exactly?
-				drive_to_waypoint()
+				enable_seek_lights()
+				If ai.has_turrets
+					drive_to( Null )
+				Else
+					drive_to( target )
+				End If
 			Else 'Not can_see_target
-				drive_to_waypoint()
+				enable_wander_lights()
+				drive_to( waypoint )
 			End If
 		End If
 		'turrets aim/fire
@@ -144,18 +152,43 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method drive_to_waypoint()
-		Local diff# = ang_wrap( avatar.ang - ang_to_waypoint )
-		Local threshold# = ATan2( waypoint_radius, dist_to_waypoint )
-		'if the avatar is not pointed at the waypoint
+	Method drive_to( dest:Object )
+		'drive to nowhere.. that's easy!
+		If dest = Null
+			avatar.drive( 0 )
+			avatar.turn( 0 )
+			Return 
+		End If
+		'take measurements as regard to destination, while being aware of the cached variables
+		Local diff#, threshold#
+		If cVEC(dest)
+			If cVEC(dest) = waypoint
+				diff = ang_wrap( avatar.ang - ang_to_waypoint )
+				threshold = ATan2( waypoint_radius, dist_to_waypoint )
+			Else 'cVEC(dest) <> waypoint
+				diff = ang_wrap( avatar.ang - avatar.ang_to_cvec( cVEC( dest )))
+				threshold = ATan2( waypoint_radius, avatar.dist_to_cVEC( cVEC( dest )))
+			End If
+		Else If POINT(dest)
+			If POINT(dest) = target
+				diff = ang_wrap( avatar.ang - ang_to_target )
+				threshold = ATan2( waypoint_radius, dist_to_target )
+			Else 'POINT(dest) <> target
+				diff = ang_wrap( avatar.ang - avatar.ang_to( POINT( dest )))
+				threshold = ATan2( waypoint_radius, avatar.dist_to( POINT( dest )))
+			End If
+		End If
+		'based on the measurements, if the avatar is NOT pointed at the destination
+		'  specifically, if the angle to the destination is within some threshold
+		'  calculated as the tangents-triangle based in a circle given by waypoint radius centered at the destination
 		If Abs( diff ) > threshold
-			'turn towards the waypoint, while driving at 1/3 throttle
+			'turn in the direction of the destination, while driving at 1/3 throttle
 			avatar.drive( 0.3333 )
 			avatar.turn( -1.0*Sgn( diff ))
-		Else 'avatar is pointed at the waypoint
-			'full speed ahead!
+		Else 'avatar IS pointed at the destination
+			'full speed ahead, let's go!
 			avatar.drive( 1.0 )
-			avatar.turn( -1.0*(diff/threshold) )
+			avatar.turn( 0.0 ) '-1.0*(diff/threshold) )
 		End If
 	End Method
 	
@@ -192,9 +225,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				End If
 				'firing checklist
 				If Not turret_overheated[turret_index] ..
-				And dist_to_target <= t.effective_range ..
 				And Abs( diff ) <= threshold
-					'OMG Fire!
+				'And dist_to_target <= t.effective_range ..
 					t.fire()
 				End If
 			Next
@@ -307,19 +339,19 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-'	Method enable_seek_lights()
-'		For Local w:WIDGET = EachIn avatar.constant_widgets
-'			If      w.name = "AI seek light"   Then w.visible = True ..
-'			Else If w.name = "AI wander light" Then w.visible = False
-'		Next
-'	End Method
+	Method enable_seek_lights()
+		For Local w:WIDGET = EachIn avatar.constant_widgets
+			If      w.name = "AI seek light"   Then w.visible = True ..
+			Else If w.name = "AI wander light" Then w.visible = False
+		Next
+	End Method
 	
-'	Method enable_wander_lights()
-'		For Local w:WIDGET = EachIn avatar.constant_widgets
-'			If      w.name = "AI seek light"   Then w.visible = False ..
-'			Else If w.name = "AI wander light" Then w.visible = True
-'		Next
-'	End Method
+	Method enable_wander_lights()
+		For Local w:WIDGET = EachIn avatar.constant_widgets
+			If      w.name = "AI seek light"   Then w.visible = False ..
+			Else If w.name = "AI wander light" Then w.visible = True
+		Next
+	End Method
 
 	Method input_control()
 		Select input_type
