@@ -9,9 +9,9 @@ Function Archetype_AGENT:AGENT( ..
 img:TImage = Null, ..
 gibs:TImage = Null, ..
 cash_value% = 0, ..
-max_health# = 1, ..
-mass# = 1, ..
-frictional_coefficient# = 0, ..
+max_health# = 1.0, ..
+mass# = 1.0, ..
+frictional_coefficient# = 0.0, ..
 physics_disabled% = False, ..
 destruct_on_contact% = False )
 	Local ag:AGENT = New AGENT

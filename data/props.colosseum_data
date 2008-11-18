@@ -5,9 +5,9 @@
 			img: "images|crate",
 			gibs: "images|crate_gibs",
 			cash_value: 0,
-			max_health: 200,
-			mass: 400,
-			frictional_coefficient: 160,
+			max_health: 200.0,
+			mass: 400.0,
+			frictional_coefficient: 160.0,
 			physics_disabled: false,
 			destruct_on_contact: true
 		},
@@ -15,9 +15,9 @@
 			img: "images|crate_small",
 			gibs: "images|crate_small_gibs",
 			cash_value: 0,
-			max_health: 75,
-			mass: 300,
-			frictional_coefficient: 160,
+			max_health: 75.0,
+			mass: 300.0,
+			frictional_coefficient: 160.0,
 			physics_disabled: false,
 			destruct_on_contact: true
 		}

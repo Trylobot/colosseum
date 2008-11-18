@@ -58,6 +58,9 @@ End Function
 Function get_image:TImage( key$ )
 	Return TImage( image_map.ValueForKey( key ))
 End Function
+'Function get_prop:AGENT( key$ )
+'	Return AGENT( prop_map.ValueForKey( key ))
+'End Function
 '...
 Function get_ai_type:AI_TYPE( key$ )
 	Return AI_TYPE( ai_type_map.ValueForKey( key ))
@@ -161,7 +164,14 @@ Function load_images%( json:TJSON )
 End Function
 '______________________________________________________________________________
 Function load_props%( json:TJSON )
-	
+	Local data:TJSONArray = json.GetArray( asset_data_heading )
+	'test successful creation of data object (somehow)
+	Local asset_json_path$
+	Local img:TImage, gibs:TImage, cash_value%, max_health#, mass#, frictional_coefficient#, physics_disabled%, destruct_on_contact%
+	Local prop:AGENT
+	For Local index% = 0 To data.Size()-1
+		'asset_json_path
+	Next
 End Function
 
 '______________________________________________________________________________
