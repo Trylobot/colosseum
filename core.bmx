@@ -160,16 +160,25 @@ Const COMMAND_LOAD_LEVEL% = 301
 Const COMMAND_SAVE_GAME% = 400
 Const COMMAND_SAVE_LEVEL% = 401
 Const COMMAND_EDIT_LEVEL% = 500
+Const COMMAND_MULTIPLAYER_JOIN% = 600
+Const COMMAND_MULTIPLAYER_HOST% = 700
 Const COMMAND_PLAYER_INPUT_TYPE% = 1000
 Const COMMAND_SETTINGS_FULLSCREEN% = 1010
 Const COMMAND_SETTINGS_RESOLUTION% = 1020
 Const COMMAND_SETTINGS_REFRESH_RATE% = 1030
 Const COMMAND_SETTINGS_BIT_DEPTH% = 1040
+Const COMMAND_SETTINGS_IP_ADDRESS% = 1050
+Const COMMAND_SETTINGS_IP_PORT% = 1060
 Const COMMAND_SETTINGS_APPLY_ALL% = 1100
 Const COMMAND_QUIT_GAME% = 65535
 
 Const MENU_ID_MAIN_MENU% = 100
 Const MENU_ID_NEW_GAME% = 200
+Const MENU_ID_MULTIPLAYER% = 250
+Const MENU_ID_MULTIPLAYER_JOIN% = 260
+Const MENU_ID_MULTIPLAYER_HOST% = 270
+Const MENU_ID_MULTIPLAYER_INPUT_IP_ADDRESS% = 280
+Const MENU_ID_MULTIPLAYER_INPUT_IP_PORT% = 281
 Const MENU_ID_LOAD_GAME% = 300
 Const MENU_ID_CONFIRM_LOAD_GAME% = 310
 Const MENU_ID_LOAD_LEVEL% = 310
@@ -201,6 +210,7 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 	MENU_OPTION.Create( "new", COMMAND_NEW_GAME,, True, True ), ..
 	MENU_OPTION.Create( "save", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_GAME), True, False ), ..
 	MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_GAME), True, True ), ..
+	MENU_OPTION.Create( "multiplayer", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER), True, False ), ..
 	MENU_OPTION.Create( "settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SETTINGS), True, True ), ..
 	MENU_OPTION.Create( "preferences", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_PREFERENCES), True, False ), ..
 	MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_EDITORS), True, True ), ..
@@ -216,6 +226,26 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ])
 
 		'all_menus[postfix_index()] = MENU.Create( "abandon current game?", 255, 64, 64, MENU_ID_CONFIRM_LOAD_GAME, MENU.CONFIRMATION_DIALOG, menu_margin, 1,,,, COMMAND_LOAD_GAME )
+
+	all_menus[postfix_index()] = MENU.Create( "multiplayer", 78, 78, 255, MENU_ID_MULTIPLAYER, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
+	[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+		MENU_OPTION.Create( "join game", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER_JOIN), True, True ), ..
+		MENU_OPTION.Create( "host game", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER_HOST), True, True )	])
+		
+		all_menus[postfix_index()] = MENU.Create( "join game", 122, 122, 255, MENU_ID_MULTIPLAYER_JOIN, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
+		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "ip address  %%ip_address%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER_INPUT_IP_ADDRESS), True, True ), ..
+			MENU_OPTION.Create( "port        %%ip_port%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER_INPUT_IP_PORT), True, True ), ..
+			MENU_OPTION.Create( "connect to game", COMMAND_MULTIPLAYER_JOIN,, True, True ) ])
+
+		all_menus[postfix_index()] = MENU.Create( "host game", 56, 56, 196, MENU_ID_MULTIPLAYER_HOST, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
+		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "port  %%ip_port%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER_INPUT_IP_PORT), True, True ), ..
+			MENU_OPTION.Create( "start game", COMMAND_MULTIPLAYER_HOST,, True, True ) ])
+	
+			all_menus[postfix_index()] = MENU.Create( "input ip address", 255, 255, 255, MENU_ID_MULTIPLAYER_INPUT_IP_ADDRESS, MENU.TEXT_INPUT_DIALOG, menu_margin,,,, COMMAND_SETTINGS_IP_ADDRESS,, 17, "%%ip_address%%"  )
+
+			all_menus[postfix_index()] = MENU.Create( "input port number", 255, 255, 255, MENU_ID_MULTIPLAYER_INPUT_IP_PORT, MENU.TEXT_INPUT_DIALOG, menu_margin,,,, COMMAND_SETTINGS_IP_PORT,, 17, "%%ip_port%%"  )
 
 	all_menus[postfix_index()] = MENU.Create( "settings", 127, 127, 255, MENU_ID_SETTINGS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
@@ -351,7 +381,14 @@ Function menu_command( command_code%, argument:Object = Null )
 		Case COMMAND_SAVE_GAME
 			save_game( String(argument), profile )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-		
+			
+			
+		Case COMMAND_MULTIPLAYER_JOIN
+			
+			
+		Case COMMAND_MULTIPLAYER_HOST
+			
+			
 		
 		Case COMMAND_NEW_LEVEL
 			level_editor_cache = Create_LEVEL( 300, 300 )
@@ -378,22 +415,19 @@ Function menu_command( command_code%, argument:Object = Null )
 		
 		Case COMMAND_SETTINGS_FULLSCREEN
 			fullscreen = Not fullscreen
-			save_settings()
-			init_graphics()
+			menu_command( COMMAND_SETTINGS_APPLY_ALL )
 			
 		Case COMMAND_SETTINGS_RESOLUTION
 			window_w = Int[](argument)[0]
 			window_h = Int[](argument)[1]
-			save_settings()
-			init_graphics()
+			menu_command( COMMAND_SETTINGS_APPLY_ALL )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		
 		Case COMMAND_SETTINGS_REFRESH_RATE
 			Local new_refresh_rate% = String(argument).ToInt()
 			If GraphicsModeExists( window_w, window_h, bit_depth, new_refresh_rate )
 				refresh_rate = new_refresh_rate
-				save_settings()
-				init_graphics()
+				menu_command( COMMAND_SETTINGS_APPLY_ALL )
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		
@@ -401,9 +435,18 @@ Function menu_command( command_code%, argument:Object = Null )
 			Local new_bit_depth% = String(argument).ToInt()
 			If GraphicsModeExists( window_w, window_h, new_bit_depth, refresh_rate )
 				bit_depth = new_bit_depth
-				save_settings()
-				init_graphics()
+				menu_command( COMMAND_SETTINGS_APPLY_ALL )
 			End If
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+			
+		Case COMMAND_SETTINGS_IP_ADDRESS
+			ip_address = String(argument)
+			save_settings()
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+			
+		Case COMMAND_SETTINGS_IP_PORT
+			ip_port = String(argument).ToInt()
+			save_settings()
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			
 		Case COMMAND_SETTINGS_APPLY_ALL
@@ -452,6 +495,10 @@ Function resolve_meta_variables$( str$ )
 					result :+ refresh_rate
 				Case "bit_depth"
 					result :+ bit_depth
+				Case "ip_address"
+					result :+ ip_address
+				Case "ip_port"
+					result :+ ip_port
 			End Select
 		Else 'even (string literal)
 			result :+ tokens[i]

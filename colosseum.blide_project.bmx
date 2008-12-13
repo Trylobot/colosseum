@@ -27,7 +27,7 @@ Import BRL.OGGLoader
 Import BRL.PNGLoader
 Import BRL.Random
 Import BRL.Timer
-
+Import brl.gnet
 '#EndRegion &H0F
 
 
@@ -129,6 +129,7 @@ Include "collide.bmx"
 Include "input.bmx"
 Include "menu_option.bmx"
 Include "menu.bmx"
+Include "net.bmx"
 Include "core.bmx"
 Include "shop.bmx"
 Include "debug.bmx"

@@ -232,20 +232,22 @@ Type MENU
 		If menu_id = MENU_ID_MAIN_MENU
 			'profile dependent options
 			If profile <> Null 'loaded
-				set_enabled( "loading bay", True )
-				set_enabled( "save", True )
-				set_enabled( "preferences", True )
+				enable_option( "loading bay" )
+				enable_option( "save" )
+				enable_option( "multiplayer" )
+				enable_option( "preferences" )
 			Else 'not loaded
-				set_enabled( "loading bay", False )
-				set_enabled( "save", False )
-				set_enabled( "preferences", False )
+				disable_option( "loading bay" )
+				disable_option( "save" )
+				disable_option( "multiplayer" )
+				disable_option( "preferences" )
 			End If
 			'main_game dependent options
 			If main_game <> Null And main_game.game_in_progress 'main_game started
-				set_enabled( "resume", True )
-				set_enabled( "loading bay", False )
+				enable_option( "resume" )
+				disable_option( "loading bay" )
 			Else
-				set_enabled( "resume", False )
+				disable_option( "resume" )
 				'option "loading bay" setting unchanged
 			End If
 		End If
@@ -312,9 +314,13 @@ Type MENU
 		Local i% = find_option( key )
 		If i <> -1 Then focus = i
 	End Method
-	Method set_enabled( key$, value% )
+	Method enable_option( key$ )
 		Local i% = find_option( key )
-		If i <> -1 Then options[i].enabled = value
+		If i <> -1 Then options[i].enabled = True
+	End Method
+	Method disable_option( key$ )
+		Local i% = find_option( key )
+		If i <> -1 Then options[i].enabled = False
 	End Method
 	Method find_option%( key$ )
 		key = key.ToLower()

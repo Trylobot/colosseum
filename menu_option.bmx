@@ -14,7 +14,7 @@ Type MENU_OPTION
 	
 	Field last_x%, last_y% '(private) records last drawn position
 	
-	Function Create:MENU_OPTION( name$, command_code%, argument:Object = Null, visible% = True, enabled% = True )
+	Function Create:MENU_OPTION( name$, command_code% = 0, argument:Object = Null, visible% = True, enabled% = True )
 		Local opt:MENU_OPTION = New MENU_OPTION
 		opt.name = name
 		opt.command_code = command_code

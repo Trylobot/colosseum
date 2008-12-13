@@ -27,6 +27,9 @@ Global window_h%
 Global fullscreen%
 Global bit_depth%
 Global refresh_rate%
+'Multiplayer
+Global ip_address$
+Global ip_port%
 
 Function apply_default_settings()
 	window_w = 800
@@ -34,6 +37,8 @@ Function apply_default_settings()
 	fullscreen = False
 	bit_depth = 32
 	refresh_rate = 60
+	ip_address = "127.0.0.1"
+	ip_port = 6112
 End Function
 
 apply_default_settings()
@@ -42,7 +47,6 @@ apply_default_settings()
 create_dirs()
 If Not load_settings()
 	save_settings()
-	load_settings()
 End If
 load_assets()
 MENU.load_fonts()
@@ -95,6 +99,7 @@ Repeat
 		
 		collide_all_objects()
 		update_all_objects()
+		update_network()
 		
 	EndIf
 	

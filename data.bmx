@@ -220,22 +220,24 @@ Function load_settings%()
 	If Not file Return False
 	Local json:TJSON = TJSON.Create( file )
 	file.Close()
-	'load json data
-	window_w = json.GetNumber( "window_w" )
-	window_h = json.GetNumber( "window_h" )
-	fullscreen = json.GetBoolean( "fullscreen" )
-	bit_depth = json.GetNumber( "bit_depth" )
-	refresh_rate = json.GetNumber( "refresh_rate" )
-	'check for bad params
-	If window_w = 0 Or window_h = 0 Or bit_depth = 0 Or refresh_rate = 0 ..
-	Then Return False
-	'check for existence of graphics mode
-	If Not GraphicsModeExists( window_w, window_h, bit_depth, refresh_rate )
-		apply_default_settings()
-		Return False
+	'check for existence of specified graphics mode
+	If GraphicsModeExists( ..
+	json.GetNumber( "window_w" ), ..
+	json.GetNumber( "window_h" ), ..
+	json.GetNumber( "bit_depth" ), ..
+	json.GetNumber( "refresh_rate" ) )
+		'success
+		window_w = json.GetNumber( "window_w" )
+		window_h = json.GetNumber( "window_h" )
+		fullscreen = json.GetBoolean( "fullscreen" )
+		bit_depth = json.GetNumber( "bit_depth" )
+		refresh_rate = json.GetNumber( "refresh_rate" )
+		ip_address = json.getString( "ip_address" )
+		ip_port = json.GetNumber( "port" )
+		Return True
 	End If
-	'success
-	Return True
+	'bad graphics mode
+	Return False
 End Function
 '______________________________________________________________________________
 Function save_settings%()
@@ -245,6 +247,8 @@ Function save_settings%()
 	this_json.SetByName( "fullscreen", TJSONBoolean.Create( fullscreen ))
 	this_json.SetByName( "bit_depth", TJSONNumber.Create( bit_depth ))
 	this_json.SetByName( "refresh_rate", TJSONNumber.Create( refresh_rate ))
+	this_json.SetByName( "ip_address", TJSONString.Create( ip_address ))
+	this_json.SetByName( "port", TJSONNumber.Create( ip_port ))
 	'output json data
 	Local json:TJSON = TJSON.Create( this_json )
 	Local file:TStream = WriteFile( data_path + default_settings_file_name )
