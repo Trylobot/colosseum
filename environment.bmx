@@ -24,9 +24,6 @@ Type ENVIRONMENT
 	Field background_clean:TImage
 	Field background_dynamic:TImage
 	Field foreground:TImage
-	'Field background_clean:TPixmap
-	'Field background_dynamic:TPixmap
-	'Field foreground:TPixmap
 
 	Field lev:LEVEL 'level object from which to build the environment, read-only
 	Field pathing:PATHING_STRUCTURE 'pathfinding object for this level
