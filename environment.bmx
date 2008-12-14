@@ -192,7 +192,8 @@ Type ENVIRONMENT
 		Next
 		'flags
 		level_enemy_count = lev.enemy_count()
-		'indicate success to caller
+		level_enemies_killed = 0
+		'indicate success
 		Return True
 	End Method
 	

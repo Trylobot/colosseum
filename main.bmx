@@ -92,14 +92,14 @@ Repeat
 	End If
 
 	get_all_input()
+	update_network()
 	
-	'decouple simulation speed from draw speed
+	'simulation speed (decoupled from draw speed)
 	If (now() - before) > (1000/60) ' = 60 hertz
 		before = now()
 		
 		collide_all_objects()
 		update_all_objects()
-		update_network()
 		
 	EndIf
 	
