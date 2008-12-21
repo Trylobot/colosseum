@@ -11,7 +11,7 @@ Global network_link_list:TList 'TList<NETWORK_LINK>
 Global player_network_link:NETWORK_LINK
 
 Function update_network()
-	If game <> Null And network_self <> Null
+	If game <> Null
 		
 		If network_host <> Null
 			GNetSync( network_host )
@@ -23,9 +23,9 @@ Function update_network()
 		If network_client <> Null
 			GNetSync( network_client )
 			'check for new remote objects created by the host (require creation of new network links)
-			For Local new_gnet_obj:TGNetObject = EachIn GNetObjects( network_self, GNET_CREATED )
+			'For Local new_gnet_obj:TGNetObject = EachIn GNetObjects( network_self, GNET_CREATED )
 				
-			Next
+			'Next
 			'update network from networked player avatar
 			player_network_link.update_network()
 		End If
@@ -43,7 +43,7 @@ Function host_new_multiplayer_game()
 	'the network client controls exactly one complex agent object
 	'other client's avatars appear as non-player complex agents
 	network_client = CreateGNetHost()
-	network_client.Connect( "localhost", ip_port, 3000 )
+	'network_client.Connect( "localhost", ip_port, 3000 )
 	
 	play_level( level_file_path, player_archetype )
 	
@@ -62,7 +62,7 @@ Function join_existing_multiplayer_game()
 	'the network client controls exactly one complex agent object
 	'other client's avatars appear as non-player complex agents
 	network_client = CreateGNetHost()
-	network_client.Connect( ip_address, ip_port, 3000 )
+	'network_client.Connect( ip_address, ip_port, 3000 )
 	
 	'determine from the host which level to use
 	
@@ -162,7 +162,7 @@ Type NETWORK_LINK Extends MANAGED_OBJECT
 				'do nothing
 			
 			Case CLASS_POINT
-				Local game_p = POINT( game_obj )
+				Local game_p:POINT = POINT( game_obj )
 				game_p.pos_x =   gnet_objects[0].GetFloat( SLOT_POINT_POS_X )
 				game_p.pos_y =   gnet_objects[0].GetFloat( SLOT_POINT_POS_Y )
 				game_p.ang =     gnet_objects[0].GetFloat( SLOT_POINT_ANG )
