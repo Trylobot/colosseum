@@ -7,7 +7,7 @@ EndRem
 '______________________________________________________________________________
 Const SPAWN_POINT_POLITE_DISTANCE% = 35.0 'delete me (please?)
 
-Function Create_ENVIRONMENT:ENVIRONMENT( human_participation% )
+Function Create_ENVIRONMENT:ENVIRONMENT( human_participation% = False )
 	Local env:ENVIRONMENT = New ENVIRONMENT
 	env.human_participation = human_participation
 	Return env
@@ -135,7 +135,7 @@ Type ENVIRONMENT
 		player = Null
 	End Method
 	
-	Method load_level%( path$ )
+	Method load_level%( path$, generate_images% = True )
 		Local file:TStream = ReadFile( path )
 		If Not file
 			Return False 'indicate failure
@@ -154,14 +154,16 @@ Type ENVIRONMENT
 		For Local cursor:CELL = EachIn lev.get_blocking_cells()
 			walls.AddLast( lev.get_wall( cursor ))
 		Next
-		'images (Drawing)
-		background_clean = generate_sand_image( lev.width, lev.height )
-		foreground = generate_level_walls_image( lev )
-		'initialize dynamic background texture with same data as background clean
-		background_dynamic = TImage.Create( lev.width, lev.height, 1, FILTEREDIMAGE|DYNAMICIMAGE, 0, 0, 0 )
-		SetOrigin( 0, 0 ); SetColor( 255, 255, 255 ); SetAlpha( 1 ); SetRotation( 0 ); SetScale( 1, 1 )
-		DrawImage( background_clean, 0, 0 )
-		GrabImage( background_dynamic, 0, 0 )
+		If generate_images
+			'images (Drawing)
+			background_clean = generate_sand_image( lev.width, lev.height )
+			foreground = generate_level_walls_image( lev )
+			'initialize dynamic background texture with same data as background clean
+			background_dynamic = TImage.Create( lev.width, lev.height, 1, FILTEREDIMAGE|DYNAMICIMAGE, 0, 0, 0 )
+			SetOrigin( 0, 0 ); SetColor( 255, 255, 255 ); SetAlpha( 1 ); SetRotation( 0 ); SetScale( 1, 1 )
+			DrawImage( background_clean, 0, 0 )
+			GrabImage( background_dynamic, 0, 0 )
+		End If
 		'props
 		For Local pd:PROP_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )
@@ -214,7 +216,9 @@ Type ENVIRONMENT
 '		End If
 	End Method
 	
-	Method spawning_system_update()
+	'returns a list of agents spawned
+	Method spawning_system_update:TList()
+		Local spawned:TList = CreateList()
 		'for each spawner
 		Local sp:SPAWNER, cur:CELL, ts%, last:COMPLEX_AGENT, counter%
 		For Local i% = 0 To lev.spawners.Length-1
@@ -229,26 +233,28 @@ Type ENVIRONMENT
 				If now() - ts >= sp.delay_time[cur.row]
 					'if this squad is just started, or the last spawned enemy is far enough away, or dead or null
 					If cur.col = 0 Or last = Null Or last.dead() Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
-						Local brain:CONTROL_BRAIN = spawn_agent( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
-						last_spawned[i] = brain.avatar
+						Local ag:COMPLEX_AGENT = spawn_agent( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
+						last_spawned[i] = ag
+						spawned.addLast( ag )
 						'counter
 						spawn_counter[i] :+ 1
 						cur.col :+ 1
 						'if that last guy was the last squadmember of the current squad
 						If cur.col > sp.squads[cur.row].Length-1
-							'point to first squadmember of spawner's next squad
+							'advance this spawner to first squadmember of next squad
 							cur.col = 0
 							cur.row :+ 1
-							'start delay timer
+							'restart delay timer
 							spawn_ts[i] = now()
 						End If
 					End If
 				End If
 			End If
 		Next
+		Return spawned
 	End Method
 	
-	Method spawn_agent:CONTROL_BRAIN( archetype_index%, alignment%, spawn_point:POINT )
+	Method spawn_agent:COMPLEX_AGENT( archetype_index%, alignment%, spawn_point:POINT )
 		Local this_agent:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], alignment ))
 		Select alignment
 			Case ALIGNMENT_HOSTILE
@@ -260,7 +266,7 @@ Type ENVIRONMENT
 		brain.manage( control_brain_list )
 		this_agent.move_to( spawn_point )
 		this_agent.snap_all_turrets()
-		Return brain
+		Return this_agent
 	End Method
 	
 	Method insert_player( new_player:COMPLEX_AGENT, new_player_brain:CONTROL_BRAIN )

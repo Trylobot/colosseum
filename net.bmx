@@ -5,174 +5,169 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Global network_host:TGNetHost = Null
-Global network_client:TGNetHost = Null
-Global network_link_list:TList 'TList<NETWORK_LINK>
-Global player_network_link:NETWORK_LINK
+Global network:TGNetHost = Null
+Global local_network_links:TList = CreateList() 'TList<NETWORK_LINK>
+Global remote_network_links:TList = CreateList() 'TList<NETWORK_LINK>
 
 Function update_network()
-	If game <> Null
-		
-		If network_host <> Null
-			GNetSync( network_host )
-			'update network from network links
-			For Local net_link:NETWORK_LINK = EachIn network_link_list
-				net_link.update_network()
-			Next
-		End If
-		If network_client <> Null
-			GNetSync( network_client )
-			'check for new remote objects created by the host (require creation of new network links)
-			'For Local new_gnet_obj:TGNetObject = EachIn GNetObjects( network_self, GNET_CREATED )
+	If network <> Null
+		network.Sync()
+		Select network_mode
+			
+			Case NETWORK_MODE_SERVER
 				
-			'Next
-			'update network from networked player avatar
-			player_network_link.update_network()
-		End If
-		
+				
+			Case NETWORK_MODE_CLIENT
+				'client uninitialized
+				If game = Null
+					For Local gnet_obj:TGNetObject = EachIn network.ObjectsCreated()
+						If gnet_obj.GetInt( NETWORK_LINK.SLOT_CLASS ) = NETWORK_LINK.CLASS_LEVEL
+							'level name is retrieved from server
+							play_level( gnet_obj.GetString( NETWORK_LINK.SLOT_SOURCE ), PLAYER_INDEX_LIGHT_TANK )  
+						End If
+					Next
+				End If
+				'normal client update
+				For Local gnet_obj:TGNetObject = EachIn network.Objects()
+					Select gnet_obj.State()
+						Case GNET_CREATED
+							NETWORK_LINK.Create_remote( gnet_obj ).manage( remote_network_links )
+						Case GNET_CLOSED
+							'..?
+					End Select
+				Next
+				
+		End Select
+
+		For Local net_link:NETWORK_LINK = EachIn remote_network_links
+			net_link.read_from_network()
+		Next
+		For Local net_link:NETWORK_LINK = EachIn local_network_links
+			net_link.write_to_network()
+		Next
+
 	End If
 End Function
 
-Function host_new_multiplayer_game()
+'______________________________________________________________________________
+Function host_game()
 	Local level_file_path$ = "data/debug.colosseum_level"
-	Local player_archetype% = PLAYER_INDEX_LIGHT_TANK
+	network = CreateGNetHost()
+	GNetListen( network, ip_port )
 	
-	'the network host controls the level and npcs
-	network_host = CreateGNetHost()
-	network_host.Listen( ip_port )
-	'the network client controls exactly one complex agent object
-	'other client's avatars appear as non-player complex agents
-	network_client = CreateGNetHost()
-	'network_client.Connect( "localhost", ip_port, 3000 )
+	main_game = Create_ENVIRONMENT()
+	Local success% = main_game.load_level( level_file_path, False )
+	If success
+		main_game.game_in_progress = True
+		FLAG_in_menu = False
+		FLAG_in_shop = False
+	Else
+		main_game = Null
+	End If
 	
-	play_level( level_file_path, player_archetype )
-	
-	'create network links for the host objects
-	
-	
-	'create network link for the client avatar
-	
-	
+	Local level_link:NETWORK_LINK = ..
+		NETWORK_LINK.Create_local( NETWORK_LINK.CLASS_LEVEL, main_game.lev, level_file_path )
+	level_link.manage( local_network_links )
 End Function
 
-Function join_existing_multiplayer_game()
-	Local level_file_path$ = ""
-	Local player_archetype% = PLAYER_INDEX_LIGHT_TANK
-	
-	'the network client controls exactly one complex agent object
-	'other client's avatars appear as non-player complex agents
-	network_client = CreateGNetHost()
-	'network_client.Connect( ip_address, ip_port, 3000 )
-	
-	'determine from the host which level to use
-	
-	play_level( level_file_path, player_archetype )
-	
-	'create network link for the client avatar
-	
-	
+'______________________________________________________________________________
+Function join_game()
+	network = CreateGNetHost()
+	GNetConnect( network, ip_address, ip_port, 10000 )
 End Function
 
+'______________________________________________________________________________
 Type NETWORK_LINK Extends MANAGED_OBJECT
 	Field class%
 	Field game_obj:Object
-	Field gnet_objects:TGNetObject[]
+	Field gnet_obj:TGNetObject
 	
 	'recognized classes
 	Global CLASS_LEVEL% = 100
-	Global CLASS_MANAGED_OBJECT% = 1000
-	Global CLASS_POINT% = 1100
-	Global CLASS_PHYSICAL_OBJECT% = 1200
 	Global CLASS_PROJECTILE% = 1300
-	Global CLASS_AGENT% = 1400
-	Global CLASS_TURRET% = 1500
 	Global CLASS_COMPLEX_AGENT% = 1600
 	Global CLASS_PLAYER% = 10000
 	'TGNetObject slots
-	Global SLOT_CLASS% = 0
+	Global SLOT_CLASS% = 0 'switches network_link create/update behavior
+	Global SLOT_SOURCE% = 1 'file path for a level, or archetype number for a complex agent
 	'LEVEL
-	Global SLOT_LEVEL_FILE_PATH% = 1
+	'...
 	'POINT
-	Global SLOT_POINT_POS_X% = 1
-	Global SLOT_POINT_POS_Y% = 2
-	Global SLOT_POINT_ANG% = 3
-	Global SLOT_POINT_VEL_X% = 4
-	Global SLOT_POINT_VEL_Y% = 5
-	Global SLOT_POINT_ANG_VEL% = 6
-	Global SLOT_POINT_ACC_X% = 7
-	Global SLOT_POINT_ACC_Y% = 8
-	Global SLOT_POINT_ANG_ACC% = 9
+	Global SLOT_POINT_POS_X%   =  2
+	Global SLOT_POINT_POS_Y%   =  3
+	Global SLOT_POINT_ANG%     =  4
+	Global SLOT_POINT_VEL_X%   =  5
+	Global SLOT_POINT_VEL_Y%   =  6
+	Global SLOT_POINT_ANG_VEL% =  7
+	Global SLOT_POINT_ACC_X%   =  8
+	Global SLOT_POINT_ACC_Y%   =  9
+	Global SLOT_POINT_ANG_ACC% = 10
 	
-	Function Create:NETWORK_LINK( class% )
-		Local netlink:NETWORK_LINK = New NETWORK_LINK
-		netlink.class = class
-		Return netlink
+	Function Create_local:NETWORK_LINK( class%, game_obj:Object, source_str$ = Null, source_int% = -1 )
+		'create a new network link from a game object
+		Local net_link:NETWORK_LINK = New NETWORK_LINK
+		net_link.class = class
+		net_link.game_obj = game_obj
+		net_link.gnet_obj = CreateGNetObject( network )
+		net_link.gnet_obj.SetInt( SLOT_CLASS, class )
+		Select class
+			Case CLASS_LEVEL
+				'the source is a string path
+				net_link.gnet_obj.SetString( SLOT_SOURCE, source_str )
+			Default
+				'the source is an archetype index
+				net_link.gnet_obj.SetInt( SLOT_SOURCE, source_int )
+		End Select
+		net_link.write_to_network()
+		Return net_link
 	End Function
 	
-	Method link( new_game_obj:Object, network:TGNetHost )
-		'based on the type of the game object,
-		'  create a set of network objects which represent it
-		game_obj = new_game_obj
-
-		Select class
-			
-			Case CLASS_LEVEL
-				gnet_objects = New TGNetObject[1]
-				gnet_objects[0] = CreateGNetObject( network )
-				gnet_objects[0].SetInt( SLOT_CLASS, CLASS_LEVEL )
-				update_network()
-							
-			Case CLASS_POINT
-				gnet_objects = New TGNetObject[1]
-				gnet_objects[0] = CreateGNetObject( network )
-				gnet_objects[0].SetInt( SLOT_CLASS, CLASS_POINT )
-				update_network()
+	Function Create_remote:NETWORK_LINK( gnet_obj:TGNetObject )
+		'create a new network link from a network object
+		'use its source ID to copy a projectile from one of the archetype maps
+		'insert it into the appropriate managed environment list
+		'set its initial physical state
+		Local net_link:NETWORK_LINK = New NETWORK_LINK
+		net_link.class = gnet_obj.GetInt( SLOT_CLASS )
+		Select net_link.class
+			Case CLASS_PROJECTILE
+				
+			Case CLASS_COMPLEX_AGENT
+				
+			Case CLASS_PLAYER
 				
 		End Select
-	End Method
+	End Function
 	
-	Method update_network()
-		'the game object has changed; update the gnet objects.
+	Method write_to_network()
 		Select class
-			
-			Case CLASS_LEVEL
-				Local game_lev:LEVEL = LEVEL( game_obj )
-				gnet_objects[0].SetString( SLOT_LEVEL_FILE_PATH, game_lev.file_path )
-			
-			Case CLASS_POINT
-				Local game_p:POINT = POINT( game_obj )
-				gnet_objects[0].SetFloat( SLOT_POINT_POS_X,   game_p.pos_x )
-				gnet_objects[0].SetFloat( SLOT_POINT_POS_Y,   game_p.pos_y )
-				gnet_objects[0].SetFloat( SLOT_POINT_ANG,     game_p.ang )
-				gnet_objects[0].SetFloat( SLOT_POINT_VEL_X,   game_p.vel_x )
-				gnet_objects[0].SetFloat( SLOT_POINT_VEL_Y,   game_p.vel_x )
-				gnet_objects[0].SetFloat( SLOT_POINT_ANG_VEL, game_p.ang_vel )
-				gnet_objects[0].SetFloat( SLOT_POINT_ACC_X,   game_p.acc_x )
-				gnet_objects[0].SetFloat( SLOT_POINT_ACC_Y,   game_p.acc_x )
-				gnet_objects[0].SetFloat( SLOT_POINT_ANG_ACC, game_p.ang_acc )
-
+			Case CLASS_PROJECTILE, CLASS_COMPLEX_AGENT, CLASS_PLAYER
+				Local p:POINT = POINT( game_obj )
+				gnet_obj.SetFloat( SLOT_POINT_POS_X,   p.pos_x )
+				gnet_obj.SetFloat( SLOT_POINT_POS_Y,   p.pos_y )
+				gnet_obj.SetFloat( SLOT_POINT_ANG,     p.ang )
+				gnet_obj.SetFloat( SLOT_POINT_VEL_X,   p.vel_x )
+				gnet_obj.SetFloat( SLOT_POINT_VEL_Y,   p.vel_x )
+				gnet_obj.SetFloat( SLOT_POINT_ANG_VEL, p.ang_vel )
+				gnet_obj.SetFloat( SLOT_POINT_ACC_X,   p.acc_x )
+				gnet_obj.SetFloat( SLOT_POINT_ACC_Y,   p.acc_x )
+				gnet_obj.SetFloat( SLOT_POINT_ANG_ACC, p.ang_acc )  
 		End Select
 	End Method
 	
-	Method update_game()
-		'the gnet objects have changed; update the game object.
+	Method read_from_network()
 		Select class
-			
-			Case CLASS_LEVEL
-				'do nothing
-			
-			Case CLASS_POINT
-				Local game_p:POINT = POINT( game_obj )
-				game_p.pos_x =   gnet_objects[0].GetFloat( SLOT_POINT_POS_X )
-				game_p.pos_y =   gnet_objects[0].GetFloat( SLOT_POINT_POS_Y )
-				game_p.ang =     gnet_objects[0].GetFloat( SLOT_POINT_ANG )
-				game_p.vel_x =   gnet_objects[0].GetFloat( SLOT_POINT_VEL_X )
-				game_p.vel_y =   gnet_objects[0].GetFloat( SLOT_POINT_VEL_Y )
-				game_p.ang_vel = gnet_objects[0].GetFloat( SLOT_POINT_ANG_VEL )
-				game_p.acc_x =   gnet_objects[0].GetFloat( SLOT_POINT_ACC_X )
-				game_p.acc_y =   gnet_objects[0].GetFloat( SLOT_POINT_ACC_Y )
-				game_p.ang_acc = gnet_objects[0].GetFloat( SLOT_POINT_ANG_ACC )
-
+			Case CLASS_PROJECTILE, CLASS_COMPLEX_AGENT, CLASS_PLAYER
+				Local p:POINT = POINT( game_obj )
+				p.pos_x =   gnet_obj.GetFloat( SLOT_POINT_POS_X )
+				p.pos_y =   gnet_obj.GetFloat( SLOT_POINT_POS_Y )
+				p.ang =     gnet_obj.GetFloat( SLOT_POINT_ANG )
+				p.vel_x =   gnet_obj.GetFloat( SLOT_POINT_VEL_X )
+				p.vel_y =   gnet_obj.GetFloat( SLOT_POINT_VEL_Y )
+				p.ang_vel = gnet_obj.GetFloat( SLOT_POINT_ANG_VEL )
+				p.acc_x =   gnet_obj.GetFloat( SLOT_POINT_ACC_X )
+				p.acc_y =   gnet_obj.GetFloat( SLOT_POINT_ACC_Y )
+				p.ang_acc = gnet_obj.GetFloat( SLOT_POINT_ANG_ACC )
 		End Select
 	End Method
 	

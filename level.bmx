@@ -29,7 +29,6 @@ Function Create_LEVEL:LEVEL( width%, height% )
 End Function
 
 Type LEVEL Extends MANAGED_OBJECT
-	Field file_path$ 'for levels loaded from disk, the source path (used in multiplayer)
 	Field width%, height% 'dimensions in whole pixels
 	Field row_count%, col_count% 'number of cells
 	Field horizontal_divs%[], vertical_divs%[] 'dividers

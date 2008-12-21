@@ -229,7 +229,7 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 	all_menus[postfix_index()] = MENU.Create( "multiplayer", 78, 78, 255, MENU_ID_MULTIPLAYER, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 		MENU_OPTION.Create( "join game", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER_JOIN), True, True ), ..
-		MENU_OPTION.Create( "host game", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER_HOST), True, True )	])
+		MENU_OPTION.Create( "host game", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER_HOST), True, False )	])
 		
 		all_menus[postfix_index()] = MENU.Create( "join game", 122, 122, 255, MENU_ID_MULTIPLAYER_JOIN, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 		[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
@@ -383,7 +383,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			
 			
 		Case COMMAND_MULTIPLAYER_JOIN
-			
+			join_game()
 			
 		Case COMMAND_MULTIPLAYER_HOST
 			

@@ -181,9 +181,7 @@ Function load_level:LEVEL( path$ )
 	If file
 		json = TJSON.Create( file )
 		file.Close()
-		Local lev:LEVEL = Create_LEVEL_from_json( json )
-		lev.file_path = path 'meta data
-		Return lev
+		Return Create_LEVEL_from_json( json )
 	Else
 		Return Null
 	End If

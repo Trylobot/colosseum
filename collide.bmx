@@ -105,19 +105,21 @@ Function collide_all_objects()
 		Next
 
 		'collisions between player and pickups
-		For pkp = EachIn game.pickup_list
-			SetRotation( 0 )
-			CollideImage( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
-		Next
-		SetRotation( game.player.ang )
-		result = CollideImage( game.player.img, game.player.pos_x, game.player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, game.player )
-		For pkp = EachIn result
-			'COLLISION! between {player} and {pkp}
-			'give pickup to player
-			game.player.grant_pickup( pkp ) 'i can has lewts?!
-			'dump out early; only the first pickup collided with will be applied this frame
-			Exit
-		Next
+		If game.human_participation
+			For pkp = EachIn game.pickup_list
+				SetRotation( 0 )
+				CollideImage( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
+			Next
+			SetRotation( game.player.ang )
+			result = CollideImage( game.player.img, game.player.pos_x, game.player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, game.player )
+			For pkp = EachIn result
+				'COLLISION! between {player} and {pkp}
+				'give pickup to player
+				game.player.grant_pickup( pkp ) 'i can has lewts?!
+				'dump out early; only the first pickup collided with will be applied this frame
+				Exit
+			Next
+		End If
 
 	End If
 End Function

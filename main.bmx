@@ -16,20 +16,18 @@ Rem
 
 EndRem
 
-?Debug
-Global FLAG_debug_overlay% = False
-'debug_format_number()
-?
-
-'Window / Arena size
+'Multiplayer
+Const NETWORK_MODE_SERVER% = 1
+Const NETWORK_MODE_CLIENT% = 2
+Const network_mode% = NETWORK_MODE_CLIENT
+Global ip_address$
+Global ip_port%
+'Graphics
 Global window_w%
 Global window_h%
 Global fullscreen%
 Global bit_depth%
 Global refresh_rate%
-'Multiplayer
-Global ip_address$
-Global ip_port%
 
 Function apply_default_settings()
 	window_w = 800
@@ -75,6 +73,8 @@ init_graphics()
 'MAIN
 Local before%
 ?Debug
+Global FLAG_debug_overlay% = False
+'debug_format_number()
 Global fps%, last_frame_ts%, time_count%, frame_count%
 
 'play_level( data_path + "debug" + "." + level_file_ext, 0 )
@@ -90,8 +90,15 @@ Repeat
 	Else
 		game = main_game
 	End If
-
-	get_all_input()
+	
+	If network_mode <> NETWORK_MODE_SERVER
+		get_all_input()
+		check_instaquit()
+		If KeyHit( KEY_F12 )
+			screenshot()
+		End If
+	End If
+	
 	update_network()
 	
 	'simulation speed (decoupled from draw speed)
@@ -105,8 +112,10 @@ Repeat
 	
 	Cls
 	
-	draw_all_graphics()
-	play_all_audio()
+	If network_mode <> NETWORK_MODE_SERVER
+		draw_all_graphics()
+		play_all_audio()
+	End If
 
 ?Debug
 	frame_count :+ 1
@@ -140,12 +149,7 @@ Repeat
 		End If
 	End If
 ?
-	check_instaquit()
-	
-	If KeyHit( KEY_F12 )
-		screenshot()
-	End If
-	
+
 	Flip( 1 )
 	
 Until AppTerminate()
