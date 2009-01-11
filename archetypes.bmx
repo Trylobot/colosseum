@@ -6,7 +6,7 @@ EndRem
 
 '______________________________________________________________________________
 Function load_all_archetypes()
-	set_prop_archetypes()
+	'set_prop_archetypes()
 	set_particle_archetypes()
 	set_particle_emitter_archetypes()
 	set_projectile_archetypes()
@@ -30,6 +30,7 @@ End Function
 
 '______________________________________________________________________________
 '[ PROPS ]
+rem
 Global prop_archetype:AGENT[2]; reset_index()
 
 Global PROP_INDEX_CRATE_MEDIUM% = postfix_index()
@@ -45,6 +46,7 @@ Function get_prop:AGENT( archetype_index% )
 	prop.cur_health = prop.max_health
 	Return prop
 End Function
+endrem
 
 '______________________________________________________________________________
 '[ PARTICLES ]

@@ -24,6 +24,8 @@ Function level_editor( lev:LEVEL )
 	Local new_spawner:SPAWNER = New SPAWNER
 	Local closest_sp:SPAWNER = Null
 	Local new_prop:PROP_DATA = New PROP_DATA
+	Local new_prop_archetype% = 0
+	Local prop_keys$[] = get_keys( prop_map )
 	Local closest_pd:PROP_DATA = Null
 
 	Local nearest_div%
@@ -570,12 +572,14 @@ Function level_editor( lev:LEVEL )
 						new_prop = New PROP_DATA
 					End If
 					If KeyHit( KEY_LEFT )
-						new_prop.archetype :- 1
-						If new_prop.archetype < 0 Then new_prop.archetype = prop_archetype.Length-1
+						new_prop_archetype :- 1
+						If new_prop_archetype < 0 Then new_prop_archetype = prop_keys.Length - 1
+						new_prop.archetype = prop_keys[ new_prop_archetype ]
 					End If
 					If KeyHit( KEY_RIGHT )
-						new_prop.archetype :+ 1
-						If new_prop.archetype > prop_archetype.Length-1 Then new_prop.archetype = 0
+						new_prop_archetype :+ 1
+						If new_prop_archetype > prop_keys.Length - 1 Then new_prop_archetype = 0
+						new_prop.archetype = prop_keys[ new_prop_archetype ]
 					End If
 					Local prop:AGENT = get_prop( new_prop.archetype )
 					prop.pos_x = gridsnap_mouse.x+x

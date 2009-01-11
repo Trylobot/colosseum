@@ -5,7 +5,7 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Function Archetype_AGENT:AGENT( ..
+Function Create_AGENT:AGENT( ..
 img:TImage = Null, ..
 gibs:TImage = Null, ..
 cash_value% = 0, ..
@@ -27,19 +27,15 @@ destruct_on_contact% = False )
 End Function
 
 Function Copy_AGENT:AGENT( other:AGENT )
-	Local ag:AGENT = New AGENT
-	ag.img = other.img
-	ag.gibs = other.gibs
-	ag.cash_value = other.cash_value
-	For Local other_em:EMITTER = EachIn other.death_emitters
-		ag.add_emitter( other_em, other_em.trigger_event )
-	Next
-	ag.max_health = other.max_health
-	ag.mass = other.mass
-	ag.frictional_coefficient = other.frictional_coefficient
-	ag.physics_disabled = other.physics_disabled
-	ag.destruct_on_contact = other.destruct_on_contact
-	Return ag
+	Return Create_AGENT( ..
+		other.img, ..
+		other.gibs, ..
+		other.cash_value, ..
+		other.max_health, ..
+		other.mass, ..
+		other.frictional_coefficient, ..
+		other.physics_disabled, ..
+		other.destruct_on_contact )
 End Function
 
 Type AGENT Extends PHYSICAL_OBJECT
@@ -143,3 +139,18 @@ Type AGENT Extends PHYSICAL_OBJECT
 	End Method
 	
 End Type
+
+Function Create_AGENT_from_json:AGENT( json:TJSON )
+	Local a:AGENT = New AGENT
+	a.img = TImage( get_asset( json.GetString( "img" )))
+	a.gibs = TImage( get_asset( json.GetString( "gibs" )))
+	a.cash_value = json.GetNumber( "cash_value" )
+	a.max_health = json.GetNumber( "max_health" )
+	a.mass = json.GetNumber( "mass" )
+	a.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
+	a.physics_disabled = json.GetBoolean( "physics_disabled" )
+	a.destruct_on_contact = json.GetBoolean( "destruct_on_contact" )
+	Return a
+End Function
+
+

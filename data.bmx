@@ -49,24 +49,83 @@ Global ai_type_map:TMap = CreateMap()
 Global complex_agent_map:TMap = CreateMap()
 Global level_map:TMap = CreateMap()
 '______________________________________________________________________________
-Function get_font:TImageFont( key$ )
+Function get_asset:Object( ref_encoded$ )
+	Local ref$[] = ref_encoded.Split( "|" )
+	If ref.Length <> 2 Or ref[0].Length = 0 Or ref[1].Length = 0
+		Local asset_type$ = ref[0]
+		Local asset_key$ = ref[1]
+		
+		Select asset_type
+			Case "fonts"
+				Return get_font( asset_key )
+			Case "sounds"
+				Return get_sound( asset_key )
+			Case "images"
+				Return get_image( asset_key )
+			Case "props"
+				Return get_prop( asset_key )
+'			Case "particles"
+'				Return get_particle( asset_key )
+'			Case "particle_emitters"
+'				Return get_particle_emitter( asset_key )
+'			Case "projectiles"
+'				Return get_projectile( asset_key )
+'			Case "projectile_launchers"
+'				Return get_projectile_launcher( asset_key )
+'			Case "widgets"
+'				Return get_widget( asset_key )
+'			Case "pickups"
+'				Return get_pickup( asset_key )
+'			Case "turret_barrels"
+'				Return get_turret_barrel( asset_key )
+'			Case "turrets"
+'				Return get_turret( asset_key )
+			Case "ai_types"
+				Return get_ai_type( asset_key )
+'			Case "complex_agents"
+'				Return get_complex_agent( asset_key )
+			Case "levels"
+				Return get_level( asset_key )
+		End Select
+		End If
+	
+	Return Null 'invalid asset encoding
+End Function
+'______________________________________________________________________________
+Function get_keys$[]( map:TMap )
+	Local list:TList = CreateList()
+	Local size% = 0
+	For Local key$ = EachIn MapKeys( map )
+		list.AddLast( key )
+		size :+ 1
+	Next
+	Local array$[] = New String[ size ]
+	Local i% = 0
+	For Local key$ = EachIn list
+		array[i] = key
+		i :+ 1
+	Next
+	Return array
+End Function
+'______________________________________________________________________________
+Function get_font:TImageFont( key$ ) 'returns read-only reference
 	Return TImageFont( font_map.ValueForKey( key ))
 End Function
-Function get_sound:TSound( key$ )
+Function get_sound:TSound( key$ ) 'returns read-only reference
 	Return TSound( sound_map.ValueForKey( key ))
 End Function
-Function get_image:TImage( key$ )
+Function get_image:TImage( key$ ) 'returns read-only reference
 	Return TImage( image_map.ValueForKey( key ))
 End Function
-'Function get_prop:AGENT( key$ )
-'	Return AGENT( prop_map.ValueForKey( key ))
-'End Function
+Function get_prop:AGENT( key$ ) 'returns a new instance, which is a copy of the global archetype
+	Return Copy_AGENT( AGENT( prop_map.ValueForKey( key )))
+End Function
 '...
-Function get_ai_type:AI_TYPE( key$ )
+Function get_ai_type:AI_TYPE( key$ ) 'returns read-only reference
 	Return AI_TYPE( ai_type_map.ValueForKey( key ))
 End Function
 '...
-Function get_level:LEVEL( key$ )
+Function get_level:LEVEL( key$ ) 'returns read-only reference
 	Return LEVEL( level_map.ValueForKey( key ))
 End Function
 
@@ -167,10 +226,14 @@ Function load_props%( json:TJSON )
 	Local data:TJSONArray = json.GetArray( asset_data_heading )
 	'test successful creation of data object (somehow)
 	Local asset_json_path$
-	Local img:TImage, gibs:TImage, cash_value%, max_health#, mass#, frictional_coefficient#, physics_disabled%, destruct_on_contact%
+	Local json_cur:TJSON
+	'Local img:TImage, gibs:TImage, cash_value%, max_health#, mass#, frictional_coefficient#, physics_disabled%, destruct_on_contact%
 	Local prop:AGENT
 	For Local index% = 0 To data.Size()-1
-		'asset_json_path
+		asset_json_path = asset_data_heading + "." + index
+		json_cur = TJSON.Create( json.GetObject( asset_json_path ))
+		prop = Create_AGENT_from_json( json_cur )
+		prop_map.Insert( json.GetString( asset_json_path + "." + "key" ), prop )
 	Next
 End Function
 

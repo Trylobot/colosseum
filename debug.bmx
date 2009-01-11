@@ -26,6 +26,17 @@ Global global_start:CELL, global_goal:CELL
 '	DebugLog "" + now() + " :: " + message
 'End Function
 '
+''______________________________________________________________________________
+Function debug_get_keys()
+	DebugLog " fonts: [ " + ", ".Join( get_keys( font_map )) + " ]"
+	DebugLog " sounds: [ " + ", ".Join( get_keys( sound_map )) + " ]"
+	DebugLog " images: [ " + ", ".Join( get_keys( image_map )) + " ]"
+	DebugLog " props: [ " + ", ".Join( get_keys( prop_map )) + " ]"
+	DebugLog " ai_types: [ " + ", ".Join( get_keys( ai_type_map )) + " ]"
+	DebugLog " levels: [ " + ", ".Join( get_keys( level_map )) + " ]"
+End Function
+'
+
 '______________________________________________________________________________
 Global sx%, sy%
 

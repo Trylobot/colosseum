@@ -209,7 +209,7 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 	MENU_OPTION.Create( "new", COMMAND_NEW_GAME,, True, True ), ..
 	MENU_OPTION.Create( "save", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_GAME), True, False ), ..
 	MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_GAME), True, True ), ..
-	MENU_OPTION.Create( "multiplayer", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER), True, False ), ..
+	MENU_OPTION.Create( "multiplayer", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER), False, False ), ..
 	MENU_OPTION.Create( "settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SETTINGS), True, True ), ..
 	MENU_OPTION.Create( "preferences", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_PREFERENCES), True, False ), ..
 	MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_EDITORS), True, True ), ..

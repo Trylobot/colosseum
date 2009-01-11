@@ -51,6 +51,11 @@ MENU.load_fonts()
 load_all_archetypes() 'REMOVE this function call by externalizing this data, please.
 menu_command( COMMAND_NEW_LEVEL ) 'initialize the level editor data
 
+?Debug
+debug_get_keys()
+End
+?
+
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo
 If My.Application.DebugOn Then AppTitle :+ " " + My.Application.Platform + " (Debug)"
@@ -74,7 +79,6 @@ init_graphics()
 Local before%
 ?Debug
 Global FLAG_debug_overlay% = False
-'debug_format_number()
 Global fps%, last_frame_ts%, time_count%, frame_count%
 
 'play_level( data_path + "debug" + "." + level_file_ext, 0 )
@@ -91,15 +95,15 @@ Repeat
 		game = main_game
 	End If
 	
-	If network_mode <> NETWORK_MODE_SERVER
+'	If network_mode <> NETWORK_MODE_SERVER
 		get_all_input()
 		check_instaquit()
 		If KeyHit( KEY_F12 )
 			screenshot()
 		End If
-	End If
+'	End If
 	
-	update_network()
+	'update_network()
 	
 	'simulation speed (decoupled from draw speed)
 	If (now() - before) > (1000/60) ' = 60 hertz
@@ -110,14 +114,14 @@ Repeat
 		
 	EndIf
 	
-	Cls
+	Cls()
 	
-	If network_mode <> NETWORK_MODE_SERVER
+'	If network_mode <> NETWORK_MODE_SERVER
 		draw_all_graphics()
 		play_all_audio()
-	End If
-
-?Debug
+'	End If
+	
+	?Debug
 	frame_count :+ 1
 	time_count :+ (now() - last_frame_ts)
 	last_frame_ts = now()
@@ -148,7 +152,7 @@ Repeat
 			debug_origin.y :+ 1
 		End If
 	End If
-?
+	?
 
 	Flip( 1 )
 	

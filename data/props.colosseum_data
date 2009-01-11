@@ -2,6 +2,7 @@
 	data:
 	[
 		{
+			key: "crate"
 			img: "images|crate",
 			gibs: "images|crate_gibs",
 			cash_value: 0,
@@ -12,6 +13,7 @@
 			destruct_on_contact: true
 		},
 		{
+			key: "crate_small"
 			img: "images|crate_small",
 			gibs: "images|crate_small_gibs",
 			cash_value: 0,
