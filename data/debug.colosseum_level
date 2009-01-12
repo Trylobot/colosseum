@@ -127,7 +127,7 @@
 	],
 	props: [
 		{
-			archetype: 0,
+			archetype: "crate",
 			pos: {
 				pos_x: 200,
 				pos_y: 135,
@@ -141,7 +141,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 250,
 				pos_y: 150,
@@ -155,7 +155,7 @@
 			}
 		},
 		{
-			archetype: 0,
+			archetype: "crate",
 			pos: {
 				pos_x: 245,
 				pos_y: 115,
@@ -169,7 +169,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 210,
 				pos_y: 90,
@@ -183,7 +183,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 235,
 				pos_y: 80,
@@ -197,7 +197,7 @@
 			}
 		},
 		{
-			archetype: 0,
+			archetype: "crate",
 			pos: {
 				pos_x: 205,
 				pos_y: 65,

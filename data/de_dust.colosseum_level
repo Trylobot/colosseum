@@ -927,7 +927,7 @@
 		} ],
 	props: [
 		{
-			archetype: 0,
+			archetype: "crate",
 			pos: {
 				pos_x: 450,
 				pos_y: 620,
@@ -941,7 +941,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 480,
 				pos_y: 625,
@@ -955,7 +955,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 265,
 				pos_y: 625,
@@ -969,7 +969,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 385,
 				pos_y: 525,
@@ -983,7 +983,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 690,
 				pos_y: 1205,
@@ -997,7 +997,7 @@
 			}
 		},
 		{
-			archetype: 0,
+			archetype: "crate",
 			pos: {
 				pos_x: 885,
 				pos_y: 995,
@@ -1011,7 +1011,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 855,
 				pos_y: 1000,
@@ -1025,7 +1025,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 885,
 				pos_y: 960,
@@ -1039,7 +1039,7 @@
 			}
 		},
 		{
-			archetype: 0,
+			archetype: "crate",
 			pos: {
 				pos_x: 350,
 				pos_y: 1125,
@@ -1053,7 +1053,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 375,
 				pos_y: 1130,
@@ -1067,7 +1067,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 400,
 				pos_y: 1130,
@@ -1081,7 +1081,7 @@
 			}
 		},
 		{
-			archetype: 1,
+			archetype: "crate_small",
 			pos: {
 				pos_x: 630,
 				pos_y: 800,
@@ -1095,7 +1095,7 @@
 			}
 		},
 		{
-			archetype: 0,
+			archetype: "crate",
 			pos: {
 				pos_x: 90,
 				pos_y: 705,

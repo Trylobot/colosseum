@@ -227,13 +227,14 @@ Function load_props%( json:TJSON )
 	'test successful creation of data object (somehow)
 	Local asset_json_path$
 	Local json_cur:TJSON
-	'Local img:TImage, gibs:TImage, cash_value%, max_health#, mass#, frictional_coefficient#, physics_disabled%, destruct_on_contact%
 	Local prop:AGENT
+	Local key$
 	For Local index% = 0 To data.Size()-1
 		asset_json_path = asset_data_heading + "." + index
 		json_cur = TJSON.Create( json.GetObject( asset_json_path ))
+		key = json_cur.GetString( "key" )
 		prop = Create_AGENT_from_json( json_cur )
-		prop_map.Insert( json.GetString( asset_json_path + "." + "key" ), prop )
+		prop_map.Insert( key, prop )
 	Next
 End Function
 
