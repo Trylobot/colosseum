@@ -51,7 +51,7 @@ Global level_map:TMap = CreateMap()
 '______________________________________________________________________________
 Function get_asset:Object( ref_encoded$ )
 	Local ref$[] = ref_encoded.Split( "|" )
-	If ref.Length <> 2 Or ref[0].Length = 0 Or ref[1].Length = 0
+	If ref.Length >= 2 And ref[0].Length > 0 And ref[1].Length > 0
 		Local asset_type$ = ref[0]
 		Local asset_key$ = ref[1]
 		

@@ -166,7 +166,6 @@ Type ENVIRONMENT
 		End If
 		'props
 		For Local pd:PROP_DATA = EachIn lev.props
-DebugStop
 			Local prop:AGENT = get_prop( pd.archetype )
 			prop.manage( prop_list )
 			prop.move_to( pd.pos )
