@@ -7,7 +7,7 @@ EndRem
 '______________________________________________________________________________
 Function load_all_archetypes()
 	'set_prop_archetypes()
-	set_particle_archetypes()
+	'set_particle_archetypes()
 	set_particle_emitter_archetypes()
 	set_projectile_archetypes()
 	set_projectile_launcher_archetypes()
@@ -27,26 +27,6 @@ Function postfix_index%( amount% = 1 )
 	array_index :+ amount
 	Return (array_index - amount)
 End Function
-
-'______________________________________________________________________________
-'[ PROPS ]
-rem
-Global prop_archetype:AGENT[2]; reset_index()
-
-Global PROP_INDEX_CRATE_MEDIUM% = postfix_index()
-Global PROP_INDEX_CRATE_SMALL% = postfix_index()
-
-Function set_prop_archetypes()
-	prop_archetype[PROP_INDEX_CRATE_MEDIUM] = Archetype_AGENT( get_image( "crate" ), get_image( "crate_gibs" ), 0, 200, 400, 160,, True )
-	prop_archetype[PROP_INDEX_CRATE_SMALL] = Archetype_AGENT( get_image( "crate_small" ), get_image( "crate_small_gibs" ), 0, 75, 300, 160,, True )
-End Function
-
-Function get_prop:AGENT( archetype_index% )
-	Local prop:AGENT = Copy_AGENT( prop_archetype[archetype_index] )
-	prop.cur_health = prop.max_health
-	Return prop
-End Function
-endrem
 
 '______________________________________________________________________________
 '[ PARTICLES ]

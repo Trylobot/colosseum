@@ -90,8 +90,9 @@ Function load_objects%( json:TJSON )
 				Case "prop"
 					Local p:AGENT = Create_AGENT_from_json( TJSON.Create( item.GetObject( "object" )))
 					If p Then prop_map.Insert( key, p )
-				'Case "particle"
-				'	
+				Case "particle"
+					Local p:PARTICLE = Create_PARTICLE_from_json( TJSON.Create( item.GetObject( "object" )))
+					If p Then particle_map.Insert( key, p )
 				'Case "particle_emitter"
 				'	
 				'Case "projectile"
