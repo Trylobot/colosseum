@@ -99,6 +99,13 @@ End Function
 Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
 	Return Create_CONTROL_BRAIN( avatar, CONTROL_BRAIN.CONTROL_TYPE_HUMAN, profile.input_method )
 End Function
+
+'______________________________________________________________________________
+Function init_ai_menu_game()
+	ai_menu_game = Create_ENVIRONMENT( False )
+	'create the AI menu game level programmatically, with size matched to screen
+End Function
+
 '______________________________________________________________________________
 Function get_player_id%()
 	If game <> Null And game.player <> Null

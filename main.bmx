@@ -77,10 +77,10 @@ init_graphics()
 '______________________________________________________________________________
 'MAIN
 Local before%
+init_ai_menu_game()
 ?Debug
 Global FLAG_debug_overlay% = False
 Global fps%, last_frame_ts%, time_count%, frame_count%
-
 'play_level( data_path + "debug" + "." + level_file_ext, 0 )
 'menu_command( COMMAND_EDIT_LEVEL )
 ?
