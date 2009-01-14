@@ -13,12 +13,12 @@ Const MODE_ENABLED_WITH_COUNTER% = 1
 Const MODE_ENABLED_WITH_TIMER% = 2
 Const MODE_ENABLED_FOREVER% = 3
 
-Type EMITTER extends MANAGED_OBJECT
+Type EMITTER Extends MANAGED_OBJECT
 	
 	Field parent:POINT 'parent object (for position and angle offsets)
 	Field trigger_event% 'optional parent field to indicate the event that triggers this emitter
 	Field emitter_type% 'emitter type (particle/projectile)
-	Field archetype_index% 'particle archetype
+	Field archetype_index$ 'particle archetype
 	Field mode% 'emitter mode (off/counter/timer)
 	Field interval:RANGE_Int 'delay between particles
 	Field interval_cur% '(private) delay between particles - pre-calculated
@@ -110,9 +110,10 @@ Type EMITTER extends MANAGED_OBJECT
 			'create a new object (particle/projectile) and set it up
 			Select emitter_type
 				Case EMITTER_TYPE_PARTICLE
-					emit_particle( particle_archetype[archetype_index].clone( Rand( 0, particle_archetype[archetype_index].img.frames.Length - 1 )))
+					emit_particle( get_particle( archetype_index, PARTICLE_FRAME_RANDOM ))
 				Case EMITTER_TYPE_PROJECTILE
-					emit_projectile( projectile_archetype[archetype_index].clone( source_id ))
+					'emit_projectile( get_projectile( archetype_index, source_id ))
+					'emit_projectile( projectile_archetype[archetype_index].clone( source_id ))
 			End Select
 			
 			'interval
@@ -225,7 +226,7 @@ Type EMITTER extends MANAGED_OBJECT
 		
 	Function Archetype:Object( ..
 	emitter_type%, ..
-	archetype_index%, ..
+	archetype_index$, ..
 	mode% = MODE_DISABLED, ..
 	combine_vel_with_parent_vel% = False, ..
 	combine_vel_ang_with_parent_ang% = False, ..

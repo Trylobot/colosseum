@@ -13,6 +13,8 @@ Const PARTICLE_TYPE_IMG% = 0
 Const PARTICLE_TYPE_ANIM% = 1
 Const PARTICLE_TYPE_STR% = 2
 
+Const PARTICLE_FRAME_RANDOM% = -1
+
 Const ANIMATION_DIRECTION_FORWARDS% = 0
 Const ANIMATION_DIRECTION_BACKWARDS% = 1
 
@@ -96,8 +98,10 @@ Type PARTICLE Extends POINT
 		Return p
 	End Function
 	
-	Method clone:PARTICLE( new_frame% = -1 )
-		If new_frame < 0 Then new_frame = frame
+	Method clone:PARTICLE( new_frame% = 0 )
+		If new_frame = PARTICLE_FRAME_RANDOM
+			new_frame = Rand( 0, img.frames.Length - 1 )
+		End If
 		Return PARTICLE( PARTICLE.Create( ..
 			particle_type, img, new_frame, frame_delay, str, font, layer, retain, frictional_coefficient, red, green, blue, red_delta, green_delta, blue_delta, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
 	End Method
@@ -194,6 +198,34 @@ Type PARTICLE Extends POINT
 	
 End Type
 
-
-
+Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
+	Local p:PARTICLE = New PARTICLE
+	p.particle_type = enum( json.GetString( "particle_type" ))
+	p.img = TImage( get_asset( json.GetString( "img" )))
+	p.frame = json.GetNumber( "frame" )
+	p.frame_delay = json.GetNumber( "frame_delay" )
+	p.str = json.GetString( "str" )
+	p.font = TImageFont( get_asset( json.GetString( "font" )))
+	p.layer = enum( json.GetString( "layer" ))
+	p.retain = json.GetBoolean( "retain" )
+	p.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
+	p.red = json.GetNumber( "red" )
+	p.green = json.GetNumber( "green" )
+	p.blue = json.GetNumber( "blue" )
+	p.red_delta = json.GetNumber( "red_delta" )
+	p.green_delta = json.GetNumber( "green_delta" )
+	p.blue_delta = json.GetNumber( "blue_delta" )
+	p.life_time = json.GetNumber( "life_time" )
+	p.pos_x = json.GetNumber( "pos_x" )
+	p.pos_y = json.GetNumber( "pos_y" )
+	p.vel_x = json.GetNumber( "vel_x" )
+	p.vel_y = json.GetNumber( "vel_y" )
+	p.ang = json.GetNumber( "ang" )
+	p.ang_vel = json.GetNumber( "ang_vel" )
+	p.alpha = json.GetNumber( "alpha" )
+	p.alpha_delta = json.GetNumber( "alpha_delta" )
+	p.scale = json.GetNumber( "scale" )
+	p.scale_delta = json.GetNumber( "scale_delta" )
+	Return p
+End Function
 

@@ -133,8 +133,8 @@ Function get_asset:Object( ref_encoded$ )
 				Return get_image( asset_key )
 			Case "prop"
 				Return get_prop( asset_key )
-'			Case "particle"
-'				Return get_particle( asset_key )
+			Case "particle"
+				Return get_particle( asset_key )
 '			Case "particle_emitter"
 '				Return get_particle_emitter( asset_key )
 '			Case "projectile"
@@ -188,9 +188,14 @@ End Function
 Function get_prop:AGENT( key$ ) 'returns a new instance, which is a copy of the global archetype
 	Return Copy_AGENT( AGENT( prop_map.ValueForKey( key )))
 End Function
+Function get_particle:PARTICLE( key$, new_frame% = 0 ) 'returns a new instance, which is a copy of the global archetype
+	Return PARTICLE( particle_map.ValueForKey( key )).clone( new_frame )
+End Function
+
 Function get_ai_type:AI_TYPE( key$ ) 'returns read-only reference
 	Return AI_TYPE( ai_type_map.ValueForKey( key ))
 End Function
+
 Function get_level:LEVEL( key$ ) 'returns read-only reference
 	Return LEVEL( level_map.ValueForKey( key ))
 End Function
@@ -388,4 +393,34 @@ Function save_pixmap_to_file( px:TPixmap )
 	SavePixmapPNG( px, path )
 End Function
 
+'______________________________________________________________________________
+Function enum%( literal$ )
+	Select literal
+		
+		Case "LAYER_UNSPECIFIED"
+			Return LAYER_UNSPECIFIED
+		Case "LAYER_FOREGROUND"
+			Return LAYER_FOREGROUND
+		Case "LAYER_BACKGROUND"
+			Return LAYER_BACKGROUND
+		
+		Case "PARTICLE_TYPE_IMG"
+			Return PARTICLE_TYPE_IMG
+		Case "PARTICLE_TYPE_ANIM"
+			Return PARTICLE_TYPE_ANIM
+		Case "PARTICLE_TYPE_STR"
+			Return PARTICLE_TYPE_STR
+		
+		Case "ANIMATION_DIRECTION_FORWARDS"
+			Return ANIMATION_DIRECTION_FORWARDS
+		Case "ANIMATION_DIRECTION_BACKWARDS"
+			Return ANIMATION_DIRECTION_BACKWARDS
+		
+		
+		
+		Default
+			Return -1
+			
+	End Select
+End Function
 
