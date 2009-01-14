@@ -1,2 +1,181 @@
 [
+	{
+		class: "particle",
+		key: "tank_tread_debris",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "debris" ),
+			layer: LAYER_BACKGROUND,
+			retain: True,
+			frictional_coefficient: 0.05
+		}
+	},
+	{
+		class: "particle",
+		key: "tank_tread_trail_small",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "trail_3" ),
+			layer: LAYER_BACKGROUND,
+			retain: True
+		}
+	},
+	{
+		class: "particle",
+		key: "tank_tread_trail_medium",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "trail_5" ),
+			layer: LAYER_BACKGROUND,
+			retain: True
+		}
+	},
+	{
+		class: "particle",
+		key: "light_tank_track",
+		object: {
+			particle_type: PARTICLE_TYPE_ANIM,
+			img: get_image( "light_tank_track" ),
+			life_time: INFINITY
+		}
+	},
+	{
+		class: "particle",
+		key: "med_tank_track",
+		object: {
+			particle_type: PARTICLE_TYPE_ANIM,
+			img: get_image( "med_tank_track" ),
+			life_time: INFINITY
+		}
+	},
+	{
+		class: "particle",
+		key: "cannon_muzzle_flash",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "muzzle_flash" ),
+			layer: LAYER_FOREGROUND
+		}
+	},
+	{
+		class: "particle",
+		key: "cannon_shell_casing",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "projectile_shell_casing" ),
+			layer: LAYER_FOREGROUND,
+			retain: True,
+			frictional_coefficient: 0.0100
+		}
+	},
+	{
+		class: "particle",
+		key: "cannon_muzzle_smoke",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "muzzle_smoke" ),
+			layer: LAYER_FOREGROUND
+		}
+	},
+	{
+		class: "particle",
+		key: "explosion",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "white_circle" ),
+			layer: LAYER_FOREGROUND,
+			retain: False,
+			frictional_coefficient: 0.0850
+		}
+	},
+	{
+		class: "particle",
+		key: "ricochet_spark",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "spark" ),
+			layer: LAYER_FOREGROUND,
+			retain: False,
+			frictional_coefficient: 0.0150
+		}
+	},
+	{
+		class: "particle",
+		key: "impact_halo",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "halo" ),
+			layer: LAYER_BACKGROUND,
+			retain: False,
+			frictional_coefficient: 0
+		}
+	},
+	{
+		class: "particle",
+		key: "machine_gun_muzzle_flash",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "mgun_muzzle_flash" ),
+			layer: LAYER_FOREGROUND
+		}
+	},
+	{
+		class: "particle",
+		key: "machine_gun_shell_casing",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "mgun_shell_casing" ),
+			layer: LAYER_FOREGROUND,
+			retain: True,
+			frictional_coefficient: 0.0100
+		}
+	},
+	{
+		class: "particle",
+		key: "machine_gun_muzzle_smoke",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "mgun_muzzle_smoke" ),
+			layer: LAYER_FOREGROUND
+		}
+	},
+	{
+		class: "particle",
+		key: "laser_muzzle_flare",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "laser_muzzle_flare" ),
+			layer: LAYER_FOREGROUND,
+			retain: False
+		}
+	},
+	{
+		class: "particle",
+		key: "rocket_thrust",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "rocket_thrust" ),
+			layer: LAYER_BACKGROUND
+		}
+	},
+	{
+		class: "particle",
+		key: "rocket_casing",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "rocket_casing" ),
+			layer: LAYER_FOREGROUND,
+			retain: True,
+			frictional_coefficient: 0.0100
+		}
+	},
+	{
+		class: "particle",
+		key: "rocket_smoke_trail",
+		object: {
+			particle_type: PARTICLE_TYPE_IMG,
+			img: get_image( "muzzle_smoke" ),
+			layer: LAYER_FOREGROUND
+		}
+	}
 ]

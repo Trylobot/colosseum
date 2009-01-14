@@ -28,6 +28,7 @@ Function postfix_index%( amount% = 1 )
 	Return (array_index - amount)
 End Function
 
+Rem
 '______________________________________________________________________________
 '[ PARTICLES ]
 Global particle_archetype:PARTICLE[50]; reset_index()
@@ -71,6 +72,7 @@ Function set_particle_archetypes()
 	particle_archetype[PARTICLE_INDEX_ROCKET_CASING] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "rocket_casing" ),,,,, LAYER_FOREGROUND, True, 0.0100 ))
 	particle_archetype[PARTICLE_INDEX_ROCKET_SMOKE_TRAIL] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "muzzle_smoke" ),,,,, LAYER_FOREGROUND ))
 End Function
+EndRem
 
 '______________________________________________________________________________
 '[ PARTICLE EMITTERS ]
