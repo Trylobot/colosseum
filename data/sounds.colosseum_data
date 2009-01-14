@@ -1,49 +1,90 @@
-{
-	data:
-	[
-		{
+[
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/victory_8-bit.ogg",
 			looping: true
-		},
-		{
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/engine_start.ogg",
 			looping: false
-		},
-		{
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/engine_idle_loop.ogg",
 			looping: true
-		},
-		{
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/cannon.ogg",
 			looping: false
-		},
-		{
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/mgun.ogg",
 			looping: false
-		},
-		{
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/laser.ogg",
 			looping: false
-		},
-		{
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/cannon_hit.ogg",
 			looping: false
-		},
-		{
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/mgun_hit.ogg",
 			looping: false
-		},
-		{
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/laser_hit.ogg",
 			looping: false
-		},
-		{
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/wood_hit.ogg",
 			looping: false
-		},
-		{
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/rocket_launch.ogg",
 			looping: false
 		}
-	]
-}
+	}
+]

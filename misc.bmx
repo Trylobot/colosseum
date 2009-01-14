@@ -78,8 +78,16 @@ End Function
 
 Function one_of%( x%, arr%[] )
 	If arr.Length = 0 Then Return False
-	For Local i% = 0 To arr.Length-1
-		If x = arr[i] Then Return True
+	For Local i% = EachIn arr
+		If x = i Then Return True
+	Next
+	Return False
+End Function
+
+Function contained_in%( x$, arr$[] )
+	If arr.Length = 0 Then Return False
+	For Local i$ = EachIn arr
+		If x = i Then Return True
 	Next
 	Return False
 End Function

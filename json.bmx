@@ -695,6 +695,10 @@ Type TJSON
 	Field Root:TJSONValue = NIL
 	Field LookupKey:TJSONKey = New TJSONKey
 	
+	Method isNIL%()
+		Return Root = NIL
+	End Method
+	
 	Function Create:TJSON( source:Object)
 		Local json:TJSON = New TJSON
 		json.Read( source)

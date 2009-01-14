@@ -32,8 +32,6 @@ Global asset_identifiers$[] = ..
 	"complex_agents", ..
 	"levels" ]
 	
-Global asset_data_heading$ = "data"
-
 Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
 Global image_map:TMap = CreateMap()
@@ -48,48 +46,117 @@ Global turret_map:TMap = CreateMap()
 Global ai_type_map:TMap = CreateMap()
 Global complex_agent_map:TMap = CreateMap()
 Global level_map:TMap = CreateMap()
+
+'_____________________________________________________________________________
+Function load_assets%()
+	Local file:TStream = ReadFile( data_path + default_assets_file_name )
+	If Not file Then Return False
+	Local json:TJSON = TJSON.Create( file )
+	file.Close()
+	If Not json.isNIL() 'read successful
+		Local asset_path$, asset_file:TStream, asset_json:TJSON
+		For Local asset_id$ = EachIn asset_identifiers
+			asset_path = json.GetString( asset_id )
+			asset_file = ReadFile( asset_path )
+			If Not file Then Continue
+			asset_json = TJSON.Create( asset_file )
+			If Not asset_json.isNIL() And TJSONArray(asset_json.Root) 'read successful
+				load_objects( asset_json )
+			End If
+		Next
+		Return True
+	End If
+	Return False
+End Function
+'______________________________________________________________________________
+Function load_objects%( json:TJSON )
+	For Local i% = 0 To TJSONArray(json.Root).Size() - 1
+		Local item:TJSON = TJSON.Create( json.GetObject( String.FromInt( i )))
+		Local key$ = item.GetString( "key" )
+		If key = "{path}" 'special, implicit key
+			key = StripAll( item.GetString( "object.path" ))
+		End If
+		If key And key <> ""
+			Select item.GetString( "class" )
+				Case "font"
+					Local f:TImageFont = Create_TImageFont_from_json( TJSON.Create( item.GetObject( "object" )))
+					If f Then font_map.Insert( key, f )
+				Case "sound"
+					Local s:TSound = Create_TSound_from_json( TJSON.Create( item.GetObject( "object" )))
+					If s Then sound_map.Insert( key, s )
+				Case "image"
+					Local i:TImage = Create_TImage_from_json( TJSON.Create( item.GetObject( "object" )))
+					If i Then image_map.Insert( key, i )
+				Case "prop"
+					Local p:AGENT = Create_AGENT_from_json( TJSON.Create( item.GetObject( "object" )))
+					If p Then prop_map.Insert( key, p )
+				'Case "particle"
+				'	
+				'Case "particle_emitter"
+				'	
+				'Case "projectile"
+				'	
+				'Case "projectile_launcher"
+				'	
+				'Case "widget"
+				'	
+				'Case "pickup"
+				'	
+				'Case "turret_barrel"
+				'	
+				'Case "turret"
+				'	
+				'Case "ai_type"
+				'	
+				'Case "complex_agents"
+				'	
+				'Case "level"
+				'	
+			End Select
+		End If
+	Next
+End Function
+
 '______________________________________________________________________________
 Function get_asset:Object( ref_encoded$ )
-	Local ref$[] = ref_encoded.Split( "|" )
+	Local ref$[] = ref_encoded.Split( "." )
 	If ref.Length >= 2 And ref[0].Length > 0 And ref[1].Length > 0
 		Local asset_type$ = ref[0]
 		Local asset_key$ = ref[1]
-		
 		Select asset_type
-			Case "fonts"
+			Case "font"
 				Return get_font( asset_key )
-			Case "sounds"
+			Case "sound"
 				Return get_sound( asset_key )
-			Case "images"
+			Case "image"
 				Return get_image( asset_key )
-			Case "props"
+			Case "prop"
 				Return get_prop( asset_key )
-'			Case "particles"
+'			Case "particle"
 '				Return get_particle( asset_key )
-'			Case "particle_emitters"
+'			Case "particle_emitter"
 '				Return get_particle_emitter( asset_key )
-'			Case "projectiles"
+'			Case "projectile"
 '				Return get_projectile( asset_key )
-'			Case "projectile_launchers"
+'			Case "projectile_launcher"
 '				Return get_projectile_launcher( asset_key )
-'			Case "widgets"
+'			Case "widget"
 '				Return get_widget( asset_key )
-'			Case "pickups"
+'			Case "pickup"
 '				Return get_pickup( asset_key )
-'			Case "turret_barrels"
+'			Case "turret_barrel"
 '				Return get_turret_barrel( asset_key )
-'			Case "turrets"
+'			Case "turret"
 '				Return get_turret( asset_key )
-			Case "ai_types"
+			Case "ai_type"
 				Return get_ai_type( asset_key )
 '			Case "complex_agents"
 '				Return get_complex_agent( asset_key )
-			Case "levels"
+			Case "level"
 				Return get_level( asset_key )
 		End Select
 		End If
-	
-	Return Null 'invalid asset encoding
+	Return Null
 End Function
 '______________________________________________________________________________
 Function get_keys$[]( map:TMap )
@@ -120,124 +187,51 @@ End Function
 Function get_prop:AGENT( key$ ) 'returns a new instance, which is a copy of the global archetype
 	Return Copy_AGENT( AGENT( prop_map.ValueForKey( key )))
 End Function
-'...
 Function get_ai_type:AI_TYPE( key$ ) 'returns read-only reference
 	Return AI_TYPE( ai_type_map.ValueForKey( key ))
 End Function
-'...
 Function get_level:LEVEL( key$ ) 'returns read-only reference
 	Return LEVEL( level_map.ValueForKey( key ))
 End Function
 
 '_____________________________________________________________________________
-Function load_assets%()
-	Local file:TStream = ReadFile( data_path + default_assets_file_name )
-	If Not file Then Return False
-	Local json:TJSON = TJSON.Create( file )
-	file.Close()
-	'test successful creation of json object (somehow)
-	Local asset_path$, asset_file:TStream, asset_json:TJSON
-	For Local asset_id$ = EachIn asset_identifiers
-		asset_path = json.GetString( asset_id )
-		asset_file = ReadFile( asset_path )
-		If Not file Then Continue
-		asset_json = TJSON.Create( asset_file )
-		'test successful creation of asset_json object (somehow)
-		Select asset_id
-			Case "fonts"
-				load_fonts( asset_json )
-			Case "sounds"
-				load_sounds( asset_json )
-			Case "images"
-				load_images( asset_json )
-			Case "props"
-				load_props( asset_json )
-			'Default
-				'unrecognized asset
-		End Select
-	Next
-	Return True
-End Function
-'_____________________________________________________________________________
-Function load_fonts%( json:TJSON )
-	Local data:TJSONArray = json.GetArray( asset_data_heading )
-	'test successful creation of data object (somehow)
-	Local asset_json_path$
+Function Create_TImageFont_from_json:TImageFont( json:TJSON )
 	Local path$, size%
-	Local font:TImageFont
-	For Local index% = 0 To data.Size()-1
-		asset_json_path = asset_data_heading + "." + index + "."
-		path = json.GetString( asset_json_path + "path" )
-		size = json.GetNumber( asset_json_path + "size" )
-		font = LoadImageFont( path, size, SMOOTHFONT )
-		If font <> Null
-  		font_map.Insert( StripAll( path )+"_"+size, font )
-		End If
-	Next
+	path = json.GetString( "path" )
+	size = json.GetNumber( "size" )
+	Return LoadImageFont( path, size, SMOOTHFONT )
 End Function
 '_____________________________________________________________________________
-Function load_sounds%( json:TJSON )
-	Local data:TJSONArray = json.GetArray( asset_data_heading )
-	'test successful creation of data object (somehow)
-	Local asset_json_path$
+Function Create_TSound_from_json:TSound( json:TJSON )
 	Local path$, looping%
-	Local sound:TSound
-	For Local index% = 0 To data.Size()-1
-		asset_json_path = asset_data_heading + "." + index + "."
-		path = json.GetString( asset_json_path + "path" )
-		looping = json.GetBoolean( asset_json_path + "looping" )
-		sound = LoadSound( path, (looping&SOUND_LOOP) )
-		If sound <> Null
-			sound_map.Insert( StripAll( path ), sound )
-		End If
-	Next
+	path = json.GetString( "path" )
+	looping = json.GetBoolean( "looping" )
+	Return LoadSound( path, (looping&SOUND_LOOP) )
 End Function
 '_____________________________________________________________________________
-Function load_images%( json:TJSON )
-	Local data:TJSONArray = json.GetArray( asset_data_heading )
-	'test successful creation of data object (somehow)
-	Local asset_json_path$
+Function Create_TImage_from_json:TImage( json:TJSON )
 	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%
 	Local img:TImage
 	AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
-	For Local index% = 0 To data.Size()-1
-		asset_json_path = asset_data_heading + "." + index + "."
-		path = json.GetString( asset_json_path + "path" )
-		handle_x = json.GetNumber( asset_json_path + "handle_x" )
-		handle_y = json.GetNumber( asset_json_path + "handle_y" )
-		frames = json.GetNumber( asset_json_path + "frames" )
-		If frames >= 1
-			If frames = 1
-				img = LoadImage( path )
-			Else 'frames > 1
-				frame_width = json.GetNumber( asset_json_path + "frame_width" )
-				frame_height = json.GetNumber( asset_json_path + "frame_height" )
-				img = LoadAnimImage( path, frame_width, frame_height, 0, frames )
-			End If
-			If img <> Null
-				SetImageHandle( img, handle_x, handle_y )
-				image_map.Insert( StripAll( path ), img )
-			End If
+	path = json.GetString( "path" )
+	frames = json.GetNumber( "frames" )
+	If frames >= 1
+		If frames = 1
+			img = LoadImage( path )
+		Else 'frames > 1
+			frame_width = json.GetNumber( "frame_width" )
+			frame_height = json.GetNumber( "frame_height" )
+			img = LoadAnimImage( path, frame_width, frame_height, 0, frames )
 		End If
-	Next
+		If img
+			handle_x = json.GetNumber( "handle_x" )
+			handle_y = json.GetNumber( "handle_y" )
+			SetImageHandle( img, handle_x, handle_y )
+			Return img
+		End If
+	End If
+	Return Null
 End Function
-'______________________________________________________________________________
-Function load_props%( json:TJSON )
-	Local data:TJSONArray = json.GetArray( asset_data_heading )
-	'test successful creation of data object (somehow)
-	Local asset_json_path$
-	Local json_cur:TJSON
-	Local prop:AGENT
-	Local key$
-	For Local index% = 0 To data.Size()-1
-		asset_json_path = asset_data_heading + "." + index
-		json_cur = TJSON.Create( json.GetObject( asset_json_path ))
-		key = json_cur.GetString( "key" )
-		prop = Create_AGENT_from_json( json_cur )
-		prop_map.Insert( key, prop )
-	Next
-End Function
-
 '______________________________________________________________________________
 Function load_level:LEVEL( path$ )
 	Local file:TStream, json:TJSON
