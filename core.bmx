@@ -103,7 +103,33 @@ End Function
 '______________________________________________________________________________
 Function init_ai_menu_game()
 	ai_menu_game = Create_ENVIRONMENT( False )
-	'create the AI menu game level programmatically, with size matched to screen
+	'AI Menu Game - dynamic-sized level
+	Local lev:LEVEL = Create_LEVEL( window_w, window_h )
+	Local sp:SPAWNER = New SPAWNER
+	'spawner 1, left side
+	sp.pos = Create_POINT( 20, window_h/2, 0 )
+	sp.class = SPAWNER.class_TURRET_ANCHOR
+	sp.alignment = ALIGNMENT_FRIENDLY
+	Local squad% = sp.add_new_squad()
+	sp.add_new_squadmember( squad, ENEMY_INDEX_MR_THE_BOX )
+	sp.add_new_squadmember( squad, ENEMY_INDEX_MR_THE_BOX )
+	sp.add_new_squadmember( squad, ENEMY_INDEX_MR_THE_BOX )
+	sp.add_new_squadmember( squad, ENEMY_INDEX_MR_THE_BOX )
+	lev.add_spawner( sp )
+	'spawner 2, right side
+	sp = sp.clone()
+	sp.pos = Create_POINT( window_w - 20, window_h/2, -180 )
+	sp.alignment = ALIGNMENT_HOSTILE
+	lev.add_spawner( sp )
+	'barrier
+	lev.add_divider( window_w/2 - window_w/12, LINE_TYPE_VERTICAL )
+	lev.add_divider( window_w/2 + window_w/12, LINE_TYPE_VERTICAL )
+	lev.add_divider( window_h/2 - window_h/8,  LINE_TYPE_HORIZONTAL )
+	lev.add_divider( window_h/2 + window_h/8,  LINE_TYPE_HORIZONTAL )
+	lev.set_path_region( CELL.Create( 1, 1 ), True )
+	'initialize
+	ai_menu_game.load_level( lev )
+	ai_menu_game.game_in_progress = True
 End Function
 
 '______________________________________________________________________________

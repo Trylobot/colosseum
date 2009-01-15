@@ -135,19 +135,24 @@ Type ENVIRONMENT
 		player = Null
 	End Method
 	
-	Method load_level%( path$, generate_images% = True )
-		Local file:TStream = ReadFile( path )
-		If Not file
-			Return False 'indicate failure
+	Method load_level%( argument:Object, generate_images% = True )
+		'level
+		If String( argument )
+			Local file:TStream = ReadFile( String( argument ))
+			If Not file
+				Return False 'indicate failure
+			End If
+			Local json:TJSON = TJSON.Create( file )
+			file.Close()
+			lev = Create_LEVEL_from_json( json )
+			If lev = Null
+				Return False 'indicate failure
+			End If
+		Else If LEVEL( argument )
+			lev = LEVEL( argument )
 		End If
-		Local json:TJSON = TJSON.Create( file )
-		file.Close()
-		lev = Create_LEVEL_from_json( json )
-		If lev = Null
-			Return False 'indicate failure
-		End If
+		'camera bounding
 		calculate_camera_constraints()
-		
 		'pathing (AI bots)
 		pathing = PATHING_STRUCTURE.Create( lev )
 		'walls (Collisions)

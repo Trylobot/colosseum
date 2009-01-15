@@ -38,6 +38,7 @@ Type SPAWNER
 		squads[squads.Length-1] = Null
 		delay_time = delay_time[..delay_time.Length+1]
 		delay_time[delay_time.Length-1] = 0
+		Return (squads.Length - 1) 'return index of new squad
 	End Method
 	
 	Method remove_squad( squad%[] )

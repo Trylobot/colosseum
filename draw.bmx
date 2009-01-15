@@ -22,10 +22,10 @@ Function draw_all_graphics()
 	SetScale( 1, 1 )
 
 	If FLAG_in_menu
-		draw_main_screen()
 		If game <> Null
 			draw_game()
 		End If
+		draw_main_screen()
 	Else If FLAG_in_shop
 		draw_shop()
 	Else If game <> Null
@@ -172,6 +172,11 @@ End Function
 'Menu and GUI
 Function draw_main_screen()
 	Local x%, y%, h%
+	
+	'dimmer
+	SetColor( 0, 0, 0 )
+	SetAlpha( 0.3333 )
+	DrawRect( 0, 0, window_w, window_h )
 	
 	'title
 	x = 25; y = 25
