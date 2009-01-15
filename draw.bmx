@@ -21,15 +21,13 @@ Function draw_all_graphics()
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 
+	If game <> Null
+		draw_game()
+	End If
 	If FLAG_in_menu
-		If game <> Null
-			draw_game()
-		End If
 		draw_main_screen()
 	Else If FLAG_in_shop
 		draw_shop()
-	Else If game <> Null
-		draw_game()
 	End If
 	
 	check_instaquit()
