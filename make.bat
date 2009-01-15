@@ -1,2 +1,2 @@
-bmk makeapp -a colosseum.blide_project.bmx
+bmk makeapp -a -r -t gui -o Colosseum.exe colosseum.blide_project.bmx
 pause

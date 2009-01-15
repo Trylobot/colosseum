@@ -122,8 +122,8 @@ Function init_ai_menu_game()
 	sp.alignment = ALIGNMENT_HOSTILE
 	lev.add_spawner( sp )
 	'barrier
-	lev.add_divider( window_w/2 - window_w/12, LINE_TYPE_VERTICAL )
-	lev.add_divider( window_w/2 + window_w/12, LINE_TYPE_VERTICAL )
+	lev.add_divider( window_w/2 - window_w/16, LINE_TYPE_VERTICAL )
+	lev.add_divider( window_w/2 + window_w/16, LINE_TYPE_VERTICAL )
 	lev.add_divider( window_h/2 - window_h/8,  LINE_TYPE_HORIZONTAL )
 	lev.add_divider( window_h/2 + window_h/8,  LINE_TYPE_HORIZONTAL )
 	lev.set_path_region( CELL.Create( 1, 1 ), True )
@@ -142,40 +142,27 @@ Function get_player_id%()
 End Function
 '______________________________________________________________________________
 'Instaquit: quit instantly from anywhere, just hold ESC for a few seconds
-Global esc_held% = False, esc_press_ts% = now()
-Global esc_held_progress_bar_show_time_required% = 200, instaquit_time_required% = 1000
+Global esc_held% = False
+Global esc_press_ts% = now()
+Global esc_held_progress_bar_show_time_required% = 200
+Global instaquit_time_required% = 1000
 
 Function check_instaquit()
-	If KeyDown( KEY_ESCAPE ) And Not esc_held
-		esc_press_ts = now()
-		esc_held = True
-	Else If KeyDown( KEY_ESCAPE ) 'esc_held
-		If (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
-			draw_instaquit_progress()
-		End If
-		If (now() - esc_press_ts) >= instaquit_time_required
-			End
+	If KeyDown( KEY_ESCAPE )
+		If Not esc_held
+			esc_press_ts = now()
+			esc_held = True
+		Else 'esc_held
+			If (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
+				draw_instaquit_progress()
+			End If
+			If (now() - esc_press_ts) >= instaquit_time_required
+				End
+			End If
 		End If
 	Else
 		esc_held = False
 	End If
-End Function
-
-Function draw_instaquit_progress()
-	Local alpha_multiplier# = time_alpha_pct( esc_press_ts + esc_held_progress_bar_show_time_required, esc_held_progress_bar_show_time_required )
-	
-	SetAlpha( 0.5 * alpha_multiplier )
-	SetColor( 0, 0, 0 )
-	DrawRect( 0,0, window_w,window_h )
-	
-	SetAlpha( 1.0 * alpha_multiplier )
-	SetColor( 255, 255, 255 )
-	SetRotation( 0 )
-	SetScale( 1, 1 )
-	draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required - 50 ))
-	Local str$ = "continue holding ESC to quit"
-	SetImageFont( get_font( "consolas_bold_24" ))
-	DrawText( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
 End Function
 
 '______________________________________________________________________________

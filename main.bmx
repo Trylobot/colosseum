@@ -78,32 +78,25 @@ init_graphics()
 'MAIN
 Local before%
 init_ai_menu_game()
+
 ?Debug
 Global FLAG_debug_overlay% = False
 Global fps%, last_frame_ts%, time_count%, frame_count%
-'play_level( data_path + "debug" + "." + level_file_ext, 0 )
-'menu_command( COMMAND_EDIT_LEVEL )
 ?
+
 Repeat
 	
 	'game object
-	If FLAG_in_menu
+	If FLAG_in_menu Or FLAG_in_shop
 		game = ai_menu_game
-	Else If FLAG_in_shop
-		game = Null
 	Else
 		game = main_game
 	End If
 	
-'	If network_mode <> NETWORK_MODE_SERVER
-		get_all_input()
-		check_instaquit()
-		If KeyHit( KEY_F12 )
-			screenshot()
-		End If
-'	End If
-	
-	'update_network()
+	get_all_input()
+	If KeyHit( KEY_F12 )
+		screenshot()
+	End If
 	
 	'simulation speed (decoupled from draw speed)
 	If (now() - before) > (1000/60) ' = 60 hertz
@@ -116,10 +109,8 @@ Repeat
 	
 	Cls()
 	
-'	If network_mode <> NETWORK_MODE_SERVER
-		draw_all_graphics()
-		play_all_audio()
-'	End If
+	draw_all_graphics()
+	play_all_audio()
 	
 	?Debug
 	frame_count :+ 1
@@ -158,3 +149,4 @@ Repeat
 	
 Until AppTerminate()
 If AppTerminate() Then End
+

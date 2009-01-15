@@ -5,12 +5,11 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-'clock and random
+'random
 SeedRnd MilliSecs()
-Global clock:TTimer = CreateTimer( 1000 )
-
+'clock
 Function now%()
-	Return clock.Ticks()
+	Return MilliSecs()
 End Function
 
 Function Pow#( x#, p% )

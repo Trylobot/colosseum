@@ -32,6 +32,8 @@ Function draw_all_graphics()
 		draw_game()
 	End If
 	
+	check_instaquit()
+	
 End Function
 
 'Function draw_loading()
@@ -641,4 +643,25 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 	Next
 	Return LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
 End Function
+'______________________________________________________________________________
+Function draw_instaquit_progress()
+	SetOrigin( 0, 0 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+
+	Local alpha_multiplier# = time_alpha_pct( esc_press_ts + esc_held_progress_bar_show_time_required, esc_held_progress_bar_show_time_required )
+
+	SetAlpha( 0.5 * alpha_multiplier )
+	SetColor( 0, 0, 0 )
+	DrawRect( 0,0, window_w,window_h )
+
+	SetAlpha( 1.0 * alpha_multiplier )
+	SetColor( 255, 255, 255 )
+	draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required - 50 ))
+
+	Local str$ = "continue holding ESC to quit"
+	SetImageFont( get_font( "consolas_bold_24" ))
+	DrawText( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
+End Function
+
 
