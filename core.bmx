@@ -127,9 +127,13 @@ Function init_ai_menu_game()
 	lev.add_divider( window_h/2 - window_h/8,  LINE_TYPE_HORIZONTAL )
 	lev.add_divider( window_h/2 + window_h/8,  LINE_TYPE_HORIZONTAL )
 	lev.set_path_region( CELL.Create( 1, 1 ), True )
-	'initialize
+	'load level
 	ai_menu_game.load_level( lev )
+	'flags
 	ai_menu_game.game_in_progress = True
+	ai_menu_game.battle_state_toggle_ts = now()
+	ai_menu_game.waiting_for_player_to_exit_arena = True
+	ai_menu_game.spawn_enemies = True
 End Function
 
 '______________________________________________________________________________
