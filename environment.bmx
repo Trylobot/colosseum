@@ -57,6 +57,7 @@ Type ENVIRONMENT
 	Field control_brain_list:TList 'TList<CONTROL_BRAIN>
 	
 	Field level_enemy_count% 'number of enemies that could possibly be spawned
+	Field active_units%
 	Field level_enemies_killed% 'number of enemies that have been killed since being spawned
 	
 	Field human_participation% 'flag indicating whether any humans will ever participate in this game
@@ -71,6 +72,7 @@ Type ENVIRONMENT
 	Field battle_state_toggle_ts%
 	Field waiting_for_player_to_exit_arena%
 	Field spawn_enemies%
+	Field auto_reset_spawners%
 
 	Field player_spawn_point:POINT 'reference to the spawnpoint that will spawn or has spawned that player
 	Field player_brain:CONTROL_BRAIN 'reference to that player's brain object
@@ -186,21 +188,9 @@ Type ENVIRONMENT
 				End Select
 			End If
 		Next
-		'spawn queues
-		spawn_cursor = New CELL[lev.spawners.Length] 'automagically initialized to (0, 0); exactly where it needs to be :)
-		spawn_ts = New Int[lev.spawners.Length]
-		last_spawned = New COMPLEX_AGENT[lev.spawners.Length]
-		spawn_counter = New Int[lev.spawners.Length]
-		For Local i% = 0 To lev.spawners.Length-1
-			spawn_cursor[i] = New CELL
-			spawn_ts[i] = now()
-			last_spawned[i] = Null
-			spawn_counter[i] = 0
-		Next
-		'flags
-		level_enemy_count = lev.enemy_count()
-		level_enemies_killed = 0
-		'indicate success
+		'spawning system
+		reset_spawners()
+		'indicate success to caller
 		Return True
 	End Method
 	
@@ -221,6 +211,24 @@ Type ENVIRONMENT
 '		End If
 	End Method
 	
+	Method reset_spawners()
+		'spawn queues and tracking info
+		spawn_cursor = New CELL[lev.spawners.Length] 'automagically initialized to (0, 0); exactly where it needs to be :)
+		spawn_ts = New Int[lev.spawners.Length]
+		last_spawned = New COMPLEX_AGENT[lev.spawners.Length]
+		spawn_counter = New Int[lev.spawners.Length]
+		For Local i% = 0 To lev.spawners.Length-1
+			spawn_cursor[i] = New CELL
+			spawn_ts[i] = now()
+			last_spawned[i] = Null
+			spawn_counter[i] = 0
+		Next
+		'flags
+		active_units = 0
+		level_enemies_killed = 0
+		level_enemy_count = lev.enemy_count()
+	End Method
+	
 	'returns a list of agents spawned
 	Method spawning_system_update:TList()
 		Local spawned:TList = CreateList()
@@ -236,13 +244,14 @@ Type ENVIRONMENT
 			If counter < sp.size
 				'if it is time to spawn this spawner's current squad
 				If now() - ts >= sp.delay_time[cur.row]
-					'if this squad is just started, or the last spawned enemy is far enough away, or dead or null
+					'if this squad has just been started, or the last spawned enemy is away, dead or null
 					If cur.col = 0 Or last = Null Or last.dead() Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
 						Local ag:COMPLEX_AGENT = spawn_agent( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
 						last_spawned[i] = ag
 						spawned.addLast( ag )
-						'counter
+						'counters
 						spawn_counter[i] :+ 1
+						active_units :+ 1
 						cur.col :+ 1
 						'if that last guy was the last squadmember of the current squad
 						If cur.col > sp.squads[cur.row].Length-1
@@ -252,8 +261,11 @@ Type ENVIRONMENT
 							'restart delay timer
 							spawn_ts[i] = now()
 						End If
+					Else
 					End If
+				Else
 				End If
+			Else
 			End If
 		Next
 		Return spawned
@@ -302,6 +314,7 @@ Type ENVIRONMENT
 			player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
 			player.move_to( player_spawn_point )
 			player.snap_all_turrets()
+			active_units :+ 1
 		End If
 	End Method
 	

@@ -66,7 +66,7 @@ End Function
 'Game State Flags, Mouse, and Drawing Origin Update
 Function update_flags()
 	If game <> Null
-		'player-related stuff
+		'flag updates for games with human participation
 		If game.human_participation
 			'local origin
 			If game.player <> Null
@@ -91,6 +91,13 @@ Function update_flags()
 				game.game_in_progress = False
 				game.player_engine_running = False
 			End If
+			'no more enemies?
+			If game.battle_in_progress And game.level_enemies_killed >= game.level_enemy_count
+				game.battle_in_progress = False
+				game.battle_state_toggle_ts = now()
+				If game.hostile_doors_status = ENVIRONMENT.DOOR_STATUS_OPEN Then game.activate_doors( ALIGNMENT_HOSTILE )
+				game.spawn_enemies = False
+			End If
 			'if waiting for player to enter arena
 			If game.waiting_for_player_to_enter_arena
 				'if player has not entered the arena
@@ -111,18 +118,13 @@ Function update_flags()
 					game.spawn_enemies = True
 				End If
 			End If
-			'if there are no more enemies left
-			If game.battle_in_progress And game.level_enemies_killed >= game.level_enemy_count
-				game.battle_in_progress = False
-				game.battle_state_toggle_ts = now()
-				If game.hostile_doors_status = ENVIRONMENT.DOOR_STATUS_OPEN Then game.activate_doors( ALIGNMENT_HOSTILE )
-				game.spawn_enemies = False
-			End If
 			'if the battle is over, and player has exited the arena
 			If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena And KeyDown( KEY_R )
 				FLAG_in_shop = True
 				game.clear()
 			End If
+		Else If game.battle_in_progress And game.active_units <= 0 And game.auto_reset_spawners 'Not game.human_participation
+			game.reset_spawners()
 		End If
 	End If
 End Function

@@ -124,7 +124,7 @@ Repeat
 	If KeyHit( KEY_TILDE )
 		FLAG_debug_overlay = Not FLAG_debug_overlay
 	End If
-	If game <> Null And game.player <> Null And FLAG_debug_overlay And Not FLAG_in_menu
+	If game <> Null And FLAG_debug_overlay
 		debug_overlay()
 		debug_fps()
 		'debug_agent_lists()

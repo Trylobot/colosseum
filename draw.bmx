@@ -21,15 +21,26 @@ Function draw_all_graphics()
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 
+	'game content
 	If game <> Null
 		draw_game()
 	End If
-	If FLAG_in_menu
-		draw_main_screen()
-	Else If FLAG_in_shop
-		draw_shop()
+	
+	'menus and such
+	If FLAG_in_menu Or FLAG_in_shop
+		'dimmer
+		SetColor( 0, 0, 0 )
+		SetAlpha( 0.3333 )
+		DrawRect( 0, 0, window_w, window_h )
+		
+		If FLAG_in_menu
+			draw_main_screen()
+		Else 'FLAG_in_shop
+			draw_shop()
+		End If
 	End If
 	
+	'so-called "insta-quit" feature
 	check_instaquit()
 	
 End Function
@@ -81,7 +92,9 @@ Function draw_game()
 
 	'arena foreground
 	draw_arena_fg()
-	draw_lighting_and_effects()
+	If game.human_participation
+		draw_lighting_and_effects()
+	End If
 	SetColor( 255, 255, 255 )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
@@ -173,11 +186,6 @@ End Function
 Function draw_main_screen()
 	Local x%, y%, h%
 	
-	'dimmer
-	SetColor( 0, 0, 0 )
-	SetAlpha( 0.3333 )
-	DrawRect( 0, 0, window_w, window_h )
-	
 	'title
 	x = 25; y = 25
 	SetColor( 255, 255, 127 )
@@ -188,8 +196,8 @@ Function draw_main_screen()
 	SetColor( 157, 157, 157 )
 	SetImageFont( get_font( "consolas_10" ))
 	h = 0.75*GetImageFont().Height()
-	x = 1
-	y = window_h - h*2 - 1
+	x = 1 + 20
+	y = window_h - h*2 - 1 - 20
 	DrawText( "Colosseum (c) 2008 Tyler W.R. Cole, aka Tylerbot; music by NickPerrin; json binding by grable", x, y ); y :+ h
 	DrawText( "special thanks to Kaze, SniperAceX, Firelord88, ZieramsFolly; written in BlitzMax", x, y ); y :+ h
 	

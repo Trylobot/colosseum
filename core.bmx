@@ -102,38 +102,71 @@ End Function
 
 '______________________________________________________________________________
 Function init_ai_menu_game()
-	ai_menu_game = Create_ENVIRONMENT( False )
+	ai_menu_game = Create_ENVIRONMENT()
 	'AI Menu Game - dynamic-sized level
 	Local lev:LEVEL = Create_LEVEL( window_w, window_h )
-	Local sp:SPAWNER = New SPAWNER
-	'spawner 1, left side
-	sp.pos = Create_POINT( 20, window_h/2, 0 )
+	Local sp:SPAWNER, squad%
+	'spawner 0, top
+	sp = New SPAWNER
+	sp.pos = Create_POINT( window_w/2, 20, 90 )
 	sp.class = SPAWNER.class_TURRET_ANCHOR
 	sp.alignment = ALIGNMENT_FRIENDLY
-	Local squad% = sp.add_new_squad()
-	sp.add_new_squadmember( squad, ENEMY_INDEX_MR_THE_BOX )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_MR_THE_BOX )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_MR_THE_BOX )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_MR_THE_BOX )
+	squad = sp.add_new_squad()
+	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
+	sp.set_delay_time( squad, 500 )
 	lev.add_spawner( sp )
-	'spawner 2, right side
-	sp = sp.clone()
-	sp.pos = Create_POINT( window_w - 20, window_h/2, -180 )
+	'spawner 1, bottom
+	sp = New SPAWNER
+	sp.pos = Create_POINT( window_w/2, window_h - 20, -90 )
+	sp.class = SPAWNER.class_TURRET_ANCHOR
 	sp.alignment = ALIGNMENT_HOSTILE
+	squad = sp.add_new_squad()
+	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
+	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
+	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
+	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
+	sp.set_delay_time( squad, 500 )
 	lev.add_spawner( sp )
-	'barrier
-	lev.add_divider( window_w/2 - window_w/16, LINE_TYPE_VERTICAL )
-	lev.add_divider( window_w/2 + window_w/16, LINE_TYPE_VERTICAL )
-	lev.add_divider( window_h/2 - window_h/8,  LINE_TYPE_HORIZONTAL )
-	lev.add_divider( window_h/2 + window_h/8,  LINE_TYPE_HORIZONTAL )
-	lev.set_path_region( CELL.Create( 1, 1 ), True )
-	'load level
+	'walls
+	lev.add_divider( 10, LINE_TYPE_VERTICAL )
+	lev.add_divider( window_w - 10, LINE_TYPE_VERTICAL )
+	lev.add_divider( window_w/2 - window_w/4,  LINE_TYPE_VERTICAL )
+	lev.add_divider( window_w/2 + window_w/4,  LINE_TYPE_VERTICAL )
+	lev.add_divider( 10, LINE_TYPE_HORIZONTAL )
+	lev.add_divider( window_h - 10, LINE_TYPE_HORIZONTAL )
+	lev.add_divider( window_h/2 - window_h/16, LINE_TYPE_HORIZONTAL )
+	lev.add_divider( window_h/2 + window_h/16, LINE_TYPE_HORIZONTAL )
+	lev.set_path_region( CELL.Create( 0, 0 ), True )
+	lev.set_path_region( CELL.Create( 0, 1 ), True )
+	lev.set_path_region( CELL.Create( 0, 2 ), True )
+	lev.set_path_region( CELL.Create( 0, 3 ), True )
+	lev.set_path_region( CELL.Create( 0, 4 ), True )
+	lev.set_path_region( CELL.Create( 1, 0 ), True )
+	lev.set_path_region( CELL.Create( 1, 4 ), True )
+	lev.set_path_region( CELL.Create( 2, 0 ), True )
+	lev.set_path_region( CELL.Create( 2, 2 ), True )
+	lev.set_path_region( CELL.Create( 2, 4 ), True )
+	lev.set_path_region( CELL.Create( 3, 0 ), True )
+	lev.set_path_region( CELL.Create( 3, 4 ), True )
+	lev.set_path_region( CELL.Create( 4, 0 ), True )
+	lev.set_path_region( CELL.Create( 4, 1 ), True )
+	lev.set_path_region( CELL.Create( 4, 2 ), True )
+	lev.set_path_region( CELL.Create( 4, 3 ), True )
+	lev.set_path_region( CELL.Create( 4, 4 ), True )
+	'load
 	ai_menu_game.load_level( lev )
-	'flags
+	'set flags
 	ai_menu_game.game_in_progress = True
-	ai_menu_game.battle_state_toggle_ts = now()
-	ai_menu_game.waiting_for_player_to_exit_arena = True
+	ai_menu_game.battle_in_progress = True
 	ai_menu_game.spawn_enemies = True
+	ai_menu_game.auto_reset_spawners = True
+	'mouse data (for debugging)
+	ai_menu_game.mouse = mouse
 End Function
 
 '______________________________________________________________________________

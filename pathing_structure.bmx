@@ -129,6 +129,7 @@ Type PATHING_STRUCTURE
 		While Not CELL(list.First()).eq( start )
 			list.AddFirst( came_from( CELL(list.First()) ))
 		End While
+		list.AddFirst( start.clone() )
 		Return list
 	End Method
 	

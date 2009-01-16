@@ -443,34 +443,34 @@ EndType
 Type TJSONParser
 	Const ARRAY_GROW_SIZE:Int = 32
 
+	Const OBJECT_START:Byte = Asc("{")
+	Const OBJECT_STOP:Byte = Asc("}")		
+	Const ARRAY_START:Byte = Asc("[")
+	Const ARRAY_STOP:Byte = Asc("]")
+	Const FIELD_SEP:Byte = Asc(":")
+	Const ELEM_SEP:Byte = Asc(",")
+	Const IDENT_START1:Byte = Asc("a")
+	Const IDENT_STOP1:Byte = Asc("z")
+	Const IDENT_START2:Byte = Asc("A")
+	Const IDENT_STOP2:Byte = Asc("Z")
+	Const UNDERSCORE:Byte = Asc("_")
+	Const MINUS:Byte = Asc("-")		
+	Const NUMBER_START:Byte = Asc("0")
+	Const NUMBER_STOP:Byte = Asc("9")
+	Const NUMBER_SEP:Byte = Asc(".")
+	Const STRING_START1:Byte = Asc("~q")
+	Const STRING_START2:Byte = Asc("'")
+	Const STRING_ESC:Byte = Asc("\")
+	Const SPACE:Byte = Asc(" ")
+	Const TAB:Byte = Asc("~t")
+	Const CR:Byte = Asc("~r")
+	Const LF:Byte = Asc( "~n")
+
 	Field Source:String
 	Field Index:Int
 	Field MakeLowerCase:Int
 	
 	Method Parse:TJSONValue()
-		Const OBJECT_START:Byte = Asc("{")
-		Const OBJECT_STOP:Byte = Asc("}")		
-		Const ARRAY_START:Byte = Asc("[")
-		Const ARRAY_STOP:Byte = Asc("]")
-		Const FIELD_SEP:Byte = Asc(":")
-		Const ELEM_SEP:Byte = Asc(",")
-		Const IDENT_START1:Byte = Asc("a")
-		Const IDENT_STOP1:Byte = Asc("z")
-		Const IDENT_START2:Byte = Asc("A")
-		Const IDENT_STOP2:Byte = Asc("Z")
-		Const UNDERSCORE:Byte = Asc("_")
-		Const MINUS:Byte = Asc("-")		
-		Const NUMBER_START:Byte = Asc("0")
-		Const NUMBER_STOP:Byte = Asc("9")
-		Const NUMBER_SEP:Byte = Asc(".")
-		Const STRING_START1:Byte = Asc("~q")
-		Const STRING_START2:Byte = Asc("'")
-		Const STRING_ESC:Byte = Asc("\")
-		Const SPACE:Byte = Asc(" ")
-		Const TAB:Byte = Asc("~t")
-		Const CR:Byte = Asc("~r")
-		Const LF:Byte = Asc( "~n")
-		
 		Local c:Byte
 		' skip whitspace & crlf		
 		While Index < Source.Length
@@ -918,11 +918,9 @@ Function GetNext:String( value:String Var, sep:String)
 EndFunction
 
 Function IsNumber:Int( value:String)
-	Const START:Int = Asc("0")
-	Const STOP:Int = Asc("9")		
 	For Local i:Int = 0 Until value.Length
 		Local c:Byte = value[i]  
-		If (c < START) Or (c > STOP) Then Return False
+		If (c < TJSONParser.NUMBER_START) Or (c > TJSONParser.NUMBER_STOP) Then Return False
 	Next
 	Return True
 EndFunction

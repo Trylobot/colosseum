@@ -62,6 +62,9 @@ Function draw_shop()
 '	Else
 		SetLineWidth( 1 )
 		SetColor( 127, 127, 127 )
+		SetAlpha( 0.33333 )
+		DrawRect( x, y, profile.inventory.Length*spacing, spacing )
+		SetAlpha( 1 )
 		DrawRectLines( x, y, profile.inventory.Length*spacing, spacing )
 		SetColor( 255, 255, 255 )
 		cx = x + spacing/2

@@ -46,6 +46,9 @@ Function debug_drawtext( message$, h% = 10 )
 	GetColor( r, g, b )
 	SetColor( 0, 0, 0 )
 	DrawText( message, sx+1, sy+1 )
+	DrawText( message, sx-1, sy+1 )
+	DrawText( message, sx+1, sy-1 )
+	DrawText( message, sx-1, sy-1 )
 	SetColor( r, g, b )
 	DrawText( message, sx, sy )
 	sy :+ h
@@ -88,9 +91,10 @@ Function debug_fps()
 	SetAlpha( 1 )
 	SetColor( 255, 255, 127 )
 	SetImageFont( get_font( "consolas_bold_24" ))
-	sx = window_w - TextWidth( String.FromInt( fps ))
-	sy = window_h - GetImageFont().Height() - 30
-	DrawText( String.FromInt( fps ), sx, sy )
+	Local fps_str$ = "fps "+fps
+	sx = window_w - TextWidth( fps_str ) - 30
+	sy = window_h - GetImageFont().Height() - 25
+	DrawText( fps_str, sx, sy )
 End Function
 '______________________________________________________________________________
 Function debug_agent_lists( to_console% = False )
@@ -120,9 +124,12 @@ Function debug_overlay()
 	SetScale( 1, 1 )
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
-	SetOrigin( 0, 0 )
 	
-	sx = 2; sy = 2
+	If game <> Null
+		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+	End If
+	
+	sx = game.mouse.x + 16; sy = game.mouse.y
 	
 '	If cb <> Null
 '		'keyboard help
@@ -131,31 +138,20 @@ Function debug_overlay()
 '		debug_drawtext( "[3]: see target" )
 '		debug_drawtext( "[4]: player path to mouse" )
 '	End If
-	debug_drawtext( "("+debug_origin.x+","+debug_origin.y+")", 18 )
-	debug_drawtext( "enemies "+game.hostile_agent_list.Count() )
+	'debug_drawtext( "("+debug_origin.x+","+debug_origin.y+")", 18 )
+	debug_drawtext( "units "+game.active_units )
 	Local sp:SPAWNER, cur:CELL, ts%, last:COMPLEX_AGENT, counter%, str$
-	debug_drawtext( "spawners "+game.lev.spawners.Length )
 	For Local i% = 0 To game.lev.spawners.Length-1
 		sp = game.lev.spawners[i]
-		cur = game.spawn_cursor[i]
-		ts = game.spawn_ts[i]
-		last = game.last_spawned[i]
+		'cur = game.spawn_cursor[i]
+		'ts = game.spawn_ts[i]
+		'last = game.last_spawned[i]
 		counter = game.spawn_counter[i]
 		If     ( sp.alignment = ALIGNMENT_FRIENDLY ) SetColor( 127, 127, 255 ) ..
 		Else If( sp.alignment = ALIGNMENT_HOSTILE )  SetColor( 255, 127, 127 )
-		str = " sp["+i+"] "+counter+"/"+sp.size+" "
-		'if this spawner has more enemies to spawn
-		If counter < sp.size
-			str :+ "ACTIVE"
-'		Else
-'			str :+ ""
-		End If
-		debug_drawtext( str )
+		debug_drawtext( "spawner["+i+"] "+(sp.size - counter) )
 	Next
-	
-	If game <> Null
-		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
-	End If
+	debug_drawtext( "" ) 'newline
 	
 	SetColor( 255, 255, 255 )
 	'show pathing grid divisions
@@ -169,28 +165,34 @@ Function debug_overlay()
 
 	SetColor( 255, 255, 255 )
 	
+	'find closest brain/avatar
+	Local closest_cb:CONTROL_BRAIN = Null
+	Local dist%, closest_dist% = 15
+	For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
+		dist = brain.avatar.dist_to_cVEC( game.mouse )
+		If dist < closest_dist
+			closest_dist = dist
+			closest_cb = brain
+		End If
+	Next
+	
+	'select control_brain/avatar for inspection
 	If KeyHit( KEY_Q )
-		cb = Null
-		For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
-			If brain.avatar.dist_to_cVEC( game.mouse ) <= 15
-				cb = brain
-				Exit
-			End If
-		Next
-	Else
-		For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
-			If brain.avatar.dist_to_cVEC( game.mouse ) <= 15
-				SetColor( 255, 255, 255 )
-				SetAlpha( 0.333 )
-				DrawOval( brain.avatar.pos_x-15,brain.avatar.pos_y-15, 30,30 )
-			End If
-		Next
+		cb = closest_cb
+	Else If closest_cb <> Null
+		DrawOval( closest_cb.avatar.pos_x-15,closest_cb.avatar.pos_y-15, 30,30 )
 	End If
 	
-	If cb <> Null
+	'instantly kill avatar under cursor
+	If KeyDown( KEY_K ) And closest_cb <> Null
+		closest_cb.avatar.die( True, True )
+		game.active_units :- 1
+	End If
+
+	If cb <> Null And cb.managed()
 		
 		'manipulate by keyboard
-		If KeyDown( KEY_1 )
+		If KeyDown( KEY_1 ) And game.player <> Null
 			cb.target = game.player
 		End If
 		If KeyDown( KEY_2 )
@@ -200,12 +202,11 @@ Function debug_overlay()
 			'cb.sighted_target = cb.see_target()
 			'cb.see_target_DEBUG()
 		End If
-		If KeyDown( KEY_4 )
+		If KeyDown( KEY_4 ) And game.player <> Null
 			game.player_brain.path = game.find_path( game.player.pos_x, game.player.pos_y, game.mouse.x, game.mouse.y )
 		End If
 		
 		'draw info
-		sx = game.mouse.x + 16; sy = game.mouse.y
 		debug_drawtext( cb.avatar.name )
 		If cb.target <> Null
 			debug_drawtext( "target -> " + cb.target.name )
