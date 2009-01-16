@@ -481,5 +481,25 @@ Type ENVIRONMENT
 		End If
 	End Method
 	
+	Method near_to:TList( obj:PHYSICAL_OBJECT, radius# )
+		'future optimization:
+		'  since the drop-off formula for forces and damage use the square of the distance
+		'  only calculate the square of the distances; do not bother calculating the actual distances
+		'  this will save a "square-root" operation for each physical object in the current game.
+		Local proximal:TList = CreateList()
+		For Local proj:PROJECTILE = EachIn projectile_list
+			If obj.dist_to( proj ) <= radius Then proximal.AddLast( proj )
+		Next
+		For Local ag:AGENT = EachIn prop_list
+			If obj.dist_to( ag ) <= radius Then proximal.AddLast( ag )
+		Next
+		For Local list:TList = EachIn complex_agent_lists
+			For Local unit:COMPLEX_AGENT = EachIn list
+				If obj.dist_to( unit ) <= radius Then proximal.AddLast( unit )
+			Next
+		Next
+		Return proximal
+	End Method
+	
 End Type
 

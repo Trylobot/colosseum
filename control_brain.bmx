@@ -142,7 +142,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			'self-destruct ability
 			If ai.can_self_destruct
 				If avatar.last_collided_agent_id = target.id
-					avatar.self_destruct( target )
+					avatar.self_destruct()
 				End If
 			End If
 			'carrier launch ability

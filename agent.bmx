@@ -68,20 +68,22 @@ Type AGENT Extends PHYSICAL_OBJECT
 		If cur_health < 0 Then cur_health = 0 'no overkill
 	End Method
 
-	Method self_destruct( other:AGENT = Null ) 'this argument should be unnecessary
-		'this method should acquire a list of proximal physical objects,
-		'  using either an environment instance method or a global function call
-		'  and then apply damage and explosive forces as a function of the square of the distance.
-		If other <> Null
-			'damage
-			other.receive_damage( 100 )
-			'explosive forces
+	Method self_destruct()
+		Local nearby_objects:TList = game.near_to( Self, 200.0 ) 'the "radius" argument should come from data
+		Local damage#, total_force#
+		For Local phys_obj:PHYSICAL_OBJECT = EachIn nearby_objects
+			damage = 100.0 'the maximum comes from data, and is modulated with the actual distance
+			total_force = 100.0 'the maximum comes from data, and is modulated with the actual distance
+			'damage to object
+			If AGENT( phys_obj )
+				AGENT( phys_obj ).receive_damage( damage )
+			End If
+			'explosive knock-back force & torque
 			Local offset#, offset_ang#
-			cartesian_to_polar( pos_x - other.pos_x, pos_y - other.pos_y, offset, offset_ang )
-			Local total_force# = 100.0
-			other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - ang ), 100 )))
-			other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - ang ), 100 )))
-		End If
+			cartesian_to_polar( pos_x - phys_obj.pos_x, pos_y - phys_obj.pos_y, offset, offset_ang )
+			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - ang ), 100 )))
+			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - ang ), 100 )))
+		Next
 		'self-destruct explosion sound
 		play_sound( get_sound( "cannon_hit" ),, 0.25 )
 		'death effects

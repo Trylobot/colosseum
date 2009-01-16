@@ -84,16 +84,23 @@ Type POINT Extends MANAGED_OBJECT
 		Return p
 	End Method
 	
-	Method move_to( pos:POINT )
-		pos_x = pos.pos_x
-		pos_y = pos.pos_y
-		ang = pos.ang
-		vel_x = pos.vel_x
-		vel_y = pos.vel_y
-		ang_vel = pos.ang_vel
-		acc_x = pos.acc_x
-		acc_y = pos.acc_y
-		ang_acc = pos.ang_acc
+	Method move_to( argument:Object )
+		If POINT( argument )
+			Local pos:POINT = POINT( argument )
+			pos_x = pos.pos_x
+			pos_y = pos.pos_y
+			ang = pos.ang
+			vel_x = pos.vel_x
+			vel_y = pos.vel_y
+			ang_vel = pos.ang_vel
+			acc_x = pos.acc_x
+			acc_y = pos.acc_y
+			ang_acc = pos.ang_acc
+		Else If cVEC( argument )
+			Local pos:cVEC = cVEC( argument )
+			pos_x = pos.x
+			pos_y = pos.y
+		End If
 	End Method
 	
 	Method to_json:TJSONObject()
