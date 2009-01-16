@@ -62,17 +62,21 @@ Function get_all_input()
 	If game <> Null And game.human_participation
 
 		If KeyHit( KEY_ESCAPE ) 'show menu
-			If Not FLAG_in_menu
-				FLAG_in_menu = True
-				If game.game_in_progress
-					menu_command( COMMAND_BACK_TO_MAIN_MENU )
-					'clear keystate listeners
-					KeyHit( KEY_DOWN )
-					KeyHit( KEY_RIGHT )
-					KeyHit( KEY_UP )
-					KeyHit( KEY_LEFT )
+			If Not game.game_over
+				If Not FLAG_in_menu
+					FLAG_in_menu = True
+					If game.game_in_progress
+						menu_command( COMMAND_BACK_TO_MAIN_MENU )
+					End If
 				End If
+			Else 'game.game_over
+				menu_command( COMMAND_SHOP )
 			End If
+			'clear keystate listeners
+			KeyHit( KEY_DOWN )
+			KeyHit( KEY_RIGHT )
+			KeyHit( KEY_UP )
+			KeyHit( KEY_LEFT )
 		End If
 
 	End If

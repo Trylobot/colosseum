@@ -204,7 +204,7 @@ Function level_editor( lev:LEVEL )
 		
 		'level name/title
 		SetImageFont( bigger_font )
-		DrawText_with_glow( lev.name, info_x, info_y )
+		DrawText_with_outline( lev.name, info_x, info_y )
 		Local title_y% = info_y
 		info_y :+ GetImageFont().Height() - 1
 		

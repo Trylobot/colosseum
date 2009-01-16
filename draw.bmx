@@ -30,7 +30,7 @@ Function draw_all_graphics()
 	If FLAG_in_menu Or FLAG_in_shop
 		'dimmer
 		SetColor( 0, 0, 0 )
-		SetAlpha( 0.3333 )
+		SetAlpha( 0.5 )
 		DrawRect( 0, 0, window_w, window_h )
 		
 		If FLAG_in_menu
@@ -132,7 +132,7 @@ Function draw_game()
 			player_msg = "[R] return to loading bay"
 		End If
 		If player_msg <> Null
-			DrawText_with_shadow( player_msg, game.player.pos_x - TextWidth( player_msg )/2, game.player.pos_y + game.player.img.height + 3 )
+			DrawText_with_outline( player_msg, game.player.pos_x - TextWidth( player_msg )/2, game.player.pos_y + game.player.img.height + 3 )
 		End If
 	End If
 
@@ -164,7 +164,6 @@ Function draw_game()
 		SetColor( 0, 0, 0 )
 		SetAlpha( 0.65 )
 		DrawRect( 0, 0, window_w, window_h )
-		SetAlpha( 1 )
 		SetColor( 0, 0, 0 )
 		SetScale( 1, 1 )
 		SetImageFont( get_font( "consolas_bold_100" ))
@@ -175,6 +174,12 @@ Function draw_game()
 		Local scale# = 0.85
 		SetScale( scale, scale )
 		DrawText( "GAME OVER", window_w/2 - scale*w/2, window_h/2 - scale*h/2 )
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetScale( 1, 1 )
+		SetImageFont( get_font( "consolas_12" ))
+		Local r_msg$ = "[R] return to loading bay" 
+		DrawText_with_outline( r_msg, Int(window_w/2 - TextWidth( r_msg )/2), Int(window_h/2 + scale*h/3 ))
 	End If
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
@@ -189,8 +194,9 @@ Function draw_main_screen()
 	'title
 	x = 25; y = 25
 	SetColor( 255, 255, 127 )
+	SetAlpha( 1 )
 	SetImageFont( get_font( "consolas_bold_50" ))
-	DrawText_with_glow( My.Application.AssemblyInfo, x, y )
+	DrawText_with_outline( My.Application.AssemblyInfo, x, y )
 	
 	'copyright stuff
 	SetColor( 157, 157, 157 )
@@ -198,8 +204,8 @@ Function draw_main_screen()
 	h = 0.75*GetImageFont().Height()
 	x = 1 + 20
 	y = window_h - h*2 - 1 - 20
-	DrawText( "Colosseum (c) 2008 Tyler W.R. Cole, aka Tylerbot; music by NickPerrin; json binding by grable", x, y ); y :+ h
-	DrawText( "special thanks to Kaze, SniperAceX, Firelord88, ZieramsFolly; written in BlitzMax", x, y ); y :+ h
+	DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole, aka Tylerbot; music by NickPerrin; json binding by grable", x, y ); y :+ h
+	DrawText_with_outline( "special thanks to Kaze, SniperAceX, Firelord88, ZieramsFolly; written in BlitzMax", x, y ); y :+ h
 	
 	'menu options
 	x = 30; y = 95
@@ -503,13 +509,16 @@ Function draw_HUD()
 End Function
 '______________________________________________________________________________
 Function draw_percentage_bar( x%,y%, w%,h%, pct#, a# = 1.0, r% = 255, g% = 255, b% = 255 )
+	SetAlpha( a / 3.0 )
+	SetColor( 0, 0, 0 )
+	DrawRect( x,y, w,h )
 	SetAlpha( a )
 	SetColor( r, g, b )
 	SetLineWidth( 1 )
 	DrawRectLines( x,y, w,h )
 	If      pct > 1.0 Then pct = 1.0 ..
 	Else If pct < 0.0 Then pct = 0.0
-	DrawRect( x + 2, y + 2, pct*(w - 4.0), h - 4 )
+	DrawRect( x + 2,y + 2, pct*(w - 4.0),h - 4 )
 End Function
 
 Function draw_scrollbar( x%, y%, w%, h%, total_size%, window_offset%, window_size% )
@@ -517,21 +526,18 @@ Function draw_scrollbar( x%, y%, w%, h%, total_size%, window_offset%, window_siz
 	Local offset# = (h-2*border_width)*Float(window_offset)/Float(total_size)
 	Local size# = (h-2*border_width)*Float(window_size)/Float(total_size)
 	SetColor( 64, 64, 64 )
-	DrawRect( x, y, w, h )
-	'SetColor( 96, 96, 96 )
-	'DrawRectLines( x, y, w, h )
+	SetAlpha( 1 )
+	DrawRectLines( x, y, w, h )
+	SetAlpha( 0.3333 )
 	SetColor( 0, 0, 0 )
 	DrawRect( ..
 		x+border_width, y+border_width, ..
 		w-2*border_width, h-2*border_width )
 	SetColor( 64, 64, 64 )
+	SetAlpha( 1 )
 	DrawRect( ..
-		x+border_width, y+border_width + offset, ..
-		w-2*border_width, size )
-	'SetColor( 96, 96, 96 )
-	'DrawRectLines( ..
-	'	x+border_width, y+border_width + offset, ..
-	'	w-2*border_width, size )
+		x+border_width + 1, y+border_width + offset + 1, ..
+		w-2*border_width - 2, size - 2 )
 End Function
 
 Function DrawRectLines( x%,y%, w%,h% )
@@ -547,6 +553,19 @@ Function DrawText_with_shadow( str$, x#, y# )
 	SetColor( 0, 0, 0 )
 	DrawText( str, x + 1, y + 1 )
 	DrawText( str, x + 2, y + 2 )
+	SetColor( r, g, b )
+	DrawText( str, x, y )
+End Function
+
+Function DrawText_with_outline( str$, x#, y# )
+	Local r%, g%, b%
+	GetColor( r%, g%, b% )
+	SetColor( 0, 0, 0 )
+	SetAlpha( 1 )
+	DrawText( str, x + 1, y + 1 )
+	DrawText( str, x - 1, y + 1 )
+	DrawText( str, x + 1, y - 1 )
+	DrawText( str, x - 1, y - 1 )
 	SetColor( r, g, b )
 	DrawText( str, x, y )
 End Function
@@ -667,7 +686,7 @@ Function draw_instaquit_progress()
 
 	Local str$ = "continue holding ESC to quit"
 	SetImageFont( get_font( "consolas_bold_24" ))
-	DrawText( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
+	DrawText_with_outline( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
 End Function
 
 

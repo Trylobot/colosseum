@@ -57,8 +57,9 @@ Type ENVIRONMENT
 	Field control_brain_list:TList 'TList<CONTROL_BRAIN>
 	
 	Field level_enemy_count% 'number of enemies that could possibly be spawned
-	Field active_units%
 	Field level_enemies_killed% 'number of enemies that have been killed since being spawned
+	Field active_units%
+	Field active_spawners%
 	
 	Field human_participation% 'flag indicating whether any humans will ever participate in this game
 	Field game_in_progress% 'flag indicating the game has begun
@@ -224,17 +225,20 @@ Type ENVIRONMENT
 			spawn_counter[i] = 0
 		Next
 		'flags
-		active_units = 0
 		level_enemies_killed = 0
 		level_enemy_count = lev.enemy_count()
+		active_units = 0
+		active_spawners = lev.spawners.Length
 	End Method
 	
 	'returns a list of agents spawned
 	Method spawning_system_update:TList()
+'If KeyDown( KEY_LSHIFT ) Then DebugLog "____spawning_system_update_____________________________________________________"
 		Local spawned:TList = CreateList()
 		'for each spawner
 		Local sp:SPAWNER, cur:CELL, ts%, last:COMPLEX_AGENT, counter%
 		For Local i% = 0 To lev.spawners.Length-1
+'If KeyDown( KEY_LSHIFT ) Then DebugLog "     spawner["+i+"]"
 			sp = lev.spawners[i]
 			cur = spawn_cursor[i]
 			ts = spawn_ts[i]
@@ -242,10 +246,13 @@ Type ENVIRONMENT
 			counter = spawn_counter[i]
 			'if this spawner has more enemies to spawn
 			If counter < sp.size
+'If KeyDown( KEY_LSHIFT ) Then DebugLog "       counter < sp.size"
 				'if it is time to spawn this spawner's current squad
 				If now() - ts >= sp.delay_time[cur.row]
+'If KeyDown( KEY_LSHIFT ) Then DebugLog "         now() - ts >= sp.delay_time[cur.row]"
 					'if this squad has just been started, or the last spawned enemy is away, dead or null
 					If cur.col = 0 Or last = Null Or last.dead() Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
+'If KeyDown( KEY_LSHIFT ) Then DebugLog "           cur.col = 0 Or last = Null Or last.dead() Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE"
 						Local ag:COMPLEX_AGENT = spawn_agent( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
 						last_spawned[i] = ag
 						spawned.addLast( ag )
@@ -260,12 +267,19 @@ Type ENVIRONMENT
 							cur.row :+ 1
 							'restart delay timer
 							spawn_ts[i] = now()
+							'if that last squad was the last squad of the current spawner
+							If cur.row > sp.squads.Length-1
+								'active spawner counter update
+								active_spawners :- 1
+							End If
 						End If
-					Else
 					End If
 				Else
+'If KeyDown( KEY_LSHIFT ) Then DebugLog "         now() - ts < sp.delay_time[cur.row]"
+'If KeyDown( KEY_LSHIFT ) Then DebugLog "         | now(): "+now()
+'If KeyDown( KEY_LSHIFT ) Then DebugLog "         | ts:    "+ts
+'If KeyDown( KEY_LSHIFT ) Then DebugLog "         | sp.delay_time[cur.row]: "+sp.delay_time[cur.row]
 				End If
-			Else
 			End If
 		Next
 		Return spawned

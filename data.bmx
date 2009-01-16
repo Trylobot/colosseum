@@ -191,6 +191,19 @@ End Function
 Function get_particle:PARTICLE( key$, new_frame% = 0 ) 'returns a new instance, which is a copy of the global archetype
 	Return PARTICLE( particle_map.ValueForKey( key )).clone( new_frame )
 End Function
+Function get_projectile:PROJECTILE( archetype_index$, source_id% = NULL_ID )
+	'Return PROJECTILE( projectile_map.ValueForKey( key )).clone( source_id )
+	Select archetype_index
+		Case "tank_cannon"
+			Return projectile_archetype[PROJECTILE_INDEX_TANK_CANNON].clone( source_id )
+		Case "machine_gun"
+			Return projectile_archetype[PROJECTILE_INDEX_MACHINE_GUN].clone( source_id )
+		Case "laser"
+			Return projectile_archetype[PROJECTILE_INDEX_LASER].clone( source_id )
+		Case "rocket"
+			Return projectile_archetype[PROJECTILE_INDEX_ROCKET].clone( source_id )
+	End Select
+End Function
 
 Function get_ai_type:AI_TYPE( key$ ) 'returns read-only reference
 	Return AI_TYPE( ai_type_map.ValueForKey( key ))

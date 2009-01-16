@@ -112,8 +112,7 @@ Type EMITTER Extends MANAGED_OBJECT
 				Case EMITTER_TYPE_PARTICLE
 					emit_particle( get_particle( archetype_index, PARTICLE_FRAME_RANDOM ))
 				Case EMITTER_TYPE_PROJECTILE
-					'emit_projectile( get_projectile( archetype_index, source_id ))
-					'emit_projectile( projectile_archetype[archetype_index].clone( source_id ))
+					emit_projectile( get_projectile( archetype_index, source_id ))
 			End Select
 			
 			'interval

@@ -40,13 +40,13 @@ Function draw_shop()
 	x = shop_margin; y = shop_margin
 	SetColor( 255, 255, 255 )
 	SetImageFont( get_font( shop_option_font_name_title )); h = GetImageFont().Height() - 1
-	DrawText_with_glow( "Loading Bay", x, y ); y :+ 1.25*h
+	DrawText_with_outline( "Loading Bay", x, y ); y :+ 1.25*h
 	
 	SetImageFont( get_font( shop_option_font_name_selected )); h = GetImageFont().Height() - 1
 	SetColor( 96, 255, 96 )
-	DrawText_with_glow( "$" + format_number( profile.cash ), x, y ); y :+ h
+	DrawText_with_outline( "$" + format_number( profile.cash ), x, y ); y :+ h
 	SetColor( 255, 96, 96 )
-	DrawText_with_glow( "kills  " + format_number( profile.kills ), x, y ); y :+ h
+	DrawText_with_outline( "kills  " + format_number( profile.kills ), x, y ); y :+ h
 	y :+ h
 	draw_shop_option( "play", (shop_option = SHOP_OPTION_GO), x, y )
 	profile_name_y = y
@@ -106,7 +106,7 @@ Function draw_shop_option( str$, selected% = False, x%, y% Var )
 		SetColor( 196, 196, 196 )
 		SetImageFont( get_font( shop_option_font_name_not_selected ))
 	End If
-	DrawText_with_glow( str, x, y )
+	DrawText_with_outline( str, x, y )
 	y :+ GetImageFont().Height() - 1
 End Function
 '______________________________________________________________________________
@@ -289,7 +289,7 @@ Function level_select()
 			Local str$ = StripAll( level_files[i] )
 			If i = level_select_index
 				SetColor( 255, 255, 255 )
-				DrawText_with_glow( str, cx, cy )
+				DrawText_with_outline( str, cx, cy )
 			Else
 				SetColor( 127, 127, 127 )
 				DrawText( str, cx, cy )

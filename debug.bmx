@@ -26,7 +26,50 @@ Global global_start:CELL, global_goal:CELL
 '	DebugLog "" + now() + " :: " + message
 'End Function
 '
-''______________________________________________________________________________
+
+'______________________________________________________________________________
+Function debug_init()
+	'debug_get_keys()
+End Function
+
+'______________________________________________________________________________
+Global FLAG_debug_overlay% = False
+Global fps%, last_frame_ts%, time_count%, frame_count%
+
+Function debug_main()
+	frame_count :+ 1
+	time_count :+ (now() - last_frame_ts)
+	last_frame_ts = now()
+	If time_count >= 1000
+		fps = frame_count
+		frame_count = 0
+		time_count = 0
+	End If
+	If KeyHit( KEY_TILDE )
+		FLAG_debug_overlay = Not FLAG_debug_overlay
+	End If
+	If game <> Null And FLAG_debug_overlay
+		debug_overlay()
+		debug_fps()
+		'debug_agent_lists()
+	End If
+	If Not FLAG_in_menu And Not FLAG_in_shop
+		If KeyDown( KEY_LEFT )
+			debug_origin.x :- 1
+		End If
+		If KeyDown( KEY_RIGHT )
+			debug_origin.x :+ 1
+		End If
+		If KeyDown( KEY_UP )
+			debug_origin.y :- 1
+		End If
+		If KeyDown( KEY_DOWN )
+			debug_origin.y :+ 1
+		End If
+	End If
+End Function
+
+'______________________________________________________________________________
 Function debug_get_keys()
 	DebugLog " fonts: [ ~n  " + ",~n  ".Join( get_keys( font_map )) + " ]"
 	DebugLog " sounds: [ ~n  " + ",~n  ".Join( get_keys( sound_map )) + " ]"
@@ -156,6 +199,7 @@ Function debug_overlay()
 	SetColor( 255, 255, 255 )
 	'show pathing grid divisions
 	SetAlpha( 0.20 )
+	SetLineWidth( 1 )
 	For Local i% = 0 To game.lev.horizontal_divs.length - 1
 		DrawLine( 0,0+game.lev.horizontal_divs[i], 0+game.lev.width,0+game.lev.horizontal_divs[i] )
 	Next

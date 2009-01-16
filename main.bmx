@@ -28,6 +28,7 @@ Global window_h%
 Global fullscreen%
 Global bit_depth%
 Global refresh_rate%
+Const time_per_frame_min% = 1000 / 60 
 
 Function apply_default_settings()
 	window_w = 800
@@ -51,10 +52,9 @@ MENU.load_fonts()
 load_all_archetypes() 'REMOVE this function call by externalizing this data, please.
 menu_command( COMMAND_NEW_LEVEL ) 'initialize the level editor data
 
-'?Debug
-'debug_get_keys()
-'End
-'?
+?Debug
+debug_init()
+?
 
 'Window Initialization and Drawing device
 AppTitle = My.Application.AssemblyInfo
@@ -79,11 +79,6 @@ init_graphics()
 Local before%
 init_ai_menu_game()
 
-?Debug
-Global FLAG_debug_overlay% = False
-Global fps%, last_frame_ts%, time_count%, frame_count%
-?
-
 Repeat
 	
 	'game object
@@ -98,8 +93,8 @@ Repeat
 		screenshot()
 	End If
 	
-	'simulation speed (decoupled from draw speed)
-	If (now() - before) > (1000/60) ' = 60 hertz
+	'simulation speed, never faster than 60 hertz
+	If (now() - before) > time_per_frame_min
 		before = now()
 		
 		collide_all_objects()
@@ -113,40 +108,10 @@ Repeat
 	play_all_audio()
 	
 	?Debug
-	frame_count :+ 1
-	time_count :+ (now() - last_frame_ts)
-	last_frame_ts = now()
-	If time_count >= 1000
-		fps = frame_count
-		frame_count = 0
-		time_count = 0
-	End If
-	If KeyHit( KEY_TILDE )
-		FLAG_debug_overlay = Not FLAG_debug_overlay
-	End If
-	If game <> Null And FLAG_debug_overlay
-		debug_overlay()
-		debug_fps()
-		'debug_agent_lists()
-	End If
-	If Not FLAG_in_menu And Not FLAG_in_shop
-		If KeyDown( KEY_LEFT )
-			debug_origin.x :- 1
-		End If
-		If KeyDown( KEY_RIGHT )
-			debug_origin.x :+ 1
-		End If
-		If KeyDown( KEY_UP )
-			debug_origin.y :- 1
-		End If
-		If KeyDown( KEY_DOWN )
-			debug_origin.y :+ 1
-		End If
-	End If
+	debug_main()
 	?
 
 	Flip( 1 )
 	
 Until AppTerminate()
-If AppTerminate() Then End
 

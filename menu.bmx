@@ -5,7 +5,7 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const border_width% = 3
+Const border_width% = 1
 Const scrollbar_width% = 20
 
 Type MENU
@@ -133,14 +133,17 @@ Type MENU
 		'draw the borders, backgrounds and title text
 		SetImageFont( title_font )
 		If border
+			SetAlpha( 1 )
 			SetColor( 64, 64, 64 )
-			DrawRect( cx,cy, width,height )
+			DrawRectLines( cx,cy, width,height )
+			SetAlpha( 0.3333 )
 			SetColor( 0, 0, 0 )
 			DrawRect( cx+border_width,cy+border_width, width-2*border_width,height-2*border_width )
 			SetColor( red/4, green/4, blue/4 )
+			SetAlpha( 1 )
 			DrawRect( cx+border_width,cy+border_width, width-2*border_width,text_height_factor*GetImageFont().Height() + margin )
 			SetColor( red, green, blue )
-			DrawText( name, cx+border_width+margin,cy+border_width+margin/2 )
+			DrawText_with_outline( name, cx+border_width+margin,cy+border_width+margin/2 )
 		End If
 		
 		'draw each option
@@ -190,9 +193,9 @@ Type MENU
 			If Not all_options_in_window
 				draw_scrollbar( ..
 					x + width - scrollbar_width, ..
-					y + 3*margin + (1 + static_option_count)*(text_height_factor*title_font.Height()) + 1, ..
+					y + 3*margin + (1 + static_option_count)*(text_height_factor*title_font.Height()) + 0, ..
 					scrollbar_width, ..
-					height - (3*margin + 2*(text_height_factor*title_font.Height())), ..
+					height - (3*margin + 2*(text_height_factor*title_font.Height())) + 1, ..
 					options.Length - static_option_count, ..
 					scroll_offset, ..
 					dynamic_options_displayed )
@@ -245,10 +248,8 @@ Type MENU
 			'main_game dependent options
 			If main_game <> Null And main_game.game_in_progress 'main_game started
 				enable_option( "resume" )
-				disable_option( "loading bay" )
 			Else
 				disable_option( "resume" )
-				'option "loading bay" setting unchanged
 			End If
 		End If
 

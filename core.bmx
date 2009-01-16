@@ -103,10 +103,17 @@ End Function
 '______________________________________________________________________________
 Function init_ai_menu_game()
 	ai_menu_game = Create_ENVIRONMENT()
-	'AI Menu Game - dynamic-sized level
+
+	ai_menu_game.auto_reset_spawners = True
+	ai_menu_game.game_in_progress = True
+	ai_menu_game.battle_in_progress = True
+	ai_menu_game.battle_state_toggle_ts = now()
+	ai_menu_game.spawn_enemies = True
+	ai_menu_game.mouse = mouse
+	
 	Local lev:LEVEL = Create_LEVEL( window_w, window_h )
 	Local sp:SPAWNER, squad%
-	'spawner 0, top
+
 	sp = New SPAWNER
 	sp.pos = Create_POINT( window_w/2, 20, 90 )
 	sp.class = SPAWNER.class_TURRET_ANCHOR
@@ -120,7 +127,7 @@ Function init_ai_menu_game()
 	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
 	sp.set_delay_time( squad, 500 )
 	lev.add_spawner( sp )
-	'spawner 1, bottom
+
 	sp = New SPAWNER
 	sp.pos = Create_POINT( window_w/2, window_h - 20, -90 )
 	sp.class = SPAWNER.class_TURRET_ANCHOR
@@ -132,7 +139,7 @@ Function init_ai_menu_game()
 	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
 	sp.set_delay_time( squad, 500 )
 	lev.add_spawner( sp )
-	'walls
+
 	lev.add_divider( 10, LINE_TYPE_VERTICAL )
 	lev.add_divider( window_w - 10, LINE_TYPE_VERTICAL )
 	lev.add_divider( window_w/2 - window_w/4,  LINE_TYPE_VERTICAL )
@@ -158,15 +165,8 @@ Function init_ai_menu_game()
 	lev.set_path_region( CELL.Create( 4, 2 ), True )
 	lev.set_path_region( CELL.Create( 4, 3 ), True )
 	lev.set_path_region( CELL.Create( 4, 4 ), True )
-	'load
+
 	ai_menu_game.load_level( lev )
-	'set flags
-	ai_menu_game.game_in_progress = True
-	ai_menu_game.battle_in_progress = True
-	ai_menu_game.spawn_enemies = True
-	ai_menu_game.auto_reset_spawners = True
-	'mouse data (for debugging)
-	ai_menu_game.mouse = mouse
 End Function
 
 '______________________________________________________________________________
@@ -415,8 +415,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			
 		Case COMMAND_BACK_TO_MAIN_MENU
 			current_menu = 0
-			get_main_menu().update()
-			
+			get_main_menu().update( True )
 		
 		Case COMMAND_RESUME
 			FLAG_in_menu = False

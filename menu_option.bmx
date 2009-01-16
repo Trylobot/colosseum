@@ -34,7 +34,7 @@ Type MENU_OPTION
 		If glow
 			DrawText_with_glow( display_name, x, y )
 		Else
-			DrawText( display_name, x, y )
+			DrawText_with_outline( display_name, x, y )
 		End If
 	End Method
 	

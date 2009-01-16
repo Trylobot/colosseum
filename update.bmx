@@ -120,10 +120,13 @@ Function update_flags()
 			End If
 			'if the battle is over, and player has exited the arena
 			If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena And KeyDown( KEY_R )
-				FLAG_in_shop = True
-				game.clear()
+				menu_command( COMMAND_SHOP )
+			Else If Not game.game_in_progress And game.game_over And KeyDown( KEY_R )
+				menu_command( COMMAND_SHOP )
 			End If
-		Else If game.battle_in_progress And game.active_units <= 0 And game.auto_reset_spawners 'Not game.human_participation
+		End If
+		'flag updates for any game
+		If game.active_spawners <= 0 And game.active_units <= 0 And game.auto_reset_spawners 'Not game.human_participation
 			game.reset_spawners()
 		End If
 	End If

@@ -174,7 +174,7 @@ Function set_projectile_archetypes()
 		projectile_archetype[PROJECTILE_INDEX_ROCKET].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_IMPACT_HALO], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
 		projectile_archetype[PROJECTILE_INDEX_ROCKET].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
 End Function
-	
+
 '______________________________________________________________________________
 '[ PROJECTILE LAUNCHERS ] (emitters)
 Global projectile_launcher_archetype:EMITTER[10]; reset_index()
@@ -185,10 +185,10 @@ Global PROJECTILE_LAUNCHER_INDEX_LASER% = postfix_index()
 Global PROJECTILE_LAUNCHER_INDEX_ROCKET% = postfix_index()
 
 Function set_projectile_launcher_archetypes()
-	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_TANK_CANNON] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_TANK_CANNON,, True, False, False, True, True ))
-	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_MACHINE_GUN] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_MACHINE_GUN,, True, False, False, True, True ))
-	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_LASER] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_LASER,, False, False, False, True, True ))
-	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_ROCKET] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, PROJECTILE_INDEX_ROCKET,, True, False, False, True, True ))
+	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_TANK_CANNON] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, "tank_cannon",, True, False, False, True, True ))
+	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_MACHINE_GUN] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, "machine_gun",, True, False, False, True, True ))
+	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_LASER] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, "laser",, False, False, False, True, True ))
+	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_ROCKET] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, "rocket",, True, False, False, True, True ))
 End Function
 	
 '______________________________________________________________________________
