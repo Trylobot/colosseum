@@ -199,33 +199,108 @@ Type PARTICLE Extends POINT
 End Type
 
 Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
-	Local p:PARTICLE = New PARTICLE
-	p.particle_type = enum( json.GetString( "particle_type" ))
-	p.img = TImage( get_asset( json.GetString( "img" )))
-	p.frame = json.GetNumber( "frame" )
-	p.frame_delay = json.GetNumber( "frame_delay" )
-	p.str = json.GetString( "str" )
-	p.font = TImageFont( get_asset( json.GetString( "font" )))
-	p.layer = enum( json.GetString( "layer" ))
-	p.retain = json.GetBoolean( "retain" )
-	p.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
-	p.red = json.GetNumber( "red" )
-	p.green = json.GetNumber( "green" )
-	p.blue = json.GetNumber( "blue" )
-	p.red_delta = json.GetNumber( "red_delta" )
-	p.green_delta = json.GetNumber( "green_delta" )
-	p.blue_delta = json.GetNumber( "blue_delta" )
-	p.life_time = json.GetNumber( "life_time" )
-	p.pos_x = json.GetNumber( "pos_x" )
-	p.pos_y = json.GetNumber( "pos_y" )
-	p.vel_x = json.GetNumber( "vel_x" )
-	p.vel_y = json.GetNumber( "vel_y" )
-	p.ang = json.GetNumber( "ang" )
-	p.ang_vel = json.GetNumber( "ang_vel" )
-	p.alpha = json.GetNumber( "alpha" )
-	p.alpha_delta = json.GetNumber( "alpha_delta" )
-	p.scale = json.GetNumber( "scale" )
-	p.scale_delta = json.GetNumber( "scale_delta" )
-	Return p
+	'required fields
+	Local particle_type%
+	If json.TypeOf( "particle_type" ) <> JSON_UNDEFINED
+		particle_type = enum( json.GetString( "particle_type" ))
+	Else
+		Return Null 'required field
+	End If
+	'optional fields
+	Local img:TImage = Null, frame% = 0
+	Local frame_delay% = INFINITY
+	Local str$ = Null, font:TImageFont = Null
+	Local layer% = LAYER_UNSPECIFIED
+	Local retain% = False
+	Local frictional_coefficient# = 0.0
+	Local red# = 1.0, green# = 1.0, blue# = 1.0
+	Local red_delta# = 0.0, green_delta# = 0.0, blue_delta# = 0.0
+	Local life_time% = 0
+	Local pos_x# = 0.0, pos_y# = 0.0
+	Local vel_x# = 0.0, vel_y# = 0.0
+	Local ang# = 0.0
+	Local ang_vel# = 0.0
+	Local alpha# = 1.0
+	Local alpha_delta# = 0.0
+	Local scale# = 1.0
+	Local scale_delta# = 0.0
+	If json.TypeOf( "img" ) <> JSON_UNDEFINED
+		img = TImage( get_asset( json.GetString( "img" )))
+	End If
+	If json.TypeOf( "frame" ) <> JSON_UNDEFINED
+		frame = json.GetNumber( "frame" )
+	End If
+	If json.TypeOf( "frame_delay" ) <> JSON_UNDEFINED
+		frame_delay = json.GetNumber( "frame_delay" )
+	End If
+	If json.TypeOf( "str" ) <> JSON_UNDEFINED
+		str = json.GetString( "str" )
+	End If
+	If json.TypeOf( "font" ) <> JSON_UNDEFINED
+		font = TImageFont( get_asset( json.GetString( "font" )))
+	End If
+	If json.TypeOf( "layer" ) <> JSON_UNDEFINED
+		layer = enum( json.GetString( "layer" ))
+	End If
+	If json.TypeOf( "retain" ) <> JSON_UNDEFINED
+		retain = json.GetBoolean( "retain" )
+	End If
+	If json.TypeOf( "frictional_coefficient" ) <> JSON_UNDEFINED
+		frictional_coefficient = json.GetNumber( "frictional_coefficient" )
+	End If
+	If json.TypeOf( "red" ) <> JSON_UNDEFINED
+		red = json.GetNumber( "red" )
+	End If
+	If json.TypeOf( "green" ) <> JSON_UNDEFINED
+		green = json.GetNumber( "green" )
+	End If
+	If json.TypeOf( "blue" ) <> JSON_UNDEFINED
+		blue = json.GetNumber( "blue" )
+	End If
+	If json.TypeOf( "red_delta" ) <> JSON_UNDEFINED
+		red_delta = json.GetNumber( "red_delta" )
+	End If
+	If json.TypeOf( "green_delta" ) <> JSON_UNDEFINED
+		green_delta = json.GetNumber( "green_delta" )
+	End If
+	If json.TypeOf( "blue_delta" ) <> JSON_UNDEFINED
+		blue_delta = json.GetNumber( "blue_delta" )
+	End If
+	If json.TypeOf( "life_time" ) <> JSON_UNDEFINED
+		life_time = json.GetNumber( "life_time" )
+	End If
+	If json.TypeOf( "pos_x" ) <> JSON_UNDEFINED
+		pos_x = json.GetNumber( "pos_x" )
+	End If
+	If json.TypeOf( "pos_y" ) <> JSON_UNDEFINED
+		pos_y = json.GetNumber( "pos_y" )
+	End If
+	If json.TypeOf( "vel_x" ) <> JSON_UNDEFINED
+		vel_x = json.GetNumber( "vel_x" )
+	End If
+	If json.TypeOf( "vel_y" ) <> JSON_UNDEFINED
+		vel_y = json.GetNumber( "vel_y" )
+	End If
+	If json.TypeOf( "ang" ) <> JSON_UNDEFINED
+		ang = json.GetNumber( "ang" )
+	End If
+	If json.TypeOf( "ang_vel" ) <> JSON_UNDEFINED
+		ang_vel = json.GetNumber( "ang_vel" )
+	End If
+	If json.TypeOf( "alpha" ) <> JSON_UNDEFINED
+		alpha = json.GetNumber( "alpha" )
+	End If
+	If json.TypeOf( "alpha_delta" ) <> JSON_UNDEFINED
+		alpha_delta = json.GetNumber( "alpha_delta" )
+	End If
+	If json.TypeOf( "scale" ) <> JSON_UNDEFINED
+		scale = json.GetNumber( "scale" )
+	End If
+	If json.TypeOf( "scale_delta" ) <> JSON_UNDEFINED
+		scale_delta = json.GetNumber( "scale_delta" )
+	End If
+
+	'initialize
+	Return = PARTICLE.Create( particle_type )
 End Function
 

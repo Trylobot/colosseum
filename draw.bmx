@@ -204,7 +204,7 @@ Function draw_main_screen()
 	h = 0.75*GetImageFont().Height()
 	x = 1 + 20
 	y = window_h - h*2 - 1 - 20
-	DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole, aka Tylerbot; music by NickPerrin; json binding by grable", x, y ); y :+ h
+	DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole, aka Tylerbot; music by NickPerrin; JSON binding by grable", x, y ); y :+ h
 	DrawText_with_outline( "special thanks to Kaze, SniperAceX, Firelord88, ZieramsFolly; written in BlitzMax", x, y ); y :+ h
 	
 	'menu options

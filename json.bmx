@@ -153,12 +153,33 @@ EndRem
 '
 ' JSON value classes
 '
+Const JSON_UNDEFINED:Int = -1
 Const JSON_NULL:Int	= 1
 Const JSON_OBJECT:Int	= 2
 Const JSON_ARRAY:Int	= 3
 Const JSON_STRING:Int	= 4
 Const JSON_NUMBER:Int	= 5
 Const JSON_BOOLEAN:Int	= 6
+
+Function JSON_Class_toString$( class% )
+	Select class
+		Case JSON_NULL
+			Return "null"
+		Case JSON_OBJECT
+			Return "object"
+		Case JSON_ARRAY
+			Return "array"
+		Case JSON_STRING
+			Return "string"
+		Case JSON_NUMBER
+			Return "number"
+		Case JSON_BOOLEAN
+			Return "boolean"
+		Case JSON_UNDEFINED
+			Return "undefined"
+	End Select
+	Return ""
+End Function
 
 
 '
@@ -769,6 +790,12 @@ Type TJSON
 			Return val
 		EndIf
 	EndMethod
+	
+	Method TypeOf%( path$ )
+		Local val:TJSONValue = Lookup( path )
+		If val Then Return val.Class ..
+		Else Return JSON_UNDEFINED
+	End Method
 	
 	Method SetValue( path:String, value:Object)
 		LookupKey.Value = GetNext( path, ".")
