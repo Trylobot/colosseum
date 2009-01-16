@@ -58,8 +58,10 @@ Type ENVIRONMENT
 	
 	Field level_enemy_count% 'number of enemies that could possibly be spawned
 	Field level_enemies_killed% 'number of enemies that have been killed since being spawned
-	Field active_units%
-	Field active_spawners%
+	Field active_friendly_spawners%
+	Field active_friendly_units%
+	Field active_hostile_spawners%
+	Field active_hostile_units%
 	
 	Field human_participation% 'flag indicating whether any humans will ever participate in this game
 	Field game_in_progress% 'flag indicating the game has begun
@@ -212,33 +214,62 @@ Type ENVIRONMENT
 '		End If
 	End Method
 	
-	Method reset_spawners()
-		'spawn queues and tracking info
-		spawn_cursor = New CELL[lev.spawners.Length] 'automagically initialized to (0, 0); exactly where it needs to be :)
-		spawn_ts = New Int[lev.spawners.Length]
-		last_spawned = New COMPLEX_AGENT[lev.spawners.Length]
-		spawn_counter = New Int[lev.spawners.Length]
-		For Local i% = 0 To lev.spawners.Length-1
-			spawn_cursor[i] = New CELL
-			spawn_ts[i] = now()
-			last_spawned[i] = Null
-			spawn_counter[i] = 0
-		Next
-		'flags
-		level_enemies_killed = 0
-		level_enemy_count = lev.enemy_count()
-		active_units = 0
-		active_spawners = lev.spawners.Length
+	Method reset_spawners( alignment% = ALIGNMENT_NONE )
+		If alignment = ALIGNMENT_NONE
+			'flags and counters
+			level_enemies_killed = 0
+			level_enemy_count = lev.enemy_count()
+			active_friendly_units = 0
+			active_friendly_spawners = 0
+			active_hostile_units = 0
+			active_hostile_spawners = 0
+			'spawn queues and tracking info
+			spawn_cursor = New CELL[lev.spawners.Length] 'automagically initialized to (0, 0); exactly where it needs to be :)
+			spawn_ts = New Int[lev.spawners.Length]
+			last_spawned = New COMPLEX_AGENT[lev.spawners.Length]
+			spawn_counter = New Int[lev.spawners.Length]
+			For Local i% = 0 To lev.spawners.Length-1
+				spawn_cursor[i] = New CELL
+				spawn_ts[i] = now()
+				last_spawned[i] = Null
+				spawn_counter[i] = 0
+				If lev.spawners[i].alignment = ALIGNMENT_FRIENDLY
+					active_friendly_spawners :+ 1
+				Else If lev.spawners[i].alignment = ALIGNMENT_HOSTILE
+					active_hostile_spawners :+ 1
+				End If
+			Next
+		Else 'alignment <> ALIGNMENT_NONE
+			'flags and counters
+			Select alignment
+				Case ALIGNMENT_FRIENDLY
+					active_friendly_units = 0
+				Case ALIGNMENT_HOSTILE
+					active_hostile_units = 0
+			End Select
+			'spawn queues and tracking info
+			For Local i% = 0 To lev.spawners.Length-1
+				If lev.spawners[i].alignment = alignment
+					spawn_cursor[i] = New CELL
+					spawn_ts[i] = now()
+					last_spawned[i] = Null
+					spawn_counter[i] = 0
+					If lev.spawners[i].alignment = ALIGNMENT_FRIENDLY
+						active_friendly_spawners :+ 1
+					Else If lev.spawners[i].alignment = ALIGNMENT_HOSTILE
+						active_hostile_spawners :+ 1
+					End If
+				End If
+			Next
+		End If
 	End Method
 	
 	'returns a list of agents spawned
 	Method spawning_system_update:TList()
-'If KeyDown( KEY_LSHIFT ) Then DebugLog "____spawning_system_update_____________________________________________________"
 		Local spawned:TList = CreateList()
 		'for each spawner
 		Local sp:SPAWNER, cur:CELL, ts%, last:COMPLEX_AGENT, counter%
 		For Local i% = 0 To lev.spawners.Length-1
-'If KeyDown( KEY_LSHIFT ) Then DebugLog "     spawner["+i+"]"
 			sp = lev.spawners[i]
 			cur = spawn_cursor[i]
 			ts = spawn_ts[i]
@@ -246,20 +277,22 @@ Type ENVIRONMENT
 			counter = spawn_counter[i]
 			'if this spawner has more enemies to spawn
 			If counter < sp.size
-'If KeyDown( KEY_LSHIFT ) Then DebugLog "       counter < sp.size"
 				'if it is time to spawn this spawner's current squad
 				If now() - ts >= sp.delay_time[cur.row]
-'If KeyDown( KEY_LSHIFT ) Then DebugLog "         now() - ts >= sp.delay_time[cur.row]"
 					'if this squad has just been started, or the last spawned enemy is away, dead or null
 					If cur.col = 0 Or last = Null Or last.dead() Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
-'If KeyDown( KEY_LSHIFT ) Then DebugLog "           cur.col = 0 Or last = Null Or last.dead() Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE"
 						Local ag:COMPLEX_AGENT = spawn_agent( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
 						last_spawned[i] = ag
 						spawned.addLast( ag )
-						'counters
+						'various counters
 						spawn_counter[i] :+ 1
-						active_units :+ 1
 						cur.col :+ 1
+						Select sp.alignment
+							Case ALIGNMENT_FRIENDLY
+								active_friendly_units :+ 1
+							Case ALIGNMENT_HOSTILE
+								active_hostile_units :+ 1
+						End Select
 						'if that last guy was the last squadmember of the current squad
 						If cur.col > sp.squads[cur.row].Length-1
 							'advance this spawner to first squadmember of next squad
@@ -270,15 +303,16 @@ Type ENVIRONMENT
 							'if that last squad was the last squad of the current spawner
 							If cur.row > sp.squads.Length-1
 								'active spawner counter update
-								active_spawners :- 1
+								Select sp.alignment
+									Case ALIGNMENT_FRIENDLY
+										active_friendly_spawners :- 1
+									Case ALIGNMENT_HOSTILE
+										active_hostile_spawners :- 1
+								End Select
 							End If
 						End If
 					End If
 				Else
-'If KeyDown( KEY_LSHIFT ) Then DebugLog "         now() - ts < sp.delay_time[cur.row]"
-'If KeyDown( KEY_LSHIFT ) Then DebugLog "         | now(): "+now()
-'If KeyDown( KEY_LSHIFT ) Then DebugLog "         | ts:    "+ts
-'If KeyDown( KEY_LSHIFT ) Then DebugLog "         | sp.delay_time[cur.row]: "+sp.delay_time[cur.row]
 				End If
 			End If
 		Next
@@ -328,7 +362,7 @@ Type ENVIRONMENT
 			player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
 			player.move_to( player_spawn_point )
 			player.snap_all_turrets()
-			active_units :+ 1
+			active_friendly_units :+ 1
 		End If
 	End Method
 	
@@ -431,6 +465,20 @@ Type ENVIRONMENT
 
 	Method point_inside_arena%( p:POINT )
 		Return True
+	End Method
+	
+	Method kill( brain:CONTROL_BRAIN )
+		If brain <> Null And Not brain.avatar.dead()
+			brain.avatar.die()
+			'this should be part of the complex agent's death emitters
+			play_sound( get_sound( "cannon_hit" ), 0.5, 0.25 )
+			Select brain.avatar.political_alignment
+				Case ALIGNMENT_FRIENDLY
+					active_friendly_units :- 1
+				Case ALIGNMENT_HOSTILE
+					active_hostile_units :- 1
+			End Select
+		End If
 	End Method
 	
 End Type

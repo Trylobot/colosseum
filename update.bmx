@@ -126,8 +126,13 @@ Function update_flags()
 			End If
 		End If
 		'flag updates for any game
-		If game.active_spawners <= 0 And game.active_units <= 0 And game.auto_reset_spawners 'Not game.human_participation
-			game.reset_spawners()
+		If game.auto_reset_spawners
+			If game.active_friendly_spawners <= 0 And game.active_friendly_units <= 0
+				game.reset_spawners( ALIGNMENT_FRIENDLY )
+			End If
+			If game.active_hostile_spawners <= 0 And game.active_hostile_units <= 0
+				game.reset_spawners( ALIGNMENT_HOSTILE )
+			End If
 		End If
 	End If
 End Function

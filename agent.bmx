@@ -84,12 +84,14 @@ Type AGENT Extends PHYSICAL_OBJECT
 	End Method
 	
 	'these boolean switches need to go.
-	Method die( show_halo% = True, show_gibs% = True )
+	Method die( show_halo% = True, show_gibs% = True, audible% = True )
+		'bright halo
 		If show_halo
 			'this should be part of the agent's death emitters, not hard coded.
 			Local halo:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "halo" ),,,,, LAYER_BACKGROUND, False,,,,,,,, 200, pos_x, pos_y, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 1.0, -0.1000 ))
 			halo.auto_manage()
 		End If
+		'gibby bits
 		If show_gibs
 			'this should also be controlled by a death emitter, albeit a more complex one.
 			'perhaps a special type of emitter that takes a multi-frame image and a series of data to specify initial conditions for each of the gibs.
@@ -112,6 +114,10 @@ Type AGENT Extends PHYSICAL_OBJECT
 					gib.auto_manage()
 				Next
 			End If
+		End If
+		'sound
+		If audible
+			'...
 		End If
 		'death emitters
 		For Local em:EMITTER = EachIn death_emitters

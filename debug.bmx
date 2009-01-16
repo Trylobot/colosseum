@@ -174,21 +174,13 @@ Function debug_overlay()
 	
 	sx = game.mouse.x + 16; sy = game.mouse.y
 	
-'	If cb <> Null
-'		'keyboard help
-'		debug_drawtext( "[1]: set target to player" )
-'		debug_drawtext( "[2]: get path to target" )
-'		debug_drawtext( "[3]: see target" )
-'		debug_drawtext( "[4]: player path to mouse" )
-'	End If
-	'debug_drawtext( "("+debug_origin.x+","+debug_origin.y+")", 18 )
-	debug_drawtext( "units "+game.active_units )
+	SetColor( 127, 127, 255 )
+	debug_drawtext( "friendlies "+game.active_friendly_units )
+	SetColor( 255, 127, 127 )
+	debug_drawtext( "hostiles "+game.active_hostile_units )
 	Local sp:SPAWNER, cur:CELL, ts%, last:COMPLEX_AGENT, counter%, str$
 	For Local i% = 0 To game.lev.spawners.Length-1
 		sp = game.lev.spawners[i]
-		'cur = game.spawn_cursor[i]
-		'ts = game.spawn_ts[i]
-		'last = game.last_spawned[i]
 		counter = game.spawn_counter[i]
 		If     ( sp.alignment = ALIGNMENT_FRIENDLY ) SetColor( 127, 127, 255 ) ..
 		Else If( sp.alignment = ALIGNMENT_HOSTILE )  SetColor( 255, 127, 127 )
@@ -228,9 +220,8 @@ Function debug_overlay()
 	End If
 	
 	'instantly kill avatar under cursor
-	If KeyDown( KEY_K ) And closest_cb <> Null
-		closest_cb.avatar.die( True, True )
-		game.active_units :- 1
+	If KeyDown( KEY_K )
+		game.kill( closest_cb )
 	End If
 
 	If cb <> Null And cb.managed()
