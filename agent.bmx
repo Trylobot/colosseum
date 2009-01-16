@@ -68,15 +68,20 @@ Type AGENT Extends PHYSICAL_OBJECT
 		If cur_health < 0 Then cur_health = 0 'no overkill
 	End Method
 
-	Method self_destruct( other:AGENT )
-		'damage
-		other.receive_damage( 100 )
-		'explosive forces
-		Local offset#, offset_ang#
-		cartesian_to_polar( pos_x - other.pos_x, pos_y - other.pos_y, offset, offset_ang )
-		Local total_force# = 100.0
-		other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - ang ), 100 )))
-		other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - ang ), 100 )))
+	Method self_destruct( other:AGENT = Null ) 'this argument should be unnecessary
+		'this method should acquire a list of proximal physical objects,
+		'  using either an environment instance method or a global function call
+		'  and then apply damage and explosive forces as a function of the square of the distance.
+		If other <> Null
+			'damage
+			other.receive_damage( 100 )
+			'explosive forces
+			Local offset#, offset_ang#
+			cartesian_to_polar( pos_x - other.pos_x, pos_y - other.pos_y, offset, offset_ang )
+			Local total_force# = 100.0
+			other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - ang ), 100 )))
+			other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - ang ), 100 )))
+		End If
 		'self-destruct explosion sound
 		play_sound( get_sound( "cannon_hit" ),, 0.25 )
 		'death effects

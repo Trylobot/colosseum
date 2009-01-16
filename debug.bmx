@@ -223,6 +223,12 @@ Function debug_overlay()
 	If KeyDown( KEY_K )
 		game.kill( closest_cb )
 	End If
+	
+	'cause an explosion under cursor via mini-bomb self detonation
+	If KeyHit( KEY_D )
+		Local bomb:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB], ALIGNMENT_NONE ))
+		bomb.self_destruct( Null )
+	End If
 
 	If cb <> Null And cb.managed()
 		
