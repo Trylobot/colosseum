@@ -77,8 +77,8 @@ init_graphics()
 '______________________________________________________________________________
 'MAIN
 Local before%
-'init_ai_menu_game()
-load_game( "user/dev.colosseum_saved_game" )
+init_ai_menu_game()
+'load_game( "user/dev.colosseum_saved_game" )
 'play_level( "data/maze.colosseum_level", 0 )
 
 Repeat

@@ -115,7 +115,7 @@ Function init_ai_menu_game()
 	Local sp:SPAWNER, squad%
 
 	sp = New SPAWNER
-	sp.pos = Create_POINT( window_w/2, 20, 90 )
+	sp.pos = Create_POINT( window_w/2, 25, 90 )
 	sp.class = SPAWNER.class_TURRET_ANCHOR
 	sp.alignment = ALIGNMENT_FRIENDLY
 	squad = sp.add_new_squad()
@@ -129,7 +129,7 @@ Function init_ai_menu_game()
 	lev.add_spawner( sp )
 
 	sp = New SPAWNER
-	sp.pos = Create_POINT( window_w/2, window_h - 20, -90 )
+	sp.pos = Create_POINT( window_w/2, window_h - 25, -90 )
 	sp.class = SPAWNER.class_TURRET_ANCHOR
 	sp.alignment = ALIGNMENT_HOSTILE
 	squad = sp.add_new_squad()
@@ -140,12 +140,12 @@ Function init_ai_menu_game()
 	sp.set_delay_time( squad, 500 )
 	lev.add_spawner( sp )
 
-	lev.add_divider( 10, LINE_TYPE_VERTICAL )
-	lev.add_divider( window_w - 10, LINE_TYPE_VERTICAL )
-	lev.add_divider( window_w/2 - window_w/4,  LINE_TYPE_VERTICAL )
-	lev.add_divider( window_w/2 + window_w/4,  LINE_TYPE_VERTICAL )
-	lev.add_divider( 10, LINE_TYPE_HORIZONTAL )
-	lev.add_divider( window_h - 10, LINE_TYPE_HORIZONTAL )
+	lev.add_divider( 15, LINE_TYPE_VERTICAL )
+	lev.add_divider( window_w - 15, LINE_TYPE_VERTICAL )
+	lev.add_divider( window_w/2 - window_w/3,  LINE_TYPE_VERTICAL )
+	lev.add_divider( window_w/2 + window_w/3,  LINE_TYPE_VERTICAL )
+	lev.add_divider( 15, LINE_TYPE_HORIZONTAL )
+	lev.add_divider( window_h - 15, LINE_TYPE_HORIZONTAL )
 	lev.add_divider( window_h/2 - window_h/16, LINE_TYPE_HORIZONTAL )
 	lev.add_divider( window_h/2 + window_h/16, LINE_TYPE_HORIZONTAL )
 	lev.set_path_region( CELL.Create( 0, 0 ), True )

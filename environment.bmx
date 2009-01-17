@@ -287,12 +287,6 @@ Type ENVIRONMENT
 						'various counters
 						spawn_counter[i] :+ 1
 						cur.col :+ 1
-						Select sp.alignment
-							Case ALIGNMENT_FRIENDLY
-								active_friendly_units :+ 1
-							Case ALIGNMENT_HOSTILE
-								active_hostile_units :+ 1
-						End Select
 						'if that last guy was the last squadmember of the current squad
 						If cur.col > sp.squads[cur.row].Length-1
 							'advance this spawner to first squadmember of next squad
@@ -324,8 +318,10 @@ Type ENVIRONMENT
 		Select alignment
 			Case ALIGNMENT_HOSTILE
 				this_agent.manage( hostile_agent_list )
+				active_hostile_units :+ 1
 			Case ALIGNMENT_FRIENDLY
 				this_agent.manage( friendly_agent_list )
+				active_friendly_units :+ 1
 		End Select
 		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( this_agent, CONTROL_BRAIN.CONTROL_TYPE_AI,, 10, 1000, 1000 )
 		brain.manage( control_brain_list )

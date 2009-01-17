@@ -79,7 +79,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 				AGENT( phys_obj ).receive_damage( damage / Pow( dist, 2 ))
 			End If
 			'explosive knock-back force & torque
-			total_force = 600000 / Pow( 0.5 * dist + 24, 2 ) - 5 'the maximum comes from data, and is modulated with the actual distance
+			total_force = (phys_obj.mass * 750) / Pow( 0.5 * dist + 24, 2 ) - 5 'the maximum comes from data, and is modulated with the actual distance
 			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang_to( phys_obj ), total_force, 100 )))
 			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, Rnd( -2.0, 2.0 )*total_force, 100 )))
 		Next

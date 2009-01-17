@@ -8,7 +8,7 @@ EndRem
 ''______________________________________________________________________________
 Global debug_origin:cVEC = cVEC.Create( 0, 0 )
 Global real_origin:cVEC = cVEC.Create( 0, 0 )
-Const SPAWN_OFF% = 0, SPAWN_HOSTILES% = 1, SPAWN_FRIENDLIES% = 2
+Const SPAWN_OFF% = 0, SPAWN_FRIENDLIES% = 1, SPAWN_HOSTILES% = 2
 Global FLAG_spawn_mode% = SPAWN_OFF
 Global spawn_archetype% = enemy_index_start, spawn_agent:COMPLEX_AGENT
 Global global_start:CELL, global_goal:CELL
@@ -216,8 +216,8 @@ Function debug_overlay()
 			If f.physics_type = PHYSICS_FORCE
 				Local x# = brain.avatar.pos_x, y# = brain.avatar.pos_y
 				Local ang# = f.direction + f.combine_ang_with_parent_ang*brain.avatar.ang
-				SetLineWidth( 3 )
-				SetAlpha( 0.3333 )
+				SetLineWidth( 2 )
+				SetAlpha( 0.2 )
 				DrawLine( x, y, x + f.magnitude_cur*Cos(ang), y + f.magnitude_cur*Sin(ang) )
 			End If
 		Next
@@ -355,24 +355,18 @@ Function debug_overlay()
 	If FLAG_spawn_mode <> SPAWN_OFF
 		If spawn_agent = Null
 			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
+			spawn_agent.ang = Rand( 360 )
 		End If
 		spawn_agent.pos_x = game.mouse.x; spawn_agent.pos_y = game.mouse.y
-		spawn_agent.ang = spawn_agent.ang_to( game.player ) + 180
 		spawn_agent.update()
 		spawn_agent.snap_all_turrets()
 		If FLAG_spawn_mode = SPAWN_HOSTILES
-			spawn_agent.draw( 255, 127, 127 )
+			spawn_agent.draw( 255, 196, 196 )
 		Else 'FLAG_spawn_mode = SPAWN_FRIENDLIES
-			spawn_agent.draw( 127, 127, 255 )
+			spawn_agent.draw( 196, 196, 255 )
 		End If
-		If KeyHit( KEY_ENTER )
-			If FLAG_spawn_mode = SPAWN_HOSTILES
-				spawn_agent.manage( game.hostile_agent_list )
-			Else 'FLAG_spawn_mode = SPAWN_FRIENDLIES
-				spawn_agent.manage( game.friendly_agent_list )
-			End If
-			Local agent_brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( spawn_agent, CONTROL_BRAIN.CONTROL_TYPE_AI,, 10, 1000, 1000 )
-			agent_brain.manage( game.control_brain_list )
+		If KeyHit( KEY_BACKSLASH )
+			game.spawn_agent( spawn_archetype, FLAG_spawn_mode, POINT( spawn_agent ))
 			spawn_agent = Null
 		Else If KeyHit( KEY_OPENBRACKET )
 			spawn_archetype :- 1

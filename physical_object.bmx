@@ -18,7 +18,10 @@ Type PHYSICAL_OBJECT Extends POINT
 	End Method
 	
 	Method update()
-		If physics_disabled Then Return
+		If physics_disabled
+			force_list.Clear()
+			Return
+		End If
 		'reset acceleration and angular acceleration
 		acc_x = 0; acc_y = 0; ang_acc = 0
 		'net force and torque

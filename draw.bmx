@@ -644,7 +644,8 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 	Local adjacent%[,]
 	Local nr%, nc%
 	Local px%, py%
-	Local x#[], y#[]
+	Local x#, x_adj%
+	Local y#, y_adj%
 	Local dist%
 	Local color:TColor
 	'for: each "blocking" region
@@ -659,16 +660,63 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 		'for each pixel of the region to be rendered
 		For py = wall.y To wall.y+wall.h-1
 			For px = wall.x To wall.x+wall.w-1
+				x = CELL.MAXIMUM_COST
+				If px <= wall.x+wall_size 'left
+					x = px - wall.x
+					x_adj = 0
+				Else If px >= wall.x+wall.w-1-wall_size 'right
+					x = wall.x+wall.w-1 - px
+					x_adj = 2
+				End If
+				y = CELL.MAXIMUM_COST
+				If py <= wall.y+wall_size 'top
+					y = py - wall.y
+					y_adj = 0
+				Else If py >= wall.y+wall.h-1-wall_size 'bottom
+					y = wall.y+wall.h-1 - py
+					y_adj = 2
+				End If
 				dist = INFINITY
-				If      px <= wall_size          And adjacent[ 1, 0 ] = PATH_BLOCKED 'left
-					dist = px - wall.x
-				Else If px >= wall.w - wall_size And adjacent[ 1, 2 ] = PATH_BLOCKED 'right
-					dist = wall.x+wall.w-1 - px
-				Else If py <= wall_size          And adjacent[ 0, 1 ] = PATH_BLOCKED 'top
-					dist = py - wall.y
-				Else If py >= wall.h - wall_size And adjacent[ 2, 1 ] = PATH_BLOCKED 'bottom
-					dist = wall.y+wall.h-1 - py
-				End If 
+				If x < CELL.MAXIMUM_COST And y = CELL.MAXIMUM_COST And adjacent[ 1, x_adj ] = PATH_PASSABLE
+					'left or ride side
+					dist = x
+				Else If y < CELL.MAXIMUM_COST And x = CELL.MAXIMUM_COST And adjacent[ y_adj, 1 ] = PATH_PASSABLE
+					'top or bottom side
+					dist = y
+				Else If x < CELL.MAXIMUM_COST And y < CELL.MAXIMUM_COST
+					'corner space
+					If adjacent[ 1, x_adj ] <> adjacent[ y_adj, 1 ]
+						'treat as normal side
+						If adjacent[ 1, x_adj ] = PATH_PASSABLE
+							dist = x
+						Else 'adjacent[ y_adj, 1 ] = PATH_PASSABLE
+							dist = y
+						End If
+					Else 'adjacent[ 1, x_adj ] = adjacent[ y_adj, 1 ]
+						If adjacent[ 1, x_adj ] = PATH_PASSABLE 'And adjacent[ y_adj, 1 ] = PATH_PASSABLE
+							'convex corner
+							dist = Min( x, y )
+						Else If adjacent[ y_adj, x_adj ] = PATH_PASSABLE 'And adjacent[ 1, x_adj ] = PATH_BLOCKED 'And adjacent[ y_adj, 1 ] = PATH_BLOCKED
+							'concave corner
+							dist = Max( x, y )
+						End If
+					End If
+				End If
+				Rem
+				If x < CELL.MAXIMUM_COST
+					'left or right
+					If adjacent[ 1, x_adj ] = PATH_PASSABLE
+						dist = x
+					Else If y < CELL.MAXIMUM_COST And adjacent[ y_adj, 1 ] = PATH_BLOCKED And adjacent[ y_adj, x_adj ] = PATH_PASSABLE 'adjacent[ 1, x_adj ] = PATH_BLOCKED
+						dist = Min( x, y ) 'corner
+					End If
+				Else If y < CELL.MAXIMUM_COST 'x >= CELL.MAXIMUM_COST
+					'top or bottom
+					If adjacent[ y_adj, 1 ] = PATH_PASSABLE
+						dist = y
+					End If
+				End If
+				EndRem
 				Select dist
 					Case 0, 2, 3
 						color = TColor.Create_by_HSL( 0.0, 0.0, 0.80 + Rnd( 0.00, 0.20 ))
@@ -677,41 +725,10 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 					Default
 						color = TColor.Create_by_HSL( 0.0, 0.0, 0.30 + Rnd( 0.00, 0.05 ))
 				End Select
-				rem
-				y = [ py - wall.y, wall.y+wall.h-1 - py ]
-				x = [ px - wall.x, wall.x+wall.w-1 - px ]
-				nr = 1; nc = 1
-				If x[0] < x[1] Then nc :- 1 Else nc :+ 1
-				If y[0] < y[1] Then nr :- 1 Else nr :+ 1
-				If adjacent[ nr, nc ] = PATH_PASSABLE 'wall portion
-				End If 
-				endrem
 				color.calc_RGB()
 				pixmap.WritePixel( px,py, encode_ARGB( 1.0, color.R,color.G,color.B ))
 			Next
 		Next
-rem
-?Debug
-Repeat
-	Cls()
-	DrawPixmap( pixmap, 0, 0 )
-	SetColor( 255, 255, 255 )
-	SetAlpha( 0.3333 )
-	For nr = 0 To 2
-		For nc = 0 To 2
-			If adjacent[ nr, nc ] <> PATH_PASSABLE
-				Local target:CELL = c.add( CELL.Create( nr - 1, nc - 1 )) 
-				If lev.in_bounds( target )
-					wall = lev.get_wall( target )
-					DrawRect( wall.x, wall.y, wall.w, wall.h )
-				End If
-			End If
-		Next
-	Next
-	Flip( 1 )
-Until KeyHit( KEY_ENTER )
-?
-endrem
 	Next
 	Return LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
 End Function
