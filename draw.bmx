@@ -637,16 +637,15 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
 	pixmap.ClearPixels( encode_ARGB( 0.0, 0,0,0 ))
 	Local blocking_cells:TList = lev.get_blocking_cells()
-	Local wall:BOX
 	Local max_dist# = CELL.MAXIMUM_COST
 	Local color:TColor
 	'for each blocking region
 	For Local c:CELL = EachIn blocking_cells
-		wall = lev.get_wall( c )
+		Local wall:BOX = lev.get_wall( c )
 		Local neighbor%[,] = New Int[ 3, 3 ]
-		For Local r% = 0 To 2
-			For Local c% = 0 To 2
-				neighbor[ r, c ] = lev.path( c.add( CELL.Create( r, c )))
+		For Local nr% = 0 To 2
+			For Local nc% = 0 To 2
+				neighbor[ nr, nc ] = lev.path( c.add( CELL.Create( nr, nc )))
 			Next
 		Next
 		'for each pixel of the region to be rendered

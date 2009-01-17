@@ -26,6 +26,7 @@ Type CELL
 	
 	Field row%
 	Field col%
+	
 	Method New()
 	End Method
 	
