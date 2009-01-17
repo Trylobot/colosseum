@@ -214,12 +214,11 @@ Function debug_overlay()
 		'also show all forces on this object
 		For Local f:FORCE = EachIn brain.avatar.force_list
 			If f.physics_type = PHYSICS_FORCE
+				Local x# = brain.avatar.pos_x, y# = brain.avatar.pos_y
+				Local ang# = f.direction + f.combine_ang_with_parent_ang*brain.avatar.ang
 				SetLineWidth( 3 )
 				SetAlpha( 0.3333 )
-				DrawLine( brain.avatar.pos_x,brain.avatar.pos_y, brain.avatar.pos_x+Cos(f.direction),brain.avatar.pos_y+Sin(f.direction) )
-				SetLineWidth( 1 )
-				SetAlpha( 1 )
-				DrawLine( brain.avatar.pos_x,brain.avatar.pos_y, brain.avatar.pos_x+Cos(f.direction),brain.avatar.pos_y+Sin(f.direction) )
+				DrawLine( x, y, x + f.magnitude_cur*Cos(ang), y + f.magnitude_cur*Sin(ang) )
 			End If
 		Next
 	Next

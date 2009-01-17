@@ -646,7 +646,7 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 		Local neighbor%[,] = New Int[ 3, 3 ]
 		For Local r% = 0 To 2
 			For Local c% = 0 To 2
-				neighbor[ r, c ] = lev.path( CELL.Create( r, c ))
+				neighbor[ r, c ] = lev.path( c.add( CELL.Create( r, c )))
 			Next
 		Next
 		'for each pixel of the region to be rendered

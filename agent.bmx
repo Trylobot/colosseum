@@ -73,7 +73,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 		Local damage#, total_force#
 		For Local phys_obj:PHYSICAL_OBJECT = EachIn nearby_objects
 			damage = 0 'the maximum comes from data, and is modulated with the actual distance
-			total_force = 35000 / Pow( 0.5 * dist_to( phys_obj ) + 25, 2 ) 'the maximum comes from data, and is modulated with the actual distance
+			total_force = 35000 / Pow( 0.5 * dist_to( phys_obj ) + 24, 2 ) - 5 'the maximum comes from data, and is modulated with the actual distance
 			'damage to object
 			If AGENT( phys_obj )
 				AGENT( phys_obj ).receive_damage( damage )
