@@ -638,28 +638,32 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 	pixmap.ClearPixels( encode_ARGB( 0.0, 0,0,0 ))
 	Local blocking_cells:TList = lev.get_blocking_cells()
 	Local wall:BOX
-	Local neighbor%[]
 	Local max_dist# = CELL.MAXIMUM_COST
 	Local color:TColor
 	'for each blocking region
 	For Local c:CELL = EachIn blocking_cells
 		wall = lev.get_wall( c )
-		neighbor = lev.get_cardinal_blocking_neighbor_info( c ) 'in same order as CELL.ALL_CARDINAL_DIRECTIONS
+		Local neighbor%[,] = New Int[ 3, 3 ]
+		For Local r% = 0 To 2
+			For Local c% = 0 To 2
+				neighbor[ r, c ] = lev.path( CELL.Create( r, c ))
+			Next
+		Next
 		'for each pixel of the region to be rendered
 		For Local px% = wall.x To wall.x+wall.w-1
 			For Local py% = wall.y To wall.y+wall.h-1
 				Local dist#[] = [ max_dist, max_dist, max_dist, max_dist ]
-				If Not neighbor[0] Then dist[0] = py - wall.y          'TOP
-				If Not neighbor[1] Then dist[1] = wall.x+wall.w-1 - px 'RIGHT
-				If Not neighbor[2] Then dist[2] = wall.y+wall.h-1 - py 'BOTTOM
-				If Not neighbor[3] Then dist[3] = px - wall.x          'LEFT
+				If neighbor[ 0, 1 ] = PATH_PASSABLE Then dist[0] = py - wall.y          'TOP
+				If neighbor[ 1, 2 ] = PATH_PASSABLE Then dist[1] = wall.x+wall.w-1 - px 'RIGHT
+				If neighbor[ 2, 1 ] = PATH_PASSABLE Then dist[2] = wall.y+wall.h-1 - py 'BOTTOM
+				If neighbor[ 1, 0 ] = PATH_PASSABLE Then dist[3] = px - wall.x          'LEFT
 				Select Int( dist[ minimum( dist )])
-					Case 0,  2,3
-						color = TColor.Create_by_HSL( 0.0, 0.0, 0.80+Rnd( 0.00, 0.20 ))
-					Case   1,    4,5
-						color = TColor.Create_by_HSL( 0.0, 0.0, 0.55+Rnd( 0.00, 0.10 ))
+					Case 0, 2, 3
+						color = TColor.Create_by_HSL( 0.0, 0.0, 0.80 + Rnd( 0.00, 0.20 ))
+					Case 1, 4, 5
+						color = TColor.Create_by_HSL( 0.0, 0.0, 0.55 + Rnd( 0.00, 0.10 ))
 					Default
-						color = TColor.Create_by_HSL( 0.0, 0.0, 0.30+Rnd( 0.00, 0.05 ))
+						color = TColor.Create_by_HSL( 0.0, 0.0, 0.30 + Rnd( 0.00, 0.05 ))
 				End Select
 				color.calc_RGB()
 				pixmap.WritePixel( px,py, encode_ARGB( 1.0, color.R,color.G,color.B ))

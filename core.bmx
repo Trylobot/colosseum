@@ -477,6 +477,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			window_h = Int[](argument)[1]
 			menu_command( COMMAND_SETTINGS_APPLY_ALL )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+			init_ai_menu_game()
 		
 		Case COMMAND_SETTINGS_REFRESH_RATE
 			Local new_refresh_rate% = String(argument).ToInt()

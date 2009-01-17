@@ -73,7 +73,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 		Local damage#, total_force#
 		For Local phys_obj:PHYSICAL_OBJECT = EachIn nearby_objects
 			damage = 0 'the maximum comes from data, and is modulated with the actual distance
-			total_force = 10000 / Pow( dist_to( phys_obj ), 2 ) 'the maximum comes from data, and is modulated with the actual distance
+			total_force = 35000 / Pow( 0.5 * dist_to( phys_obj ) + 25, 2 ) 'the maximum comes from data, and is modulated with the actual distance
 			'damage to object
 			If AGENT( phys_obj )
 				AGENT( phys_obj ).receive_damage( damage )
@@ -82,7 +82,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 			Local offset#, offset_ang#
 			cartesian_to_polar( pos_x - phys_obj.pos_x, pos_y - phys_obj.pos_y, offset, offset_ang )
 			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 180 + offset_ang, 30*total_force*Cos( offset_ang - ang ), 50 )))
-			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, offset*total_force*Sin( offset_ang - ang ), 50 )))
+			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, offset*total_force*Sin( offset_ang - ang ), 50 )))
 		Next
 		'self-destruct explosion sound
 		play_sound( get_sound( "cannon_hit" ),, 0.25 )

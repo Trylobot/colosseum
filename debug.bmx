@@ -210,6 +210,18 @@ Function debug_overlay()
 			closest_dist = dist
 			closest_cb = brain
 		End If
+		
+		'also show all forces on this object
+		For Local f:FORCE = EachIn brain.avatar.force_list
+			If f.physics_type = PHYSICS_FORCE
+				SetLineWidth( 3 )
+				SetAlpha( 0.3333 )
+				DrawLine( brain.avatar.pos_x,brain.avatar.pos_y, brain.avatar.pos_x+Cos(f.direction),brain.avatar.pos_y+Sin(f.direction) )
+				SetLineWidth( 1 )
+				SetAlpha( 1 )
+				DrawLine( brain.avatar.pos_x,brain.avatar.pos_y, brain.avatar.pos_x+Cos(f.direction),brain.avatar.pos_y+Sin(f.direction) )
+			End If
+		Next
 	Next
 	
 	'select control_brain/avatar for inspection

@@ -351,23 +351,14 @@ Type LEVEL Extends MANAGED_OBJECT
 		Return list
 	End Method
 	
-	Method get_cardinal_blocking_neighbor_info:Int[]( c:CELL )
+	Method path%( c:CELL )
 		If in_bounds( c )
-			Local info%[] = New Int[4]
-			For Local index% = 0 To CELL.ALL_CARDINAL_DIRECTIONS.Length-1
-				Local neighbor:CELL = c.move( CELL.ALL_CARDINAL_DIRECTIONS[index] )
-				If (Not in_bounds( neighbor )) Or (path_regions[ neighbor.row, neighbor.col ] = PATH_BLOCKED)
-					info[index] = PATH_BLOCKED
-				Else
-					info[index] = PATH_PASSABLE
-				End If
-			Next
-			Return info
-		Else 'Not in_bounds( c )
-			Return [ PATH_BLOCKED, PATH_BLOCKED, PATH_BLOCKED, PATH_BLOCKED ]
+			Return path_regions[ c.row, c.col ]
+		Else
+			Return PATH_BLOCKED
 		End If
 	End Method
-	
+
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "name", TJSONString.Create( name ))
