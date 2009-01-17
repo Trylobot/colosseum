@@ -72,17 +72,16 @@ Type AGENT Extends PHYSICAL_OBJECT
 		Local nearby_objects:TList = game.near_to( Self, 200.0 ) 'the "radius" argument should come from data
 		Local damage#, total_force#
 		For Local phys_obj:PHYSICAL_OBJECT = EachIn nearby_objects
-			damage = 0 'the maximum comes from data, and is modulated with the actual distance
-			total_force = 35000 / Pow( 0.5 * dist_to( phys_obj ) + 24, 2 ) - 5 'the maximum comes from data, and is modulated with the actual distance
-			'damage to object
+			Local dist# = dist_to( phys_obj ) 
+			'damage
+			damage = 100 'this should come from data
 			If AGENT( phys_obj )
-				AGENT( phys_obj ).receive_damage( damage )
+				AGENT( phys_obj ).receive_damage( damage / Pow( dist, 2 ))
 			End If
 			'explosive knock-back force & torque
-			Local offset#, offset_ang#
-			cartesian_to_polar( pos_x - phys_obj.pos_x, pos_y - phys_obj.pos_y, offset, offset_ang )
-			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 180 + offset_ang, 30*total_force*Cos( offset_ang - ang ), 50 )))
-			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, offset*total_force*Sin( offset_ang - ang ), 50 )))
+			total_force = 600000 / Pow( 0.5 * dist + 24, 2 ) - 5 'the maximum comes from data, and is modulated with the actual distance
+			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang_to( phys_obj ), total_force, 100 )))
+			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, Rnd( -2.0, 2.0 )*total_force, 100 )))
 		Next
 		'self-destruct explosion sound
 		play_sound( get_sound( "cannon_hit" ),, 0.25 )

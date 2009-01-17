@@ -487,9 +487,9 @@ Type ENVIRONMENT
 		'  only calculate the square of the distances; do not bother calculating the actual distances
 		'  this will save a "square-root" operation for each physical object in the current game.
 		Local proximal:TList = CreateList()
-		For Local proj:PROJECTILE = EachIn projectile_list
-			If obj.dist_to( proj ) <= radius Then proximal.AddLast( proj )
-		Next
+		'For Local proj:PROJECTILE = EachIn projectile_list
+		'	If obj.dist_to( proj ) <= radius Then proximal.AddLast( proj )
+		'Next
 		For Local ag:AGENT = EachIn prop_list
 			If obj.dist_to( ag ) <= radius Then proximal.AddLast( ag )
 		Next

@@ -433,7 +433,7 @@ Function draw_HUD()
 	SetImageFont( get_font( "consolas_14" ))
 	str = "$" + format_number( profile.cash )
 	SetColor( 50, 220, 50 )
-	DrawText_with_shadow( str, x, y+1-3 )
+	DrawText_with_outline( str, x, y+1-3 )
 	x :+ w + HORIZONTAL_HUD_MARGIN
 	SetImageFont( get_font( "consolas_bold_12" ))
 	
@@ -446,7 +446,7 @@ Function draw_HUD()
 		y = y1
 		If t.name <> Null And t.name <> ""
 			SetColor( 196, 196, 196 );
-			DrawText( t.name, x, y+1 ); 'x :+ TextWidth( t.name ) + 3
+			DrawText_with_outline( t.name, x, y+1 ); 'x :+ TextWidth( t.name ) + 3
 		End If
 		y = y2
 		temp_x = x; temp_y = y
@@ -493,7 +493,7 @@ Function draw_HUD()
 	x = window_w - 10 - TextWidth( music_str )
 	y = y1
 	SetColor( 255, 255, 255 )
-	DrawText( music_str, x, y )
+	DrawText_with_outline( music_str, x, y )
 	y = y2
 	Local img_spkr:TImage
 	If FLAG_bg_music_on
@@ -634,29 +634,42 @@ Function generate_sand_image:TImage( w%, h% )
 End Function
 '______________________________________________________________________________
 Function generate_level_walls_image:TImage( lev:LEVEL )
+	Const wall_size% = 5
 	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
 	pixmap.ClearPixels( encode_ARGB( 0.0, 0,0,0 ))
+	'variables
+	Local c:CELL
 	Local blocking_cells:TList = lev.get_blocking_cells()
-	Local max_dist# = CELL.MAXIMUM_COST
+	Local wall:BOX
+	Local adjacent%[,]
+	Local nr%, nc%
+	Local px%, py%
+	Local x#[], y#[]
+	Local dist%
 	Local color:TColor
-	'for each blocking region
-	For Local c:CELL = EachIn blocking_cells
-		Local wall:BOX = lev.get_wall( c )
-		Local neighbor%[,] = New Int[ 3, 3 ]
-		For Local nr% = 0 To 2
-			For Local nc% = 0 To 2
-				neighbor[ nr, nc ] = lev.path( c.add( CELL.Create( nr, nc )))
+	'for: each "blocking" region
+	For c = EachIn blocking_cells
+		wall = lev.get_wall( c )
+		adjacent = New Int[ 3, 3 ]
+		For nr = 0 To 2
+			For nc = 0 To 2
+				adjacent[ nr, nc ] = lev.path( c.add( CELL.Create( nr - 1, nc - 1 )))
 			Next
 		Next
 		'for each pixel of the region to be rendered
-		For Local px% = wall.x To wall.x+wall.w-1
-			For Local py% = wall.y To wall.y+wall.h-1
-				Local dist#[] = [ max_dist, max_dist, max_dist, max_dist ]
-				If neighbor[ 0, 1 ] = PATH_PASSABLE Then dist[0] = py - wall.y          'TOP
-				If neighbor[ 1, 2 ] = PATH_PASSABLE Then dist[1] = wall.x+wall.w-1 - px 'RIGHT
-				If neighbor[ 2, 1 ] = PATH_PASSABLE Then dist[2] = wall.y+wall.h-1 - py 'BOTTOM
-				If neighbor[ 1, 0 ] = PATH_PASSABLE Then dist[3] = px - wall.x          'LEFT
-				Select Int( dist[ minimum( dist )])
+		For py = wall.y To wall.y+wall.h-1
+			For px = wall.x To wall.x+wall.w-1
+				dist = INFINITY
+				If      px <= wall_size          And adjacent[ 1, 0 ] = PATH_BLOCKED 'left
+					dist = px - wall.x
+				Else If px >= wall.w - wall_size And adjacent[ 1, 2 ] = PATH_BLOCKED 'right
+					dist = wall.x+wall.w-1 - px
+				Else If py <= wall_size          And adjacent[ 0, 1 ] = PATH_BLOCKED 'top
+					dist = py - wall.y
+				Else If py >= wall.h - wall_size And adjacent[ 2, 1 ] = PATH_BLOCKED 'bottom
+					dist = wall.y+wall.h-1 - py
+				End If 
+				Select dist
 					Case 0, 2, 3
 						color = TColor.Create_by_HSL( 0.0, 0.0, 0.80 + Rnd( 0.00, 0.20 ))
 					Case 1, 4, 5
@@ -664,10 +677,41 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 					Default
 						color = TColor.Create_by_HSL( 0.0, 0.0, 0.30 + Rnd( 0.00, 0.05 ))
 				End Select
+				rem
+				y = [ py - wall.y, wall.y+wall.h-1 - py ]
+				x = [ px - wall.x, wall.x+wall.w-1 - px ]
+				nr = 1; nc = 1
+				If x[0] < x[1] Then nc :- 1 Else nc :+ 1
+				If y[0] < y[1] Then nr :- 1 Else nr :+ 1
+				If adjacent[ nr, nc ] = PATH_PASSABLE 'wall portion
+				End If 
+				endrem
 				color.calc_RGB()
 				pixmap.WritePixel( px,py, encode_ARGB( 1.0, color.R,color.G,color.B ))
 			Next
 		Next
+rem
+?Debug
+Repeat
+	Cls()
+	DrawPixmap( pixmap, 0, 0 )
+	SetColor( 255, 255, 255 )
+	SetAlpha( 0.3333 )
+	For nr = 0 To 2
+		For nc = 0 To 2
+			If adjacent[ nr, nc ] <> PATH_PASSABLE
+				Local target:CELL = c.add( CELL.Create( nr - 1, nc - 1 )) 
+				If lev.in_bounds( target )
+					wall = lev.get_wall( target )
+					DrawRect( wall.x, wall.y, wall.w, wall.h )
+				End If
+			End If
+		Next
+	Next
+	Flip( 1 )
+Until KeyHit( KEY_ENTER )
+?
+endrem
 	Next
 	Return LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
 End Function
