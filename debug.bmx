@@ -365,7 +365,7 @@ Function debug_overlay()
 		Else 'FLAG_spawn_mode = SPAWN_FRIENDLIES
 			spawn_agent.draw( 196, 196, 255 )
 		End If
-		If KeyHit( KEY_BACKSLASH )
+		If KeyHit( KEY_O )
 			game.spawn_agent( spawn_archetype, FLAG_spawn_mode, POINT( spawn_agent ))
 			spawn_agent = Null
 		Else If KeyHit( KEY_OPENBRACKET )

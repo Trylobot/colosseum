@@ -177,30 +177,6 @@ Function get_player_id%()
 		Return -1
 	End If
 End Function
-'______________________________________________________________________________
-'Instaquit: quit instantly from anywhere, just hold ESC for a few seconds
-Global esc_held% = False
-Global esc_press_ts% = now()
-Global esc_held_progress_bar_show_time_required% = 200
-Global instaquit_time_required% = 1000
-
-Function check_instaquit()
-	If KeyDown( KEY_ESCAPE )
-		If Not esc_held
-			esc_press_ts = now()
-			esc_held = True
-		Else 'esc_held
-			If (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
-				draw_instaquit_progress()
-			End If
-			If (now() - esc_press_ts) >= instaquit_time_required
-				End
-			End If
-		End If
-	Else
-		esc_held = False
-	End If
-End Function
 
 '______________________________________________________________________________
 Const COMMAND_NULL% = 0

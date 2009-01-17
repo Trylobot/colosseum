@@ -22,7 +22,7 @@ Function get_all_input()
 	'navigate menu and select option
 	If FLAG_in_menu
 		'menu navigation controls
-		If KeyHit( KEY_ESCAPE ) And current_menu <> 0
+		If escape_key_release() And current_menu <> 0
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		End If
 		If KeyHit( KEY_DOWN ) 'Or KeyHit( KEY_RIGHT )
@@ -42,7 +42,7 @@ Function get_all_input()
 
 	Else If FLAG_in_shop
 		'shop navigation
-		If KeyHit( KEY_ESCAPE )
+		If escape_key_release()
 			FLAG_in_menu = True
 			FLAG_in_shop = False
 		End If
@@ -61,7 +61,7 @@ Function get_all_input()
 	'player's game specific input
 	If game <> Null And game.human_participation
 
-		If KeyHit( KEY_ESCAPE ) 'show menu
+		If escape_key_release() 'show menu
 			If Not game.game_over
 				If Not FLAG_in_menu
 					FLAG_in_menu = True
@@ -81,7 +81,33 @@ Function get_all_input()
 
 	End If
 	
+	'instaquit
+	If esc_held And (now() - esc_press_ts) >= instaquit_time_required
+		End
+	End If
+	'escape key state
+	If KeyDown( KEY_ESCAPE )
+		If Not esc_held
+			esc_press_ts = now()
+		End If
+		esc_held = True
+	Else
+		esc_held = False
+	End If
+
 End Function
+
+'______________________________________________________________________________
+'Instaquit: quit instantly from anywhere, just hold ESC for a few seconds
+Global esc_held% = False
+Global esc_press_ts% = now()
+Global esc_held_progress_bar_show_time_required% = 200
+Global instaquit_time_required% = 1000
+
+Function escape_key_release%()
+	Return (Not KeyDown( KEY_ESCAPE ) And esc_held)
+End Function
+
 '______________________________________________________________________________
 Type CONSOLE
 	'Field cursor_index%
