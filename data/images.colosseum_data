@@ -637,6 +637,26 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/door_bg.png",
+			handle_x: 16.0,
+			handle_y: 68.0,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/door_fg.png",
+			handle_x: 16.0,
+			handle_y: 68.0,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/crate.png",
 			handle_x: 16.0,
 			handle_y: 16.0,

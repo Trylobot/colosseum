@@ -57,7 +57,7 @@ Type PARTICLE Extends POINT
 	frictional_coefficient# = 0.0, ..
 	red# = 1.0, green# = 1.0, blue# = 1.0, ..
 	red_delta# = 0.0, green_delta# = 0.0, blue_delta# = 0.0, ..
-	life_time% = 0, ..
+	life_time% = INFINITY, ..
 	pos_x# = 0.0, pos_y# = 0.0, ..
 	vel_x# = 0.0, vel_y# = 0.0, ..
 	ang# = 0.0, ..

@@ -175,5 +175,23 @@
 			img: "image.muzzle_smoke",
 			layer: "LAYER_FOREGROUND"
 		}
-	}
+	},
+	{
+		class: "particle",
+		key: "door_bg",
+		object: {
+			particle_type: "PARTICLE_TYPE_IMG",
+			img: "image.door_bg",
+			layer: "LAYER_BACKGROUND",
+		}
+	},
+	{
+		class: "particle",
+		key: "door_fg",
+		object: {
+			particle_type: "PARTICLE_TYPE_IMG",
+			img: "image.door_fg",
+			layer: "LAYER_FOREGROUND",
+		}
+	},
 ]

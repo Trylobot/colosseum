@@ -409,6 +409,12 @@ Type ENVIRONMENT
 		right_door.manage( environmental_widget_list )
 		door_list.AddLast( left_door )
 		door_list.AddLast( right_door )
+		Local bg:PARTICLE = get_particle( "door_bg" )
+		bg.move_to( p )
+		particle_list_background.AddLast( bg )
+		Local fg:PARTICLE = get_particle( "door_fg" )
+		fg.move_to( p )
+		particle_list_foreground.AddLast( fg )
 	End Method
 	
 	Method activate_doors( political_alignment% )

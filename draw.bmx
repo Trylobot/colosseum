@@ -117,6 +117,11 @@ Function draw_game()
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	
+	'environmental widgets
+	For Local w:WIDGET = EachIn game.environmental_widget_list
+		w.draw()
+	Next
+
 	'SetViewport( 0, 0, window_w, window_h )
 
 	draw_reticle()
@@ -275,7 +280,7 @@ Function draw_arena_bg()
 	SetRotation( 0 )
 	DrawImage( game.background_clean, 0.0, 0.0 )
 	DrawImage( game.background_dynamic, 0.0, 0.0 )
-
+	
 	'draw particles to be retained
 	For Local part:PARTICLE = EachIn game.retained_particle_list
 		part.draw()
@@ -322,10 +327,6 @@ Function draw_arena_fg()
 	
 	DrawImage( game.foreground, 0, 0 )
 	'DrawPixmap( game.foreground, 0, 0 )
-
-	For Local w:WIDGET = EachIn game.environmental_widget_list
-		w.draw()
-	Next
 End Function
 
 Function draw_lighting_and_effects()
