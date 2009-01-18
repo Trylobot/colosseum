@@ -46,7 +46,7 @@ Function get_all_input()
 			FLAG_in_menu = True
 			FLAG_in_shop = False
 		End If
-		'delegate
+		'delegate input to shop function
 		get_shop_input()
 
 	Else 'show in-game help

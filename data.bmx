@@ -9,6 +9,7 @@ Global settings_file_ext$ = "colosseum_settings"
 Global data_file_ext$ = "colosseum_data"
 Global level_file_ext$ = "colosseum_level"
 Global saved_game_file_ext$ = "colosseum_saved_game"
+Global autosave_path$ = "user/autosave.colosseum_data"
 
 Global data_path$ = "data/"
 Global user_path$ = "user/"
@@ -53,14 +54,14 @@ Function load_assets%()
 	If Not file Then Return False
 	Local json:TJSON = TJSON.Create( file )
 	file.Close()
-	If Not json.isNIL() 'read successful
+	If Not json.isNull() 'read successful
 		Local asset_path$, asset_file:TStream, asset_json:TJSON
 		For Local asset_id$ = EachIn asset_identifiers
 			asset_path = json.GetString( asset_id )
 			asset_file = ReadFile( asset_path )
 			If Not file Then Continue
 			asset_json = TJSON.Create( asset_file )
-			If Not asset_json.isNIL() And TJSONArray(asset_json.Root) 'read successful
+			If Not asset_json.isNull() And TJSONArray(asset_json.Root) 'read successful
 				load_objects( asset_json )
 			End If
 		Next
@@ -400,12 +401,33 @@ Function save_pixmap_to_file( px:TPixmap )
 			If high <= current Then high = current + 1
 		EndIf
 	Next
-	'build path
+	'procedurally build filename
 	Local path$ = user_path + file_prefix + pad( high, 3, "0" ) + ".png"
 	'save png
 	SavePixmapPNG( px, path )
 End Function
-
+'______________________________________________________________________________
+Function load_autosave$()
+	Local file:TStream, json:TJSON
+	file = ReadFile( autosave_path )
+	If file
+		json = TJSON.Create( file )
+		file.Close()
+		Return json.GetString( "autosave" )
+	Else
+		Return Null
+	End If
+End Function
+'______________________________________________________________________________
+Function save_autosave( profile$ )
+	Local file:TStream, json:TJSON
+	json = TJSON.Create( "{autosave:~q"+profile+"~q}" )
+	file = WriteFile( autosave_path )
+	If file
+		json.Write( file )
+		file.Close()
+	End If
+End Function
 '______________________________________________________________________________
 Function enum%( literal$ )
 	Select literal

@@ -118,11 +118,12 @@ Function update_flags()
 					game.spawn_enemies = True
 				End If
 			End If
-			'if the battle is over, and player has exited the arena
-			If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena And KeyDown( KEY_R )
+			'if the battle is over (player has won or lost)
+			If Not game.battle_in_progress And ..
+			(game.waiting_for_player_to_exit_arena Or (Not game.game_in_progress And game.game_over)) ..
+			And KeyHit( KEY_R )
 				menu_command( COMMAND_SHOP )
-			Else If Not game.game_in_progress And game.game_over And KeyDown( KEY_R )
-				menu_command( COMMAND_SHOP )
+				menu_command( COMMAND_SAVE_GAME, profile.src_path )
 			End If
 		End If
 		'flag updates for any game

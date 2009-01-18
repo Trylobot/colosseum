@@ -11,6 +11,7 @@ Const UNSPECIFIED% = -1
 Const PICKUP_PROBABILITY# = 0.50 'chance of an enemy dropping a pickup (randomly selected from all pickups)
 Const arena_lights_fade_time% = 1000
 Global level_intro_time% = 2000
+Global info$ = ""
 
 'environmental objects
 Global mouse:cVEC = New cVEC
@@ -416,6 +417,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			
 		Case COMMAND_LOAD_GAME
 			profile = load_game( String(argument) )
+			save_autosave( profile.src_path )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			get_main_menu().update()
 				

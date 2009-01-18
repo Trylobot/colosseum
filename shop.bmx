@@ -85,6 +85,7 @@ Function draw_shop()
 		y :+ 50 + 3
 		SetRotation( 0 )
 	End If
+	SetAlpha( 1 )
 	draw_shop_option( "level " + StripAll( profile.current_level ), (shop_option = SHOP_OPTION_LEVEL_SELECT), x, y )
 	level_y = y
 	draw_shop_option( "shop", (shop_option = SHOP_OPTION_BUY_STUFF), x, y )

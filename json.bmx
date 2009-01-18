@@ -716,7 +716,7 @@ Type TJSON
 	Field Root:TJSONValue = NIL
 	Field LookupKey:TJSONKey = New TJSONKey
 	
-	Method isNIL%()
+	Method isNull%()
 		Return Root = NIL
 	End Method
 	

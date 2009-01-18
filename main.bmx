@@ -28,7 +28,7 @@ Global window_h%
 Global fullscreen%
 Global bit_depth%
 Global refresh_rate%
-Const time_per_frame_min% = 1000 / 60 
+Global autosave_profile_path$
 
 Function apply_default_settings()
 	window_w = 800
@@ -51,6 +51,9 @@ load_assets()
 MENU.load_fonts()
 load_all_archetypes() 'REMOVE this function call by externalizing this data, please.
 menu_command( COMMAND_NEW_LEVEL ) 'initialize the level editor data
+'autosave profile auto-load on startup
+autosave_profile_path = load_autosave()
+menu_command( COMMAND_LOAD_GAME, autosave_profile_path )
 
 ?Debug
 debug_init()
@@ -76,6 +79,7 @@ init_graphics()
 
 '______________________________________________________________________________
 'MAIN
+Const time_per_frame_min% = 1000 / 60
 Local before%
 init_ai_menu_game()
 'load_game( "user/dev.colosseum_saved_game" )
