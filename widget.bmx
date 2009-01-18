@@ -129,12 +129,19 @@ Type WIDGET Extends MANAGED_OBJECT
 			SetColor( state.red, state.green, state.blue )
 			SetAlpha( state.alpha )
 			SetScale( state.scale_x, state.scale_y )
-			
-			SetRotation( parent.ang + offset_ang + state.ang + ang_offset )
-			DrawImage( img, ..
-				parent.pos_x + offset*Cos( parent.ang + offset_ang ) + state.pos_length*Cos( parent.ang + offset_ang + state.ang + ang_offset ), ..
-				parent.pos_y + offset*Sin( parent.ang + offset_ang ) + state.pos_length*Sin( parent.ang + offset_ang + state.ang + ang_offset ) )
+			SetRotation( get_ang() )
+			DrawImage( img, get_x(), get_y() )
 		End If
+	End Method
+	
+	Method get_x#()
+		Return parent.pos_x + offset*Cos( parent.ang + offset_ang ) + state.pos_length*Cos( parent.ang + offset_ang + state.ang + ang_offset )
+	End Method
+	Method get_y#()
+		Return parent.pos_y + offset*Sin( parent.ang + offset_ang ) + state.pos_length*Sin( parent.ang + offset_ang + state.ang + ang_offset )
+	End Method
+	Method get_ang#()
+		Return parent.ang + offset_ang + state.ang + ang_offset
 	End Method
 	
 	Method queue_transformation( count% = INFINITY )

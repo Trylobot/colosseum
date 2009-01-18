@@ -330,6 +330,33 @@ Type ENVIRONMENT
 		Return this_agent
 	End Method
 	
+	Method deal_damage( ag:AGENT, damage# )
+		'actual damage assignment
+		ag.receive_damage( damage )
+		'resulting death
+		If ag.dead() 'some agent was killed
+			'agent death animations and sounds, and memory cleanup
+			ag.die()
+			'shalt we spawneth teh phat lewts?! perhaps!
+			spawn_pickup( ag.pos_x, ag.pos_y )
+			'complex-agent-specific death routine
+			If COMPLEX_AGENT( ag )
+				'duplicate code, pulled from ENVIRONMENT.kill()
+				Select COMPLEX_AGENT( ag ).political_alignment
+					Case ALIGNMENT_FRIENDLY
+						active_friendly_units :- 1
+					Case ALIGNMENT_HOSTILE
+						active_hostile_units :- 1
+				End Select
+				'hostile complex agent death (as in, not allied with the player)
+				If COMPLEX_AGENT( ag ).political_alignment = ALIGNMENT_HOSTILE
+					'PARTICLE( PARTICLE.Create( PARTICLE_TYPE_STR,,,, ("$" + ag.cash_value), get_font( "consolas_24" ), LAYER_FOREGROUND, False, 0.1, 0.333, 1.000, 0.3333,,,, 1000, ag.pos_x, ag.pos_y-5, 0.0, -2.0, 0.0, 0.0, 0.5, -0.016, 1.0, 0.01 )).auto_manage()
+					level_enemies_killed :+ 1
+				End If
+			End If
+		End If
+	End Method
+	
 	Method insert_player( new_player:COMPLEX_AGENT, new_player_brain:CONTROL_BRAIN )
 		'if player already exists in this environment, it must be removed
 		If player <> Null
@@ -489,9 +516,6 @@ Type ENVIRONMENT
 		'  only calculate the square of the distances; do not bother calculating the actual distances
 		'  this will save a "square-root" operation for each physical object in the current game.
 		Local proximal:TList = CreateList()
-		'For Local proj:PROJECTILE = EachIn projectile_list
-		'	If obj.dist_to( proj ) <= radius Then proximal.AddLast( proj )
-		'Next
 		For Local ag:AGENT = EachIn prop_list
 			If obj.dist_to( ag ) <= radius Then proximal.AddLast( ag )
 		Next

@@ -85,18 +85,13 @@ Function collide_all_objects()
 		Next
 		For Local cur_door_list:TList = EachIn game.all_door_lists
 			For Local door:WIDGET = EachIn cur_door_list
-				SetRotation( door.parent.ang + door.offset_ang + door.state.ang + door.ang_offset )
-				Local x#, y#, w#, h#
-				x = door.parent.pos_x + door.offset*Cos( door.parent.ang + door.offset_ang ) + door.state.pos_length*Cos( door.parent.ang + door.offset_ang + door.state.ang + door.ang_offset )
-				y = door.parent.pos_y + door.offset*Sin( door.parent.ang + door.offset_ang ) + door.state.pos_length*Sin( door.parent.ang + door.offset_ang + door.state.ang + door.ang_offset )
-				w = door.img.width
-				h = door.img.height
-				result = CollideRect( x,y, w,h, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, door )
+				SetRotation( door.get_ang() )
+				result = CollideImage( door.img, door.get_x(), door.get_y(), 0, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, door )
 				For ag = EachIn result
 					'COLLISION! between {ag} and {door}
 					collision_agent_door( ag, door )
 				Next
-				result = CollideRect( x,y, w,h, PROJECTILE_COLLISION_LAYER, DOOR_COLLISION_LAYER, door )
+				result = CollideImage( door.img, door.get_x(), door.get_y(), 0, PROJECTILE_COLLISION_LAYER, DOOR_COLLISION_LAYER, door )
 				For proj = EachIn result
 					'COLLISION! between {proj} and {door}
 					collision_projectile_door( proj, door )
@@ -149,34 +144,10 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 		Next
 	Next
 	'process damage, death, cash and pickups resulting from it
-	ag.receive_damage( proj.damage )
-	If ag.dead() 'some agent was killed
-		'show the player how much cash they got for killing this enemy, if they killed it
-		If profile <> Null And proj.source_id = get_player_id()
-			profile.cash :+ ag.cash_value
-		End If
-		'perhaps! spawneth teh phat lewts?!
-		game.spawn_pickup( ag.pos_x, ag.pos_y )
-		'agent death
-		ag.die()
-		'complex agent death
-		If COMPLEX_AGENT( ag )
-			'duplicate code, pulled from ENVIRONMENT.kill()
-			Select COMPLEX_AGENT( ag ).political_alignment
-				Case ALIGNMENT_FRIENDLY
-					game.active_friendly_units :- 1
-				Case ALIGNMENT_HOSTILE
-					game.active_hostile_units :- 1
-			End Select
-			'hostile complex agent death (as in, not allied with the player)
-			If COMPLEX_AGENT( ag ).political_alignment = ALIGNMENT_HOSTILE
-				'PARTICLE( PARTICLE.Create( PARTICLE_TYPE_STR,,,, ("$" + ag.cash_value), get_font( "consolas_24" ), LAYER_FOREGROUND, False, 0.1, 0.333, 1.000, 0.3333,,,, 1000, ag.pos_x, ag.pos_y-5, 0.0, -2.0, 0.0, 0.0, 0.5, -0.016, 1.0, 0.01 )).auto_manage()
-				game.level_enemies_killed :+ 1
-				If profile <> Null
-					profile.kills :+ 1
-				End If
-			End If
-		End If
+	game.deal_damage( ag, proj.damage )
+	'if a kill was made, show the player how much cash they got for killing this enemy, if they killed it
+	If ag.dead() And profile <> Null And proj.source_id = get_player_id()
+		record_player_kill( ag.cash_value )
 	End If
 	'activate projectile impact emitter
 	proj.impact( ag )
@@ -219,14 +190,6 @@ Function collision_agent_wall( ag:AGENT, wall:BOX )
 	Local offset#, offset_ang#
 	cartesian_to_polar( ag.pos_x - average([wall.x,wall.x+wall.w]), ag.pos_y - average([wall.y,wall.y+wall.h]), offset, offset_ang )
 	Local ang# = clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )
-	''nudge
-	'ag.pos_x :+ WALL_NUDGE_DIST*Cos( ang )
-	'ag.pos_y :+ WALL_NUDGE_DIST*Sin( ang )
-	''cancellation of (the scalar projection of (the agent's {velocity|acceleration} onto the direction of (the collision response force)))
-	'Local vel:cVEC = Create_cVEC( ag.vel_x, ag.vel_y )
-	'ag.vel_x :- vel.r() * Cos( ang - vel.a() )
-	'Local acc:cVEC = Create_cVEC( ag.acc_x, ag.acc_y )
-	'ag.acc_x :- acc.r() * Cos( ang - acc.a() )
 	Select clamp_ang_to_bifurcate_wall_diagonals( offset_ang, wall )
 		Case 0
 			ag.pos_x :+ WALL_NUDGE_DIST
@@ -248,28 +211,37 @@ Function collision_agent_wall( ag:AGENT, wall:BOX )
 End Function
 
 Function collision_agent_door( ag:AGENT, door:WIDGET )
-	'DebugLog " collision_agent_door"
-
+	If Not ag.physics_disabled
+		Local door_pos:POINT = POINT( Create_POINT( door.get_x(), door.get_y(), door.get_ang() ))
+		Local dist# = ag.dist_to( door_pos )
+		Local ang# = ag.ang_to( door_pos )
+		'nudge
+		ag.pos_x :+ WALL_NUDGE_DIST*Cos( ang )
+		ag.pos_y :+ WALL_NUDGE_DIST*Sin( ang )
+		'velocity cancellation
+		Local vel:cVEC = Create_cVEC( ag.vel_x, ag.vel_y )
+		Local vel_projection# = vel.r()*Cos( ang - vel.a() )
+		ag.vel_x :- vel_projection*Cos( ang )
+		ag.vel_y :- vel_projection*Sin( ang )
+		'acceleration cancellation
+		Local acc:cVEC = Create_cVEC( ag.acc_x, ag.acc_y )
+		Local acc_projection# = acc.r()*Cos( ang - acc.a() )
+		ag.acc_x :- acc_projection*Cos( ang )
+		ag.acc_y :- acc_projection*Sin( ang )
+		'collision force/torque
+		Local door_mass# = 800.0
+		Local collision_force_mag# = door_mass*AGENT_AGENT_ENERGY_COEFFICIENT*vel.r()
+		ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, collision_force_mag*Cos( ang - door_pos.ang ), 50 )))
+		ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, dist*(collision_force_mag/6.0)*Sin( ang - door_pos.ang ), 50 )))
+	End If
 End Function
 
 Function collision_projectile_door( proj:PROJECTILE, door:WIDGET )
-	'DebugLog " collision_projectile_door"
-
+	proj.impact()
+	proj.unmanage()
 End Function
 
 Function collision_projectile_wall( proj:PROJECTILE, wall:BOX )
-	'add explosive force to nearby agents
-	For Local list:TList = EachIn game.agent_lists
-		For Local other:AGENT = EachIn list
-			Local dist# = proj.dist_to( other )
-			If dist < proj.radius
-				Local ang# = proj.ang_to( other )
-				Local total_force# = PROJECTILE_EXPLOSIVE_FORCE_COEFFICIENT*proj.explosive_force_magnitude / Pow( dist, 2 )
-				other.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, total_force*Cos( ang ), 100 )))
-				other.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, dist*total_force*Sin( ang ), 100 )))
-			End If
-		Next
-	Next
 	proj.impact()
 	proj.unmanage()
 End Function

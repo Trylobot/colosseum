@@ -74,9 +74,9 @@ Type AGENT Extends PHYSICAL_OBJECT
 		For Local phys_obj:PHYSICAL_OBJECT = EachIn nearby_objects
 			Local dist# = dist_to( phys_obj ) 
 			'damage
-			damage = 100 'this should come from data
+			damage = 1000 'this should come from data
 			If AGENT( phys_obj )
-				AGENT( phys_obj ).receive_damage( damage / Pow( dist, 2 ))
+				game.deal_damage( AGENT( phys_obj ), damage / Pow( 0.1 * dist, 2 ))
 			End If
 			'explosive knock-back force & torque
 			total_force = (phys_obj.mass * 750) / Pow( 0.5 * dist + 24, 2 ) - 5 'the maximum comes from data, and is modulated with the actual distance

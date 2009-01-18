@@ -101,6 +101,14 @@ Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
 End Function
 
 '______________________________________________________________________________
+Function record_player_kill( cash_value% )
+	If profile <> Null
+		profile.kills :+ 1
+		profile.cash :+ cash_value
+	End If
+End Function
+
+'______________________________________________________________________________
 Function init_ai_menu_game()
 	ai_menu_game = Create_ENVIRONMENT()
 
