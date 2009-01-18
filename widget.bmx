@@ -5,8 +5,9 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const REPEAT_MODE_CYCLIC_WRAP% = 0
-Const REPEAT_MODE_LOOP_BACK% = 1
+Const REPEAT_MODE_NONE% = 0
+Const REPEAT_MODE_CYCLIC_WRAP% = 1
+Const REPEAT_MODE_LOOP_BACK% = 2
 
 Const TRAVERSAL_DIRECTION_INCREASING% = 0
 Const TRAVERSAL_DIRECTION_DECREASING% = 1
@@ -35,6 +36,7 @@ Type WIDGET Extends MANAGED_OBJECT
 	Field transforming% '{true|false}
 	Field transform_begin_ts% 'timestamp of beginning of current transformation, used with interpolation
 	Field transformations_remaining% '{INFINITE|integer}
+	Field prune_idle%
 	
 	Method New()
 	End Method
@@ -42,18 +44,16 @@ Type WIDGET Extends MANAGED_OBJECT
 	Function Create:Object( ..
 	name$ = Null, ..
 	img:TImage, ..
-	layer%, ..
+	layer% = LAYER_IN_FRONT_OF_PARENT, ..
 	visible% = True, ..
-	repeat_mode%, ..
-	state_count%, ..
-	initially_transforming% )
+	repeat_mode% = REPEAT_MODE_CYCLIC_WRAP, ..
+	initially_transforming% = False )
 		Local w:WIDGET = New WIDGET
 		w.name = name
 		w.img = img
 		w.layer = layer
 		w.visible = visible
 		w.repeat_mode = repeat_mode
-		w.states = New TRANSFORM_STATE[state_count]
 		w.cur_state = -1
 		w.final_state = -1
 		w.traversal_direction = TRAVERSAL_DIRECTION_INCREASING
@@ -63,8 +63,8 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Function
 	
 	Method clone:WIDGET()
-		Local w:WIDGET = WIDGET( WIDGET.Create( name, img, layer, visible, repeat_mode, states.Length, transforming ))
-		'list of states
+		Local w:WIDGET = WIDGET( WIDGET.Create( name, img, layer, visible, repeat_mode, transforming ))
+		'copy list of states
 		For Local cur_state:TRANSFORM_STATE = EachIn states
 			w.add_state( cur_state )
 		Next
@@ -97,6 +97,9 @@ Type WIDGET Extends MANAGED_OBJECT
 					If transformations_remaining <= 0
 						'no? fine
 						transforming = False
+						If prune_idle
+							unmanage()
+						End If
 					End If
 				End If
 			End If
@@ -119,8 +122,6 @@ Type WIDGET Extends MANAGED_OBJECT
 				'widget just stopped transforming during this update() call
 				state = cs.clone()
 			End If
-		Else
-			'not transforming, nothing to update.
 		End If
 	End Method
 	
@@ -135,16 +136,17 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Method
 	
 	Method get_x#()
-		Return parent.pos_x + offset*Cos( parent.ang + offset_ang ) + state.pos_length*Cos( parent.ang + offset_ang + state.ang + ang_offset )
+		Return parent.pos_x + offset*Cos( parent.ang + offset_ang ) + state.pos_length*Cos( parent.ang + offset_ang + state.pos_ang + ang_offset )
 	End Method
 	Method get_y#()
-		Return parent.pos_y + offset*Sin( parent.ang + offset_ang ) + state.pos_length*Sin( parent.ang + offset_ang + state.ang + ang_offset )
+		Return parent.pos_y + offset*Sin( parent.ang + offset_ang ) + state.pos_length*Sin( parent.ang + offset_ang + state.pos_ang + ang_offset )
 	End Method
 	Method get_ang#()
 		Return parent.ang + offset_ang + state.ang + ang_offset
 	End Method
 	
-	Method queue_transformation( count% = INFINITY )
+	Method queue_transformation( count% = INFINITY, prune_when_finished% = False )
+		prune_idle = prune_when_finished
 		If transforming
 			transformations_remaining :+ count
 		Else
@@ -156,6 +158,11 @@ Type WIDGET Extends MANAGED_OBJECT
 	
 	Method add_state( s:TRANSFORM_STATE )
 		final_state :+ 1
+		If states = Null
+			states = New TRANSFORM_STATE[1]
+		Else
+			states = states[..states.Length+1]
+		End If
 		states[final_state] = s.clone()
 		If cur_state < 0 Then cur_state = 0
 		If state = Null Then state = states[cur_state].clone()
@@ -163,6 +170,10 @@ Type WIDGET Extends MANAGED_OBJECT
 	
 	Method state_successor%( i% )
 		Select repeat_mode
+			Case REPEAT_MODE_NONE
+				If i >= final_state
+					Return final_state
+				End If
 			Case REPEAT_MODE_CYCLIC_WRAP
 				If i >= final_state
 					Return 0

@@ -185,23 +185,20 @@ Function draw_game()
 	If game.game_over
 		SetColor( 0, 0, 0 )
 		SetAlpha( 0.65 )
-		DrawRect( 0, 0, window_w, window_h )
-		SetColor( 0, 0, 0 )
 		SetScale( 1, 1 )
+		SetRotation( 0 )
+		DrawRect( 0, 0, window_w, window_h )
 		SetImageFont( get_font( "consolas_bold_100" ))
 		Local w% = TextWidth( "GAME OVER" )
 		Local h% = GetImageFont().Height()
-		DrawText( "GAME OVER", window_w/2 - w/2, window_h/2 - h/2 )
 		SetColor( 255, 0, 0 )
-		Local scale# = 0.85
-		SetScale( scale, scale )
-		DrawText( "GAME OVER", window_w/2 - scale*w/2, window_h/2 - scale*h/2 )
+		DrawText_with_outline( "GAME OVER", window_w/2 - w/2, window_h/2 - h/2 )
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		SetScale( 1, 1 )
 		SetImageFont( get_font( "consolas_12" ))
 		Local r_msg$ = "[R] return to loading bay" 
-		DrawText_with_outline( r_msg, Int(window_w/2 - TextWidth( r_msg )/2), Int(window_h/2 + scale*h/3 ))
+		DrawText_with_outline( r_msg, Int(window_w/2 - TextWidth( r_msg )/2), Int(window_h/2 + h/3 ))
 	End If
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
@@ -536,6 +533,8 @@ End Function
 Function draw_percentage_bar( x%,y%, w%,h%, pct#, a# = 1.0, r% = 255, g% = 255, b% = 255 )
 	SetAlpha( a / 3.0 )
 	SetColor( 0, 0, 0 )
+	SetScale( 1, 1 )
+	SetRotation( 0 )
 	DrawRect( x,y, w,h )
 	SetAlpha( a )
 	SetColor( r, g, b )
@@ -777,5 +776,27 @@ Function draw_instaquit_progress()
 	SetImageFont( get_font( "consolas_bold_24" ))
 	DrawText_with_outline( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
 End Function
-
+'______________________________________________________________________________
+Function create_rect_img:TIMage( w%, h%, r% = 255, g% = 255, b% = 255 )
+	'create pixmap of given size, with a border pixel for smoothing
+	Local pixmap:TPixmap = CreatePixmap( w + 2, h + 2, PF_RGBA8888 )
+	pixmap.ClearPixels( encode_ARGB( 1.0, r, g, b ))
+	'erase the outer border
+	For Local x% = 0 To w + 2 - 1
+		pixmap.WritePixel( x, 0, encode_ARGB( 0.0, r, g, b ))
+	Next
+	For Local x% = 0 To w + 2 - 1
+		pixmap.WritePixel( x, h + 2 - 1, encode_ARGB( 0.0, r, g, b ))
+	Next
+	For Local y% = 0 To h + 2 - 1
+		pixmap.WritePixel( 0, y, encode_ARGB( 0.0, r, g, b ))
+	Next
+	For Local y% = 0 To h + 2 - 1
+		pixmap.WritePixel( w + 2 - 1, y, encode_ARGB( 0.0, r, g, b ))
+	Next
+	'transfer to video memory
+	Local img:TImage = LoadImage( pixmap, FILTEREDIMAGE )
+	SetImageHandle( img, 0.5, 0.5 )
+	Return img
+End Function
 

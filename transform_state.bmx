@@ -19,12 +19,12 @@ Type TRANSFORM_STATE
 	End Method
 	
 	Function Create:Object( ..
-	pos_x#, pos_y#, ..
-	ang#, ..
-	red%, green%, blue%, ..
-	alpha#, ..
-	scale_x#, scale_y#, ..
-	transition_time% )
+	pos_x# = 0.0, pos_y# = 0.0, ..
+	ang# = 0.0, ..
+	red% = 255, green% = 255, blue% = 255, ..
+	alpha# = 1.0, ..
+	scale_x# = 1.0, scale_y# = 1.0, ..
+	transition_time% = 1000 )
 		Local s:TRANSFORM_STATE = New TRANSFORM_STATE
 		s.pos_x = pos_x; s.pos_y = pos_y
 		cartesian_to_polar( pos_x, pos_y, s.pos_length, s.pos_ang )

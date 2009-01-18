@@ -80,6 +80,10 @@ End Function
 
 init_graphics()
 
+'?Debug
+'debug_widget()
+'?
+
 '______________________________________________________________________________
 'MAIN
 Const time_per_frame_min% = 1000 / 60

@@ -56,10 +56,7 @@ Function update_all_objects()
 		'health bits
 		For Local w:WIDGET = EachIn health_bits
 			w.update()
-			'once finished animating, prune
-			If w.cur_state = 1
-				w.unmanage()
-			End If
+			If w.cur_state = 0 Then w.unmanage()
 		Next
 		
 		'retain particles (?)
@@ -95,12 +92,13 @@ Function update_flags()
 			End If
 			'game over
 			If game.player.dead() 'player just died? (omgwtf)
-				game.game_over = True
 				game.game_in_progress = False
+				game.game_over = True
 				game.player_engine_running = False
 			End If
 			'no more enemies?
 			If game.battle_in_progress And game.level_enemies_killed >= game.level_enemy_count
+				game.game_in_progress = False
 				game.battle_in_progress = False
 				game.battle_state_toggle_ts = now()
 				If game.hostile_doors_status = ENVIRONMENT.DOOR_STATUS_OPEN Then game.activate_doors( ALIGNMENT_HOSTILE )
@@ -127,9 +125,7 @@ Function update_flags()
 				End If
 			End If
 			'if the battle is over (player has won or lost)
-			If Not game.battle_in_progress And ..
-			(game.waiting_for_player_to_exit_arena Or (Not game.game_in_progress And game.game_over)) ..
-			And KeyHit( KEY_R )
+			If Not game.game_in_progress And KeyHit( KEY_R )
 				menu_command( COMMAND_SHOP )
 				menu_command( COMMAND_SAVE_GAME, profile.src_path )
 			End If

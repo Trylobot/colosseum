@@ -12,30 +12,17 @@ Const SPAWN_OFF% = 0, SPAWN_FRIENDLIES% = 1, SPAWN_HOSTILES% = 2
 Global FLAG_spawn_mode% = SPAWN_OFF
 Global spawn_archetype% = enemy_index_start, spawn_agent:COMPLEX_AGENT
 Global global_start:CELL, global_goal:CELL
-'Global maus_x#, maus_y#, speed# = 1, r#, a#, px#, py#
-'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
-'Const PATH_UNSET% = 1000
-'Global path_type% = PATH_UNSET, mouse_path_type%
-'Global p:POINT = Create_POINT( arena_offset+arena_w/2, arena_offset+arena_h/2, -90 )
-'Global w:WIDGET[] = New WIDGET[2]
-'w[0] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[0].parent = p; w[0].attach_at( arena_offset/2, -arena_offset/2, 180 - 45 )
-'w[1] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[1].parent = p; w[1].attach_at( arena_offset/2, arena_offset/2, 180 + 45 )
-'
-''______________________________________________________________________________
-'Function debug_ts( message$ )
-'	DebugLog "" + now() + " :: " + message
-'End Function
-'
-
+'______________________________________________________________________________
+Function debug_ts( message$ )
+	DebugLog "" + now() + " :: " + message
+End Function
 '______________________________________________________________________________
 Function debug_init()
 	'debug_get_keys()
 End Function
-
 '______________________________________________________________________________
 Global FLAG_debug_overlay% = False
 Global fps%, last_frame_ts%, time_count%, frame_count%
-
 Function debug_main()
 	frame_count :+ 1
 	time_count :+ (now() - last_frame_ts)
@@ -68,7 +55,6 @@ Function debug_main()
 		End If
 	End If
 End Function
-
 '______________________________________________________________________________
 Function debug_get_keys()
 	DebugLog " fonts: [ ~n  " + ",~n  ".Join( get_keys( font_map )) + " ]"
@@ -77,11 +63,8 @@ Function debug_get_keys()
 	DebugLog " props: [ ~n  " + ",~n  ".Join( get_keys( prop_map )) + " ]"
 	DebugLog " ai_types: [ ~n  " + ",~n  ".Join( get_keys( ai_type_map )) + " ]"
 End Function
-'
-
 '______________________________________________________________________________
 Global sx%, sy%
-
 Function debug_drawtext( message$, h% = 10 )
 	SetImageFont( get_font( "consolas_10" ))
 	SetAlpha( 1 )
@@ -161,7 +144,6 @@ Function debug_agent_lists( to_console% = False )
 End Function
 '______________________________________________________________________________
 Global cb:CONTROL_BRAIN = Null
-
 Function debug_overlay()
 	SetRotation( 0 )
 	SetScale( 1, 1 )
@@ -391,6 +373,70 @@ Function debug_overlay()
 	End If
 	
 End Function
+
+'______________________________________________________________________________
+'Global p:POINT = Create_POINT( arena_offset+arena_w/2, arena_offset+arena_h/2, -90 )
+'Global w:WIDGET[] = New WIDGET[2]
+'w[0] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[0].parent = p; w[0].attach_at( arena_offset/2, -arena_offset/2, 180 - 45 )
+'w[1] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[1].parent = p; w[1].attach_at( arena_offset/2, arena_offset/2, 180 + 45 )
+Global health:BOX = create_box( 100, 100, 500, 50 )
+Global health_max# = 100.0
+Global health_cur# = 100.0
+
+Function debug_widget()
+	Local list:TList = CreateList()
+	Local before% = now()
+	Local health_pct# = health_cur/health_max
+	Local damage_pct#
+	Local mouse:POINT = New POINT
+	
+	Repeat
+		Cls()
+		
+		sx = 0; sy = 0
+		mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
+		
+		If KeyHit( KEY_ENTER )
+			Local damage# = Rnd( 5.0, 20.0 )
+			health_cur :- damage
+			If health_cur < 0 Then health_cur :+ 100.0
+			health_pct = health_cur/health_max
+			damage_pct = damage/health_max
+			
+			Local bit:WIDGET = WIDGET( WIDGET.Create( "health bit", create_rect_img( damage_pct * health.w, health.h - 4 ),,, REPEAT_MODE_LOOP_BACK, True ))
+			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, -30, -8.0, 255,   0,   0, 0.0 )))
+			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0,   0,    0, 255, 255, 255, 1.0 )))
+			bit.parent = Create_POINT( health.x, health.y + 2 )
+			bit.attach_at( health.w * health_pct, 0, 0, False )
+			bit.manage( list )
+		End If
+		
+		If (now() - before) > time_per_frame_min
+			before = now()
+			For Local w:WIDGET = EachIn list
+				w.update()
+				If w.cur_state = 0 Then w.unmanage()
+			Next
+		End If
+		
+		draw_percentage_bar( health.x, health.y, health.w, health.h, health_pct )
+		For Local w:WIDGET = EachIn list
+			w.draw()
+			'SetColor( 255, 255, 255 )
+			'SetRotation( 0 )
+			'debug_drawtext( "state "+w.cur_state )
+		Next
+		
+		Flip( 1 )
+	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+	End
+End Function
+
+'Global maus_x#, maus_y#, speed# = 1, r#, a#, px#, py#
+'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
+'Const PATH_UNSET% = 1000
+'Global path_type% = PATH_UNSET, mouse_path_type%
+'
 '______________________________________________________________________________
 'Function debug_format_number()
 '	Local i% = 1, n% = 0
@@ -532,56 +578,6 @@ End Function
 '		Next
 '		Flip( 1 )
 '	Until AppTerminate() Or KeyHit( KEY_ESCAPE )
-'End Function
-''______________________________________________________________________________
-'Function draw_widget_debug()
-'	
-'	SetRotation( 0 )
-'	SetLineWidth( 2 )
-'	For Local w:WIDGET = EachIn w
-'		
-'		Local w_off:pVEC = w.widget_offset()
-'		Local w_st:pVEC = w.state_offset()
-'		
-'		Local v:cVEC[] = New cVEC[20]
-'		v[0] = cVEC( cVEC.Create( p.pos_x, p.pos_y ))
-'		v[1] = cVEC( cVEC.Create( v[0].x + w_off.x(), v[0].y + w_off.y() ))
-'		v[2] = cVEC( cVEC.Create( v[1].x + w_st.x(), v[1].y + w_st.y() ))
-'		
-'		Local color%[] = [ ..
-'		127, ..
-'		196, ..
-'		255 ]
-'		
-'		For Local i% = 1 To v.Length - 1
-'			If v[i] = Null Then Exit
-'			DrawOval( v[i-1].x-4,v[i-1].y-4, 8,8 )
-'			SetColor( color[i-1], color[i-1], color[i-1] )
-'			DrawLine( v[i-1].x,v[i-1].y, v[i].x,v[i].y )
-'			DrawOval( v[i].x-4,v[i].y-4, 8,8 )
-'		Next
-'	Next
-'	
-'	If KeyDown( KEY_P )
-'		If MouseDown( 1 )
-'			w[0].attach_at( MouseX()-p.pos_x, MouseY()-p.pos_y, w[0].ang_offset )
-'		Else If MouseDown( 2 )
-'			w[1].attach_at( MouseX()-p.pos_x, MouseY()-p.pos_y, w[1].ang_offset )
-'		End If
-'	Else If KeyDown( KEY_A )
-'		If MouseDown( 1 )
-'			w[0].ang_offset = MouseX()
-'		Else If MouseDown( 2 )
-'			w[1].ang_offset = MouseX()
-'		End If
-'	End If
-'	
-'	If KeyHit( KEY_W )
-'		For Local w:WIDGET = EachIn w
-'			w.begin_transformation( 1 )
-'		Next
-'	End If
-'	
 'End Function
 ''______________________________________________________________________________
 'Function debug_range()
@@ -942,3 +938,4 @@ End Function
 '
 'End Function
 ?
+
