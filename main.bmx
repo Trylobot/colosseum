@@ -72,7 +72,10 @@ Function init_graphics()
 	End If
 	SetClsColor( 0, 0, 0 )
 	SetBlend( ALPHABLEND )
+	glEnable( GL_BLEND )
 	glEnable( GL_LINE_SMOOTH )
+	glEnable( GL_POINT_SMOOTH )
+	glEnable( GL_POLYGON_SMOOTH )
 End Function
 
 init_graphics()
@@ -82,8 +85,7 @@ init_graphics()
 Const time_per_frame_min% = 1000 / 60
 Local before%
 init_ai_menu_game()
-'load_game( "user/dev.colosseum_saved_game" )
-'play_level( "data/maze.colosseum_level", 0 )
+info_change_ts = now()
 
 Repeat
 	

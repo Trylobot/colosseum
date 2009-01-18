@@ -9,12 +9,12 @@ Const border_width% = 1
 Const scrollbar_width% = 20
 
 Type MENU
-	Global VERTICAL_LIST% = 10
-	Global VERTICAL_LIST_WITH_SUBSECTION% = 11
-	Global VERTICAL_LIST_WITH_FILES% = 12
-	Global TEXT_INPUT_DIALOG% = 20
-	Global CONFIRMATION_DIALOG% = 21
-	Global NOTIFICATION_DIALOG% = 22
+	Const VERTICAL_LIST% = 10
+	Const VERTICAL_LIST_WITH_SUBSECTION% = 11
+	Const VERTICAL_LIST_WITH_FILES% = 12
+	Const TEXT_INPUT_DIALOG% = 20
+	Const CONFIRMATION_DIALOG% = 21
+	Const NOTIFICATION_DIALOG% = 22
 	
 	Global title_font:TImagefont
 	Global menu_font:TImageFont
@@ -30,6 +30,8 @@ Type MENU
 	Field menu_type% 'menu class
 	
 	Field name$ 'menu title string
+	Field width%, height% 'cached dimensions
+	Field dimensions_cached% 'flag
 	Field red%, green%, blue% 'title bar color
 	Field margin% 'visual margin (pixels)
 	
@@ -97,39 +99,11 @@ Type MENU
 	
 	Method draw( x%, y%, border% = True, dark_overlay_alpha# = 0 )
 		Local cx% = x, cy% = y, opt:MENU_OPTION
-		
 		Local text_height_factor# = 0.70
-		Local width% = 0, height% = 0
-		
 		'calculate dimensions
-		Local i% = 0
-		For Local opt:MENU_OPTION = EachIn options
-			If is_scrollable( menu_type ) And i >= static_option_count
-				SetImageFont( menu_font_small )
-				If i = static_option_count
-					height :+ 0.5*( text_height_factor*GetImageFont().Height() + margin )
-				End If
-			Else
-				SetImageFont( menu_font )
-			End If
-			Local opt_name_dynamic$ = resolve_meta_variables( opt.name )
-			If (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width) > width
-				width = (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width)
-			End If
-			If opt.visible And option_is_in_window( i )
-				height :+ (text_height_factor*GetImageFont().Height() + margin)
-			End If
-			i :+ 1
-		Next
-		SetImageFont( menu_font )
-		If (2*margin + TextWidth( name ) + 2*border_width) > width
-			width = (2*margin + TextWidth( name ) + 2*border_width)
+		If Not dimensions_cached
+			calculate_dimensions( text_height_factor )
 		End If
-		If is_scrollable( menu_type )
-			width :+ scrollbar_width
-		End If
-		height :+ (margin + (text_height_factor*GetImageFont().Height() + margin) + 2*border_width)
-
 		'draw the borders, backgrounds and title text
 		SetImageFont( title_font )
 		If border
@@ -145,7 +119,6 @@ Type MENU
 			SetColor( red, green, blue )
 			DrawText_with_outline( name, cx+border_width+margin,cy+border_width+margin/2 )
 		End If
-		
 		'draw each option
 		SetImageFont( menu_font )
 		cx :+ border_width + margin; cy :+ border_width + 2*margin + text_height_factor*GetImageFont().Height()
@@ -180,7 +153,6 @@ Type MENU
 				cy :+ text_height_factor*GetImageFont().Height() + margin
 			End If
 		Next
-		
 		'draw scrollable subsection visual cues
 		If is_scrollable( menu_type )
 			Local all_options_in_window% = True
@@ -201,7 +173,7 @@ Type MENU
 					dynamic_options_displayed )
 			End If
 		End If
-		
+		'text input stuff
 		If menu_type = TEXT_INPUT_DIALOG
 			cx = x + margin
 			cy = y + 2*margin + text_height_factor*title_font.Height()
@@ -219,12 +191,41 @@ Type MENU
 			SetAlpha( 0.5 + Sin(now() Mod 360) )
 			DrawText( "|", cx - Int(TextWidth( "|" )/3), cy )
 		End If
-		
 		'fade-out (used for menus which are "in the background")
 		SetAlpha( dark_overlay_alpha )
 		SetColor( 0, 0, 0 )
 		DrawRect( x-border_width,y-border_width, width,height )
-
+	End Method
+	
+	Method calculate_dimensions( text_height_factor# = 1.0 )
+		dimensions_cached = True
+		Local i% = 0
+		For Local opt:MENU_OPTION = EachIn options
+			If is_scrollable( menu_type ) And i >= static_option_count
+				SetImageFont( menu_font_small )
+				If i = static_option_count
+					height :+ 0.5*( text_height_factor*GetImageFont().Height() + margin )
+				End If
+			Else
+				SetImageFont( menu_font )
+			End If
+			Local opt_name_dynamic$ = resolve_meta_variables( opt.name )
+			If (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width) > width
+				width = (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width)
+			End If
+			If opt.visible And option_is_in_window( i )
+				height :+ (text_height_factor*GetImageFont().Height() + margin)
+			End If
+			i :+ 1
+		Next
+		SetImageFont( menu_font )
+		If (2*margin + TextWidth( name ) + 2*border_width) > width
+			width = (2*margin + TextWidth( name ) + 2*border_width)
+		End If
+		If is_scrollable( menu_type )
+			width :+ scrollbar_width
+		End If
+		height :+ (margin + (text_height_factor*GetImageFont().Height() + margin) + 2*border_width)
 	End Method
 	
 	Method update( initial_update% = False )

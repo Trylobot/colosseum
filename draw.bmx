@@ -4,12 +4,16 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-'Background cached texture
+'background texture caching constraints
 Global FLAG_retain_particles% = False
-Const retained_particle_limit% = 500
 Global FLAG_dim_bg% = False
+Const retained_particle_limit% = 500
+'input
 Const cursor_blink% = 500
-Global str$
+'misc
+Const	health_bar_w% = 85
+Const health_bar_h% = 12
+Global health_bits:TList 'TList<WIDGET> when the player loses any amount of life, a chunk of the life bar falls off; this list keeps track of them
 
 '______________________________________________________________________________
 'Drawing to Screen
@@ -40,6 +44,13 @@ Function draw_all_graphics()
 			draw_shop()
 		End If
 	End If
+	
+	'info
+	SetImageFont( get_font( "consolas_14" ))
+	SetColor( 100, 149, 237 ) 'Cornflower Blue
+	'SetColor( 255, 255, 127 ) 'Title Yellow
+	SetAlpha( time_alpha_pct( info_change_ts + info_stay_time, info_fade_time, False ))
+	DrawText_with_outline( info, 50 + get_current_menu().width, 85 )
 	
 	'instaquit
 	If KeyDown( KEY_ESCAPE ) And esc_held And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
@@ -149,7 +160,10 @@ Function draw_game()
 	If game.human_participation
 		'hud
 		draw_HUD()
-	
+		'health bits
+		For Local health_bit:WIDGET = EachIn health_bits
+			health_bit.draw()
+		Next
 		'help screen
 		If FLAG_draw_help
 			Local img_help_kb:TImage = get_image( "help_kb" )
@@ -216,7 +230,7 @@ Function draw_main_screen()
 	DrawText_with_outline( "special thanks to Kaze, SniperAceX, Firelord88, ZieramsFolly; written in BlitzMax", x, y ); y :+ h
 	
 	'menu options
-	x = 30; y = 95
+	x = 30; y = 85
 	draw_menus( x, y )
 	
 End Function
@@ -410,8 +424,8 @@ Function draw_HUD()
 	x = 0
 	y1 = window_h - hud_height
 	y2 = window_h - hud_height/2
-	w = 85
-	h = 12
+	w = health_bar_w
+	h = health_bar_h
 	
 	'hud "chrome"
 	y = y1
@@ -434,12 +448,19 @@ Function draw_HUD()
 	
 	y = y2
 	'player cash
-	SetColor( 50, 220, 50 )
+	SetColor( 85, 255, 85 ) 'Cash Green
 	SetImageFont( get_font( "consolas_bold_14" ))
 	str = "$" + format_number( profile.cash )
 	DrawText_with_outline( str, x, y+1-3 )
+	If now() - last_kill_ts <= 1250
+		SetAlpha( time_alpha_pct( last_kill_ts, 1250, False ))
+		DrawText_with_glow( str, x, y+1-3 )
+		SetAlpha( 0.3333*GetAlpha() )
+		DrawImage( get_image( "halo" ), x + TextWidth(str)/2.0, y+1-3 + TextHeight(str)/2.0 )
+	End If
 	x :+ w + HORIZONTAL_HUD_MARGIN
 	SetImageFont( get_font( "consolas_bold_12" ))
+	SetAlpha( 1 )
 	
 	'player ammo, overheat & charge indicators
 	Local img_icon_player_cannon_ammo:TImage = get_image( "icon_player_cannon_ammo" )
@@ -574,12 +595,13 @@ Function DrawText_with_outline( str$, x#, y# )
 End Function
 
 Function DrawText_with_glow( str$, x%, y% )
-	SetAlpha( 0.2 )
+	Local alpha# = GetAlpha()
+	SetAlpha( 0.2*alpha )
 	DrawText( str, x-1, y-1 )
 	DrawText( str, x+1, y-1 )
 	DrawText( str, x+1, y+1 )
 	DrawText( str, x-1, y-1 )
-	SetAlpha( 1 )
+	SetAlpha( alpha )
 	DrawText( str, x, y )
 End Function
 

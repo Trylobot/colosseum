@@ -53,6 +53,14 @@ Function update_all_objects()
 		For Local w:WIDGET = EachIn game.environmental_widget_list
 			w.update()
 		Next
+		'health bits
+		For Local w:WIDGET = EachIn health_bits
+			w.update()
+			'once finished animating, prune
+			If w.cur_state = 1
+				w.unmanage()
+			End If
+		Next
 		
 		'retain particles (?)
 		If game.retained_particle_list_count > retained_particle_limit

@@ -325,6 +325,7 @@ End Function
 Function buy_stuff()
 	Local bg:TPixmap = GrabPixmap( 0, 0, window_w, window_h )
 	Local selected_shop_item_index%
+	Local bought_something% = False
 	
 	Repeat
 		Cls
@@ -406,10 +407,11 @@ Function buy_stuff()
 				profile.cash :- shop_item_prices[selected_shop_item_index]
 				profile.inventory = profile.inventory[..profile.inventory.Length+1]
 				profile.inventory[profile.inventory.Length-1] = shop_items[selected_shop_item_index]
+				bought_something = True
 			End If
 		End If
 		
-	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+	Until KeyHit( KEY_ESCAPE ) Or bought_something% AppTerminate()
 	If AppTerminate() Then End
 End Function
 '______________________________________________________________________________

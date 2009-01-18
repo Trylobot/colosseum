@@ -333,6 +333,19 @@ Type ENVIRONMENT
 	Method deal_damage( ag:AGENT, damage# )
 		'actual damage assignment
 		ag.receive_damage( damage )
+		'player-specific code
+		If human_participation And ag.id = get_player_id()
+			'create a health bit
+			Local pixmap:TPixmap = CreatePixmap( 1, 1, PF_RGBA8888 )
+			pixmap.ClearPixels( encode_ARGB( 1.0, 255, 255, 255 ))
+			Local img:TImage = LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
+			Local w:WIDGET = WIDGET( WIDGET.Create( "health_bit", img, LAYER_IN_FRONT_OF_PARENT, True, REPEAT_MODE_CYCLIC_WRAP, 2, True ))
+			Local width% = Float(health_bar_w) * damage/player.max_health
+			Local height% = health_bar_h
+			w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1.0, width, height, 800 )))
+			w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1.0, width, height, 800 )))
+			w.manage( health_bits )
+		End If
 		'resulting death
 		If ag.dead() 'some agent was killed
 			'agent death animations and sounds, and memory cleanup

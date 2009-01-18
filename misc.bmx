@@ -172,7 +172,7 @@ Function remove_origin:POINT( p:POINT )
 	Return POINT( Create_POINT( p.pos_x - ox, p.pos_y - oy ))
 End Function
 '______________________________________________________________________________
-Function time_alpha_pct#( ts%, time%, in% = True )
+Function time_alpha_pct#( ts%, time%, in% = True ) 'either fading IN or OUT
 	If in 'fade in
 		If (now() - ts) <= time
 			Return (Float(now() - ts) / Float(time))

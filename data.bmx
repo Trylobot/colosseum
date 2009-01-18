@@ -350,10 +350,10 @@ Function load_game:PLAYER_PROFILE( path$ )
 	End If
 End Function
 '______________________________________________________________________________
-Function save_game%( path$, game:PLAYER_PROFILE )
+Function save_game%( path$, prof:PLAYER_PROFILE )
 	If game <> Null
 		Local file:TStream, json:TJSON
-		json = TJSON.Create( game.to_json() )
+		json = TJSON.Create( prof.to_json() )
 		file = WriteFile( path )
 		If file
 			json.Write( file )

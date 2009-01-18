@@ -5,13 +5,19 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-'Generic globals
+'generic
 Const INFINITY% = -1
 Const UNSPECIFIED% = -1
 Const PICKUP_PROBABILITY# = 0.50 'chance of an enemy dropping a pickup (randomly selected from all pickups)
-Const arena_lights_fade_time% = 1000
-Global level_intro_time% = 2000
-Global info$ = ""
+Const arena_lights_fade_time% = 1000 'this should be in environment class
+Global level_intro_time% = 2000 'this is deprecated
+'notifications
+Global info$
+Global info_change_ts%
+Const info_stay_time% = 3000
+Const info_fade_time% = 1250
+'player events
+Global last_kill_ts%
 
 'environmental objects
 Global mouse:cVEC = New cVEC
@@ -102,13 +108,17 @@ Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
 End Function
 
 '______________________________________________________________________________
-Global last_kill_ts%
 Function record_player_kill( cash_value% )
 	If profile <> Null
 		last_kill_ts = now()
 		profile.kills :+ 1
 		profile.cash :+ cash_value
 	End If
+End Function
+'______________________________________________________________________________
+Function show_info( str$ )
+	info = str
+	info_change_ts = now()
 End Function
 
 '______________________________________________________________________________
@@ -296,7 +306,8 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 		MENU_OPTION.Create( "audio settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_AUDIO), True, False ) ])
 
 	all_menus[postfix_index()] = MENU.Create( "preferences", 64, 64, 212, MENU_ID_PREFERENCES, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
-	[	MENU_OPTION.Create( "controls", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_CONTROLS), True, True ), ..
+	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+		MENU_OPTION.Create( "controls", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_CONTROLS), True, True ), ..
 		MENU_OPTION.Create( "gameplay", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_GAME), True, False ) ])
 
 		all_menus[postfix_index()] = MENU.Create( "video settings", 212, 96, 226, MENU_ID_OPTIONS_VIDEO, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
@@ -390,62 +401,68 @@ End Function
 '  if the cast fails, the argument is invalid
 Function menu_command( command_code%, argument:Object = Null )
 	Select command_code
-		
+		'________________________________________
 		Case COMMAND_SHOW_CHILD_MENU
 			current_menu :+ 1
 			menu_stack[current_menu] = INTEGER(argument).value
 			get_current_menu().update( True )
-			
+		'________________________________________
 		Case COMMAND_BACK_TO_PARENT_MENU
 			If current_menu > 0 Then current_menu :- 1
 			get_current_menu().update()
-			
+		'________________________________________
 		Case COMMAND_BACK_TO_MAIN_MENU
 			current_menu = 0
 			get_main_menu().update( True )
-		
+		'________________________________________
 		Case COMMAND_RESUME
 			FLAG_in_menu = False
-			
+		'________________________________________
 		Case COMMAND_SHOP
 			FLAG_in_menu = False
 			FLAG_in_shop = True
-		
+		'________________________________________
 		Case COMMAND_NEW_GAME
 			profile = New PLAYER_PROFILE
+			show_info( "new profile loaded" )
 			get_main_menu().update()
-			
+		'________________________________________
 		Case COMMAND_LOAD_GAME
 			profile = load_game( String(argument) )
-			save_autosave( profile.src_path )
+			If profile
+				save_autosave( profile.src_path )
+				show_info( "loaded profile "+profile.profile_name+" from "+profile.src_path )
+			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			get_main_menu().update()
-				
+		'________________________________________
 		Case COMMAND_SAVE_GAME
-			save_game( String(argument), profile )
+			If save_game( String(argument), profile )
+				save_autosave( profile.src_path )
+				show_info( "saved profile "+profile.profile_name+" to "+profile.src_path )
+			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-			
-			
+		'________________________________________
 		Case COMMAND_MULTIPLAYER_JOIN
-			join_game()
-			
+			'join_game()
+		'________________________________________
 		Case COMMAND_MULTIPLAYER_HOST
-			
-			
-		
+		'________________________________________
 		Case COMMAND_NEW_LEVEL
 			level_editor_cache = Create_LEVEL( 300, 300 )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-
+			show_info( "new level loaded" )
+		'________________________________________
 		Case COMMAND_LOAD_LEVEL
 			level_editor_cache = load_level( String(argument) )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-			
+			show_info( "loaded level "+level_editor_cache.name+" from "+String(argument) )
+		'________________________________________
 		Case COMMAND_SAVE_LEVEL
 			save_level( String(argument), level_editor_cache )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-			
-		
+			show_info( "saved level "+level_editor_cache.name+" to "+String(argument) )
+		'________________________________________
 		Case COMMAND_PLAYER_INPUT_TYPE
 			If profile <> Null
 				profile.input_method = INTEGER(argument).value
@@ -454,19 +471,25 @@ Function menu_command( command_code%, argument:Object = Null )
 				game.player_brain.input_type = profile.input_method
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-		
-		
+			show_info( "player input method changed" )
+		'________________________________________
 		Case COMMAND_SETTINGS_FULLSCREEN
 			fullscreen = Not fullscreen
 			menu_command( COMMAND_SETTINGS_APPLY_ALL )
-			
+			If fullscreen
+				show_info( "fullscreen mode" )
+			Else
+				show_info( "windowed mode" )
+			End If
+		'________________________________________
 		Case COMMAND_SETTINGS_RESOLUTION
 			window_w = Int[](argument)[0]
 			window_h = Int[](argument)[1]
 			menu_command( COMMAND_SETTINGS_APPLY_ALL )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			init_ai_menu_game()
-		
+			show_info( "resolution "+window_w+" x "+window_h )
+		'________________________________________
 		Case COMMAND_SETTINGS_REFRESH_RATE
 			Local new_refresh_rate% = String(argument).ToInt()
 			If GraphicsModeExists( window_w, window_h, bit_depth, new_refresh_rate )
@@ -474,7 +497,8 @@ Function menu_command( command_code%, argument:Object = Null )
 				menu_command( COMMAND_SETTINGS_APPLY_ALL )
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-		
+			show_info( "refresh rate "+refresh_rate+" Hz" )
+		'________________________________________
 		Case COMMAND_SETTINGS_BIT_DEPTH
 			Local new_bit_depth% = String(argument).ToInt()
 			If GraphicsModeExists( window_w, window_h, new_bit_depth, refresh_rate )
@@ -482,34 +506,30 @@ Function menu_command( command_code%, argument:Object = Null )
 				menu_command( COMMAND_SETTINGS_APPLY_ALL )
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-			
+			show_info( "bit depth "+bit_depth+" bpp" )
+		'________________________________________
 		Case COMMAND_SETTINGS_IP_ADDRESS
 			ip_address = String(argument)
 			save_settings()
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-			
+		'________________________________________
 		Case COMMAND_SETTINGS_IP_PORT
 			ip_port = String(argument).ToInt()
 			save_settings()
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-			
+		'________________________________________
 		Case COMMAND_SETTINGS_APPLY_ALL
 			save_settings()
 			init_graphics()
-		
-		
+			show_info( "video settings changed" )
+		'________________________________________
 		Case COMMAND_EDIT_LEVEL
 			level_editor( level_editor_cache )
-			
-		
+		'________________________________________
 		Case COMMAND_QUIT_GAME
 			End
 			
 	End Select
-End Function
-
-Function status( msg$ )
-	
 End Function
 
 Type INTEGER
