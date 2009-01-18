@@ -36,6 +36,7 @@ Function draw_shop()
 	
 	SetRotation( 0 )
 	SetScale( 1, 1 )
+	SetAlpha( 1 )
 	
 	x = shop_margin; y = shop_margin
 	SetColor( 255, 255, 255 )

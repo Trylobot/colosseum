@@ -72,11 +72,7 @@ Type PARTICLE Extends POINT
 		p.particle_type = particle_type
 		p.img = img; p.frame = frame
 		p.str = str; p.font = font
-		If str <> Null And font <> Null
-			SetImageFont( font )
-			p.text_width = TextWidth( str )/2.0
-			p.text_height = TextHeight( str )/2.0
-		End If
+		p.str_update()
 		p.layer = layer
 		p.retain = retain
 		p.frictional_coefficient = frictional_coefficient 
@@ -146,13 +142,21 @@ Type PARTICLE Extends POINT
 					SetImageFont( font )
 					If parent <> Null
 						SetRotation( ang + parent.ang )
-						DrawText( str, parent.pos_x + offset*Cos( offset_ang + parent.ang ) - text_width/2, parent.pos_y + offset*Sin( offset_ang + parent.ang ) - text_height/2 )
+						DrawText_with_outline( str, parent.pos_x + offset*Cos( offset_ang + parent.ang ) - text_width/2, parent.pos_y + offset*Sin( offset_ang + parent.ang ) - text_height/2 )
 					Else
 						SetRotation( ang )
-						DrawText( str, pos_x - scale*text_width/2, pos_y - scale*text_height/2 )
+						DrawText_with_outline( str, pos_x - scale*text_width/2, pos_y - scale*text_height/2 )
 					End If
 				End If
 		End Select
+	End Method
+	
+	Method str_update()
+		If str <> Null And font <> Null
+			SetImageFont( font )
+			text_width = TextWidth( str )/2.0
+			text_height = TextHeight( str )/2.0
+		End If
 	End Method
 	
 	Method advance_frame()

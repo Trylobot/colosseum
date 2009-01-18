@@ -350,7 +350,6 @@ Type ENVIRONMENT
 				End Select
 				'hostile complex agent death (as in, not allied with the player)
 				If COMPLEX_AGENT( ag ).political_alignment = ALIGNMENT_HOSTILE
-					'PARTICLE( PARTICLE.Create( PARTICLE_TYPE_STR,,,, ("$" + ag.cash_value), get_font( "consolas_24" ), LAYER_FOREGROUND, False, 0.1, 0.333, 1.000, 0.3333,,,, 1000, ag.pos_x, ag.pos_y-5, 0.0, -2.0, 0.0, 0.0, 0.5, -0.016, 1.0, 0.01 )).auto_manage()
 					level_enemies_killed :+ 1
 				End If
 			End If

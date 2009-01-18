@@ -20,6 +20,7 @@ Function draw_all_graphics()
 	SetRotation( 0 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
+	SetLineWidth( 1 )
 
 	'game content
 	If game <> Null
@@ -433,9 +434,9 @@ Function draw_HUD()
 	
 	y = y2
 	'player cash
-	SetImageFont( get_font( "consolas_14" ))
-	str = "$" + format_number( profile.cash )
 	SetColor( 50, 220, 50 )
+	SetImageFont( get_font( "consolas_bold_14" ))
+	str = "$" + format_number( profile.cash )
 	DrawText_with_outline( str, x, y+1-3 )
 	x :+ w + HORIZONTAL_HUD_MARGIN
 	SetImageFont( get_font( "consolas_bold_12" ))
@@ -564,7 +565,6 @@ Function DrawText_with_outline( str$, x#, y# )
 	Local r%, g%, b%
 	GetColor( r%, g%, b% )
 	SetColor( 0, 0, 0 )
-	SetAlpha( 1 )
 	DrawText( str, x + 1, y + 1 )
 	DrawText( str, x - 1, y + 1 )
 	DrawText( str, x + 1, y - 1 )

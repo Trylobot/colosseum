@@ -146,8 +146,18 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 	'process damage, death, cash and pickups resulting from it
 	game.deal_damage( ag, proj.damage )
 	'if a kill was made, show the player how much cash they got for killing this enemy, if they killed it
-	If ag.dead() And profile <> Null And proj.source_id = get_player_id()
+	If ag.dead() ..
+	And game.human_participation ..
+	And COMPLEX_AGENT( ag ) ..
+	And COMPLEX_AGENT( ag ).political_alignment <> game.player.political_alignment ..
+	And profile <> Null ..
+	And proj.source_id = get_player_id()
 		record_player_kill( ag.cash_value )
+		Local p:PARTICLE = get_particle( "cash_from_kill" )
+		p.str :+ ag.cash_value
+		p.pos_x = ag.pos_x
+		p.pos_y = ag.pos_y - 20.0
+		p.auto_manage()
 	End If
 	'activate projectile impact emitter
 	proj.impact( ag )

@@ -101,8 +101,10 @@ Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
 End Function
 
 '______________________________________________________________________________
+Global last_kill_ts%
 Function record_player_kill( cash_value% )
 	If profile <> Null
+		last_kill_ts = now()
 		profile.kills :+ 1
 		profile.cash :+ cash_value
 	End If

@@ -241,6 +241,17 @@ Function debug_overlay()
 		bomb.move_to( game.mouse )
 		bomb.self_destruct()
 	End If
+	
+	If KeyHit( KEY_C )
+		If closest_cb <> Null
+			Local p:PARTICLE = get_particle( "cash_from_kill" )
+			p.str :+ closest_cb.avatar.cash_value
+			p.str_update()
+			p.pos_x = closest_cb.avatar.pos_x
+			p.pos_y = closest_cb.avatar.pos_y - 20
+			p.auto_manage()
+		End If
+	End If
 
 	If cb <> Null And cb.managed()
 		

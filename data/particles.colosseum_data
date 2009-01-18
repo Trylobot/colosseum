@@ -194,4 +194,22 @@
 			layer: "LAYER_FOREGROUND",
 		}
 	},
+	{
+		class: "particle",
+		key: "cash_from_kill",
+		object: {
+			particle_type: "PARTICLE_TYPE_STR",
+			str: "$",
+			font: "font.consolas_bold_14",
+			layer: "LAYER_FOREGROUND",
+			frictional_coefficient: 0.05,
+			red: 0.3333,
+			green: 1.0,
+			blue: 0.3333,
+			life_time: 1250,
+			vel_y: -0.5,
+			alpha: 1.0,
+			alpha_delta: -0.020
+		}
+	}
 ]
