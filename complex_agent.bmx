@@ -73,6 +73,7 @@ Type COMPLEX_AGENT Extends AGENT
 	Function Archetype:Object( ..
 	name$, ..
 	img:TImage, ..
+	hitbox:TImage = Null, ..
 	gibs:TImage, ..
 	ai_name$ = Null, ..
 	cash_value%, ..
@@ -87,6 +88,8 @@ Type COMPLEX_AGENT Extends AGENT
 		'static fields
 		c.name = name
 		c.img = img
+		c.hitbox = hitbox
+		If hitbox = Null Then c.hitbox = img
 		c.gibs = gibs
 		c.ai_name = ai_name
 		c.max_health = max_health
@@ -116,6 +119,7 @@ Type COMPLEX_AGENT Extends AGENT
 			c.political_alignment = other.political_alignment
 		End If
 		c.img = other.img
+		c.hitbox = other.hitbox
 		c.gibs = other.gibs
 		c.ai_name = other.ai_name
 		c.max_health = other.max_health

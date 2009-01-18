@@ -16,6 +16,7 @@ physics_disabled% = False, ..
 destruct_on_contact% = False )
 	Local ag:AGENT = New AGENT
 	ag.img = img
+	ag.hitbox = img
 	ag.gibs = gibs
 	ag.cash_value = cash_value
 	ag.max_health = max_health
@@ -39,8 +40,11 @@ Function Copy_AGENT:AGENT( other:AGENT )
 End Function
 
 Type AGENT Extends PHYSICAL_OBJECT
+
 	Field img:TImage 'image to be drawn
+	Field hitbox:TImage	'required for accurate-looking hit detection, since complex agents can be composed of many parts
 	Field gibs:TImage 'gib image(s)
+
 	Field max_health# 'maximum health
 	Field cash_value% 'cash to be awarded player on death
 	Field death_emitters:TList 'emitters to be activated on death
@@ -74,9 +78,9 @@ Type AGENT Extends PHYSICAL_OBJECT
 		For Local phys_obj:PHYSICAL_OBJECT = EachIn nearby_objects
 			Local dist# = dist_to( phys_obj ) 
 			'damage
-			damage = 1000 'this should come from data
+			damage = 150 'this should come from data
 			If AGENT( phys_obj )
-				game.deal_damage( AGENT( phys_obj ), damage / Pow( 0.1 * dist, 2 ))
+				game.deal_damage( AGENT( phys_obj ), damage / Pow(( 0.05 * dist + 2 ), 2 ))
 			End If
 			'explosive knock-back force & torque
 			total_force = (phys_obj.mass * 750) / Pow( 0.5 * dist + 24, 2 ) - 5 'the maximum comes from data, and is modulated with the actual distance

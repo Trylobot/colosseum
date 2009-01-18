@@ -40,7 +40,7 @@ Function collide_all_objects()
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
 				SetRotation( ag.ang )
-				CollideImage( ag.img, ag.pos_x, ag.pos_y, 0, 0, AGENT_COLLISION_LAYER, ag )
+				CollideImage( ag.hitbox, ag.pos_x, ag.pos_y, 0, 0, AGENT_COLLISION_LAYER, ag )
 			Next
 		Next
 		For proj = EachIn game.projectile_list
@@ -59,7 +59,7 @@ Function collide_all_objects()
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
 				SetRotation( ag.ang )
-				result = CollideImage( ag.img, ag.pos_x, ag.pos_y, 0, AGENT_COLLISION_LAYER, SECONDARY_AGENT_COLLISION_LAYER, ag )
+				result = CollideImage( ag.hitbox, ag.pos_x, ag.pos_y, 0, AGENT_COLLISION_LAYER, SECONDARY_AGENT_COLLISION_LAYER, ag )
 				For other = EachIn result
 					If ag.id <> other.id 'not colliding with self
 						'COLLISION! between {ag} and {other}
@@ -106,7 +106,7 @@ Function collide_all_objects()
 				CollideImage( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
 			Next
 			SetRotation( game.player.ang )
-			result = CollideImage( game.player.img, game.player.pos_x, game.player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, game.player )
+			result = CollideImage( game.player.hitbox, game.player.pos_x, game.player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, game.player )
 			For pkp = EachIn result
 				'COLLISION! between {player} and {pkp}
 				'give pickup to player

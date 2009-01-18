@@ -682,5 +682,25 @@
 			handle_y: 2.5,
 			frames: 1
 		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/light_tank_hitbox.png",
+			handle_x: 12.5,
+			handle_y: 9.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/medium_tank_hitbox.png",
+			handle_x: 16.5,
+			handle_y: 11.5,
+			frames: 1
+		}
 	}
 ]
