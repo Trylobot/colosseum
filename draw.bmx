@@ -13,7 +13,7 @@ Const cursor_blink% = 500
 'misc
 Const	health_bar_w% = 85
 Const health_bar_h% = 12
-Global health_bits:TList 'TList<WIDGET> when the player loses any amount of life, a chunk of the life bar falls off; this list keeps track of them
+Global health_bits:TList = CreateList() 'TList<WIDGET> when the player loses any amount of life, a chunk of the life bar falls off; this list keeps track of them
 
 '______________________________________________________________________________
 'Drawing to Screen

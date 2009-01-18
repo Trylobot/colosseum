@@ -335,16 +335,22 @@ Type ENVIRONMENT
 		ag.receive_damage( damage )
 		'player-specific code
 		If human_participation And ag.id = get_player_id()
+			SetImageFont( get_font( "consolas_bold_12" ))
+			Local hud_height% = 2*(GetImageFont().Height() + 3)
 			'create a health bit
-			Local pixmap:TPixmap = CreatePixmap( 1, 1, PF_RGBA8888 )
-			pixmap.ClearPixels( encode_ARGB( 1.0, 255, 255, 255 ))
-			Local img:TImage = LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
-			Local w:WIDGET = WIDGET( WIDGET.Create( "health_bit", img, LAYER_IN_FRONT_OF_PARENT, True, REPEAT_MODE_CYCLIC_WRAP, 2, True ))
-			Local width% = Float(health_bar_w) * damage/player.max_health
-			Local height% = health_bar_h
-			w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1.0, width, height, 800 )))
-			w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1.0, width, height, 800 )))
-			w.manage( health_bits )
+			Local x% = get_image( "health_mini" ).width + 3 + ag.cur_health/ag.max_health
+			Local y% = window_h - hud_height
+			Local w% = Float(health_bar_w) * damage/player.max_health
+			Local h% = health_bar_h
+			'Local pixmap:TPixmap = CreatePixmap( 1, 1, PF_RGBA8888 )
+			'pixmap.WritePixel( 0, 0, encode_ARGB( 1.0, 255, 255, 255 ))
+			'Local img:TImage = LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
+			'Local bit:WIDGET = WIDGET( WIDGET.Create( "health_bit", img, LAYER_IN_FRONT_OF_PARENT, True, REPEAT_MODE_CYCLIC_WRAP, 2, True ))
+			Local bit:WIDGET = WIDGET( WIDGET.Create( "health_bit", get_image( "door" ), LAYER_IN_FRONT_OF_PARENT, True, REPEAT_MODE_CYCLIC_WRAP, 2, True ))
+			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1.0, w, h, 800 )))
+			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 30, Rnd( -30, 30 ), 255, 85, 85, 0.2, w, h, 800 )))
+			bit.parent = Create_POINT( x, y )
+			bit.manage( health_bits )
 		End If
 		'resulting death
 		If ag.dead() 'some agent was killed
