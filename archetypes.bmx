@@ -147,7 +147,7 @@ Function set_particle_emitter_archetypes()
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "rocket_smoke_trail", MODE_ENABLED_FOREVER,,,,,, 25, 50, 0, 0, 250, 500, 0.06, 0.12, -0.002, -0.020, 0.10, 0.70, 0.0008, 0.0300 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "tank_tread_debris",,, True,,,, 100, 150, 0, 0, 200, 350, 0.75, 0.75, -0.0012, -0.0025 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "tank_tread_trail_small",,,,,,, 100, 100,,, 50, 50,,,,, 0.60, 0.60, 0.0, 0.0 ))
-	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SPAWNER] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "laser_blue", MODE_ENABLED_WITH_TIMER,,, True, True, True, 10,60,,, 800,800, 1.0,1.0, 0.0,0.0, 0.2,0.2, 0.01,0.01 ))
+	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SPAWNER] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "laser", MODE_ENABLED_WITH_TIMER,,, True, True, True, 10,25,,, 500,500, 1.0,1.0, -0.008,-0.008, 0.2,0.2, 0.015,0.015 ))
 End Function
 
 '______________________________________________________________________________

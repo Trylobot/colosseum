@@ -374,112 +374,113 @@ Function debug_overlay()
 	
 End Function
 
-'______________________________________________________________________________
-'Global p:POINT = Create_POINT( arena_offset+arena_w/2, arena_offset+arena_h/2, -90 )
-'Global w:WIDGET[] = New WIDGET[2]
-'w[0] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[0].parent = p; w[0].attach_at( arena_offset/2, -arena_offset/2, 180 - 45 )
-'w[1] = widget_archetype[WIDGET_ARENA_DOOR].clone(); w[1].parent = p; w[1].attach_at( arena_offset/2, arena_offset/2, 180 + 45 )
-Global health:BOX = create_box( 100, 100, 500, 50 )
-Global health_max# = 100.0
-Global health_cur# = 100.0
-
-Function debug_widget()
-	Local list:TList = CreateList()
-	Local before% = now()
-	Local health_pct# = health_cur/health_max
-	Local damage_pct#
-	Local mouse:POINT = New POINT
-	
-	Repeat
-		Cls()
-		
-		sx = 0; sy = 0
-		mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
-		
-		If KeyHit( KEY_ENTER )
-			Local damage# = Rnd( 5.0, 20.0 )
-			health_cur :- damage
-			If health_cur < 0 Then health_cur :+ 100.0
-			health_pct = health_cur/health_max
-			damage_pct = damage/health_max
-			
-			Local bit:WIDGET = WIDGET( WIDGET.Create( "health bit", create_rect_img( damage_pct * health.w, health.h - 4 ),,, REPEAT_MODE_LOOP_BACK, True ))
-			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, -30, -8.0, 255,   0,   0, 0.0 )))
-			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0,   0,    0, 255, 255, 255, 1.0 )))
-			bit.parent = Create_POINT( health.x, health.y + 2 )
-			bit.attach_at( health.w * health_pct, 0, 0, False )
-			bit.manage( list )
-		End If
-		
-		If (now() - before) > time_per_frame_min
-			before = now()
-			For Local w:WIDGET = EachIn list
-				w.update()
-				If w.cur_state = 0 Then w.unmanage()
-			Next
-		End If
-		
-		draw_percentage_bar( health.x, health.y, health.w, health.h, health_pct )
-		For Local w:WIDGET = EachIn list
-			w.draw()
-			'SetColor( 255, 255, 255 )
-			'SetRotation( 0 )
-			'debug_drawtext( "state "+w.cur_state )
-		Next
-		
-		Flip( 1 )
-	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
-	End
-End Function
-
-'______________________________________________________________________________
-Function debug_spawner()
-	Local mouseP:POINT = New POINT
-	Local environmental_emitter_list:TList = CreateList()
-	Local agent_list:TList = CreateList()
-	Local particle_list:TList = CreateList()
-
-	Repeat
-		Cls()
-		
-		mouseP.pos_x = MouseX(); mouseP.pos_y = MouseY()
-		
-		If MouseHit( 1 )
-			Local em:EMITTER = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SPAWNER], environmental_emitter_list, mouseP ))
-			em.attach_at( ,, 30,60, -180,180,,,,, -0.010,-0.015 )
-			em.enable( MODE_ENABLED_WITH_TIMER )
-			em.time_to_live = 1000
-			Local ag:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] ))
-			ag.manage( agent_list )
-			ag.move_to( mouseP )
-			Local p:PARTICLE = get_particle( "halo" )
-			'p.life_time = 2000
-			p.red = 96; p.green = 96; p.blue = 255
-			p.manage( particle_list )
-			p.move_to( mouseP )
-		End If
-		
-		For Local em:EMITTER = EachIn environmental_emitter_list
-			em.update()
-			em.emit( particle_list )
-		Next
-		
-		For Local ag:COMPLEX_AGENT = EachIn agent_list
-			ag.update()
-			ag.draw()
-		Next
-		
-		For Local p:PARTICLE = EachIn particle_list
-			p.update()
-			p.draw()
-			p.prune()
-		Next
-		
-		Flip( 1 )
-	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
-	End
-End Function
-
+''______________________________________________________________________________
+'Global health:BOX = create_box( 100, 100, 500, 50 )
+'Global health_max# = 100.0
+'Global health_cur# = 100.0
+'
+'Function debug_widget()
+'	Local list:TList = CreateList()
+'	Local before% = now()
+'	Local health_pct# = health_cur/health_max
+'	Local damage_pct#
+'	Local mouse:POINT = New POINT
+'	
+'	Repeat
+'		Cls()
+'		
+'		sx = 0; sy = 0
+'		mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
+'		
+'		If KeyHit( KEY_ENTER )
+'			Local damage# = Rnd( 5.0, 20.0 )
+'			health_cur :- damage
+'			If health_cur < 0 Then health_cur :+ 100.0
+'			health_pct = health_cur/health_max
+'			damage_pct = damage/health_max
+'			
+'			Local bit:WIDGET = WIDGET( WIDGET.Create( "health bit", create_rect_img( damage_pct * health.w, health.h - 4 ),,, REPEAT_MODE_LOOP_BACK, True ))
+'			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, -30, -8.0, 255,   0,   0, 0.0 )))
+'			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0,   0,    0, 255, 255, 255, 1.0 )))
+'			bit.parent = Create_POINT( health.x, health.y + 2 )
+'			bit.attach_at( health.w * health_pct, 0, 0, False )
+'			bit.manage( list )
+'		End If
+'		
+'		If (now() - before) > time_per_frame_min
+'			before = now()
+'			For Local w:WIDGET = EachIn list
+'				w.update()
+'				If w.cur_state = 0 Then w.unmanage()
+'			Next
+'		End If
+'		
+'		draw_percentage_bar( health.x, health.y, health.w, health.h, health_pct )
+'		For Local w:WIDGET = EachIn list
+'			w.draw()
+'			'SetColor( 255, 255, 255 )
+'			'SetRotation( 0 )
+'			'debug_drawtext( "state "+w.cur_state )
+'		Next
+'		
+'		Flip( 1 )
+'	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+'	End
+'End Function
+'
+''______________________________________________________________________________
+'Function debug_spawner()
+'	Local mouseP:POINT = New POINT
+'	Local environmental_emitter_list:TList = CreateList()
+'	Local agent_list:TList = CreateList()
+'	Local particle_list_bg:TList = CreateList()
+'	Local particle_list_fg:TList = CreateList()
+'
+'	Repeat
+'		Cls()
+'		
+'		mouseP.pos_x = MouseX(); mouseP.pos_y = MouseY()
+'		
+'		If MouseHit( 1 )
+'			Local ag:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] ))
+'			ag.manage( agent_list )
+'			ag.spawn_at( mouseP, 1250 )
+'			Local em:EMITTER = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SPAWNER] ))
+'			em.manage( environmental_emitter_list )
+'			em.parent = ag
+'			em.attach_at( ,, 30,60, -180,180,,,,, -0.015,-0.025 )
+'			em.enable( MODE_ENABLED_WITH_TIMER )
+'			em.time_to_live = 1000
+'			Local p:PARTICLE = get_particle( "soft_glow" )
+'			p.red = 0.3; p.green = 0.3; p.blue = 0.9
+'			p.manage( particle_list_fg )
+'			p.move_to( ag )
+'		End If
+'		
+'		For Local em:EMITTER = EachIn environmental_emitter_list
+'			em.update()
+'			em.emit( particle_list_bg )
+'		Next
+'		
+'		For Local p:PARTICLE = EachIn particle_list_bg
+'			p.update()
+'			p.draw()
+'			p.prune()
+'		Next
+'		For Local ag:COMPLEX_AGENT = EachIn agent_list
+'			ag.update()
+'			ag.draw()
+'		Next
+'		For Local p:PARTICLE = EachIn particle_list_fg
+'			p.update()
+'			p.draw()
+'			p.prune()
+'		Next
+'		
+'		Flip( 1 )
+'	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+'	End
+'End Function
 
 'Global maus_x#, maus_y#, speed# = 1, r#, a#, px#, py#
 'Global wait_ts%, wait_time%, r%, c%, mouse:CELL

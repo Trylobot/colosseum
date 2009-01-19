@@ -24,6 +24,7 @@ Type EMITTER Extends MANAGED_OBJECT
 	Field interval_cur% '(private) delay between particles - pre-calculated
 	Field last_emit_ts% '(private) timestamp of last emitted particle
 	Field time_to_live% 'time until this emitter is disabled
+	Field prune_on_disable%
 	Field last_enable_ts% '(private) timestamp of the last time this emitter was enabled
 	Field count:RANGE_Int 'number of particles to emit - upper bound
 	Field count_cur% '(private) number of particles remaining to emit - pre-calculated and tracked
@@ -79,6 +80,10 @@ Type EMITTER Extends MANAGED_OBJECT
 			Case MODE_ENABLED_WITH_TIMER
 				If (now() - last_enable_ts) >= time_to_live Then disable()
 		End Select
+	End Method
+	
+	Method prune()
+		If Not is_enabled() Then unmanage()
 	End Method
 	
 	Method enable( new_mode% = MODE_ENABLED_FOREVER )

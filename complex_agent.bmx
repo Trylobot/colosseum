@@ -50,6 +50,10 @@ Type COMPLEX_AGENT Extends AGENT
 	Field alpha#
 	Field scale#
 	
+	Field spawning%
+	Field spawn_time%
+	Field spawn_begin_ts%
+	
 	'___________________________________________
 	Method New()
 		drive_forward_emitters = CreateList()
@@ -178,8 +182,8 @@ Type COMPLEX_AGENT Extends AGENT
 
 	'___________________________________________
 	Method update()
-		'update agent variables
 		Super.update()
+		
 		'smooth out velocity
 		Local vel# = vector_length( vel_x, vel_y )
 		If vel <= 0.00001
@@ -236,6 +240,10 @@ Type COMPLEX_AGENT Extends AGENT
 			right_track.update()
 			left_track.update()
 		End If
+		
+		'spawn mode
+		If now() - spawn_begin_ts >= spawn_time Then spawning = False
+		
 	End Method
 	
 	'___________________________________________
@@ -255,6 +263,9 @@ Type COMPLEX_AGENT Extends AGENT
 			Next
 		Next
 		SetColor( red, green, blue )
+		If spawning
+			alpha = time_alpha_pct( spawn_begin_ts, spawn_time, True )
+		End If
 		SetAlpha( alpha )
 		SetScale( scale, scale )
 		SetRotation( ang )
@@ -301,40 +312,48 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
+	Method spawn_at( p:POINT, time% )
+		spawning = True
+		spawn_time = time
+		spawn_begin_ts = now()
+		move_to( p )
+	End Method
+	
+	'___________________________________________
 	Method drive( pct# )
-		driving_force.control_pct = pct
-		If pct > 0
-			enable_only_rear_emitters()
-		Else If pct < 0
-			enable_only_forward_emitters()
-		Else
-			disable_all_emitters()
+		If Not spawning
+			driving_force.control_pct = pct
+			If pct > 0
+				enable_only_rear_emitters()
+			Else If pct < 0
+				enable_only_forward_emitters()
+			Else
+				disable_all_emitters()
+			End If
 		End If
 	End Method
 	'___________________________________________
 	Method turn( pct# )
-		turning_force.control_pct = pct
+		If Not spawning
+			turning_force.control_pct = pct
+		End If
 	End Method
 	'___________________________________________
 	Method fire( index% )
-		If index < turrets.Length
-			turrets[index].fire()
+		If Not spawning
+			If index < turrets.Length
+				turrets[index].fire()
+			End If
 		End If
-	End Method
-	
-	'___________________________________________
-	Method DEPRECATED__turn_turret( index%, control_pct# )
-'		If index < turret_list.Count()
-'			Local t:TURRET = TURRET( turret_list.ValueAtIndex( index ))
-'			If t <> Null Then t.turn( control_pct )
-'		End If
 	End Method
 	'___________________________________________
 	Method turn_turret_system( index%, control_pct# )
-		If index < turret_systems.Length
-			For Local tur_index% = EachIn turret_systems[index]
-				turrets[tur_index].turn( control_pct )
-			Next
+		If Not spawning
+			If index < turret_systems.Length
+				For Local tur_index% = EachIn turret_systems[index]
+					turrets[tur_index].turn( control_pct )
+				Next
+			End If
 		End If
 	End Method
 	'___________________________________________

@@ -377,7 +377,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/laser_blue.png",
+			path: "art/laser.png",
 			handle_x: 13.5,
 			handle_y: 2.5,
 			frames: 1

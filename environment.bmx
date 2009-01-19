@@ -327,12 +327,21 @@ Type ENVIRONMENT
 		End Select
 		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( this_agent, CONTROL_BRAIN.CONTROL_TYPE_AI,, 10, 1000, 1000 )
 		brain.manage( control_brain_list )
-		this_agent.move_to( spawn_point )
+		this_agent.spawn_at( spawn_point, 1250 )
 		this_agent.snap_all_turrets()
-		
-		Local em:EMITTER = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SPAWNER], environmental_emitter_list, this_agent ))
-		em.attach_at( ,, 10,30, -180,180,,,,, -0.010,-0.015 )
-		
+		'this should come from an emitter event attached to the agent
+		Local pt:POINT = Create_POINT( this_agent.pos_x, this_agent.pos_y )
+		Local em:EMITTER = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SPAWNER] ))
+		em.manage( environmental_emitter_list )
+		em.parent = pt
+		em.attach_at( ,, 30,60, -180,180,,,,, -0.04,-0.08 )
+		em.enable( MODE_ENABLED_WITH_TIMER )
+		em.time_to_live = 1000
+		em.prune_on_disable = True
+		Local part:PARTICLE = get_particle( "soft_glow" )
+		part.manage( particle_list_foreground )
+		part.parent = pt
+	
 		Return this_agent
 	End Method
 	

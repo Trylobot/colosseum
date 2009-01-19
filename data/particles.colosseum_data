@@ -104,7 +104,7 @@
 			particle_type: "PARTICLE_TYPE_IMG",
 			img: "image.halo",
 			layer: "LAYER_BACKGROUND",
-			retain: false,
+			retain: false
 		}
 	},
 	{
@@ -118,6 +118,21 @@
 			life_time: 200,
 			alpha: 0.5,
 			scale_delta: -0.1000
+		}
+	},
+	{
+		class: "particle",
+		key: "soft_glow",
+		object: {
+			particle_type: "PARTICLE_TYPE_IMG",
+			img: "image.halo",
+			layer: "LAYER_FOREGROUND",
+			retain: false,
+			life_time: 1250,
+			alpha: 0.60,
+			alpha_delta: -0.012,
+			scale: 0.250,
+			scale_delta: 0.0015
 		}
 	},
 	{
@@ -226,10 +241,10 @@
 	},
 	{
 		class: "particle",
-		key: "laser_blue",
+		key: "laser",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.laser_blue",
+			img: "image.laser",
 			layer: "LAYER_FOREGROUND",
 			retain: false
 		}

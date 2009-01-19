@@ -97,7 +97,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 	Method die( show_halo% = True, show_gibs% = True, audible% = True )
 		'bright halo
 		If show_halo
-			'this should be part of the agent's death emitters, not hard coded.
+			'this particle's creation should be part of the agent's death emitters, not hard coded.
 			get_particle( "halo" ).auto_manage()
 		End If
 		'gibby bits

@@ -82,7 +82,7 @@ init_graphics()
 
 ?Debug
 'debug_widget()
-debug_spawner()
+'debug_spawner()
 ?
 
 '______________________________________________________________________________
