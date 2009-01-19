@@ -1,9 +1,0 @@
-{
-	profile_name: "new_profile",
-	inventory: null,
-	input_method: 2,
-	current_level: "",
-	cash: 500,
-	kills: 0,
-	selected_inventory_index: 0
-}
