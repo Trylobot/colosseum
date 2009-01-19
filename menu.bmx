@@ -36,6 +36,7 @@ Type MENU
 	Field margin% 'visual margin (pixels)
 	
 	Field options:MENU_OPTION[] 'array of options in this menu
+	Field bounding_box:BOX[] 'array of boxes around potentially selectable options
 	Field static_option_count% 'number of static options (applicable for menus with dynamic lists, such as file chooser)
 	Field default_focus% 'index of default option
 	Field focus% 'index of currently focused option
@@ -52,6 +53,8 @@ Type MENU
 	Field input_box_size% 'size of user input box
 	Field input_listener:CONSOLE 'input controller/listener (if applicable)
 	Field input_initial_value$ 'automatic suffix to append to input, such as in the case of filename extensions
+	
+	Field last_x%, last_y% 'record of last drawn coordinates, for input processing
 	
 	Method New()
 		files = CreateList()
@@ -84,6 +87,7 @@ Type MENU
 		m.input_listener = New CONSOLE
 		m.input_initial_value = input_initial_value
 		m.options = options[..]
+		m.bounding_box = New BOX[options.Length]
 		Return m
 	End Function
 	
@@ -95,9 +99,11 @@ Type MENU
 	Method add_option( opt:MENU_OPTION )
 		options = options[..options.Length+1]
 		options[options.Length-1] = opt
+		bounding_box = bounding_box[..bounding_box.Length+1]
 	End Method
 	
 	Method draw( x%, y%, border% = True, dark_overlay_alpha# = 0 )
+		last_x = x; last_y = y
 		Local cx% = x, cy% = y, opt:MENU_OPTION
 		Local text_height_factor# = 0.70
 		'calculate dimensions
@@ -148,7 +154,9 @@ Type MENU
 						rgb_val = 64
 					End If
 					'draw the option
-					opt.draw( resolve_meta_variables( opt.name ), cx,cy, glow, rgb_val,rgb_val,rgb_val ) 
+					Local display_name$ = resolve_meta_variables( opt.name )
+					opt.draw( display_name, cx, cy, glow, rgb_val, rgb_val, rgb_val )
+					bounding_box[i] = Create_BOX( last_x, cy, width, TextHeight( display_name ))
 				End If
 				cy :+ text_height_factor*GetImageFont().Height() + margin
 			End If
@@ -372,6 +380,24 @@ Type MENU
 		Else If focus < 0
 			focus = (options.Length - 1)
 		End If
+	End Method
+	
+	Method select_by_coords%( x%, y% )
+		Local opt_box:BOX
+		For Local i% = 0 To bounding_box.Length - 1
+			opt_box = bounding_box[i]
+			If opt_box <> Null ..
+			And x >= opt_box.x And x <= opt_box.x + opt_box.w ..
+			And y >= opt_box.y And y <= opt_box.y + opt_box.h
+				If options[i].visible And options[i].enabled
+					focus = i
+					Return True
+				Else
+					Return False
+				End If
+			End If
+		Next
+		Return False
 	End Method
 	
 End Type

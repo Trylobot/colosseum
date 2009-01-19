@@ -8,7 +8,7 @@ EndRem
 'Keyboard Input
 Function get_all_input()
 	
-	'mouse
+	'mouse update
 	mouse_delta.x = MouseX() - mouse.x
 	mouse_delta.y = MouseY() - mouse.y
 	mouse.x = MouseX()
@@ -21,25 +21,29 @@ Function get_all_input()
 	
 	'navigate menu and select option
 	If FLAG_in_menu
+		Local m:MENU = get_current_menu()
 		'menu navigation controls
 		If escape_key_release() And current_menu <> 0
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		End If
 		If KeyHit( KEY_DOWN ) 'Or KeyHit( KEY_RIGHT )
-			get_current_menu().increment_focus()
+			m.increment_focus()
 		Else If KeyHit( KEY_UP ) 'Or KeyHit( KEY_LEFT )
-			get_current_menu().decrement_focus()
+			m.decrement_focus()
 		End If
 		If KeyHit( KEY_ENTER )
-			get_current_menu().execute_current_option()
+			m.execute_current_option()
 		End If
 		'text input controls
-		Local m:MENU = get_current_menu()
 		If m.menu_type = MENU.TEXT_INPUT_DIALOG
 			m.input_box = m.input_listener.update( m.input_box )
 			m.update()
 		End If
-
+		'mouseover of menu items
+		Local target_valid% = m.select_by_coords%( mouse.x, mouse.y )
+		If MouseHit( 1 ) And target_valid
+			m.execute_current_option()
+		End If
 	Else If FLAG_in_shop
 		'shop navigation
 		If escape_key_release()
@@ -48,7 +52,6 @@ Function get_all_input()
 		End If
 		'delegate input to shop function
 		get_shop_input()
-
 	Else 'show in-game help
 		If KeyHit( KEY_F1 )
 			FLAG_draw_help = Not FLAG_draw_help
@@ -60,7 +63,6 @@ Function get_all_input()
 	
 	'player's game specific input
 	If game <> Null And game.human_participation
-
 		If escape_key_release() 'show menu
 			If Not game.game_over
 				If Not FLAG_in_menu
@@ -78,7 +80,6 @@ Function get_all_input()
 			KeyHit( KEY_UP )
 			KeyHit( KEY_LEFT )
 		End If
-
 	End If
 	
 	'instaquit
