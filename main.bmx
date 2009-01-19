@@ -56,7 +56,7 @@ autosave_profile_path = load_autosave()
 menu_command( COMMAND_LOAD_GAME, autosave_profile_path )
 
 ?Debug
-debug_init()
+'debug_init()
 ?
 
 'Window Initialization and Drawing device
@@ -80,9 +80,10 @@ End Function
 
 init_graphics()
 
-'?Debug
+?Debug
 'debug_widget()
-'?
+debug_spawner()
+?
 
 '______________________________________________________________________________
 'MAIN

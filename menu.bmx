@@ -86,8 +86,9 @@ Type MENU
 		m.input_box_size = input_box_size
 		m.input_listener = New CONSOLE
 		m.input_initial_value = input_initial_value
-		m.options = options[..]
-		m.bounding_box = New BOX[options.Length]
+		For Local opt:MENU_OPTION = EachIn options
+			m.add_option( opt )
+		Next
 		Return m
 	End Function
 	
@@ -97,9 +98,21 @@ Type MENU
 	End Method
 	
 	Method add_option( opt:MENU_OPTION )
-		options = options[..options.Length+1]
-		options[options.Length-1] = opt
-		bounding_box = bounding_box[..bounding_box.Length+1]
+		If options = Null
+			options = New MENU_OPTION[1]
+			options[0] = opt
+			bounding_box = New BOX[1]
+		Else
+			options = options[..options.Length+1]
+			options[options.Length-1] = opt
+			bounding_box = bounding_box[..bounding_box.Length+1]
+		End If
+	End Method
+	
+	Method purge_dynamic_options()
+		If options <> Null
+			options = options[..static_option_count]
+		End If
 	End Method
 	
 	Method draw( x%, y%, border% = True, dark_overlay_alpha# = 0 )
@@ -272,23 +285,14 @@ Type MENU
 		Select menu_type
 			
 			Case VERTICAL_LIST_WITH_FILES
-				files = find_files( path, preferred_file_extension )
-				Local new_options:MENU_OPTION[] = New MENU_OPTION[static_option_count + files.Count()]
-				Local i%
-				For i = 0 To static_option_count - 1
-					new_options[i] = options[i]
+				purge_dynamic_options()
+				For Local file$ = EachIn find_files( path, preferred_file_extension )
+					add_option( MENU_OPTION.Create( StripDir( file ), default_command, file, True, True ))
 				Next
-				i = static_option_count
-				For Local file$ = EachIn files
-					new_options[i] = ..
-						MENU_OPTION.Create( StripDir( file ), default_command, file, True, True )
-					i :+ 1
-				Next
-				options = new_options
 				
 			Case TEXT_INPUT_DIALOG
 				If initial_update
-					options = [ MENU_OPTION.Create( str_repeat( " ", input_box_size ), default_command, input_box, True, True )]
+					add_option( MENU_OPTION.Create( str_repeat( " ", input_box_size ), default_command, input_box, True, True ))
 					input_box = resolve_meta_variables( input_initial_value )
 					FlushKeys()
 				End If
@@ -300,9 +304,8 @@ Type MENU
 				
 			Case CONFIRMATION_DIALOG
 				If initial_update
-					options = ..
-						[	MENU_OPTION.Create( "OK", default_command, default_argument, True, True ), ..
-							MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True )]
+					add_option( MENU_OPTION.Create( "OK", default_command, default_argument, True, True ))
+					add_option( MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ))
 					focus = 1
 				End If
 			
@@ -389,7 +392,7 @@ Type MENU
 			If opt_box <> Null ..
 			And x >= opt_box.x And x <= opt_box.x + opt_box.w ..
 			And y >= opt_box.y And y <= opt_box.y + opt_box.h
-				If options[i].visible And options[i].enabled
+				If options[i].visible And options[i].enabled And menu_type <> TEXT_INPUT_DIALOG
 					focus = i
 					Return True
 				Else

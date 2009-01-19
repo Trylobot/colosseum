@@ -105,7 +105,19 @@
 			img: "image.halo",
 			layer: "LAYER_BACKGROUND",
 			retain: false,
-			frictional_coefficient: 0
+		}
+	},
+	{
+		class: "particle",
+		key: "halo",
+		object: {
+			particle_type: "PARTICLE_TYPE_IMG",
+			img: "image.halo",
+			layer: "LAYER_BACKGROUND",
+			retain: false,
+			life_time: 200,
+			alpha: 0.5,
+			scale_delta: -0.1000
 		}
 	},
 	{
@@ -210,6 +222,16 @@
 			vel_y: -0.5,
 			alpha: 1.0,
 			alpha_delta: -0.020
+		}
+	},
+	{
+		class: "particle",
+		key: "laser_blue",
+		object: {
+			particle_type: "PARTICLE_TYPE_IMG",
+			img: "image.laser_blue",
+			layer: "LAYER_FOREGROUND",
+			retain: false
 		}
 	}
 ]

@@ -46,6 +46,7 @@ Type ENVIRONMENT
 	Field particle_lists:TList 'TList<TList<PARTICLE>>
 	Field retained_particle_list:TList 'TList<PARTICLE>
 	Field retained_particle_list_count% 'number of particles currently retained, cached for speed
+	Field environmental_emitter_list:TList 'TList<EMITTER>
 	Field environmental_widget_list:TList 'TList<WIDGET>
 	Field projectile_list:TList 'TList<PROJECTILE>
 	Field friendly_agent_list:TList 'TList<COMPLEX_AGENT>
@@ -91,6 +92,7 @@ Type ENVIRONMENT
 			particle_lists.AddLast( particle_list_background )
 			particle_lists.AddLast( particle_list_foreground )
 		retained_particle_list = CreateList()
+		environmental_emitter_list = CreateList()
 		environmental_widget_list = CreateList()
 		projectile_list = CreateList()
 		friendly_agent_list = CreateList()
@@ -327,6 +329,10 @@ Type ENVIRONMENT
 		brain.manage( control_brain_list )
 		this_agent.move_to( spawn_point )
 		this_agent.snap_all_turrets()
+		
+		Local em:EMITTER = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SPAWNER], environmental_emitter_list, this_agent ))
+		em.attach_at( ,, 10,30, -180,180,,,,, -0.010,-0.015 )
+		
 		Return this_agent
 	End Method
 	

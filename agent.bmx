@@ -98,8 +98,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 		'bright halo
 		If show_halo
 			'this should be part of the agent's death emitters, not hard coded.
-			Local halo:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "halo" ),,,,, LAYER_BACKGROUND, False,,,,,,,, 200, pos_x, pos_y, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 1.0, -0.1000 ))
-			halo.auto_manage()
+			get_particle( "halo" ).auto_manage()
 		End If
 		'gibby bits
 		If show_gibs

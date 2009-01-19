@@ -105,14 +105,14 @@ Type EMITTER Extends MANAGED_OBJECT
 	
 	'like the fire() method of the TANK type, this method should be treated like a request.
 	'ie, this method will only emit if it's appropriate.
-	Method emit() '( alignment% = ALIGNMENT_NOT_APPLICABLE )
+	Method emit( list:TList = Null )
 		If is_enabled() And ready()
 			'create a new object (particle/projectile) and set it up
 			Select emitter_type
 				Case EMITTER_TYPE_PARTICLE
-					emit_particle( get_particle( archetype_index, PARTICLE_FRAME_RANDOM ))
+					emit_particle( get_particle( archetype_index, PARTICLE_FRAME_RANDOM ), list )
 				Case EMITTER_TYPE_PROJECTILE
-					emit_projectile( get_projectile( archetype_index, source_id ))
+					emit_projectile( get_projectile( archetype_index, source_id ), list )
 			End Select
 			
 			'interval
@@ -123,8 +123,7 @@ Type EMITTER Extends MANAGED_OBJECT
 			
 		End If
 	End Method
-	Method emit_particle( p:PARTICLE ) '(private)
-		
+	Method emit_particle( p:PARTICLE, list:TList = Null ) '(private)
 		'position
 		Local dist_actual# = dist.get()
 		Local dist_ang_actual# = dist_ang.get()
@@ -183,10 +182,14 @@ Type EMITTER Extends MANAGED_OBJECT
 		p.life_time = life_time.get()
 		
 		'management
-		p.auto_manage()
+		If list
+			p.manage( list )
+		Else
+			p.auto_manage()
+		End If
 			
 	End Method
-	Method emit_projectile( p:PROJECTILE ) '(private)
+	Method emit_projectile( p:PROJECTILE, list:TList = Null ) '(private)
 		
 		'position
 		Local dist_actual# = dist.get()
@@ -219,10 +222,16 @@ Type EMITTER Extends MANAGED_OBJECT
 		p.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, acc.get())), True )
 		
 		'management
-		p.auto_manage()
+		If list
+			p.manage( list )
+		Else
+			p.auto_manage()
+		End If
 	
 	End Method
 		
+	'this should be renamed to Create
+	'and also, this function should allow for the initialization of the attach_to() in one call
 	Function Archetype:Object( ..
 	emitter_type%, ..
 	archetype_index$, ..
@@ -272,51 +281,50 @@ Type EMITTER Extends MANAGED_OBJECT
 	End Function
 
 	Function Copy:Object( other:EMITTER, managed_list:TList = Null, new_parent:POINT = Null, source_id% = NULL_ID )
-		Local em:EMITTER = New EMITTER
-		If other = Null Then Return em
-		
+		If other = Null Then Return Null
+		'initialization
+		Local em:EMITTER = EMITTER( Archetype( ..
+			other.emitter_type, ..
+			other.archetype_index, ..
+			other.mode, ..
+			other.combine_vel_with_parent_vel, ..
+			other.combine_vel_ang_with_parent_ang, ..
+			other.inherit_ang_from_dist_ang, ..
+			other.inherit_vel_ang_from_ang, ..
+			other.inherit_acc_ang_from_vel_ang, ..
+			other.interval.low, other.interval.high, ..
+			other.count.low, other.count.high, ..
+			other.life_time.low, other.life_time.high, ..
+			other.alpha.low, other.alpha.high, ..
+			other.alpha_delta.low, other.alpha_delta.high, ..
+			other.scale.low, other.scale.high, ..
+			other.scale_delta.low, other.scale_delta.high, ..
+			other.red.low, other.red.high, ..
+			other.green.low, other.green.high, ..
+			other.blue.low, other.blue.high, ..
+			other.red_delta.low, other.red_delta.high, ..
+			other.green_delta.low, other.green_delta.high, ..
+			other.blue_delta.low, other.blue_delta.high ))
 		'argument fields
+		If managed_list Then em.manage( managed_list )
 		em.parent = new_parent
 		em.source_id = source_id
-
 		'emitter-specific fields
-		em.emitter_type = other.emitter_type
-		em.archetype_index = other.archetype_index
-		em.mode = other.mode
-		em.combine_vel_with_parent_vel = other.combine_vel_with_parent_vel
-		em.combine_vel_ang_with_parent_ang = other.combine_vel_ang_with_parent_ang
-		em.inherit_ang_from_dist_ang = other.inherit_ang_from_dist_ang
-		em.inherit_vel_ang_from_ang = other.inherit_vel_ang_from_ang
-		em.inherit_acc_ang_from_vel_ang = other.inherit_acc_ang_from_vel_ang
-		em.interval = other.interval.clone()
-		em.interval_cur = em.interval.get()
-		em.count = other.count.clone()
 		em.count_cur = em.count.get()
 		em.last_enable_ts = now()
-		
-		'emitted particle-specific fields
-		em.life_time = other.life_time.clone()
-		em.alpha = other.alpha.clone()
-		em.alpha_delta = other.alpha_delta.clone()
-		em.scale = other.scale.clone()
-		em.scale_delta = other.scale_delta.clone()
-		
 		'dynamic fields
-		em.offset = other.offset
-		em.offset_ang = other.offset_ang
-		em.dist = other.dist.clone(); em.dist_ang = other.dist_ang.clone()
-		em.vel = other.vel.clone(); em.vel_ang = other.vel_ang.clone()
-		em.acc = other.acc.clone(); em.acc_ang = other.acc_ang.clone()
-		em.ang = other.ang.clone()
-		em.ang_vel = other.ang_vel.clone()
-		em.ang_acc = other.ang_acc.clone()
-		em.life_time = other.life_time.clone()
-		em.alpha = other.alpha.clone(); em.alpha_delta = other.alpha_delta.clone()
-		em.scale = other.scale.clone(); em.scale_delta = other.scale_delta.clone()
-		em.red = other.red.clone(); em.green = other.green.clone(); em.blue = other.blue.clone()
-		em.red_delta = other.red_delta.clone(); em.green_delta = other.green_delta.clone(); em.blue_delta = other.blue_delta.clone()
-		
-		If managed_list <> Null Then em.manage( managed_list )
+		em.attach_at( ..
+			other.attach_x, other.attach_y, ..
+			other.dist.low, other.dist.high, ..
+			other.dist_ang.low, other.dist_ang.high, ..
+			other.vel.low, other.vel.high, ..
+			other.vel_ang.low, other.vel_ang.high, ..
+			other.acc.low, other.acc.high, ..
+			other.acc_ang.low, other.acc_ang.high, ..
+			other.ang.low, other.ang.high, ..
+			other.ang_vel.low, other.ang_vel.high, ..
+			other.ang_acc.low, other.ang_acc.high )
+		'return
 		Return em
 	End Function
 	

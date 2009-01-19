@@ -49,6 +49,10 @@ Function update_all_objects()
 		For Local prop:AGENT = EachIn game.prop_list
 			prop.update()
 		Next
+		For Local em:EMITTER = EachIn game.environmental_emitter_list
+			em.update()
+			em.emit()
+		Next
 		'environmental widgets
 		For Local w:WIDGET = EachIn game.environmental_widget_list
 			w.update()

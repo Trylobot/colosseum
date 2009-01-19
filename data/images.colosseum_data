@@ -367,7 +367,17 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/laser.png",
+			path: "art/laser_red.png",
+			handle_x: 13.5,
+			handle_y: 2.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/laser_blue.png",
 			handle_x: 13.5,
 			handle_y: 2.5,
 			frames: 1
@@ -519,6 +529,36 @@
 		object: {
 			path: "art/pickup_ammo_main_5.png",
 			handle_x: 16.0,
+			handle_y: 9.0,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/pickup_ammo_main_10.png",
+			handle_x: 18.0,
+			handle_y: 9.0,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/pickup_ammo_main_15.png",
+			handle_x: 18.0,
+			handle_y: 9.0,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/pickup_ammo_main_20.png",
+			handle_x: 18.0,
 			handle_y: 9.0,
 			frames: 1
 		}

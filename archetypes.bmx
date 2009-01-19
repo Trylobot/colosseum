@@ -121,6 +121,7 @@ Global PARTICLE_EMITTER_INDEX_ROCKET_CASING% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL% = postfix_index()
+Global PARTICLE_EMITTER_INDEX_SPAWNER% = postfix_index()
 
 Function set_particle_emitter_archetypes()
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "tank_tread_debris",,, True,,,, 100, 150, 0, 0, 200, 350, 0.75, 0.75, -0.0012, -0.0025 ))
@@ -146,6 +147,7 @@ Function set_particle_emitter_archetypes()
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "rocket_smoke_trail", MODE_ENABLED_FOREVER,,,,,, 25, 50, 0, 0, 250, 500, 0.06, 0.12, -0.002, -0.020, 0.10, 0.70, 0.0008, 0.0300 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_DEBRIS] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "tank_tread_debris",,, True,,,, 100, 150, 0, 0, 200, 350, 0.75, 0.75, -0.0012, -0.0025 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_QUAD_WHEEL_TRAIL] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "tank_tread_trail_small",,,,,,, 100, 100,,, 50, 50,,,,, 0.60, 0.60, 0.0, 0.0 ))
+	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SPAWNER] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "laser_blue", MODE_ENABLED_WITH_TIMER,,, True, True, True, 10,60,,, 800,800, 1.0,1.0, 0.0,0.0, 0.2,0.2, 0.01,0.01 ))
 End Function
 
 '______________________________________________________________________________
@@ -158,13 +160,13 @@ Global PROJECTILE_INDEX_LASER% = postfix_index()
 Global PROJECTILE_INDEX_ROCKET% = postfix_index()
 
 Function set_projectile_archetypes()
-	projectile_archetype[PROJECTILE_INDEX_TANK_CANNON] = PROJECTILE( PROJECTILE.Create( get_image( "projectile" ), get_sound( "cannon_hit" ), 50.00, 1000.0, 25.0, -1, 0.0300 ))
+	projectile_archetype[PROJECTILE_INDEX_TANK_CANNON] = PROJECTILE( PROJECTILE.Create( get_image( "projectile" ), get_sound( "cannon_hit" ), 50.00, 1000.0, 25.0,, 0.0300 ))
 		projectile_archetype[PROJECTILE_INDEX_TANK_CANNON].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_RICOCHET_SPARK], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0,0, 0,0, 135,225, 0.50,2.50 )
 		projectile_archetype[PROJECTILE_INDEX_TANK_CANNON].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_IMPACT_HALO], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
 		projectile_archetype[PROJECTILE_INDEX_TANK_CANNON].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
-	projectile_archetype[PROJECTILE_INDEX_MACHINE_GUN] = PROJECTILE( PROJECTILE.Create( get_image( "mgun" ), get_sound( "mgun_hit" ), 5.00,,, -1, 0.0050 ))
+	projectile_archetype[PROJECTILE_INDEX_MACHINE_GUN] = PROJECTILE( PROJECTILE.Create( get_image( "mgun" ), get_sound( "mgun_hit" ), 5.00,,,, 0.0050 ))
 		projectile_archetype[PROJECTILE_INDEX_MACHINE_GUN].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_RICOCHET_SPARK], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0,0, 0,0, 135,225, 0.50,1.00 )
-	projectile_archetype[PROJECTILE_INDEX_LASER] = PROJECTILE( PROJECTILE.Create( get_image( "laser" ), get_sound( "laser_hit" ), 15.00,,, INFINITY, 0.0001,, True ))
+	projectile_archetype[PROJECTILE_INDEX_LASER] = PROJECTILE( PROJECTILE.Create( get_image( "laser_red" ), get_sound( "laser_hit" ), 15.00,,,, 0.0001,, True ))
 		projectile_archetype[PROJECTILE_INDEX_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
 		projectile_archetype[PROJECTILE_INDEX_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_SECONDARY_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0, 5,8, 0,359.999, 1.3,2.5 )
 		projectile_archetype[PROJECTILE_INDEX_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_IMPACT_HALO], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
@@ -216,13 +218,19 @@ End Function
 Global pickup_archetype:PICKUP[10]; reset_index()
 
 Global PICKUP_INDEX_HEALTH% = postfix_index()
-Global PICKUP_INDEX_CANNON_AMMO% = postfix_index()
+Global PICKUP_INDEX_CANNON_AMMO_5% = postfix_index()
+Global PICKUP_INDEX_CANNON_AMMO_10% = postfix_index()
+Global PICKUP_INDEX_CANNON_AMMO_15% = postfix_index()
+Global PICKUP_INDEX_CANNON_AMMO_20% = postfix_index()
 Global PICKUP_INDEX_COOLDOWN% = postfix_index()
 
 Function set_pickup_archetypes()
-	pickup_archetype[PICKUP_INDEX_HEALTH] = PICKUP( PICKUP.Create( get_image( "pickup_health" ), HEALTH_PICKUP, 200, 20000 ))
-	pickup_archetype[PICKUP_INDEX_CANNON_AMMO] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_5" ), AMMO_PICKUP, 5, 20000 ))
-	pickup_archetype[PICKUP_INDEX_COOLDOWN] = PICKUP( PICKUP.Create( get_image( "pickup_cooldown" ), COOLDOWN_PICKUP, 4000, 20000 ))
+	pickup_archetype[PICKUP_INDEX_HEALTH] = PICKUP( PICKUP.Create( get_image( "pickup_health" ), HEALTH_PICKUP, 200, 60000 ))
+	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_5] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_5" ), AMMO_PICKUP, 5, 60000 ))
+	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_10] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_10" ), AMMO_PICKUP, 10, 60000 ))
+	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_15] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_15" ), AMMO_PICKUP, 15, 60000 ))
+	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_20] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_20" ), AMMO_PICKUP, 20, 60000 ))
+	pickup_archetype[PICKUP_INDEX_COOLDOWN] = PICKUP( PICKUP.Create( get_image( "pickup_cooldown" ), COOLDOWN_PICKUP, 4000, 60000 ))
 End Function
 
 '______________________________________________________________________________
@@ -443,8 +451,8 @@ Function set_complex_agent_archetypes()
 	complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] ))
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].cash_value = 300
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].max_health = 175
-		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[0].turret_barrel_array[0].reload_time = 1500
-		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[0].max_heat = 20.0
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[0].turret_barrel_array[0].reload_time = 1750
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[1].max_heat = 20.0
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].driving_force.magnitude_max = 66.0
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turning_force.magnitude_max = 75.0
 		

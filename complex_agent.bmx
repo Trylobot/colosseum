@@ -170,6 +170,9 @@ Type COMPLEX_AGENT Extends AGENT
 			c.left_track.animation_direction = other.left_track.animation_direction
 		End If
 		
+		c.drive( 0 )
+		c.turn( 0 )
+		
 		Return c
 	End Function
 
@@ -381,6 +384,7 @@ Type COMPLEX_AGENT Extends AGENT
 		Select pkp.pickup_type
 			
 			Case AMMO_PICKUP
+				play_sound( get_sound( "reload" ))
 				Local tur_list:TList = CreateList()
 				For Local t:TURRET = EachIn turrets
 					If t.class = TURRET_CLASS_AMMUNITION And t.max_ammo <> INFINITY Then tur_list.AddLast( t )

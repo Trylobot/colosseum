@@ -56,7 +56,7 @@ Function debug_main()
 	End If
 End Function
 '______________________________________________________________________________
-Function debug_get_keys()
+Function debug_get_map_keys()
 	DebugLog " fonts: [ ~n  " + ",~n  ".Join( get_keys( font_map )) + " ]"
 	DebugLog " sounds: [ ~n  " + ",~n  ".Join( get_keys( sound_map )) + " ]"
 	DebugLog " images: [ ~n  " + ",~n  ".Join( get_keys( image_map )) + " ]"
@@ -432,12 +432,61 @@ Function debug_widget()
 	End
 End Function
 
+'______________________________________________________________________________
+Function debug_spawner()
+	Local mouseP:POINT = New POINT
+	Local environmental_emitter_list:TList = CreateList()
+	Local agent_list:TList = CreateList()
+	Local particle_list:TList = CreateList()
+
+	Repeat
+		Cls()
+		
+		mouseP.pos_x = MouseX(); mouseP.pos_y = MouseY()
+		
+		If MouseHit( 1 )
+			Local em:EMITTER = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SPAWNER], environmental_emitter_list, mouseP ))
+			em.attach_at( ,, 30,60, -180,180,,,,, -0.010,-0.015 )
+			em.enable( MODE_ENABLED_WITH_TIMER )
+			em.time_to_live = 1000
+			Local ag:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] ))
+			ag.manage( agent_list )
+			ag.move_to( mouseP )
+			Local p:PARTICLE = get_particle( "halo" )
+			'p.life_time = 2000
+			p.red = 96; p.green = 96; p.blue = 255
+			p.manage( particle_list )
+			p.move_to( mouseP )
+		End If
+		
+		For Local em:EMITTER = EachIn environmental_emitter_list
+			em.update()
+			em.emit( particle_list )
+		Next
+		
+		For Local ag:COMPLEX_AGENT = EachIn agent_list
+			ag.update()
+			ag.draw()
+		Next
+		
+		For Local p:PARTICLE = EachIn particle_list
+			p.update()
+			p.draw()
+			p.prune()
+		Next
+		
+		Flip( 1 )
+	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+	End
+End Function
+
+
 'Global maus_x#, maus_y#, speed# = 1, r#, a#, px#, py#
 'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
 'Const PATH_UNSET% = 1000
 'Global path_type% = PATH_UNSET, mouse_path_type%
 '
-'______________________________________________________________________________
+''______________________________________________________________________________
 'Function debug_format_number()
 '	Local i% = 1, n% = 0
 '	While n <= 100000000
