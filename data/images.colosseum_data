@@ -742,5 +742,45 @@
 			handle_y: 11.5,
 			frames: 1
 		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/bay_door.png",
+			handle_x: 3,
+			handle_y: 2,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/carrier_chassis.png",
+			handle_x: 17,
+			handle_y: 13,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/carrier_hitbox.png",
+			handle_x: 17,
+			handle_y: 13,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/ramp.png",
+			handle_x: 1,
+			handle_y: 4,
+			frames: 1
+		}
 	}
 ]

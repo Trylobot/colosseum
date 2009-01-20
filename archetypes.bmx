@@ -211,6 +211,9 @@ Function set_widget_archetypes()
 	widget_archetype[WIDGET_INDEX_ARENA_DOOR] = WIDGET( WIDGET.Create( , get_image( "door" ), LAYER_IN_FRONT_OF_PARENT,, REPEAT_MODE_CYCLIC_WRAP, False ))
 		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1, 1, 1, 1750 )))
 		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 35, 0, 0, 255, 255, 255, 1, 1, 1, 925 )))
+	'widget for the bay door
+	'widget for the ramp extender
+	'widget for a spinner on top
 End Function
 
 '______________________________________________________________________________
@@ -362,6 +365,7 @@ Global ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT% = postfix_index()
 Global ENEMY_INDEX_MOBILE_MINI_BOMB% = postfix_index()
 Global ENEMY_INDEX_LIGHT_QUAD% = postfix_index()
 Global ENEMY_INDEX_LIGHT_TANK% = postfix_index()
+Global ENEMY_INDEX_CARRIER% = postfix_index()
 
 Function set_complex_agent_archetypes()
 	
@@ -455,5 +459,9 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[1].max_heat = 20.0
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].driving_force.magnitude_max = 66.0
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turning_force.magnitude_max = 75.0
+		
+	complex_agent_archetype[ENEMY_INDEX_CARRIER] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "carrier", get_image( "carrier_chassis" ), get_image( "carrier_hitbox" ), get_image( "quad_gibs" ), "carrier", 350, 300, 1200, 125.0, 80.0, 110.0 ))
+		'add the tracks
+		'add the widgets
 		
 End Function
