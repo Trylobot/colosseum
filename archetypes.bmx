@@ -200,6 +200,9 @@ Global widget_archetype:WIDGET[10]; reset_index()
 Global WIDGET_INDEX_AI_SEEK_LIGHT% = postfix_index()
 Global WIDGET_INDEX_AI_WANDER_LIGHT% = postfix_index()
 Global WIDGET_INDEX_ARENA_DOOR% = postfix_index()
+Global WIDGET_INDEX_BAY_DOOR% = postfix_index()
+Global WIDGET_INDEX_RAMP_EXTENDER% = postfix_index()
+Global WIDGET_INDEX_SPINNER% = postfix_index()
 
 Function set_widget_archetypes()
 	widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT] = WIDGET( WIDGET.Create( "AI seek light", get_image( "glow" ), LAYER_IN_FRONT_OF_PARENT,, REPEAT_MODE_CYCLIC_WRAP, True ))
@@ -211,9 +214,15 @@ Function set_widget_archetypes()
 	widget_archetype[WIDGET_INDEX_ARENA_DOOR] = WIDGET( WIDGET.Create( , get_image( "door" ), LAYER_IN_FRONT_OF_PARENT,, REPEAT_MODE_CYCLIC_WRAP, False ))
 		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1, 1, 1, 1750 )))
 		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 35, 0, 0, 255, 255, 255, 1, 1, 1, 925 )))
-	'widget for the bay door
-	'widget for the ramp extender
-	'widget for a spinner on top
+	widget_archetype[WIDGET_INDEX_BAY_DOOR] = WIDGET( WIDGET.Create( , get_image( "bay_door" )))
+		widget_archetype[WIDGET_INDEX_BAY_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0,,,,,,, 1000 )))
+		widget_archetype[WIDGET_INDEX_BAY_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 100,,,,,,, 1000 )))
+	widget_archetype[WIDGET_INDEX_RAMP_EXTENDER] = WIDGET( WIDGET.Create( , get_image( "ramp" )))
+		widget_archetype[WIDGET_INDEX_RAMP_EXTENDER].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0,,,,,,, 1000 )))
+		widget_archetype[WIDGET_INDEX_RAMP_EXTENDER].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -12, 0, 0,,,,,,, 1000 )))
+	widget_archetype[WIDGET_INDEX_SPINNER] = WIDGET( WIDGET.Create( , get_image( "spinner" )))
+		widget_archetype[WIDGET_INDEX_SPINNER].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, -180,,,,,,, 1000 )))
+		widget_archetype[WIDGET_INDEX_SPINNER].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 180,,,,,,, 1000 )))
 End Function
 
 '______________________________________________________________________________
@@ -349,7 +358,7 @@ End Function
 
 '______________________________________________________________________________
 '[ COMPLEX_AGENTS ]
-Global complex_agent_archetype:COMPLEX_AGENT[10]; reset_index()
+Global complex_agent_archetype:COMPLEX_AGENT[11]; reset_index()
 
 '[ PLAYERS ]
 Global player_index_start% = array_index
@@ -461,7 +470,14 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turning_force.magnitude_max = 75.0
 		
 	complex_agent_archetype[ENEMY_INDEX_CARRIER] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "carrier", get_image( "carrier_chassis" ), get_image( "carrier_hitbox" ), get_image( "quad_gibs" ), "carrier", 350, 300, 1200, 125.0, 80.0, 110.0 ))
-		'add the tracks
-		'add the widgets
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_BAY_DOOR], WIDGET_DEPLOY ).attach_at( 2, 3 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_RAMP_EXTENDER], WIDGET_DEPLOY ).attach_at( 3, 13 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_SPINNER], WIDGET_DEPLOY ).attach_at( 28, 13 )
+		complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK].left_track = get_particle( "med_tank_track" )
+			complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK].left_track.parent = complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK]
+			complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK].left_track.attach_at( 0, -7.5 )
+		complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK].right_track = get_particle( "med_tank_track" )
+			complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK].right_track.parent = complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK]
+			complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK].right_track.attach_at( 0, 7.5 )
 		
 End Function

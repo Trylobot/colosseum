@@ -397,6 +397,12 @@ Type COMPLEX_AGENT Extends AGENT
 			em.disable()
 		Next
 	End Method
+	'___________________________________________
+	Method deploy()
+		For Local w:WIDGET = EachIn deploy_widgets
+			w.queue_transformation( 1 )
+		Next
+	End Method
 	
 	'___________________________________________
 	Method grant_pickup( pkp:PICKUP )

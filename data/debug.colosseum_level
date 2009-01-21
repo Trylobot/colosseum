@@ -109,7 +109,7 @@
 		},
 		{
 			class: 2,
-			squads: [ [ 6 ] ],
+			squads: [ [ 4 ] ],
 			pos: {
 				pos_x: 45,
 				pos_y: 150,
@@ -155,52 +155,10 @@
 			}
 		},
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 245,
-				pos_y: 115,
-				ang: 0,
-				vel_x: 0,
-				vel_y: 0,
-				ang_vel: 0,
-				acc_x: 0,
-				acc_y: 0,
-				ang_acc: 0
-			}
-		},
-		{
 			archetype: "crate_small",
 			pos: {
 				pos_x: 210,
 				pos_y: 90,
-				ang: 0,
-				vel_x: 0,
-				vel_y: 0,
-				ang_vel: 0,
-				acc_x: 0,
-				acc_y: 0,
-				ang_acc: 0
-			}
-		},
-		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 235,
-				pos_y: 80,
-				ang: 0,
-				vel_x: 0,
-				vel_y: 0,
-				ang_vel: 0,
-				acc_x: 0,
-				acc_y: 0,
-				ang_acc: 0
-			}
-		},
-		{
-			archetype: "crate",
-			pos: {
-				pos_x: 205,
-				pos_y: 65,
 				ang: 0,
 				vel_x: 0,
 				vel_y: 0,
