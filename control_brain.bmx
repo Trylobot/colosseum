@@ -51,16 +51,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field dist_to_target# 'measurement
 	Field dist_to_waypoint# 'measurement
 	
-	'all of the following fields need to go.
-	Field DEPRECATED__sighted_target%
-	Field DEPRECATED__think_delay%
-	Field DEPRECATED__look_target_delay%
-	Field DEPRECATED__find_path_delay%
-	Field DEPRECATED__last_think_ts%
-	Field DEPRECATED__last_look_target_ts%
-	Field DEPRECATED__last_find_path_ts%
-	Field DEPRECATED__FLAG_waiting%
-	
 	Method update() 'this function needs some TLC
 		prune()
 		If control_type = CONTROL_TYPE_HUMAN
@@ -87,7 +77,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 		If target <> Null
 			ang_to_target = avatar.ang_to( target )
-		dist_to_target = avatar.dist_to( target )
+			dist_to_target = avatar.dist_to( target )
 		End If
 		can_see_target = see_target()
 		ally_blocking = False 'friendly_blocking()
@@ -197,15 +187,23 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Local diff#
 			If targ <> Null
 				diff = ang_wrap( avatar.get_turret_system_ang( index ) - ang_to_target )
-			Else
+			Else 'targ = null
 				diff = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.ang )
 			End If
-			Local threshold# = ATan2( targeting_radius, dist_to_target )
-			'if the turret system is not pointed at the target
-			If targ <> Null And Abs( diff ) > threshold
-				avatar.turn_turret_system( index, -1.0*Sgn( diff ))
-			Else 'turret system is pointed at the target
-				avatar.turn_turret_system( index, 0.0 ) '-1.0*Sgn( diff ))
+			Local diff_mag# = Abs( diff )
+			Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
+			If diff_mag > 5.0*max_ang_vel
+				If diff < 0
+					avatar.turn_turret_system( 0, 1.0 )
+				Else 'diff > 0
+					avatar.turn_turret_system( 0, -1.0 )
+				End If
+			Else
+				If diff < 0
+					avatar.turn_turret_system( 0, diff_mag /( max_ang_vel * 5.0 ))
+				Else 'diff > 0
+					avatar.turn_turret_system( 0, -diff_mag /( max_ang_vel * 5.0 ))
+				End If
 			End If
 		Next
 	End Method
@@ -394,10 +392,11 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						avatar.turn_turret_system( 0, 0.0 )
 					EndIf
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-					For Local t:TURRET = EachIn game.player.turrets
-						Local diff# = ang_wrap( t.ang - t.ang_to_cVEC( game.mouse ))
+					For Local index% = 0 To avatar.turret_systems.Length-1
+						Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.ang_to_cVEC( game.mouse ))
 						Local diff_mag# = Abs( diff )
-						If diff_mag > 5*t.max_ang_vel
+						Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
+						If diff_mag > 5.0*max_ang_vel
 							If diff < 0
 								avatar.turn_turret_system( 0, 1.0 )
 							Else 'diff > 0
@@ -405,9 +404,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 							End If
 						Else
 							If diff < 0
-								avatar.turn_turret_system( 0, diff_mag /( t.max_ang_vel * 5.0 ))
+								avatar.turn_turret_system( 0, diff_mag /( max_ang_vel * 5.0 ))
 							Else 'diff > 0
-								avatar.turn_turret_system( 0, -diff_mag /( t.max_ang_vel * 5.0 ))
+								avatar.turn_turret_system( 0, -diff_mag /( max_ang_vel * 5.0 ))
 							End If
 						End If
 					Next

@@ -11,7 +11,10 @@ Global level_file_ext$ = "colosseum_level"
 Global saved_game_file_ext$ = "colosseum_saved_game"
 Global autosave_path$ = "user/autosave.colosseum_data"
 
+Global art_path$ = "art/"
 Global data_path$ = "data/"
+Global font_path$ = "fonts/"
+Global sound_path$ = "sound/"
 Global user_path$ = "user/"
 Global default_settings_file_name$ = "settings."+settings_file_ext
 Global default_assets_file_name$ = "assets."+data_file_ext
@@ -284,7 +287,10 @@ End Function
 
 '______________________________________________________________________________
 Function create_dirs()
+	CreateDir( art_path )
 	CreateDir( data_path )
+	CreateDir( font_path )
+	CreateDir( sound_path )
 	CreateDir( user_path )
 End Function
 '______________________________________________________________________________

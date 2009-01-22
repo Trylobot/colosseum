@@ -476,23 +476,23 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].driving_force.magnitude_max = 66.0
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turning_force.magnitude_max = 75.0
 		
-	complex_agent_archetype[ENEMY_INDEX_CARRIER] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "carrier", get_image( "carrier_chassis" ), get_image( "carrier_hitbox" ), get_image( "quad_gibs" ), "carrier", 350, 300, 1200, 125.0, 80.0, 110.0 ))
+	complex_agent_archetype[ENEMY_INDEX_CARRIER] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "carrier", get_image( "carrier_chassis" ), get_image( "carrier_hitbox" ), get_image( "quad_gibs" ), "carrier", 350, 300, 1200, 125.0, 70.0, 95.0 ))
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_BAY_DOOR], WIDGET_DEPLOY ).attach_at( -16, -9 )
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_RAMP_EXTENDER], WIDGET_DEPLOY ).attach_at( -15, 0 )
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_SPINNER], WIDGET_DEPLOY ).attach_at( 10, 0 )
-		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 15, -8, 0, 2, -45, 45, 0.3, 0.6 )
-		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 15, 8, 0, 2, -45, 45, 0.3, 0.6 )
-		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, -8, 0, 2, 135, 225, 0.3, 0.6 )
-		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, 8, 0, 2, 135, 225, 0.3, 0.6 )
-		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM] ), EVENT_DRIVE_FORWARD ).attach_at( 15, -8, 1, 1 )
-		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM] ), EVENT_DRIVE_FORWARD ).attach_at( 15, 8, 1, 1 )
-		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, -8, 1, 1 )
-		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM] ), EVENT_DRIVE_BACKWARD ).attach_at( -15, 8, 1, 1 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 16, -8, 0, 2, -45, 45, 0.3, 0.6 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( 16, 8, 0, 2, -45, 45, 0.3, 0.6 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -16, -8, 0, 2, 135, 225, 0.3, 0.6 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( -16, 8, 0, 2, 135, 225, 0.3, 0.6 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM] ), EVENT_DRIVE_FORWARD ).attach_at( 16, -8, 1, 1 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM] ), EVENT_DRIVE_FORWARD ).attach_at( 16, 8, 1, 1 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM] ), EVENT_DRIVE_BACKWARD ).attach_at( -16, -8, 1, 1 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM] ), EVENT_DRIVE_BACKWARD ).attach_at( -16, 8, 1, 1 )
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].left_track = get_particle( "med_tank_track" )
 			complex_agent_archetype[ENEMY_INDEX_CARRIER].left_track.parent = complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK]
-			complex_agent_archetype[ENEMY_INDEX_CARRIER].left_track.attach_at( 0, -8.5 )
+			complex_agent_archetype[ENEMY_INDEX_CARRIER].left_track.attach_at( 1, -8.5 )
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].right_track = get_particle( "med_tank_track" )
 			complex_agent_archetype[ENEMY_INDEX_CARRIER].right_track.parent = complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK]
-			complex_agent_archetype[ENEMY_INDEX_CARRIER].right_track.attach_at( 0, 8.5 )
+			complex_agent_archetype[ENEMY_INDEX_CARRIER].right_track.attach_at( 1, 8.5 )
 		
 End Function

@@ -375,6 +375,13 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		Return Null
 	End Method
+	'___________________________________________
+	Method get_turret_system_max_ang_vel#( index% )
+		If index < turret_systems.Length
+			Return turrets[turret_systems[index][0]].max_ang_vel
+		End If
+		Return Null
+	End Method
 	
 	'___________________________________________
 	Method enable_only_forward_emitters()
