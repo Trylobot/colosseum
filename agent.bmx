@@ -98,7 +98,9 @@ Type AGENT Extends PHYSICAL_OBJECT
 		'bright halo
 		If show_halo
 			'this particle's creation should be part of the agent's death emitters, not hard coded.
-			get_particle( "halo" ).auto_manage()
+			Local halo:PARTICLE = get_particle( "halo" )
+			halo.move_to( Self )
+			halo.auto_manage()
 		End If
 		'gibby bits
 		If show_gibs

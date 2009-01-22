@@ -109,7 +109,7 @@
 		},
 		{
 			class: 2,
-			squads: [ [ 4 ] ],
+			squads: [ [ 3 ] ],
 			pos: {
 				pos_x: 45,
 				pos_y: 150,

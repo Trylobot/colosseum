@@ -410,37 +410,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 								avatar.turn_turret_system( 0, -diff_mag /( t.max_ang_vel * 5.0 ))
 							End If
 						End If
-'						Else If diff_mag > 2.5*t.max_ang_vel
-'							If diff < 0
-'								avatar.turn_turret_system( 0, 0.5 )
-'							Else 'diff > 0
-'								avatar.turn_turret_system( 0, -0.5 )
-'							End If
-'						Else If diff_mag > 1.25*t.max_ang_vel
-'							If diff < 0
-'								avatar.turn_turret_system( 0, 0.25 )
-'							Else 'diff > 0
-'								avatar.turn_turret_system( 0, -0.25 )
-'							End If
-'						Else If diff_mag > 0.75*t.max_ang_vel
-'							If diff < 0
-'								avatar.turn_turret_system( 0, 0.125 )
-'							Else 'diff > 0
-'								avatar.turn_turret_system( 0, -0.125 )
-'							End If
-'						Else If diff_mag > 0.375*t.max_ang_vel
-'							If diff < 0
-'								avatar.turn_turret_system( 0, 0.0625 )
-'							Else 'diff > 0
-'								avatar.turn_turret_system( 0, -0.0625 )
-'							End If
-'						Else
-'							If diff < 0
-'								avatar.turn_turret_system( 0, 0.03125 )
-'							Else 'diff > 0
-'								avatar.turn_turret_system( 0, -0.03125 )
-'							End If
-'						End If
 					Next
 				End If
 				'turret fire control
@@ -457,7 +426,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					'End If
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 					'turret(s) fire
-					If MouseDown( 1 )
+					If MouseDown( 1 ) And Not FLAG_ignore_mouse_1
 						avatar.fire( 0 )
 					End If
 					If MouseDown( 2 )

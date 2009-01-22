@@ -92,6 +92,10 @@ Type TURRET_BARREL Extends POINT
 		last_reloaded_ts = now()
 	End Method
 	
+	Method fire_blank()
+		last_reloaded_ts = now()
+	End Method
+	
 	Method ready_to_fire%()
 		Return ..
 			(parent <> Null) And ..

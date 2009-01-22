@@ -35,6 +35,7 @@ Global FLAG_bg_music_on% = False
 Global FLAG_no_sound% = False
 Global FLAG_draw_help% = False
 Global FLAG_console% = False
+Global FLAG_ignore_mouse_1% = False
 
 '______________________________________________________________________________
 Type PLAYER_PROFILE
@@ -187,6 +188,8 @@ Function init_ai_menu_game()
 	lev.set_path_region( CELL.Create( 4, 2 ), True )
 	lev.set_path_region( CELL.Create( 4, 3 ), True )
 	lev.set_path_region( CELL.Create( 4, 4 ), True )
+	
+	'add more dividers
 
 	ai_menu_game.load_level( lev )
 End Function
@@ -224,6 +227,7 @@ Const COMMAND_SETTINGS_BIT_DEPTH% = 1040
 Const COMMAND_SETTINGS_IP_ADDRESS% = 1050
 Const COMMAND_SETTINGS_IP_PORT% = 1060
 Const COMMAND_SETTINGS_APPLY_ALL% = 1100
+Const COMMAND_PAUSE% = 10000
 Const COMMAND_QUIT_GAME% = 65535
 
 Const MENU_ID_MAIN_MENU% = 100
@@ -252,10 +256,12 @@ Const MENU_ID_OPTIONS_CONTROLS% = 530
 Const MENU_ID_OPTIONS_GAME% = 540
 Const MENU_ID_EDITORS% = 600
 Const MENU_ID_LEVEL_EDITOR% = 610
+Const MENU_ID_PAUSED% = 1000
 
 Global menu_margin% = 8
 Global dynamic_subsection_window_size% = 8
 Global all_menus:MENU[50]
+Global pause_menu:MENU
 reset_index()
 
 all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MAIN_MENU, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
@@ -375,6 +381,14 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ])
 			
 			all_menus[postfix_index()] = MENU.Create( "abandon current level?", 255, 64, 64, MENU_ID_CONFIRM_ERASE_LEVEL, MENU.CONFIRMATION_DIALOG, menu_margin, 1,,, COMMAND_NEW_LEVEL )
+
+all_menus[postfix_index()] = MENU.Create( "game paused", 96, 96, 96, MENU_ID_PAUSED, MENU.VERTICAL_LIST, menu_margin, -1,,,,,,,, ..
+[	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, True ), ..
+	MENU_OPTION.Create( "settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SETTINGS), True, True ), ..
+	MENU_OPTION.Create( "preferences", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_PREFERENCES), True, True ), ..
+	MENU_OPTION.Create( "abandon level", COMMAND_SHOP,, True, True ), ..
+	MENU_OPTION.Create( "quit game", COMMAND_QUIT_GAME,, True, True ) ])
+
 '______________________________________________________________________________
 Global menu_stack%[] = New Int[255]
 	menu_stack[0] = MENU_ID_MAIN_MENU
@@ -390,7 +404,7 @@ End Function
 
 Function get_menu:MENU( menu_id% )
 	For Local i% = 0 To all_menus.Length - 1
-		If all_menus[i].menu_id = menu_id
+		If all_menus[i] <> Null And all_menus[i].menu_id = menu_id
 			Return all_menus[i]
 		End If
 	Next
@@ -413,20 +427,34 @@ Function menu_command( command_code%, argument:Object = Null )
 			get_current_menu().update()
 		'________________________________________
 		Case COMMAND_BACK_TO_MAIN_MENU
+			FLAG_in_menu = True
+			FLAG_in_shop = False
 			current_menu = 0
-			get_main_menu().update( True )
+			get_current_menu().update()
+		'________________________________________
+		Case COMMAND_PAUSE
+			FLAG_in_menu = True
+			FLAG_in_shop = False
+			current_menu = 1
+			menu_stack[1] = MENU_ID_PAUSED
+			If main_game <> Null Then main_game.paused = True
+			get_current_menu().update()
 		'________________________________________
 		Case COMMAND_RESUME
 			FLAG_in_menu = False
+			If main_game <> Null Then main_game.paused = False
+			MoveMouse( window_w/2 - 30, window_h/2 )
+			FLAG_ignore_mouse_1 = True
 		'________________________________________
 		Case COMMAND_SHOP
 			FLAG_in_menu = False
 			FLAG_in_shop = True
+			main_game = Null
 		'________________________________________
 		Case COMMAND_NEW_GAME
 			profile = New PLAYER_PROFILE
 			show_info( "new profile loaded" )
-			get_main_menu().update()
+			get_current_menu().update( True )
 		'________________________________________
 		Case COMMAND_LOAD_GAME
 			profile = load_game( String(argument) )
@@ -435,7 +463,7 @@ Function menu_command( command_code%, argument:Object = Null )
 				show_info( "loaded profile "+profile.profile_name+" from "+profile.src_path )
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-			get_main_menu().update()
+			get_current_menu().update( True )
 		'________________________________________
 		Case COMMAND_SAVE_GAME
 			If save_game( String(argument), profile )
@@ -443,11 +471,11 @@ Function menu_command( command_code%, argument:Object = Null )
 				show_info( "saved profile "+profile.profile_name+" to "+profile.src_path )
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-		'________________________________________
-		Case COMMAND_MULTIPLAYER_JOIN
-			'join_game()
-		'________________________________________
-		Case COMMAND_MULTIPLAYER_HOST
+		''________________________________________
+		'Case COMMAND_MULTIPLAYER_JOIN
+		'	join_game()
+		''________________________________________
+		'Case COMMAND_MULTIPLAYER_HOST
 		'________________________________________
 		Case COMMAND_NEW_LEVEL
 			level_editor_cache = Create_LEVEL( 300, 300 )

@@ -156,16 +156,18 @@ Type WIDGET Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method add_state( s:TRANSFORM_STATE )
-		final_state :+ 1
+	Method add_state( st:TRANSFORM_STATE )
 		If states = Null
+			cur_state = 0
+			final_state = 0
 			states = New TRANSFORM_STATE[1]
-		Else
+			states[0] = st.clone()
+			state = states[0].clone()
+		Else 'states <> Null
 			states = states[..states.Length+1]
+			final_state = states.Length - 1
+			states[final_state] = st.clone()
 		End If
-		states[final_state] = s.clone()
-		If cur_state < 0 Then cur_state = 0
-		If state = Null Then state = states[cur_state].clone()
 	End Method
 	
 	Method state_successor%( i% )

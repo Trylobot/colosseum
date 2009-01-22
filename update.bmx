@@ -9,7 +9,7 @@ EndRem
 Function update_all_objects()
 	
 	'update body
-	If game <> Null
+	If game <> Null And Not game.paused
 		
 		update_flags()
 		
@@ -134,6 +134,8 @@ Function update_flags()
 			If Not game.game_in_progress And KeyHit( KEY_R )
 				menu_command( COMMAND_SHOP )
 				menu_command( COMMAND_SAVE_GAME, profile.src_path )
+				main_game = Null
+				game = ai_menu_game
 			End If
 		End If
 		'flag updates for any game

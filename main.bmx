@@ -94,37 +94,45 @@ info_change_ts = now()
 
 Repeat
 	
-	'game object
+	'game object to use for this frame
 	If FLAG_in_menu Or FLAG_in_shop
-		game = ai_menu_game
+		If main_game <> Null
+			game = main_game
+		Else
+			game = ai_menu_game
+		End If
 	Else
 		game = main_game
 	End If
 	
+	'input
 	get_all_input()
-	If KeyHit( KEY_F12 )
-		screenshot()
-	End If
 	
 	'simulation speed, never faster than 60 hertz
 	If (now() - before) > time_per_frame_min
 		before = now()
 		
+		'collision detection & resolution
 		collide_all_objects()
+		'physics engine update
 		update_all_objects()
 		
 	EndIf
 	
+	'clear buffer
 	Cls()
 	
+	'draw to buffer
 	draw_all_graphics()
-	play_all_audio()
-	
 	?Debug
 	debug_main()
 	?
-
+	
+	'show buffer
 	Flip( 1 )
+	
+	'audio
+	play_all_audio()
 	
 Until AppTerminate()
 

@@ -18,12 +18,15 @@ Function get_all_input()
 	Else
 		ShowMouse()
 	End If
+	If Not MouseDown( 1 )
+		FLAG_ignore_mouse_1 = False
+	End If
 	
 	'navigate menu and select option
 	If FLAG_in_menu
 		Local m:MENU = get_current_menu()
 		'menu navigation controls
-		If escape_key_release() And current_menu <> 0
+		If escape_key_release() And current_menu <> 0 And get_current_menu().menu_id <> MENU_ID_PAUSED
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		End If
 		If KeyHit( KEY_DOWN ) 'Or KeyHit( KEY_RIGHT )
@@ -47,40 +50,39 @@ Function get_all_input()
 	Else If FLAG_in_shop
 		'shop navigation
 		If escape_key_release()
-			FLAG_in_menu = True
-			FLAG_in_shop = False
+			menu_command( COMMAND_BACK_TO_MAIN_MENU )
 		End If
 		'delegate input to shop function
 		get_shop_input()
-	Else 'show in-game help
+	Else
+		'show in-game help
 		If KeyHit( KEY_F1 )
 			FLAG_draw_help = Not FLAG_draw_help
+		End If
+		'in-game input
+		If game <> Null And game.human_participation
+			'pressed ESC
+			If escape_key_release()
+				If Not game.game_over
+					If Not FLAG_in_menu
+						FLAG_in_menu = True
+						If game.game_in_progress
+							menu_command( COMMAND_PAUSE )
+						Else
+							menu_command( COMMAND_BACK_TO_MAIN_MENU )
+						End If
+					End If
+				Else 'game.game_over
+					menu_command( COMMAND_SHOP )
+				End If
+				'clear unused keystrokes
+				FlushKeys()
+			End If
 		End If
 	End If
 	
 	'music enable/disable
 	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
-	
-	'player's game specific input
-	If game <> Null And game.human_participation
-		If escape_key_release() 'show menu
-			If Not game.game_over
-				If Not FLAG_in_menu
-					FLAG_in_menu = True
-					If game.game_in_progress
-						menu_command( COMMAND_BACK_TO_MAIN_MENU )
-					End If
-				End If
-			Else 'game.game_over
-				menu_command( COMMAND_SHOP )
-			End If
-			'clear keystate listeners
-			KeyHit( KEY_DOWN )
-			KeyHit( KEY_RIGHT )
-			KeyHit( KEY_UP )
-			KeyHit( KEY_LEFT )
-		End If
-	End If
 	
 	'instaquit
 	If esc_held And (now() - esc_press_ts) >= instaquit_time_required
@@ -94,6 +96,11 @@ Function get_all_input()
 		esc_held = True
 	Else
 		esc_held = False
+	End If
+
+	'screenshot
+	If KeyHit( KEY_F12 )
+		screenshot()
 	End If
 
 End Function

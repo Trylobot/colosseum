@@ -64,6 +64,7 @@ Type ENVIRONMENT
 	Field active_hostile_spawners%
 	Field active_hostile_units%
 	
+	Field paused% 'pause flag
 	Field human_participation% 'flag indicating whether any humans will ever participate in this game
 	Field game_in_progress% 'flag indicating the game has begun
 	Field game_over% 'flag indicating game over state
@@ -355,8 +356,8 @@ Type ENVIRONMENT
 			Local damage_pct# = damage/player.max_health
 			
 			Local bit:WIDGET = WIDGET( WIDGET.Create( "health bit", create_rect_img( damage_pct * health_bar_w, health_bar_h - 3 ),,, REPEAT_MODE_LOOP_BACK, True ))
-			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 6.0,-16.0,-3.0, 255,   0,   0, 0.0,,, 500 )))
 			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0.0,  0.0,   0, 255, 255, 255, 1.0,,, 500 )))
+			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 6.0,-16.0,-3.0, 255,   0,   0, 0.0,,, 500 )))
 			bit.parent = Create_POINT( get_image( "health_mini" ).width + 3, window_h - 2*(get_font( "consolas_bold_12" ).Height() + 3) + 2 )
 			bit.attach_at( health_pct * health_bar_w, 2, 0, True )
 			bit.manage( health_bits )

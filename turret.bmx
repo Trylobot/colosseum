@@ -180,6 +180,12 @@ Type TURRET Extends POINT
 		End If
 	End Method
 	
+	Method fire_blanks_all()
+		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
+			tb.fire_blank()
+		Next
+	End Method
+	
 	Method ready_to_fire%()
 		For Local tb% = EachIn firing_sequence[firing_state]
 			If Not turret_barrel_array[tb].ready_to_fire()

@@ -347,6 +347,12 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 	End Method
 	'___________________________________________
+	Method fire_blanks_all()
+		For Local t:TURRET = EachIn turrets
+			t.fire_blanks_all()
+		Next
+	End Method
+	'___________________________________________
 	Method turn_turret_system( index%, control_pct# )
 		If Not spawning
 			If index < turret_systems.Length

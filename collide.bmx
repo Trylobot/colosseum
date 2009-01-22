@@ -26,7 +26,7 @@ Const WALL_NUDGE_DIST# = 0.2
 Function collide_all_objects()
 	
 	'collision detection & resolution body
-	If game <> Null
+	If game <> Null And Not game.paused
 	
 		Local list:TList
 		Local ag:AGENT, other:AGENT
@@ -170,7 +170,7 @@ Function collision_agent_agent( ag:AGENT, other:AGENT )
 	ag.last_collided_agent_id = other.id
 	If ag.destruct_on_contact And COMPLEX_AGENT( other )
 		'this extra parameter to the following call is appropriate only for wooden crates and other non-volatile objects.
-		ag.die( False )
+		ag.die( False, True, False )
 		'this sound also applies only to crates
 		play_sound( get_sound( "wood_hit" ), 0.5, 0.25 )
 	Else If Not ag.physics_disabled And COMPLEX_AGENT( other ) 'this second condition is also only applicable to crates and such, really. it gives the impression that the crate had such little mass, that the total force of the collision went into deforming the object (shattering), and so the complex_agent does not even get affected by the collision.

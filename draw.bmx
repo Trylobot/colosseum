@@ -106,9 +106,6 @@ Function draw_game()
 
 	'arena foreground
 	draw_arena_fg()
-	If game.human_participation
-		draw_lighting_and_effects()
-	End If
 	SetColor( 255, 255, 255 )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
@@ -134,7 +131,12 @@ Function draw_game()
 		w.draw()
 	Next
 
-	'SetViewport( 0, 0, window_w, window_h )
+	If game.human_participation
+		draw_lighting_and_effects()
+	End If
+	SetColor( 255, 255, 255 )
+	SetScale( 1, 1 )
+	SetAlpha( 1 )
 
 	draw_reticle()
 	SetRotation( 0 )
@@ -223,6 +225,7 @@ Function draw_main_screen()
 	h = 0.75*GetImageFont().Height()
 	x = 1 + 20
 	y = window_h - h*2 - 1 - 20
+	If game = main_game Then y :- 50
 	DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole, aka Tylerbot; music by NickPerrin; JSON binding by grable", x, y ); y :+ h
 	DrawText_with_outline( "special thanks to Kaze, SniperAceX, Firelord88, ZieramsFolly; written in BlitzMax", x, y ); y :+ h
 	

@@ -235,6 +235,48 @@ Function debug_overlay()
 		End If
 	End If
 
+	If KeyHit( KEY_QUOTES )
+		game.spawn_pickup( mouse.x, mouse.y )
+	End If
+	
+	If KeyHit( KEY_9 )
+		FLAG_retain_particles = True
+		If KeyDown( KEY_0 )
+			FLAG_dim_bg = True
+		End If
+	End If
+	
+	If KeyHit( KEY_P )
+		FLAG_spawn_mode :+ 1
+		If FLAG_spawn_mode > 2 Then FLAG_spawn_mode = 0
+	End If
+	If FLAG_spawn_mode <> SPAWN_OFF
+		If spawn_agent = Null
+			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
+			spawn_agent.ang = Rand( 360 )
+		End If
+		spawn_agent.pos_x = game.mouse.x; spawn_agent.pos_y = game.mouse.y
+		spawn_agent.update()
+		spawn_agent.snap_all_turrets()
+		If FLAG_spawn_mode = SPAWN_HOSTILES
+			spawn_agent.draw( 255, 196, 196 )
+		Else 'FLAG_spawn_mode = SPAWN_FRIENDLIES
+			spawn_agent.draw( 196, 196, 255 )
+		End If
+		If KeyHit( KEY_O )
+			game.spawn_agent( spawn_archetype, FLAG_spawn_mode, POINT( spawn_agent ))
+			spawn_agent = Null
+		Else If KeyHit( KEY_OPENBRACKET )
+			spawn_archetype :- 1
+			If spawn_archetype < enemy_index_start Then spawn_archetype = complex_agent_archetype.Length - 1
+			spawn_agent = Null
+		Else If KeyHit( KEY_CLOSEBRACKET )
+			spawn_archetype :+ 1
+			If spawn_archetype > complex_agent_archetype.Length - 1 Then spawn_archetype = enemy_index_start
+			spawn_agent = Null
+		End If
+	End If
+	
 	If cb <> Null And cb.managed()
 		
 		'manipulate by keyboard
@@ -328,48 +370,6 @@ Function debug_overlay()
 			Next
 		End If
 			
-	End If
-	
-	If KeyHit( KEY_QUOTES )
-		game.spawn_pickup( mouse.x, mouse.y )
-	End If
-	
-	If KeyHit( KEY_9 )
-		FLAG_retain_particles = True
-		If KeyDown( KEY_0 )
-			FLAG_dim_bg = True
-		End If
-	End If
-	
-	If KeyHit( KEY_P )
-		FLAG_spawn_mode :+ 1
-		If FLAG_spawn_mode > 2 Then FLAG_spawn_mode = 0
-	End If
-	If FLAG_spawn_mode <> SPAWN_OFF
-		If spawn_agent = Null
-			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
-			spawn_agent.ang = Rand( 360 )
-		End If
-		spawn_agent.pos_x = game.mouse.x; spawn_agent.pos_y = game.mouse.y
-		spawn_agent.update()
-		spawn_agent.snap_all_turrets()
-		If FLAG_spawn_mode = SPAWN_HOSTILES
-			spawn_agent.draw( 255, 196, 196 )
-		Else 'FLAG_spawn_mode = SPAWN_FRIENDLIES
-			spawn_agent.draw( 196, 196, 255 )
-		End If
-		If KeyHit( KEY_O )
-			game.spawn_agent( spawn_archetype, FLAG_spawn_mode, POINT( spawn_agent ))
-			spawn_agent = Null
-		Else If KeyHit( KEY_OPENBRACKET )
-			spawn_archetype :- 1
-			If spawn_archetype < enemy_index_start Then spawn_archetype = complex_agent_archetype.Length - 1
-			spawn_agent = Null
-		Else If KeyHit( KEY_CLOSEBRACKET )
-			spawn_archetype :+ 1
-			If spawn_archetype > complex_agent_archetype.Length - 1 Then spawn_archetype = enemy_index_start
-			spawn_agent = Null
-		End If
 	End If
 	
 End Function
