@@ -27,8 +27,6 @@ Type TRANSFORM_STATE
 	transition_time% = 1000 )
 		Local s:TRANSFORM_STATE = New TRANSFORM_STATE
 		s.pos_x = pos_x; s.pos_y = pos_y
-		Local position:cVEC = Create_cVEC( pos_x, pos_y )
-		s.pos_length = position.r(); s.pos_ang = position.a()
 		s.ang = ang
 		s.red = red; s.green = green; s.blue = blue
 		s.alpha = alpha
@@ -36,7 +34,13 @@ Type TRANSFORM_STATE
 		If transition_time <> 0 Then s.transition_time = transition_time Else s.transition_time = 1000
 		Return s
 	End Function
-
+	
+	Method calc_polar()
+		Local pos:cVEC = Create_cVEC( pos_x, pos_y )
+		pos_length = pos.r()
+		pos_ang = pos.a()
+	End Method
+	
 	Method clone:TRANSFORM_STATE()
 		Return TRANSFORM_STATE( TRANSFORM_STATE.Create( ..
 			pos_x, pos_y, ang, red, green, blue, alpha, scale_x, scale_y, transition_time ))

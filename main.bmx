@@ -81,7 +81,7 @@ End Function
 init_graphics()
 
 ?Debug
-debug_widget()
+'debug_widget()
 'debug_spawner()
 ?
 

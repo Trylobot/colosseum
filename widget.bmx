@@ -108,10 +108,9 @@ Type WIDGET Extends MANAGED_OBJECT
 				'currently transforming
 				Local ns:TRANSFORM_STATE = states[ state_successor( cur_state )]
 				Local pct# = (Float(now() - transform_begin_ts) / Float(cs.transition_time))
-				state.pos_length = cs.pos_length + pct * (ns.pos_length - cs.pos_length)
-				state.pos_ang = cs.pos_ang + pct * (ns.pos_ang - cs.pos_ang)
-				'state.pos_length
-				'state.pos_ang
+				state.pos_x = cs.pos_x + pct * (ns.pos_x - cs.pos_x)
+				state.pos_y = cs.pos_y + pct * (ns.pos_y - cs.pos_y)
+				state.calc_polar()
 				state.ang = cs.ang + pct * (ns.ang - cs.ang)
 				state.red = cs.red + pct * (ns.red - cs.red)
 				state.green = cs.green + pct * (ns.green - cs.green)

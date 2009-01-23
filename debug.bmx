@@ -411,14 +411,12 @@ Function debug_widget()
 	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create(   0.0 ,,,,,,,,, 1000 )))
 	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -35.0 ,,,,,,,,, 1000 )))
 	w.parent = p
-	'w.attach_at( 0, 0, 180 )
 	w.manage( list )
 	
   w = WIDGET( WIDGET.Create( "hinged_door", create_rect_img( 50, 5, 2.5, 2.5 ),,,, True ))
 	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,,   0.0,,,,,,, 1000 )))
 	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,, -90.0,,,,,,, 1000 )))
 	w.parent = p
-	'w.attach_at( 0, 0, 180 )
 	w.manage( list )
 	
 	Repeat
