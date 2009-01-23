@@ -81,34 +81,42 @@ Function debug_drawtext( message$, h% = 10 )
 	sy :+ h
 End Function
 '______________________________________________________________________________
-Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = "", b_msg$ = "", m_msg$ = "" )
+Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = null, b_msg$ = null, m_msg$ = null )
 	'decl.
 	Local a:cVEC = New cVEC, b:cVEC = New cVEC, m:cVEC = New cVEC
 	'init.
-	If( cVEC(arg1) )
+	If cVEC(arg1) 
 		a = cVEC(arg1)
-	Else
+	Else if point(arg1)
 		Local p:POINT = POINT(arg1)
 		a.x = p.pos_x; a.y = p.pos_y
+	else
+		return
 	End If
-	If( cVEC(arg2) )
+	If cVEC(arg2) 
 		b = cVEC(arg2)
-	Else
+	Else if point(arg2)
 		Local p:POINT = POINT(arg2)
 		b.x = p.pos_x; b.y = p.pos_y
+	else
+		return
 	End If
 	m.x = (a.x+b.x)/2
 	m.y = (a.y+b.y)/2
 	'draw
+	setlinewidth( 3)
+	setalpha( 0.5 )
 	DrawLine( a.x,a.y, b.x,b.y )
-	DrawOval( a.x-2,a.y-2, 5,5 )
-	DrawOval( b.x-2,b.y-2, 5,5 )
-	DrawOval( m.x-2,m.y-2, 5,5 )
-	'messages
-	SetImageFont( get_font( "consolas_10" ))
-	DrawText( a_msg, Int(a.x+2),Int(a.y+2) )
-	DrawText( b_msg, Int(b.x+2),Int(b.y+2) )
-	DrawText( m_msg, Int(m.x+2),Int(m.y+2) )
+	setlinewidth( 1 )
+	setalpha( 1 )
+	'DrawOval( a.x-2,a.y-2, 5,5 )
+	'DrawOval( b.x-2,b.y-2, 5,5 )
+	'DrawOval( m.x-2,m.y-2, 5,5 )
+	''messages
+	'SetImageFont( get_font( "consolas_10" ))
+	'DrawText( a_msg, Int(a.x+2),Int(a.y+2) )
+	'DrawText( b_msg, Int(b.x+2),Int(b.y+2) )
+	'DrawText( m_msg, Int(m.x+2),Int(m.y+2) )
 End Function
 '______________________________________________________________________________
 Function debug_fps()
@@ -400,30 +408,34 @@ End Function
 
 '______________________________________________________________________________
 Function debug_widget()
-	Local list:TList = CreateList()
+	'Local list:TList = CreateList()
 	Local before% = now()
 	Local mouse:POINT = New POINT
+	Local game:ENVIRONMENT = create_environment()
+	Local carrier:COMPLEX_AGENT = game.spawn_agent( ENEMY_INDEX_CARRIER, ALIGNMENT_HOSTILE, Create_POINT( window_w/2, window_h/2 )).avatar
 	
-	Local p:POINT = Create_POINT( window_w/2, window_h/2 )
-	Local w:WIDGET
+	'Local p:POINT = Create_POINT( window_w/2, window_h/2 )
+	'Local w:WIDGET
 	
-	w = WIDGET( WIDGET.Create( "blinker", create_rect_img( 25, 25, 12.5, 12.5 ),,,, False ))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.5,,, 1000 )))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 1.0,,, 1000 )))
-	w.parent = p
-	w.manage( list )
+	'w = WIDGET( WIDGET.Create( "blinker", create_rect_img( 25, 25, 12.5, 12.5 ),,,, False ))
+	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.5,,, 1000 )))
+	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 1.0,,, 1000 )))
+	'w.parent = p
+	'w.manage( list )
 
-	w = WIDGET( WIDGET.Create( "pump", create_rect_img( 15, 15, 7.5, 7.5 ),,,, False ))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create(   0.0 ,,,,,,,,, 1000 )))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -35.0 ,,,,,,,,, 1000 )))
-	w.parent = p
-	w.manage( list )
+	'w = WIDGET( WIDGET.Create( "pump", create_rect_img( 15, 15, 7.5, 7.5 ),,,, False ))
+	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create(   0.0 ,,,,,,,,, 1000 )))
+	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -35.0 ,,,,,,,,, 1000 )))
+	'w.parent = p
+	'w.attach_at( -35,,, true )
+	'w.manage( list )
 	
-  w = WIDGET( WIDGET.Create( "hinged_door", create_rect_img( 50, 5, 2.5, 2.5 ),,,, False ))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,,   0.0,,,,,,, 1000 )))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,, -90.0,,,,,,, 1000 )))
-	w.parent = p
-	w.manage( list )
+  'w = WIDGET( WIDGET.Create( "hinged_door", create_rect_img( 50, 10, 5, 5 ),,,, False ))
+	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,,  0.0,,,,,,, 1000 )))
+	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,, 90.0,,,,,,, 1000 )))
+	'w.parent = p
+	'w.attach_at( -10, -10,, true )
+	'w.manage( list )
 	
 	Repeat
 		Cls()
@@ -432,37 +444,41 @@ Function debug_widget()
 		mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
 		
 		If MouseDown( 1 )
-			p.move_to( mouse )
+			'p.move_to( mouse )
 		End If
 		If KeyDown( KEY_LEFT )
-			p.ang :+ 1
+			'p.ang :+ 1
 		Else If KeyDown( KEY_RIGHT )
-			p.ang :- 1
+			'p.ang :- 1
 		End If
 		If MouseHit( 2 )
-			For Local w:WIDGET = EachIn list
-				w.queue_transformation( 1 )
-			Next
+			'For Local w:WIDGET = EachIn list
+			'	w.queue_transformation( 1 )
+			'Next
+			carrier.deploy()
 		End If
 		
 		If (now() - before) > time_per_frame_min
 			before = now()
 			
-			For Local w:WIDGET = EachIn list
-				w.update()
-			Next
+			carrier.update()
 		End If
 		
-		Local i% = 0
-		For Local w:WIDGET = EachIn list
-			w.draw()
-			SetColor( 255, 255, 255 )
-			SetAlpha( 1 )
-			SetRotation( 0 )
-			SetScale( 1, 1 )
-			debug_drawtext( "w["+i+"].state_index_cur "+w.state_index_cur )
-			i :+ 1
-		Next
+		'Local i% = 0
+		'For Local w:WIDGET = EachIn list
+		'	debug_drawline( create_cvec( w.get_x(), w.get_y() ), w.parent )
+		'	w.draw()
+		'	
+		'	SetColor( 255, 255, 255 )
+		'	SetAlpha( 1 )
+		'	SetRotation( 0 )
+		'	SetScale( 1, 1 )
+		'	debug_drawtext( "w["+i+"].state_index_cur "+w.state_index_cur )
+		'	
+		'	i :+ 1
+		'Next
+		
+		carrier.draw()
 		
 		Flip( 1 )
 	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
