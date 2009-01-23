@@ -253,22 +253,12 @@ Type COMPLEX_AGENT Extends AGENT
 		If blue_override  <> -1   Then blue  = blue_override  Else blue  = 255
 		If alpha_override <> -1.0 Then alpha = alpha_override Else alpha = 1.0
 		If scale_override <> -1.0 Then scale = scale_override Else scale = 1.0
-		
-'		?Debug
-'		Local drawd_the_thang% = False
-'		?
-		'chassis widgets
+		'widgets behind
 		If Not hide_widgets
 			For Local widget_list:TList = EachIn all_widget_lists
 				For Local w:WIDGET = EachIn widget_list
 					If w.layer = LAYER_BEHIND_PARENT
-'						?Debug
-'						If Not drawd_the_thang And KeyDown( KEY_LSHIFT )
-'							drawd_the_thang = True
-'							DebugLog( "#########################################" )
-'						End If
-'						?
-						w.draw()
+						w.draw( alpha )
 					End If
 				Next
 			Next
@@ -302,18 +292,12 @@ Type COMPLEX_AGENT Extends AGENT
 		SetScale( scale, scale )
 		SetRotation( ang )
 		If img <> Null Then DrawImage( img, pos_x, pos_y )
-		'chassis widgets
+		'widgets in front of
 		If Not hide_widgets
 			For Local widget_list:TList = EachIn all_widget_lists
 				For Local w:WIDGET = EachIn widget_list
 					If w.layer = LAYER_IN_FRONT_OF_PARENT
-'						?Debug
-'						If Not drawd_the_thang And KeyDown( KEY_LSHIFT )
-'							drawd_the_thang = True
-'							DebugLog( "#########################################" )
-'						End If
-'						?
-						w.draw()
+						w.draw( alpha )
 					End If
 				Next
 			Next

@@ -809,4 +809,7 @@ Function create_rect_img:TIMage( w%, h%, hx% = 0, hy% = 0 )
 	SetImageHandle( img, 0.5 + hx, 0.5 + hy )
 	Return img
 End Function
-
+'______________________________________________________________________________
+Function pixel_transform( img:TImage, flip_horizontal% = False, flip_vertical% = False )
+	Return img;
+End Function

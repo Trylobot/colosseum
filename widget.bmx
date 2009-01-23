@@ -110,10 +110,10 @@ Type WIDGET Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method draw()
+	Method draw( alpha_override# = 1.0 )
 		If visible
 			SetColor( actual_state.red, actual_state.green, actual_state.blue )
-			SetAlpha( actual_state.alpha )
+			SetAlpha( actual_state.alpha*alpha_override )
 			SetScale( actual_state.scale_x, actual_state.scale_y )
 			SetRotation( get_ang() )
 			DrawImage( img, get_x(), get_y() )
