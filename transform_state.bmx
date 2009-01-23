@@ -27,6 +27,7 @@ Type TRANSFORM_STATE
 	transition_time% = 1000 )
 		Local s:TRANSFORM_STATE = New TRANSFORM_STATE
 		s.pos_x = pos_x; s.pos_y = pos_y
+		s.calc_polar()
 		s.ang = ang
 		s.red = red; s.green = green; s.blue = blue
 		s.alpha = alpha
@@ -36,9 +37,7 @@ Type TRANSFORM_STATE
 	End Function
 	
 	Method calc_polar()
-		Local pos:cVEC = Create_cVEC( pos_x, pos_y )
-		pos_length = pos.r()
-		pos_ang = pos.a()
+		cartesian_to_polar( pos_x, pos_y, pos_length, pos_ang )
 	End Method
 	
 	Method clone:TRANSFORM_STATE()

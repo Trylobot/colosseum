@@ -40,10 +40,6 @@ Type WIDGET Extends MANAGED_OBJECT
 	Field transformations_remaining% '{INFINITE|integer}
 	Field prune_idle%
 	
-	Method New()
-		actual_state = New TRANSFORM_STATE
-	End Method
-	
 	Function Create:Object( ..
 	name$ = Null, ..
 	img:TImage, ..
@@ -178,10 +174,11 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Method
 	
 	Method add_state( st:TRANSFORM_STATE )
-		If states = Null
+		If states = Null Or states.Length = 0
 			states = New TRANSFORM_STATE[1]
 			states[0] = st.clone()
 			state_index_cur = 0
+			actual_state = st.clone()
 		Else 'states <> Null
 			states = states[..states.Length+1]
 			states[states.Length-1] = st.clone()

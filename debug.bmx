@@ -280,6 +280,11 @@ Function debug_overlay()
 	
 	If KeyHit( KEY_G )
 		cb = game.spawn_agent( ENEMY_INDEX_CARRIER, SPAWN_HOSTILES, Create_POINT( game.mouse.x, game.mouse.y ))
+		'For Local w_list:TList = EachIn cb.avatar.all_widget_lists
+		'	For Local w:WIDGET = EachIn w_list
+		'		DebugLog( pad(w.name,10)+"."+w.state_index_cur+" x="+pad(DoubleToString(w.actual_state.pos_x),6)+" y="+pad(DoubleToString(w.actual_state.pos_y),6)+" a="+pad(DoubleToString(w.actual_state.ang),6) )
+		'	Next
+		'Next
 	End If
 	
 	If cb <> Null And cb.managed()
@@ -345,14 +350,15 @@ Function debug_overlay()
 		
 		'widgets
 		SetColor( 255, 255, 255 )
-		Local i% = 0
 		For Local w_list:TList = EachIn cb.avatar.all_widget_lists
-			Local j% = 0
 			For Local w:WIDGET = EachIn w_list
-				debug_drawtext( pad(w.name,10)+"."+w.state_index_cur+" x="+DoubleToString(w.actual_state.pos_x)+" y="+DoubleToString(w.actual_state.pos_y)+" a="+DoubleToString(w.actual_state.ang) )
-				j :+ 1
+				debug_drawtext( pad(w.name,12,,False)+" R="+pad(DoubleToString(w.actual_state.pos_length),6,,False)+" A="+pad(DoubleToString(w.actual_state.pos_ang),6,,False) )
+				Local i% = 0
+				For Local ts:TRANSFORM_STATE = EachIn w.states
+					debug_drawtext( pad("  states["+i+"]",12,,False)+" R="+pad(DoubleToString(ts.pos_length),6,,False)+" A="+pad(DoubleToString(ts.pos_ang),6,,False) )
+					i :+ 1
+				Next
 			Next
-			i :+ 1
 		Next
 		
 		'friendly fire

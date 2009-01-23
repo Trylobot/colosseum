@@ -188,9 +188,13 @@ Function time_alpha_pct#( ts%, time%, in% = True ) 'either fading IN or OUT
 	End If
 End Function
 '______________________________________________________________________________
-Function pad$( str$, width%, pad$ = " " )
+Function pad$( str$, width%, pad$ = " ", align_right% = True )
 	While str.Length < width
-		str = pad + str
+		If align_right
+			str = pad + str
+		Else
+			str = str + pad
+		End If
 	EndWhile
 	Return str
 End Function
