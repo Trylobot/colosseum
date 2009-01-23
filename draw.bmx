@@ -799,6 +799,11 @@ Function create_rect_img:TIMage( w%, h%, hx% = 0, hy% = 0 )
 	For Local y% = 0 To h + 2 - 1
 		pixmap.WritePixel( w + 2 - 1, y, encode_ARGB( 0.0, r, g, b ))
 	Next
+	For Local x% = 1 + w/2 To w + 2 - 1
+		For Local y% = 1 + h/3 To 1 + 2*h/3
+			pixmap.WritePixel( x, y, encode_ARGB( 0.0, r, g, b ))
+		Next
+	Next
 	'transfer to video memory
 	Local img:TImage = LoadImage( pixmap, FILTEREDIMAGE )
 	SetImageHandle( img, 0.5 + hx, 0.5 + hy )
