@@ -349,7 +349,7 @@ Function debug_overlay()
 		For Local w_list:TList = EachIn cb.avatar.all_widget_lists
 			Local j% = 0
 			For Local w:WIDGET = EachIn w_list
-				debug_drawtext( pad(w.name,10)+"."+w.cur_state+" x="+DoubleToString(w.state.pos_x)+" y="+DoubleToString(w.state.pos_y)+" a="+DoubleToString(w.state.ang) )
+				debug_drawtext( pad(w.name,10)+"."+w.state_index_cur+" x="+DoubleToString(w.actual_state.pos_x)+" y="+DoubleToString(w.actual_state.pos_y)+" a="+DoubleToString(w.actual_state.ang) )
 				j :+ 1
 			Next
 			i :+ 1
@@ -401,19 +401,19 @@ Function debug_widget()
 	Local p:POINT = Create_POINT( window_w/2, window_h/2 )
 	Local w:WIDGET
 	
-	w = WIDGET( WIDGET.Create( "blinker", create_rect_img( 25, 25, 12.5, 12.5 ),,,, True ))
+	w = WIDGET( WIDGET.Create( "blinker", create_rect_img( 25, 25, 12.5, 12.5 ),,,, False ))
 	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.5,,, 1000 )))
 	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 1.0,,, 1000 )))
 	w.parent = p
 	w.manage( list )
 
-	w = WIDGET( WIDGET.Create( "pump", create_rect_img( 15, 15, 7.5, 7.5 ),,,, True ))
+	w = WIDGET( WIDGET.Create( "pump", create_rect_img( 15, 15, 7.5, 7.5 ),,,, False ))
 	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create(   0.0 ,,,,,,,,, 1000 )))
 	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -35.0 ,,,,,,,,, 1000 )))
 	w.parent = p
 	w.manage( list )
 	
-  w = WIDGET( WIDGET.Create( "hinged_door", create_rect_img( 50, 5, 2.5, 2.5 ),,,, True ))
+  w = WIDGET( WIDGET.Create( "hinged_door", create_rect_img( 50, 5, 2.5, 2.5 ),,,, False ))
 	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,,   0.0,,,,,,, 1000 )))
 	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,, -90.0,,,,,,, 1000 )))
 	w.parent = p
@@ -433,6 +433,11 @@ Function debug_widget()
 		Else If KeyDown( KEY_RIGHT )
 			p.ang :- 1
 		End If
+		If MouseHit( 2 )
+			For Local w:WIDGET = EachIn list
+				w.queue_transformation( 1 )
+			Next
+		End If
 		
 		If (now() - before) > time_per_frame_min
 			before = now()
@@ -449,7 +454,7 @@ Function debug_widget()
 			SetAlpha( 1 )
 			SetRotation( 0 )
 			SetScale( 1, 1 )
-			debug_drawtext( "w["+i+"].cur_state "+w.cur_state )
+			debug_drawtext( "w["+i+"].state_index_cur "+w.state_index_cur )
 			i :+ 1
 		Next
 		

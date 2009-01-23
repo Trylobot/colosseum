@@ -29,16 +29,19 @@ Type WIDGET Extends MANAGED_OBJECT
 	Field ang_offset# 'angle to be combined with all transform state angles
 	Field repeat_mode% '{cyclic_wrap|loop_back}
 	Field traversal_direction% '{increasing|decreasing}
+	
 	Field states:TRANSFORM_STATE[] 'sequence of states to be traversed over time
-	Field cur_state% 'index of current transform state
-	Field final_state% 'index of last valid state
-	Field state:TRANSFORM_STATE 'current transform state, used only when in-between states
+	Field state_index_cur% 'index of state representing the state of the widget at the beginning of the transformation
+	Field state_index_next% 'index of state representing the desired state of the widget
+	Field actual_state:TRANSFORM_STATE 'current transform state, used when in-between states
+	
 	Field transforming% '{true|false}
 	Field transform_begin_ts% 'timestamp of beginning of current transformation, used with interpolation
 	Field transformations_remaining% '{INFINITE|integer}
 	Field prune_idle%
 	
 	Method New()
+		actual_state = New TRANSFORM_STATE
 	End Method
 	
 	Function Create:Object( ..
@@ -54,8 +57,6 @@ Type WIDGET Extends MANAGED_OBJECT
 		w.layer = layer
 		w.visible = visible
 		w.repeat_mode = repeat_mode
-		w.cur_state = -1
-		w.final_state = -1
 		w.traversal_direction = TRAVERSAL_DIRECTION_INCREASING
 		w.transforming = initially_transforming
 		w.transform_begin_ts = now()
@@ -86,69 +87,74 @@ Type WIDGET Extends MANAGED_OBJECT
 	
 	Method update()
 		If transforming
-			Local cs:TRANSFORM_STATE = states[cur_state]
-			If (now() - transform_begin_ts) >= cs.transition_time
-				'finished current transformation
-				cur_state = state_successor( cur_state )
-				cs = states[cur_state]
-				transform_begin_ts = now()
-				If transformations_remaining > 0
-					'are there any transformations left
-					transformations_remaining :- 1
-					If transformations_remaining <= 0
-						'no? fine
-						transforming = False
-						If prune_idle
-							unmanage()
-						End If
-					End If
-				End If
-			End If
-			If transforming
-				'currently transforming
-				Local ns:TRANSFORM_STATE = states[ state_successor( cur_state )]
-				Local pct# = (Float(now() - transform_begin_ts) / Float(cs.transition_time))
-				state.pos_x = cs.pos_x + pct * (ns.pos_x - cs.pos_x)
-				state.pos_y = cs.pos_y + pct * (ns.pos_y - cs.pos_y)
-				state.calc_polar()
-				state.ang = cs.ang + pct * (ns.ang - cs.ang)
-				state.red = cs.red + pct * (ns.red - cs.red)
-				state.green = cs.green + pct * (ns.green - cs.green)
-				state.blue = cs.blue + pct * (ns.blue - cs.blue)
-				state.alpha = cs.alpha + pct * (ns.alpha - cs.alpha)
-				state.scale_x = cs.scale_x + pct * (ns.scale_x - cs.scale_x)
-				state.scale_y = cs.scale_y + pct * (ns.scale_y - cs.scale_y)
-			Else
-				'widget just stopped transforming during this update() call
-				state = cs.clone()
+			calculate_actual_state()
+			If (now() - transform_begin_ts) >= states[state_index_cur].transition_time
+				advance_state()
 			End If
 		End If
 	End Method
 	
 	Method draw()
 		If visible
-			SetColor( state.red, state.green, state.blue )
-			SetAlpha( state.alpha )
-			SetScale( state.scale_x, state.scale_y )
+			SetColor( actual_state.red, actual_state.green, actual_state.blue )
+			SetAlpha( actual_state.alpha )
+			SetScale( actual_state.scale_x, actual_state.scale_y )
 			SetRotation( get_ang() )
 			DrawImage( img, get_x(), get_y() )
 		End If
 	End Method
 	
+	Method calculate_actual_state()
+		Local cs:TRANSFORM_STATE = states[state_index_cur]
+		Local ns:TRANSFORM_STATE = states[state_index_next]
+		Local pct# = (Float(now() - transform_begin_ts) / Float(cs.transition_time))
+		If pct > 1.0 Then pct = 1.0
+		actual_state.pos_x = cs.pos_x + pct * (ns.pos_x - cs.pos_x)
+		actual_state.pos_y = cs.pos_y + pct * (ns.pos_y - cs.pos_y)
+		actual_state.calc_polar()
+		actual_state.ang = cs.ang + pct * (ns.ang - cs.ang)
+		actual_state.red = cs.red + pct * (ns.red - cs.red)
+		actual_state.green = cs.green + pct * (ns.green - cs.green)
+		actual_state.blue = cs.blue + pct * (ns.blue - cs.blue)
+		actual_state.alpha = cs.alpha + pct * (ns.alpha - cs.alpha)
+		actual_state.scale_x = cs.scale_x + pct * (ns.scale_x - cs.scale_x)
+		actual_state.scale_y = cs.scale_y + pct * (ns.scale_y - cs.scale_y)
+	End Method
+	
+	Method advance_state()
+		state_index_cur = state_index_next
+		state_index_next = state_successor( state_index_next )
+		transform_begin_ts = now()
+		'post-transformation checks
+		If transformations_remaining > 0
+			'are there any transformations left
+			transformations_remaining :- 1
+			If transformations_remaining <= 0
+				'no? fine
+				transforming = False
+				If prune_idle
+					unmanage()
+				End If
+			End If
+		End If
+	End Method
+	
 	Method get_x#()
-		Return parent.pos_x + offset*Cos( parent.ang + offset_ang ) + state.pos_length*Cos( parent.ang + offset_ang + state.pos_ang + ang_offset )
+		Return parent.pos_x + offset*Cos( parent.ang + offset_ang ) + actual_state.pos_length*Cos( parent.ang + offset_ang + actual_state.pos_ang + ang_offset )
 	End Method
 	Method get_y#()
-		Return parent.pos_y + offset*Sin( parent.ang + offset_ang ) + state.pos_length*Sin( parent.ang + offset_ang + state.pos_ang + ang_offset )
+		Return parent.pos_y + offset*Sin( parent.ang + offset_ang ) + actual_state.pos_length*Sin( parent.ang + offset_ang + actual_state.pos_ang + ang_offset )
 	End Method
 	Method get_ang#()
-		Return parent.ang + offset_ang + state.ang + ang_offset
+		Return parent.ang + offset_ang + actual_state.ang + ang_offset
 	End Method
 	
 	Method queue_transformation( count% = INFINITY, prune_when_finished% = False )
 		prune_idle = prune_when_finished
 		If transforming
-			transformations_remaining :+ count
+			If count <> INFINITY
+				transformations_remaining :+ count
+			End If
 		Else
 			transformations_remaining = count
 			transforming = True
@@ -156,21 +162,35 @@ Type WIDGET Extends MANAGED_OBJECT
 		End If
 	End Method
 	
+	Method pause()
+		transforming = False
+	End Method
+	
+	Method unpause()
+		transforming = True
+		transform_begin_ts = now()
+	End Method
+
+	Method reset()
+		transforming = False
+		state_index_cur = 0
+		actual_state = states[0].clone()
+	End Method
+	
 	Method add_state( st:TRANSFORM_STATE )
 		If states = Null
-			cur_state = 0
-			final_state = 0
 			states = New TRANSFORM_STATE[1]
 			states[0] = st.clone()
-			state = st.clone()
+			state_index_cur = 0
 		Else 'states <> Null
 			states = states[..states.Length+1]
-			final_state = states.Length - 1
-			states[final_state] = st.clone()
+			states[states.Length-1] = st.clone()
+			state_index_next = state_successor( state_index_cur )
 		End If
 	End Method
 	
 	Method state_successor%( i% )
+		Local final_state% = states.Length - 1
 		Select repeat_mode
 			Case REPEAT_MODE_NONE
 				If i >= final_state
@@ -200,12 +220,6 @@ Type WIDGET Extends MANAGED_OBJECT
 						End If
 				End Select
 		End Select
-	End Method
-	
-	Method reset()
-		transforming = False
-		cur_state = 0
-		state = states[cur_state].clone()
 	End Method
 	
 	Method auto_manage()

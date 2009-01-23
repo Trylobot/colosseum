@@ -62,7 +62,7 @@ Function update_all_objects()
 		'health bits
 		For Local w:WIDGET = EachIn health_bits
 			w.update()
-			If w.cur_state = 0 Then w.unmanage()
+			If w.state_index_cur = 1 Then w.unmanage()
 		Next
 		
 		'retain particles (?)
