@@ -53,18 +53,38 @@ Type WIDGET Extends MANAGED_OBJECT
 		w.layer = layer
 		w.visible = visible
 		w.repeat_mode = repeat_mode
-		w.traversal_direction = TRAVERSAL_DIRECTION_INCREASING
 		w.transforming = initially_transforming
+		
+		w.traversal_direction = TRAVERSAL_DIRECTION_INCREASING
 		w.transform_begin_ts = now()
 		w.transformations_remaining = INFINITY
 		Return w
 	End Function
 	
+	Method add_state( st:TRANSFORM_STATE )
+		If states = Null Or states.Length <= 0
+			states = New TRANSFORM_STATE[1]
+			states[0] = st.clone()
+			state_index_cur = 0
+			actual_state = states[state_index_cur].clone()
+		Else 'states <> Null And states.Length > 0
+			states = states[..states.Length+1]
+			states[states.Length-1] = st.clone()
+			state_index_next = state_successor( state_index_cur )
+		End If
+	End Method
+	
 	Method clone:WIDGET()
-		Local w:WIDGET = WIDGET( WIDGET.Create( name, img, layer, visible, repeat_mode, transforming ))
-		'copy list of states
-		For Local cur_state:TRANSFORM_STATE = EachIn states
-			w.add_state( cur_state )
+		Local w:WIDGET = WIDGET( WIDGET.Create( ..
+			name, ..
+			img, ..
+			layer, ..
+			visible, ..
+			repeat_mode, ..
+			transforming ))
+		'copy states
+		For Local st:TRANSFORM_STATE = EachIn states
+			w.add_state( st )
 		Next
 		Return w
 	End Method
@@ -171,19 +191,6 @@ Type WIDGET Extends MANAGED_OBJECT
 		transforming = False
 		state_index_cur = 0
 		actual_state = states[0].clone()
-	End Method
-	
-	Method add_state( st:TRANSFORM_STATE )
-		If states = Null Or states.Length = 0
-			states = New TRANSFORM_STATE[1]
-			states[0] = st.clone()
-			state_index_cur = 0
-			actual_state = st.clone()
-		Else 'states <> Null
-			states = states[..states.Length+1]
-			states[states.Length-1] = st.clone()
-			state_index_next = state_successor( state_index_cur )
-		End If
 	End Method
 	
 	Method state_successor%( i% )

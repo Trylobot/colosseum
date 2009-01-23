@@ -67,8 +67,10 @@ End Function
 '______________________________________________________________________________
 Global sx%, sy%
 Function debug_drawtext( message$, h% = 10 )
-	SetImageFont( get_font( "consolas_10" ))
+	SetRotation( 0 )
+	SetScale( 1, 1 )
 	SetAlpha( 1 )
+	SetImageFont( get_font( "consolas_10" ))
 	Local r%, g%, b%
 	GetColor( r, g, b )
 	SetColor( 0, 0, 0 )
@@ -408,34 +410,38 @@ End Function
 
 '______________________________________________________________________________
 Function debug_widget()
-	'Local list:TList = CreateList()
+	Local list:TList = CreateList()
 	Local before% = now()
 	Local mouse:POINT = New POINT
+	
 	Local game:ENVIRONMENT = create_environment()
-	Local carrier:COMPLEX_AGENT = game.spawn_agent( ENEMY_INDEX_CARRIER, ALIGNMENT_HOSTILE, Create_POINT( window_w/2, window_h/2 )).avatar
+	Local carrier:COMPLEX_AGENT = game.spawn_agent( ENEMY_INDEX_CARRIER, ALIGNMENT_HOSTILE, Create_POINT( window_w/2, window_h/3 )).avatar
 	
-	'Local p:POINT = Create_POINT( window_w/2, window_h/2 )
-	'Local w:WIDGET
+	Local p:POINT = Create_POINT( window_w/2, 2*window_h/3 )
+	Local w:WIDGET
 	
-	'w = WIDGET( WIDGET.Create( "blinker", create_rect_img( 25, 25, 12.5, 12.5 ),,,, False ))
-	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.5,,, 1000 )))
-	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 1.0,,, 1000 )))
-	'w.parent = p
-	'w.manage( list )
+	w = WIDGET( WIDGET.Create( "blinker", create_rect_img( 25, 25, 12.5, 12.5 ),,,, False ))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.5,,, 1000 )))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 1.0,,, 1000 )))
+	w = w.clone()
+	w.parent = p
+	w.manage( list )
 
-	'w = WIDGET( WIDGET.Create( "pump", create_rect_img( 15, 15, 7.5, 7.5 ),,,, False ))
-	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create(   0.0 ,,,,,,,,, 1000 )))
-	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -35.0 ,,,,,,,,, 1000 )))
-	'w.parent = p
-	'w.attach_at( -35,,, true )
-	'w.manage( list )
+	w = WIDGET( WIDGET.Create( "pump", create_rect_img( 15, 15, 7.5, 7.5 ),,,, False ))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create(   0.0 ,,,,,,,,, 1000 )))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -35.0 ,,,,,,,,, 1000 )))
+	w = w.clone()
+	w.parent = p
+	w.attach_at( -35,,, true )
+	w.manage( list )
 	
-  'w = WIDGET( WIDGET.Create( "hinged_door", create_rect_img( 50, 10, 5, 5 ),,,, False ))
-	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,,  0.0,,,,,,, 1000 )))
-	'w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,, 90.0,,,,,,, 1000 )))
-	'w.parent = p
-	'w.attach_at( -10, -10,, true )
-	'w.manage( list )
+  w = WIDGET( WIDGET.Create( "hinged_door", create_rect_img( 50, 10, 5, 5 ),,,, False ))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,,  0.0,,,,,,, 1000 )))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,, 90.0,,,,,,, 1000 )))
+	w = w.clone()
+	w.parent = p
+	w.attach_at( -10, -10,, true )
+	w.manage( list )
 	
 	Repeat
 		Cls()
@@ -452,33 +458,42 @@ Function debug_widget()
 			'p.ang :- 1
 		End If
 		If MouseHit( 2 )
-			'For Local w:WIDGET = EachIn list
-			'	w.queue_transformation( 1 )
-			'Next
+			For Local w:WIDGET = EachIn list
+				w.queue_transformation( 1 )
+			Next
 			carrier.deploy()
 		End If
 		
 		If (now() - before) > time_per_frame_min
 			before = now()
 			
+			For Local w:WIDGET = EachIn list
+				w.update()
+			Next
 			carrier.update()
 		End If
 		
-		'Local i% = 0
-		'For Local w:WIDGET = EachIn list
-		'	debug_drawline( create_cvec( w.get_x(), w.get_y() ), w.parent )
-		'	w.draw()
-		'	
-		'	SetColor( 255, 255, 255 )
-		'	SetAlpha( 1 )
-		'	SetRotation( 0 )
-		'	SetScale( 1, 1 )
-		'	debug_drawtext( "w["+i+"].state_index_cur "+w.state_index_cur )
-		'	
-		'	i :+ 1
-		'Next
+		Local i% = 0
+		For Local w:WIDGET = EachIn list
+			debug_drawline( create_cvec( w.get_x(), w.get_y() ), w.parent )
+			w.draw()
+			
+			SetColor( 255, 255, 255 )
+			SetAlpha( 1 )
+			SetRotation( 0 )
+			SetScale( 1, 1 )
+			debug_drawtext( "w["+i+"].state_index_cur "+w.state_index_cur )
+			
+			i :+ 1
+		Next
 		
 		carrier.draw()
+		
+		For Local list:TList = EachIn carrier.all_widget_lists
+			For Local w:WIDGET = EachIn list
+				debug_drawtext( "w.offset_ang="+w.offset_ang+" w.ang_offset="+w.ang_offset )
+			Next
+		Next
 		
 		Flip( 1 )
 	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()

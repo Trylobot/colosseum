@@ -42,7 +42,12 @@ Type TRANSFORM_STATE
 	
 	Method clone:TRANSFORM_STATE()
 		Return TRANSFORM_STATE( TRANSFORM_STATE.Create( ..
-			pos_x, pos_y, ang, red, green, blue, alpha, scale_x, scale_y, transition_time ))
+			pos_x, pos_y, ..
+			ang, ..
+			red, green, blue, ..
+			alpha, ..
+			scale_x, scale_y, ..
+			transition_time ))
 	End Method
 	
 End Type
