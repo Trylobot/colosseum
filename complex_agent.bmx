@@ -34,15 +34,15 @@ Type COMPLEX_AGENT Extends AGENT
 	Field driving_force:FORCE 'permanent force for this object; also added to the general force list
 	Field turning_force:FORCE 'permanent torque for this object; also added to the general force list
 
-	Field drive_forward_emitters:TList 'emitters triggered when the agent drives forward
-	Field drive_backward_emitters:TList 'emitters triggered when the agent drives backward
-	Field all_emitters:TList 'master emitter list
+	Field drive_forward_emitters:TList 'TList<EMITTER> emitters triggered when the agent drives forward
+	Field drive_backward_emitters:TList 'TList<EMITTER> emitters triggered when the agent drives backward
+	Field all_emitter_lists:TList 'TList<TList<EMITTER>> master emitter list
 
-	Field constant_widgets:TList 'always-on widgets
-	Field deploy_widgets:TList 'widgets that toggle when the agent deploys/undeploys
-	Field all_widgets:TList 'widget master list
+	Field constant_widgets:TList 'TList<WIDGET> always-on widgets
+	Field deploy_widgets:TList 'TList<WIDGET> widgets that toggle when the agent deploys/undeploys
+	Field all_widget_lists:TList 'TList<TList<WIDGET>> widget master list
 
-	Field stickies:TList 'damage particles
+	Field stickies:TList 'TList<PARTICLE> damage particles
 	Field left_track:PARTICLE 'a special particle that represents the "left track" of a tank
 	Field right_track:PARTICLE 'a special particle that represents the "right track" of a tank
 
@@ -58,15 +58,15 @@ Type COMPLEX_AGENT Extends AGENT
 	Method New()
 		drive_forward_emitters = CreateList()
 		drive_backward_emitters = CreateList()
-		all_emitters = CreateList()
-			all_emitters.AddLast( drive_forward_emitters )
-			all_emitters.AddLast( drive_backward_emitters )
-			all_emitters.AddLast( death_emitters )
+		all_emitter_lists = CreateList()
+			all_emitter_lists.AddLast( drive_forward_emitters )
+			all_emitter_lists.AddLast( drive_backward_emitters )
+			all_emitter_lists.AddLast( death_emitters )
 		constant_widgets = CreateList()
 		deploy_widgets = CreateList()
-		all_widgets = CreateList()
-			all_widgets.AddLast( constant_widgets )
-			all_widgets.AddLast( deploy_widgets )
+		all_widget_lists = CreateList()
+			all_widget_lists.AddLast( constant_widgets )
+			all_widget_lists.AddLast( deploy_widgets )
 		stickies = CreateList()
 		red = 255; green = 255; blue = 255
 		alpha = 1.0
@@ -145,7 +145,7 @@ Type COMPLEX_AGENT Extends AGENT
 			Next
 		Next
 
-		For Local list:TList = EachIn other.all_emitters
+		For Local list:TList = EachIn other.all_emitter_lists
 			For Local other_em:EMITTER = EachIn list
 				c.add_emitter( other_em, other_em.trigger_event )
 			Next
@@ -196,13 +196,13 @@ Type COMPLEX_AGENT Extends AGENT
 			t.update()
 		Next
 		'widgets
-		For Local widget_list:TList = EachIn all_widgets
+		For Local widget_list:TList = EachIn all_widget_lists
 			For Local w:WIDGET = EachIn widget_list
 				w.update()
 			Next
 		Next
 		'emitters
-		For Local list:TList = EachIn all_emitters
+		For Local list:TList = EachIn all_emitter_lists
 			For Local em:EMITTER = EachIn list
 				em.update()
 				em.emit()
@@ -254,14 +254,25 @@ Type COMPLEX_AGENT Extends AGENT
 		If alpha_override <> -1.0 Then alpha = alpha_override Else alpha = 1.0
 		If scale_override <> -1.0 Then scale = scale_override Else scale = 1.0
 		
+'		?Debug
+'		Local drawd_the_thang% = False
+'		?
 		'chassis widgets
-		For Local widget_list:TList = EachIn all_widgets
-			For Local w:WIDGET = EachIn widget_list
-				If w.layer = LAYER_BEHIND_PARENT
-					w.draw()
-				End If
+		If Not hide_widgets
+			For Local widget_list:TList = EachIn all_widget_lists
+				For Local w:WIDGET = EachIn widget_list
+					If w.layer = LAYER_BEHIND_PARENT
+'						?Debug
+'						If Not drawd_the_thang And KeyDown( KEY_LSHIFT )
+'							drawd_the_thang = True
+'							DebugLog( "#########################################" )
+'						End If
+'						?
+						w.draw()
+					End If
+				Next
 			Next
-		Next
+		End If
 		SetColor( red, green, blue )
 		If spawning
 			alpha = time_alpha_pct( spawn_begin_ts, spawn_time, True )
@@ -293,9 +304,15 @@ Type COMPLEX_AGENT Extends AGENT
 		If img <> Null Then DrawImage( img, pos_x, pos_y )
 		'chassis widgets
 		If Not hide_widgets
-			For Local widget_list:TList = EachIn all_widgets
+			For Local widget_list:TList = EachIn all_widget_lists
 				For Local w:WIDGET = EachIn widget_list
 					If w.layer = LAYER_IN_FRONT_OF_PARENT
+'						?Debug
+'						If Not drawd_the_thang And KeyDown( KEY_LSHIFT )
+'							drawd_the_thang = True
+'							DebugLog( "#########################################" )
+'						End If
+'						?
 						w.draw()
 					End If
 				Next

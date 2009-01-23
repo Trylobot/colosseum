@@ -34,6 +34,7 @@ Function debug_main()
 	End If
 	If KeyHit( KEY_TILDE )
 		FLAG_debug_overlay = Not FLAG_debug_overlay
+		FlushKeys()
 	End If
 	If game <> Null And FLAG_debug_overlay
 		debug_overlay()
@@ -277,6 +278,10 @@ Function debug_overlay()
 		End If
 	End If
 	
+	If KeyHit( KEY_G )
+		cb = game.spawn_agent( ENEMY_INDEX_CARRIER, SPAWN_HOSTILES, Create_POINT( game.mouse.x, game.mouse.y ))
+	End If
+	
 	If cb <> Null And cb.managed()
 		
 		'manipulate by keyboard
@@ -316,6 +321,7 @@ Function debug_overlay()
 			SetAlpha( 1 )
 		End If
 		
+		'pathing
 		If cb.path <> Null And Not cb.path.IsEmpty()
 			debug_drawtext( "path to target displayed" )
 			'start and goal
@@ -336,6 +342,18 @@ Function debug_overlay()
 		Else
 			debug_drawtext( "no path" )
 		End If
+		
+		'widgets
+		SetColor( 255, 255, 255 )
+		Local i% = 0
+		For Local w_list:TList = EachIn cb.avatar.all_widget_lists
+			Local j% = 0
+			For Local w:WIDGET = EachIn w_list
+				debug_drawtext( pad(w.name,10)+"."+w.cur_state+" x="+DoubleToString(w.state.pos_x)+" y="+DoubleToString(w.state.pos_y)+" a="+DoubleToString(w.state.ang) )
+				j :+ 1
+			Next
+			i :+ 1
+		Next
 		
 		'friendly fire
 		If cb.target <> Null And cb.avatar.turrets <> Null
@@ -374,60 +392,74 @@ Function debug_overlay()
 	
 End Function
 
-''______________________________________________________________________________
-'Global health:BOX = create_box( 100, 100, 500, 50 )
-'Global health_max# = 100.0
-'Global health_cur# = 100.0
-'
-'Function debug_widget()
-'	Local list:TList = CreateList()
-'	Local before% = now()
-'	Local health_pct# = health_cur/health_max
-'	Local damage_pct#
-'	Local mouse:POINT = New POINT
-'	
-'	Repeat
-'		Cls()
-'		
-'		sx = 0; sy = 0
-'		mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
-'		
-'		If KeyHit( KEY_ENTER )
-'			Local damage# = Rnd( 5.0, 20.0 )
-'			health_cur :- damage
-'			If health_cur < 0 Then health_cur :+ 100.0
-'			health_pct = health_cur/health_max
-'			damage_pct = damage/health_max
-'			
-'			Local bit:WIDGET = WIDGET( WIDGET.Create( "health bit", create_rect_img( damage_pct * health.w, health.h - 4 ),,, REPEAT_MODE_LOOP_BACK, True ))
-'			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, -30, -8.0, 255,   0,   0, 0.0 )))
-'			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0,   0,    0, 255, 255, 255, 1.0 )))
-'			bit.parent = Create_POINT( health.x, health.y + 2 )
-'			bit.attach_at( health.w * health_pct, 0, 0, False )
-'			bit.manage( list )
-'		End If
-'		
-'		If (now() - before) > time_per_frame_min
-'			before = now()
-'			For Local w:WIDGET = EachIn list
-'				w.update()
-'				If w.cur_state = 0 Then w.unmanage()
-'			Next
-'		End If
-'		
-'		draw_percentage_bar( health.x, health.y, health.w, health.h, health_pct )
-'		For Local w:WIDGET = EachIn list
-'			w.draw()
-'			'SetColor( 255, 255, 255 )
-'			'SetRotation( 0 )
-'			'debug_drawtext( "state "+w.cur_state )
-'		Next
-'		
-'		Flip( 1 )
-'	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
-'	End
-'End Function
-'
+'______________________________________________________________________________
+Function debug_widget()
+	Local list:TList = CreateList()
+	Local before% = now()
+	Local mouse:POINT = New POINT
+	
+	Local p:POINT = Create_POINT( window_w/2, window_h/2 )
+	Local w:WIDGET
+	
+	w = WIDGET( WIDGET.Create( "blinker", create_rect_img( 25, 25, 12.5, 12.5 ),,,, True ))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.5,,, 1000 )))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 1.0,,, 1000 )))
+	w.parent = p
+	w.manage( list )
+
+	w = WIDGET( WIDGET.Create( "pump", create_rect_img( 15, 15, 7.5, 7.5 ),,,, True ))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create(   0.0 ,,,,,,,,, 1000 )))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -35.0 ,,,,,,,,, 1000 )))
+	w.parent = p
+	'w.attach_at( 0, 0, 180 )
+	w.manage( list )
+	
+  w = WIDGET( WIDGET.Create( "hinged_door", create_rect_img( 50, 5, 2.5, 2.5 ),,,, True ))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,,   0.0,,,,,,, 1000 )))
+	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,, -90.0,,,,,,, 1000 )))
+	w.parent = p
+	'w.attach_at( 0, 0, 180 )
+	w.manage( list )
+	
+	Repeat
+		Cls()
+		
+		sx = 1; sy = 1
+		mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
+		
+		If MouseDown( 1 )
+			p.move_to( mouse )
+		End If
+		If KeyDown( KEY_LEFT )
+			p.ang :+ 1
+		Else If KeyDown( KEY_RIGHT )
+			p.ang :- 1
+		End If
+		
+		If (now() - before) > time_per_frame_min
+			before = now()
+			
+			For Local w:WIDGET = EachIn list
+				w.update()
+			Next
+		End If
+		
+		Local i% = 0
+		For Local w:WIDGET = EachIn list
+			w.draw()
+			SetColor( 255, 255, 255 )
+			SetAlpha( 1 )
+			SetRotation( 0 )
+			SetScale( 1, 1 )
+			debug_drawtext( "w["+i+"].cur_state "+w.cur_state )
+			i :+ 1
+		Next
+		
+		Flip( 1 )
+	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+	End
+End Function
+
 ''______________________________________________________________________________
 'Function debug_spawner()
 '	Local mouseP:POINT = New POINT

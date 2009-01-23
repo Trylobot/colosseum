@@ -339,15 +339,15 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method enable_seek_lights()
 		For Local w:WIDGET = EachIn avatar.constant_widgets
-			If      w.name = "AI seek light"   Then w.visible = True ..
-			Else If w.name = "AI wander light" Then w.visible = False
+			If      w.name = "seek light"   Then w.visible = True ..
+			Else If w.name = "wander light" Then w.visible = False
 		Next
 	End Method
 	
 	Method enable_wander_lights()
 		For Local w:WIDGET = EachIn avatar.constant_widgets
-			If      w.name = "AI seek light"   Then w.visible = False ..
-			Else If w.name = "AI wander light" Then w.visible = True
+			If      w.name = "seek light"   Then w.visible = False ..
+			Else If w.name = "wander light" Then w.visible = True
 		Next
 	End Method
 

@@ -284,9 +284,9 @@ Type ENVIRONMENT
 				If now() - ts >= sp.delay_time[cur.row]
 					'if this squad has just been started, or the last spawned enemy is away, dead or null
 					If cur.col = 0 Or last = Null Or last.dead() Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
-						Local ag:COMPLEX_AGENT = spawn_agent( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
-						last_spawned[i] = ag
-						spawned.addLast( ag )
+						Local brain:CONTROL_BRAIN = spawn_agent( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
+						last_spawned[i] = brain.avatar
+						spawned.addLast( last_spawned[i] )
 						'various counters
 						spawn_counter[i] :+ 1
 						cur.col :+ 1
@@ -316,7 +316,7 @@ Type ENVIRONMENT
 		Return spawned
 	End Method
 	
-	Method spawn_agent:COMPLEX_AGENT( archetype_index%, alignment%, spawn_point:POINT )
+	Method spawn_agent:CONTROL_BRAIN( archetype_index%, alignment%, spawn_point:POINT )
 		Local this_agent:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], alignment ))
 		Select alignment
 			Case ALIGNMENT_HOSTILE
@@ -342,8 +342,7 @@ Type ENVIRONMENT
 		Local part:PARTICLE = get_particle( "soft_glow" )
 		part.manage( particle_list_foreground )
 		part.parent = pt
-	
-		Return this_agent
+		Return brain
 	End Method
 	
 	Method deal_damage( ag:AGENT, damage# )

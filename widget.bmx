@@ -58,6 +58,7 @@ Type WIDGET Extends MANAGED_OBJECT
 		w.final_state = -1
 		w.traversal_direction = TRAVERSAL_DIRECTION_INCREASING
 		w.transforming = initially_transforming
+		w.transform_begin_ts = now()
 		w.transformations_remaining = INFINITY
 		Return w
 	End Function
@@ -107,10 +108,10 @@ Type WIDGET Extends MANAGED_OBJECT
 				'currently transforming
 				Local ns:TRANSFORM_STATE = states[ state_successor( cur_state )]
 				Local pct# = (Float(now() - transform_begin_ts) / Float(cs.transition_time))
-				'state.pos_x = cs.pos_x + pct * (ns.pos_x - cs.pos_x)
-				'state.pos_y = cs.pos_y + pct * (ns.pos_y - cs.pos_y)
 				state.pos_length = cs.pos_length + pct * (ns.pos_length - cs.pos_length)
 				state.pos_ang = cs.pos_ang + pct * (ns.pos_ang - cs.pos_ang)
+				'state.pos_length
+				'state.pos_ang
 				state.ang = cs.ang + pct * (ns.ang - cs.ang)
 				state.red = cs.red + pct * (ns.red - cs.red)
 				state.green = cs.green + pct * (ns.green - cs.green)
@@ -162,7 +163,7 @@ Type WIDGET Extends MANAGED_OBJECT
 			final_state = 0
 			states = New TRANSFORM_STATE[1]
 			states[0] = st.clone()
-			state = states[0].clone()
+			state = st.clone()
 		Else 'states <> Null
 			states = states[..states.Length+1]
 			final_state = states.Length - 1

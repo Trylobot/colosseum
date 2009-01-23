@@ -228,6 +228,7 @@ Const COMMAND_SETTINGS_IP_ADDRESS% = 1050
 Const COMMAND_SETTINGS_IP_PORT% = 1060
 Const COMMAND_SETTINGS_APPLY_ALL% = 1100
 Const COMMAND_PAUSE% = 10000
+Const COMMAND_QUIT_LEVEL% = 10010
 Const COMMAND_QUIT_GAME% = 65535
 
 Const MENU_ID_MAIN_MENU% = 100
@@ -386,7 +387,7 @@ all_menus[postfix_index()] = MENU.Create( "game paused", 96, 96, 96, MENU_ID_PAU
 [	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, True ), ..
 	MENU_OPTION.Create( "settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SETTINGS), True, True ), ..
 	MENU_OPTION.Create( "preferences", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_PREFERENCES), True, True ), ..
-	MENU_OPTION.Create( "abandon level", COMMAND_SHOP,, True, True ), ..
+	MENU_OPTION.Create( "abandon level", COMMAND_QUIT_LEVEL,, True, True ), ..
 	MENU_OPTION.Create( "quit game", COMMAND_QUIT_GAME,, True, True ) ])
 
 '______________________________________________________________________________
@@ -449,7 +450,12 @@ Function menu_command( command_code%, argument:Object = Null )
 		Case COMMAND_SHOP
 			FLAG_in_menu = False
 			FLAG_in_shop = True
+		'________________________________________
+		Case COMMAND_QUIT_LEVEL
+			menu_command( COMMAND_SHOP )
+			menu_command( COMMAND_SAVE_GAME, profile.src_path )
 			main_game = Null
+			game = ai_menu_game
 		'________________________________________
 		Case COMMAND_NEW_GAME
 			profile = New PLAYER_PROFILE

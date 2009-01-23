@@ -50,7 +50,7 @@ Function draw_all_graphics()
 	SetColor( 100, 149, 237 ) 'Cornflower Blue
 	'SetColor( 255, 255, 127 ) 'Title Yellow
 	SetAlpha( time_alpha_pct( info_change_ts + info_stay_time, info_fade_time, False ))
-	DrawText_with_outline( info, 50 + get_current_menu().width, 85 )
+	DrawText_with_outline( info, 30, 70 )
 	
 	'instaquit
 	If KeyDown( KEY_ESCAPE ) And esc_held And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
@@ -230,7 +230,7 @@ Function draw_main_screen()
 	DrawText_with_outline( "special thanks to Kaze, SniperAceX, Firelord88, ZieramsFolly; written in BlitzMax", x, y ); y :+ h
 	
 	'menu options
-	x = 30; y = 85
+	x = 30; y = 115
 	draw_menus( x, y )
 	
 End Function
@@ -773,6 +773,7 @@ Function draw_instaquit_progress()
 
 	SetAlpha( 1.0 * alpha_multiplier )
 	SetColor( 255, 255, 255 )
+	'draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required - 50 ))
 	draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required - 50 ))
 
 	Local str$ = "continue holding ESC to quit"
@@ -780,9 +781,10 @@ Function draw_instaquit_progress()
 	DrawText_with_outline( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
 End Function
 '______________________________________________________________________________
-Function create_rect_img:TIMage( w%, h%, r% = 255, g% = 255, b% = 255 )
+Function create_rect_img:TIMage( w%, h%, hx% = 0, hy% = 0 )
 	'create pixmap of given size, with a border pixel for smoothing
 	Local pixmap:TPixmap = CreatePixmap( w + 2, h + 2, PF_RGBA8888 )
+	Local r% = 255, g% = 255, b% = 255
 	pixmap.ClearPixels( encode_ARGB( 1.0, r, g, b ))
 	'erase the outer border
 	For Local x% = 0 To w + 2 - 1
@@ -799,7 +801,7 @@ Function create_rect_img:TIMage( w%, h%, r% = 255, g% = 255, b% = 255 )
 	Next
 	'transfer to video memory
 	Local img:TImage = LoadImage( pixmap, FILTEREDIMAGE )
-	SetImageHandle( img, 0.5, 0.5 )
+	SetImageHandle( img, 0.5 + hx, 0.5 + hy )
 	Return img
 End Function
 

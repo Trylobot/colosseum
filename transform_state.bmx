@@ -27,12 +27,13 @@ Type TRANSFORM_STATE
 	transition_time% = 1000 )
 		Local s:TRANSFORM_STATE = New TRANSFORM_STATE
 		s.pos_x = pos_x; s.pos_y = pos_y
-		cartesian_to_polar( pos_x, pos_y, s.pos_length, s.pos_ang )
+		Local position:cVEC = Create_cVEC( pos_x, pos_y )
+		s.pos_length = position.r(); s.pos_ang = position.a()
 		s.ang = ang
 		s.red = red; s.green = green; s.blue = blue
 		s.alpha = alpha
 		s.scale_x = scale_x; s.scale_y = scale_y
-		s.transition_time = transition_time
+		If transition_time <> 0 Then s.transition_time = transition_time Else s.transition_time = 1000
 		Return s
 	End Function
 

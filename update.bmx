@@ -132,10 +132,7 @@ Function update_flags()
 			End If
 			'if the battle is over (player has won or lost)
 			If Not game.game_in_progress And KeyHit( KEY_R )
-				menu_command( COMMAND_SHOP )
-				menu_command( COMMAND_SAVE_GAME, profile.src_path )
-				main_game = Null
-				game = ai_menu_game
+				menu_command( COMMAND_QUIT_LEVEL )
 			End If
 		End If
 		'flag updates for any game
