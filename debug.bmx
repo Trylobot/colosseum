@@ -127,11 +127,11 @@ Function debug_fps()
 	SetRotation( 0 )
 	SetAlpha( 1 )
 	SetColor( 255, 255, 127 )
-	SetImageFont( get_font( "consolas_bold_24" ))
+	SetImageFont( get_font( "consolas_bold_12" ))
 	Local fps_str$ = "fps "+fps
-	sx = window_w - TextWidth( fps_str ) - 30
-	sy = window_h - GetImageFont().Height() - 25
-	DrawText( fps_str, sx, sy )
+	sx = window_w - TextWidth( fps_str ) - 1
+	sy = window_h - GetImageFont().Height() - 1
+	DrawText_with_outline( fps_str, sx, sy )
 End Function
 '______________________________________________________________________________
 Function debug_agent_lists( to_console% = False )
@@ -288,15 +288,6 @@ Function debug_overlay()
 		End If
 	End If
 	
-	If KeyHit( KEY_G )
-		cb = game.spawn_agent( ENEMY_INDEX_CARRIER, SPAWN_HOSTILES, Create_POINT( game.mouse.x, game.mouse.y ))
-		'For Local w_list:TList = EachIn cb.avatar.all_widget_lists
-		'	For Local w:WIDGET = EachIn w_list
-		'		DebugLog( pad(w.name,10)+"."+w.state_index_cur+" x="+pad(DoubleToString(w.actual_state.pos_x),6)+" y="+pad(DoubleToString(w.actual_state.pos_y),6)+" a="+pad(DoubleToString(w.actual_state.ang),6) )
-		'	Next
-		'Next
-	End If
-	
 	If cb <> Null And cb.managed()
 		
 		'manipulate by keyboard
@@ -312,6 +303,14 @@ Function debug_overlay()
 		End If
 		If KeyDown( KEY_4 ) And game.player <> Null
 			game.player_brain.path = game.find_path( game.player.pos_x, game.player.pos_y, game.mouse.x, game.mouse.y )
+		End If
+		
+		If KeyHit( KEY_X )
+			If Not cb.avatar.is_deployed
+				cb.avatar.deploy()
+			Else
+				cb.avatar.undeploy()
+			End If
 		End If
 		
 		'draw info

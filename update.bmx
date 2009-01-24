@@ -16,6 +16,7 @@ Function update_all_objects()
 		'spawner system
 		If game.spawn_enemies
 			game.spawning_system_update()
+			game.update_AI_spawners_registry()
 		End If
 		
 		'pickups

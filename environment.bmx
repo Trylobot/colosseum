@@ -56,6 +56,7 @@ Type ENVIRONMENT
 	Field agent_lists:TList 'TList<TList<AGENT>>
 	Field pickup_list:TList 'TList<PICKUP>
 	Field control_brain_list:TList 'TList<CONTROL_BRAIN>
+	Field AI_spawners:TList 'TList<CONTROL_BRAIN>
 	
 	Field level_enemy_count% 'number of enemies that could possibly be spawned
 	Field level_enemies_killed% 'number of enemies that have been killed since being spawned
@@ -115,6 +116,7 @@ Type ENVIRONMENT
 		all_door_lists = CreateList()
 			all_door_lists.addlast( friendly_door_list )
 			all_door_lists.addlast( hostile_door_list )
+		AI_spawners = CreateList()
 	End Method
 	
 	Method clear()
@@ -327,6 +329,12 @@ Type ENVIRONMENT
 				active_friendly_units :+ 1
 		End Select
 		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( this_agent, CONTROL_BRAIN.CONTROL_TYPE_AI,, 10, 1000, 1000 )
+		'this should be data-driven somehow
+		brain.factory_queue = ..
+		[	ENEMY_INDEX_MOBILE_MINI_BOMB, ..
+			ENEMY_INDEX_MOBILE_MINI_BOMB, ..
+			ENEMY_INDEX_MOBILE_MINI_BOMB, ..
+			ENEMY_INDEX_MOBILE_MINI_BOMB ] 
 		brain.manage( control_brain_list )
 		this_agent.spawn_at( spawn_point, 1250 )
 		this_agent.snap_all_turrets()
@@ -414,6 +422,37 @@ Type ENVIRONMENT
 			player.snap_all_turrets()
 			active_friendly_units :+ 1
 		End If
+	End Method
+	
+	Method register_AI_spawner( brain:CONTROL_BRAIN )
+		AI_spawners.AddLast( brain )
+		Select brain.avatar.political_alignment
+			Case ALIGNMENT_FRIENDLY
+				active_friendly_spawners :+ 1
+			Case ALIGNMENT_HOSTILE
+				active_hostile_spawners :+ 1
+		End Select
+	End Method
+	
+	Method update_AI_spawners_registry()
+'		If Not AI_spawners.IsEmpty()
+'			Local cursor_link:TLink = AI_spawners.FirstLink()
+'			Repeat
+'				Local cursor_link_remove:TLink = cursor_link
+'				cursor_link = cursor_link.NextLink()
+'				Local brain:CONTROL_BRAIN = CONTROL_BRAIN( cursor_link.Value() )
+'				If brain.spawn_index >= brain.factory_queue.Length Or brain.avatar.dead()
+'					'spawner dead
+'					cursor_link_remove.Remove()
+'					Select brain.avatar.political_alignment
+'						Case ALIGNMENT_FRIENDLY
+'							active_friendly_spawners :- 1
+'						Case ALIGNMENT_HOSTILE
+'							active_hostile_spawners :- 1
+'					End Select
+'				End If
+'			Until cursor_link = AI_spawners.LastLink()
+'		End If
 	End Method
 	
 	Method spawn_pickup( x%, y% ) 'request; depends on probability

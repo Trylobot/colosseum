@@ -26,14 +26,15 @@ find_path_delay% = 0 )
 End Function
 '_________________________________________
 Type CONTROL_BRAIN Extends MANAGED_OBJECT
-	Global CONTROL_TYPE_HUMAN% = 1
-	Global CONTROL_TYPE_AI% = 2
-	Global INPUT_KEYBOARD% = 1
-	Global INPUT_KEYBOARD_MOUSE_HYBRID% = 2
-	Global INPUT_XBOX_360_CONTROLLER% = 3
-	Global waypoint_radius# = 15.0
-	Global targeting_radius# = 15.0
-	Global friendly_blocking_scalar_projection_distance# = 20.0
+	Const CONTROL_TYPE_HUMAN% = 1
+	Const CONTROL_TYPE_AI% = 2
+	Const INPUT_KEYBOARD% = 1
+	Const INPUT_KEYBOARD_MOUSE_HYBRID% = 2
+	Const INPUT_XBOX_360_CONTROLLER% = 3
+	Const waypoint_radius# = 25.0
+	Const targeting_radius# = 15.0
+	Const friendly_blocking_scalar_projection_distance# = 20.0
+	Const spawn_delay% = 1000
 	
 	Field avatar:COMPLEX_AGENT 'this brain's "body"
 	Field control_type% 'control type indicator (human/AI)
@@ -44,6 +45,12 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field waypoint:cVEC 'current waypoint (can come from path or from tactical analyzer)
 	Field target:AGENT 'current target
 	Field turret_overheated%[] 'flags for AI turret control
+	
+	Field factory_queue%[] 'list of complex agents to spawn
+	Field spawn_index% 'tracker for factory
+	Field last_spawned_ts% 'timestamp of last spawn
+	Field spawn_point:POINT 'actual spawn location
+	
 	Field can_see_target% 'indicator
 	Field ally_blocking% 'indicator
 	Field ang_to_target# 'measurement
@@ -57,6 +64,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			input_control()
 		Else If control_type = CONTROL_TYPE_AI
 			AI_control()
+			If ai.is_carrier And avatar.is_deployed
+				AI_spawning_system_update()
+			End If
 		End If
 	End Method
 	
@@ -71,10 +81,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method AI_control()
 		'AI state
-		If target = Null Or target.dead()
-			'acquire new target if possible
-			target = acquire_target()
-		End If
+		target = acquire_target()
 		If target <> Null
 			ang_to_target = avatar.ang_to( target )
 			dist_to_target = avatar.dist_to( target )
@@ -98,7 +105,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			dist_to_waypoint = avatar.dist_to_cVEC( waypoint )
 		End If
 		'chassis movement
-		If ai.can_move
+		If ai.can_move And Not (ai.is_carrier And avatar.is_deployed)
 			'target availability
 			If can_see_target
 				enable_seek_lights()
@@ -114,7 +121,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 		'turrets aim/fire
 		If ai.has_turrets
-			'target availability (includes whether target is null or dead)
+			'target availability
 			If can_see_target
 				'point turrets at target
 				aim_turrets( target )
@@ -137,9 +144,30 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			End If
 			'carrier launch ability
 			If ai.is_carrier
-				'...?
+				If can_see_target And Not avatar.is_deployed
+					avatar.deploy()
+					spawn_point = create_spawn_point()
+					last_spawned_ts = now()
+					game.register_AI_spawner( Self )
+				End If
 			End If
 		End If
+	End Method
+	
+	Method AI_spawning_system_update()
+		If spawn_index < factory_queue.Length And now() - last_spawned_ts > spawn_delay
+			game.spawn_agent( factory_queue[spawn_index], avatar.political_alignment, spawn_point )
+			last_spawned_ts = now()
+			spawn_index :+ 1
+		End If
+	End Method
+	
+	Method create_spawn_point:POINT()
+		Local p:POINT = Copy_POINT( avatar )
+		p.ang = avatar.ang + 180
+		p.pos_x :+ ( avatar.hitbox.width/2 + 15 )*Cos( 180 + avatar.ang )
+		p.pos_y :+ ( avatar.hitbox.width/2 + 15 )*Sin( 180 + avatar.ang )
+		Return p
 	End Method
 	
 	Method drive_to( dest:Object )
@@ -327,10 +355,12 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Return False
 		End If
 	End Method
-
+	
+	Const path_calculation_delay% = 100
+	Global last_path_calculation_ts%
 	Method get_path_to_target:TList()
-		If target <> Null
-			'last_find_path_ts = now()
+		If target <> Null And now() - last_path_calculation_ts > path_calculation_delay
+			last_path_calculation_ts = now()
 			Return game.find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y, True )
 		Else
 			Return Null

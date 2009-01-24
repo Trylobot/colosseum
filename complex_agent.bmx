@@ -324,7 +324,7 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	'___________________________________________
 	Method drive( pct# )
-		If Not spawning
+		If Not spawning And Not is_deployed
 			driving_force.control_pct = pct
 			If pct > 0
 				enable_only_rear_emitters()
@@ -337,7 +337,7 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	'___________________________________________
 	Method turn( pct# )
-		If Not spawning
+		If Not spawning And Not is_deployed
 			turning_force.control_pct = pct
 		End If
 	End Method
@@ -415,6 +415,8 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	'___________________________________________
 	Method deploy()
+		drive( 0 )
+		turn( 0 )
 		is_deployed = True
 		For Local w:WIDGET = EachIn deploy_widgets
 			w.queue_transformation( 1 )

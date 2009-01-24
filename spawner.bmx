@@ -9,7 +9,7 @@ Type SPAWNER
 	Global class_GATED_FACTORY% = 1
 	Global class_TURRET_ANCHOR% = 2
 	
-	Field class% '{gated_factory|turret_anchor}
+	Field class% '{gated_factory|turret_anchor} <-- this should be gone, doors should be separate entirely
 	Field squads%[][] 'grouped references to COMPLEX_AGENT prototypes; to be "baked" at spawn-time; turret anchors ignore all entries beyond the first.
 	Field size% 'cached result of count_all_squadmembers()
 	Field pos:POINT 'initial state to be conferred on each spawned agent; velocity and acceleration ignored for turret anchors
