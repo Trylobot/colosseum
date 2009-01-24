@@ -810,6 +810,38 @@ Function create_rect_img:TIMage( w%, h%, hx% = 0, hy% = 0 )
 	Return img
 End Function
 '______________________________________________________________________________
-Function pixel_transform( img:TImage, flip_horizontal% = False, flip_vertical% = False )
-	Return img;
+Function pixel_transform:TImage( img_src:TImage, flip_horizontal% = False, flip_vertical% = False )
+	If Not flip_horizontal And Not flip_vertical
+		Return img_src;
+	End If
+	Local pixmap_src:TPixmap = img_src.Lock( 0, True, False )
+	Local pixmap_new:TPixmap = pixmap_src.Copy()
+	'transform the pixels
+	Local new_x%, new_y%
+	For Local x% = 0 To pixmap_src.width - 1
+		For Local y% = 0 To pixmap_src.height - 1
+			If flip_horizontal
+				new_x = pixmap_src.width - 1 - x
+			Else
+				new_x = x
+			End If
+			If flip_vertical
+				new_y = pixmap_src.height - 1 - y
+			Else
+				new_y = y
+			End If
+			pixmap_new.WritePixel( new_x, new_y, pixmap_src.ReadPixel( x, y ))
+		Next
+	Next
+	UnlockImage( img_src )
+	Local img_new:TImage = LoadImage( pixmap_new, FILTEREDIMAGE|MIPMAPPEDIMAGE )
+	'set the image handle
+	SetImageHandle( img_new, img_src.handle_x, img_src.handle_y )
+	If flip_horizontal
+		img_new.handle_x = img_src.width - 1 - img_src.handle_x
+	End If
+	If flip_vertical
+		img_new.handle_y = img_src.height - 1 - img_src.handle_y
+	End If
+	Return img_new
 End Function

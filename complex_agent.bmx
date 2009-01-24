@@ -54,6 +54,8 @@ Type COMPLEX_AGENT Extends AGENT
 	Field spawn_time%
 	Field spawn_begin_ts%
 	
+	Field is_deployed%
+	
 	'___________________________________________
 	Method New()
 		drive_forward_emitters = CreateList()
@@ -413,6 +415,14 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	'___________________________________________
 	Method deploy()
+		is_deployed = True
+		For Local w:WIDGET = EachIn deploy_widgets
+			w.queue_transformation( 1 )
+		Next
+	End Method
+	'___________________________________________
+	Method undeploy()
+		is_deployed = False
 		For Local w:WIDGET = EachIn deploy_widgets
 			w.queue_transformation( 1 )
 		Next

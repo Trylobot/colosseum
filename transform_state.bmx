@@ -15,9 +15,6 @@ Type TRANSFORM_STATE
 	Field scale_x#, scale_y#
 	Field transition_time%
 	
-	Method New()
-	End Method
-	
 	Function Create:Object( ..
 	pos_x# = 0.0, pos_y# = 0.0, ..
 	ang# = 0.0, ..
