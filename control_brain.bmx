@@ -109,7 +109,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			'target availability
 			If can_see_target
 				enable_seek_lights()
-				If ai.has_turrets
+				If ai.has_turrets And dist_to_target <= 50
 					drive_to( Null )
 				Else
 					drive_to( target )

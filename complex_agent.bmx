@@ -561,5 +561,40 @@ Type COMPLEX_AGENT Extends AGENT
 		p.parent = Self
 		Return p
 	End Method
-	
+	'___________________________________________
+	Method add_motivator_pair( particle_key$, x# = 0.0, y# = 0.0, include_tread_emitters% = True )
+DebugStop
+		'particles
+		left_track = get_particle( particle_key )
+		left_track.parent = Self
+		left_track.attach_at( x, -y )
+		right_track = get_particle( particle_key )
+		right_track.parent = Self
+		right_track.attach_at( x, y )
+		'junk emitters
+		If include_tread_emitters
+			Local archetype%
+			Select particle_key
+				Case "light_tank_track"
+					archetype = PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL
+				Case "med_tank_track"
+					archetype = PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM
+				Default
+					archetype = -1
+			End Select
+			add_tread_emitters( archetype = get_particle( particle_key ).img.width, x, y + 0.5 )
+		End If
+	End Method
+	'___________________________________________
+	Method add_tread_emitters( trail_emitter_archetype%, separation% = 0, x# = 0.0, y# = 0.0 )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( x + separation/2, -y, 0, 2, -45, 45, 0.3, 0.6 )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_FORWARD ).attach_at( x + separation/2, y, 0, 2, -45, 45, 0.3, 0.6 )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( x + -separation/2, -y, 0, 2, 135, 225, 0.3, 0.6 )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] ), EVENT_DRIVE_BACKWARD ).attach_at( x + -separation/2, y, 0, 2, 135, 225, 0.3, 0.6 )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_emitter_archetype] ), EVENT_DRIVE_FORWARD ).attach_at( x + separation/2, -y, 1, 1 )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_emitter_archetype] ), EVENT_DRIVE_FORWARD ).attach_at( x + separation/2, y, 1, 1 )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_emitter_archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( x + -separation/2, -y, 1, 1 )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_emitter_archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( x + -separation/2, y, 1, 1 )
+	End Method
+		
 End Type
