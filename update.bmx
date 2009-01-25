@@ -31,7 +31,10 @@ Function update_all_objects()
 		For Local list:TList = EachIn game.particle_lists
 			For Local part:PARTICLE = EachIn list
 				part.update()
-				part.prune()
+				If part.prune() And part.retain
+					part.manage( game.retained_particle_list )
+					game.retained_particle_count :+ 1
+				End If
 			Next
 		Next
 
@@ -65,11 +68,6 @@ Function update_all_objects()
 			w.update()
 			If w.state_index_cur = 1 Then w.unmanage()
 		Next
-		
-		'retain particles (?)
-		If game.retained_particle_list_count > retained_particle_limit
-			FLAG_retain_particles = True
-		End If
 		
 	End If
 	

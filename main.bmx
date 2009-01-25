@@ -29,17 +29,18 @@ Global fullscreen%
 Global bit_depth%
 Global refresh_rate%
 Global autosave_profile_path$
+Global retained_particle_count_limit%
 
 Function apply_default_settings()
-	window_w = 800
-	window_h = 600
+	window_w = 640
+	window_h = 480
 	fullscreen = False
 	bit_depth = 32
 	refresh_rate = 60
+	retained_particle_count_limit = 500
 	ip_address = "127.0.0.1"
 	ip_port = 6112
 End Function
-
 apply_default_settings()
 
 'external data load
@@ -83,6 +84,7 @@ init_graphics()
 ?Debug
 'debug_widget()
 'debug_spawner()
+'debug_dirtyrects()
 ?
 
 '______________________________________________________________________________

@@ -71,15 +71,7 @@ Function debug_drawtext( message$, h% = 10 )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 	SetImageFont( get_font( "consolas_10" ))
-	Local r%, g%, b%
-	GetColor( r, g, b )
-	SetColor( 0, 0, 0 )
-	DrawText( message, sx+1, sy+1 )
-	DrawText( message, sx-1, sy+1 )
-	DrawText( message, sx+1, sy-1 )
-	DrawText( message, sx-1, sy-1 )
-	SetColor( r, g, b )
-	DrawText( message, sx, sy )
+	DrawText_with_outline( message, sx, sy )
 	sy :+ h
 End Function
 '______________________________________________________________________________
@@ -160,6 +152,11 @@ Function debug_overlay()
 	SetScale( 1, 1 )
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
+	
+	sx = 2; sy = 2
+	debug_drawtext( "      retained_particle_count_limit --> "+retained_particle_count_limit )
+	debug_drawtext( "game.retained_particle_list.Count() --> "+game.retained_particle_list.Count() )
+	debug_drawtext( "       game.retained_particle_count --> "+game.retained_particle_count )
 	
 	If game <> Null
 		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
@@ -248,13 +245,6 @@ Function debug_overlay()
 
 	If KeyHit( KEY_QUOTES )
 		game.spawn_pickup( mouse.x, mouse.y )
-	End If
-	
-	If KeyHit( KEY_9 )
-		FLAG_retain_particles = True
-		If KeyDown( KEY_0 )
-			FLAG_dim_bg = True
-		End If
 	End If
 	
 	If KeyHit( KEY_P )
@@ -408,96 +398,195 @@ Function debug_overlay()
 End Function
 
 '______________________________________________________________________________
-Function debug_widget()
-	Local list:TList = CreateList()
-	Local before% = now()
-	Local mouse:POINT = New POINT
-	
-	Local game:ENVIRONMENT = create_environment()
-	Local carrier:COMPLEX_AGENT = game.spawn_agent( ENEMY_INDEX_CARRIER, ALIGNMENT_HOSTILE, Create_POINT( window_w/2, window_h/3 )).avatar
-	
-	Local p:POINT = Create_POINT( window_w/2, 2*window_h/3 )
-	Local w:WIDGET
-	
-	w = WIDGET( WIDGET.Create( "blinker", create_rect_img( 25, 25, 12.5, 12.5 ),,,, False ))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.5,,, 1000 )))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 1.0,,, 1000 )))
-	w = w.clone()
-	w.parent = p
-	w.manage( list )
+Function debug_dirtyrects()
+	Local o:cVEC = Create_cVEC( 0, 0 )
+	Local window_rect:BOX = Create_BOX( o.x, o.y, window_w, window_h )
+	Local mouse:cVEC
 
-	w = WIDGET( WIDGET.Create( "pump", create_rect_img( 15, 15, 7.5, 7.5 ),,,, False ))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create(   0.0 ,,,,,,,,, 1000 )))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -35.0 ,,,,,,,,, 1000 )))
-	w = w.clone()
-	w.parent = p
-	w.attach_at( -35,,, true )
-	w.manage( list )
+	Local list:TList = CreateList()
+	Local bg_img:TImage = generate_sand_image( window_w, window_h )
+	Local retain_particles% = False
+	Local visible_particles%, hidden_particles%
+	SetImageFont( get_font( "consolas_12" ))
 	
-  w = WIDGET( WIDGET.Create( "hinged_door", create_rect_img( 50, 10, 5, 5 ),,,, False ))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,,  0.0,,,,,,, 1000 )))
-	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,, 90.0,,,,,,, 1000 )))
-	w = w.clone()
-	w.parent = p
-	w.attach_at( -10, -10,, true )
-	w.manage( list )
-	
+	Local before% = now()
 	Repeat
 		Cls()
 		
-		sx = 1; sy = 1
-		mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
+		sx = 1 - o.x
+		sy = 1 - o.y
 		
-		If MouseDown( 1 )
-			'p.move_to( mouse )
-		End If
-		If KeyDown( KEY_LEFT )
-			'p.ang :+ 1
-		Else If KeyDown( KEY_RIGHT )
-			'p.ang :- 1
-		End If
-		If MouseHit( 2 )
-			For Local w:WIDGET = EachIn list
-				w.queue_transformation( 1 )
-			Next
-			carrier.deploy()
-		End If
+		mouse = Create_cVEC( MouseX(), MouseY() )
 		
-		If (now() - before) > time_per_frame_min
+		If now() - before > time_per_frame_min
 			before = now()
 			
-			For Local w:WIDGET = EachIn list
-				w.update()
-			Next
-			carrier.update()
+			If KeyDown( KEY_RIGHT ) Then o.x :+ 2
+			If KeyDown( KEY_LEFT  ) Then o.x :- 2
+			If KeyDown( KEY_DOWN  ) Then o.y :+ 2
+			If KeyDown( KEY_UP    ) Then o.y :- 2
+			
+			SetOrigin( o.x, o.y )
+			window_rect = Create_BOX( -o.x, -o.y, window_w, window_h )
+			
+			If MouseDown( 1 )
+				Local p:PARTICLE = get_particle( "tank_tread_trail_medium" )
+				p.move_to( Create_cVEC( mouse.x - o.x, mouse.y - o.y ))
+				p.ang = Rnd( -180, 180 )
+				p.manage( list )
+			End If
+			
+			If KeyHit( KEY_ENTER )
+				retain_particles = True
+			End If
+			
 		End If
 		
-		Local i% = 0
-		For Local w:WIDGET = EachIn list
-			debug_drawline( create_cvec( w.get_x(), w.get_y() ), w.parent )
-			w.draw()
+		SetAlpha( 1 )
+		SetColor( 255, 255, 255 )
+		SetRotation( 0 )
+		SetScale( 1, 1 )
+		DrawImage( bg_img, 0, 0 )
+		
+		visible_particles = 0
+		hidden_particles = 0
+		For Local p:PARTICLE = EachIn list
+			p.draw()
 			
-			SetColor( 255, 255, 255 )
+			Local dirty_rect:BOX = p.get_bounding_box()
+			If box_contains_box( window_rect, dirty_rect )
+				visible_particles :+ 1
+			Else
+				hidden_particles :+ 1
+			End If
+		Next
+		
+		If retain_particles
+			retain_particles = False
+			For Local p:PARTICLE = EachIn list
+				Local dirty_rect:BOX = p.get_bounding_box()
+				If box_contains_box( window_rect, dirty_rect )
+					'copy+paste pixmap into bg_img
+					Local dirty_rect_pixmap:TPixmap = GrabPixmap( dirty_rect.x + o.x, dirty_rect.y + o.y, dirty_rect.w, dirty_rect.h )
+					Local bg_img_pixmap:TPixmap = LockImage( bg_img )
+					bg_img_pixmap.Paste( dirty_rect_pixmap, dirty_rect.x, dirty_rect.y )
+					UnlockImage( bg_img )
+					p.unmanage()
+				End If
+			Next
+		End If
+		
+		If KeyDown( KEY_RSHIFT )
 			SetAlpha( 1 )
+			SetColor( 255, 255, 255 )
 			SetRotation( 0 )
 			SetScale( 1, 1 )
-			debug_drawtext( "w["+i+"].state_index_cur "+w.state_index_cur )
+			debug_drawtext( "visible particles "+visible_particles )
+			debug_drawtext( "hidden particles  "+hidden_particles )
 			
-			i :+ 1
-		Next
-		
-		carrier.draw()
-		
-		For Local list:TList = EachIn carrier.all_widget_lists
-			For Local w:WIDGET = EachIn list
-				debug_drawtext( "w.offset_ang="+w.offset_ang+" w.ang_offset="+w.ang_offset )
+			For Local p:PARTICLE = EachIn list
+				Local dirty_rect:BOX = p.get_bounding_box()
+				SetAlpha( 0.33333 )
+				DrawRectLines( dirty_rect.x, dirty_rect.y, dirty_rect.w, dirty_rect.h )
 			Next
-		Next
+		End If
 		
 		Flip( 1 )
 	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
 	End
 End Function
+
+''______________________________________________________________________________
+'Function debug_widget()
+'	Local list:TList = CreateList()
+'	Local before% = now()
+'	Local mouse:POINT = New POINT
+'	
+'	Local game:ENVIRONMENT = create_environment()
+'	Local carrier:COMPLEX_AGENT = game.spawn_agent( ENEMY_INDEX_CARRIER, ALIGNMENT_HOSTILE, Create_POINT( window_w/2, window_h/3 )).avatar
+'	
+'	Local p:POINT = Create_POINT( window_w/2, 2*window_h/3 )
+'	Local w:WIDGET
+'	
+'	w = WIDGET( WIDGET.Create( "blinker", create_rect_img( 25, 25, 12.5, 12.5 ),,,, False ))
+'	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.5,,, 1000 )))
+'	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 1.0,,, 1000 )))
+'	w = w.clone()
+'	w.parent = p
+'	w.manage( list )
+'
+'	w = WIDGET( WIDGET.Create( "pump", create_rect_img( 15, 15, 7.5, 7.5 ),,,, False ))
+'	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create(   0.0 ,,,,,,,,, 1000 )))
+'	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -35.0 ,,,,,,,,, 1000 )))
+'	w = w.clone()
+'	w.parent = p
+'	w.attach_at( -35,,, true )
+'	w.manage( list )
+'	
+'  w = WIDGET( WIDGET.Create( "hinged_door", create_rect_img( 50, 10, 5, 5 ),,,, False ))
+'	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,,  0.0,,,,,,, 1000 )))
+'	w.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -25.0 ,, 90.0,,,,,,, 1000 )))
+'	w = w.clone()
+'	w.parent = p
+'	w.attach_at( -10, -10,, true )
+'	w.manage( list )
+'	
+'	Repeat
+'		Cls()
+'		
+'		sx = 1; sy = 1
+'		mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
+'		
+'		If MouseDown( 1 )
+'			'p.move_to( mouse )
+'		End If
+'		If KeyDown( KEY_LEFT )
+'			'p.ang :+ 1
+'		Else If KeyDown( KEY_RIGHT )
+'			'p.ang :- 1
+'		End If
+'		If MouseHit( 2 )
+'			For Local w:WIDGET = EachIn list
+'				w.queue_transformation( 1 )
+'			Next
+'			carrier.deploy()
+'		End If
+'		
+'		If (now() - before) > time_per_frame_min
+'			before = now()
+'			
+'			For Local w:WIDGET = EachIn list
+'				w.update()
+'			Next
+'			carrier.update()
+'		End If
+'		
+'		Local i% = 0
+'		For Local w:WIDGET = EachIn list
+'			debug_drawline( create_cvec( w.get_x(), w.get_y() ), w.parent )
+'			w.draw()
+'			
+'			SetColor( 255, 255, 255 )
+'			SetAlpha( 1 )
+'			SetRotation( 0 )
+'			SetScale( 1, 1 )
+'			debug_drawtext( "w["+i+"].state_index_cur "+w.state_index_cur )
+'			
+'			i :+ 1
+'		Next
+'		
+'		carrier.draw()
+'		
+'		For Local list:TList = EachIn carrier.all_widget_lists
+'			For Local w:WIDGET = EachIn list
+'				debug_drawtext( "w.offset_ang="+w.offset_ang+" w.ang_offset="+w.ang_offset )
+'			Next
+'		Next
+'		
+'		Flip( 1 )
+'	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+'	End
+'End Function
 
 ''______________________________________________________________________________
 'Function debug_spawner()

@@ -19,6 +19,15 @@ Function Pow#( x#, p% )
 	Return x
 End Function
 
+Function box_contains_box%( big:BOX, small:BOX )
+	If  small.x >= big.x And small.y >= big.y ..
+	And small.x + small.w <= big.x + big.w ..
+	And small.y + small.h <= big.y + big.h
+		Return True
+	End If
+	Return False
+End Function
+
 Function ints_to_floats:Float[]( arr%[] )
 	Local f#[] = New Float[arr.Length]
 	For Local i% = 0 To arr.Length

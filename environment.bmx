@@ -45,7 +45,7 @@ Type ENVIRONMENT
 	Field particle_list_foreground:TList 'TList<PARTICLE>
 	Field particle_lists:TList 'TList<TList<PARTICLE>>
 	Field retained_particle_list:TList 'TList<PARTICLE>
-	Field retained_particle_list_count% 'number of particles currently retained, cached for speed
+	Field retained_particle_count% 'number of particles currently retained, cached for speed
 	Field environmental_emitter_list:TList 'TList<EMITTER>
 	Field environmental_widget_list:TList 'TList<WIDGET>
 	Field projectile_list:TList 'TList<PROJECTILE>
@@ -126,7 +126,7 @@ Type ENVIRONMENT
 		particle_list_background.Clear()
 		particle_list_foreground.Clear()
 		retained_particle_list.Clear()
-		retained_particle_list_count = 0
+		retained_particle_count = 0
 		environmental_widget_list.Clear()
 		projectile_list.Clear()
 		friendly_agent_list.Clear()
@@ -173,11 +173,9 @@ Type ENVIRONMENT
 			'images (Drawing)
 			background_clean = generate_sand_image( lev.width, lev.height )
 			foreground = generate_level_walls_image( lev )
-			'initialize dynamic background texture with same data as background clean
-			background_dynamic = TImage.Create( lev.width, lev.height, 1, FILTEREDIMAGE|DYNAMICIMAGE, 0, 0, 0 )
-			SetOrigin( 0, 0 ); SetColor( 255, 255, 255 ); SetAlpha( 1 ); SetRotation( 0 ); SetScale( 1, 1 )
-			DrawImage( background_clean, 0, 0 )
-			GrabImage( background_dynamic, 0, 0 )
+			'copy clean background into dynamic background
+			background_dynamic = LoadImage( LockImage( background_clean,, True, False ), DYNAMICIMAGE )
+			UnlockImage( background_clean )
 		End If
 		'props
 		For Local pd:PROP_DATA = EachIn lev.props
@@ -336,7 +334,7 @@ Type ENVIRONMENT
 			ENEMY_INDEX_MOBILE_MINI_BOMB, ..
 			ENEMY_INDEX_MOBILE_MINI_BOMB ] 
 		brain.manage( control_brain_list )
-		this_agent.spawn_at( spawn_point, 1250 )
+		this_agent.spawn_at( spawn_point, 800 )
 		this_agent.snap_all_turrets()
 		'this should come from an emitter event attached to the agent
 		Local pt:POINT = Create_POINT( this_agent.pos_x, this_agent.pos_y )

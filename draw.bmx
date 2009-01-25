@@ -4,13 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-'background texture caching constraints
-Global FLAG_retain_particles% = False
-Global FLAG_dim_bg% = False
-Const retained_particle_limit% = 500
-'input
 Const cursor_blink% = 500
-'misc
 Const	health_bar_w% = 85
 Const health_bar_h% = 12
 Global health_bits:TList = CreateList() 'TList<WIDGET> when the player loses any amount of life, a chunk of the life bar falls off; this list keeps track of them
@@ -59,18 +53,19 @@ Function draw_all_graphics()
 	
 End Function
 
-'Function draw_loading()
-'	draw_percentage_bar( window_w/5,window_h/5, 3*window_w/5,3*window_w/5, loaded_pct )
-'End Function
 '______________________________________________________________________________
 'In-game stuff
 Function draw_game()
 	
-	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
-	'SetViewport( game.drawing_origin.x, game.drawing_origin.y, game.lev.width, game.lev.height )
+	'force drawing origin to integer coordinates if about to perform "dirty-rects" operation
+	If game.retained_particle_count > retained_particle_count_limit
+		SetOrigin( Int( game.drawing_origin.x ), Int( game.drawing_origin.y ))
+	Else
+		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+	End If
+	SetBlend( ALPHABLEND )
 	
 	'arena (& retained particles)
-	SetBlend( ALPHABLEND )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetAlpha( 1 )
@@ -277,61 +272,40 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 End Function
 '______________________________________________________________________________
 Function draw_arena_bg()
-	'this first check tweaks the origin, if the retain_particles flag is set.
-	'it is necessary because GrabImage only operates on integer coordinates.
-	'so, if it will be called, the origin for this frame only will be truncated to the nearest integer.
-	'this may result in a bit of a "skip" onscreen, but I can live with that.
-	'the alternative is that GrabImage will get a fucked-up version of the canvas and look horrible ever after. 
-	If FLAG_retain_particles
-		Local x#, y#
-		GetOrigin( x, y )
-		SetOrigin( Int(x), Int(y) )
-	End If
-
-	'draw arena background cache image
+	'dynamic background image
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 	SetRotation( 0 )
-	DrawImage( game.background_clean, 0.0, 0.0 )
-	DrawImage( game.background_dynamic, 0.0, 0.0 )
-	
-	'draw particles to be retained
+	DrawImage( game.background_dynamic, 0, 0 )
+	'draw all so-called "dead" particles wanting to be retained
 	For Local part:PARTICLE = EachIn game.retained_particle_list
 		part.draw()
 	Next
-
-	'if an arbitrary performance threshold is reached, ..
-	' save backbuffer to dynamic texture, and delete retained particles
-	If FLAG_retain_particles
-		'delete retained particles
-		FLAG_retain_particles = False
-		game.retained_particle_list.Clear()
-		game.retained_particle_list_count = 0
-		
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		SetScale( 1, 1 )
-		SetRotation( 0 )
-		'save backbuffer to dynamic texture
-		GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y )
-		
-		'fade-out particles if desired, by blending backbuffer with the "clean" background
-		If FLAG_dim_bg
-			FLAG_dim_bg = False
-			
-			SetColor( 255, 255, 255 )
-			SetAlpha( 0.3333 )
-			SetScale( 1, 1 )
-			SetRotation( 0 )
-			'draw the clean background, again
-			DrawImage( game.background_clean, 0.0, 0.0 )
-			
-			'save backbuffer to dynamic texture, again
-			GrabImage( game.background_dynamic, game.drawing_origin.x, game.drawing_origin.y )
-		End If
+	'if there are too many, ..
+	If game.retained_particle_count > retained_particle_count_limit
+		Local background_pixmap:TPixmap = LockImage( game.background_dynamic )
+		Local window_rect:BOX = Create_BOX( -game.drawing_origin.x, -game.drawing_origin.x, window_w, window_h )
+		'for all particles to be retained, ..
+		For Local part:PARTICLE = EachIn game.retained_particle_list
+			Local dirty_rect:BOX = part.get_bounding_box()
+			'move only those that are visible, given the current window and drawing origin, ..
+			If box_contains_box( window_rect, dirty_rect )
+				part.unmanage()
+				game.retained_particle_count :- 1
+				'into the dynamic background image.
+				background_pixmap.Paste( ..
+					GrabPixmap( ..
+						dirty_rect.x + game.drawing_origin.x, ..
+						dirty_rect.y + game.drawing_origin.y, ..
+						dirty_rect.w, ..
+						dirty_rect.h ), ..
+					dirty_rect.x, ..
+					dirty_rect.y )
+			End If
+		Next
+		UnlockImage( game.background_dynamic )
 	End If
-		
 End Function
 '______________________________________________________________________________
 Function draw_arena_fg()
@@ -341,7 +315,6 @@ Function draw_arena_fg()
 	SetRotation( 0 )
 	
 	DrawImage( game.foreground, 0, 0 )
-	'DrawPixmap( game.foreground, 0, 0 )
 End Function
 
 Function draw_lighting_and_effects()
@@ -845,3 +818,4 @@ Function pixel_transform:TImage( img_src:TImage, flip_horizontal% = False, flip_
 	End If
 	Return img_new
 End Function
+

@@ -563,7 +563,6 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	'___________________________________________
 	Method add_motivator_pair( particle_key$, x# = 0.0, y# = 0.0, include_tread_emitters% = True )
-DebugStop
 		'particles
 		left_track = get_particle( particle_key )
 		left_track.parent = Self

@@ -176,17 +176,16 @@ Type PARTICLE Extends POINT
 			(now() - created_ts) >= life_time
 	End Method
 	
-	Method prune()
+	'indicates whether the particle was successfully "pruned" (removed from its managed list)
+	Method prune%()
 		If dead()
-			'remove from normal managed list
 			unmanage()
-			If retain
-				manage( game.retained_particle_list )
-				game.retained_particle_list_count :+ 1
-			End If
+			Return True
 		End If
+		Return False
 	End Method
 	
+	'OOP broken
 	Method auto_manage()
 		If layer = LAYER_BACKGROUND
 			manage( game.particle_list_background )
@@ -198,6 +197,11 @@ Type PARTICLE Extends POINT
 	Method attach_at( new_off_x#, new_off_y# )
 		off_x = new_off_x; off_y = new_off_y
 		cartesian_to_polar( off_x,off_y, offset,offset_ang )
+	End Method
+	
+	Method get_bounding_box:BOX()
+		Local size% = Max( img.width, img.height ) + 1
+		Return Create_BOX( pos_x - size/2, pos_y - size/2, size, size )
 	End Method
 	
 End Type
