@@ -16,10 +16,10 @@ End Function
 Type ENVIRONMENT
 	Field mouse:cVEC 'mouse position relative to local origin
 	Field drawing_origin:cVEC 'drawing origin (either midpoint of local origin and relative mouse, or some constant)
-'	Field origin_min_x% 'constraint
-'	Field origin_min_y% 'constraint
-'	Field origin_max_x% 'constraint
-'	Field origin_max_y% 'constraint
+	Field origin_min_x% 'camera constraint
+	Field origin_min_y% 'camera constraint
+	Field origin_max_x% 'camera constraint
+	Field origin_max_y% 'camera constraint
 	
 	Field background_clean:TImage
 	Field background_dynamic:TImage
@@ -201,20 +201,20 @@ Type ENVIRONMENT
 	End Method
 	
 	Method calculate_camera_constraints()
-'		If lev.width <= window_w
-'			origin_min_x = window_w/2 - lev.width/2
-'			origin_max_x = origin_min_x
-'		Else 'lev.width > window_w
-'			origin_min_x = -20
-'			origin_max_x = 20 + lev.width - window_w
-'		End If
-'		If lev.height <= window_h
-'			origin_min_y = window_h/2 - lev.height/2
-'			origin_max_y = origin_min_y
-'		Else 'lev.height > window_h
-'			origin_min_y = -20
-'			origin_max_y = 20 + lev.height - window_h
-'		End If
+		If lev.width <= window_w 'level not as wide as window
+			origin_min_x = window_w/2 - lev.width/2
+			origin_max_x = origin_min_x
+		Else 'lev.width > window_w 'level wider than window
+			origin_min_x = -(lev.width + 2*20 - window_w)
+			origin_max_x = 20
+		End If
+		If lev.height <= window_h 'level not as tall as window
+			origin_min_y = window_h/2 - lev.height/2
+			origin_max_y = origin_min_y
+		Else 'lev.height > window_h 'level taller than window
+			origin_min_y = -(lev.height + 2*20 - window_h)
+			origin_max_y = 20
+		End If
 	End Method
 	
 	Method reset_spawners( alignment% = ALIGNMENT_NONE )
@@ -371,8 +371,10 @@ Type ENVIRONMENT
 		If ag.dead() 'some agent was killed
 			'agent death animations and sounds, and memory cleanup
 			ag.die()
-			'shalt we spawneth teh phat lewts?! perhaps!
-			spawn_pickup( ag.pos_x, ag.pos_y )
+			'shalt we spawneth teh phat lewts?! perhaps! perhaps.
+			If human_participation
+				spawn_pickup( ag.pos_x, ag.pos_y )
+			End If
 			'complex-agent-specific death routine
 			If COMPLEX_AGENT( ag )
 				'duplicate code, pulled from ENVIRONMENT.kill()

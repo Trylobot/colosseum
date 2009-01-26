@@ -792,5 +792,15 @@
 			handle_y: 6,
 			frames: 1
 		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/arrow.png",
+			handle_x: 23,
+			handle_y: 19,
+			frames: 1
+		}
 	}
 ]

@@ -242,6 +242,7 @@ Const COMMAND_SETTINGS_REFRESH_RATE% = 1030
 Const COMMAND_SETTINGS_BIT_DEPTH% = 1040
 Const COMMAND_SETTINGS_IP_ADDRESS% = 1050
 Const COMMAND_SETTINGS_IP_PORT% = 1060
+Const COMMAND_SETTINGS_PARTICLE_LIMIT% = 1070
 Const COMMAND_SETTINGS_APPLY_ALL% = 1100
 Const COMMAND_PAUSE% = 10000
 Const COMMAND_QUIT_LEVEL% = 10010
@@ -263,11 +264,13 @@ Const MENU_ID_SAVE_LEVEL% = 450
 Const MENU_ID_INPUT_LEVEL_FILE_NAME% = 460
 Const MENU_ID_CONFIRM_ERASE_LEVEL% = 470
 Const MENU_ID_SETTINGS% = 500
+Const MENU_ID_OPTIONS_PERFORMANCE% = 501
 Const MENU_ID_PREFERENCES% = 505
 Const MENU_ID_OPTIONS_VIDEO% = 510
 Const MENU_ID_CHOOSE_RESOLUTION% = 511
 Const MENU_ID_INPUT_REFRESH_RATE% = 512
 Const MENU_ID_INPUT_BIT_DEPTH% = 513
+Const MENU_ID_INPUT_PARTICLE_LIMIT% = 514
 Const MENU_ID_OPTIONS_AUDIO% = 520
 Const MENU_ID_OPTIONS_CONTROLS% = 530
 Const MENU_ID_OPTIONS_GAME% = 540
@@ -327,12 +330,8 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 	all_menus[postfix_index()] = MENU.Create( "settings", 127, 127, 255, MENU_ID_SETTINGS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 		MENU_OPTION.Create( "video settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_VIDEO), True, True ), ..
+		MENU_OPTION.Create( "performance settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_PERFORMANCE), True, True ), ..
 		MENU_OPTION.Create( "audio settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_AUDIO), True, False ) ])
-
-	all_menus[postfix_index()] = MENU.Create( "preferences", 64, 64, 212, MENU_ID_PREFERENCES, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
-	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-		MENU_OPTION.Create( "controls", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_CONTROLS), True, True ), ..
-		MENU_OPTION.Create( "gameplay", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_GAME), True, False ) ])
 
 		all_menus[postfix_index()] = MENU.Create( "video settings", 212, 96, 226, MENU_ID_OPTIONS_VIDEO, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
@@ -371,7 +370,18 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 			
 			all_menus[postfix_index()] = MENU.Create( "input bit depth", 255, 255, 255, MENU_ID_INPUT_BIT_DEPTH, MENU.TEXT_INPUT_DIALOG, menu_margin,,,, COMMAND_SETTINGS_BIT_DEPTH,, 10, "%%bit_depth%%"  )
 		
-		all_menus[postfix_index()] = MENU.Create( "control options", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
+		all_menus[postfix_index()] = MENU.Create( "performance settings", 212, 226, 96, MENU_ID_OPTIONS_PERFORMANCE, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
+		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "particle limit  %%retained_particle_count_limit%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_PARTICLE_LIMIT), True, True ) ])
+
+			all_menus[postfix_index()] = MENU.Create( "input particle limit", 255, 255, 255, MENU_ID_INPUT_PARTICLE_LIMIT, MENU.TEXT_INPUT_DIALOG, menu_margin,,,, COMMAND_SETTINGS_PARTICLE_LIMIT,, 10, "%%retained_particle_count_limit%%"  )
+	
+	all_menus[postfix_index()] = MENU.Create( "preferences", 64, 64, 212, MENU_ID_PREFERENCES, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
+	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+		MENU_OPTION.Create( "controls", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_CONTROLS), True, True ), ..
+		MENU_OPTION.Create( "gameplay", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_GAME), True, False ) ])
+
+		all_menus[postfix_index()] = MENU.Create( "control preferences", 127, 196, 255, MENU_ID_OPTIONS_CONTROLS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "keyboard only", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(CONTROL_BRAIN.INPUT_KEYBOARD), True, True ), ..
 			MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID), True, True ), ..
@@ -388,13 +398,13 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 			MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_LEVEL), True, True ), ..
 			MENU_OPTION.Create( "new", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CONFIRM_ERASE_LEVEL), True, True ) ])
 			
-			all_menus[postfix_index()] = MENU.Create( "save level", 255, 96, 127, MENU_ID_SAVE_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, data_path, level_file_ext, COMMAND_SAVE_LEVEL,,,, dynamic_subsection_window_size, ..
+			all_menus[postfix_index()] = MENU.Create( "save from level editor", 255, 96, 127, MENU_ID_SAVE_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, data_path, level_file_ext, COMMAND_SAVE_LEVEL,,,, dynamic_subsection_window_size, ..
 			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 				MENU_OPTION.Create( "new file", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_LEVEL_FILE_NAME), True, True )])
 				
 				all_menus[postfix_index()] = MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_LEVEL_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,, data_path, level_file_ext, COMMAND_SAVE_LEVEL,, 60, "%%level_editor_cache.name%%"  )
 			
-			all_menus[postfix_index()] = MENU.Create( "load level", 96, 255, 127, MENU_ID_LOAD_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, data_path, level_file_ext, COMMAND_LOAD_LEVEL,,,, dynamic_subsection_window_size, ..
+			all_menus[postfix_index()] = MENU.Create( "load into level editor", 96, 255, 127, MENU_ID_LOAD_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, data_path, level_file_ext, COMMAND_LOAD_LEVEL,,,, dynamic_subsection_window_size, ..
 			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ])
 			
 			all_menus[postfix_index()] = MENU.Create( "abandon current level?", 255, 64, 64, MENU_ID_CONFIRM_ERASE_LEVEL, MENU.CONFIRMATION_DIALOG, menu_margin, 1,,, COMMAND_NEW_LEVEL )
@@ -467,12 +477,6 @@ Function menu_command( command_code%, argument:Object = Null )
 			FLAG_in_menu = False
 			FLAG_in_shop = True
 		'________________________________________
-		Case COMMAND_QUIT_LEVEL
-			menu_command( COMMAND_SHOP )
-			menu_command( COMMAND_SAVE_GAME, profile.src_path )
-			main_game = Null
-			game = ai_menu_game
-		'________________________________________
 		Case COMMAND_NEW_GAME
 			profile = New PLAYER_PROFILE
 			show_info( "new profile loaded" )
@@ -532,14 +536,18 @@ Function menu_command( command_code%, argument:Object = Null )
 			Else
 				show_info( "windowed mode" )
 			End If
+			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_RESOLUTION
 			window_w = Int[](argument)[0]
 			window_h = Int[](argument)[1]
+				window = Create_BOX( 0, 0, window_w, window_h )
 			menu_command( COMMAND_SETTINGS_APPLY_ALL )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			init_ai_menu_game()
+			If main_game <> Null Then main_game.calculate_camera_constraints()
 			show_info( "resolution "+window_w+" x "+window_h )
+			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_REFRESH_RATE
 			Local new_refresh_rate% = String(argument).ToInt()
@@ -549,6 +557,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			show_info( "refresh rate "+refresh_rate+" Hz" )
+			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_BIT_DEPTH
 			Local new_bit_depth% = String(argument).ToInt()
@@ -558,16 +567,25 @@ Function menu_command( command_code%, argument:Object = Null )
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			show_info( "bit depth "+bit_depth+" bpp" )
+			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_IP_ADDRESS
 			ip_address = String(argument)
 			save_settings()
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_IP_PORT
 			ip_port = String(argument).ToInt()
 			save_settings()
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
+		'________________________________________
+		Case COMMAND_SETTINGS_PARTICLE_LIMIT
+			retained_particle_count_limit = String(argument).ToInt()
+			save_settings()
+			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+			get_menu( MENU_ID_OPTIONS_PERFORMANCE ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_APPLY_ALL
 			save_settings()
@@ -577,7 +595,14 @@ Function menu_command( command_code%, argument:Object = Null )
 		Case COMMAND_EDIT_LEVEL
 			level_editor( level_editor_cache )
 		'________________________________________
+		Case COMMAND_QUIT_LEVEL
+			menu_command( COMMAND_SHOP )
+			menu_command( COMMAND_SAVE_GAME, profile.src_path )
+			main_game = Null
+			game = ai_menu_game
+		'________________________________________
 		Case COMMAND_QUIT_GAME
+			menu_command( COMMAND_QUIT_LEVEL )
 			End
 			
 	End Select
@@ -610,6 +635,8 @@ Function resolve_meta_variables$( str$ )
 					result :+ refresh_rate
 				Case "bit_depth"
 					result :+ bit_depth
+				Case "retained_particle_count_limit"
+					result :+ retained_particle_count_limit
 				Case "ip_address"
 					result :+ ip_address
 				Case "ip_port"

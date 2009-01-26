@@ -1,10 +1,10 @@
 {
-	window_w: 1024,
-	window_h: 768,
-	fullscreen: true,
+	window_w: 800,
+	window_h: 600,
+	fullscreen: false,
 	bit_depth: 32,
 	refresh_rate: 85,
-	retained_particle_count_limit: 500,
+	retained_particle_count_limit: 1000,
 	ip_address: "127.0.0.1",
 	port: 6112
 }

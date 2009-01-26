@@ -86,7 +86,7 @@ Function get_all_input()
 	
 	'instaquit
 	If esc_held And (now() - esc_press_ts) >= instaquit_time_required
-		End
+		menu_command( COMMAND_QUIT_GAME )
 	End If
 	'escape key state
 	If KeyDown( KEY_ESCAPE )

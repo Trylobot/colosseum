@@ -154,15 +154,10 @@ Function debug_overlay()
 	SetAlpha( 1 )
 	
 	sx = 2; sy = 2
+
 	debug_drawtext( "      retained_particle_count_limit --> "+retained_particle_count_limit )
 	debug_drawtext( "game.retained_particle_list.Count() --> "+game.retained_particle_list.Count() )
 	debug_drawtext( "       game.retained_particle_count --> "+game.retained_particle_count )
-	
-	If game <> Null
-		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
-	End If
-	
-	sx = game.mouse.x + 16; sy = game.mouse.y
 	
 	SetColor( 127, 127, 255 )
 	debug_drawtext( "friendlies "+game.active_friendly_units )
@@ -178,6 +173,11 @@ Function debug_overlay()
 	Next
 	debug_drawtext( "" ) 'newline
 	
+	If game <> Null
+		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+	End If
+	sx = game.mouse.x + 16; sy = game.mouse.y
+	
 	SetColor( 255, 255, 255 )
 	'show pathing grid divisions
 	SetAlpha( 0.20 )
@@ -188,6 +188,16 @@ Function debug_overlay()
 	For Local i% = 0 To game.lev.vertical_divs.length - 1
 		DrawLine( 0+game.lev.vertical_divs[i],0, 0+game.lev.vertical_divs[i],0+game.lev.height )
 	Next
+
+	'show particle bounding boxes
+	If game <> Null
+		SetAlpha( 0.33333 )
+		Local dirty_rect:BOX
+		For Local p:PARTICLE = EachIn game.retained_particle_list
+			dirty_rect = p.get_bounding_box()
+			DrawRectLines( dirty_rect.x, dirty_rect.y, dirty_rect.w, dirty_rect.h )
+		Next
+	End If
 
 	SetColor( 255, 255, 255 )
 	
@@ -206,7 +216,7 @@ Function debug_overlay()
 			If f.physics_type = PHYSICS_FORCE
 				Local x# = brain.avatar.pos_x, y# = brain.avatar.pos_y
 				Local ang# = f.direction + f.combine_ang_with_parent_ang*brain.avatar.ang
-				SetLineWidth( 2 )
+				SetLineWidth( 1 )
 				SetAlpha( 0.2 )
 				DrawLine( x, y, x + f.magnitude_cur*Cos(ang), y + f.magnitude_cur*Sin(ang) )
 			End If
@@ -454,7 +464,7 @@ Function debug_dirtyrects()
 			p.draw()
 			
 			Local dirty_rect:BOX = p.get_bounding_box()
-			If box_contains_box( window_rect, dirty_rect )
+			If window_rect.contains( dirty_rect )
 				visible_particles :+ 1
 			Else
 				hidden_particles :+ 1
@@ -465,7 +475,7 @@ Function debug_dirtyrects()
 			retain_particles = False
 			For Local p:PARTICLE = EachIn list
 				Local dirty_rect:BOX = p.get_bounding_box()
-				If box_contains_box( window_rect, dirty_rect )
+				If window_rect.contains( dirty_rect )
 					'copy+paste pixmap into bg_img
 					Local dirty_rect_pixmap:TPixmap = GrabPixmap( dirty_rect.x + o.x, dirty_rect.y + o.y, dirty_rect.w, dirty_rect.h )
 					Local bg_img_pixmap:TPixmap = LockImage( bg_img )

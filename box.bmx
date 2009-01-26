@@ -15,8 +15,14 @@ End Function
 Type BOX
 	Field x#, y# 'position components
 	Field w#, h# 'dimension components
+	
 	Method clone:BOX()
 		Return Create_BOX( x, y, w, h )
 	End Method
+	
+	Method contains%( other:BOX )
+		Return (other.x >= x And other.y >= y And other.x + other.w < x + w And other.y + other.h < y + h)
+	End Method
+
 End Type
 

@@ -220,6 +220,8 @@ Type MENU
 	
 	Method calculate_dimensions( text_height_factor# = 1.0 )
 		dimensions_cached = True
+		width = 0
+		height = 0
 		Local i% = 0
 		For Local opt:MENU_OPTION = EachIn options
 			If is_scrollable( menu_type ) And i >= static_option_count
@@ -247,6 +249,10 @@ Type MENU
 			width :+ scrollbar_width
 		End If
 		height :+ (margin + (text_height_factor*GetImageFont().Height() + margin) + 2*border_width)
+	End Method
+	
+	Method recalculate_dimensions() 'forces a re-calculation of the window dimensions at the next draw step
+		Self.dimensions_cached = False
 	End Method
 	
 	Method update( initial_update% = False )

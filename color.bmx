@@ -17,11 +17,12 @@ Type TColor
 	Field H#, S#, L#
 	
 	'( H [0.0,360.0] ), ( S,L [0.0,1.0] )
-	Function Create_by_HSL:TColor( H#, S#, L# )
+	Function Create_by_HSL:TColor( H#, S#, L#, auto_calc_RGB% = False )
 		Local c:TColor = New TColor
 		c.H = H
 		c.S = S
 		c.L = L
+		If auto_calc_RGB Then c.calc_RGB()
 		Return c
 	End Function
 	
@@ -79,11 +80,12 @@ Type TColor
 	End Method
 	
 	'( R,G,B [0,255] )
-	Function Create_by_RGB:TColor( R%, G%, B% )
+	Function Create_by_RGB:TColor( R%, G%, B%, auto_calc_HSL% = False )
 		Local c:TColor = New TColor
 		c.R = R
 		c.G = G
 		c.B = B
+		If auto_calc_HSL Then c.calc_HSL()
 		Return c
 	End Function
 	

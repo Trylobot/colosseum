@@ -25,6 +25,7 @@ Global ip_port%
 'Graphics
 Global window_w%
 Global window_h%
+	Global window:BOX
 Global fullscreen%
 Global bit_depth%
 Global refresh_rate%
@@ -34,6 +35,7 @@ Global retained_particle_count_limit%
 Function apply_default_settings()
 	window_w = 640
 	window_h = 480
+		window = Create_BOX( 0, 0, window_w, window_h )
 	fullscreen = False
 	bit_depth = 32
 	refresh_rate = 60

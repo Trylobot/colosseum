@@ -285,23 +285,31 @@ Function draw_arena_bg()
 	'if there are too many, ..
 	If game.retained_particle_count > retained_particle_count_limit
 		Local background_pixmap:TPixmap = LockImage( game.background_dynamic )
-		Local window_rect:BOX = Create_BOX( -game.drawing_origin.x, -game.drawing_origin.x, window_w, window_h )
+		Local background_rect:BOX = Create_BOX( 0, 0, background_pixmap.width, background_pixmap.height )
 		'for all particles to be retained, ..
 		For Local part:PARTICLE = EachIn game.retained_particle_list
 			Local dirty_rect:BOX = part.get_bounding_box()
-			'move only those that are visible, given the current window and drawing origin, ..
-			If box_contains_box( window_rect, dirty_rect )
+			Local dirty_rect_relative_to_window:BOX = Create_BOX( ..
+				dirty_rect.x + game.drawing_origin.x, ..
+				dirty_rect.y + game.drawing_origin.y, ..
+				dirty_rect.w, ..
+				dirty_rect.h )
+			'move only those that are currently visible, given the current window/frame position & size, ..
+			If window.contains( dirty_rect_relative_to_window )
 				part.unmanage()
 				game.retained_particle_count :- 1
-				'into the dynamic background image.
-				background_pixmap.Paste( ..
-					GrabPixmap( ..
-						dirty_rect.x + game.drawing_origin.x, ..
-						dirty_rect.y + game.drawing_origin.y, ..
-						dirty_rect.w, ..
-						dirty_rect.h ), ..
-					dirty_rect.x, ..
-					dirty_rect.y )
+				'into the dynamic background image, if it doesn't lie outside the image dimensions.
+				If background_rect.contains( dirty_rect )
+					Local dirty_pixmap:TPixmap = GrabPixmap( ..
+						dirty_rect_relative_to_window.x, ..
+						dirty_rect_relative_to_window.y, ..
+						dirty_rect_relative_to_window.w, ..
+						dirty_rect_relative_to_window.h )
+					background_pixmap.Paste( ..
+						dirty_pixmap, ..
+						dirty_rect.x, ..
+						dirty_rect.y )
+				End If
 			End If
 		Next
 		UnlockImage( game.background_dynamic )
@@ -373,7 +381,29 @@ Function draw_reticle()
 				SetRotation( p_tur.ang_to_cVEC( game.mouse ))
 				SetAlpha( 1.0 )
 				DrawImage( img_reticle, game.mouse.x, game.mouse.y )
-			
+				'if the reticle is not visible, show an indicator on the edge of the screen
+				SetAlpha( Sin( now() Mod 2000 ))
+				Local arrow:TImage = get_image( "arrow" )
+				If game.mouse.x + game.drawing_origin.x < 0
+					SetRotation( 180 )
+					'DrawImage( arrow, 0, game.mouse.y )
+'SetRotation( 0 ); DrawText_with_outline( "reticle hidden", game.player.pos_x, game.player.pos_y )
+				Else If game.mouse.x + game.drawing_origin.x > window_w
+					SetRotation( 0 )
+					'DrawImage( arrow, window_w, game.mouse.y )
+'SetRotation( 0 ); DrawText_with_outline( "reticle hidden", game.player.pos_x, game.player.pos_y )
+				End If
+				If game.mouse.y + game.drawing_origin.y < 0
+					SetRotation( 90 )
+					'DrawImage( arrow, game.mouse.x, 0 )
+'SetRotation( 0 ); DrawText_with_outline( "reticle hidden", game.player.pos_x, game.player.pos_y )
+				Else If game.mouse.y + game.drawing_origin.y > window_w
+					SetRotation( -90 )
+					'DrawImage( arrow, game.mouse.x, window_h )
+'SetRotation( 0 ); DrawText_with_outline( "reticle hidden", game.player.pos_x, game.player.pos_y )
+				End If
+				SetAlpha( 1 )
+				
 			Else If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD
 				SetRotation( p_tur.ang )
 				DrawImage( img_reticle, p_tur.pos_x + 85*Cos( p_tur.ang ), p_tur.pos_y + 85*Sin( p_tur.ang ))
@@ -617,7 +647,7 @@ Function generate_sand_image:TImage( w%, h% )
 			'ratio:1 -> HSL( 40, 0.57, 0.28 )
 			color = TColor.Create_by_HSL( 39.0 + ((1.0 - ratio) * 5.0), 0.34 + (ratio * (0.23)), 0.30 + ((1.0 - ratio) * 0.10) )
 			If Rand( 1, 2 ) = 1 '1:2 chance of static
-				Select Rand( 1, 3 ) '3 types of staic
+				Select Rand( 1, 3 ) '3 types of static
 					Case 1
 						color.H :+ Rnd( -10.0, 5.0 )
 					Case 2
@@ -647,6 +677,17 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 	Local x#, x_adj%
 	Local y#, y_adj%
 	Local dist%
+	Local color_cache:TColor[,] = New TColor[ 3, 50 ]
+	'pre-cache some colors
+	For Local i% = 0 To 49 'dist = {0, 2, 3}
+		color_cache[ 0, i ] = TColor.Create_by_HSL( 0.0, 0.0, 0.80 + Rnd( 0.00, 0.20 ), True )
+	Next
+	For Local i% = 0 To 49 'dist = {1, 4, 5}
+		color_cache[ 1, i ] = TColor.Create_by_HSL( 0.0, 0.0, 0.55 + Rnd( 0.00, 0.10 ), True )
+	Next
+	For Local i% = 0 To 49 'dist = {*}
+		color_cache[ 2, i ] = TColor.Create_by_HSL( 0.0, 0.0, 0.30 + Rnd( 0.00, 0.05 ), True )
+	Next
 	Local color:TColor
 	'for: each "blocking" region
 	For c = EachIn blocking_cells
@@ -702,30 +743,14 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 						End If
 					End If
 				End If
-				Rem
-				If x < CELL.MAXIMUM_COST
-					'left or right
-					If adjacent[ 1, x_adj ] = PATH_PASSABLE
-						dist = x
-					Else If y < CELL.MAXIMUM_COST And adjacent[ y_adj, 1 ] = PATH_BLOCKED And adjacent[ y_adj, x_adj ] = PATH_PASSABLE 'adjacent[ 1, x_adj ] = PATH_BLOCKED
-						dist = Min( x, y ) 'corner
-					End If
-				Else If y < CELL.MAXIMUM_COST 'x >= CELL.MAXIMUM_COST
-					'top or bottom
-					If adjacent[ y_adj, 1 ] = PATH_PASSABLE
-						dist = y
-					End If
-				End If
-				EndRem
 				Select dist
 					Case 0, 2, 3
-						color = TColor.Create_by_HSL( 0.0, 0.0, 0.80 + Rnd( 0.00, 0.20 ))
+						color = color_cache[ 0, Rand( 0, 49 )]
 					Case 1, 4, 5
-						color = TColor.Create_by_HSL( 0.0, 0.0, 0.55 + Rnd( 0.00, 0.10 ))
+						color = color_cache[ 1, Rand( 0, 49 )]
 					Default
-						color = TColor.Create_by_HSL( 0.0, 0.0, 0.30 + Rnd( 0.00, 0.05 ))
+						color = color_cache[ 2, Rand( 0, 49 )]
 				End Select
-				color.calc_RGB()
 				pixmap.WritePixel( px,py, encode_ARGB( 1.0, color.R,color.G,color.B ))
 			Next
 		Next

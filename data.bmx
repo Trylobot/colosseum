@@ -313,6 +313,7 @@ Function load_settings%()
 		'success
 		window_w = json.GetNumber( "window_w" )
 		window_h = json.GetNumber( "window_h" )
+			window = Create_BOX( 0, 0, window_w, window_h )
 		fullscreen = json.GetBoolean( "fullscreen" )
 		bit_depth = json.GetNumber( "bit_depth" )
 		refresh_rate = json.GetNumber( "refresh_rate" )
