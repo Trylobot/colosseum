@@ -77,7 +77,7 @@ Function collide_all_objects()
 				'COLLISION! between {ag} and {wall}
 				collision_agent_wall( ag, wall )
 			Next
-			result = CollideRect( wall.x,wall.y, wall.w,wall.h, PROJECTILE_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
+			result = CollideRect( wall.x,wall.y, wall.w,wall.h, PROJECTILE_COLLISION_LAYER, 0, wall )
 			For proj = EachIn result
 				'COLLISION! between {proj} and {wall}
 				collision_projectile_wall( proj, wall )
@@ -94,7 +94,7 @@ Function collide_all_objects()
 						'COLLISION! between {ag} and {door}
 						collision_agent_door( ag, slider )
 					Next
-					result = CollideImage( slider.img, slider.get_x(), slider.get_y(), 0, PROJECTILE_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
+					result = CollideImage( slider.img, slider.get_x(), slider.get_y(), 0, PROJECTILE_COLLISION_LAYER, 0, slider )
 					For proj = EachIn result
 						'COLLISION! between {proj} and {door}
 						collision_projectile_door( proj, slider )
@@ -230,8 +230,8 @@ Function collision_agent_door( ag:AGENT, door:WIDGET )
 		Local dist# = ag.dist_to( door_pos )
 		Local ang# = ag.ang_to( door_pos )
 		'nudge
-		ag.pos_x :+ WALL_NUDGE_DIST*Cos( ang )
-		ag.pos_y :+ WALL_NUDGE_DIST*Sin( ang )
+		ag.pos_x :- WALL_NUDGE_DIST*Cos( ang )
+		ag.pos_y :- WALL_NUDGE_DIST*Sin( ang )
 		'velocity cancellation
 		Local vel:cVEC = Create_cVEC( ag.vel_x, ag.vel_y )
 		Local vel_projection# = vel.r()*Cos( ang - vel.a() )
@@ -246,7 +246,7 @@ Function collision_agent_door( ag:AGENT, door:WIDGET )
 		Local door_mass# = 800.0
 		Local collision_force_mag# = door_mass*AGENT_AGENT_ENERGY_COEFFICIENT*vel.r()
 		ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, collision_force_mag*Cos( ang - door_pos.ang ), 50 )))
-		ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, dist*(collision_force_mag/6.0)*Sin( ang - door_pos.ang ), 50 )))
+		ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, dist*(collision_force_mag/60.0)*Sin( ang - door_pos.ang ), 50 )))
 	End If
 End Function
 

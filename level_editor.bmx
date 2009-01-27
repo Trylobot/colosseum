@@ -106,11 +106,14 @@ Function level_editor( lev:LEVEL )
 					SetColor( 255, 64, 64 )
 			End Select
 			Local p:POINT = sp.pos
-			SetAlpha( 0.50 )
+			SetAlpha( 0.5 )
 			DrawOval( x+p.pos_x-spawn_point_preview_radius,y+p.pos_y-spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
 			SetLineWidth( 2 )
 			SetAlpha( 1 )
 			DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )
+			SetAlpha( 0.5 )
+			SetRotation( sp.pos.ang )
+			DrawImage( get_image( "door_fg" ), sp.pos.pos_x, sp.pos.pos_y )
 		Next
 		
 		'draw the props
@@ -411,7 +414,7 @@ Function level_editor( lev:LEVEL )
 				If MouseDown( 1 )
 					alpha_mod = 1.0
 				Else
-					alpha_mod = 0.50
+					alpha_mod = 0.5
 				End If
 				If Not any_modifiers
 					Local p:POINT = new_spawner.pos

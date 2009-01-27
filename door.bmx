@@ -91,10 +91,10 @@ Type DOOR Extends MANAGED_OBJECT
 		right_slider.queue_transformation( 1 )
 	End Method
 	Method open()
-		If status <> DOOR_OPEN Then toggle()
+		If status = DOOR_CLOSED Then toggle()
 	End Method
 	Method close()
-		If status <> DOOR_CLOSED Then toggle()
+		If status = DOOR_OPEN Then toggle()
 	End Method
 	
 End Type

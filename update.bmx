@@ -13,7 +13,6 @@ Function update_all_objects()
 		
 		'drawing origin
 		update_drawing_origin()
-
 		'flags
 		update_flags()
 		
@@ -69,8 +68,8 @@ Function update_all_objects()
 		Next
 		'doors (really just special environmental widgets)
 		For Local list:TList = EachIn game.door_lists
-			For Local w:WIDGET = EachIn list
-				w.update()
+			For Local d:DOOR = EachIn list
+				d.update()
 			Next
 		Next
 		'health bits

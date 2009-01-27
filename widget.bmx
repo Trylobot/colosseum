@@ -171,7 +171,7 @@ Type WIDGET Extends MANAGED_OBJECT
 			If count <> INFINITY
 				transformations_remaining :+ count
 			End If
-		Else
+		Else 'Not transforming
 			transformations_remaining = count
 			transforming = True
 			transform_begin_ts = now()

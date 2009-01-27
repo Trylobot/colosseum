@@ -182,7 +182,7 @@ Type ENVIRONMENT
 				add_door( sp.pos, sp.alignment )
 			End If
 		Next
-		'spawning system
+		'spawning system initialize/reset
 		reset_spawners()
 		'indicate success to caller
 		Return True
@@ -205,6 +205,10 @@ Type ENVIRONMENT
 		End If
 	End Method
 	
+	Method add_door( p:POINT, alignment% )
+		Create_DOOR( p ).manage( political_door_list( alignment ))
+	End Method
+
 	Method reset_spawners( alignment% = ALIGNMENT_NONE )
 		If alignment = ALIGNMENT_NONE
 			'flags and counters
@@ -477,49 +481,28 @@ Type ENVIRONMENT
 		End If
 	End Method
 	
-	Method add_door( p:POINT, alignment% )
-		Local d:DOOR = Create_DOOR( p )
+	Method political_door_list:TList( alignment% )
 		Select alignment
 			Case ALIGNMENT_FRIENDLY
-				d.manage( friendly_door_list )
+				Return friendly_door_list
 			Case ALIGNMENT_HOSTILE
-				d.manage( hostile_door_list )
+				Return hostile_door_list
 		End Select
+		Return Null
 	End Method
-	
-	Method toggle_doors( political_alignment% )
-		Local door_list:TList
-		Select political_alignment
-			Case ALIGNMENT_FRIENDLY
-				door_list = friendly_door_list
-			Case ALIGNMENT_HOSTILE
-				door_list = hostile_door_list
-		End Select
-		For Local d:DOOR = EachIn door_list
+
+	Method toggle_doors( alignment% )
+		For Local d:DOOR = EachIn political_door_list( alignment )
 			d.toggle()
 		Next
 	End Method
-	Method open_doors( political_alignment% )
-		Local door_list:TList
-		Select political_alignment
-			Case ALIGNMENT_FRIENDLY
-				door_list = friendly_door_list
-			Case ALIGNMENT_HOSTILE
-				door_list = hostile_door_list
-		End Select
-		For Local d:DOOR = EachIn door_list
+	Method open_doors( alignment% )
+		For Local d:DOOR = EachIn political_door_list( alignment )
 			d.open()
 		Next
 	End Method
-	Method close_doors( political_alignment% )
-		Local door_list:TList
-		Select political_alignment
-			Case ALIGNMENT_FRIENDLY
-				door_list = friendly_door_list
-			Case ALIGNMENT_HOSTILE
-				door_list = hostile_door_list
-		End Select
-		For Local d:DOOR = EachIn door_list
+	Method close_doors( alignment% )
+		For Local d:DOOR = EachIn political_door_list( alignment )
 			d.close()
 		Next
 	End Method

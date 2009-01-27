@@ -7,7 +7,7 @@
 	],
 	input_method: 2,
 	current_level: "data/three_gates.colosseum_level",
-	cash: 15400,
-	kills: 149,
-	selected_inventory_index: 2
+	cash: 17975,
+	kills: 175,
+	selected_inventory_index: 1
 }
