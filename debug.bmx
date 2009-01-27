@@ -406,106 +406,137 @@ Function debug_overlay()
 	End If
 	
 End Function
-
 '______________________________________________________________________________
-Function debug_dirtyrects()
-	Local o:cVEC = Create_cVEC( 0, 0 )
-	Local window_rect:BOX = Create_BOX( o.x, o.y, window_w, window_h )
-	Local mouse:cVEC
-
-	Local list:TList = CreateList()
-	Local bg_img:TImage = generate_sand_image( window_w, window_h )
-	Local retain_particles% = False
-	Local visible_particles%, hidden_particles%
-	SetImageFont( get_font( "consolas_12" ))
+Function debug_doors()
+	Local spawn:POINT = Create_POINT( window_w/2, window_h/2 )
+	Local env:ENVIRONMENT = Create_ENVIRONMENT()
+	env.add_door( spawn, ALIGNMENT_FRIENDLY )
 	
 	Local before% = now()
 	Repeat
 		Cls()
 		
-		sx = 1 - o.x
-		sy = 1 - o.y
-		
-		mouse = Create_cVEC( MouseX(), MouseY() )
+		If KeyHit( KEY_ENTER )
+			env.toggle_doors( ALIGNMENT_FRIENDLY )
+		End If
+		If MouseDown( 1 )
+			spawn.move_to( Create_cVEC( MouseX(), MouseY() ))
+		End If
 		
 		If now() - before > time_per_frame_min
 			before = now()
-			
-			If KeyDown( KEY_RIGHT ) Then o.x :+ 2
-			If KeyDown( KEY_LEFT  ) Then o.x :- 2
-			If KeyDown( KEY_DOWN  ) Then o.y :+ 2
-			If KeyDown( KEY_UP    ) Then o.y :- 2
-			
-			SetOrigin( o.x, o.y )
-			window_rect = Create_BOX( -o.x, -o.y, window_w, window_h )
-			
-			If MouseDown( 1 )
-				Local p:PARTICLE = get_particle( "tank_tread_trail_medium" )
-				p.move_to( Create_cVEC( mouse.x - o.x, mouse.y - o.y ))
-				p.ang = Rnd( -180, 180 )
-				p.manage( list )
-			End If
-			
-			If KeyHit( KEY_ENTER )
-				retain_particles = True
-			End If
-			
+			For Local d:DOOR = EachIn env.friendly_door_list
+				d.update()
+			Next
 		End If
 		
-		SetAlpha( 1 )
-		SetColor( 255, 255, 255 )
-		SetRotation( 0 )
-		SetScale( 1, 1 )
-		DrawImage( bg_img, 0, 0 )
-		
-		visible_particles = 0
-		hidden_particles = 0
-		For Local p:PARTICLE = EachIn list
-			p.draw()
-			
-			Local dirty_rect:BOX = p.get_bounding_box()
-			If window_rect.contains( dirty_rect )
-				visible_particles :+ 1
-			Else
-				hidden_particles :+ 1
-			End If
+		For Local d:DOOR = EachIn env.friendly_door_list
+			d.draw_bg()
+			d.draw_fg()
 		Next
-		
-		If retain_particles
-			retain_particles = False
-			For Local p:PARTICLE = EachIn list
-				Local dirty_rect:BOX = p.get_bounding_box()
-				If window_rect.contains( dirty_rect )
-					'copy+paste pixmap into bg_img
-					Local dirty_rect_pixmap:TPixmap = GrabPixmap( dirty_rect.x + o.x, dirty_rect.y + o.y, dirty_rect.w, dirty_rect.h )
-					Local bg_img_pixmap:TPixmap = LockImage( bg_img )
-					bg_img_pixmap.Paste( dirty_rect_pixmap, dirty_rect.x, dirty_rect.y )
-					UnlockImage( bg_img )
-					p.unmanage()
-				End If
-			Next
-		End If
-		
-		If KeyDown( KEY_RSHIFT )
-			SetAlpha( 1 )
-			SetColor( 255, 255, 255 )
-			SetRotation( 0 )
-			SetScale( 1, 1 )
-			debug_drawtext( "visible particles "+visible_particles )
-			debug_drawtext( "hidden particles  "+hidden_particles )
-			
-			For Local p:PARTICLE = EachIn list
-				Local dirty_rect:BOX = p.get_bounding_box()
-				SetAlpha( 0.33333 )
-				DrawRectLines( dirty_rect.x, dirty_rect.y, dirty_rect.w, dirty_rect.h )
-			Next
-		End If
 		
 		Flip( 1 )
 	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
 	End
 End Function
-
+''______________________________________________________________________________
+'Function debug_dirtyrects()
+'	Local o:cVEC = Create_cVEC( 0, 0 )
+'	Local window_rect:BOX = Create_BOX( o.x, o.y, window_w, window_h )
+'	Local mouse:cVEC
+'
+'	Local list:TList = CreateList()
+'	Local bg_img:TImage = generate_sand_image( window_w, window_h )
+'	Local retain_particles% = False
+'	Local visible_particles%, hidden_particles%
+'	SetImageFont( get_font( "consolas_12" ))
+'	
+'	Local before% = now()
+'	Repeat
+'		Cls()
+'		
+'		sx = 1 - o.x
+'		sy = 1 - o.y
+'		
+'		mouse = Create_cVEC( MouseX(), MouseY() )
+'		
+'		If now() - before > time_per_frame_min
+'			before = now()
+'			
+'			If KeyDown( KEY_RIGHT ) Then o.x :+ 2
+'			If KeyDown( KEY_LEFT  ) Then o.x :- 2
+'			If KeyDown( KEY_DOWN  ) Then o.y :+ 2
+'			If KeyDown( KEY_UP    ) Then o.y :- 2
+'			
+'			SetOrigin( o.x, o.y )
+'			window_rect = Create_BOX( -o.x, -o.y, window_w, window_h )
+'			
+'			If MouseDown( 1 )
+'				Local p:PARTICLE = get_particle( "tank_tread_trail_medium" )
+'				p.move_to( Create_cVEC( mouse.x - o.x, mouse.y - o.y ))
+'				p.ang = Rnd( -180, 180 )
+'				p.manage( list )
+'			End If
+'			
+'			If KeyHit( KEY_ENTER )
+'				retain_particles = True
+'			End If
+'			
+'		End If
+'		
+'		SetAlpha( 1 )
+'		SetColor( 255, 255, 255 )
+'		SetRotation( 0 )
+'		SetScale( 1, 1 )
+'		DrawImage( bg_img, 0, 0 )
+'		
+'		visible_particles = 0
+'		hidden_particles = 0
+'		For Local p:PARTICLE = EachIn list
+'			p.draw()
+'			
+'			Local dirty_rect:BOX = p.get_bounding_box()
+'			If window_rect.contains( dirty_rect )
+'				visible_particles :+ 1
+'			Else
+'				hidden_particles :+ 1
+'			End If
+'		Next
+'		
+'		If retain_particles
+'			retain_particles = False
+'			For Local p:PARTICLE = EachIn list
+'				Local dirty_rect:BOX = p.get_bounding_box()
+'				If window_rect.contains( dirty_rect )
+'					'copy+paste pixmap into bg_img
+'					Local dirty_rect_pixmap:TPixmap = GrabPixmap( dirty_rect.x + o.x, dirty_rect.y + o.y, dirty_rect.w, dirty_rect.h )
+'					Local bg_img_pixmap:TPixmap = LockImage( bg_img )
+'					bg_img_pixmap.Paste( dirty_rect_pixmap, dirty_rect.x, dirty_rect.y )
+'					UnlockImage( bg_img )
+'					p.unmanage()
+'				End If
+'			Next
+'		End If
+'		
+'		If KeyDown( KEY_RSHIFT )
+'			SetAlpha( 1 )
+'			SetColor( 255, 255, 255 )
+'			SetRotation( 0 )
+'			SetScale( 1, 1 )
+'			debug_drawtext( "visible particles "+visible_particles )
+'			debug_drawtext( "hidden particles  "+hidden_particles )
+'			
+'			For Local p:PARTICLE = EachIn list
+'				Local dirty_rect:BOX = p.get_bounding_box()
+'				SetAlpha( 0.33333 )
+'				DrawRectLines( dirty_rect.x, dirty_rect.y, dirty_rect.w, dirty_rect.h )
+'			Next
+'		End If
+'		
+'		Flip( 1 )
+'	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+'	End
+'End Function
 ''______________________________________________________________________________
 'Function debug_widget()
 '	Local list:TList = CreateList()
@@ -597,7 +628,6 @@ End Function
 '	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
 '	End
 'End Function
-
 ''______________________________________________________________________________
 'Function debug_spawner()
 '	Local mouseP:POINT = New POINT
@@ -656,7 +686,6 @@ End Function
 'Global wait_ts%, wait_time%, r%, c%, mouse:CELL
 'Const PATH_UNSET% = 1000
 'Global path_type% = PATH_UNSET, mouse_path_type%
-'
 ''______________________________________________________________________________
 'Function debug_format_number()
 '	Local i% = 1, n% = 0

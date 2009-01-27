@@ -709,7 +709,7 @@
 		object: {
 			path: "art/door_bg.png",
 			handle_x: 35.0,
-			handle_y: 68.0,
+			handle_y: 74.0,
 			frames: 1
 		}
 	},
@@ -719,7 +719,7 @@
 		object: {
 			path: "art/door_fg.png",
 			handle_x: 35.0,
-			handle_y: 68.0,
+			handle_y: 74.0,
 			frames: 1
 		}
 	},
@@ -802,5 +802,17 @@
 			handle_y: 19,
 			frames: 1
 		}
-	}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/door_servo.png",
+			handle_x: 0,
+			handle_y: 6,
+			frames: 7,
+			frame_width: 9,
+			frame_height: 12
+		}
+	},
 ]

@@ -67,6 +67,12 @@ Function update_all_objects()
 		For Local w:WIDGET = EachIn game.environmental_widget_list
 			w.update()
 		Next
+		'doors (really just special environmental widgets)
+		For Local list:TList = EachIn game.door_lists
+			For Local w:WIDGET = EachIn list
+				w.update()
+			Next
+		Next
 		'health bits
 		For Local w:WIDGET = EachIn health_bits
 			w.update()
@@ -112,7 +118,7 @@ Function update_flags()
 			game.game_in_progress = False
 			game.battle_in_progress = False
 			game.battle_state_toggle_ts = now()
-			If game.hostile_doors_status = ENVIRONMENT.DOOR_STATUS_OPEN Then game.activate_doors( ALIGNMENT_HOSTILE )
+			game.close_doors( ALIGNMENT_HOSTILE )
 			game.spawn_enemies = False
 		End If
 		'if waiting for player to enter arena
@@ -122,13 +128,13 @@ Function update_flags()
 				'if the player has started the engine
 				If game.player_engine_running
 					'open the friendly doors
-					If game.friendly_doors_status = ENVIRONMENT.DOOR_STATUS_CLOSED Then game.activate_doors( ALIGNMENT_FRIENDLY )
+					game.open_doors( ALIGNMENT_FRIENDLY )
 				End If
 			'else, player has entered the arena
 			Else 'point_inside_arena( player )
 				game.player_in_locker = False
 				game.waiting_for_player_to_enter_arena = False
-				If game.hostile_doors_status = ENVIRONMENT.DOOR_STATUS_CLOSED Then game.activate_doors( ALIGNMENT_HOSTILE )
+				game.open_doors( ALIGNMENT_HOSTILE )
 				game.battle_in_progress = True
 				game.battle_state_toggle_ts = now()
 				game.waiting_for_player_to_exit_arena = True

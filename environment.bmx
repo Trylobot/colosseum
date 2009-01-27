@@ -33,14 +33,6 @@ Type ENVIRONMENT
 	Field last_spawned:COMPLEX_AGENT[] 'for each spawner, a reference to the last spawned enemy (so they don't overlap)
 	Field spawn_counter%[] 'for each spawner, a count of how many enemies have been spawned so far
 	
-	Global DOOR_STATUS_OPEN% = 0
-	Global DOOR_STATUS_CLOSED% = 1
-	Field friendly_door_list:TList 'TList<WIDGET> list of paired door widgets
-	Field friendly_doors_status% 'flag indicating state of all friendly doors
-	Field hostile_door_list:TList'TList<WIDGET> list of paired door widgets
-	Field hostile_doors_status% 'flag indicating state of all hostile doors
-	Field all_door_lists:TList 'list of all door lists
-	
 	Field particle_list_background:TList 'TList<PARTICLE>
 	Field particle_list_foreground:TList 'TList<PARTICLE>
 	Field particle_lists:TList 'TList<TList<PARTICLE>>
@@ -57,6 +49,9 @@ Type ENVIRONMENT
 	Field pickup_list:TList 'TList<PICKUP>
 	Field control_brain_list:TList 'TList<CONTROL_BRAIN>
 	Field AI_spawners:TList 'TList<CONTROL_BRAIN>
+	Field friendly_door_list:TList 'TList<DOOR>
+	Field hostile_door_list:TList 'TList<DOOR>
+	Field door_lists:TList 'TList<TList<DOOR>>
 	
 	Field level_enemy_count% 'number of enemies that could possibly be spawned
 	Field level_enemies_killed% 'number of enemies that have been killed since being spawned
@@ -110,12 +105,10 @@ Type ENVIRONMENT
 		pickup_list = CreateList()
 		control_brain_list = CreateList()
 		friendly_door_list = CreateList()
-		friendly_doors_status = DOOR_STATUS_CLOSED
 		hostile_door_list = CreateList()
-		hostile_doors_status = DOOR_STATUS_CLOSED
-		all_door_lists = CreateList()
-			all_door_lists.addlast( friendly_door_list )
-			all_door_lists.addlast( hostile_door_list )
+		door_lists = CreateList()
+			door_lists.addlast( friendly_door_list )
+			door_lists.addlast( hostile_door_list )
 		AI_spawners = CreateList()
 	End Method
 	
@@ -186,12 +179,7 @@ Type ENVIRONMENT
 		'doors
 		For Local sp:SPAWNER = EachIn lev.spawners
 			If sp.class = SPAWNER.class_GATED_FACTORY
-				Select sp.alignment
-					Case ALIGNMENT_FRIENDLY
-						add_door( sp.pos, friendly_door_list )
-					Case ALIGNMENT_HOSTILE
-						add_door( sp.pos, hostile_door_list )
-				End Select
+				add_door( sp.pos, sp.alignment )
 			End If
 		Next
 		'spawning system
@@ -489,51 +477,55 @@ Type ENVIRONMENT
 		End If
 	End Method
 	
-	Method add_door( p:POINT, door_list:TList )
-		Local left_door:WIDGET
-		Local right_door:WIDGET
-		left_door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
-		right_door = widget_archetype[WIDGET_INDEX_ARENA_DOOR].clone()
-		left_door.parent = p
-		right_door.parent = p
-		left_door.attach_at( 25 + 50/3 - widget_archetype[WIDGET_INDEX_ARENA_DOOR].img.height/2 + 1, 0, 90, True )
-		right_door.attach_at( 25 + 50/3 - widget_archetype[WIDGET_INDEX_ARENA_DOOR].img.height/2 + 1, 0, -90, True )
-		left_door.manage( environmental_widget_list )
-		right_door.manage( environmental_widget_list )
-		door_list.AddLast( left_door )
-		door_list.AddLast( right_door )
-		Local bg:PARTICLE = get_particle( "door_bg" )
-		bg.move_to( p )
-		particle_list_background.AddLast( bg )
-		Local fg:PARTICLE = get_particle( "door_fg" )
-		fg.move_to( p )
-		particle_list_foreground.AddLast( fg )
+	Method add_door( p:POINT, alignment% )
+		Local d:DOOR = Create_DOOR( p )
+		Select alignment
+			Case ALIGNMENT_FRIENDLY
+				d.manage( friendly_door_list )
+			Case ALIGNMENT_HOSTILE
+				d.manage( hostile_door_list )
+		End Select
 	End Method
 	
-	Method activate_doors( political_alignment% )
-		Local political_door_list:TList
+	Method toggle_doors( political_alignment% )
+		Local door_list:TList
 		Select political_alignment
 			Case ALIGNMENT_FRIENDLY
-				political_door_list = friendly_door_list
-				friendly_doors_status = Not friendly_doors_status
+				door_list = friendly_door_list
 			Case ALIGNMENT_HOSTILE
-				political_door_list = hostile_door_list
-				hostile_doors_status = Not hostile_doors_status
+				door_list = hostile_door_list
 		End Select
-		For Local door:WIDGET = EachIn political_door_list
-			door.queue_transformation( 1 )
+		For Local d:DOOR = EachIn door_list
+			d.toggle()
 		Next
 	End Method
-	
+	Method open_doors( political_alignment% )
+		Local door_list:TList
+		Select political_alignment
+			Case ALIGNMENT_FRIENDLY
+				door_list = friendly_door_list
+			Case ALIGNMENT_HOSTILE
+				door_list = hostile_door_list
+		End Select
+		For Local d:DOOR = EachIn door_list
+			d.open()
+		Next
+	End Method
+	Method close_doors( political_alignment% )
+		Local door_list:TList
+		Select political_alignment
+			Case ALIGNMENT_FRIENDLY
+				door_list = friendly_door_list
+			Case ALIGNMENT_HOSTILE
+				door_list = hostile_door_list
+		End Select
+		For Local d:DOOR = EachIn door_list
+			d.close()
+		Next
+	End Method
+
 	Method reset_all_doors()
-		For Local door:WIDGET = EachIn friendly_door_list
-			door.reset()
-		Next
-		For Local door:WIDGET = EachIn hostile_door_list
-			door.reset()
-		Next
-		friendly_doors_status = DOOR_STATUS_CLOSED
-		hostile_doors_status = DOOR_STATUS_CLOSED
+		'...
 	End Method
 	
 	Method find_path:TList( start_x#, start_y#, goal_x#, goal_y#, per_waypoint_chaotic_nudging% = False )

@@ -76,6 +76,13 @@ Function draw_game()
 	For Local part:PARTICLE = EachIn game.particle_list_background
 		part.draw()
 	Next
+	
+	'door backgrounds
+	For Local list:TList = EachIn game.door_lists
+		For Local d:DOOR = EachIn list
+			d.draw_bg()
+		Next
+	Next
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
 	SetColor( 255, 255, 255 )
@@ -124,6 +131,13 @@ Function draw_game()
 	'environmental widgets
 	For Local w:WIDGET = EachIn game.environmental_widget_list
 		w.draw()
+	Next
+
+	'door foregrounds
+	For Local list:TList = EachIn game.door_lists
+		For Local d:DOOR = EachIn list
+			d.draw_fg()
+		Next
 	Next
 
 	If game.human_participation

@@ -87,6 +87,7 @@ init_graphics()
 'debug_widget()
 'debug_spawner()
 'debug_dirtyrects()
+'debug_doors()
 ?
 
 '______________________________________________________________________________

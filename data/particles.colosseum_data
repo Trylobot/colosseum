@@ -205,24 +205,6 @@
 	},
 	{
 		class: "particle",
-		key: "door_bg",
-		object: {
-			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.door_bg",
-			layer: "LAYER_BACKGROUND",
-		}
-	},
-	{
-		class: "particle",
-		key: "door_fg",
-		object: {
-			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.door_fg",
-			layer: "LAYER_FOREGROUND",
-		}
-	},
-	{
-		class: "particle",
 		key: "cash_from_kill",
 		object: {
 			particle_type: "PARTICLE_TYPE_STR",
@@ -247,6 +229,14 @@
 			img: "image.laser",
 			layer: "LAYER_FOREGROUND",
 			retain: false
+		}
+	},
+	{
+		class: "particle",
+		key: "door_servo",
+		object: {
+			particle_type: "PARTICLE_TYPE_ANIM",
+			img: "image.door_servo",
 		}
 	}
 ]
