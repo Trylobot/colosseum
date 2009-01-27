@@ -101,8 +101,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			get_next_waypoint()
 		End If
 		If waypoint <> Null
-			ang_to_waypoint = avatar.ang_to_cVEC( waypoint )
-			dist_to_waypoint = avatar.dist_to_cVEC( waypoint )
+			ang_to_waypoint = avatar.ang_to( waypoint )
+			dist_to_waypoint = avatar.dist_to( waypoint )
 		End If
 		'chassis movement
 		If ai.can_move And Not (ai.is_carrier And avatar.is_deployed)
@@ -177,36 +177,23 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			avatar.turn( 0 )
 			Return 
 		End If
-		'take measurements as regard to destination, while being aware of the cached variables
-		Local diff#, threshold#
-		If cVEC(dest)
-			If cVEC(dest) = waypoint
-				diff = ang_wrap( avatar.ang - ang_to_waypoint )
-				threshold = ATan2( waypoint_radius, dist_to_waypoint )
-			Else 'cVEC(dest) <> waypoint
-				diff = ang_wrap( avatar.ang - avatar.ang_to_cvec( cVEC( dest )))
-				threshold = ATan2( waypoint_radius, avatar.dist_to_cVEC( cVEC( dest )))
-			End If
-		Else If POINT(dest)
-			If POINT(dest) = target
-				diff = ang_wrap( avatar.ang - ang_to_target )
-				threshold = ATan2( waypoint_radius, dist_to_target )
-			Else 'POINT(dest) <> target
-				diff = ang_wrap( avatar.ang - avatar.ang_to( POINT( dest )))
-				threshold = ATan2( waypoint_radius, avatar.dist_to( POINT( dest )))
-			End If
-		End If
-		'based on the measurements, if the avatar is NOT pointed at the destination
-		'  specifically, if the angle to the destination is within some threshold
-		'  calculated as the tangents-triangle based in a circle given by waypoint radius centered at the destination
-		If Abs( diff ) > threshold
-			'turn in the direction of the destination, while driving at 1/3 throttle
+		Local diff# = ang_wrap( avatar.ang_to( dest ))
+		Local diff_mag# = Abs( diff )
+		Local max_ang_vel# = avatar.turning_force.magnitude_max / avatar.mass
+		If diff_mag > 5.0 * max_ang_vel
 			avatar.drive( 0.3333 )
-			avatar.turn( -1.0*Sgn( diff ))
-		Else 'avatar IS pointed at the destination
-			'full speed ahead, let's go!
+			If diff < 0
+				avatar.turn_turret_system( 0, 1.0 )
+			Else 'diff > 0
+				avatar.turn_turret_system( 0, -1.0 )
+			End If
+		Else 'diff_mag <= 5.0 * max_ang_vel
 			avatar.drive( 1.0 )
-			avatar.turn( 0.0 ) '-1.0*(diff/threshold) )
+			If diff < 0
+				avatar.turn_turret_system( 0, diff_mag /( max_ang_vel * 5.0 ))
+			Else 'diff > 0
+				avatar.turn_turret_system( 0, -diff_mag /( max_ang_vel * 5.0 ))
+			End If
 		End If
 	End Method
 	
@@ -260,7 +247,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method waypoint_reached%()
-		If waypoint <> Null And avatar.dist_to_cVEC( waypoint ) <= waypoint_radius
+		If waypoint <> Null And avatar.dist_to( waypoint ) <= waypoint_radius
 			Return True
 		Else
 			Return False 'sir, where are we going? LOL :D
@@ -423,7 +410,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					EndIf
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 					For Local index% = 0 To avatar.turret_systems.Length-1
-						Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.ang_to_cVEC( game.mouse ))
+						Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.ang_to( game.mouse ))
 						Local diff_mag# = Abs( diff )
 						Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
 						If diff_mag > 5.0*max_ang_vel

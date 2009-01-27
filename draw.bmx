@@ -376,9 +376,9 @@ Function draw_reticle()
 				'initialization
 				If last_pos = Null Then last_pos = Copy_POINT( p_tur )
 				If lag_aimer = Null Then lag_aimer = cVEC.Create( p_tur.pos_x + 50*Cos( p_tur.ang ), p_tur.pos_y + 50*Sin( p_tur.ang ) )
-				Local ang_to_mouse# = p_tur.ang_to_cVEC( game.mouse )
+				Local ang_to_mouse# = p_tur.ang_to( game.mouse )
 				Local dist_from_lag_aimer_to_mouse# = vector_diff_length( lag_aimer.x, lag_aimer.y, game.mouse.x, game.mouse.y )
-				Local dist_to_ptur# = p_tur.dist_to_cVEC( lag_aimer )
+				Local dist_to_ptur# = p_tur.dist_to( lag_aimer )
 				lag_aimer.x :+ p_tur.pos_x - last_pos.pos_x
 				lag_aimer.y :+ p_tur.pos_y - last_pos.pos_y
 				last_pos = Copy_POINT( p_tur )
@@ -392,7 +392,7 @@ Function draw_reticle()
 					lag_aimer = game.mouse.clone()
 				End If
 				'actual mouse reticle
-				SetRotation( p_tur.ang_to_cVEC( game.mouse ))
+				SetRotation( p_tur.ang_to( game.mouse ))
 				SetAlpha( 1.0 )
 				DrawImage( img_reticle, game.mouse.x, game.mouse.y )
 				'if the reticle is not visible, show an indicator on the edge of the screen

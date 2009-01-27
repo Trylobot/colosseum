@@ -246,6 +246,16 @@ Type COMPLEX_AGENT Extends AGENT
 		If spawning
 			alpha_override :* time_alpha_pct( spawn_begin_ts, spawn_time, True )
 		End If
+		'colored glow/shadow to display political alignment
+		Select political_alignment
+			Case ALIGNMENT_FRIENDLY
+				SetColor( 96, 96, 255 )
+			Case ALIGNMENT_HOSTILE
+				SetColor( 255, 96, 96 )
+		End Select
+		SetAlpha( 0.15 )
+		SetScale( 0.3, 0.3 )
+		DrawImage( get_image( "halo" ), pos_x, pos_y )
 		'widgets behind
 		If Not hide_widgets
 			For Local widget_list:TList = EachIn all_widget_lists

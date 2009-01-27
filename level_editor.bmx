@@ -420,7 +420,7 @@ Function level_editor( lev:LEVEL )
 							End If
 						Else If shift
 							If MouseDown( 1 )
-								closest_sp.pos.ang = round_to_nearest( ang_wrap( closest_sp.pos.ang_to_cVEC( mouse )), 45 )
+								closest_sp.pos.ang = round_to_nearest( ang_wrap( closest_sp.pos.ang_to( mouse )), 45 )
 							End If
 						End If
 					End If

@@ -191,7 +191,7 @@ Function debug_overlay()
 
 	'show particle bounding boxes
 	If game <> Null
-		SetAlpha( 0.33333 )
+		SetAlpha( 0.08 )
 		Local dirty_rect:BOX
 		For Local p:PARTICLE = EachIn game.retained_particle_list
 			dirty_rect = p.get_bounding_box()
@@ -205,7 +205,7 @@ Function debug_overlay()
 	Local closest_cb:CONTROL_BRAIN = Null
 	Local dist%, closest_dist% = 15
 	For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
-		dist = brain.avatar.dist_to_cVEC( game.mouse )
+		dist = brain.avatar.dist_to( game.mouse )
 		If dist < closest_dist
 			closest_dist = dist
 			closest_cb = brain
