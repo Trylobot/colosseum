@@ -196,7 +196,7 @@ Function collision_agent_agent( ag:AGENT, other:AGENT )
 		'collision force/torque
 		Local collision_force_mag# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*vel.r()
 		ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, collision_force_mag*Cos( ang - other.ang ), 50 )))
-		ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, dist*(collision_force_mag/6.0)*Sin( ang - other.ang ), 50 )))
+		ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, dist*(collision_force_mag/30.0)*Sin( ang - other.ang ), 50 )))
 	End If
 End Function
 

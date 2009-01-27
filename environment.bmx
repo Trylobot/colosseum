@@ -507,10 +507,6 @@ Type ENVIRONMENT
 		Next
 	End Method
 
-	Method reset_all_doors()
-		'...
-	End Method
-	
 	Method find_path:TList( start_x#, start_y#, goal_x#, goal_y#, per_waypoint_chaotic_nudging% = False )
 		Local start_cell:CELL = pathing.containing_cell( start_x, start_y )
 		Local goal_cell:CELL = pathing.containing_cell( goal_x, goal_y )
@@ -533,10 +529,6 @@ Type ENVIRONMENT
 		Return list
 	End Method
 
-	Method point_inside_arena%( p:POINT )
-		Return True
-	End Method
-	
 	Method kill( brain:CONTROL_BRAIN )
 		If brain <> Null And Not brain.avatar.dead()
 			brain.avatar.die()

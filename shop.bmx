@@ -79,7 +79,7 @@ Function draw_shop()
 			If i = profile.selected_inventory_index
 				alpha = 1.0
 			End If
-			ag.draw( ,,, alpha )
+			ag.draw( alpha )
 			cx :+ spacing
 		Next
 		y :+ 50 + 3
@@ -216,7 +216,7 @@ Function inventory_select()
 				SetColor( 127, 127, 127 )
 				DrawText( "[ENTER] equip", cx - TextWidth( "[ENTER] equip" )/2, cy + spacing/2 + 3 + 1.5*(GetImageFont().Height() - 1))
 			End If
-			ag.draw( ,,, alpha, 2 )
+			ag.draw( alpha, 2 )
 			cx :+ spacing
 		Next
 		
@@ -377,7 +377,7 @@ Function buy_stuff()
 					End If
 				End If
 			End If
-			ag.draw( ,,, alpha, 2 )
+			ag.draw( alpha, 2 )
 			SetScale( 1, 1 )
 			SetRotation( 0 )
 			SetAlpha( 1 )

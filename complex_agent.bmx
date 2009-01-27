@@ -46,10 +46,6 @@ Type COMPLEX_AGENT Extends AGENT
 	Field left_track:PARTICLE 'a special particle that represents the "left track" of a tank
 	Field right_track:PARTICLE 'a special particle that represents the "right track" of a tank
 
-	Field red%, green%, blue%
-	Field alpha#
-	Field scale#
-	
 	Field spawning%
 	Field spawn_time%
 	Field spawn_begin_ts%
@@ -70,9 +66,6 @@ Type COMPLEX_AGENT Extends AGENT
 			all_widget_lists.AddLast( constant_widgets )
 			all_widget_lists.AddLast( deploy_widgets )
 		stickies = CreateList()
-		red = 255; green = 255; blue = 255
-		alpha = 1.0
-		scale = 1.0
 	End Method
 	
 	'___________________________________________
@@ -249,49 +242,33 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
-	Method draw( red_override% = -1, green_override% = -1, blue_override% = -1, alpha_override# = -1.0, scale_override# = -1.0, hide_widgets% = False )
-		If red_override   <> -1   Then red   = red_override   Else red   = 255
-		If green_override <> -1   Then green = green_override Else green = 255
-		If blue_override  <> -1   Then blue  = blue_override  Else blue  = 255
-		If alpha_override <> -1.0 Then alpha = alpha_override Else alpha = 1.0
-		If scale_override <> -1.0 Then scale = scale_override Else scale = 1.0
+	Method draw( alpha_override# = 1.0, scale_override# = 1.0, hide_widgets% = False )
+		If spawning
+			alpha_override :* time_alpha_pct( spawn_begin_ts, spawn_time, True )
+		End If
 		'widgets behind
 		If Not hide_widgets
 			For Local widget_list:TList = EachIn all_widget_lists
 				For Local w:WIDGET = EachIn widget_list
 					If w.layer = LAYER_BEHIND_PARENT
-						w.draw( alpha )
+						w.draw( alpha_override, scale_override )
 					End If
 				Next
 			Next
 		End If
-		SetColor( red, green, blue )
-		If spawning
-			alpha = time_alpha_pct( spawn_begin_ts, spawn_time, True )
-		End If
-		SetAlpha( alpha )
-		SetScale( scale, scale )
+		SetColor( 255, 255, 255 )
+		SetAlpha( alpha_override )
+		SetScale( scale_override, scale_override )
 		SetRotation( ang )
 		'tracks
 		If right_track <> Null And left_track <> Null
-			left_track.red = Float(red)/255.0
-			left_track.green = Float(green)/255.0
-			left_track.blue = Float(blue)/255.0
-			left_track.alpha = alpha
-			left_track.scale = scale
-			left_track.draw()
-			
-			right_track.red = Float(red)/255.0
-			right_track.green = Float(green)/255.0
-			right_track.blue = Float(blue)/255.0
-			right_track.alpha = alpha
-			right_track.scale = scale
-			right_track.draw()
+			left_track.draw( alpha_override, scale_override )
+			right_track.draw( alpha_override, scale_override )
 		End If
 		'chassis
-		SetColor( red, green, blue )
-		SetAlpha( alpha )
-		SetScale( scale, scale )
+		SetColor( 255, 255, 255 )
+		SetAlpha( alpha_override )
+		SetScale( scale_override, scale_override )
 		SetRotation( ang )
 		If img <> Null Then DrawImage( img, pos_x, pos_y )
 		'widgets in front of
@@ -299,14 +276,14 @@ Type COMPLEX_AGENT Extends AGENT
 			For Local widget_list:TList = EachIn all_widget_lists
 				For Local w:WIDGET = EachIn widget_list
 					If w.layer = LAYER_IN_FRONT_OF_PARENT
-						w.draw( alpha )
+						w.draw( alpha_override, scale_override )
 					End If
 				Next
 			Next
 		End If
 		'turrets
 		For Local t:TURRET = EachIn turrets
-			t.draw()
+			t.draw( alpha_override, scale_override )
 		Next
 		'sticky particles (damage)
 		For Local s:PARTICLE = EachIn stickies
@@ -527,6 +504,12 @@ Type COMPLEX_AGENT Extends AGENT
 		turrets = Null
 		turret_systems = New Int[][turret_anchors.Length]
 	End Method
+	'___________________________________________
+	Method move_to( argument:Object, snap_turrets% = False )
+		Super.move_to( argument )
+		If snap_turrets Then snap_all_turrets()
+	End Method
+	
 	'___________________________________________
 	Method add_emitter:EMITTER(	other_em:EMITTER, event% )
 		Local em:EMITTER = Copy_EMITTER( other_em )

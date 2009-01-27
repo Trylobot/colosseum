@@ -84,7 +84,7 @@ Type POINT Extends MANAGED_OBJECT
 		Return p
 	End Method
 	
-	Method move_to( argument:Object )
+	Method move_to( argument:Object, DUMMY_PARAMETER% = False )
 		If POINT( argument )
 			Local pos:POINT = POINT( argument )
 			pos_x = pos.pos_x

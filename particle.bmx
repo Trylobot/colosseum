@@ -121,10 +121,10 @@ Type PARTICLE Extends POINT
 		End If
 	End Method
 	
-	Method draw()
+	Method draw( alpha_override# = 1.0, scale_override# = 1.0, hide_widgets% = False )
 		SetColor( red*255, green*255, blue*255 )
-		SetAlpha( alpha )
-		SetScale( scale, scale )
+		SetAlpha( alpha*alpha_override )
+		SetScale( scale*scale_override, scale*scale_override )
 		
 		Select particle_type
 			Case PARTICLE_TYPE_IMG, PARTICLE_TYPE_ANIM
@@ -200,8 +200,8 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Method get_bounding_box:BOX()
-		Local size% = Max( img.width, img.height ) + 1
-		Return Create_BOX( pos_x - size/2, pos_y - size/2, size, size )
+		Local size# = Max( img.width, img.height )
+		Return Create_BOX( pos_x - size/2.0, pos_y - size/2.0, size, size )
 	End Method
 	
 End Type

@@ -151,11 +151,10 @@ Type TURRET Extends POINT
 		If Not overheated() Then cur_heat :- cur_heat*cooling_coefficient
 	End Method
 	
-	Method draw()
-		SetColor( parent.red, parent.green, parent.blue )
-		SetAlpha( parent.alpha )
-		SetScale( parent.scale, parent.scale )
-		
+	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
+		SetColor( 255, 255, 255 )
+		SetAlpha( alpha_override )
+		SetScale( scale_override, scale_override )
 		SetRotation( ang )
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
 			tb.draw()

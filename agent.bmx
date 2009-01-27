@@ -58,7 +58,10 @@ Type AGENT Extends PHYSICAL_OBJECT
 		death_emitters = CreateList()
 	End Method
 	
-	Method draw( red_override% = -1, green_override% = -1, blue_override% = -1, alpha_override# = -1.0, scale_override# = -1.0, UNUSED% = False )
+	Method draw( alpha_override# = -1.0, scale_override# = -1.0, DUMMY_PARAMETER% = False )
+		SetColor( 255, 255, 255 )
+		SetAlpha( alpha_override )
+		SetScale( scale_override, scale_override )
 		SetRotation( ang )
 		DrawImage( img, pos_x, pos_y )
 	End Method

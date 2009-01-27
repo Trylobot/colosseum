@@ -487,7 +487,7 @@ Function level_editor( lev:LEVEL )
 								ag.ang = -90
 								ag.snap_all_turrets()
 								ag.update()
-								ag.draw( ,,,, 0.75, True )
+								ag.draw( , 0.75, True )
 							Next
 						Next
 						SetRotation( 0 )
@@ -530,7 +530,7 @@ Function level_editor( lev:LEVEL )
 						ag.ang = -90
 						ag.snap_all_turrets()
 						ag.update()
-						ag.draw( ,,, 0.5 + Sin(now() Mod 360), 0.75, True )
+						ag.draw( 0.5 + Sin(now() Mod 360), 0.75, True )
 						SetRotation( 0 )
 						SetScale( 1, 1 )
 						
