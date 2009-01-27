@@ -58,7 +58,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 		death_emitters = CreateList()
 	End Method
 	
-	Method draw( alpha_override# = -1.0, scale_override# = -1.0, DUMMY_PARAMETER% = False )
+	Method draw( alpha_override# = 1.0, scale_override# = 1.0, DUMMY_PARAMETER% = False )
 		SetColor( 255, 255, 255 )
 		SetAlpha( alpha_override )
 		SetScale( scale_override, scale_override )
