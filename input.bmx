@@ -26,7 +26,7 @@ Function get_all_input()
 	If FLAG_in_menu
 		Local m:MENU = get_current_menu()
 		'menu navigation controls
-		If escape_key_release() And current_menu <> 0 And get_current_menu().menu_id <> MENU_ID_PAUSED
+		If KeyHit( KEY_ESCAPE ) And current_menu <> 0 And get_current_menu().menu_id <> MENU_ID_PAUSED
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		End If
 		If KeyHit( KEY_DOWN ) 'Or KeyHit( KEY_RIGHT )
@@ -49,7 +49,7 @@ Function get_all_input()
 		End If
 	Else If FLAG_in_shop
 		'shop navigation
-		If escape_key_release()
+		If KeyHit( KEY_ESCAPE )
 			menu_command( COMMAND_BACK_TO_MAIN_MENU )
 		End If
 		'delegate input to shop function
@@ -62,7 +62,7 @@ Function get_all_input()
 		'in-game input
 		If game <> Null And game.human_participation
 			'pressed ESC
-			If escape_key_release()
+			If KeyHit( KEY_ESCAPE )
 				If Not game.game_over
 					If Not FLAG_in_menu
 						FLAG_in_menu = True

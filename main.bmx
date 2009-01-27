@@ -23,7 +23,7 @@ Const network_mode% = NETWORK_MODE_CLIENT
 Global ip_address$
 Global ip_port%
 'Graphics
-Global window_w%
+Global window_w% 'either keep these two, or keep window:BOX, but not both.
 Global window_h%
 	Global window:BOX
 Global fullscreen%

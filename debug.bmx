@@ -8,10 +8,8 @@ EndRem
 ''______________________________________________________________________________
 Global debug_origin:cVEC = cVEC.Create( 0, 0 )
 Global real_origin:cVEC = cVEC.Create( 0, 0 )
-Const SPAWN_OFF% = 0, SPAWN_FRIENDLIES% = 1, SPAWN_HOSTILES% = 2
-Global FLAG_spawn_mode% = SPAWN_OFF
-Global spawn_archetype% = enemy_index_start, spawn_agent:COMPLEX_AGENT
-Global global_start:CELL, global_goal:CELL
+Global global_start:CELL
+Global global_goal:CELL
 '______________________________________________________________________________
 Function debug_ts( message$ )
 	DebugLog "" + now() + " :: " + message
@@ -152,6 +150,9 @@ Function debug_agent_lists( to_console% = False )
 	Next
 End Function
 '______________________________________________________________________________
+Global spawn_archetype% = enemy_index_start
+Global spawn_alignment% = ALIGNMENT_FRIENDLY
+Global spawn_agent:COMPLEX_AGENT
 Global cb:CONTROL_BRAIN = Null
 Function debug_overlay()
 	SetRotation( 0 )
@@ -263,12 +264,12 @@ Function debug_overlay()
 	End If
 	
 	If KeyHit( KEY_P )
-		FLAG_spawn_mode :+ 1
-		If FLAG_spawn_mode > 2 Then FLAG_spawn_mode = 0
+		spawn_alignment :+ 1
+		If spawn_alignment > 2 Then spawn_alignment = 0
 	End If
-	If FLAG_spawn_mode <> SPAWN_OFF
+	If spawn_alignment <> ALIGNMENT_NONE
 		If spawn_agent = Null
-			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype] ))
+			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype], spawn_alignment ))
 			spawn_agent.ang = Rand( 360 )
 		End If
 		spawn_agent.move_to( game.mouse, True )
@@ -276,7 +277,7 @@ Function debug_overlay()
 		spawn_agent.draw()
 		
 		If KeyHit( KEY_O )
-			game.spawn_agent( spawn_archetype, FLAG_spawn_mode, POINT( spawn_agent ))
+			game.spawn_agent( spawn_archetype, spawn_alignment, POINT( spawn_agent ))
 			spawn_agent = Null
 		Else If KeyHit( KEY_OPENBRACKET )
 			spawn_archetype :- 1
