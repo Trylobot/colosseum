@@ -512,6 +512,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			level_editor_cache = load_level( String(argument) )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			show_info( "loaded level "+level_editor_cache.name+" from "+String(argument) )
+			get_menu( MENU_ID_LEVEL_EDITOR ).recalculate_dimensions() 
 		'________________________________________
 		Case COMMAND_SAVE_LEVEL
 			save_level( String(argument), level_editor_cache )

@@ -139,13 +139,25 @@ Type LEVEL Extends MANAGED_OBJECT
 	End Method
 	
 	Method set_divider( line_type%, index%, value% )
-		If index = 0 Then Return
-		
+		If index = 0 Then Return 'left- and top-most dividers are anchored to zero
 		Select line_type
 			
 			Case LINE_TYPE_HORIZONTAL
 				Local delta% = value - horizontal_divs[index]
 				height :+ delta
+				'spawners
+				For Local sp:SPAWNER = EachIn spawners
+					If sp.pos.pos_y >= horizontal_divs[index]
+						sp.pos.pos_y :+ delta
+					End If
+				Next
+				'props
+				For Local pd:PROP_DATA = EachIn props
+					If pd.pos.pos_y >= horizontal_divs[index]
+						pd.pos.pos_y :+ delta
+					End If
+				Next
+				'divs
 				For Local i% = index To horizontal_divs.Length - 1
 					horizontal_divs[i] :+ delta
 				Next
@@ -153,6 +165,19 @@ Type LEVEL Extends MANAGED_OBJECT
 			Case LINE_TYPE_VERTICAL
 				Local delta% = value - vertical_divs[index]
 				width :+ delta
+				'spawners
+				For Local sp:SPAWNER = EachIn spawners
+					If sp.pos.pos_x >= vertical_divs[index]
+						sp.pos.pos_x :+ delta
+					End If
+				Next
+				'props
+				For Local pd:PROP_DATA = EachIn props
+					If pd.pos.pos_x >= vertical_divs[index]
+						pd.pos.pos_x :+ delta
+					End If
+				Next
+				'divs
 				For Local i% = index To vertical_divs.Length - 1
 					vertical_divs[i] :+ delta
 				Next

@@ -32,7 +32,9 @@ Function level_editor( lev:LEVEL )
 	Local nearest_div_dist%
 	Local nearest_div_axis%
 	
-	Local gridsnap% = 5
+	Local current_grid_size% = 2
+	Local grid_sizes%[] = [ 1, 2, 5, 8, 10, 12, 15, 20, 25 ]
+	Local gridsnap% = grid_sizes[current_grid_size]
 	Local mode% = EDIT_LEVEL_MODE_BASIC
 	Local FLAG_text_mode%
 	Local x% = gridsnap, y% = gridsnap
@@ -65,15 +67,21 @@ Function level_editor( lev:LEVEL )
 		DrawLine( mouse.x - mouse_delta.x, mouse.y - mouse_delta.y, mouse.x, mouse.y )		
 		
 		'draw the gridsnap lines
-		SetAlpha( 0.25 )
-		Local grid_rows% = lev.height / gridsnap
-		Local grid_cols% = lev.width / gridsnap
-		For Local i% = 0 To grid_rows
-			DrawLine( x,y+i*gridsnap, x+grid_cols*gridsnap,y+i*gridsnap )
-		Next
-		For Local i% = 0 To grid_cols
-			DrawLine( x+i*gridsnap,y, x+i*gridsnap,y+grid_rows*gridsnap )
-		Next
+		If gridsnap > 1
+			If gridsnap > 2
+				SetAlpha( 0.25 )
+			Else
+				SetAlpha( 0.125 )
+			End If
+			Local grid_rows% = lev.height / gridsnap
+			Local grid_cols% = lev.width / gridsnap
+			For Local i% = 0 To grid_rows
+				DrawLine( x,y+i*gridsnap, x+grid_cols*gridsnap,y+i*gridsnap )
+			Next
+			For Local i% = 0 To grid_cols
+				DrawLine( x+i*gridsnap,y, x+i*gridsnap,y+grid_rows*gridsnap )
+			Next
+		End If
 		
 		'draw the dividers
 		SetAlpha( 0.50 )
@@ -105,16 +113,21 @@ Function level_editor( lev:LEVEL )
 				Case ALIGNMENT_HOSTILE
 					SetColor( 255, 64, 64 )
 			End Select
+			SetRotation( 0 )
 			Local p:POINT = sp.pos
 			SetAlpha( 0.5 )
 			DrawOval( x+p.pos_x-spawn_point_preview_radius,y+p.pos_y-spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
 			SetLineWidth( 2 )
 			SetAlpha( 1 )
 			DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )
-			SetAlpha( 0.5 )
-			SetRotation( sp.pos.ang )
-			DrawImage( get_image( "door_fg" ), sp.pos.pos_x, sp.pos.pos_y )
+			If sp.class = SPAWNER.class_GATED_FACTORY
+				SetAlpha( 0.5 )
+				SetRotation( sp.pos.ang )
+				DrawImage( get_image( "door_fg" ), x+sp.pos.pos_x, y+sp.pos.pos_y )
+			End If
 		Next
+		SetAlpha( 1 )
+		SetRotation( 0 )
 		
 		'draw the props
 		For Local pd:PROP_DATA = EachIn lev.props
@@ -137,11 +150,15 @@ Function level_editor( lev:LEVEL )
 			Else If KeyHit( KEY_6 ) Then mode = EDIT_LEVEL_MODE_PROPS
 			
 			If KeyHit( KEY_NUMADD )
-				gridsnap :+ 5
+				current_grid_size :+ 1
+				If current_grid_size > grid_sizes.Length - 1 Then current_grid_size = 0
+				gridsnap = grid_sizes[current_grid_size]
 				x = gridsnap
 				y = gridsnap
 			Else If KeyHit( KEY_NUMSUBTRACT )
-				If gridsnap > 5 Then gridsnap :- 5
+				current_grid_size :- 1
+				If current_grid_size < 0 Then current_grid_size = grid_sizes.Length - 1
+				gridsnap = grid_sizes[current_grid_size]
 				x = gridsnap
 				y = gridsnap
 			End If
@@ -271,10 +288,8 @@ Function level_editor( lev:LEVEL )
 						'remove nearest div (do not recalculate)
 						lev.remove_divider( nearest_div, nearest_div_axis )
 					Else If control And MouseDown( 1 )
-						If Not mouse_down_1
-							'no need to record this event
-						Else
-							'drag nearest div (do not recalculate)
+						If mouse_down_1
+							'drag nearest div, and do not change it while dragging
 							If nearest_div_axis = LINE_TYPE_VERTICAL
 								lev.set_divider( LINE_TYPE_VERTICAL, nearest_div, gridsnap_mouse.x-x - nearest_div_dist )
 							Else If nearest_div_axis = LINE_TYPE_HORIZONTAL
@@ -282,7 +297,7 @@ Function level_editor( lev:LEVEL )
 							End If
 						End If
 					Else
-						'recalculate nearest div
+						'search for the nearest div to the mouse
 						nearest_div = 0
 						nearest_div_dist = CELL.MAXIMUM_COST
 						nearest_div_axis = LINE_TYPE_VERTICAL
@@ -643,7 +658,8 @@ Function level_editor( lev:LEVEL )
 		End If
 
 		Flip( 1 )
-	Until KeyHit( KEY_ESCAPE )
+	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+	If AppTerminate() Then End
 	
 End Function
 
