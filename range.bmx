@@ -41,6 +41,11 @@ Type RANGE
 		End If
 	End Method
 	
+	Method scale( scalar# )
+		low = low * scalar
+		high = high * scalar
+	End Method
+	
 End Type
 
 '______________________________________________________________________________

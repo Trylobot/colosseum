@@ -151,7 +151,7 @@ Function debug_agent_lists( to_console% = False )
 End Function
 '______________________________________________________________________________
 Global spawn_archetype% = enemy_index_start
-Global spawn_alignment% = ALIGNMENT_FRIENDLY
+Global spawn_alignment% = ALIGNMENT_NONE
 Global spawn_agent:COMPLEX_AGENT
 Global cb:CONTROL_BRAIN = Null
 Function debug_overlay()
@@ -266,15 +266,17 @@ Function debug_overlay()
 	If KeyHit( KEY_P )
 		spawn_alignment :+ 1
 		If spawn_alignment > 2 Then spawn_alignment = 0
+		spawn_agent = Null
 	End If
 	If spawn_alignment <> ALIGNMENT_NONE
 		If spawn_agent = Null
 			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype], spawn_alignment ))
 			spawn_agent.ang = Rand( 360 )
+			spawn_agent.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, -spawn_agent.mass/100.0 )))
 		End If
 		spawn_agent.move_to( game.mouse, True )
 		spawn_agent.update()
-		spawn_agent.draw()
+		spawn_agent.draw( 0.50, 1.50 )
 		
 		If KeyHit( KEY_O )
 			game.spawn_agent( spawn_archetype, spawn_alignment, POINT( spawn_agent ))
@@ -408,39 +410,39 @@ Function debug_overlay()
 	End If
 	
 End Function
-'______________________________________________________________________________
-Function debug_doors()
-	Local spawn:POINT = Create_POINT( window_w/2, window_h/2 )
-	Local env:ENVIRONMENT = Create_ENVIRONMENT()
-	env.add_door( spawn, ALIGNMENT_FRIENDLY )
-	
-	Local before% = now()
-	Repeat
-		Cls()
-		
-		If KeyHit( KEY_ENTER )
-			env.toggle_doors( ALIGNMENT_FRIENDLY )
-		End If
-		If MouseDown( 1 )
-			spawn.move_to( Create_cVEC( MouseX(), MouseY() ))
-		End If
-		
-		If now() - before > time_per_frame_min
-			before = now()
-			For Local d:DOOR = EachIn env.friendly_door_list
-				d.update()
-			Next
-		End If
-		
-		For Local d:DOOR = EachIn env.friendly_door_list
-			d.draw_bg()
-			d.draw_fg()
-		Next
-		
-		Flip( 1 )
-	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
-	End
-End Function
+''______________________________________________________________________________
+'Function debug_doors()
+'	Local spawn:POINT = Create_POINT( window_w/2, window_h/2 )
+'	Local env:ENVIRONMENT = Create_ENVIRONMENT()
+'	env.add_door( spawn, ALIGNMENT_FRIENDLY )
+'	
+'	Local before% = now()
+'	Repeat
+'		Cls()
+'		
+'		If KeyHit( KEY_ENTER )
+'			env.toggle_doors( ALIGNMENT_FRIENDLY )
+'		End If
+'		If MouseDown( 1 )
+'			spawn.move_to( Create_cVEC( MouseX(), MouseY() ))
+'		End If
+'		
+'		If now() - before > time_per_frame_min
+'			before = now()
+'			For Local d:DOOR = EachIn env.friendly_door_list
+'				d.update()
+'			Next
+'		End If
+'		
+'		For Local d:DOOR = EachIn env.friendly_door_list
+'			d.draw_bg()
+'			d.draw_fg()
+'		Next
+'		
+'		Flip( 1 )
+'	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+'	End
+'End Function
 ''______________________________________________________________________________
 'Function debug_dirtyrects()
 '	Local o:cVEC = Create_cVEC( 0, 0 )

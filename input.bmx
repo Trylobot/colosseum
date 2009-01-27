@@ -84,6 +84,7 @@ Function get_all_input()
 	'music enable/disable
 	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
 	
+	'insta-quit feature
 	escape_key_update()
 	
 	'screenshot

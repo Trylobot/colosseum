@@ -254,7 +254,7 @@ Type COMPLEX_AGENT Extends AGENT
 				SetColor( 255, 96, 96 )
 		End Select
 		SetAlpha( 0.15*alpha_override )
-		SetScale( 0.3, 0.3 )
+		SetScale( 0.3*scale_override, 0.3*scale_override )
 		DrawImage( get_image( "halo" ), pos_x, pos_y )
 		'widgets behind
 		If Not hide_widgets
@@ -441,6 +441,7 @@ Type COMPLEX_AGENT Extends AGENT
 				If cur_health > max_health Then cur_health = max_health
 			
 			Case PICKUP_INDEX_COOLDOWN
+DebugStop
 				Local tur_list:TList = CreateList()
 				For Local t:TURRET = EachIn turrets
 					If t.max_heat <> INFINITY Then tur_list.AddLast( t )
