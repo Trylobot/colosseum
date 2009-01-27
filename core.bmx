@@ -237,12 +237,13 @@ Const COMMAND_MULTIPLAYER_JOIN% = 600
 Const COMMAND_MULTIPLAYER_HOST% = 700
 Const COMMAND_PLAYER_INPUT_TYPE% = 1000
 Const COMMAND_SETTINGS_FULLSCREEN% = 1010
-Const COMMAND_SETTINGS_RESOLUTION% = 1020
-Const COMMAND_SETTINGS_REFRESH_RATE% = 1030
-Const COMMAND_SETTINGS_BIT_DEPTH% = 1040
-Const COMMAND_SETTINGS_IP_ADDRESS% = 1050
-Const COMMAND_SETTINGS_IP_PORT% = 1060
-Const COMMAND_SETTINGS_PARTICLE_LIMIT% = 1070
+Const COMMAND_SETTINGS_RESOLUTION% = 1011
+Const COMMAND_SETTINGS_REFRESH_RATE% = 1012
+Const COMMAND_SETTINGS_BIT_DEPTH% = 1013
+Const COMMAND_SETTINGS_IP_ADDRESS% = 1020
+Const COMMAND_SETTINGS_IP_PORT% = 1021
+Const COMMAND_SETTINGS_RETAIN_PARTICLES% = 1030
+Const COMMAND_SETTINGS_PARTICLE_LIMIT% = 1031
 Const COMMAND_SETTINGS_APPLY_ALL% = 1100
 Const COMMAND_PAUSE% = 10000
 Const COMMAND_QUIT_LEVEL% = 10010
@@ -372,9 +373,10 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 		
 		all_menus[postfix_index()] = MENU.Create( "performance settings", 212, 226, 96, MENU_ID_OPTIONS_PERFORMANCE, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-			MENU_OPTION.Create( "particle limit  %%retained_particle_count_limit%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_PARTICLE_LIMIT), True, True ) ])
+			MENU_OPTION.Create( "retain particles       %%retain_particles%%", COMMAND_SETTINGS_RETAIN_PARTICLES,, True, True ), ..
+			MENU_OPTION.Create( "active particle limit  %%active_particle_limit%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_PARTICLE_LIMIT), True, True ) ])
 
-			all_menus[postfix_index()] = MENU.Create( "input particle limit", 255, 255, 255, MENU_ID_INPUT_PARTICLE_LIMIT, MENU.TEXT_INPUT_DIALOG, menu_margin,,,, COMMAND_SETTINGS_PARTICLE_LIMIT,, 10, "%%retained_particle_count_limit%%"  )
+			all_menus[postfix_index()] = MENU.Create( "input particle limit", 255, 255, 255, MENU_ID_INPUT_PARTICLE_LIMIT, MENU.TEXT_INPUT_DIALOG, menu_margin,,,, COMMAND_SETTINGS_PARTICLE_LIMIT,, 10, "%%active_particle_limit%%"  )
 	
 	all_menus[postfix_index()] = MENU.Create( "preferences", 64, 64, 212, MENU_ID_PREFERENCES, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
@@ -582,8 +584,13 @@ Function menu_command( command_code%, argument:Object = Null )
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
 		'________________________________________
+		Case COMMAND_SETTINGS_RETAIN_PARTICLES
+			retain_particles = Not retain_particles
+			save_settings()
+			get_menu( MENU_ID_OPTIONS_PERFORMANCE ).recalculate_dimensions()
+		'________________________________________
 		Case COMMAND_SETTINGS_PARTICLE_LIMIT
-			retained_particle_count_limit = String(argument).ToInt()
+			active_particle_limit = String(argument).ToInt()
 			save_settings()
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			get_menu( MENU_ID_OPTIONS_PERFORMANCE ).recalculate_dimensions()
@@ -636,8 +643,10 @@ Function resolve_meta_variables$( str$ )
 					result :+ refresh_rate
 				Case "bit_depth"
 					result :+ bit_depth
-				Case "retained_particle_count_limit"
-					result :+ retained_particle_count_limit
+				Case "retain_particles"
+					result :+ boolean_to_string( retain_particles )
+				Case "active_particle_limit"
+					result :+ active_particle_limit
 				Case "ip_address"
 					result :+ ip_address
 				Case "ip_port"

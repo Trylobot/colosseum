@@ -59,6 +59,7 @@ Function level_editor( lev:LEVEL )
 		'copied from input.bmx
 		mouse.x = MouseX()
 		mouse.y = MouseY()
+		escape_key_update()
 
 		SetColor( 255, 255, 255 )
 		SetLineWidth( 1 )

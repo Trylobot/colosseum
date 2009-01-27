@@ -30,7 +30,8 @@ Global fullscreen%
 Global bit_depth%
 Global refresh_rate%
 Global autosave_profile_path$
-Global retained_particle_count_limit%
+Global retain_particles%
+Global active_particle_limit%
 
 Function apply_default_settings()
 	window_w = 640
@@ -39,7 +40,8 @@ Function apply_default_settings()
 	fullscreen = False
 	bit_depth = 32
 	refresh_rate = 60
-	retained_particle_count_limit = 500
+	retain_particles = True
+	active_particle_limit = 500
 	ip_address = "127.0.0.1"
 	ip_port = 6112
 End Function

@@ -84,20 +84,8 @@ Function get_all_input()
 	'music enable/disable
 	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
 	
-	'instaquit
-	If esc_held And (now() - esc_press_ts) >= instaquit_time_required
-		menu_command( COMMAND_QUIT_GAME )
-	End If
-	'escape key state
-	If KeyDown( KEY_ESCAPE )
-		If Not esc_held
-			esc_press_ts = now()
-		End If
-		esc_held = True
-	Else
-		esc_held = False
-	End If
-
+	escape_key_update()
+	
 	'screenshot
 	If KeyHit( KEY_F12 )
 		screenshot()
@@ -114,6 +102,22 @@ Global instaquit_time_required% = 1000
 
 Function escape_key_release%()
 	Return (Not KeyDown( KEY_ESCAPE ) And esc_held)
+End Function
+
+Function escape_key_update()
+	'instaquit
+	If esc_held And (now() - esc_press_ts) >= instaquit_time_required
+		menu_command( COMMAND_QUIT_GAME )
+	End If
+	'escape key state
+	If KeyDown( KEY_ESCAPE )
+		If Not esc_held
+			esc_press_ts = now()
+		End If
+		esc_held = True
+	Else
+		esc_held = False
+	End If
 End Function
 
 '______________________________________________________________________________
@@ -179,6 +183,11 @@ Type CONSOLE
 		Return "" 'nothing
 	End Method
 
+End Type
+
+'______________________________________________________________________________
+Type KB
+	
 End Type
 
 

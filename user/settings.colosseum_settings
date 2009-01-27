@@ -4,7 +4,7 @@
 	fullscreen: false,
 	bit_depth: 32,
 	refresh_rate: 85,
-	retained_particle_count_limit: 1000,
+	active_particle_limit: 1000,
 	ip_address: "127.0.0.1",
 	port: 6112
 }

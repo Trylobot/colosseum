@@ -126,7 +126,7 @@ Global PARTICLE_EMITTER_INDEX_SPAWNER% = postfix_index()
 
 Function set_particle_emitter_archetypes()
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "tank_tread_debris",,, True,,,, 100, 150, 0, 0, 200, 350, 0.75, 0.75, -0.0012, -0.0025 ))
-	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "explosion",,, True,,,, 50, 100,,, 3000, 4000, 0.10, 0.20, -0.0010, -0.0020, 0.10, 0.12, 0.0010, 0.0015, 125, 255, 125, 255, 125, 255 ))
+	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "dust",,, True,,,, 50, 100,,, 3000, 4000, 0.10, 0.20, -0.0010, -0.0020, 0.10, 0.12, 0.0010, 0.0015, 125, 255, 125, 255, 125, 255 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "tank_tread_trail_small",,,,,,, 100, 100,,, 50, 50 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "tank_tread_trail_medium",,,,,,, 100, 100,,, 50, 50 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "explosion",,,,,,,,,,, 250,300, 1.0,1.0, -0.100,-0.100, 1.0,1.0, -0.050,-0.050, 1.0,1.0, 1.0,1.0, 0.8,0.8, -0.002,-0.002, -0.035,-0.035, -0.030,-0.030 ))

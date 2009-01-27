@@ -88,6 +88,17 @@
 	},
 	{
 		class: "particle",
+		key: "dust",
+		object: {
+			particle_type: "PARTICLE_TYPE_IMG",
+			img: "image.white_circle",
+			layer: "LAYER_BACKGROUND",
+			retain: false,
+			frictional_coefficient: 0.0850
+		}
+	},
+	{
+		class: "particle",
 		key: "ricochet_spark",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",

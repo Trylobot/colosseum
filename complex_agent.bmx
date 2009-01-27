@@ -253,7 +253,7 @@ Type COMPLEX_AGENT Extends AGENT
 			Case ALIGNMENT_HOSTILE
 				SetColor( 255, 96, 96 )
 		End Select
-		SetAlpha( 0.15 )
+		SetAlpha( 0.15*alpha_override )
 		SetScale( 0.3, 0.3 )
 		DrawImage( get_image( "halo" ), pos_x, pos_y )
 		'widgets behind

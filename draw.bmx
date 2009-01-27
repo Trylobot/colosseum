@@ -58,7 +58,7 @@ End Function
 Function draw_game()
 	
 	'force drawing origin to integer coordinates if about to perform "dirty-rects" operation
-	If game.retained_particle_count > retained_particle_count_limit
+	If game.retained_particle_count > active_particle_limit
 		SetOrigin( Int( game.drawing_origin.x ), Int( game.drawing_origin.y ))
 	Else
 		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
@@ -296,37 +296,44 @@ Function draw_arena_bg()
 	For Local part:PARTICLE = EachIn game.retained_particle_list
 		part.draw()
 	Next
-	'if there are too many, ..
-	If game.retained_particle_count > retained_particle_count_limit
-		Local background_pixmap:TPixmap = LockImage( game.background_dynamic )
-		Local background_rect:BOX = Create_BOX( 0, 0, background_pixmap.width, background_pixmap.height )
-		'for all particles to be retained, ..
-		For Local part:PARTICLE = EachIn game.retained_particle_list
-			Local dirty_rect:BOX = part.get_bounding_box()
-			Local dirty_rect_relative_to_window:BOX = Create_BOX( ..
-				dirty_rect.x + game.drawing_origin.x, ..
-				dirty_rect.y + game.drawing_origin.y, ..
-				dirty_rect.w, ..
-				dirty_rect.h )
-			'move only those that are currently visible, given the current window/frame position & size, ..
-			If window.contains( dirty_rect_relative_to_window )
-				part.unmanage()
-				game.retained_particle_count :- 1
-				'into the dynamic background image, if it doesn't lie outside the image dimensions.
-				If background_rect.contains( dirty_rect )
-					Local dirty_pixmap:TPixmap = GrabPixmap( ..
-						dirty_rect_relative_to_window.x, ..
-						dirty_rect_relative_to_window.y, ..
-						dirty_rect_relative_to_window.w, ..
-						dirty_rect_relative_to_window.h )
-					background_pixmap.Paste( ..
-						dirty_pixmap, ..
-						dirty_rect.x, ..
-						dirty_rect.y )
+	If retain_particles
+		'if there are too many, ..
+		If game.retained_particle_count > active_particle_limit
+			Local background_pixmap:TPixmap = LockImage( game.background_dynamic )
+			Local background_rect:BOX = Create_BOX( 0, 0, background_pixmap.width, background_pixmap.height )
+			'for all particles to be retained, ..
+			For Local part:PARTICLE = EachIn game.retained_particle_list
+				Local dirty_rect:BOX = part.get_bounding_box()
+				Local dirty_rect_relative_to_window:BOX = Create_BOX( ..
+					dirty_rect.x + game.drawing_origin.x, ..
+					dirty_rect.y + game.drawing_origin.y, ..
+					dirty_rect.w, ..
+					dirty_rect.h )
+				'move only those that are currently visible, given the current window/frame position & size, ..
+				If window.contains( dirty_rect_relative_to_window )
+					part.unmanage()
+					game.retained_particle_count :- 1
+					'into the dynamic background image, if it doesn't lie outside the image dimensions.
+					If background_rect.contains( dirty_rect )
+						Local dirty_pixmap:TPixmap = GrabPixmap( ..
+							dirty_rect_relative_to_window.x, ..
+							dirty_rect_relative_to_window.y, ..
+							dirty_rect_relative_to_window.w, ..
+							dirty_rect_relative_to_window.h )
+						background_pixmap.Paste( ..
+							dirty_pixmap, ..
+							dirty_rect.x, ..
+							dirty_rect.y )
+					End If
 				End If
-			End If
-		Next
-		UnlockImage( game.background_dynamic )
+			Next
+			UnlockImage( game.background_dynamic )
+		End If
+	Else 'Not retain_particles
+		While game.retained_particle_count > active_particle_limit
+			game.retained_particle_list.RemoveFirst()
+			game.retained_particle_count :- 1
+		End While
 	End If
 End Function
 '______________________________________________________________________________

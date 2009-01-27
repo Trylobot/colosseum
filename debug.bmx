@@ -67,10 +67,16 @@ End Function
 '______________________________________________________________________________
 Global sx%, sy%
 Function debug_drawtext( message$, h% = 10 )
+	Local r%, g%, b%
 	SetRotation( 0 )
 	SetScale( 1, 1 )
-	SetAlpha( 1 )
+	GetColor( r%, g%, b% )
+	SetColor( 0, 0, 0 )
+	SetAlpha( 0.65 )
 	SetImageFont( get_font( "consolas_10" ))
+	DrawRect( sx, sy, TextWidth( message + " " ), TextHeight( message ))
+	SetAlpha( 1 )
+	SetColor( r, g, b )
 	DrawText_with_outline( message, sx, sy )
 	sy :+ h
 End Function
@@ -79,7 +85,7 @@ Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = null, b_msg$ = null,
 	'decl.
 	Local a:cVEC = New cVEC, b:cVEC = New cVEC, m:cVEC = New cVEC
 	'init.
-	If cVEC(arg1) 
+	If cVEC(arg1)
 		a = cVEC(arg1)
 	Else if point(arg1)
 		Local p:POINT = POINT(arg1)
@@ -155,9 +161,8 @@ Function debug_overlay()
 	
 	sx = 2; sy = 2
 
-	debug_drawtext( "      retained_particle_count_limit --> "+retained_particle_count_limit )
-	debug_drawtext( "game.retained_particle_list.Count() --> "+game.retained_particle_list.Count() )
-	debug_drawtext( "       game.retained_particle_count --> "+game.retained_particle_count )
+	debug_drawtext( "       active_particle_limit --> "+active_particle_limit )
+	debug_drawtext( "game.retained_particle_count --> "+game.retained_particle_count )
 	
 	SetColor( 127, 127, 255 )
 	debug_drawtext( "friendlies "+game.active_friendly_units )

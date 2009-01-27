@@ -131,7 +131,7 @@ Type PARTICLE Extends POINT
 				If img <> Null
 					If parent <> Null
 						SetRotation( ang + parent.ang )
-						DrawImage( img, parent.pos_x + scale*offset*Cos( offset_ang + parent.ang ), parent.pos_y + scale*offset*Sin( offset_ang + parent.ang ), frame )
+						DrawImage( img, parent.pos_x + scale*scale_override*offset*Cos( offset_ang + parent.ang ), parent.pos_y + scale*scale_override*offset*Sin( offset_ang + parent.ang ), frame )
 					Else
 						SetRotation( ang )
 						DrawImage( img, pos_x, pos_y, frame )
@@ -145,7 +145,7 @@ Type PARTICLE Extends POINT
 						DrawText_with_outline( str, parent.pos_x + offset*Cos( offset_ang + parent.ang ) - text_width/2, parent.pos_y + offset*Sin( offset_ang + parent.ang ) - text_height/2 )
 					Else
 						SetRotation( ang )
-						DrawText_with_outline( str, pos_x - scale*text_width/2, pos_y - scale*text_height/2 )
+						DrawText_with_outline( str, pos_x - scale*scale_override*text_width/2, pos_y - scale*scale_override*text_height/2 )
 					End If
 				End If
 		End Select

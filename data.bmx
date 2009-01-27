@@ -300,7 +300,7 @@ End Function
 
 '______________________________________________________________________________
 Function load_settings%()
-	Local file:TStream = ReadFile( data_path + default_settings_file_name )
+	Local file:TStream = ReadFile( user_path + default_settings_file_name )
 	If Not file Return False
 	Local json:TJSON = TJSON.Create( file )
 	file.Close()
@@ -317,7 +317,7 @@ Function load_settings%()
 		fullscreen = json.GetBoolean( "fullscreen" )
 		bit_depth = json.GetNumber( "bit_depth" )
 		refresh_rate = json.GetNumber( "refresh_rate" )
-		retained_particle_count_limit = json.GetNumber( "retained_particle_count_limit" )
+		active_particle_limit = json.GetNumber( "active_particle_limit" )
 		ip_address = json.getString( "ip_address" )
 		ip_port = json.GetNumber( "port" )
 		Return True
@@ -333,12 +333,12 @@ Function save_settings%()
 	this_json.SetByName( "fullscreen", TJSONBoolean.Create( fullscreen ))
 	this_json.SetByName( "bit_depth", TJSONNumber.Create( bit_depth ))
 	this_json.SetByName( "refresh_rate", TJSONNumber.Create( refresh_rate ))
-	this_json.SetByName( "retained_particle_count_limit", TJSONNumber.Create( retained_particle_count_limit ))
+	this_json.SetByName( "active_particle_limit", TJSONNumber.Create( active_particle_limit ))
 	this_json.SetByName( "ip_address", TJSONString.Create( ip_address ))
 	this_json.SetByName( "port", TJSONNumber.Create( ip_port ))
 	'output json data
 	Local json:TJSON = TJSON.Create( this_json )
-	Local file:TStream = WriteFile( data_path + default_settings_file_name )
+	Local file:TStream = WriteFile( user_path + default_settings_file_name )
 	If Not file Return False
 	json.Write( file )
 	file.Close()

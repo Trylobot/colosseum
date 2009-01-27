@@ -113,6 +113,7 @@ Function draw_shop_option( str$, selected% = False, x%, y% Var )
 End Function
 '______________________________________________________________________________
 Function get_shop_input()
+	escape_key_update()
 	'execute option
 	If KeyHit( KEY_ENTER )
 		Select shop_option

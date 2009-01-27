@@ -177,22 +177,22 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			avatar.turn( 0 )
 			Return 
 		End If
-		Local diff# = ang_wrap( avatar.ang_to( dest ))
+		Local diff# = ang_wrap( avatar.ang_to( dest ) - avatar.ang )
 		Local diff_mag# = Abs( diff )
 		Local max_ang_vel# = avatar.turning_force.magnitude_max / avatar.mass
-		If diff_mag > 5.0 * max_ang_vel
+		If diff_mag > 20.0 * max_ang_vel
 			avatar.drive( 0.3333 )
 			If diff < 0
-				avatar.turn_turret_system( 0, 1.0 )
+				avatar.turn( -1.0 )
 			Else 'diff > 0
-				avatar.turn_turret_system( 0, -1.0 )
+				avatar.turn( 1.0 )
 			End If
 		Else 'diff_mag <= 5.0 * max_ang_vel
 			avatar.drive( 1.0 )
 			If diff < 0
-				avatar.turn_turret_system( 0, diff_mag /( max_ang_vel * 5.0 ))
+				avatar.turn( -diff_mag /( 20.0 * max_ang_vel ))
 			Else 'diff > 0
-				avatar.turn_turret_system( 0, -diff_mag /( max_ang_vel * 5.0 ))
+				avatar.turn( diff_mag /( 20.0 * max_ang_vel ))
 			End If
 		End If
 	End Method
@@ -247,7 +247,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method waypoint_reached%()
-		If waypoint <> Null And avatar.dist_to( waypoint ) <= waypoint_radius
+		Local current_cell:CELL = game.pathing.containing_cell( avatar.pos_x, avatar.pos_y )
+		Local waypoint_cell:CELL = game.pathing.containing_cell( waypoint.x, waypoint.y )
+		'If waypoint <> Null And avatar.dist_to( waypoint ) <= waypoint_radius
+		If current_cell.eq( waypoint_cell )
 			Return True
 		Else
 			Return False 'sir, where are we going? LOL :D
