@@ -440,8 +440,7 @@ Type COMPLEX_AGENT Extends AGENT
 				cur_health :+ pkp.pickup_amount
 				If cur_health > max_health Then cur_health = max_health
 			
-			Case PICKUP_INDEX_COOLDOWN
-DebugStop
+			Case COOLDOWN_PICKUP
 				Local tur_list:TList = CreateList()
 				For Local t:TURRET = EachIn turrets
 					If t.max_heat <> INFINITY Then tur_list.AddLast( t )

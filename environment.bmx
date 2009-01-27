@@ -447,9 +447,15 @@ Type ENVIRONMENT
 '		End If
 	End Method
 	
-	Method spawn_pickup( x%, y% ) 'request; depends on probability
+	Method spawn_pickup( x%, y%, probability_override# = -1.0 ) 'request; depends on probability
 		Local pkp:PICKUP
-		If Rnd( 0.0, 1.0 ) < PICKUP_PROBABILITY
+		Local threshold#
+		If probability_override <> -1.0
+			threshold = probability_override
+		Else
+			threshold = PICKUP_PROBABILITY
+		End If
+		If Rnd( 0.0, 1.0 ) < threshold
 			Local index% = Rand( 0, pickup_archetype.Length - 1 )
 			pkp = pickup_archetype[index]
 			If pkp <> Null

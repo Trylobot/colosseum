@@ -260,7 +260,7 @@ Function debug_overlay()
 	End If
 
 	If KeyHit( KEY_QUOTES )
-		game.spawn_pickup( mouse.x, mouse.y )
+		game.spawn_pickup( game.mouse.x, game.mouse.y, 1.0 )
 	End If
 	
 	If KeyHit( KEY_P )
