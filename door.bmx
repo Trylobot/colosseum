@@ -48,8 +48,8 @@ Type DOOR Extends MANAGED_OBJECT
 		left_slider.update()
 		right_slider.update()
 		If left_slider.transforming
-			left_servo.frame_delay = left_slider.states[ left_slider.state_index_cur ].transition_time / 30.0
-			right_servo.frame_delay = right_slider.states[ right_slider.state_index_cur ].transition_time / 30.0
+			left_servo.frame_delay = left_slider.states[ left_slider.state_index_cur ].transition_time / 35.0
+			right_servo.frame_delay = right_slider.states[ right_slider.state_index_cur ].transition_time / 35.0
 			If left_slider.state_index_cur = 0
 				left_servo.animation_direction = ANIMATION_DIRECTION_FORWARDS
 				right_servo.animation_direction = ANIMATION_DIRECTION_FORWARDS
