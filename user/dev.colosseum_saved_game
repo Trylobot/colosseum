@@ -7,7 +7,7 @@
 	],
 	input_method: 2,
 	current_level: "data/debug.colosseum_level",
-	cash: 22700,
-	kills: 224,
+	cash: 22750,
+	kills: 225,
 	selected_inventory_index: 1
 }

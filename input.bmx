@@ -47,29 +47,23 @@ Function get_all_input()
 		If MouseHit( 1 ) And target_valid
 			m.execute_current_option()
 		End If
-	Else If FLAG_in_shop
+	Else If FLAG_in_shop 'Not FLAG_in_menu
 		'shop navigation
 		If KeyHit( KEY_ESCAPE )
 			menu_command( COMMAND_BACK_TO_MAIN_MENU )
 		End If
 		'delegate input to shop function
 		get_shop_input()
-	Else
-		'show in-game help
-		If KeyHit( KEY_F1 )
-			FLAG_draw_help = Not FLAG_draw_help
-		End If
-		'in-game input
+	Else 'Not FLAG_in_menu And Not FLAG_in_shop
+		'pause game
 		If game <> Null And game.human_participation
-			'pressed ESC
-			If KeyHit( KEY_ESCAPE )
+			'pressed (and released) ESCAPE
+			If escape_key_release() 'KeyHit( KEY_ESCAPE )
 				If Not game.game_over
 					If Not FLAG_in_menu
 						FLAG_in_menu = True
 						If game.game_in_progress
 							menu_command( COMMAND_PAUSE )
-						Else
-							menu_command( COMMAND_BACK_TO_MAIN_MENU )
 						End If
 					End If
 				Else 'game.game_over
@@ -78,6 +72,10 @@ Function get_all_input()
 				'clear unused keystrokes
 				FlushKeys()
 			End If
+		End If
+		'help
+		If KeyHit( KEY_F1 )
+			FLAG_draw_help = Not FLAG_draw_help
 		End If
 	End If
 	
