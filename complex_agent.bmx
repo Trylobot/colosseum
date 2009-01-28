@@ -21,7 +21,7 @@ Const ALIGNMENT_NONE% = 0
 Const ALIGNMENT_FRIENDLY% = 1
 Const ALIGNMENT_HOSTILE% = 2
 
-Const MAX_COMPLEX_AGENT_VELOCITY# = 5.0 'hard velocity limit
+Const MAX_COMPLEX_AGENT_VELOCITY# = 4.0 'hard velocity limit
 
 '___________________________________________
 Type COMPLEX_AGENT Extends AGENT
