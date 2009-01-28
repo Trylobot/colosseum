@@ -757,6 +757,18 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/carrier_gibs.png",
+			handle_x: 17,
+			handle_y: 13,
+			frames: 21,
+			frame_width: 35,
+			frame_height: 26
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/carrier_hitbox.png",
 			handle_x: 17,
 			handle_y: 13,

@@ -121,8 +121,8 @@ Type AGENT Extends PHYSICAL_OBJECT
 					gib_vel_ang = Rnd( 0.0, 359.9999 )
 					gib.vel_x = vel_x + gib_vel*Cos( gib_vel_ang + ang )
 					gib.vel_y = vel_y + gib_vel*Sin( gib_vel_ang + ang )
-					gib.ang = ang
-					gib.ang_vel = Rnd( -1.0, 1.0 )
+					gib.ang = ang + Rand( -30, 30 )
+					gib.ang_vel = Rnd( -3.0, 3.0 )
 					gib.update()
 					gib.created_ts = now()
 					gib.auto_manage()

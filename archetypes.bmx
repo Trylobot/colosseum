@@ -484,7 +484,7 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].driving_force.magnitude_max = 50.0
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turning_force.magnitude_max = 65.0
 		
-	complex_agent_archetype[ENEMY_INDEX_CARRIER] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "carrier", get_image( "carrier_chassis" ), get_image( "carrier_hitbox" ), get_image( "quad_gibs" ), "carrier", 350, 300, 1200, 125.0, 70.0, 95.0 ))
+	complex_agent_archetype[ENEMY_INDEX_CARRIER] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "carrier", get_image( "carrier_chassis" ), get_image( "carrier_hitbox" ), get_image( "carrier_gibs" ), "carrier", 350, 300, 1200, 125.0, 70.0, 95.0 ))
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_BAY_DOOR_CLOCKWISE], WIDGET_DEPLOY ).attach_at( -16, -9,, True )
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_BAY_DOOR_COUNTER_CLOCKWISE], WIDGET_DEPLOY ).attach_at( -16, 9,, True )
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_RAMP_EXTENDER], WIDGET_DEPLOY ).attach_at( -15, 0,, True )
@@ -503,5 +503,6 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].right_track = get_particle( "med_tank_track" )
 			complex_agent_archetype[ENEMY_INDEX_CARRIER].right_track.parent = complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK]
 			complex_agent_archetype[ENEMY_INDEX_CARRIER].right_track.attach_at( 1, 8.5 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 		
 End Function
