@@ -148,7 +148,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					avatar.deploy()
 					spawn_point = create_spawn_point()
 					last_spawned_ts = now()
-					game.register_AI_spawner( Self )
+					'game.register_AI_spawner( Self )
 				End If
 			End If
 		End If

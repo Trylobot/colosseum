@@ -19,7 +19,7 @@ Function update_all_objects()
 		'spawner system
 		If game.spawn_enemies
 			game.spawning_system_update()
-			game.update_AI_spawners_registry()
+			'game.update_AI_spawners_registry()
 		End If
 		
 		'pickups
@@ -112,8 +112,8 @@ Function update_flags()
 			game.game_over = True
 			game.player_engine_running = False
 		End If
-		'no more enemies?
-		If game.battle_in_progress And game.level_enemies_killed >= game.level_enemy_count
+		'no more enemies (either still to spawn or still alive)?
+		If game.battle_in_progress And game.active_hostile_spawners = 0 And game.hostile_agent_list.Count() = 0 'And game.level_enemies_killed >= game.level_enemy_count
 			game.game_in_progress = False
 			game.battle_in_progress = False
 			game.battle_state_toggle_ts = now()

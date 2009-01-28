@@ -416,17 +416,17 @@ Type ENVIRONMENT
 		End If
 	End Method
 	
-	Method register_AI_spawner( brain:CONTROL_BRAIN )
-		AI_spawners.AddLast( brain )
-		Select brain.avatar.political_alignment
-			Case ALIGNMENT_FRIENDLY
-				active_friendly_spawners :+ 1
-			Case ALIGNMENT_HOSTILE
-				active_hostile_spawners :+ 1
-		End Select
-	End Method
-	
-	Method update_AI_spawners_registry()
+'	Method register_AI_spawner( brain:CONTROL_BRAIN )
+'		AI_spawners.AddLast( brain )
+'		Select brain.avatar.political_alignment
+'			Case ALIGNMENT_FRIENDLY
+'				active_friendly_spawners :+ 1
+'			Case ALIGNMENT_HOSTILE
+'				active_hostile_spawners :+ 1
+'		End Select
+'	End Method
+'	
+'	Method update_AI_spawners_registry()
 '		If Not AI_spawners.IsEmpty()
 '			Local cursor_link:TLink = AI_spawners.FirstLink()
 '			Repeat
@@ -445,7 +445,7 @@ Type ENVIRONMENT
 '				End If
 '			Until cursor_link = AI_spawners.LastLink()
 '		End If
-	End Method
+'	End Method
 	
 	Method spawn_pickup( x%, y%, probability_override# = -1.0 ) 'request; depends on probability
 		Local pkp:PICKUP
