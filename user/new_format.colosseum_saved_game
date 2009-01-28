@@ -1,0 +1,36 @@
+{
+	name: "new_format",
+	cash: 2725,
+	kills: 21,
+	inventory: [
+		"chassis.light_tank",
+		"turret.single_cannon",
+		"turret.machine_gun"
+	],
+	vehicle: {
+		chassis: "chassis.light_tank",
+		turrets: [
+			{
+				turret: "turret.single_cannon",
+				anchor: 0
+			}
+			{
+				turret: "turret.machine_gun",
+				anchor: 0
+			}
+		]
+	},
+	input_method: 2,
+	progress: [
+		{
+			campaign: "basic",
+			completed: [
+				0,
+				0,
+				0
+			]
+		}
+	],
+	campaign: null,
+	campaign_level: null
+}

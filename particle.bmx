@@ -208,92 +208,38 @@ End Type
 
 Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
 	Local p:PARTICLE
-	'required fields
+	'get required fields
 	Local particle_type%
-	If json.TypeOf( "particle_type" ) <> JSON_UNDEFINED
-		particle_type = enum( json.GetString( "particle_type" ))
-	Else
-		Return Null 'required field
-	End If
-	'initialization using default values for optional fields
+	If json.TypeOf( "particle_type" ) <> JSON_UNDEFINED          Then particle_type = enum( json.GetString( "particle_type" )) Else Return Null
+	'create object with required fields
 	p = PARTICLE( PARTICLE.Create( particle_type ))
-	'optional fields
-	If json.TypeOf( "img" ) <> JSON_UNDEFINED
-		p.img = TImage( get_asset( json.GetString( "img" )))
-	End If
-	If json.TypeOf( "frame" ) <> JSON_UNDEFINED
-		p.frame = json.GetNumber( "frame" )
-	End If
-	If json.TypeOf( "frame_delay" ) <> JSON_UNDEFINED
-		p.frame_delay = json.GetNumber( "frame_delay" )
-	End If
-	If json.TypeOf( "str" ) <> JSON_UNDEFINED
-		p.str = json.GetString( "str" )
-	End If
-	If json.TypeOf( "font" ) <> JSON_UNDEFINED
-		p.font = TImageFont( get_asset( json.GetString( "font" )))
-	End If
-	If json.TypeOf( "layer" ) <> JSON_UNDEFINED
-		p.layer = enum( json.GetString( "layer" ))
-	End If
-	If json.TypeOf( "retain" ) <> JSON_UNDEFINED
-		p.retain = json.GetBoolean( "retain" )
-	End If
-	If json.TypeOf( "frictional_coefficient" ) <> JSON_UNDEFINED
-		p.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
-	End If
-	If json.TypeOf( "red" ) <> JSON_UNDEFINED
-		p.red = json.GetNumber( "red" )
-	End If
-	If json.TypeOf( "green" ) <> JSON_UNDEFINED
-		p.green = json.GetNumber( "green" )
-	End If
-	If json.TypeOf( "blue" ) <> JSON_UNDEFINED
-		p.blue = json.GetNumber( "blue" )
-	End If
-	If json.TypeOf( "red_delta" ) <> JSON_UNDEFINED
-		p.red_delta = json.GetNumber( "red_delta" )
-	End If
-	If json.TypeOf( "green_delta" ) <> JSON_UNDEFINED
-		p.green_delta = json.GetNumber( "green_delta" )
-	End If
-	If json.TypeOf( "blue_delta" ) <> JSON_UNDEFINED
-		p.blue_delta = json.GetNumber( "blue_delta" )
-	End If
-	If json.TypeOf( "life_time" ) <> JSON_UNDEFINED
-		p.life_time = json.GetNumber( "life_time" )
-	End If
-	If json.TypeOf( "pos_x" ) <> JSON_UNDEFINED
-		p.pos_x = json.GetNumber( "pos_x" )
-	End If
-	If json.TypeOf( "pos_y" ) <> JSON_UNDEFINED
-		p.pos_y = json.GetNumber( "pos_y" )
-	End If
-	If json.TypeOf( "vel_x" ) <> JSON_UNDEFINED
-		p.vel_x = json.GetNumber( "vel_x" )
-	End If
-	If json.TypeOf( "vel_y" ) <> JSON_UNDEFINED
-		p.vel_y = json.GetNumber( "vel_y" )
-	End If
-	If json.TypeOf( "ang" ) <> JSON_UNDEFINED
-		p.ang = json.GetNumber( "ang" )
-	End If
-	If json.TypeOf( "ang_vel" ) <> JSON_UNDEFINED
-		p.ang_vel = json.GetNumber( "ang_vel" )
-	End If
-	If json.TypeOf( "alpha" ) <> JSON_UNDEFINED
-		p.alpha = json.GetNumber( "alpha" )
-	End If
-	If json.TypeOf( "alpha_delta" ) <> JSON_UNDEFINED
-		p.alpha_delta = json.GetNumber( "alpha_delta" )
-	End If
-	If json.TypeOf( "scale" ) <> JSON_UNDEFINED
-		p.scale = json.GetNumber( "scale" )
-	End If
-	If json.TypeOf( "scale_delta" ) <> JSON_UNDEFINED
-		p.scale_delta = json.GetNumber( "scale_delta" )
-	End If
-
+	'get optional fields
+	If json.TypeOf( "img" ) <> JSON_UNDEFINED                    Then p.img = TImage( get_asset( json.GetString( "img" )))
+	If json.TypeOf( "frame" ) <> JSON_UNDEFINED                  Then p.frame = json.GetNumber( "frame" )
+	If json.TypeOf( "frame_delay" ) <> JSON_UNDEFINED            Then p.frame_delay = json.GetNumber( "frame_delay" )
+	If json.TypeOf( "str" ) <> JSON_UNDEFINED                    Then p.str = json.GetString( "str" )
+	If json.TypeOf( "font" ) <> JSON_UNDEFINED                   Then p.font = TImageFont( get_asset( json.GetString( "font" )))
+	If json.TypeOf( "layer" ) <> JSON_UNDEFINED                  Then p.layer = enum( json.GetString( "layer" ))
+	If json.TypeOf( "retain" ) <> JSON_UNDEFINED                 Then p.retain = json.GetBoolean( "retain" )
+	If json.TypeOf( "frictional_coefficient" ) <> JSON_UNDEFINED Then p.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
+	If json.TypeOf( "red" ) <> JSON_UNDEFINED                    Then p.red = json.GetNumber( "red" )
+	If json.TypeOf( "green" ) <> JSON_UNDEFINED                  Then p.green = json.GetNumber( "green" )
+	If json.TypeOf( "blue" ) <> JSON_UNDEFINED                   Then p.blue = json.GetNumber( "blue" )
+	If json.TypeOf( "red_delta" ) <> JSON_UNDEFINED              Then p.red_delta = json.GetNumber( "red_delta" )
+	If json.TypeOf( "green_delta" ) <> JSON_UNDEFINED            Then p.green_delta = json.GetNumber( "green_delta" )
+	If json.TypeOf( "blue_delta" ) <> JSON_UNDEFINED             Then p.blue_delta = json.GetNumber( "blue_delta" )
+	If json.TypeOf( "life_time" ) <> JSON_UNDEFINED              Then p.life_time = json.GetNumber( "life_time" )
+	If json.TypeOf( "pos_x" ) <> JSON_UNDEFINED                  Then p.pos_x = json.GetNumber( "pos_x" )
+	If json.TypeOf( "pos_y" ) <> JSON_UNDEFINED                  Then p.pos_y = json.GetNumber( "pos_y" )
+	If json.TypeOf( "vel_x" ) <> JSON_UNDEFINED                  Then p.vel_x = json.GetNumber( "vel_x" )
+	If json.TypeOf( "vel_y" ) <> JSON_UNDEFINED                  Then p.vel_y = json.GetNumber( "vel_y" )
+	If json.TypeOf( "ang" ) <> JSON_UNDEFINED                    Then p.ang = json.GetNumber( "ang" )
+	If json.TypeOf( "ang_vel" ) <> JSON_UNDEFINED                Then p.ang_vel = json.GetNumber( "ang_vel" )
+	If json.TypeOf( "alpha" ) <> JSON_UNDEFINED                  Then p.alpha = json.GetNumber( "alpha" )
+	If json.TypeOf( "alpha_delta" ) <> JSON_UNDEFINED            Then p.alpha_delta = json.GetNumber( "alpha_delta" )
+	If json.TypeOf( "scale" ) <> JSON_UNDEFINED                  Then p.scale = json.GetNumber( "scale" )
+	If json.TypeOf( "scale_delta" ) <> JSON_UNDEFINED            Then p.scale_delta = json.GetNumber( "scale_delta" )
+	'done
 	Return p
 End Function
 
