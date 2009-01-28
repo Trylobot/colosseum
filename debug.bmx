@@ -39,7 +39,7 @@ Function debug_main()
 		debug_fps()
 		'debug_agent_lists()
 	End If
-	If Not FLAG_in_menu And Not FLAG_in_shop
+	If Not FLAG_in_menu
 		If KeyDown( KEY_LEFT )
 			debug_origin.x :- 1
 		End If
@@ -207,17 +207,16 @@ Function debug_overlay()
 
 	SetColor( 255, 255, 255 )
 	
-	'find closest brain/avatar
 	Local closest_cb:CONTROL_BRAIN = Null
 	Local dist%, closest_dist% = 15
 	For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
+		'closest avatar search
 		dist = brain.avatar.dist_to( game.mouse )
 		If dist < closest_dist
 			closest_dist = dist
 			closest_cb = brain
 		End If
-		
-		'also show all forces on this object
+		'show forces
 		For Local f:FORCE = EachIn brain.avatar.force_list
 			If f.physics_type = PHYSICS_FORCE
 				Local x# = brain.avatar.pos_x, y# = brain.avatar.pos_y
@@ -227,6 +226,11 @@ Function debug_overlay()
 				DrawLine( x, y, x + f.magnitude_cur*Cos(ang), y + f.magnitude_cur*Sin(ang) )
 			End If
 		Next
+		'show health
+		SetAlpha( 0.25 )
+		SetColor( 0, 0, 0 )
+		DrawRect( brain.avatar.pos_x - 10, brain.avatar.pos_y + 15, 20, 6 )
+		draw_percentage_bar( brain.avatar.pos_x - 10, brain.avatar.pos_y + 15, 20, 6, brain.avatar.cur_health/brain.avatar.max_health, 0.25 )
 	Next
 	
 	'select control_brain/avatar for inspection
@@ -410,6 +414,140 @@ Function debug_overlay()
 	End If
 	
 End Function
+
+'______________________________________________________________________________
+Function command_code_to_string$( code% )
+	Select code
+		Case COMMAND_NULL
+			Return "COMMAND_NULL"
+		Case COMMAND_SHOW_CHILD_MENU
+			Return "COMMAND_SHOW_CHILD_MENU"
+		Case COMMAND_BACK_TO_PARENT_MENU
+			Return "COMMAND_BACK_TO_PARENT_MENU"
+		Case COMMAND_BACK_TO_MAIN_MENU
+			Return "COMMAND_BACK_TO_MAIN_MENU"
+		Case COMMAND_PLAY_LEVEL
+			Return "COMMAND_PLAY_LEVEL"
+		Case COMMAND_PAUSE
+			Return "COMMAND_PAUSE"
+		Case COMMAND_RESUME
+			Return "COMMAND_RESUME"
+		Case COMMAND_NEW_GAME
+			Return "COMMAND_NEW_GAME"
+		Case COMMAND_NEW_LEVEL
+			Return "COMMAND_NEW_LEVEL"
+		Case COMMAND_LOAD_GAME
+			Return "COMMAND_LOAD_GAME"
+		Case COMMAND_LOAD_LEVEL
+			Return "COMMAND_LOAD_LEVEL"
+		Case COMMAND_SAVE_GAME
+			Return "COMMAND_SAVE_GAME"
+		Case COMMAND_SAVE_LEVEL
+			Return "COMMAND_SAVE_LEVEL"
+		Case COMMAND_EDIT_LEVEL
+			Return "COMMAND_EDIT_LEVEL"
+		Case COMMAND_MULTIPLAYER_JOIN
+			Return "COMMAND_MULTIPLAYER_JOIN"
+		Case COMMAND_MULTIPLAYER_HOST
+			Return "COMMAND_MULTIPLAYER_HOST"
+		Case COMMAND_PLAYER_PROFILE_NAME
+			Return "COMMAND_PLAYER_PROFILE_NAME"
+		Case COMMAND_PLAYER_PROFILE_PATH
+			Return "COMMAND_PLAYER_PROFILE_PATH"
+		Case COMMAND_PLAYER_INPUT_TYPE
+			Return "COMMAND_PLAYER_INPUT_TYPE"
+		Case COMMAND_SETTINGS_FULLSCREEN
+			Return "COMMAND_SETTINGS_FULLSCREEN"
+		Case COMMAND_SETTINGS_RESOLUTION
+			Return "COMMAND_SETTINGS_RESOLUTION"
+		Case COMMAND_SETTINGS_REFRESH_RATE
+			Return "COMMAND_SETTINGS_REFRESH_RATE"
+		Case COMMAND_SETTINGS_BIT_DEPTH
+			Return "COMMAND_SETTINGS_BIT_DEPTH"
+		Case COMMAND_SETTINGS_IP_ADDRESS
+			Return "COMMAND_SETTINGS_IP_ADDRESS"
+		Case COMMAND_SETTINGS_IP_PORT
+			Return "COMMAND_SETTINGS_IP_PORT"
+		Case COMMAND_SETTINGS_RETAIN_PARTICLES
+			Return "COMMAND_SETTINGS_RETAIN_PARTICLES"
+		Case COMMAND_SETTINGS_PARTICLE_LIMIT
+			Return "COMMAND_SETTINGS_PARTICLE_LIMIT"
+		Case COMMAND_SETTINGS_APPLY_ALL
+			Return "COMMAND_SETTINGS_APPLY_ALL"
+		Case COMMAND_QUIT_LEVEL
+			Return "COMMAND_QUIT_LEVEL"
+		Case COMMAND_QUIT_GAME
+			Return "COMMAND_QUIT_GAME"
+	End Select
+End Function
+
+Function menu_id_to_string$( menu_id% )
+	Select menu_id
+		Case MENU_ID_MAIN_MENU
+			Return "MENU_ID_MAIN_MENU"
+		Case MENU_ID_LOADING_BAY
+			Return "MENU_ID_LOADING_BAY"
+		Case MENU_ID_INPUT_PROFILE_NAME
+			Return "MENU_ID_INPUT_PROFILE_NAME"
+		Case MENU_ID_SELECT_LEVEL
+			Return "MENU_ID_SELECT_LEVEL"
+		Case MENU_ID_MULTIPLAYER
+			Return "MENU_ID_MULTIPLAYER"
+		Case MENU_ID_MULTIPLAYER_JOIN
+			Return "MENU_ID_MULTIPLAYER_JOIN"
+		Case MENU_ID_MULTIPLAYER_HOST
+			Return "MENU_ID_MULTIPLAYER_HOST"
+		Case MENU_ID_MULTIPLAYER_INPUT_IP_ADDRESS
+			Return "MENU_ID_MULTIPLAYER_INPUT_IP_ADDRESS"
+		Case MENU_ID_MULTIPLAYER_INPUT_IP_PORT
+			Return "MENU_ID_MULTIPLAYER_INPUT_IP_PORT"
+		Case MENU_ID_LOAD_GAME
+			Return "MENU_ID_LOAD_GAME"
+		Case MENU_ID_CONFIRM_LOAD_GAME
+			Return "MENU_ID_CONFIRM_LOAD_GAME"
+		Case MENU_ID_LOAD_LEVEL
+			Return "MENU_ID_LOAD_LEVEL"
+		Case MENU_ID_SAVE_GAME
+			Return "MENU_ID_SAVE_GAME"
+		Case MENU_ID_INPUT_GAME_FILE_NAME
+			Return "MENU_ID_INPUT_GAME_FILE_NAME"
+		Case MENU_ID_SAVE_LEVEL
+			Return "MENU_ID_SAVE_LEVEL"
+		Case MENU_ID_INPUT_LEVEL_FILE_NAME
+			Return "MENU_ID_INPUT_LEVEL_FILE_NAME"
+		Case MENU_ID_CONFIRM_ERASE_LEVEL
+			Return "MENU_ID_CONFIRM_ERASE_LEVEL"
+		Case MENU_ID_SETTINGS
+			Return "MENU_ID_SETTINGS"
+		Case MENU_ID_OPTIONS_PERFORMANCE
+			Return "MENU_ID_OPTIONS_PERFORMANCE"
+		Case MENU_ID_PREFERENCES
+			Return "MENU_ID_PREFERENCES"
+		Case MENU_ID_OPTIONS_VIDEO
+			Return "MENU_ID_OPTIONS_VIDEO"
+		Case MENU_ID_CHOOSE_RESOLUTION
+			Return "MENU_ID_CHOOSE_RESOLUTION"
+		Case MENU_ID_INPUT_REFRESH_RATE
+			Return "MENU_ID_INPUT_REFRESH_RATE"
+		Case MENU_ID_INPUT_BIT_DEPTH
+			Return "MENU_ID_INPUT_BIT_DEPTH"
+		Case MENU_ID_INPUT_PARTICLE_LIMIT
+			Return "MENU_ID_INPUT_PARTICLE_LIMIT"
+		Case MENU_ID_OPTIONS_AUDIO
+			Return "MENU_ID_OPTIONS_AUDIO"
+		Case MENU_ID_OPTIONS_CONTROLS
+			Return "MENU_ID_OPTIONS_CONTROLS"
+		Case MENU_ID_OPTIONS_GAME
+			Return "MENU_ID_OPTIONS_GAME"
+		Case MENU_ID_EDITORS
+			Return "MENU_ID_EDITORS"
+		Case MENU_ID_LEVEL_EDITOR
+			Return "MENU_ID_LEVEL_EDITOR"
+		Case MENU_ID_PAUSED
+			Return "MENU_ID_PAUSED"
+	End Select
+End Function
+
 ''______________________________________________________________________________
 'Function debug_doors()
 '	Local spawn:POINT = Create_POINT( window_w/2, window_h/2 )

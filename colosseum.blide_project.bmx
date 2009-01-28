@@ -93,6 +93,7 @@ Public
 '#Region &H03 Includes
 Include "misc.bmx"
 Include "json.bmx"
+Include "player_profile.bmx"
 Include "data.bmx"
 Include "managed_object.bmx"
 Include "point.bmx"

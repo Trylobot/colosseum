@@ -26,7 +26,7 @@ Function draw_all_graphics()
 	End If
 	
 	'menus and such
-	If FLAG_in_menu Or FLAG_in_shop
+	If FLAG_in_menu
 		'dimmer
 		SetColor( 0, 0, 0 )
 		SetAlpha( 0.5 )
@@ -34,8 +34,6 @@ Function draw_all_graphics()
 		
 		If FLAG_in_menu
 			draw_main_screen()
-		Else 'FLAG_in_shop
-			draw_shop()
 		End If
 	End If
 	
@@ -228,6 +226,10 @@ Function draw_main_screen()
 	SetImageFont( get_font( "consolas_bold_50" ))
 	DrawText_with_outline( My.Application.AssemblyInfo, x, y )
 	
+	'menu options
+	x = 30; y = 96
+	draw_menus( x, y )
+	
 	'copyright stuff
 	SetColor( 157, 157, 157 )
 	SetImageFont( get_font( "consolas_10" ))
@@ -237,10 +239,6 @@ Function draw_main_screen()
 	If game = main_game Then y :- 50
 	DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole, aka Tylerbot; music by NickPerrin; JSON binding by grable", x, y ); y :+ h
 	DrawText_with_outline( "special thanks to Kaze, SniperAceX, Firelord88, ZieramsFolly; written in BlitzMax", x, y ); y :+ h
-	
-	'menu options
-	x = 30; y = 115
-	draw_menus( x, y )
 	
 End Function
 '______________________________________________________________________________

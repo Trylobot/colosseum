@@ -30,57 +30,12 @@ Global level_editor_cache:LEVEL
 	
 'app state flags
 Global FLAG_in_menu% = True
-Global FLAG_in_shop% = False
 Global FLAG_bg_music_on% = False
 Global FLAG_no_sound% = False
 Global FLAG_draw_help% = False
 Global FLAG_console% = False
-Global FLAG_ignore_mouse_1% = False
+Global FLAG_ignore_mouse_1% = False 'used for temporary ignore after resuming a paused game.
 
-'______________________________________________________________________________
-Type PLAYER_PROFILE
-	Field profile_name$
-	Field inventory%[]
-	Field input_method%
-	Field current_level$
-	Field cash%
-	Field kills%
-
-	Field src_path$
-	Field selected_inventory_index%
-		
-	Method New()
-		profile_name = "new_profile"
-		inventory = Null
-		input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-		cash = shop_item_prices[0]
-		src_path = ""
-	End Method
-	
-	Method to_json:TJSONObject()
-		Local this_json:TJSONObject = New TJSONObject
-		this_json.SetByName( "profile_name", TJSONString.Create( profile_name ))
-		this_json.SetByName( "inventory", Create_TJSONArray_from_Int_array( inventory ))
-		this_json.SetByName( "input_method", TJSONNumber.Create( input_method ))
-		this_json.SetByName( "current_level", TJSONString.Create( current_level ))
-		this_json.SetByName( "cash", TJSONNumber.Create( cash ))
-		this_json.SetByName( "kills", TJSONNumber.Create( kills ))
-		this_json.SetByName( "selected_inventory_index", TJSONNumber.Create( selected_inventory_index ))
-		Return this_json
-	End Method
-End Type
-
-Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
-	Local prof:PLAYER_PROFILE = New PLAYER_PROFILE
-	prof.profile_name = json.GetString( "profile_name" )
-	prof.inventory = Create_Int_array_from_TJSONArray( json.GetArray( "inventory" ))
-	prof.input_method = json.GetNumber( "input_method" )
-	prof.current_level = json.GetString( "current_level" )
-	prof.cash = json.GetNumber( "cash" )
-	prof.kills = json.GetNumber( "kills" )
-	prof.selected_inventory_index = json.GetNumber( "selected_inventory_index" )
-	Return prof
-End Function
 '______________________________________________________________________________
 Function play_level( level_file_path$, player_archetype% )
 	main_game = Create_ENVIRONMENT( True )
@@ -92,7 +47,6 @@ Function play_level( level_file_path$, player_archetype% )
 		main_game.insert_player( player, player_brain )
 		main_game.respawn_player()
 		FLAG_in_menu = False
-		FLAG_in_shop = False
 		main_game.player_in_locker = True
 		main_game.waiting_for_player_to_enter_arena = True
 		MoveMouse( window_w/2 - 30, window_h/2 )
@@ -111,7 +65,7 @@ End Function
 
 '______________________________________________________________________________
 Function record_player_kill( cash_value% )
-	If profile <> Null
+	If profile
 		last_kill_ts = now()
 		profile.kills :+ 1
 		profile.cash :+ cash_value
@@ -224,17 +178,20 @@ Const COMMAND_NULL% = 0
 Const COMMAND_SHOW_CHILD_MENU% = 50
 Const COMMAND_BACK_TO_PARENT_MENU% = 51
 Const COMMAND_BACK_TO_MAIN_MENU% = 53
-Const COMMAND_RESUME% = 100
-Const COMMAND_SHOP% = 150
+Const COMMAND_PLAY_LEVEL% = 100
+Const COMMAND_PAUSE% = 110
+Const COMMAND_RESUME% = 120
 Const COMMAND_NEW_GAME% = 200
-Const COMMAND_NEW_LEVEL% = 201
+Const COMMAND_NEW_LEVEL% = 210
 Const COMMAND_LOAD_GAME% = 300
-Const COMMAND_LOAD_LEVEL% = 301
+Const COMMAND_LOAD_LEVEL% = 310
 Const COMMAND_SAVE_GAME% = 400
 Const COMMAND_SAVE_LEVEL% = 401
 Const COMMAND_EDIT_LEVEL% = 500
 Const COMMAND_MULTIPLAYER_JOIN% = 600
-Const COMMAND_MULTIPLAYER_HOST% = 700
+Const COMMAND_MULTIPLAYER_HOST% = 650
+Const COMMAND_PLAYER_PROFILE_NAME% = 700
+Const COMMAND_PLAYER_PROFILE_PATH% = 710
 Const COMMAND_PLAYER_INPUT_TYPE% = 1000
 Const COMMAND_SETTINGS_FULLSCREEN% = 1010
 Const COMMAND_SETTINGS_RESOLUTION% = 1011
@@ -245,17 +202,18 @@ Const COMMAND_SETTINGS_IP_PORT% = 1021
 Const COMMAND_SETTINGS_RETAIN_PARTICLES% = 1030
 Const COMMAND_SETTINGS_PARTICLE_LIMIT% = 1031
 Const COMMAND_SETTINGS_APPLY_ALL% = 1100
-Const COMMAND_PAUSE% = 10000
 Const COMMAND_QUIT_LEVEL% = 10010
 Const COMMAND_QUIT_GAME% = 65535
 
 Const MENU_ID_MAIN_MENU% = 100
-Const MENU_ID_NEW_GAME% = 200
-Const MENU_ID_MULTIPLAYER% = 250
-Const MENU_ID_MULTIPLAYER_JOIN% = 260
-Const MENU_ID_MULTIPLAYER_HOST% = 270
-Const MENU_ID_MULTIPLAYER_INPUT_IP_ADDRESS% = 280
-Const MENU_ID_MULTIPLAYER_INPUT_IP_PORT% = 281
+Const MENU_ID_LOADING_BAY% = 200
+Const MENU_ID_INPUT_PROFILE_NAME% = 205
+Const MENU_ID_SELECT_LEVEL% = 270
+Const MENU_ID_MULTIPLAYER% = 1000
+Const MENU_ID_MULTIPLAYER_JOIN% = 1160
+Const MENU_ID_MULTIPLAYER_HOST% = 1170
+Const MENU_ID_MULTIPLAYER_INPUT_IP_ADDRESS% = 1180
+Const MENU_ID_MULTIPLAYER_INPUT_IP_PORT% = 1181
 Const MENU_ID_LOAD_GAME% = 300
 Const MENU_ID_CONFIRM_LOAD_GAME% = 310
 Const MENU_ID_LOAD_LEVEL% = 310
@@ -287,9 +245,9 @@ reset_index()
 
 all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MAIN_MENU, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 [	MENU_OPTION.Create( "resume", COMMAND_RESUME,, True, False ), ..
-	MENU_OPTION.Create( "loading bay", COMMAND_SHOP,, True, False ), ..
+	MENU_OPTION.Create( "loading bay", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOADING_BAY), True, False ), ..
 	MENU_OPTION.Create( "new", COMMAND_NEW_GAME,, True, True ), ..
-	MENU_OPTION.Create( "save", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_GAME), True, False ), ..
+	MENU_OPTION.Create( "save", COMMAND_SAVE_GAME,, True, False ), ..
 	MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_GAME), True, True ), ..
 	MENU_OPTION.Create( "multiplayer", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER), False, False ), ..
 	MENU_OPTION.Create( "settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SETTINGS), True, True ), ..
@@ -297,16 +255,24 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 	MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_EDITORS), True, True ), ..
 	MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ])
 	
-	all_menus[postfix_index()] = MENU.Create( "save game", 255, 96, 127, MENU_ID_SAVE_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, user_path, saved_game_file_ext, COMMAND_SAVE_GAME,,,, dynamic_subsection_window_size, ..
+	all_menus[postfix_index()] = MENU.Create( "loading bay", 255, 96, 64, MENU_ID_LOADING_BAY, MENU.VERTICAL_LIST, menu_margin, 1,,,,,,,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-		MENU_OPTION.Create( "new file", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_GAME_FILE_NAME), True, True )])
-
-		all_menus[postfix_index()] = MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_GAME_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,, user_path, saved_game_file_ext, COMMAND_SAVE_GAME,, 60, "%%profile.profile_name%%"  )
+		MENU_OPTION.Create( "continue game", COMMAND_NULL,, True, True ), ..
+		MENU_OPTION.Create( "profile %%profile.name%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_PROFILE_NAME), True, True ), ..
+		MENU_OPTION.Create( "  $%%profile.cash%%", COMMAND_NULL,, True, False, 96, 255, 96, True ), ..
+		MENU_OPTION.Create( "  kills %%profile.kills%%", COMMAND_NULL,, True, False, 255, 96, 96, True ), ..
+		MENU_OPTION.Create( "play campaign", COMMAND_NULL,, True, False ), ..
+		MENU_OPTION.Create( "inventory", COMMAND_NULL,, True, False ), ..
+		MENU_OPTION.Create( "buy parts", COMMAND_NULL,, True, False ), ..
+		MENU_OPTION.Create( "play custom level", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SELECT_LEVEL), True, True )])
+	
+		all_menus[postfix_index()] = MENU.Create( "input profile name", 255, 255, 255, MENU_ID_INPUT_PROFILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,,,, COMMAND_PLAYER_PROFILE_NAME,, 20, "%%profile.name%%" )
+		
+		all_menus[postfix_index()] = MENU.Create( "select level", 96, 255, 127, MENU_ID_SELECT_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, level_path, level_file_ext, COMMAND_PLAY_LEVEL,,,, dynamic_subsection_window_size, ..
+		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ])
 	
 	all_menus[postfix_index()] = MENU.Create( "load game", 96, 255, 127, MENU_ID_LOAD_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, user_path, saved_game_file_ext, COMMAND_LOAD_GAME,,,, dynamic_subsection_window_size, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ])
-
-		'all_menus[postfix_index()] = MENU.Create( "abandon current game?", 255, 64, 64, MENU_ID_CONFIRM_LOAD_GAME, MENU.CONFIRMATION_DIALOG, menu_margin, 1,,,, COMMAND_LOAD_GAME )
 
 	all_menus[postfix_index()] = MENU.Create( "multiplayer", 78, 78, 255, MENU_ID_MULTIPLAYER, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
@@ -400,13 +366,13 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 			MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_LEVEL), True, True ), ..
 			MENU_OPTION.Create( "new", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CONFIRM_ERASE_LEVEL), True, True ) ])
 			
-			all_menus[postfix_index()] = MENU.Create( "save from level editor", 255, 96, 127, MENU_ID_SAVE_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, data_path, level_file_ext, COMMAND_SAVE_LEVEL,,,, dynamic_subsection_window_size, ..
+			all_menus[postfix_index()] = MENU.Create( "save from level editor", 255, 96, 127, MENU_ID_SAVE_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, level_path, level_file_ext, COMMAND_SAVE_LEVEL,,,, dynamic_subsection_window_size, ..
 			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 				MENU_OPTION.Create( "new file", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_LEVEL_FILE_NAME), True, True )])
 				
-				all_menus[postfix_index()] = MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_LEVEL_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,, data_path, level_file_ext, COMMAND_SAVE_LEVEL,, 60, "%%level_editor_cache.name%%"  )
+				all_menus[postfix_index()] = MENU.Create( "input filename", 255, 255, 255, MENU_ID_INPUT_LEVEL_FILE_NAME, MENU.TEXT_INPUT_DIALOG, menu_margin,, level_path, level_file_ext, COMMAND_SAVE_LEVEL,, 60, "%%level_editor_cache.name%%"  )
 			
-			all_menus[postfix_index()] = MENU.Create( "load into level editor", 96, 255, 127, MENU_ID_LOAD_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, data_path, level_file_ext, COMMAND_LOAD_LEVEL,,,, dynamic_subsection_window_size, ..
+			all_menus[postfix_index()] = MENU.Create( "load into level editor", 96, 255, 127, MENU_ID_LOAD_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, level_path, level_file_ext, COMMAND_LOAD_LEVEL,,,, dynamic_subsection_window_size, ..
 			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ])
 			
 			all_menus[postfix_index()] = MENU.Create( "abandon current level?", 255, 64, 64, MENU_ID_CONFIRM_ERASE_LEVEL, MENU.CONFIRMATION_DIALOG, menu_margin, 1,,, COMMAND_NEW_LEVEL )
@@ -444,6 +410,13 @@ End Function
 '  the object gets cast to an appropriate type automatically, a container type with all the information necessary
 '  if the cast fails, the argument is invalid
 Function menu_command( command_code%, argument:Object = Null )
+	?Debug
+	Local arg$ = ""
+	If String(argument) Then arg = String(argument)
+	If INTEGER(argument) Then arg = menu_id_to_string( INTEGER(argument).value )
+	DebugLog( " "+pad( command_code_to_string( command_code ), 35,, False )+" "+arg )
+	?
+	
 	Select command_code
 		'________________________________________
 		Case COMMAND_SHOW_CHILD_MENU
@@ -457,13 +430,11 @@ Function menu_command( command_code%, argument:Object = Null )
 		'________________________________________
 		Case COMMAND_BACK_TO_MAIN_MENU
 			FLAG_in_menu = True
-			FLAG_in_shop = False
 			current_menu = 0
 			get_current_menu().update()
 		'________________________________________
 		Case COMMAND_PAUSE
 			FLAG_in_menu = True
-			FLAG_in_shop = False
 			current_menu = 1
 			menu_stack[1] = MENU_ID_PAUSED
 			If main_game <> Null Then main_game.paused = True
@@ -475,35 +446,44 @@ Function menu_command( command_code%, argument:Object = Null )
 			MoveMouse( window_w/2 - 30, window_h/2 )
 			FLAG_ignore_mouse_1 = True
 		'________________________________________
-		Case COMMAND_SHOP
-			FLAG_in_menu = False
-			FLAG_in_shop = True
+		Case COMMAND_PLAY_LEVEL
+			play_level( String(argument), 0 )
 		'________________________________________
 		Case COMMAND_NEW_GAME
 			profile = New PLAYER_PROFILE
 			show_info( "new profile loaded" )
 			get_current_menu().update( True )
 		'________________________________________
+		Case COMMAND_PLAYER_PROFILE_NAME
+			profile.name = String(argument)
+			profile.src_path = profile.generate_src_path()
+			menu_command( COMMAND_SAVE_GAME )
+			'menu_command( COMMAND_BACK_TO_PARENT_MENU )
+			get_current_menu().update( True )
+		'________________________________________
 		Case COMMAND_LOAD_GAME
 			profile = load_game( String(argument) )
 			If profile
 				save_autosave( profile.src_path )
-				show_info( "loaded profile "+profile.profile_name+" from "+profile.src_path )
+				show_info( "loaded profile "+profile.name+" from "+profile.src_path )
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			get_current_menu().update( True )
 		'________________________________________
 		Case COMMAND_SAVE_GAME
-			If save_game( String(argument), profile )
-				save_autosave( profile.src_path )
-				show_info( "saved profile "+profile.profile_name+" to "+profile.src_path )
+			If profile
+				If save_game( profile.src_path, profile )
+					save_autosave( profile.src_path )
+					show_info( "saved profile "+profile.name+" to "+profile.src_path )
+				End If
+			Else 'Not profile
+				save_autosave( Null )
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-		''________________________________________
-		'Case COMMAND_MULTIPLAYER_JOIN
-		'	join_game()
-		''________________________________________
-		'Case COMMAND_MULTIPLAYER_HOST
+		'________________________________________
+		Case COMMAND_MULTIPLAYER_JOIN
+		'________________________________________
+		Case COMMAND_MULTIPLAYER_HOST
 		'________________________________________
 		Case COMMAND_NEW_LEVEL
 			level_editor_cache = Create_LEVEL( 300, 300 )
@@ -604,8 +584,8 @@ Function menu_command( command_code%, argument:Object = Null )
 			level_editor( level_editor_cache )
 		'________________________________________
 		Case COMMAND_QUIT_LEVEL
-			menu_command( COMMAND_SHOP )
-			menu_command( COMMAND_SAVE_GAME, profile.src_path )
+			FLAG_in_menu = True
+			menu_command( COMMAND_SAVE_GAME )
 			main_game = Null
 			game = ai_menu_game
 		'________________________________________
@@ -629,10 +609,14 @@ Function resolve_meta_variables$( str$ )
 	For Local i% = 0 To tokens.Length - 1
 		If i Mod 2 = 1 'odd (and thus, intended as a variable pseudo-identifier)
 			Select tokens[i]
+				Case "profile.name"
+					result :+ profile.name
+				Case "profile.cash"
+					result :+ format_number( profile.cash )
+				Case "profile.kills"
+					result :+ format_number( profile.kills )
 				Case "level_editor_cache.name"
 					result :+ level_editor_cache.name
-				Case "profile.profile_name"
-					result :+ profile.profile_name
 				Case "fullscreen"
 					result :+ boolean_to_string( fullscreen )
 				Case "window_w"

@@ -155,22 +155,10 @@ Type MENU
 				SetImageFont( menu_font )
 			End If
 			opt = options[i]
-			If opt.visible And option_is_in_window( i )
-				If opt <> Null
-					Local rgb_val%, glow% = False
-					If i = focus
-						rgb_val = 255
-						glow = True
-					Else If opt.enabled And opt.visible
-						rgb_val = 127
-					Else If opt.visible
-						rgb_val = 64
-					End If
-					'draw the option
-					Local display_name$ = resolve_meta_variables( opt.name )
-					opt.draw( display_name, cx, cy, glow, rgb_val, rgb_val, rgb_val )
-					bounding_box[i] = Create_BOX( last_x, cy, width, TextHeight( display_name ))
-				End If
+			If opt <> Null And opt.visible And option_is_in_window( i )
+				Local name$ = resolve_meta_variables( opt.name )
+				opt.draw( name, cx, cy, (focus = i) )
+				bounding_box[i] = Create_BOX( last_x, cy, width, TextHeight( name ))
 				cy :+ text_height_factor*GetImageFont().Height() + margin
 			End If
 		Next

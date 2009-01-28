@@ -51,7 +51,7 @@ Function draw_shop()
 	y :+ h
 	draw_shop_option( "play", (shop_option = SHOP_OPTION_GO), x, y )
 	profile_name_y = y
-	draw_shop_option( "profile " + profile.profile_name, (shop_option = SHOP_OPTION_PROFILE_NAME), x, y )
+	draw_shop_option( "profile " + profile.name, (shop_option = SHOP_OPTION_PROFILE_NAME), x, y )
 	draw_shop_option( "current vehicle", (shop_option = SHOP_OPTION_INVENTORY_SELECT), x, y )
 	inventory_y = y
 	Local spacing% = 50
@@ -95,7 +95,7 @@ Function draw_shop()
 	If text_input_mode
 		SetImageFont( get_font( shop_option_font_name_selected ))
 		SetAlpha( 0.5 + Sin(now() Mod 360) )
-		DrawText( "|", shop_margin + TextWidth( "profile " + profile.profile_name ) - 4, profile_name_y )
+		DrawText( "|", shop_margin + TextWidth( "profile " + profile.name ) - 4, profile_name_y )
 	End If
 	
 End Function
@@ -167,7 +167,7 @@ Function get_shop_input()
 			End If
 		End If
 	Else 'text_input_mode
-		profile.profile_name = shop_console.update( profile.profile_name )
+		profile.name = shop_console.update( profile.name )
 	End If
 	
 End Function

@@ -14,6 +14,7 @@ Global autosave_path$ = "user/autosave.colosseum_data"
 Global art_path$ = "art/"
 Global data_path$ = "data/"
 Global font_path$ = "fonts/"
+Global level_path$ = "levels/"
 Global sound_path$ = "sound/"
 Global user_path$ = "user/"
 Global default_settings_file_name$ = "settings."+settings_file_ext
@@ -290,6 +291,7 @@ Function create_dirs()
 	CreateDir( art_path )
 	CreateDir( data_path )
 	CreateDir( font_path )
+	CreateDir( level_path )
 	CreateDir( sound_path )
 	CreateDir( user_path )
 End Function
@@ -428,9 +430,13 @@ Function load_autosave$()
 	End If
 End Function
 '______________________________________________________________________________
-Function save_autosave( profile$ )
+Function save_autosave( profile_path$ )
 	Local file:TStream, json:TJSON
-	json = TJSON.Create( "{autosave:~q"+profile+"~q}" )
+	If profile_path <> Null
+		json = TJSON.Create( "{autosave:~q"+profile_path+"~q}" )
+	Else 'profile_path = Null
+		json = TJSON.Create( "{autosave:null}" )
+	End If
 	file = WriteFile( autosave_path )
 	If file
 		json.Write( file )

@@ -260,7 +260,7 @@ Type COMPLEX_AGENT Extends AGENT
 				SetColor( 255, 96, 96 )
 		End Select
 		SetAlpha( 0.15*alpha_override )
-		SetScale( 0.3*scale_override, 0.3*scale_override )
+		SetScale( 0.3*scale_override*(img.width-2)/17.0, 0.3*scale_override*(img.width-2)/17.0 )
 		DrawImage( get_image( "halo" ), pos_x, pos_y )
 		'widgets behind
 		If Not hide_widgets

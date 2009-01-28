@@ -60,7 +60,6 @@ Function host_game()
 	If success
 		main_game.game_in_progress = True
 		FLAG_in_menu = False
-		FLAG_in_shop = False
 	Else
 		main_game = Null
 	End If

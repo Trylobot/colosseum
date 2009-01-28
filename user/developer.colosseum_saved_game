@@ -1,0 +1,9 @@
+{
+	name: "developer",
+	inventory: null,
+	input_method: 2,
+	current_level: "",
+	cash: 2725,
+	kills: 21,
+	selected_inventory_index: 0
+}

@@ -47,13 +47,6 @@ Function get_all_input()
 		If MouseHit( 1 ) And target_valid
 			m.execute_current_option()
 		End If
-	Else If FLAG_in_shop 'Not FLAG_in_menu
-		'shop navigation
-		If KeyHit( KEY_ESCAPE )
-			menu_command( COMMAND_BACK_TO_MAIN_MENU )
-		End If
-		'delegate input to shop function
-		get_shop_input()
 	Else 'Not FLAG_in_menu And Not FLAG_in_shop
 		'pause game
 		If game <> Null And game.human_participation
@@ -67,7 +60,7 @@ Function get_all_input()
 						End If
 					End If
 				Else 'game.game_over
-					menu_command( COMMAND_SHOP )
+					menu_command( COMMAND_QUIT_LEVEL )
 				End If
 				'clear unused keystrokes
 				FlushKeys()

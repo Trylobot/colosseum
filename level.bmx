@@ -346,14 +346,19 @@ Type LEVEL Extends MANAGED_OBJECT
 	End Method
 	
 	Method get_random_contained_point:cVEC( c:CELL )
-		If in_bounds( c )
-			Local m:cVEC = New cVEC
-			m.x = Float(vertical_divs[c.col])   + (RndFloat() * (Float(vertical_divs[c.col+1])   - Float(vertical_divs[c.col])))
-			m.y = Float(horizontal_divs[c.row]) + (RndFloat() * (Float(horizontal_divs[c.row+1]) - Float(horizontal_divs[c.row])))
-			Return m
-		Else
-			Return Null
-		End If
+		'If in_bounds( c )
+			Local x_min% = vertical_divs[c.col]
+			Local x_max% = vertical_divs[c.col+1]
+			Local x_diff_qtr% = 0.25 * (x_max - x_min)
+			Local y_min% = horizontal_divs[c.row]
+			Local y_max% = horizontal_divs[c.row+1]
+			Local y_diff_qtr% = 0.25 * (y_max - y_min)
+			Return cVEC.Create( ..
+				Rand( x_min + x_diff_qtr, x_max - x_diff_qtr ), ..
+				Rand( y_min + y_diff_qtr, y_max - y_diff_qtr ))
+		'Else
+		'	Return Null
+		'End If
 	End Method
 	
 	Method enemy_count%()

@@ -102,14 +102,14 @@ info_change_ts = now()
 Repeat
 	
 	'game object to use for this frame
-	If FLAG_in_menu Or FLAG_in_shop
-		If main_game <> Null
-			game = main_game
-		Else
-			game = ai_menu_game
+	If FLAG_in_menu
+		If main_game = Null
+			game = ai_menu_game 'initial condition; show autonomous game
+		Else 'main_game <> Null
+			game = main_game 'paused after beginning game
 		End If
 	Else
-		game = main_game
+		game = main_game 'normal play
 	End If
 	
 	'input
