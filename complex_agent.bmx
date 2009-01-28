@@ -21,6 +21,8 @@ Const ALIGNMENT_NONE% = 0
 Const ALIGNMENT_FRIENDLY% = 1
 Const ALIGNMENT_HOSTILE% = 2
 
+Const MAX_COMPLEX_AGENT_VELOCITY# = 5.0 'hard velocity limit
+
 '___________________________________________
 Type COMPLEX_AGENT Extends AGENT
 	
@@ -179,9 +181,13 @@ Type COMPLEX_AGENT Extends AGENT
 	Method update()
 		Super.update()
 		
-		'smooth out velocity
+		'smooth out and constrain velocity
 		Local vel# = vector_length( vel_x, vel_y )
-		If vel <= 0.00001
+		If vel > MAX_COMPLEX_AGENT_VELOCITY
+			Local proportion# = MAX_COMPLEX_AGENT_VELOCITY/vel
+			vel_x :* proportion
+			vel_y :* proportion
+		Else If vel <= 0.00001
 			vel_x = 0
 			vel_y = 0
 		End If
