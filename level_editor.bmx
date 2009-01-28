@@ -64,6 +64,7 @@ Function level_editor( lev:LEVEL )
 		SetColor( 255, 255, 255 )
 		SetLineWidth( 1 )
 		SetAlpha( 0.5 )
+		SetRotation( 0 )
 		'mouse delta line
 		DrawLine( mouse.x - mouse_delta.x, mouse.y - mouse_delta.y, mouse.x, mouse.y )		
 		

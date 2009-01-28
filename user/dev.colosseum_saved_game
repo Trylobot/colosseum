@@ -6,8 +6,8 @@
 		2
 	],
 	input_method: 2,
-	current_level: "data/debug.colosseum_level",
-	cash: 22750,
-	kills: 225,
-	selected_inventory_index: 1
+	current_level: "data/maze.colosseum_level",
+	cash: 25600,
+	kills: 251,
+	selected_inventory_index: 0
 }

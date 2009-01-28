@@ -136,15 +136,15 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			End If
 		End If
 		If target <> Null
-			'self-destruct ability
+			'mini-bomb "self-destruct" ability
 			If ai.can_self_destruct
 				If avatar.last_collided_agent_id = target.id
 					avatar.self_destruct()
 				End If
 			End If
-			'carrier launch ability
+			'carrier "deploy" ability
 			If ai.is_carrier
-				If can_see_target And Not avatar.is_deployed
+				If can_see_target And dist_to_target <= 175 And Not avatar.is_deployed
 					avatar.deploy()
 					spawn_point = create_spawn_point()
 					last_spawned_ts = now()
