@@ -392,24 +392,13 @@ Global ENEMY_INDEX_CARRIER% = postfix_index()
 Function set_complex_agent_archetypes()
 	
 	complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "light tank", get_image( "player_tank_chassis" ), get_image( "light_tank_hitbox" ), get_image( "quad_gibs" ), "vehicle", 0, 500, 800.0, 75.0, 75.0, 100.0 ))
+		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
+		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_trail_package( PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL,, 12, 6 )
+		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_dust_cloud_package( , 12, 7, 0, 2, -45, 45, -0.2, 0.8 )
+		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_motivator_package( "light_tank_track", 0, 6.5 )
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret_anchor( cVEC.Create( -5, 0 ))
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON], 0 )
 		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN], 0 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_FORWARD ).attach_at( 12, -6, 1, 1 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_FORWARD ).attach_at( 12, 6, 1, 1 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, -6, 1, 1 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, 6, 1, 1 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD] ), EVENT_DRIVE_FORWARD ).attach_at( 12, -7, 0, 2, -45, 45, 0.3, 0.6 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD] ), EVENT_DRIVE_FORWARD ).attach_at( 12, 7, 0, 2, -45, 45, 0.3, 0.6 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, -7, 0, 2, 135, 225, 0.3, 0.6 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD] ), EVENT_DRIVE_BACKWARD ).attach_at( -12, 7, 0, 2, 135, 225, 0.3, 0.6 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track = get_particle( "light_tank_track" )
-			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track.parent = complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK]
-			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].left_track.attach_at( 0, -6.5 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track = get_particle( "light_tank_track" )
-			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track.parent = complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK]
-			complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].right_track.attach_at( 0, 6.5 )
-		complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 	
 	complex_agent_archetype[PLAYER_INDEX_LASER_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] ))
 		complex_agent_archetype[PLAYER_INDEX_LASER_TANK].name = "light tank/laser"
@@ -476,11 +465,11 @@ Function set_complex_agent_archetypes()
 	complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[PLAYER_INDEX_LIGHT_TANK] ))
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].cash_value = 300
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].max_health = 175
-		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[0].turret_barrel_array[0].reload_time = 1750
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[0].turret_barrel_array[0].reload_time = 2000
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[0].turret_barrel_array[0].launcher.vel.scale( 0.60 )
-		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[1].turret_barrel_array[0].reload_time = 95
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[1].turret_barrel_array[0].reload_time = 105
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[1].turret_barrel_array[0].launcher.vel.scale( 0.60 )
-		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[1].max_heat = 17.5
+		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turrets[1].max_heat = 15.0
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].driving_force.magnitude_max = 50.0
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turning_force.magnitude_max = 65.0
 		

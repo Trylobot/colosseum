@@ -175,6 +175,7 @@ End Function
 
 '______________________________________________________________________________
 Const COMMAND_NULL% = 0
+Const COMMAND_LOAD_ASSETS% = 10
 Const COMMAND_SHOW_CHILD_MENU% = 50
 Const COMMAND_BACK_TO_PARENT_MENU% = 51
 Const COMMAND_BACK_TO_MAIN_MENU% = 53
@@ -233,7 +234,7 @@ Const MENU_ID_INPUT_PARTICLE_LIMIT% = 514
 Const MENU_ID_OPTIONS_AUDIO% = 520
 Const MENU_ID_OPTIONS_CONTROLS% = 530
 Const MENU_ID_OPTIONS_GAME% = 540
-Const MENU_ID_EDITORS% = 600
+Const MENU_ID_GAME_DATA% = 600
 Const MENU_ID_LEVEL_EDITOR% = 610
 Const MENU_ID_PAUSED% = 1000
 
@@ -252,7 +253,7 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 	MENU_OPTION.Create( "multiplayer", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER), False, False ), ..
 	MENU_OPTION.Create( "settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SETTINGS), True, True ), ..
 	MENU_OPTION.Create( "preferences", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_PREFERENCES), True, False ), ..
-	MENU_OPTION.Create( "editors", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_EDITORS), True, True ), ..
+	MENU_OPTION.Create( "game data", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_GAME_DATA), True, True ), ..
 	MENU_OPTION.Create( "quit", COMMAND_QUIT_GAME,, True, True ) ])
 	
 	all_menus[postfix_index()] = MENU.Create( "loading bay", 255, 96, 64, MENU_ID_LOADING_BAY, MENU.VERTICAL_LIST, menu_margin, 1,,,,,,,, ..
@@ -273,7 +274,8 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 	
 	all_menus[postfix_index()] = MENU.Create( "load game", 96, 255, 127, MENU_ID_LOAD_GAME, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, user_path, saved_game_file_ext, COMMAND_LOAD_GAME,,,, dynamic_subsection_window_size, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ) ])
-
+	
+	Rem
 	all_menus[postfix_index()] = MENU.Create( "multiplayer", 78, 78, 255, MENU_ID_MULTIPLAYER, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[ MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 		MENU_OPTION.Create( "join game", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_MULTIPLAYER_JOIN), True, True ), ..
@@ -293,7 +295,8 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 			all_menus[postfix_index()] = MENU.Create( "input ip address", 255, 255, 255, MENU_ID_MULTIPLAYER_INPUT_IP_ADDRESS, MENU.TEXT_INPUT_DIALOG, menu_margin,,,, COMMAND_SETTINGS_IP_ADDRESS,, 17, "%%ip_address%%"  )
 
 			all_menus[postfix_index()] = MENU.Create( "input port number", 255, 255, 255, MENU_ID_MULTIPLAYER_INPUT_IP_PORT, MENU.TEXT_INPUT_DIALOG, menu_margin,,,, COMMAND_SETTINGS_IP_PORT,, 17, "%%ip_port%%"  )
-
+	EndRem
+	
 	all_menus[postfix_index()] = MENU.Create( "settings", 127, 127, 255, MENU_ID_SETTINGS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 		MENU_OPTION.Create( "video settings", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_OPTIONS_VIDEO), True, True ), ..
@@ -355,9 +358,10 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 			MENU_OPTION.Create( "keyboard and mouse", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID), True, True ), ..
 			MENU_OPTION.Create( "xbox 360 controller", COMMAND_PLAYER_INPUT_TYPE, INTEGER.Create(CONTROL_BRAIN.INPUT_XBOX_360_CONTROLLER), True, False ) ])
 	
-	all_menus[postfix_index()] = MENU.Create( "editors", 196, 196, 196, MENU_ID_EDITORS, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
+	all_menus[postfix_index()] = MENU.Create( "game data", 196, 196, 196, MENU_ID_GAME_DATA, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 	[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
-		MENU_OPTION.Create( "level editor", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LEVEL_EDITOR), True, True ) ])
+		MENU_OPTION.Create( "level editor", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LEVEL_EDITOR), True, True ), ..
+		MENU_OPTION.Create( "reload external data", COMMAND_LOAD_ASSETS,, True, True ) ])
 		
 		all_menus[postfix_index()] = MENU.Create( "level editor", 96, 127, 255, MENU_ID_LEVEL_EDITOR, MENU.VERTICAL_LIST, menu_margin, 1,,,,,,,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
@@ -413,8 +417,8 @@ Function menu_command( command_code%, argument:Object = Null )
 	?Debug
 	Local arg$ = ""
 	If String(argument) Then arg = String(argument)
-	If INTEGER(argument) Then arg = menu_id_to_string( INTEGER(argument).value )
-	DebugLog( " "+pad( command_code_to_string( command_code ), 35,, False )+" "+arg )
+	If INTEGER(argument) Then arg = menu_id_to_string( INTEGER(argument).value )[7..].ToLower()
+	DebugLog( " "+pad( command_code_to_string( command_code )[8..].ToLower(), 26,, False )+" "+arg )
 	?
 	
 	Select command_code
@@ -436,7 +440,7 @@ Function menu_command( command_code%, argument:Object = Null )
 		Case COMMAND_PAUSE
 			FLAG_in_menu = True
 			current_menu = 1
-			menu_stack[1] = MENU_ID_PAUSED
+			menu_stack[current_menu] = MENU_ID_PAUSED
 			If main_game <> Null Then main_game.paused = True
 			get_current_menu().update()
 		'________________________________________
@@ -583,6 +587,12 @@ Function menu_command( command_code%, argument:Object = Null )
 		Case COMMAND_EDIT_LEVEL
 			level_editor( level_editor_cache )
 		'________________________________________
+		Case COMMAND_LOAD_ASSETS
+			load_assets()
+			MENU.load_fonts()
+			load_all_archetypes() 'REMOVE this function call by externalizing this data, please.
+			show_info( "external data loaded" )
+		'________________________________________
 		Case COMMAND_QUIT_LEVEL
 			FLAG_in_menu = True
 			menu_command( COMMAND_SAVE_GAME )
@@ -596,13 +606,7 @@ Function menu_command( command_code%, argument:Object = Null )
 	End Select
 End Function
 
-Type INTEGER
-	Field value%
-	Function Create:INTEGER( value% )
-		Local i:INTEGER = New INTEGER; i.value = value;	Return i
-	End Function
-End Type
-
+'______________________________________________________________________________
 Function resolve_meta_variables$( str$ )
 	Local tokens$[] = str.Split( "%%" )
 	Local result$ = ""
@@ -643,4 +647,142 @@ Function resolve_meta_variables$( str$ )
 	Return result
 End Function
 
+'______________________________________________________________________________
+Function command_code_to_string$( code% )
+	Select code
+		Case COMMAND_NULL
+			Return "COMMAND_NULL"
+		Case COMMAND_LOAD_ASSETS
+			Return "COMMAND_LOAD_ASSETS"
+		Case COMMAND_SHOW_CHILD_MENU
+			Return "COMMAND_SHOW_CHILD_MENU"
+		Case COMMAND_BACK_TO_PARENT_MENU
+			Return "COMMAND_BACK_TO_PARENT_MENU"
+		Case COMMAND_BACK_TO_MAIN_MENU
+			Return "COMMAND_BACK_TO_MAIN_MENU"
+		Case COMMAND_PLAY_LEVEL
+			Return "COMMAND_PLAY_LEVEL"
+		Case COMMAND_PAUSE
+			Return "COMMAND_PAUSE"
+		Case COMMAND_RESUME
+			Return "COMMAND_RESUME"
+		Case COMMAND_NEW_GAME
+			Return "COMMAND_NEW_GAME"
+		Case COMMAND_NEW_LEVEL
+			Return "COMMAND_NEW_LEVEL"
+		Case COMMAND_LOAD_GAME
+			Return "COMMAND_LOAD_GAME"
+		Case COMMAND_LOAD_LEVEL
+			Return "COMMAND_LOAD_LEVEL"
+		Case COMMAND_SAVE_GAME
+			Return "COMMAND_SAVE_GAME"
+		Case COMMAND_SAVE_LEVEL
+			Return "COMMAND_SAVE_LEVEL"
+		Case COMMAND_EDIT_LEVEL
+			Return "COMMAND_EDIT_LEVEL"
+		Case COMMAND_MULTIPLAYER_JOIN
+			Return "COMMAND_MULTIPLAYER_JOIN"
+		Case COMMAND_MULTIPLAYER_HOST
+			Return "COMMAND_MULTIPLAYER_HOST"
+		Case COMMAND_PLAYER_PROFILE_NAME
+			Return "COMMAND_PLAYER_PROFILE_NAME"
+		Case COMMAND_PLAYER_PROFILE_PATH
+			Return "COMMAND_PLAYER_PROFILE_PATH"
+		Case COMMAND_PLAYER_INPUT_TYPE
+			Return "COMMAND_PLAYER_INPUT_TYPE"
+		Case COMMAND_SETTINGS_FULLSCREEN
+			Return "COMMAND_SETTINGS_FULLSCREEN"
+		Case COMMAND_SETTINGS_RESOLUTION
+			Return "COMMAND_SETTINGS_RESOLUTION"
+		Case COMMAND_SETTINGS_REFRESH_RATE
+			Return "COMMAND_SETTINGS_REFRESH_RATE"
+		Case COMMAND_SETTINGS_BIT_DEPTH
+			Return "COMMAND_SETTINGS_BIT_DEPTH"
+		Case COMMAND_SETTINGS_IP_ADDRESS
+			Return "COMMAND_SETTINGS_IP_ADDRESS"
+		Case COMMAND_SETTINGS_IP_PORT
+			Return "COMMAND_SETTINGS_IP_PORT"
+		Case COMMAND_SETTINGS_RETAIN_PARTICLES
+			Return "COMMAND_SETTINGS_RETAIN_PARTICLES"
+		Case COMMAND_SETTINGS_PARTICLE_LIMIT
+			Return "COMMAND_SETTINGS_PARTICLE_LIMIT"
+		Case COMMAND_SETTINGS_APPLY_ALL
+			Return "COMMAND_SETTINGS_APPLY_ALL"
+		Case COMMAND_QUIT_LEVEL
+			Return "COMMAND_QUIT_LEVEL"
+		Case COMMAND_QUIT_GAME
+			Return "COMMAND_QUIT_GAME"
+		Default
+			Return String.FromInt( code )
+	End Select
+End Function
+'______________________________________________________________________________
+Function menu_id_to_string$( menu_id% )
+	Select menu_id
+		Case MENU_ID_MAIN_MENU
+			Return "MENU_ID_MAIN_MENU"
+		Case MENU_ID_LOADING_BAY
+			Return "MENU_ID_LOADING_BAY"
+		Case MENU_ID_INPUT_PROFILE_NAME
+			Return "MENU_ID_INPUT_PROFILE_NAME"
+		Case MENU_ID_SELECT_LEVEL
+			Return "MENU_ID_SELECT_LEVEL"
+		Case MENU_ID_MULTIPLAYER
+			Return "MENU_ID_MULTIPLAYER"
+		Case MENU_ID_MULTIPLAYER_JOIN
+			Return "MENU_ID_MULTIPLAYER_JOIN"
+		Case MENU_ID_MULTIPLAYER_HOST
+			Return "MENU_ID_MULTIPLAYER_HOST"
+		Case MENU_ID_MULTIPLAYER_INPUT_IP_ADDRESS
+			Return "MENU_ID_MULTIPLAYER_INPUT_IP_ADDRESS"
+		Case MENU_ID_MULTIPLAYER_INPUT_IP_PORT
+			Return "MENU_ID_MULTIPLAYER_INPUT_IP_PORT"
+		Case MENU_ID_LOAD_GAME
+			Return "MENU_ID_LOAD_GAME"
+		Case MENU_ID_CONFIRM_LOAD_GAME
+			Return "MENU_ID_CONFIRM_LOAD_GAME"
+		Case MENU_ID_LOAD_LEVEL
+			Return "MENU_ID_LOAD_LEVEL"
+		Case MENU_ID_SAVE_GAME
+			Return "MENU_ID_SAVE_GAME"
+		Case MENU_ID_INPUT_GAME_FILE_NAME
+			Return "MENU_ID_INPUT_GAME_FILE_NAME"
+		Case MENU_ID_SAVE_LEVEL
+			Return "MENU_ID_SAVE_LEVEL"
+		Case MENU_ID_INPUT_LEVEL_FILE_NAME
+			Return "MENU_ID_INPUT_LEVEL_FILE_NAME"
+		Case MENU_ID_CONFIRM_ERASE_LEVEL
+			Return "MENU_ID_CONFIRM_ERASE_LEVEL"
+		Case MENU_ID_SETTINGS
+			Return "MENU_ID_SETTINGS"
+		Case MENU_ID_OPTIONS_PERFORMANCE
+			Return "MENU_ID_OPTIONS_PERFORMANCE"
+		Case MENU_ID_PREFERENCES
+			Return "MENU_ID_PREFERENCES"
+		Case MENU_ID_OPTIONS_VIDEO
+			Return "MENU_ID_OPTIONS_VIDEO"
+		Case MENU_ID_CHOOSE_RESOLUTION
+			Return "MENU_ID_CHOOSE_RESOLUTION"
+		Case MENU_ID_INPUT_REFRESH_RATE
+			Return "MENU_ID_INPUT_REFRESH_RATE"
+		Case MENU_ID_INPUT_BIT_DEPTH
+			Return "MENU_ID_INPUT_BIT_DEPTH"
+		Case MENU_ID_INPUT_PARTICLE_LIMIT
+			Return "MENU_ID_INPUT_PARTICLE_LIMIT"
+		Case MENU_ID_OPTIONS_AUDIO
+			Return "MENU_ID_OPTIONS_AUDIO"
+		Case MENU_ID_OPTIONS_CONTROLS
+			Return "MENU_ID_OPTIONS_CONTROLS"
+		Case MENU_ID_OPTIONS_GAME
+			Return "MENU_ID_OPTIONS_GAME"
+		Case MENU_ID_GAME_DATA
+			Return "MENU_ID_GAME_DATA"
+		Case MENU_ID_LEVEL_EDITOR
+			Return "MENU_ID_LEVEL_EDITOR"
+		Case MENU_ID_PAUSED
+			Return "MENU_ID_PAUSED"
+		Default
+			Return String.FromInt( menu_id )
+	End Select
+End Function
 

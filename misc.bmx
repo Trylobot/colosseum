@@ -192,7 +192,7 @@ Function pad$( str$, width%, pad$ = " ", align_right% = True )
 	While str.Length < width
 		If align_right
 			str = pad + str
-		Else
+		Else 'align left
 			str = str + pad
 		End If
 	EndWhile
@@ -329,3 +329,9 @@ Function intersection:cVEC( j1:cVEC, j2:cVEC, k1:cVEC, k2:cVEC ) 'return the poi
 	Return i
 End Function
 
+Type INTEGER
+	Field value%
+	Function Create:INTEGER( value% )
+		Local i:INTEGER = New INTEGER; i.value = value;	Return i
+	End Function
+End Type

@@ -20,7 +20,7 @@ Const PROJECTILE_EXPLOSIVE_FORCE_COEFFICIENT# = 1000.0 'energy multiplier for al
 Const PROJECTILE_AGENT_ENERGY_COEFFICIENT# = 350.0 'energy multiplier for all collisions involving projectiles and agents
 Const PROJECTILE_AGENT_TORQUE_COEFFICIENT# = 0.25 'energy multiplier (torque only) for collisions involving projectiles and agents
 Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.012 'energy multiplier for all projectile-projectile collisions
-Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.1 'energy multiplier for all agent-agent collisions
+Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.05 'energy multiplier for all agent-agent collisions
 Const WALL_NUDGE_DIST# = 0.2
 
 Function collide_all_objects()
@@ -195,7 +195,7 @@ Function collision_agent_agent( ag:AGENT, other:AGENT )
 		ag.acc_y :- acc_projection*Sin( ang )
 		'collision force/torque
 		Local collision_force_mag# = other.mass*AGENT_AGENT_ENERGY_COEFFICIENT*vel.r()
-		ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, collision_force_mag*Cos( ang - other.ang ), 50 )))
+		ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang, collision_force_mag*Cos( ang ), 50 )))
 		ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, dist*(collision_force_mag/30.0)*Sin( ang - other.ang ), 50 )))
 	End If
 End Function

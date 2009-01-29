@@ -827,4 +827,14 @@
 			frame_height: 12
 		}
 	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/laser_big.png",
+			handle_x: 15,
+			handle_y: 3.5,
+			frames: 1
+		}
+	},
 ]

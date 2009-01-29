@@ -45,18 +45,20 @@ Function apply_default_settings()
 	ip_address = "127.0.0.1"
 	ip_port = 6112
 End Function
+'defaults
 apply_default_settings()
 
-'external data load
+'data directory enforce
 create_dirs()
+'settings
 If Not load_settings()
 	save_settings()
 End If
-load_assets()
-MENU.load_fonts()
-load_all_archetypes() 'REMOVE this function call by externalizing this data, please.
-menu_command( COMMAND_NEW_LEVEL ) 'initialize the level editor data
-'autosave profile auto-load on startup
+'assets
+menu_command( COMMAND_LOAD_ASSETS )
+'level editor cache 
+menu_command( COMMAND_NEW_LEVEL )
+'autosave/load
 autosave_profile_path = load_autosave()
 menu_command( COMMAND_LOAD_GAME, autosave_profile_path )
 
