@@ -199,8 +199,7 @@ End Function
 '[ WIDGETS ]
 Global widget_archetype:WIDGET[10]; reset_index()
 
-Global WIDGET_INDEX_AI_SEEK_LIGHT% = postfix_index()
-Global WIDGET_INDEX_AI_WANDER_LIGHT% = postfix_index()
+Global WIDGET_INDEX_AI_LIGHTBULB% = postfix_index()
 Global WIDGET_INDEX_ARENA_DOOR% = postfix_index()
 Global WIDGET_INDEX_BAY_DOOR_CLOCKWISE% = postfix_index()
 Global WIDGET_INDEX_BAY_DOOR_COUNTER_CLOCKWISE% = postfix_index()
@@ -208,12 +207,8 @@ Global WIDGET_INDEX_RAMP_EXTENDER% = postfix_index()
 Global WIDGET_INDEX_SPINNER% = postfix_index()
 
 Function set_widget_archetypes()
-	widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT] = WIDGET( WIDGET.Create( "seek light", get_image( "glow" ), LAYER_IN_FRONT_OF_PARENT,, REPEAT_MODE_CYCLIC_WRAP, True ))
-		widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.000, 1, 1, 200 )))
-		widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 127, 127, 0.750, 1, 1, 200 )))
-	widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT] = WIDGET( WIDGET.Create( "wander light", get_image( "glow" ), LAYER_IN_FRONT_OF_PARENT,, REPEAT_MODE_CYCLIC_WRAP, True ))
-		widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 96, 96, 255, 0.000, 1, 1, 400 )))
-		widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 96, 96, 255, 0.750, 1, 1, 400 )))
+	'widget_archetype[WIDGET_INDEX_AI_LIGHTBULB] = '..?
+		'..?
 	widget_archetype[WIDGET_INDEX_ARENA_DOOR] = WIDGET( WIDGET.Create( "door", get_image( "door" ), LAYER_IN_FRONT_OF_PARENT,, REPEAT_MODE_CYCLIC_WRAP, False ))
 		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1, 1, 1, 1750 )))
 		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 32, 0, 0, 255, 255, 255, 1, 1, 1, 925 )))
@@ -367,6 +362,7 @@ Function set_ai_type_archetypes()
 	ai_type_map.Insert( "bomb", Create_AI_TYPE( False, True, True, False ))
 	ai_type_map.Insert( "vehicle", Create_AI_TYPE( True, True, False, False ))
 	ai_type_map.Insert( "carrier", Create_AI_TYPE( False, True, False, True ))
+	ai_type_map.Insert( "armed_carrier", Create_AI_TYPE( True, True, False, True ))
 End Function
 
 '______________________________________________________________________________
@@ -445,9 +441,8 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[ENEMY_INDEX_ROCKET_TURRET_EMPLACEMENT].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 		
 	complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mini bomb", get_image( "nme_mobile_bomb" ),, get_image( "bomb_gibs" ), "bomb", 75, 50, 200, 10.0, 7.50, 30.0 ))
-		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_widget( widget_archetype[WIDGET_INDEX_AI_SEEK_LIGHT], WIDGET_CONSTANT ).attach_at( -6, 0 )
-		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_widget( widget_archetype[WIDGET_INDEX_AI_WANDER_LIGHT], WIDGET_CONSTANT ).attach_at( -6, 0 )
 		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
+		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_lightbulb()
 		
 	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun quad", get_image( "enemy_quad_chassis" ),, get_image( "quad_gibs" ), "vehicle", 100, 50, 400, 25.0, 35.0, 55.0 ))
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_turret_anchor( cVEC.Create( -6, 0 ))
@@ -473,7 +468,7 @@ Function set_complex_agent_archetypes()
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].driving_force.magnitude_max = 50.0
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_TANK].turning_force.magnitude_max = 65.0
 		
-	complex_agent_archetype[ENEMY_INDEX_CARRIER] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "carrier", get_image( "carrier_chassis" ), get_image( "carrier_hitbox" ), get_image( "carrier_gibs" ), "carrier", 350, 300, 1200, 125.0, 70.0, 95.0 ))
+	complex_agent_archetype[ENEMY_INDEX_CARRIER] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "armed_carrier", get_image( "carrier_chassis" ), get_image( "carrier_hitbox" ), get_image( "carrier_gibs" ), "armed_carrier", 375, 300, 1200, 125.0, 70.0, 95.0 ))
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_BAY_DOOR_CLOCKWISE], WIDGET_DEPLOY ).attach_at( -16, -9,, True )
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_BAY_DOOR_COUNTER_CLOCKWISE], WIDGET_DEPLOY ).attach_at( -16, 9,, True )
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_RAMP_EXTENDER], WIDGET_DEPLOY ).attach_at( -15, 0,, True )
@@ -493,5 +488,9 @@ Function set_complex_agent_archetypes()
 			complex_agent_archetype[ENEMY_INDEX_CARRIER].right_track.parent = complex_agent_archetype[PLAYER_INDEX_MEDIUM_TANK]
 			complex_agent_archetype[ENEMY_INDEX_CARRIER].right_track.attach_at( 1, 8.5 )
 		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_turret_anchor( cVEC.Create( 10, -10 ))
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_turret_anchor( cVEC.Create( 10, 10 ))
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 0 )
+		complex_agent_archetype[ENEMY_INDEX_CARRIER].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 1 )
 		
 End Function

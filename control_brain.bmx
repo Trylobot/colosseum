@@ -108,14 +108,14 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		If ai.can_move And Not (ai.is_carrier And avatar.is_deployed)
 			'target availability
 			If can_see_target
-				enable_seek_lights()
+				'avatar.lightbulb_pulsate()
 				If ai.has_turrets And dist_to_target <= 50
 					drive_to( Null )
 				Else
 					drive_to( target )
 				End If
 			Else 'Not can_see_target
-				enable_wander_lights()
+				'avatar.lightbulb_off()
 				drive_to( waypoint )
 			End If
 		End If
@@ -123,11 +123,11 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		If ai.has_turrets
 			'target availability
 			If can_see_target
-				'point turrets at target
+				'rotate turrets that aren't pointing at the target
 				aim_turrets( target )
 				'friendly fire prevention
 				If Not ally_blocking
-					'fire appropriate turrets
+					'fire turrets that want to fire
 					fire_turrets()
 				End If
 			Else 'Not can_see_target
@@ -209,38 +209,38 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
 			If diff_mag > 5.0*max_ang_vel
 				If diff < 0
-					avatar.turn_turret_system( 0, 1.0 )
+					avatar.turn_turret_system( index, 1.0 )
 				Else 'diff > 0
-					avatar.turn_turret_system( 0, -1.0 )
+					avatar.turn_turret_system( index, -1.0 )
 				End If
 			Else
 				If diff < 0
-					avatar.turn_turret_system( 0, diff_mag /( max_ang_vel * 5.0 ))
+					avatar.turn_turret_system( index, diff_mag /( max_ang_vel * 5.0 ))
 				Else 'diff > 0
-					avatar.turn_turret_system( 0, -diff_mag /( max_ang_vel * 5.0 ))
+					avatar.turn_turret_system( index, -diff_mag /( max_ang_vel * 5.0 ))
 				End If
 			End If
 		Next
 	End Method
 	
 	Method fire_turrets()
-		Local t:TURRET
-		For Local system_index% = 0 To avatar.turret_systems.Length-1
-			Local diff# = ang_wrap( avatar.get_turret_system_ang( system_index ) - ang_to_target )
-			Local threshold# = ATan2( targeting_radius, dist_to_target )
-			For Local turret_index% = 0 To avatar.turret_systems[system_index].Length-1
-				t = avatar.turrets[turret_index]
+		Local system_index%, system_turret_index%, turret_index%
+		Local diff#, threshold#
+		For system_index = 0 To avatar.turret_systems.Length-1
+			diff = ang_wrap( avatar.get_turret_system_ang( system_index ) - ang_to_target )
+			threshold = ATan2( targeting_radius, dist_to_target )
+			For system_turret_index = 0 To avatar.turret_systems[system_index].Length-1
+				turret_index = avatar.turret_systems[system_index][system_turret_index]
 				'overheat-wait system update
-				If t.overheated()
+				If avatar.overheated( turret_index )
 					turret_overheated[turret_index] = True
-				Else If turret_overheated[turret_index] And t.cur_heat <= 0.25*t.max_heat
+				Else If turret_overheated[turret_index] And avatar.mostly_cooled( turret_index )
 					turret_overheated[turret_index] = False
 				End If
 				'firing checklist
-				If Not turret_overheated[turret_index] ..
-				And Abs( diff ) <= threshold
+				If Not turret_overheated[turret_index] And Abs( diff ) <= threshold
 				'And dist_to_target <= t.effective_range ..
-					t.fire()
+					avatar.fire( turret_index )
 				End If
 			Next
 		Next
@@ -357,20 +357,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method enable_seek_lights()
-		For Local w:WIDGET = EachIn avatar.constant_widgets
-			If      w.name = "seek light"   Then w.visible = True ..
-			Else If w.name = "wander light" Then w.visible = False
-		Next
-	End Method
-	
-	Method enable_wander_lights()
-		For Local w:WIDGET = EachIn avatar.constant_widgets
-			If      w.name = "seek light"   Then w.visible = False ..
-			Else If w.name = "wander light" Then w.visible = True
-		Next
-	End Method
-
 	Method input_control()
 		Select input_type
 			

@@ -178,8 +178,8 @@
 		key: "{path}",
 		object: {
 			path: "art/nme_mobile_bomb.png",
-			handle_x: 7.5,
-			handle_y: 7.5,
+			handle_x: 3.5,
+			handle_y: 5.5,
 			frames: 1
 		}
 	},
@@ -837,4 +837,14 @@
 			frames: 1
 		}
 	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/lightbulb.png",
+			handle_x: 9.5,
+			handle_y: 9.5,
+			frames: 1
+		}
+	}
 ]

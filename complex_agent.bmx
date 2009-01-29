@@ -47,6 +47,7 @@ Type COMPLEX_AGENT Extends AGENT
 	Field stickies:TList 'TList<PARTICLE> damage particles
 	Field left_track:PARTICLE 'a special particle that represents the "left track" of a tank
 	Field right_track:PARTICLE 'a special particle that represents the "right track" of a tank
+	Field lightbulb:WIDGET 'a special widget that the AI can manipulate as a graphical indication of its intent
 
 	Field spawning%
 	Field spawn_time%
@@ -349,6 +350,18 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 	End Method
 	'___________________________________________
+	Method overheated%( index% )
+		If index < turrets.Length
+			Return turrets[index].overheated()
+		End If
+	End Method
+	'___________________________________________
+	Method mostly_cooled%( index% )
+		If index < turrets.Length
+			Return turrets[index].cur_heat <= (0.25 * turrets[index].max_heat)
+		End If
+	End Method
+	'___________________________________________
 	Method turn_turret_system( index%, control_pct# )
 		If Not spawning
 			If index < turret_systems.Length
@@ -582,6 +595,10 @@ Type COMPLEX_AGENT Extends AGENT
 		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_archetype] ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y )
 		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y )
 		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y )
+	End Method
+	'___________________________________________
+	Method add_lightbulb()
+		
 	End Method
 		
 End Type
