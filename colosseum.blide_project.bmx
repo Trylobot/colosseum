@@ -5,8 +5,8 @@ EndRem
 '#Region &HFF Program Info
 'Program: Colosseum
 'Version: 0
-'Subversion: 2
-'Revision: 13
+'Subversion: 3
+'Revision: 0
 '#EndRegion &HFF
 
 
@@ -50,8 +50,8 @@ End Type
 TYPE z_blide_bge2f17149_9a68_460c_a3de_03fd0d792659 Abstract
     Const Name:string = "Colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
-    Const MinorVersion:Int = 2  'This Const contains the minor version number of the program
-    Const Revision:Int =  13  'This Const contains the revision number of the current program version
+    Const MinorVersion:Int = 3  'This Const contains the minor version number of the program
+    Const Revision:Int =  0  'This Const contains the revision number of the current program version
     Const VersionString:String = MajorVersion + "." + MinorVersion + "." + Revision   'This string contains the assembly version in format (MAJOR.MINOR.REVISION)
     Const AssemblyInfo:String = Name + " " + MajorVersion + "." + MinorVersion + "." + Revision   'This string represents the available assembly info.
     ?win32
@@ -134,7 +134,6 @@ Include "menu_option.bmx"
 Include "menu.bmx"
 Include "net.bmx"
 Include "core.bmx"
-Include "shop.bmx"
 Include "debug.bmx"
 Include "main.bmx"
  

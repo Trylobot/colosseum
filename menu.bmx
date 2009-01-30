@@ -75,6 +75,7 @@ Type MENU
 		m.menu_id = menu_id
 		m.menu_type = menu_type
 		m.margin = margin
+		m.default_focus = default_focus
 		m.focus = default_focus
 		m.dynamic_options_displayed = dynamic_options_displayed
 		m.static_option_count = options.Length

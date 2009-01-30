@@ -108,15 +108,15 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		If ai.can_move And Not (ai.is_carrier And avatar.is_deployed)
 			'target availability
 			If can_see_target
-				'avatar.lightbulb_pulsate()
 				If ai.has_turrets And dist_to_target <= 50
 					drive_to( Null )
 				Else
 					drive_to( target )
 				End If
+				avatar.ai_lightbulb( True ) 'enable the "ai_lightbulbs"
 			Else 'Not can_see_target
-				'avatar.lightbulb_off()
 				drive_to( waypoint )
+				avatar.ai_lightbulb( False ) 'disable the "ai_lightbulbs"
 			End If
 		End If
 		'turrets aim/fire

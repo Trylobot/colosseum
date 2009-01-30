@@ -458,11 +458,11 @@
 		key: "{path}",
 		object: {
 			path: "art/bomb_gibs.png",
-			handle_x: 7.5,
-			handle_y: 7.5,
+			handle_x: 3.5,
+			handle_y: 5.5,
 			frames: 7,
 			frame_width: 15,
-			frame_height: 15
+			frame_height: 11
 		}
 	},
 	{

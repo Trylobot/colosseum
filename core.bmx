@@ -415,10 +415,10 @@ End Function
 '  if the cast fails, the argument is invalid
 Function menu_command( command_code%, argument:Object = Null )
 	?Debug
-	Local arg$ = ""
-	If String(argument) Then arg = String(argument)
-	If INTEGER(argument) Then arg = menu_id_to_string( INTEGER(argument).value )[7..].ToLower()
-	DebugLog( " "+pad( command_code_to_string( command_code )[8..].ToLower(), 26,, False )+" "+arg )
+		Local arg$ = ""
+		If String(argument) Then arg = String(argument)
+		If INTEGER(argument) Then arg = menu_id_to_string( INTEGER(argument).value )[8..].ToLower()
+		DebugLog( " "+pad( command_code_to_string( command_code )[8..].ToLower(), 26 )+"  "+arg )
 	?
 	
 	Select command_code

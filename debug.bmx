@@ -226,11 +226,6 @@ Function debug_overlay()
 				DrawLine( x, y, x + f.magnitude_cur*Cos(ang), y + f.magnitude_cur*Sin(ang) )
 			End If
 		Next
-		'show health
-		SetAlpha( 0.25 )
-		SetColor( 0, 0, 0 )
-		DrawRect( brain.avatar.pos_x - 10, brain.avatar.pos_y + 15, 20, 6 )
-		draw_percentage_bar( brain.avatar.pos_x - 10, brain.avatar.pos_y + 15, 20, 6, brain.avatar.cur_health/brain.avatar.max_health, 0.25 )
 	Next
 	
 	'select control_brain/avatar for inspection

@@ -1084,6 +1084,16 @@ Function Create_2D_Int_array_from_TJSONArray:Int[,]( json:TJSONArray )
 	Return arr
 End Function
 
+Function Create_String_array_from_TJSONArray:String[]( json:TJSONArray )
+	If json = Null Then Return Null
+	Local index%
+	Local arr$[] = New String[json.Size()]
+	For index = 0 To json.Size() - 1
+		arr[index] = TJSONString( json.GetByIndex( index )).Value
+	Next
+	Return arr
+End Function
+
 '
 'MARK: various test cases, each in its own Rem/EndRem block
 '

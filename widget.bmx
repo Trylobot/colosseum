@@ -38,7 +38,12 @@ Type WIDGET Extends MANAGED_OBJECT
 	Field transforming% '{true|false}
 	Field transform_begin_ts% 'timestamp of beginning of current transformation, used with interpolation
 	Field transformations_remaining% '{INFINITE|integer}
+	Field stop_state%
 	Field prune_idle%
+	
+	Method New()
+		stop_state = INFINITY
+	End Method
 	
 	Function Create:Object( ..
 	name$ = Null, ..
@@ -142,12 +147,15 @@ Type WIDGET Extends MANAGED_OBJECT
 		state_index_next = state_successor( state_index_next )
 		transform_begin_ts = now()
 		'post-transformation checks
-		If transformations_remaining > 0
-			'are there any transformations left
-			transformations_remaining :- 1
-			If transformations_remaining <= 0
-				'no? fine
+		If transformations_remaining <> 0
+			'transformations counter decrement
+			If transformations_remaining > 0
+				transformations_remaining :- 1
+			End If
+			'stop conditions
+			If transformations_remaining = 0 Or state_index_cur = stop_state
 				transforming = False
+				stop_state = -1 'reset
 				If prune_idle
 					unmanage()
 				End If
@@ -168,13 +176,22 @@ Type WIDGET Extends MANAGED_OBJECT
 	Method queue_transformation( count% = INFINITY, prune_when_finished% = False )
 		prune_idle = prune_when_finished
 		If transforming
-			If count <> INFINITY
+			If count = INFINITY
+				transformations_remaining = count
+			Else 'count <> INFINITY
 				transformations_remaining :+ count
 			End If
 		Else 'Not transforming
 			transformations_remaining = count
 			transforming = True
 			transform_begin_ts = now()
+		End If
+		stop_state = INFINITY
+	End Method
+	
+	Method stop_at( new_stop_state% = INFINITY )
+		If transforming
+			stop_state = new_stop_state
 		End If
 	End Method
 	

@@ -145,9 +145,17 @@ Function draw_game()
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
 
+	'enemy life bars
+'	For Local list:TList = EachIn game.complex_agent_lists
+'		For Local cmp_ag:COMPLEX_AGENT = EachIn list
+'			draw_percentage_bar( cmp_ag.pos_x - 10, cmp_ag.pos_y + 15, 20, 5, (cmp_ag.cur_health/cmp_ag.max_health), 0.35 )
+'		Next
+'	Next
+
+	'aimer
 	draw_reticle()
 	SetRotation( 0 )
-
+	
 	If game.human_participation And Not game.game_over
 		'player tips
 		Local player_msg$ = Null
@@ -309,7 +317,6 @@ Function draw_arena_bg()
 					dirty_rect.h )
 				'move only those that are currently visible, given the current window/frame position & size, ..
 				If window.contains( dirty_rect_relative_to_window )
-					part.unmanage()
 					game.retained_particle_count :- 1
 					'into the dynamic background image, if it doesn't lie outside the image dimensions.
 					If background_rect.contains( dirty_rect )
@@ -324,6 +331,9 @@ Function draw_arena_bg()
 							dirty_rect.y )
 					End If
 				End If
+				'delete the particle
+				part.unmanage() 'ideally this particle would stay in the queue if it is not on-screen
+				                'but unfortunately this causes major performance issues in larger levels, even for me
 			Next
 			UnlockImage( game.background_dynamic )
 		End If
@@ -555,19 +565,25 @@ Function draw_HUD()
 	
 End Function
 '______________________________________________________________________________
-Function draw_percentage_bar( x%,y%, w%,h%, pct#, a# = 1.0, r% = 255, g% = 255, b% = 255 )
+Function draw_percentage_bar( x%, y%, w%, h%, pct#, a# = 1.0, r% = 255, g% = 255, b% = 255, borders% = True )
+	If      pct > 1.0 Then pct = 1.0 ..
+	Else If pct < 0.0 Then pct = 0.0
 	SetAlpha( a / 3.0 )
 	SetColor( 0, 0, 0 )
 	SetScale( 1, 1 )
 	SetRotation( 0 )
-	DrawRect( x,y, w,h )
-	SetAlpha( a )
-	SetColor( r, g, b )
-	SetLineWidth( 1 )
-	DrawRectLines( x,y, w,h )
-	If      pct > 1.0 Then pct = 1.0 ..
-	Else If pct < 0.0 Then pct = 0.0
-	DrawRect( x + 2,y + 2, pct*(w - 4.0),h - 4 )
+	DrawRect( x, y, w, h )
+	If borders
+		SetAlpha( a )
+		SetColor( r, g, b )
+		SetLineWidth( 1 )
+		DrawRectLines( x, y, w, h )
+		DrawRect( x + 2.0, y + 2.0, pct*(w - 4.0), h - 4.0 )
+	Else 'Not borders
+		SetAlpha( a )
+		SetColor( r, g, b )
+		DrawRect( x, y, pct*w, h )
+	End If
 End Function
 
 Function draw_scrollbar( x%, y%, w%, h%, total_size%, window_offset%, window_size% )
@@ -589,7 +605,7 @@ Function draw_scrollbar( x%, y%, w%, h%, total_size%, window_offset%, window_siz
 		w-2*border_width - 2, size - 2 )
 End Function
 
-Function DrawRectLines( x%,y%, w%,h% )
+Function DrawRectLines( x%, y%, w%, h% )
 	DrawLine( x,     y,     x+w-1, y,     False )
 	DrawLine( x+w-1, y,     x+w-1, y+h-1, False )
 	DrawLine( x+w-1, y+h-1, x,     y+h-1, False )

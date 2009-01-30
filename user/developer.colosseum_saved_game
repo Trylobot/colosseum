@@ -1,9 +1,0 @@
-{
-	name: "developer",
-	cash: 7575,
-	kills: 69,
-	inventory: null,
-	input_method: 2,
-	current_level: "",
-	selected_inventory_index: 0
-}

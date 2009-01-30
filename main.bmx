@@ -78,11 +78,12 @@ Function init_graphics()
 		Graphics( window_w, window_h, bit_depth, refresh_rate, GRAPHICS_BACKBUFFER )
 	End If
 	SetClsColor( 0, 0, 0 )
-	SetBlend( ALPHABLEND )
-	glEnable( GL_BLEND )
+	glBlendFunc( GL_SRC_ALPHA_SATURATE, GL_ONE )
+  glEnable( GL_BLEND )
 	glEnable( GL_LINE_SMOOTH )
-	glEnable( GL_POINT_SMOOTH )
-	glEnable( GL_POLYGON_SMOOTH )
+  glEnable( GL_POLYGON_SMOOTH )
+  glDisable( GL_DEPTH_TEST )
+	SetBlend( ALPHABLEND )
 End Function
 
 init_graphics()

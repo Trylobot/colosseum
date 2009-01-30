@@ -14,6 +14,7 @@ Const EVENT_DEATH% = 5
 
 Const WIDGET_CONSTANT% = 1
 Const WIDGET_DEPLOY% = 2
+Const WIDGET_AI_LIGHTBULB% = 3
 
 Const TURRETS_ALL% = -1
 
@@ -42,12 +43,12 @@ Type COMPLEX_AGENT Extends AGENT
 
 	Field constant_widgets:TList 'TList<WIDGET> always-on widgets
 	Field deploy_widgets:TList 'TList<WIDGET> widgets that toggle when the agent deploys/undeploys
+	Field ai_lightbulb_widgets:TList 'TList<WIDGET>
 	Field all_widget_lists:TList 'TList<TList<WIDGET>> widget master list
 
 	Field stickies:TList 'TList<PARTICLE> damage particles
 	Field left_track:PARTICLE 'a special particle that represents the "left track" of a tank
 	Field right_track:PARTICLE 'a special particle that represents the "right track" of a tank
-	Field lightbulb:WIDGET 'a special widget that the AI can manipulate as a graphical indication of its intent
 
 	Field spawning%
 	Field spawn_time%
@@ -65,9 +66,11 @@ Type COMPLEX_AGENT Extends AGENT
 			all_emitter_lists.AddLast( death_emitters )
 		constant_widgets = CreateList()
 		deploy_widgets = CreateList()
+		ai_lightbulb_widgets = CreateList()
 		all_widget_lists = CreateList()
 			all_widget_lists.AddLast( constant_widgets )
 			all_widget_lists.AddLast( deploy_widgets )
+			all_widget_lists.AddLast( ai_lightbulb_widgets )
 		stickies = CreateList()
 	End Method
 	
@@ -158,6 +161,9 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 		For Local other_w:WIDGET = EachIn other.deploy_widgets
 			c.add_widget( other_w, WIDGET_DEPLOY ).attach_at( other_w.attach_x, other_w.attach_y, other_w.ang_offset )
+		Next
+		For Local other_w:WIDGET = EachIn other.ai_lightbulb_widgets
+			c.add_widget( other_w, WIDGET_AI_LIGHTBULB ).attach_at( other_w.attach_x, other_w.attach_y, other_w.ang_offset )
 		Next
 		
 		If other.right_track <> Null And other.left_track <> Null
@@ -308,6 +314,11 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 	End Method
 	
+	'___________________________________________
+	Method move_to( argument:Object, snap_turrets% = False )
+		Super.move_to( argument )
+		If snap_turrets Then snap_all_turrets()
+	End Method
 	'___________________________________________
 	Method spawn_at( p:POINT, time% )
 		spawning = True
@@ -482,6 +493,17 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
+	Method ai_lightbulb( enable% = True )
+		For Local w:WIDGET = EachIn ai_lightbulb_widgets
+			If enable And Not w.transforming
+				w.queue_transformation( INFINITY )
+			Else If Not enable And w.transforming
+				w.stop_at( 0 )
+			End If
+		Next
+	End Method
+	
+	'___________________________________________
 	Method add_turret_anchor:cVEC( other_a:cVEC )
 		Local a:cVEC = other_a.clone()
 		'add the anchor to the array
@@ -534,12 +556,6 @@ Type COMPLEX_AGENT Extends AGENT
 		turret_systems = New Int[][turret_anchors.Length]
 	End Method
 	'___________________________________________
-	Method move_to( argument:Object, snap_turrets% = False )
-		Super.move_to( argument )
-		If snap_turrets Then snap_all_turrets()
-	End Method
-	
-	'___________________________________________
 	Method add_emitter:EMITTER(	other_em:EMITTER, event% )
 		Local em:EMITTER = Copy_EMITTER( other_em )
 		em.parent = Self
@@ -563,6 +579,8 @@ Type COMPLEX_AGENT Extends AGENT
 				w.manage( constant_widgets )
 			Case WIDGET_DEPLOY
 				w.manage( deploy_widgets )
+			Case WIDGET_AI_LIGHTBULB
+				w.manage( ai_lightbulb_widgets )
 		End Select
 		Return w
 	End Method
@@ -595,10 +613,6 @@ Type COMPLEX_AGENT Extends AGENT
 		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_archetype] ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y )
 		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y )
 		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y )
-	End Method
-	'___________________________________________
-	Method add_lightbulb()
-		
 	End Method
 		
 End Type

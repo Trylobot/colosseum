@@ -207,8 +207,9 @@ Global WIDGET_INDEX_RAMP_EXTENDER% = postfix_index()
 Global WIDGET_INDEX_SPINNER% = postfix_index()
 
 Function set_widget_archetypes()
-	'widget_archetype[WIDGET_INDEX_AI_LIGHTBULB] = '..?
-		'..?
+	widget_archetype[WIDGET_INDEX_AI_LIGHTBULB] = WIDGET( WIDGET.Create( "lightbulb", get_image( "lightbulb" )))
+		widget_archetype[WIDGET_INDEX_AI_LIGHTBULB].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.0, 0.75, 0.75, 100 )))
+		widget_archetype[WIDGET_INDEX_AI_LIGHTBULB].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.75, 1.25, 1.25, 100 )))
 	widget_archetype[WIDGET_INDEX_ARENA_DOOR] = WIDGET( WIDGET.Create( "door", get_image( "door" ), LAYER_IN_FRONT_OF_PARENT,, REPEAT_MODE_CYCLIC_WRAP, False ))
 		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1, 1, 1, 1750 )))
 		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 32, 0, 0, 255, 255, 255, 1, 1, 1, 925 )))
@@ -442,7 +443,7 @@ Function set_complex_agent_archetypes()
 		
 	complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mini bomb", get_image( "nme_mobile_bomb" ),, get_image( "bomb_gibs" ), "bomb", 75, 50, 200, 10.0, 7.50, 30.0 ))
 		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
-		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_lightbulb()
+		complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB].add_widget( widget_archetype[WIDGET_INDEX_AI_LIGHTBULB], WIDGET_AI_LIGHTBULB ).attach_at( 0, 0 )
 		
 	complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine-gun quad", get_image( "enemy_quad_chassis" ),, get_image( "quad_gibs" ), "vehicle", 100, 50, 400, 25.0, 35.0, 55.0 ))
 		complex_agent_archetype[ENEMY_INDEX_LIGHT_QUAD].add_turret_anchor( cVEC.Create( -6, 0 ))
