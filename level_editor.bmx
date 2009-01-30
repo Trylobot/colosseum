@@ -232,6 +232,7 @@ Function level_editor( lev:LEVEL )
 		
 		'level info
 		SetImageFont( normal_font )
+		DrawText( "size: "+lev.width+" x "+lev.height, info_x,info_y ); info_y :+ 1.5*line_h
 		DrawText( "pathing regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
 		DrawText( "spawners: "+lev.spawners.Length, info_x,info_y ); info_y :+ line_h
 		

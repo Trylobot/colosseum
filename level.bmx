@@ -102,7 +102,7 @@ Type LEVEL Extends MANAGED_OBJECT
 		Select line_type
 			
 			Case LINE_TYPE_HORIZONTAL
-				If i > 0 And i < horizontal_divs.Length
+				If i > 0 And i < horizontal_divs.Length - 1
 					Local old_horizontal_divs%[] = horizontal_divs
 					horizontal_divs = New Int[old_horizontal_divs.Length-1]
 					'all old divs up to the removed one's spot
@@ -119,7 +119,7 @@ Type LEVEL Extends MANAGED_OBJECT
 				End If
 			
 			Case LINE_TYPE_VERTICAL
-				If i > 0 And i < vertical_divs.Length
+				If i > 0 And i < vertical_divs.Length - 1
 					Local old_vertical_divs%[] = vertical_divs
 					vertical_divs = New Int[old_vertical_divs.Length-1]
 					'all old divs up to the removed one's spot
@@ -138,12 +138,13 @@ Type LEVEL Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
-	Method set_divider( line_type%, index%, value% )
+	Method set_divider( line_type%, index%, value%, value_is_delta% = False )
 		If index = 0 Then Return 'left- and top-most dividers are anchored to zero
 		Select line_type
 			
 			Case LINE_TYPE_HORIZONTAL
-				Local delta% = value - horizontal_divs[index]
+				Local delta% = value
+				If Not value_is_delta Then delta :- horizontal_divs[index]
 				height :+ delta
 				'spawners
 				For Local sp:SPAWNER = EachIn spawners
@@ -163,7 +164,8 @@ Type LEVEL Extends MANAGED_OBJECT
 				Next
 			
 			Case LINE_TYPE_VERTICAL
-				Local delta% = value - vertical_divs[index]
+				Local delta% = value
+				If Not value_is_delta Then delta :- vertical_divs[index]
 				width :+ delta
 				'spawners
 				For Local sp:SPAWNER = EachIn spawners

@@ -360,19 +360,6 @@ Function debug_overlay()
 			debug_drawtext( "no path" )
 		End If
 		
-'		'widgets
-'		SetColor( 255, 255, 255 )
-'		For Local w_list:TList = EachIn cb.avatar.all_widget_lists
-'			For Local w:WIDGET = EachIn w_list
-'				debug_drawtext( pad(w.name,12,,False)+" R="+pad(DoubleToString(w.actual_state.pos_length),6,,False)+" A="+pad(DoubleToString(w.actual_state.pos_ang),6,,False) )
-'				Local i% = 0
-'				For Local ts:TRANSFORM_STATE = EachIn w.states
-'					debug_drawtext( pad("  states["+i+"]",12,,False)+" R="+pad(DoubleToString(ts.pos_length),6,,False)+" A="+pad(DoubleToString(ts.pos_ang),6,,False) )
-'					i :+ 1
-'				Next
-'			Next
-'		Next
-		
 		'friendly fire
 		If cb.target <> Null And cb.avatar.turrets <> Null
 			SetLineWidth( 1 )

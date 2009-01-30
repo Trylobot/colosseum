@@ -30,6 +30,7 @@ Global fullscreen%
 Global bit_depth%
 Global refresh_rate%
 Global autosave_profile_path$
+Global show_ai_menu_game%
 Global retain_particles%
 Global active_particle_limit%
 
@@ -40,6 +41,7 @@ Function apply_default_settings()
 	fullscreen = False
 	bit_depth = 32
 	refresh_rate = 60
+	show_ai_menu_game = True
 	retain_particles = True
 	active_particle_limit = 500
 	ip_address = "127.0.0.1"
@@ -95,15 +97,16 @@ init_graphics()
 'debug_doors()
 ?
 
-'______________________________________________________________________________
-'MAIN
+If show_ai_menu_game
+	init_ai_menu_game()
+End If
+
 Const time_per_frame_min% = 1000 / 60
 Local before%
-init_ai_menu_game()
 info_change_ts = now()
-
+'______________________________________________________________________________
+'MAIN GAME LOOP
 Repeat
-	
 	'game object to use for this frame
 	If FLAG_in_menu
 		If main_game = Null

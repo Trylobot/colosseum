@@ -33,7 +33,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Const INPUT_XBOX_360_CONTROLLER% = 3
 	Const waypoint_radius# = 25.0
 	Const targeting_radius# = 15.0
-	Const friendly_blocking_scalar_projection_distance# = 20.0
 	Const spawn_delay% = 1000
 	
 	Field avatar:COMPLEX_AGENT 'this brain's "body"
@@ -83,7 +82,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			dist_to_target = avatar.dist_to( target )
 		End If
 		can_see_target = see_target()
-		ally_blocking = False 'friendly_blocking()
+		ally_blocking = any_friendly_blocking()
 		If can_see_target
 			path = Null
 		Else 'Not can_see_target
@@ -94,7 +93,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 		If waypoint = Null Or waypoint_reached()
 			'acquire new waypoint
-			get_next_waypoint()
+			waypoint = get_next_path_waypoint()
 		End If
 		If waypoint <> Null
 			ang_to_waypoint = avatar.ang_to( waypoint )
@@ -105,9 +104,21 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			'target availability
 			If can_see_target
 				If ai.has_turrets And dist_to_target <= 50
-					drive_to( Null )
-				Else
+					If Not ally_blocking
+						'clear shot, stop and take it
+						drive_to( Null )
+						waypoint = Null
+					Else 'ally_blocking
+						'try to drive around the ally
+						If Not waypoint
+							waypoint = get_random_nearby_waypoint()
+						End If
+						drive_to( waypoint )
+					End If
+				Else 'Not ai.has_turrets Or dist_to_target > 50
+					'drive towards visible target
 					drive_to( target )
+					waypoint = Null
 				End If
 				avatar.ai_lightbulb( True ) 'enable the "ai_lightbulbs"
 			Else 'Not can_see_target
@@ -140,13 +151,16 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			End If
 			'carrier "deploy" ability
 			If ai.is_carrier
-				If can_see_target And dist_to_target <= 175 And Not avatar.is_deployed
+				If can_see_target And dist_to_target <= 175 And Not avatar.is_deployed And Not spawn_index > 0
 					avatar.deploy()
 					spawn_point = create_spawn_point()
 					last_spawned_ts = now()
 				End If
 				If avatar.is_deployed
 					AI_spawning_system_update()
+					If spawn_index >= avatar.factory_queue.Length And now() - last_spawned_ts > 5 * spawn_delay 'done spawning + some delay
+						avatar.undeploy()
+					End If
 				End If
 			End If
 		End If
@@ -183,7 +197,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		For Local index% = 0 To avatar.turret_systems.Length-1
 			Local diff#
 			If targ <> Null
-				diff = ang_wrap( avatar.get_turret_system_ang( index ) - ang_to_target )
+				diff = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.turrets[avatar.turret_systems[index][0]].ang_to( targ ))
 			Else 'targ = null
 				diff = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.ang )
 			End If
@@ -256,16 +270,22 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method get_next_waypoint%()
+	Method get_next_path_waypoint:cVEC()
 		If path <> Null And Not path.IsEmpty()
 			path.RemoveFirst()
 			If path <> Null And Not path.IsEmpty()
-				waypoint = cVEC( path.First())
+				Return cVEC( path.First())
 			End If
-			Return True 'course locked!
-		Else
-			Return False 'no seriously.. like, where the hell are we... ;_;
 		End If
+		Return Null 'no seriously.. like, where the hell are we... ;_;
+	End Method
+	
+	Method get_random_nearby_waypoint:cVEC()
+		Local ang% = Rand( -180, 180 )
+		Local dist% = Rand( 20, 50 )
+		Return Create_cVEC( ..
+			avatar.pos_x + dist*Cos( ang ), ..
+			avatar.pos_y + dist*Sin( ang ))
 	End Method
 	
 	Method acquire_target:AGENT()
@@ -310,11 +330,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Method friendly_blocking%()
+	Const friendly_blocking_scalar_projection_distance# = 15.0
+	Method any_friendly_blocking%()
+If KeyDown( KEY_F4 ) Then DebugStop
 		If target <> Null
-			'last_look_target_ts = now()
-			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
-			'for each allied agent
 			Local allied_agent_list:TList = CreateList()
 			Select avatar.political_alignment
 				Case ALIGNMENT_FRIENDLY
@@ -322,26 +341,30 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Case ALIGNMENT_HOSTILE
 					allied_agent_list = game.hostile_agent_list
 			End Select
-			Local ally_offset#, ally_offset_ang#
+			Local avatar_turret_ang#, ally_offset#, ally_offset_ang#
 			Local scalar_projection#
+			Local projected_point:cVEC
 			For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
-				'if the line of sight of the avatar is too close to the ally
-				ally_offset = avatar.turrets[0].dist_to( ally )
-				ally_offset_ang = avatar.turrets[0].ang_to( ally )
-				scalar_projection = ally_offset*Cos( ally_offset_ang - avatar.turrets[0].ang )
-				If ..
-				vector_length( ..
-					(ally.pos_x - av.x+scalar_projection*Cos(avatar.turrets[0].ang)), ..
-					(ally.pos_y - av.y+scalar_projection*Sin(avatar.turrets[0].ang)) ) ..
-				< friendly_blocking_scalar_projection_distance
-					'then the avatar's shot is blocked by this ally
-					Return True
+				'is this me? LOL
+				If avatar.id = ally.id Then Continue
+				'find the scalar projection of the relative position of the ally onto the primary turret's line-of-sight
+				avatar_turret_ang = avatar.get_turret_system_ang( 0 )
+				ally_offset = avatar.dist_to( ally )
+				ally_offset_ang = avatar_turret_ang - avatar.ang_to( ally )
+				scalar_projection = ally_offset*Cos( ally_offset_ang )
+				If scalar_projection > 0
+					projected_point = Create_cVEC( ..
+						avatar.pos_x + scalar_projection*Cos( avatar_turret_ang ), ..
+						avatar.pos_y + scalar_projection*Sin( avatar_turret_ang ))
+					'too close?
+					If ally.dist_to( projected_point ) < friendly_blocking_scalar_projection_distance
+						Return True 'shot blocked
+					End If
 				End If
 			Next
-			'after checking all the allies, none are blocking
-			Return False
-		Else 'target == Null, thus no blockers
-			Return False
+			Return False 'no allies blocking
+		Else 'target = Null
+			Return False 'a null target can never be blocked
 		End If
 	End Method
 	

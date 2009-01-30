@@ -56,7 +56,7 @@ Function host_game()
 	GNetListen( network, ip_port )
 	
 	main_game = Create_ENVIRONMENT()
-	Local success% = main_game.load_level( level_file_path, False )
+	Local success% = main_game.bake_level( level_file_path, False )
 	If success
 		main_game.game_in_progress = True
 		FLAG_in_menu = False

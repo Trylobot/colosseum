@@ -138,22 +138,14 @@ Type ENVIRONMENT
 		player = Null
 	End Method
 	
-	Method load_level%( argument:Object, generate_images% = True )
+	Method bake_level%( argument:Object, generate_images% = True )
 		'level
 		If String( argument )
-			Local file:TStream = ReadFile( String( argument ))
-			If Not file
-				Return False 'indicate failure
-			End If
-			Local json:TJSON = TJSON.Create( file )
-			file.Close()
-			lev = Create_LEVEL_from_json( json )
-			If lev = Null
-				Return False 'indicate failure
-			End If
+			lev = load_level( String( argument ))
 		Else If LEVEL( argument )
 			lev = LEVEL( argument )
 		End If
+		If Not lev Then Return False 'failure
 		'camera bounding
 		calculate_camera_constraints()
 		'pathing (AI bots)
@@ -209,7 +201,7 @@ Type ENVIRONMENT
 		Create_DOOR( p ).manage( political_door_list( alignment ))
 	End Method
 
-	Method reset_spawners( alignment% = ALIGNMENT_NONE )
+	Method reset_spawners( alignment% = ALIGNMENT_NONE, omit_turrets% = False )
 		If alignment = ALIGNMENT_NONE
 			'flags and counters
 			level_enemies_killed = 0
@@ -224,6 +216,7 @@ Type ENVIRONMENT
 			last_spawned = New COMPLEX_AGENT[lev.spawners.Length]
 			spawn_counter = New Int[lev.spawners.Length]
 			For Local i% = 0 To lev.spawners.Length-1
+				If omit_turrets And lev.spawners[i].class = SPAWNER.class_TURRET_ANCHOR Then Continue
 				spawn_cursor[i] = New CELL
 				spawn_ts[i] = now()
 				last_spawned[i] = Null
@@ -244,6 +237,7 @@ Type ENVIRONMENT
 			End Select
 			'spawn queues and tracking info
 			For Local i% = 0 To lev.spawners.Length-1
+				If omit_turrets And lev.spawners[i].class = SPAWNER.class_TURRET_ANCHOR Then Continue
 				If lev.spawners[i].alignment = alignment
 					spawn_cursor[i] = New CELL
 					spawn_ts[i] = now()

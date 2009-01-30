@@ -40,7 +40,7 @@ Global FLAG_ignore_mouse_1% = False 'used for temporary ignore after resuming a 
 Function play_level( level_file_path$, player:COMPLEX_AGENT )
 	If Not player Then Return
 	main_game = Create_ENVIRONMENT( True )
-	If main_game.load_level( level_file_path )
+	If main_game.bake_level( level_file_path )
 		main_game.game_in_progress = True
 		Local player_brain:CONTROL_BRAIN = create_player_brain( player )
 		main_game.insert_player( player, player_brain )
@@ -88,94 +88,34 @@ Function show_info( str$ )
 End Function
 
 '______________________________________________________________________________
-Function init_ai_menu_game()
+Function init_ai_menu_game( fit_to_window% = True )
 	ai_menu_game = Create_ENVIRONMENT()
-
+	Local lev:LEVEL = load_level( level_path + "ai_menu_game.colosseum_level" )
+	Local diff%
+	If fit_to_window
+		If window_w > lev.width
+			diff = window_w - lev.width
+			lev.set_divider( LINE_TYPE_VERTICAL, 4, diff/2, True )
+			lev.set_divider( LINE_TYPE_VERTICAL, 15, diff/2, True )
+		End If
+		If window_h > lev.height
+			diff = window_h - lev.height
+			lev.set_divider( LINE_TYPE_HORIZONTAL, 3, diff/2, True )
+			lev.set_divider( LINE_TYPE_HORIZONTAL, 11, diff/2, True )
+		End If
+	Else
+		ai_menu_game.drawing_origin = Create_cVEC( window_w/2 - lev.width/2, window_h/2 - lev.height/2 )
+	End If
+	ai_menu_game.bake_level( lev )
 	ai_menu_game.auto_reset_spawners = True
 	ai_menu_game.game_in_progress = True
 	ai_menu_game.battle_in_progress = True
 	ai_menu_game.battle_state_toggle_ts = now()
 	ai_menu_game.spawn_enemies = True
 	ai_menu_game.mouse = mouse
+	ai_menu_game.toggle_doors( ALIGNMENT_FRIENDLY )
+	ai_menu_game.toggle_doors( ALIGNMENT_HOSTILE )
 	
-	Local lev:LEVEL = Create_LEVEL( window_w, window_h )
-	Local sp:SPAWNER, squad%
-
-	sp = New SPAWNER
-	sp.pos = Create_POINT( window_w/2, 25, 90 )
-	sp.class = SPAWNER.class_TURRET_ANCHOR
-	sp.alignment = ALIGNMENT_FRIENDLY
-	squad = sp.add_new_squad()
-	sp.set_delay_time( squad, 1000 )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, UNIT_INDEX_CARRIER )
-	sp.add_new_squadmember( squad, UNIT_INDEX_CARRIER )
-	lev.add_spawner( sp )
-
-	sp = New SPAWNER
-	sp.pos = Create_POINT( window_w/2, window_h - 25, -90 )
-	sp.class = SPAWNER.class_TURRET_ANCHOR
-	sp.alignment = ALIGNMENT_HOSTILE
-	squad = sp.add_new_squad()
-	sp.set_delay_time( squad, 1000 )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, UNIT_INDEX_CARRIER )
-	sp.add_new_squadmember( squad, UNIT_INDEX_CARRIER )
-	lev.add_spawner( sp )
-
-	lev.add_divider( 15, LINE_TYPE_VERTICAL )
-	lev.add_divider( window_w - 15, LINE_TYPE_VERTICAL )
-	lev.add_divider( window_w/2 - window_w/3,  LINE_TYPE_VERTICAL )
-	lev.add_divider( window_w/2 + window_w/3,  LINE_TYPE_VERTICAL )
-	lev.add_divider( 15, LINE_TYPE_HORIZONTAL )
-	lev.add_divider( window_h - 15, LINE_TYPE_HORIZONTAL )
-	lev.add_divider( window_h/2 - window_h/16, LINE_TYPE_HORIZONTAL )
-	lev.add_divider( window_h/2 + window_h/16, LINE_TYPE_HORIZONTAL )
-	
-	lev.set_path_region( CELL.Create( 0, 0 ), True )
-	lev.set_path_region( CELL.Create( 0, 1 ), True )
-	lev.set_path_region( CELL.Create( 0, 2 ), True )
-	lev.set_path_region( CELL.Create( 0, 3 ), True )
-	lev.set_path_region( CELL.Create( 0, 4 ), True )
-	lev.set_path_region( CELL.Create( 1, 0 ), True )
-	lev.set_path_region( CELL.Create( 1, 4 ), True )
-	lev.set_path_region( CELL.Create( 2, 0 ), True )
-	lev.set_path_region( CELL.Create( 2, 2 ), True )
-	lev.set_path_region( CELL.Create( 2, 4 ), True )
-	lev.set_path_region( CELL.Create( 3, 0 ), True )
-	lev.set_path_region( CELL.Create( 3, 4 ), True )
-	lev.set_path_region( CELL.Create( 4, 0 ), True )
-	lev.set_path_region( CELL.Create( 4, 1 ), True )
-	lev.set_path_region( CELL.Create( 4, 2 ), True )
-	lev.set_path_region( CELL.Create( 4, 3 ), True )
-	lev.set_path_region( CELL.Create( 4, 4 ), True )
-	
-	lev.add_divider(  1*window_w/16, LINE_TYPE_VERTICAL )
-	lev.add_divider( 15*window_w/16, LINE_TYPE_VERTICAL )
-	lev.add_divider( 1*window_w/4, LINE_TYPE_VERTICAL )
-	lev.add_divider( 3*window_w/4, LINE_TYPE_VERTICAL )
-	lev.add_divider( 1*window_h/4, LINE_TYPE_HORIZONTAL )
-	lev.add_divider( 3*window_h/4, LINE_TYPE_HORIZONTAL )
-	lev.add_divider( window_w/2 - window_w/8, LINE_TYPE_VERTICAL )
-	lev.add_divider( window_w/2 + window_w/8, LINE_TYPE_VERTICAL )
-	lev.add_divider( window_w/2 - 2*window_w/8, LINE_TYPE_VERTICAL )
-	lev.add_divider( window_w/2 + 2*window_w/8, LINE_TYPE_VERTICAL )
-
-	ai_menu_game.load_level( lev )
 End Function
 
 '______________________________________________________________________________
@@ -214,6 +154,7 @@ Const COMMAND_SETTINGS_REFRESH_RATE% = 1012
 Const COMMAND_SETTINGS_BIT_DEPTH% = 1013
 Const COMMAND_SETTINGS_IP_ADDRESS% = 1020
 Const COMMAND_SETTINGS_IP_PORT% = 1021
+Const COMMAND_SETTINGS_SHOW_AI_MENU_GAME% = 1025
 Const COMMAND_SETTINGS_RETAIN_PARTICLES% = 1030
 Const COMMAND_SETTINGS_PARTICLE_LIMIT% = 1031
 Const COMMAND_SETTINGS_APPLY_ALL% = 1100
@@ -356,6 +297,7 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 		
 		all_menus[postfix_index()] = MENU.Create( "performance settings", 212, 226, 96, MENU_ID_OPTIONS_PERFORMANCE, MENU.VERTICAL_LIST, menu_margin,,,,,,,,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
+			MENU_OPTION.Create( "background AI game     %%show_ai_menu_game%%", COMMAND_SETTINGS_SHOW_AI_MENU_GAME,, True, True ), ..
 			MENU_OPTION.Create( "retain particles       %%retain_particles%%", COMMAND_SETTINGS_RETAIN_PARTICLES,, True, True ), ..
 			MENU_OPTION.Create( "active particle limit  %%active_particle_limit%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_INPUT_PARTICLE_LIMIT), True, True ) ])
 
@@ -380,9 +322,9 @@ all_menus[postfix_index()] = MENU.Create( "main menu", 255, 255, 127, MENU_ID_MA
 		all_menus[postfix_index()] = MENU.Create( "level editor", 96, 127, 255, MENU_ID_LEVEL_EDITOR, MENU.VERTICAL_LIST, menu_margin, 1,,,,,,,, ..
 		[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
 			MENU_OPTION.Create( "edit %%level_editor_cache.name%%", COMMAND_EDIT_LEVEL, level_editor_cache, True, True ), ..
-			MENU_OPTION.Create( "save", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_LEVEL), True, True ), ..
-			MENU_OPTION.Create( "load", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_LEVEL), True, True ), ..
-			MENU_OPTION.Create( "new", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CONFIRM_ERASE_LEVEL), True, True ) ])
+			MENU_OPTION.Create( "save %%level_editor_cache.name%%", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_SAVE_LEVEL), True, True ), ..
+			MENU_OPTION.Create( "load level", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOAD_LEVEL), True, True ), ..
+			MENU_OPTION.Create( "create new", COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CONFIRM_ERASE_LEVEL), True, True ) ])
 			
 			all_menus[postfix_index()] = MENU.Create( "save from level editor", 255, 96, 127, MENU_ID_SAVE_LEVEL, MENU.VERTICAL_LIST_WITH_FILES, menu_margin,, level_path, level_file_ext, COMMAND_SAVE_LEVEL,,,, dynamic_subsection_window_size, ..
 			[	MENU_OPTION.Create( "back", COMMAND_BACK_TO_PARENT_MENU,, True, True ), ..
@@ -478,7 +420,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			profile.name = String(argument)
 			profile.src_path = profile.generate_src_path()
 			menu_command( COMMAND_SAVE_GAME )
-			'menu_command( COMMAND_BACK_TO_PARENT_MENU )
+			'menu_command( COMMAND_BACK_TO_PARENT_MENU ) 'save game command does this implicitly
 			get_current_menu().update( True )
 		'________________________________________
 		Case COMMAND_LOAD_GAME
@@ -491,15 +433,6 @@ Function menu_command( command_code%, argument:Object = Null )
 			get_current_menu().update( True )
 		'________________________________________
 		Case COMMAND_SAVE_GAME
-			Return
-			Return
-			Return
-			Return
-			Return
-			Return
-			Return
-			Return
-			Return
 			Return
 			Return
 			Return
@@ -551,7 +484,6 @@ Function menu_command( command_code%, argument:Object = Null )
 			Else
 				show_info( "windowed mode" )
 			End If
-			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_RESOLUTION
 			window_w = Int[](argument)[0]
@@ -562,7 +494,6 @@ Function menu_command( command_code%, argument:Object = Null )
 			init_ai_menu_game()
 			If main_game <> Null Then main_game.calculate_camera_constraints()
 			show_info( "resolution "+window_w+" x "+window_h )
-			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_REFRESH_RATE
 			Local new_refresh_rate% = String(argument).ToInt()
@@ -572,7 +503,6 @@ Function menu_command( command_code%, argument:Object = Null )
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			show_info( "refresh rate "+refresh_rate+" Hz" )
-			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_BIT_DEPTH
 			Local new_bit_depth% = String(argument).ToInt()
@@ -582,30 +512,34 @@ Function menu_command( command_code%, argument:Object = Null )
 			End If
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 			show_info( "bit depth "+bit_depth+" bpp" )
-			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_IP_ADDRESS
 			ip_address = String(argument)
 			save_settings()
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_IP_PORT
 			ip_port = String(argument).ToInt()
 			save_settings()
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-			get_menu( MENU_ID_SETTINGS ).recalculate_dimensions()
+		'________________________________________
+		Case COMMAND_SETTINGS_SHOW_AI_MENU_GAME
+			show_ai_menu_game = Not show_ai_menu_game
+			If ai_menu_game And Not show_ai_menu_game
+				ai_menu_game = Null
+			Else If Not ai_menu_game And show_ai_menu_game
+				init_ai_menu_game()
+			End If
+			save_settings()
 		'________________________________________
 		Case COMMAND_SETTINGS_RETAIN_PARTICLES
 			retain_particles = Not retain_particles
 			save_settings()
-			get_menu( MENU_ID_OPTIONS_PERFORMANCE ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_PARTICLE_LIMIT
 			active_particle_limit = String(argument).ToInt()
 			save_settings()
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
-			get_menu( MENU_ID_OPTIONS_PERFORMANCE ).recalculate_dimensions()
 		'________________________________________
 		Case COMMAND_SETTINGS_APPLY_ALL
 			save_settings()
@@ -618,7 +552,10 @@ Function menu_command( command_code%, argument:Object = Null )
 		Case COMMAND_LOAD_ASSETS
 			load_assets()
 			MENU.load_fonts()
-			load_all_archetypes() 'REMOVE this function call by externalizing this data, please.
+			load_all_archetypes()
+			If show_ai_menu_game
+				init_ai_menu_game()
+			End If
 			show_info( "external data loaded" )
 		'________________________________________
 		Case COMMAND_QUIT_LEVEL
@@ -632,6 +569,8 @@ Function menu_command( command_code%, argument:Object = Null )
 			End
 			
 	End Select
+	get_current_menu().recalculate_dimensions()
+	
 End Function
 
 '______________________________________________________________________________
@@ -659,6 +598,8 @@ Function resolve_meta_variables$( str$ )
 					result :+ refresh_rate
 				Case "bit_depth"
 					result :+ bit_depth
+				Case "show_ai_menu_game"
+					result :+ boolean_to_string( show_ai_menu_game )
 				Case "retain_particles"
 					result :+ boolean_to_string( retain_particles )
 				Case "active_particle_limit"
@@ -730,6 +671,8 @@ Function command_code_to_string$( code% )
 			Return "COMMAND_SETTINGS_IP_ADDRESS"
 		Case COMMAND_SETTINGS_IP_PORT
 			Return "COMMAND_SETTINGS_IP_PORT"
+		Case COMMAND_SETTINGS_SHOW_AI_MENU_GAME
+			Return "COMMAND_SETTINGS_SHOW_AI_MENU_GAME"
 		Case COMMAND_SETTINGS_RETAIN_PARTICLES
 			Return "COMMAND_SETTINGS_RETAIN_PARTICLES"
 		Case COMMAND_SETTINGS_PARTICLE_LIMIT

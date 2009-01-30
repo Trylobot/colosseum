@@ -877,4 +877,7 @@ Function pixel_transform:TImage( img_src:TImage, flip_horizontal% = False, flip_
 	End If
 	Return img_new
 End Function
-
+'______________________________________________________________________________
+Function win()
+	
+End Function

@@ -846,5 +846,15 @@
 			handle_y: 9.5,
 			frames: 1
 		}
-	}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/skull.png",
+			handle_x: 0,
+			handle_y: 0,
+			frames: 1
+		}
+	},
 ]

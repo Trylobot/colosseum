@@ -78,7 +78,6 @@ Type MENU
 		m.default_focus = default_focus
 		m.focus = default_focus
 		m.dynamic_options_displayed = dynamic_options_displayed
-		m.static_option_count = options.Length
 		m.path = path
 		m.preferred_file_extension = preferred_file_extension
 		m.default_command = default_command
@@ -88,7 +87,7 @@ Type MENU
 		m.input_listener = New CONSOLE
 		m.input_initial_value = input_initial_value
 		For Local opt:MENU_OPTION = EachIn options
-			m.add_option( opt )
+			m.add_option( opt, True )
 		Next
 		Return m
 	End Function
@@ -98,7 +97,7 @@ Type MENU
 		menu_command( opt.command_code, opt.argument )
 	End Method
 	
-	Method add_option( opt:MENU_OPTION )
+	Method add_option( opt:MENU_OPTION, is_static% = False )
 		If options = Null
 			options = New MENU_OPTION[1]
 			options[0] = opt
@@ -108,6 +107,12 @@ Type MENU
 			options[options.Length-1] = opt
 			bounding_box = bounding_box[..bounding_box.Length+1]
 		End If
+		If is_static Then static_option_count :+ 1
+	End Method
+	
+	Method purge_all_options()
+		options = Null
+		static_option_count = 0
 	End Method
 	
 	Method purge_dynamic_options()
@@ -299,8 +304,9 @@ Type MENU
 				
 			Case CONFIRMATION_DIALOG
 				If initial_update
-					add_option( MENU_OPTION.Create( "OK", default_command, default_argument, True, True ))
-					add_option( MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ))
+					purge_all_options()
+					add_option( MENU_OPTION.Create( "OK", default_command, default_argument, True, True ), True )
+					add_option( MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), True )
 					focus = 1
 				End If
 			
