@@ -879,5 +879,16 @@ Function pixel_transform:TImage( img_src:TImage, flip_horizontal% = False, flip_
 End Function
 '______________________________________________________________________________
 Function win()
-	
+	Local skull:TImage = get_image( "skull" )
+	Repeat
+		Cls()
+		
+		For Local i% = 0 To game.level_enemies_killed - 1
+			DrawImage( skull, 10 + i*(skull.width + 5), 10 )
+		Next
+		
+		DrawText_with_outline( "enter to continue", window_w/2, window_h - 20 )
+		
+		Flip( 1 )
+	Until KeyHit( KEY_ENTER )
 End Function
