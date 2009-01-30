@@ -298,16 +298,16 @@ Function draw_arena_bg()
 	SetScale( 1, 1 )
 	SetRotation( 0 )
 	DrawImage( game.background_dynamic, 0, 0 )
-	'draw all so-called "dead" particles wanting to be retained
+	'draw active particles that wish to be retained
 	For Local part:PARTICLE = EachIn game.retained_particle_list
 		part.draw()
 	Next
 	If retain_particles
-		'if there are too many, ..
+		'if there are too many active particles
 		If game.retained_particle_count > active_particle_limit
 			Local background_pixmap:TPixmap = LockImage( game.background_dynamic )
 			Local background_rect:BOX = Create_BOX( 0, 0, background_pixmap.width, background_pixmap.height )
-			'for all particles to be retained, ..
+			'for all particles to be potentially retained
 			For Local part:PARTICLE = EachIn game.retained_particle_list
 				Local dirty_rect:BOX = part.get_bounding_box()
 				Local dirty_rect_relative_to_window:BOX = Create_BOX( ..
@@ -315,10 +315,12 @@ Function draw_arena_bg()
 					dirty_rect.y + game.drawing_origin.y, ..
 					dirty_rect.w, ..
 					dirty_rect.h )
-				'move only those that are currently visible, given the current window/frame position & size, ..
+				'delete the particle
+				game.retained_particle_count :- 1
+				part.unmanage() 'ideally this particle would stay in the queue if it is not on-screen, but it causes performance issue
+				'if the particle is visible given the current window-frame position & size
 				If window.contains( dirty_rect_relative_to_window )
-					game.retained_particle_count :- 1
-					'into the dynamic background image, if it doesn't lie outside the image dimensions.
+					'paste it into the dynamic background image
 					If background_rect.contains( dirty_rect )
 						Local dirty_pixmap:TPixmap = GrabPixmap( ..
 							dirty_rect_relative_to_window.x, ..
@@ -331,9 +333,6 @@ Function draw_arena_bg()
 							dirty_rect.y )
 					End If
 				End If
-				'delete the particle
-				part.unmanage() 'ideally this particle would stay in the queue if it is not on-screen
-				                'but unfortunately this causes major performance issues in larger levels, even for me
 			Next
 			UnlockImage( game.background_dynamic )
 		End If

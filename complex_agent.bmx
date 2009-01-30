@@ -55,6 +55,7 @@ Type COMPLEX_AGENT Extends AGENT
 	Field spawn_begin_ts%
 	
 	Field is_deployed%
+	Field factory_queue%[] 'list of complex agents to spawn (only applies to carriers)
 	
 	'___________________________________________
 	Method New()
@@ -177,6 +178,8 @@ Type COMPLEX_AGENT Extends AGENT
 			c.left_track.parent = c
 			c.left_track.animation_direction = other.left_track.animation_direction
 		End If
+		
+		c.factory_queue = other.factory_queue[..]
 		
 		c.drive( 0 )
 		c.turn( 0 )
@@ -592,6 +595,22 @@ Type COMPLEX_AGENT Extends AGENT
 		Return p
 	End Method
 	'___________________________________________
+	Method add_factory_unit( archetype%, count% = 1 )
+		If count <= 0 Then Return
+		If factory_queue = Null
+			factory_queue = New Int[count]
+			For Local i% = 0 To factory_queue.Length - 1
+				factory_queue[i] = archetype
+			Next
+		Else 'factory_queue <> null
+			Local old_size% = factory_queue.Length
+			factory_queue = factory_queue[..(factory_queue.Length + count)]
+			For Local i% = old_size To (factory_queue.Length - 1)
+				factory_queue[i] = archetype
+			Next
+		End If
+	End Method
+	'___________________________________________
 	Method add_motivator_package( particle_key$, offset_x# = 0.0, separation_y# = 0.0 )
 		left_track = get_particle( particle_key )
 		left_track.parent = Self
@@ -608,11 +627,11 @@ Type COMPLEX_AGENT Extends AGENT
 		add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD] ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
 	End Method
 	'___________________________________________
-	Method add_trail_package( trail_archetype%, offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0 )
-		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_archetype] ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y )
-		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_archetype] ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y )
-		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y )
-		add_emitter( Copy_EMITTER( particle_emitter_archetype[trail_archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y )
+	Method add_trail_package( archetype%, offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0 )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[archetype] ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[archetype] ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y )
+		add_emitter( Copy_EMITTER( particle_emitter_archetype[archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y )
 	End Method
 		
 End Type

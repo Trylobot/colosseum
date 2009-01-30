@@ -150,7 +150,7 @@ Function debug_agent_lists( to_console% = False )
 	Next
 End Function
 '______________________________________________________________________________
-Global spawn_archetype% = enemy_index_start
+Global spawn_archetype% = 0
 Global spawn_alignment% = ALIGNMENT_NONE
 Global spawn_agent:COMPLEX_AGENT
 Global cb:CONTROL_BRAIN = Null
@@ -242,7 +242,7 @@ Function debug_overlay()
 	
 	'cause an explosion under cursor via mini-bomb self detonation
 	If KeyHit( KEY_SEMICOLON )
-		Local bomb:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[ENEMY_INDEX_MOBILE_MINI_BOMB], ALIGNMENT_NONE ))
+		Local bomb:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB], ALIGNMENT_NONE ))
 		bomb.move_to( game.mouse )
 		bomb.self_destruct()
 	End If
@@ -269,7 +269,7 @@ Function debug_overlay()
 	End If
 	If spawn_alignment <> ALIGNMENT_NONE
 		If spawn_agent = Null
-			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[spawn_archetype], spawn_alignment ))
+			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[spawn_archetype], spawn_alignment ))
 			spawn_agent.ang = Rand( 360 )
 			spawn_agent.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, -spawn_agent.mass/100.0 )))
 		End If
@@ -278,15 +278,15 @@ Function debug_overlay()
 		spawn_agent.draw( 0.50, 1.50 )
 		
 		If KeyHit( KEY_O )
-			game.spawn_agent( spawn_archetype, spawn_alignment, POINT( spawn_agent ))
+			game.spawn_unit( spawn_archetype, spawn_alignment, POINT( spawn_agent ))
 			spawn_agent = Null
 		Else If KeyHit( KEY_OPENBRACKET )
 			spawn_archetype :- 1
-			If spawn_archetype < enemy_index_start Then spawn_archetype = complex_agent_archetype.Length - 1
+			If spawn_archetype < 0 Then spawn_archetype = unit_archetype.Length - 1
 			spawn_agent = Null
 		Else If KeyHit( KEY_CLOSEBRACKET )
 			spawn_archetype :+ 1
-			If spawn_archetype > complex_agent_archetype.Length - 1 Then spawn_archetype = enemy_index_start
+			If spawn_archetype > unit_archetype.Length - 1 Then spawn_archetype = 0
 			spawn_agent = Null
 		End If
 	End If

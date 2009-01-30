@@ -276,7 +276,7 @@ Type ENVIRONMENT
 				If now() - ts >= sp.delay_time[cur.row]
 					'if this squad has just been started, or the last spawned enemy is away, dead or null
 					If cur.col = 0 Or last = Null Or last.dead() Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
-						Local brain:CONTROL_BRAIN = spawn_agent( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
+						Local brain:CONTROL_BRAIN = spawn_unit( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
 						last_spawned[i] = brain.avatar
 						spawned.addLast( last_spawned[i] )
 						'various counters
@@ -308,28 +308,24 @@ Type ENVIRONMENT
 		Return spawned
 	End Method
 	
-	Method spawn_agent:CONTROL_BRAIN( archetype_index%, alignment%, spawn_point:POINT )
-		Local this_agent:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype_index], alignment ))
+	Method spawn_unit:CONTROL_BRAIN( archetype_index%, alignment%, spawn_point:POINT )
+		Local unit:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[archetype_index], alignment ))
 		Select alignment
 			Case ALIGNMENT_HOSTILE
-				this_agent.manage( hostile_agent_list )
+				unit.manage( hostile_agent_list )
 				active_hostile_units :+ 1
 			Case ALIGNMENT_FRIENDLY
-				this_agent.manage( friendly_agent_list )
+				unit.manage( friendly_agent_list )
 				active_friendly_units :+ 1
 		End Select
-		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( this_agent, CONTROL_BRAIN.CONTROL_TYPE_AI,, 10, 1000, 1000 )
-		'this should be data-driven somehow
-		brain.factory_queue = ..
-		[	ENEMY_INDEX_MOBILE_MINI_BOMB, ..
-			ENEMY_INDEX_MOBILE_MINI_BOMB, ..
-			ENEMY_INDEX_MOBILE_MINI_BOMB, ..
-			ENEMY_INDEX_MOBILE_MINI_BOMB ] 
+		unit.spawn_at( spawn_point, 800 )
+		unit.snap_all_turrets()
+		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( unit, CONTROL_BRAIN.CONTROL_TYPE_AI,, 10, 1000, 1000 )
 		brain.manage( control_brain_list )
-		this_agent.spawn_at( spawn_point, 800 )
-		this_agent.snap_all_turrets()
-		'this should come from an emitter event attached to the agent
-		Local pt:POINT = Create_POINT( this_agent.pos_x, this_agent.pos_y )
+		
+		'_____________________________________________________________________
+		'the following should come from an emitter event attached to the agent
+		Local pt:POINT = Create_POINT( unit.pos_x, unit.pos_y )
 		Local em:EMITTER = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SPAWNER] ))
 		em.manage( environmental_emitter_list )
 		em.parent = pt
@@ -340,6 +336,7 @@ Type ENVIRONMENT
 		Local part:PARTICLE = get_particle( "soft_glow" )
 		part.manage( particle_list_foreground )
 		part.parent = pt
+		
 		Return brain
 	End Method
 	

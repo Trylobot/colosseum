@@ -13,7 +13,7 @@
 			{
 				turret: "turret.single_cannon",
 				anchor: 0
-			}
+			},
 			{
 				turret: "turret.machine_gun",
 				anchor: 0

@@ -23,7 +23,7 @@ Function update_network()
 					For Local gnet_obj:TGNetObject = EachIn network.ObjectsCreated()
 						If gnet_obj.GetInt( NETWORK_LINK.SLOT_CLASS ) = NETWORK_LINK.CLASS_LEVEL
 							'level name is retrieved from server
-							play_level( gnet_obj.GetString( NETWORK_LINK.SLOT_SOURCE ), PLAYER_INDEX_LIGHT_TANK )  
+							'play_level( gnet_obj.GetString( NETWORK_LINK.SLOT_SOURCE ), PLAYER_CHASSIS_INDEX_LIGHT_TANK )  
 						End If
 					Next
 				End If

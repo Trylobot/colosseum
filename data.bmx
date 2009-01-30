@@ -34,7 +34,8 @@ Global asset_identifiers$[] = ..
 	"turret_barrels", ..
 	"turrets", ..
 	"ai_types", ..
-	"complex_agents", ..
+	"units", ..
+	"player_chassis", ..
 	"levels" ]
 	
 Global font_map:TMap = CreateMap()
@@ -49,8 +50,71 @@ Global widget_map:TMap = CreateMap()
 Global pickup_map:TMap = CreateMap()
 Global turret_map:TMap = CreateMap()
 Global ai_type_map:TMap = CreateMap()
-Global complex_agent_map:TMap = CreateMap()
+Global unit_map:TMap = CreateMap()
+Global player_chassis_map:TMap = CreateMap()
 Global level_map:TMap = CreateMap()
+
+'______________________________________________________________________________
+Function get_font:TImageFont( key$ ) 'returns read-only reference
+	Return TImageFont( font_map.ValueForKey( key ))
+End Function
+'________________________________
+Function get_sound:TSound( key$ ) 'returns read-only reference
+	Return TSound( sound_map.ValueForKey( key ))
+End Function
+'________________________________
+Function get_image:TImage( key$ ) 'returns read-only reference
+	Return TImage( image_map.ValueForKey( key ))
+End Function
+'________________________________
+Function get_prop:AGENT( key$, copy% = True )
+	Local ag:AGENT = AGENT( prop_map.ValueForKey( key ))
+	If copy Then ag = Copy_AGENT( ag )
+	Return ag
+End Function
+'________________________________
+Function get_particle:PARTICLE( key$, new_frame% = 0, copy% = True )
+	Local part:PARTICLE = PARTICLE( particle_map.ValueForKey( key ))
+	If copy Then part = part.clone( new_frame )
+	Return part
+End Function
+'________________________________
+Function get_projectile:PROJECTILE( key$, source_id% = NULL_ID, copy% = True )
+	Local proj:PROJECTILE = PROJECTILE( projectile_map.ValueForKey( key ))
+	If proj And copy
+		proj = proj.clone( source_id )
+	End If
+	Return proj
+End Function
+
+'________________________________
+Function get_turret:TURRET( key$, copy% = True )
+	Local tur:TURRET = TURRET( turret_map.ValueForKey( key ))
+	If copy Then tur = tur.clone()
+	Return tur
+End Function
+'________________________________
+Function get_ai_type:AI_TYPE( key$ ) 'returns read-only reference
+	Return AI_TYPE( ai_type_map.ValueForKey( key ))
+End Function
+'________________________________
+Function get_player_chassis:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
+	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_chassis_map.ValueForKey( key ))
+	If copy Then comp_ag = COMPLEX_AGENT( COMPLEX_AGENT.Copy( comp_ag ))
+	Return comp_ag
+End Function
+'________________________________
+Function get_unit:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
+	Local unit:COMPLEX_AGENT = COMPLEX_AGENT( unit_map.ValueForKey( key ))
+	If copy Then unit = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit ))
+	Return unit
+End Function
+'________________________________
+Function get_level:LEVEL( key$, copy% = True ) 'returns read-only reference
+	Local lev:LEVEL = LEVEL( level_map.ValueForKey( key ))
+	'if copy then ...
+	Return lev
+End Function
 
 '_____________________________________________________________________________
 Function load_assets%()
@@ -152,14 +216,14 @@ Function get_asset:Object( ref_encoded$ )
 '				Return get_pickup( asset_key )
 '			Case "turret_barrel"
 '				Return get_turret_barrel( asset_key )
-'			Case "turret"
-'				Return get_turret( asset_key )
+			Case "turret"
+				Return get_turret( asset_key )
 			Case "ai_type"
 				Return get_ai_type( asset_key )
-'			Case "complex_agents"
-'				Return get_complex_agent( asset_key )
-			Case "level"
-				Return get_level( asset_key )
+			Case "chassis"
+				Return get_player_chassis( asset_key )
+'			Case "level"
+'				Return get_level( asset_key )
 		End Select
 		End If
 	Return Null
@@ -179,43 +243,6 @@ Function get_keys$[]( map:TMap )
 		i :+ 1
 	Next
 	Return array
-End Function
-'______________________________________________________________________________
-Function get_font:TImageFont( key$ ) 'returns read-only reference
-	Return TImageFont( font_map.ValueForKey( key ))
-End Function
-Function get_sound:TSound( key$ ) 'returns read-only reference
-	Return TSound( sound_map.ValueForKey( key ))
-End Function
-Function get_image:TImage( key$ ) 'returns read-only reference
-	Return TImage( image_map.ValueForKey( key ))
-End Function
-Function get_prop:AGENT( key$ ) 'returns a new instance, which is a copy of the global archetype
-	Return Copy_AGENT( AGENT( prop_map.ValueForKey( key )))
-End Function
-Function get_particle:PARTICLE( key$, new_frame% = 0 ) 'returns a new instance, which is a copy of the global archetype
-	Return PARTICLE( particle_map.ValueForKey( key )).clone( new_frame )
-End Function
-Function get_projectile:PROJECTILE( archetype_index$, source_id% = NULL_ID )
-	'Return PROJECTILE( projectile_map.ValueForKey( key )).clone( source_id )
-	Select archetype_index
-		Case "tank_cannon"
-			Return projectile_archetype[PROJECTILE_INDEX_TANK_CANNON].clone( source_id )
-		Case "machine_gun"
-			Return projectile_archetype[PROJECTILE_INDEX_MACHINE_GUN].clone( source_id )
-		Case "laser"
-			Return projectile_archetype[PROJECTILE_INDEX_LASER].clone( source_id )
-		Case "rocket"
-			Return projectile_archetype[PROJECTILE_INDEX_ROCKET].clone( source_id )
-	End Select
-End Function
-
-Function get_ai_type:AI_TYPE( key$ ) 'returns read-only reference
-	Return AI_TYPE( ai_type_map.ValueForKey( key ))
-End Function
-
-Function get_level:LEVEL( key$ ) 'returns read-only reference
-	Return LEVEL( level_map.ValueForKey( key ))
 End Function
 
 '_____________________________________________________________________________

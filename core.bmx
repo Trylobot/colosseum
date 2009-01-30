@@ -37,12 +37,11 @@ Global FLAG_console% = False
 Global FLAG_ignore_mouse_1% = False 'used for temporary ignore after resuming a paused game.
 
 '______________________________________________________________________________
-Function play_level( level_file_path$, player_archetype% )
+Function play_level( level_file_path$, player:COMPLEX_AGENT )
+	If Not player Then Return
 	main_game = Create_ENVIRONMENT( True )
-	Local success% = main_game.load_level( level_file_path )
-	If success
+	If main_game.load_level( level_file_path )
 		main_game.game_in_progress = True
-		Local player:COMPLEX_AGENT = create_player( player_archetype )
 		Local player_brain:CONTROL_BRAIN = create_player_brain( player )
 		main_game.insert_player( player, player_brain )
 		main_game.respawn_player()
@@ -50,13 +49,24 @@ Function play_level( level_file_path$, player_archetype% )
 		main_game.player_in_locker = True
 		main_game.waiting_for_player_to_enter_arena = True
 		MoveMouse( window_w/2 - 30, window_h/2 )
-	Else
+	Else 'Not main_game.load_level()
 		main_game = Null
 	End If
 End Function
 '______________________________________________________________________________
-Function create_player:COMPLEX_AGENT( archetype% )
-	Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( complex_agent_archetype[archetype], ALIGNMENT_FRIENDLY ))
+Function create_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA )
+	If Not v_dat Then Return Null 'no chassis data
+	Local player:COMPLEX_AGENT = get_player_chassis( v_dat.chassis_key )
+	If player
+		For Local t_dat:TURRET_DATA = EachIn v_dat.turrets
+			If Not player.add_turret( get_turret( t_dat.turret_key, False ), t_dat.anchor )
+				Return Null 'bad turret data
+			End If
+		Next
+		Return player 'all good
+	Else
+		Return Null 'bad chassis data
+	End If
 End Function
 '______________________________________________________________________________
 Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
@@ -96,15 +106,17 @@ Function init_ai_menu_game()
 	sp.class = SPAWNER.class_TURRET_ANCHOR
 	sp.alignment = ALIGNMENT_FRIENDLY
 	squad = sp.add_new_squad()
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
-	sp.set_delay_time( squad, 500 )
+	sp.set_delay_time( squad, 1000 )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
+	sp.add_new_squadmember( squad, UNIT_INDEX_CARRIER )
+	sp.add_new_squadmember( squad, UNIT_INDEX_CARRIER )
 	lev.add_spawner( sp )
 
 	sp = New SPAWNER
@@ -112,15 +124,17 @@ Function init_ai_menu_game()
 	sp.class = SPAWNER.class_TURRET_ANCHOR
 	sp.alignment = ALIGNMENT_HOSTILE
 	squad = sp.add_new_squad()
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_QUAD )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
-	sp.add_new_squadmember( squad, ENEMY_INDEX_LIGHT_TANK )
-	sp.set_delay_time( squad, 500 )
+	sp.set_delay_time( squad, 1000 )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_QUAD )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
+	sp.add_new_squadmember( squad, UNIT_INDEX_LIGHT_TANK )
+	sp.add_new_squadmember( squad, UNIT_INDEX_CARRIER )
+	sp.add_new_squadmember( squad, UNIT_INDEX_CARRIER )
 	lev.add_spawner( sp )
 
 	lev.add_divider( 15, LINE_TYPE_VERTICAL )
@@ -451,7 +465,9 @@ Function menu_command( command_code%, argument:Object = Null )
 			FLAG_ignore_mouse_1 = True
 		'________________________________________
 		Case COMMAND_PLAY_LEVEL
-			play_level( String(argument), 0 )
+			If profile And profile.vehicle
+				play_level( String(argument), create_player( profile.vehicle ))
+			End If
 		'________________________________________
 		Case COMMAND_NEW_GAME
 			profile = New PLAYER_PROFILE
@@ -475,6 +491,18 @@ Function menu_command( command_code%, argument:Object = Null )
 			get_current_menu().update( True )
 		'________________________________________
 		Case COMMAND_SAVE_GAME
+			Return
+			Return
+			Return
+			Return
+			Return
+			Return
+			Return
+			Return
+			Return
+			Return
+			Return
+			Return
 			If profile
 				If save_game( profile.src_path, profile )
 					save_autosave( profile.src_path )

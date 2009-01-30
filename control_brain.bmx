@@ -46,7 +46,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field target:AGENT 'current target
 	Field turret_overheated%[] 'flags for AI turret control
 	
-	Field factory_queue%[] 'list of complex agents to spawn
 	Field spawn_index% 'tracker for factory
 	Field last_spawned_ts% 'timestamp of last spawn
 	Field spawn_point:POINT 'actual spawn location
@@ -64,9 +63,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			input_control()
 		Else If control_type = CONTROL_TYPE_AI
 			AI_control()
-			If ai.is_carrier And avatar.is_deployed
-				AI_spawning_system_update()
-			End If
 		End If
 	End Method
 	
@@ -148,26 +144,12 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					avatar.deploy()
 					spawn_point = create_spawn_point()
 					last_spawned_ts = now()
-					'game.register_AI_spawner( Self )
+				End If
+				If avatar.is_deployed
+					AI_spawning_system_update()
 				End If
 			End If
 		End If
-	End Method
-	
-	Method AI_spawning_system_update()
-		If spawn_index < factory_queue.Length And now() - last_spawned_ts > spawn_delay
-			game.spawn_agent( factory_queue[spawn_index], avatar.political_alignment, spawn_point )
-			last_spawned_ts = now()
-			spawn_index :+ 1
-		End If
-	End Method
-	
-	Method create_spawn_point:POINT()
-		Local p:POINT = Copy_POINT( avatar )
-		p.ang = avatar.ang + 180
-		p.pos_x :+ ( avatar.hitbox.width/2 + 15 )*Cos( 180 + avatar.ang )
-		p.pos_y :+ ( avatar.hitbox.width/2 + 15 )*Sin( 180 + avatar.ang )
-		Return p
 	End Method
 	
 	Method drive_to( dest:Object )
@@ -244,6 +226,23 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				End If
 			Next
 		Next
+	End Method
+	
+	Method create_spawn_point:POINT()
+		Local p:POINT = Copy_POINT( avatar )
+		p.ang = avatar.ang + 180
+		p.pos_x :+ ( avatar.hitbox.width/2 + 15 )*Cos( 180 + avatar.ang )
+		p.pos_y :+ ( avatar.hitbox.width/2 + 15 )*Sin( 180 + avatar.ang )
+		Return p
+	End Method
+	
+	Method AI_spawning_system_update()
+		If spawn_index < avatar.factory_queue.Length And now() - last_spawned_ts > spawn_delay
+			game.spawn_unit( avatar.factory_queue[spawn_index], avatar.political_alignment, spawn_point )
+			last_spawned_ts = now()
+			spawn_index :+ 1
+		Else
+		End If
 	End Method
 	
 	Method waypoint_reached%()
