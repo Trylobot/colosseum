@@ -56,10 +56,10 @@ End Function
 '______________________________________________________________________________
 Function create_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA )
 	If Not v_dat Then Return Null 'no chassis data
-	Local player:COMPLEX_AGENT = COMPLEX_AGENT( get_asset( v_dat.chassis_key ))
+	Local player:COMPLEX_AGENT = get_player_chassis( v_dat.chassis_key )
 	If player
 		For Local t_dat:TURRET_DATA = EachIn v_dat.turrets
-			Local tur:TURRET = TURRET( get_asset( t_dat.turret_key, False ))
+			Local tur:TURRET = get_turret( t_dat.turret_key, False )
 			If Not tur Then Return Null
 			player.add_turret( tur, t_dat.anchor )
 		Next

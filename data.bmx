@@ -188,47 +188,6 @@ Function load_objects%( json:TJSON )
 End Function
 
 '______________________________________________________________________________
-Function get_asset:Object( ref_encoded$, copy% = True )
-	Local ref$[] = ref_encoded.Split( "." )
-	If ref.Length >= 2 And ref[0].Length > 0 And ref[1].Length > 0
-		Local asset_type$ = ref[0]
-		Local asset_key$ = ref[1]
-		Select asset_type
-			Case "font"
-				Return get_font( asset_key )
-			Case "sound"
-				Return get_sound( asset_key )
-			Case "image"
-				Return get_image( asset_key )
-			Case "prop"
-				Return get_prop( asset_key, copy )
-			Case "particle"
-				Return get_particle( asset_key,, copy )
-'			Case "particle_emitter"
-'				Return get_particle_emitter( asset_key )
-'			Case "projectile"
-'				Return get_projectile( asset_key )
-'			Case "projectile_launcher"
-'				Return get_projectile_launcher( asset_key )
-'			Case "widget"
-'				Return get_widget( asset_key )
-'			Case "pickup"
-'				Return get_pickup( asset_key )
-'			Case "turret_barrel"
-'				Return get_turret_barrel( asset_key )
-			Case "turret"
-				Return get_turret( asset_key, copy )
-			Case "ai_type"
-				Return get_ai_type( asset_key )
-			Case "chassis"
-				Return get_player_chassis( asset_key, copy )
-'			Case "level"
-'				Return get_level( asset_key )
-		End Select
-		End If
-	Return Null
-End Function
-'______________________________________________________________________________
 Function get_keys$[]( map:TMap )
 	Local list:TList = CreateList()
 	Local size% = 0
@@ -463,6 +422,7 @@ End Function
 '______________________________________________________________________________
 Function save_autosave( profile_path$ )
 	Local file:TStream, json:TJSON
+	
 	If profile_path <> Null
 		json = TJSON.Create( "{autosave:~q"+profile_path+"~q}" )
 	Else 'profile_path = Null

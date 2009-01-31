@@ -29,7 +29,6 @@ Global window_h%
 Global fullscreen%
 Global bit_depth%
 Global refresh_rate%
-Global autosave_profile_path$
 Global show_ai_menu_game%
 Global retain_particles%
 Global active_particle_limit%
@@ -61,7 +60,7 @@ menu_command( COMMAND_LOAD_ASSETS )
 'level editor cache 
 menu_command( COMMAND_NEW_LEVEL )
 'autosave/load
-autosave_profile_path = load_autosave()
+Global autosave_profile_path$ = load_autosave()
 menu_command( COMMAND_LOAD_GAME, autosave_profile_path )
 
 ?Debug

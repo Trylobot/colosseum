@@ -3,8 +3,8 @@
 		class: "prop",
 		key: "crate",
 		object:	{
-			img: "image.crate",
-			gibs: "image.crate_gibs",
+			img: "crate",
+			gibs: "crate_gibs",
 			cash_value: 0,
 			max_health: 200.0,
 			mass: 400.0,
@@ -17,8 +17,8 @@
 		class: "prop",
 		key: "crate_small",
 		object:	{
-			img: "image.crate_small",
-			gibs: "image.crate_small_gibs",
+			img: "crate_small",
+			gibs: "crate_small_gibs",
 			cash_value: 0,
 			max_health: 75.0,
 			mass: 300.0,

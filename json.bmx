@@ -1,18 +1,17 @@
 Rem
 	json.bmx
 	This is a COLOSSEUM project BlitzMax source file.
+	original author: grable
 	author: Tyler W Cole
+	Downloaded from http://www.blitzbasic.com/codearcs/codearcs_bmx/2066.bmx at 12:57 PM on Sunday, August 24th, 2008
 EndRem
+
+'SuperStrict
+
+'Import brl.LinkedList
+'Import brl.Map
+
 Rem
-
-; ID: 2066
-; Author: grable
-; Date: 2007-07-14 11:02:26
-; Title: JSON Reader/Writer
-; Description: Easy handling of JSON data
-
-; Downloaded from http://www.blitzbasic.com/codearcs/codearcs_bmx/2066.bmx at 12:57 PM on Sunday, August 24th, 2008
-
 **********************************************************************************************************************************
 * JSON Reader/Writer and generic handling
 *
@@ -131,23 +130,13 @@ Rem
 **********************************************************************************************************************************
 * NOTES
 *
-	** most of the TJSON.GetXXX methods returns the JSON NULL type on failure if not specified
-	** all identifiers are CASE SENSITIVE
-	** the parser is as close as i could get it with my current understanding of JSON, please let me know if i missed something
-	** see the bottom of this source file for more examples, or check out http://json.org/ for more info on JSON
-	
-***********************************************************	
-* INFO
-*
-	author: grable
-	email : grable0@gmail.com
+	most of the TJSON.GetXXX methods returns the JSON NULL type on failure if not specified
+	all identifiers are CASE SENSITIVE
+	the parser is as close as i could get it with my current understanding of JSON, please let me know if i missed something
+	see the bottom of this source file for more examples, or check out http://json.org/ for more info on JSON
 	
 EndRem
 
-'SuperStrict
-
-'Import BRL.LinkedList
-'Import BRL.Map
 
 
 '
@@ -266,7 +255,7 @@ Type TJSONObject Extends TJSONValue
 			lines :+ 1
 		Next
 		If lines > 1 Then Return "{~n"+ RepeatString( "~t", level + 1) + s + "~n" + RepeatString( "~t", level) + "}"
-		Return "{ "+ s +" }~n"
+		Return "{ "+ s +" }~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n"
 	EndMethod		
 	
 	Method GetByName:TJSONValue( name:Object)
@@ -341,7 +330,7 @@ Type TJSONArray Extends TJSONValue
 			lines :+ 1
 		Next
 		If lines > 1 Then Return "[~n" + RepeatString( "~t", level + 1) + s + "~n" + RepeatString( "~t", level) + "]"
-		Return "[ "+ s +" ]"
+		Return "[ "+ s +" ]~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n"
 	EndMethod
 	
 	Method GetByIndex:TJSONValue( index:Int)
@@ -757,11 +746,11 @@ Type TJSON
 	
 	Method Write( dest:Object)
 		If TStream(dest) Then
-			TStream(dest).WriteString( Root.ToSource())
+			TStream(dest).WriteString( Root.ToSource() )
 		ElseIf String(dest) Then
 			Local stream:TStream = WriteFile( String(dest))
 			If Not stream Then Return
-			stream.WriteString( Root.ToSource())
+			stream.WriteString( Root.ToSource() )
 			stream.Close()
 		EndIf
 	EndMethod
@@ -1097,6 +1086,9 @@ End Function
 '
 'MARK: various test cases, each in its own Rem/EndRem block
 '
+
+'Print TJSON.Create( "[[0,0,0,0,0,0,0],[1,0,0,1,0]]" ).ToSource()
+'Print TJSON.Create( "{x:5,y:10,z:1658}" ).ToSource()
 
 Rem
 Local array:TJSONValue = TJSONArray.Create( 4)

@@ -162,8 +162,8 @@ End Type
 
 Function Create_AGENT_from_json:AGENT( json:TJSON )
 	Local a:AGENT = New AGENT
-	a.img = TImage( get_asset( json.GetString( "img" )))
-	a.gibs = TImage( get_asset( json.GetString( "gibs" )))
+	a.img = get_image( json.GetString( "img" ))
+	a.gibs = get_image( json.GetString( "gibs" ))
 	a.cash_value = json.GetNumber( "cash_value" )
 	a.max_health = json.GetNumber( "max_health" )
 	a.mass = json.GetNumber( "mass" )

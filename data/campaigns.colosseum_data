@@ -4,9 +4,9 @@
 		key: "basic",
 		object: {
 			levels: [
-				"levels/basic0.colosseum_level",
-				"levels/basic1.colosseum_level",
-				"levels/basic2.colosseum_level"
+				"basic_0",
+				"basic_1",
+				"basic_2"
 			]
 		}
 	}

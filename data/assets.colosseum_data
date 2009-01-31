@@ -12,6 +12,7 @@
 	turret_barrels: "data/turret_barrels.colosseum_data",
 	turrets: "data/turrets.colosseum_data",
 	ai_types: "data/ai_types.colosseum_data",
-	complex_agents: "data/complex_agents.colosseum_data",
+	player_chassis: "data/player_chassis.colosseum_data",
+	units: "data/units.colosseum_data",
 	levels: "data/levels.colosseum_data"
 }

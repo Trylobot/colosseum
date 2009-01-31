@@ -4,7 +4,7 @@
 		key: "tank_tread_debris",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.debris",
+			img: "debris",
 			layer: "LAYER_BACKGROUND",
 			retain: true,
 			frictional_coefficient: 0.05
@@ -15,7 +15,7 @@
 		key: "tank_tread_trail_small",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.trail_3",
+			img: "trail_3",
 			layer: "LAYER_BACKGROUND",
 			retain: true
 		}
@@ -25,7 +25,7 @@
 		key: "tank_tread_trail_medium",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.trail_5",
+			img: "trail_5",
 			layer: "LAYER_BACKGROUND",
 			retain: true
 		}
@@ -35,7 +35,7 @@
 		key: "light_tank_track",
 		object: {
 			particle_type: "PARTICLE_TYPE_ANIM",
-			img: "image.light_tank_track",
+			img: "light_tank_track",
 		}
 	},
 	{
@@ -43,7 +43,7 @@
 		key: "med_tank_track",
 		object: {
 			particle_type: "PARTICLE_TYPE_ANIM",
-			img: "image.med_tank_track",
+			img: "med_tank_track",
 		}
 	},
 	{
@@ -51,7 +51,7 @@
 		key: "cannon_muzzle_flash",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.muzzle_flash",
+			img: "muzzle_flash",
 			layer: "LAYER_FOREGROUND"
 		}
 	},
@@ -60,7 +60,7 @@
 		key: "cannon_shell_casing",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.projectile_shell_casing",
+			img: "projectile_shell_casing",
 			layer: "LAYER_FOREGROUND",
 			retain: true,
 			frictional_coefficient: 0.0100
@@ -71,7 +71,7 @@
 		key: "cannon_muzzle_smoke",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.muzzle_smoke",
+			img: "muzzle_smoke",
 			layer: "LAYER_FOREGROUND"
 		}
 	},
@@ -80,7 +80,7 @@
 		key: "explosion",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.white_circle",
+			img: "white_circle",
 			layer: "LAYER_FOREGROUND",
 			retain: false,
 			frictional_coefficient: 0.0850
@@ -91,7 +91,7 @@
 		key: "dust",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.white_circle",
+			img: "white_circle",
 			layer: "LAYER_BACKGROUND",
 			retain: false,
 			frictional_coefficient: 0.0850
@@ -102,7 +102,7 @@
 		key: "ricochet_spark",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.spark",
+			img: "spark",
 			layer: "LAYER_FOREGROUND",
 			retain: false,
 			frictional_coefficient: 0.0150
@@ -113,7 +113,7 @@
 		key: "impact_halo",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.halo",
+			img: "halo",
 			layer: "LAYER_BACKGROUND",
 			retain: false
 		}
@@ -123,7 +123,7 @@
 		key: "halo",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.halo",
+			img: "halo",
 			layer: "LAYER_BACKGROUND",
 			retain: false,
 			life_time: 200,
@@ -136,7 +136,7 @@
 		key: "soft_glow",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.halo",
+			img: "halo",
 			layer: "LAYER_FOREGROUND",
 			retain: false,
 			life_time: 1250,
@@ -151,7 +151,7 @@
 		key: "machine_gun_muzzle_flash",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.mgun_muzzle_flash",
+			img: "mgun_muzzle_flash",
 			layer: "LAYER_FOREGROUND"
 		}
 	},
@@ -160,7 +160,7 @@
 		key: "machine_gun_shell_casing",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.mgun_shell_casing",
+			img: "mgun_shell_casing",
 			layer: "LAYER_FOREGROUND",
 			retain: true,
 			frictional_coefficient: 0.0100
@@ -171,7 +171,7 @@
 		key: "machine_gun_muzzle_smoke",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.mgun_muzzle_smoke",
+			img: "mgun_muzzle_smoke",
 			layer: "LAYER_FOREGROUND"
 		}
 	},
@@ -180,7 +180,7 @@
 		key: "laser_muzzle_flare",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.laser_muzzle_flare",
+			img: "laser_muzzle_flare",
 			layer: "LAYER_FOREGROUND",
 			retain: false
 		}
@@ -190,7 +190,7 @@
 		key: "rocket_thrust",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.rocket_thrust",
+			img: "rocket_thrust",
 			layer: "LAYER_BACKGROUND"
 		}
 	},
@@ -199,7 +199,7 @@
 		key: "rocket_casing",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.rocket_casing",
+			img: "rocket_casing",
 			layer: "LAYER_FOREGROUND",
 			retain: true,
 			frictional_coefficient: 0.0100
@@ -210,7 +210,7 @@
 		key: "rocket_smoke_trail",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.muzzle_smoke",
+			img: "muzzle_smoke",
 			layer: "LAYER_FOREGROUND"
 		}
 	},
@@ -220,7 +220,7 @@
 		object: {
 			particle_type: "PARTICLE_TYPE_STR",
 			str: "$",
-			font: "font.consolas_bold_14",
+			font: "consolas_bold_14",
 			layer: "LAYER_FOREGROUND",
 			frictional_coefficient: 0.05,
 			red: 0.3333,
@@ -237,7 +237,7 @@
 		key: "laser",
 		object: {
 			particle_type: "PARTICLE_TYPE_IMG",
-			img: "image.laser",
+			img: "laser",
 			layer: "LAYER_FOREGROUND",
 			retain: false
 		}
@@ -247,7 +247,7 @@
 		key: "door_servo",
 		object: {
 			particle_type: "PARTICLE_TYPE_ANIM",
-			img: "image.door_servo",
+			img: "door_servo",
 		}
 	}
 ]

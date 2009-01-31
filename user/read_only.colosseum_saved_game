@@ -3,19 +3,28 @@
 	cash: 2725,
 	kills: 21,
 	inventory: [
-		"chassis.light_tank",
-		"turret.single_cannon",
-		"turret.machine_gun"
+		{
+			type: "chassis",
+			key: "light_tank"
+		},
+		{
+			type: "turret",
+			key: "single_cannon"
+		},
+		{
+			type: "turret",
+			key: "machine_gun"
+		}
 	],
 	vehicle: {
-		chassis: "chassis.light_tank",
+		chassis: "light_tank",
 		turrets: [
 			{
-				turret: "turret.single_cannon",
+				turret: "single_cannon",
 				anchor: 0
 			},
 			{
-				turret: "turret.machine_gun",
+				turret: "machine_gun",
 				anchor: 0
 			}
 		]

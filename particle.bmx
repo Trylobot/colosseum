@@ -214,11 +214,11 @@ Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
 	'create object with required fields
 	p = PARTICLE( PARTICLE.Create( particle_type ))
 	'get optional fields
-	If json.TypeOf( "img" ) <> JSON_UNDEFINED                    Then p.img = TImage( get_asset( json.GetString( "img" )))
+	If json.TypeOf( "img" ) <> JSON_UNDEFINED                    Then p.img = get_image( json.GetString( "img" ))
 	If json.TypeOf( "frame" ) <> JSON_UNDEFINED                  Then p.frame = json.GetNumber( "frame" )
 	If json.TypeOf( "frame_delay" ) <> JSON_UNDEFINED            Then p.frame_delay = json.GetNumber( "frame_delay" )
 	If json.TypeOf( "str" ) <> JSON_UNDEFINED                    Then p.str = json.GetString( "str" )
-	If json.TypeOf( "font" ) <> JSON_UNDEFINED                   Then p.font = TImageFont( get_asset( json.GetString( "font" )))
+	If json.TypeOf( "font" ) <> JSON_UNDEFINED                   Then p.font = get_font( json.GetString( "font" ))
 	If json.TypeOf( "layer" ) <> JSON_UNDEFINED                  Then p.layer = enum( json.GetString( "layer" ))
 	If json.TypeOf( "retain" ) <> JSON_UNDEFINED                 Then p.retain = json.GetBoolean( "retain" )
 	If json.TypeOf( "frictional_coefficient" ) <> JSON_UNDEFINED Then p.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
