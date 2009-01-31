@@ -134,6 +134,28 @@ Function get_player_id%()
 End Function
 
 '______________________________________________________________________________
+Function win()
+	SetOrigin( 0, 0 )
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	
+	Local kills_this_level% = profile.kills - game.player_kills_at_start
+	
+	Repeat
+		Cls()
+		
+		SetColor( 212, 32, 32 )
+		DrawText_with_outline( "enter to continue", window_w/2, window_h - 20 )
+		
+		Flip( 1 )
+	Until KeyHit( KEY_ENTER )	Or KeyHit( KEY_ESCAPE ) Or AppTerminate()
+	If AppTerminate() Then End
+	
+End Function
+
+'______________________________________________________________________________
 Const COMMAND_NULL% = 0
 Const COMMAND_LOAD_ASSETS% = 10
 Const COMMAND_SHOW_CHILD_MENU% = 50

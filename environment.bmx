@@ -53,8 +53,8 @@ Type ENVIRONMENT
 	Field hostile_door_list:TList 'TList<DOOR>
 	Field door_lists:TList 'TList<TList<DOOR>>
 	
-	Field level_enemy_count% 'number of enemies that could possibly be spawned
-	Field level_enemies_killed% 'number of enemies that have been killed since being spawned
+	Field level_enemy_count% '[DEPRECATED] number of enemies that could possibly be spawned
+	Field player_kills_at_start% 'kill count at level initialization
 	Field active_friendly_spawners%
 	Field active_friendly_units%
 	Field active_hostile_spawners%
@@ -176,7 +176,8 @@ Type ENVIRONMENT
 		Next
 		'spawning system initialize/reset
 		reset_spawners()
-		'indicate success to caller
+		player_kills_at_start = profile.kills
+		'success
 		Return True
 	End Method
 	
