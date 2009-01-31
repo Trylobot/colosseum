@@ -73,11 +73,11 @@ Type PICKUP Extends MANAGED_OBJECT
 	Method play_categorical_sound()
 		Select pickup_type
 			Case AMMO_PICKUP
-				play_sound( "reload" )
+				play_sound( get_sound( "reload" ))
 			Case HEALTH_PICKUP
-				play_sound( "drill" )
+				play_sound( get_sound( "drill" ))
 			Case COOLDOWN_PICKUP
-				play_sound( "air_release" )
+				play_sound( get_sound( "air_release" ))
 		End Select
 	End Method
 	

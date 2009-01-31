@@ -406,39 +406,7 @@ Type ENVIRONMENT
 		End If
 	End Method
 	
-'	Method register_AI_spawner( brain:CONTROL_BRAIN )
-'		AI_spawners.AddLast( brain )
-'		Select brain.avatar.political_alignment
-'			Case ALIGNMENT_FRIENDLY
-'				active_friendly_spawners :+ 1
-'			Case ALIGNMENT_HOSTILE
-'				active_hostile_spawners :+ 1
-'		End Select
-'	End Method
-'	
-'	Method update_AI_spawners_registry()
-'		If Not AI_spawners.IsEmpty()
-'			Local cursor_link:TLink = AI_spawners.FirstLink()
-'			Repeat
-'				Local cursor_link_remove:TLink = cursor_link
-'				cursor_link = cursor_link.NextLink()
-'				Local brain:CONTROL_BRAIN = CONTROL_BRAIN( cursor_link.Value() )
-'				If brain.spawn_index >= brain.factory_queue.Length Or brain.avatar.dead()
-'					'spawner dead
-'					cursor_link_remove.Remove()
-'					Select brain.avatar.political_alignment
-'						Case ALIGNMENT_FRIENDLY
-'							active_friendly_spawners :- 1
-'						Case ALIGNMENT_HOSTILE
-'							active_hostile_spawners :- 1
-'					End Select
-'				End If
-'			Until cursor_link = AI_spawners.LastLink()
-'		End If
-'	End Method
-	
 	Method spawn_pickup( x%, y%, probability_override# = -1.0, omit_ammunition% = False ) 'request; depends on probability
-		Local pkp:PICKUP
 		Local threshold#
 		If probability_override <> -1.0
 			threshold = probability_override
@@ -462,8 +430,8 @@ Type ENVIRONMENT
 			Local valid_pickup_archetypes%[count]
 			Local index% = 0
 			For Local i% = 0 To pickup_archetype.Length - 1
-				If pkp.pickup_type = pickup_class
-					valid_pickup_archetypes[index] = pickup_archetype[i]
+				If pickup_archetype[i].pickup_type = pickup_class
+					valid_pickup_archetypes[index] = i
 					index :+ 1
 				End If
 			Next
@@ -481,7 +449,7 @@ Type ENVIRONMENT
 				Next
 				n :+ 1
 			Next
-			pkp = pickup_archetype[deck[Rand( 0, deck.Length - 1 )]]
+			Local pkp:PICKUP = pickup_archetype[deck[Rand( 0, deck.Length - 1 )]]
 			If pkp
 				pkp = pkp.clone()
 				pkp.pos_x = x

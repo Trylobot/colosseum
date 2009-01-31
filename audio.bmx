@@ -11,7 +11,7 @@ Global audio_channels:TList = CreateList()
 Function play_all_audio()
 	play_bg_music()
 	
-	If game <> Null
+	If game
 		If game.player_engine_ignition
 			start_player_engine()
 		End If

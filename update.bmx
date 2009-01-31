@@ -114,6 +114,7 @@ Function update_flags()
 			game.game_in_progress = False
 			game.game_over = True
 			game.player_engine_running = False
+			tweak_engine_idle()
 		End If
 		'no more enemies (either still to spawn or still alive)?
 		If game.battle_in_progress And game.active_hostile_spawners = 0 And game.hostile_agent_list.Count() = 0 'And game.level_enemies_killed >= game.level_enemy_count
@@ -145,6 +146,7 @@ Function update_flags()
 		'if the battle is over (player has won or lost)
 		If Not game.game_in_progress And KeyHit( KEY_R )
 			game.player_engine_running = False
+			tweak_engine_idle()
 			If Not game.game_over
 				kill_tally( "LEVEL COMPLETE!", screencap() )
 			End If
