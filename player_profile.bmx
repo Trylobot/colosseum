@@ -9,7 +9,7 @@ Type PLAYER_PROFILE
 	Field name$
 	Field cash%
 	Field kills%
-	Field inventory$[]
+	Field inventory:INVENTORY_DATA[]
 	Field vehicle:VEHICLE_DATA
 	Field input_method%
 	Field progress:PROGRESS_DATA[]
@@ -47,7 +47,11 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 	prof.name = json.GetString( "name" )
 	prof.cash = json.GetNumber( "cash" )
 	prof.kills = json.GetNumber( "kills" )
-	prof.inventory = Create_String_array_from_TJSONArray( json.GetArray( "inventory" ))
+	Local inv:TJSONArray = json.GetArray( "inventory" )
+	prof.inventory = New INVENTORY_DATA[ inv.Size() ]
+	For Local i% = 0 To prof.inventory.Length - 1
+		prof.inventory [i] = Create_INVENTORY_DATA_from_json( TJSON.Create( inv.GetByIndex( i )))
+	Next
 	prof.vehicle = Create_VEHICLE_DATA_from_json( TJSON.Create( json.GetObject( "vehicle" )))
 	prof.input_method = json.GetNumber( "input_method" )
 	Local prog:TJSONArray = json.GetArray( "progress" )
@@ -62,6 +66,20 @@ End Function
 
 '______________________________________________________________________________
 'helper objects
+
+'_________________
+Type INVENTORY_DATA
+	Field item_type$
+	Field key$
+End Type
+
+Function Create_INVENTORY_DATA_from_json:INVENTORY_DATA( json:TJSON ) 
+	Local id:INVENTORY_DATA = New INVENTORY_DATA
+	id.item_type = json.GetString( "item_type" ) 
+	id.key = json.GetString( "key" ) 
+	Return id
+End Function
+
 '_________________
 Type VEHICLE_DATA
 	Field chassis_key$

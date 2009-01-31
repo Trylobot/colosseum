@@ -4,15 +4,15 @@
 	kills: 21,
 	inventory: [
 		{
-			type: "chassis",
+			item_type: "chassis",
 			key: "light_tank"
 		},
 		{
-			type: "turret",
+			item_type: "turret",
 			key: "single_cannon"
 		},
 		{
-			type: "turret",
+			item_type: "turret",
 			key: "machine_gun"
 		}
 	],
