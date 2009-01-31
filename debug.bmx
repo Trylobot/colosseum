@@ -157,27 +157,20 @@ Global cb:CONTROL_BRAIN = Null
 Function debug_overlay()
 	SetRotation( 0 )
 	SetScale( 1, 1 )
-	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	
 	sx = 2; sy = 2
-
-	debug_drawtext( "       active_particle_limit --> "+active_particle_limit )
-	debug_drawtext( "game.retained_particle_count --> "+game.retained_particle_count )
 	
+	'basic info 
+	SetColor( 255, 255, 255 )
+	debug_drawtext( "       active_particle_limit "+active_particle_limit )
+	debug_drawtext( "game.retained_particle_count "+game.retained_particle_count )
 	SetColor( 127, 127, 255 )
-	debug_drawtext( "friendlies "+game.active_friendly_units )
+	debug_drawtext( "   friendly units "+game.active_friendly_units )
+	debug_drawtext( "friendly spawners "+game.active_friendly_spawners )
 	SetColor( 255, 127, 127 )
-	debug_drawtext( "hostiles "+game.active_hostile_units )
-	Local sp:SPAWNER, cur:CELL, ts%, last:COMPLEX_AGENT, counter%, str$
-	For Local i% = 0 To game.lev.spawners.Length-1
-		sp = game.lev.spawners[i]
-		counter = game.spawn_counter[i]
-		If     ( sp.alignment = ALIGNMENT_FRIENDLY ) SetColor( 127, 127, 255 ) ..
-		Else If( sp.alignment = ALIGNMENT_HOSTILE )  SetColor( 255, 127, 127 )
-		debug_drawtext( "spawner["+i+"] "+(sp.size - counter) )
-	Next
-	debug_drawtext( "" ) 'newline
+	debug_drawtext( "    hostile units "+game.active_hostile_units )
+	debug_drawtext( " hostile spawners "+game.active_hostile_spawners )
 	
 	If game <> Null
 		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
@@ -395,6 +388,11 @@ Function debug_overlay()
 			
 	End If
 	
+End Function
+
+Function debug_win()
+	win( LoadImage( "test/debug_win.png" ), 99 )
+	End
 End Function
 
 

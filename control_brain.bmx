@@ -103,7 +103,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		If ai.can_move And Not (ai.is_carrier And avatar.is_deployed)
 			'target availability
 			If can_see_target
-				If ai.has_turrets And dist_to_target <= 50
+				If ai.has_turrets And dist_to_target <= 75
 					If Not ally_blocking
 						'clear shot, stop and take it
 						drive_to( Null )

@@ -409,28 +409,24 @@ Function draw_reticle()
 				SetRotation( p_tur.ang_to( game.mouse ))
 				SetAlpha( 1.0 )
 				DrawImage( img_reticle, game.mouse.x, game.mouse.y )
-				'if the reticle is not visible, show an indicator on the edge of the screen
-				SetAlpha( Sin( now() Mod 2000 ))
-				Local arrow:TImage = get_image( "arrow" )
-				If game.mouse.x + game.drawing_origin.x < 0
-					SetRotation( 180 )
-					'DrawImage( arrow, 0, game.mouse.y )
-'SetRotation( 0 ); DrawText_with_outline( "reticle hidden", game.player.pos_x, game.player.pos_y )
-				Else If game.mouse.x + game.drawing_origin.x > window_w
-					SetRotation( 0 )
-					'DrawImage( arrow, window_w, game.mouse.y )
-'SetRotation( 0 ); DrawText_with_outline( "reticle hidden", game.player.pos_x, game.player.pos_y )
-				End If
-				If game.mouse.y + game.drawing_origin.y < 0
-					SetRotation( 90 )
-					'DrawImage( arrow, game.mouse.x, 0 )
-'SetRotation( 0 ); DrawText_with_outline( "reticle hidden", game.player.pos_x, game.player.pos_y )
-				Else If game.mouse.y + game.drawing_origin.y > window_w
-					SetRotation( -90 )
-					'DrawImage( arrow, game.mouse.x, window_h )
-'SetRotation( 0 ); DrawText_with_outline( "reticle hidden", game.player.pos_x, game.player.pos_y )
-				End If
-				SetAlpha( 1 )
+				''if the reticle is not visible, show an indicator on the edge of the screen
+				'SetAlpha( Sin( now() Mod 2000 ))
+				'Local arrow:TImage = get_image( "arrow" )
+				'If game.mouse.x + game.drawing_origin.x < 0
+				'	SetRotation( 180 )
+				'	'DrawImage( arrow, 0, game.mouse.y )
+				'Else If game.mouse.x + game.drawing_origin.x > window_w
+				'	SetRotation( 0 )
+				'	'DrawImage( arrow, window_w, game.mouse.y )
+				'End If
+				'If game.mouse.y + game.drawing_origin.y < 0
+				'	SetRotation( 90 )
+				'	'DrawImage( arrow, game.mouse.x, 0 )
+				'Else If game.mouse.y + game.drawing_origin.y > window_w
+				'	SetRotation( -90 )
+				'	'DrawImage( arrow, game.mouse.x, window_h )
+				'End If
+				'SetAlpha( 1 )
 				
 			Else If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD
 				SetRotation( p_tur.ang )
@@ -661,6 +657,11 @@ Function draw_arrow( arrow_type%, x#, y#, height% )
 	End Select
 End Function
 
+'______________________________________________________________________________
+Function screencap:TImage()
+	SetOrigin( 0, 0 )
+	Return LoadImage( GrabPixmap( 0, 0, window_w, window_h ))
+End Function
 Function screenshot()
 	SetOrigin( 0, 0 )
 	save_pixmap_to_file( GrabPixmap( 0, 0, window_w, window_h ))
@@ -878,10 +879,43 @@ Function pixel_transform:TImage( img_src:TImage, flip_horizontal% = False, flip_
 	Return img_new
 End Function
 '______________________________________________________________________________
-Function draw_skulls( y%, max_width%, count% )
-	Local skull:TImage = get_image( "skull" )
+Function draw_skulls( x_override% = -1, y%, max_width%, count% )
 	SetColor( 255, 255, 255 )
-	For Local i% = 0 To count - 1
-		DrawImage( skull, 10 + i*(skull.width + 5), 10 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	Local skull:TImage = get_image( "skull" )
+	Local skull5:TImage = get_image( "skull5" )
+	Local skull_count% = 0
+	Local skull5_count% = 0
+	Local w% = skull.width + 2
+	Local h% = skull.height + 2
+	Local i% = 0
+	While count >= 5
+		skull5_count :+ 1
+		count :- 5
+		i :+ 1
+	End While
+	While count >= 1
+		skull_count :+ 1
+		count :- 1
+		i :+ 1
+	End While
+	Local x%
+	If x_override = -1 Then x_override = window_w/2 - (skull5_count + skull_count)*w/2
+	x = x_override
+	y :+ 0
+	If skull5_count > 0
+		For i = 0 To skull5_count - 1
+			DrawImage( skull5, x + i*w, y )
+		Next
+		x = x_override
+		y :+ h
+	End If
+	'For i = skull5_count To skull5_count + skull_count - 1
+	For i = 0 To skull_count - 1
+		DrawImage( skull, x + i*w, y )
 	Next
 End Function
+
+
+

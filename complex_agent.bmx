@@ -99,10 +99,10 @@ Type COMPLEX_AGENT Extends AGENT
 		If hitbox = Null Then c.hitbox = img
 		c.gibs = gibs
 		c.ai_name = ai_name
+		c.cash_value = cash_value
 		c.max_health = max_health
 		c.mass = mass
 		c.frictional_coefficient = frictional_coefficient
-		c.cash_value = cash_value
 		c.physics_disabled = physics_disabled
 		
 		'dynamic fields
@@ -129,10 +129,10 @@ Type COMPLEX_AGENT Extends AGENT
 		c.hitbox = other.hitbox
 		c.gibs = other.gibs
 		c.ai_name = other.ai_name
+		c.cash_value = other.cash_value
 		c.max_health = other.max_health
 		c.mass = other.mass
 		c.frictional_coefficient = other.frictional_coefficient
-		c.cash_value = other.cash_value
 		c.physics_disabled = other.physics_disabled
 		
 		c.pos_x = other.pos_x; c.pos_y = other.pos_y

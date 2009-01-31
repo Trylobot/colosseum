@@ -6,8 +6,6 @@ EndRem
 
 '______________________________________________________________________________
 Function load_all_archetypes()
-	'set_prop_archetypes()
-	'set_particle_archetypes()
 	set_particle_emitter_archetypes()
 	set_projectile_archetypes()
 	set_projectile_launcher_archetypes()
@@ -16,7 +14,6 @@ Function load_all_archetypes()
 	set_turret_barrel_archetypes()
 	set_turret_archetypes()
 	set_ai_type_archetypes()
-	'set_complex_agent_archetypes()
 	set_player_chassis_archetypes()
 	set_unit_archetypes()
 End Function
@@ -29,72 +26,6 @@ Function postfix_index%( amount% = 1 )
 	array_index :+ amount
 	Return (array_index - amount)
 End Function
-
-Rem
-'______________________________________________________________________________
-'[ PROPS ]
-Global prop_archetype:AGENT[2]; reset_index()
-
-Global PROP_INDEX_CRATE_MEDIUM% = postfix_index()
-Global PROP_INDEX_CRATE_SMALL% = postfix_index()
-
-Function set_prop_archetypes()
-	prop_archetype[PROP_INDEX_CRATE_MEDIUM] = Archetype_AGENT( get_image( "crate" ), get_image( "crate_gibs" ), 0, 200, 400, 160,, True )
-	prop_archetype[PROP_INDEX_CRATE_SMALL] = Archetype_AGENT( get_image( "crate_small" ), get_image( "crate_small_gibs" ), 0, 75, 300, 160,, True )
-End Function
-
-Function get_prop:AGENT( archetype_index% )
-	Local prop:AGENT = Copy_AGENT( prop_archetype[archetype_index] )
-	prop.cur_health = prop.max_health
-	Return prop
-End Function
-End Rem
-
-Rem
-'______________________________________________________________________________
-'[ PARTICLES ]
-Global particle_archetype:PARTICLE[50]; reset_index()
-
-Global PARTICLE_INDEX_TANK_TREAD_DEBRIS% = postfix_index()
-Global PARTICLE_INDEX_TANK_TREAD_TRAIL_SMALL% = postfix_index()
-Global PARTICLE_INDEX_TANK_TREAD_TRAIL_MEDIUM% = postfix_index()
-Global PARTICLE_INDEX_LIGHT_TANK_TRACK% = postfix_index()
-Global PARTICLE_INDEX_MED_TANK_TRACK% = postfix_index()
-Global PARTICLE_INDEX_CANNON_MUZZLE_FLASH% = postfix_index()
-Global PARTICLE_INDEX_CANNON_SHELL_CASING% = postfix_index()
-Global PARTICLE_INDEX_CANNON_MUZZLE_SMOKE% = postfix_index()
-Global PARTICLE_INDEX_EXPLOSION% = postfix_index()
-Global PARTICLE_INDEX_RICOCHET_SPARK% = postfix_index()
-Global PARTICLE_INDEX_IMPACT_HALO% = postfix_index()
-Global PARTICLE_INDEX_MACHINE_GUN_MUZZLE_FLASH% = postfix_index()
-Global PARTICLE_INDEX_MACHINE_GUN_SHELL_CASING% = postfix_index()
-Global PARTICLE_INDEX_MACHINE_GUN_MUZZLE_SMOKE% = postfix_index()
-Global PARTICLE_INDEX_LASER_MUZZLE_FLARE% = postfix_index()
-Global PARTICLE_INDEX_ROCKET_THRUST% = postfix_index()
-Global PARTICLE_INDEX_ROCKET_CASING% = postfix_index()
-Global PARTICLE_INDEX_ROCKET_SMOKE_TRAIL% = postfix_index()
-
-Function set_particle_archetypes()
-	particle_archetype[PARTICLE_INDEX_TANK_TREAD_DEBRIS] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "debris" ),,,,, LAYER_BACKGROUND, True, 0.05 ))
-	particle_archetype[PARTICLE_INDEX_TANK_TREAD_TRAIL_SMALL] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "trail_3" ),,,,, LAYER_BACKGROUND, True ))
-	particle_archetype[PARTICLE_INDEX_TANK_TREAD_TRAIL_MEDIUM] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "trail_5" ),,,,, LAYER_BACKGROUND, True ))
-	particle_archetype[PARTICLE_INDEX_LIGHT_TANK_TRACK] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_ANIM, get_image( "light_tank_track" ),,,,,,,,,,,,,, INFINITY ))
-	particle_archetype[PARTICLE_INDEX_MED_TANK_TRACK] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_ANIM, get_image( "med_tank_track" ),,,,,,,,,,,,,, INFINITY ))
-	particle_archetype[PARTICLE_INDEX_CANNON_MUZZLE_FLASH] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "muzzle_flash" ),,,,, LAYER_FOREGROUND ))
-	particle_archetype[PARTICLE_INDEX_CANNON_SHELL_CASING] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "projectile_shell_casing" ),,,,, LAYER_FOREGROUND, True, 0.0100 ))
-	particle_archetype[PARTICLE_INDEX_CANNON_MUZZLE_SMOKE] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "muzzle_smoke" ),,,,, LAYER_FOREGROUND ))
-	particle_archetype[PARTICLE_INDEX_EXPLOSION] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "white_circle" ),,,,, LAYER_FOREGROUND, False, 0.0850 ))
-	particle_archetype[PARTICLE_INDEX_RICOCHET_SPARK] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "spark" ),,,,, LAYER_FOREGROUND, False, 0.0150 ))
-	particle_archetype[PARTICLE_INDEX_IMPACT_HALO] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "halo" ),,,,, LAYER_BACKGROUND, False, 0 ))
-	particle_archetype[PARTICLE_INDEX_MACHINE_GUN_MUZZLE_FLASH] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "mgun_muzzle_flash" ),,,,, LAYER_FOREGROUND ))
-	particle_archetype[PARTICLE_INDEX_MACHINE_GUN_SHELL_CASING] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "mgun_shell_casing" ),,,,, LAYER_FOREGROUND, True, 0.0100 ))
-	particle_archetype[PARTICLE_INDEX_MACHINE_GUN_MUZZLE_SMOKE] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "mgun_muzzle_smoke" ),,,,, LAYER_FOREGROUND ))
-	particle_archetype[PARTICLE_INDEX_LASER_MUZZLE_FLARE] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "laser_muzzle_flare" ),,,,, LAYER_FOREGROUND, False ))
-	particle_archetype[PARTICLE_INDEX_ROCKET_THRUST] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "rocket_thrust" ),,,,, LAYER_BACKGROUND ))
-	particle_archetype[PARTICLE_INDEX_ROCKET_CASING] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "rocket_casing" ),,,,, LAYER_FOREGROUND, True, 0.0100 ))
-	particle_archetype[PARTICLE_INDEX_ROCKET_SMOKE_TRAIL] = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, get_image( "muzzle_smoke" ),,,,, LAYER_FOREGROUND ))
-End Function
-End Rem
 
 '______________________________________________________________________________
 '[ PARTICLE EMITTERS ]
@@ -381,14 +312,14 @@ Global PLAYER_CHASSIS_INDEX_LIGHT_TANK% = postfix_index()
 Global PLAYER_CHASSIS_INDEX_MEDIUM_TANK% = postfix_index()
 
 Function set_player_chassis_archetypes()
-	player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "war horse", get_image( "player_tank_chassis" ), get_image( "light_tank_hitbox" ), get_image( "quad_gibs" ),, 1250, 0, 500, 800.0, 75.0, 75.0, 100.0 ))
+	player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "war horse", get_image( "player_tank_chassis" ), get_image( "light_tank_hitbox" ), get_image( "quad_gibs" ),, 1250, 500, 800.0, 75.0, 75.0, 100.0 ))
 		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_motivator_package( "light_tank_track", 0, 6.5 )
 		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_trail_package( PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL,, 12, 6 )
 		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_dust_cloud_package( , 12, 7, 0, 2, -45, 45, 0.2, 0.8 )
 		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_turret_anchor( cVEC.Create( -5, 0 ))
 		player_chassis_map.Insert( "light_tank", player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK] )
-	player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "predator", get_image( "player_tank_chassis_med" ), get_image( "medium_tank_hitbox" ), get_image( "quad_gibs" ),, 5000, 0, 750, 1200, 125.0, 100.0, 125.0 ))
+	player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "predator", get_image( "player_tank_chassis_med" ), get_image( "medium_tank_hitbox" ), get_image( "quad_gibs" ),, 5000, 750, 1200, 125.0, 100.0, 125.0 ))
 		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_motivator_package( "med_tank_track", 0, 7.5 )
 		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_trail_package( PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM,, 15, 8 )
@@ -411,7 +342,7 @@ Global UNIT_INDEX_LIGHT_TANK% = postfix_index()
 Global UNIT_INDEX_CARRIER% = postfix_index()
 
 Function set_unit_archetypes()		
-	unit_archetype[UNIT_INDEX_MR_THE_BOX] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mr_the_box", get_image( "box" ),, get_image( "box_gib" ), "wildlife", 50, 35, 350.0, 8.0, 6.0, 12.0 ))
+	unit_archetype[UNIT_INDEX_MR_THE_BOX] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mr_the_box", get_image( "box" ),, get_image( "box_gib" ), "wildlife", 25, 35, 350.0, 8.0, 6.0, 12.0 ))
 		unit_archetype[UNIT_INDEX_MR_THE_BOX].add_emitter( Copy_EMITTER( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] ), EVENT_DEATH ).attach_at( 0, 0 )
 		unit_map.Insert( "mr_the_box", unit_archetype[UNIT_INDEX_MR_THE_BOX] )
 	unit_archetype[UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine_gun_emplacement", get_image( "enemy_stationary-emplacement-1_chassis" ),, get_image( "tower_gibs" ), "turret", 100, 100, 1000.0, 0, 0, 0, True ))

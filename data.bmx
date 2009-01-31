@@ -70,28 +70,26 @@ End Function
 '________________________________
 Function get_prop:AGENT( key$, copy% = True )
 	Local ag:AGENT = AGENT( prop_map.ValueForKey( key ))
-	If copy Then ag = Copy_AGENT( ag )
+	If copy Then Return Copy_AGENT( ag )
 	Return ag
 End Function
 '________________________________
 Function get_particle:PARTICLE( key$, new_frame% = 0, copy% = True )
 	Local part:PARTICLE = PARTICLE( particle_map.ValueForKey( key ))
-	If copy Then part = part.clone( new_frame )
+	If copy Then Return part.clone( new_frame )
 	Return part
 End Function
 '________________________________
 Function get_projectile:PROJECTILE( key$, source_id% = NULL_ID, copy% = True )
 	Local proj:PROJECTILE = PROJECTILE( projectile_map.ValueForKey( key ))
-	If proj And copy
-		proj = proj.clone( source_id )
-	End If
+	If copy Then Return proj.clone( source_id )
 	Return proj
 End Function
 
 '________________________________
 Function get_turret:TURRET( key$, copy% = True )
 	Local tur:TURRET = TURRET( turret_map.ValueForKey( key ))
-	If copy Then tur = tur.clone()
+	If copy Then Return tur.clone()
 	Return tur
 End Function
 '________________________________
@@ -101,19 +99,19 @@ End Function
 '________________________________
 Function get_player_chassis:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
 	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_chassis_map.ValueForKey( key ))
-	If copy Then comp_ag = COMPLEX_AGENT( COMPLEX_AGENT.Copy( comp_ag ))
+	If copy Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( comp_ag ))
 	Return comp_ag
 End Function
 '________________________________
 Function get_unit:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
 	Local unit:COMPLEX_AGENT = COMPLEX_AGENT( unit_map.ValueForKey( key ))
-	If copy Then unit = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit ))
+	If copy Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit ))
 	Return unit
 End Function
 '________________________________
 Function get_level:LEVEL( key$, copy% = True ) 'returns read-only reference
 	Local lev:LEVEL = LEVEL( level_map.ValueForKey( key ))
-	'if copy then ...
+	'If copy Then Return ...
 	Return lev
 End Function
 

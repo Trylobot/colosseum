@@ -857,4 +857,14 @@
 			frames: 1
 		}
 	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/skull5.png",
+			handle_x: 0,
+			handle_y: 0,
+			frames: 1
+		}
+	}
 ]

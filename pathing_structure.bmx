@@ -109,13 +109,13 @@ Type PATHING_STRUCTURE
 		If Not in_bounds( c ) Then Return
 		pathing_f[c.row,c.col] = pathing_g[c.row,c.col] + pathing_h[c.row,c.col]
 	End Method
-		
+	
 	Method get_passable_unvisited_neighbors:TList( c:CELL )
 		Local list:TList = CreateList()
-		'For Local i% = 0 To CELL.ALL_DIRECTIONS.Length - 1
-		'	Local c_dir:CELL = c.move( CELL.ALL_DIRECTIONS[i] )
-		For Local i% = 0 To CELL.ALL_CARDINAL_DIRECTIONS.Length - 1
-			Local c_dir:CELL = c.move( CELL.ALL_CARDINAL_DIRECTIONS[i] )
+		For Local i% = 0 To CELL.ALL_DIRECTIONS.Length - 1
+			Local c_dir:CELL = c.move( CELL.ALL_DIRECTIONS[i] )
+		'For Local i% = 0 To CELL.ALL_CARDINAL_DIRECTIONS.Length - 1
+		'	Local c_dir:CELL = c.move( CELL.ALL_CARDINAL_DIRECTIONS[i] )
 			If in_bounds( c_dir ) ..
 			And grid( c_dir ) = PATH_PASSABLE ..
 			And Not visited( c_dir )

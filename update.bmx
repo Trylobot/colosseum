@@ -9,7 +9,7 @@ EndRem
 Function update_all_objects()
 	
 	'update body
-	If game <> Null And Not game.paused
+	If game And Not game.paused
 		
 		'set drawing origin
 		update_drawing_origin()
@@ -18,6 +18,7 @@ Function update_all_objects()
 		game.count_units()
 		'player and game-state flags
 		update_flags()
+		If Not game Then Return 'possibility exists that game will be deleted
 		
 		'spawner systems
 		If game.spawn_enemies
@@ -145,13 +146,13 @@ Function update_flags()
 		'if the battle is over (player has won or lost)
 		If Not game.game_in_progress And KeyHit( KEY_R )
 			If Not game.game_over
-				win()
+				win( screencap() )
 			End If
 			menu_command( COMMAND_QUIT_LEVEL )
 		End If
 	End If
 	'flag updates for any game
-	If game.auto_reset_spawners
+	If game And game.auto_reset_spawners
 		If game.active_friendly_spawners <= 0 And game.active_friendly_units <= 0
 			game.reset_spawners( ALIGNMENT_FRIENDLY )
 		End If

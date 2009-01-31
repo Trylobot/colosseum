@@ -94,6 +94,7 @@ init_graphics()
 'debug_spawner()
 'debug_dirtyrects()
 'debug_doors()
+'debug_win() 
 ?
 
 If show_ai_menu_game
