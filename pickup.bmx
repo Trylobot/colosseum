@@ -67,8 +67,18 @@ Type PICKUP Extends MANAGED_OBJECT
 		SetRotation( 0 )
 		SetAlpha( alpha )
 		SetScale( 1, 1 )
-		
 		DrawImage( img, pos_x, pos_y )
+	End Method
+	
+	Method play_categorical_sound()
+		Select pickup_type
+			Case AMMO_PICKUP
+				play_sound( "reload" )
+			Case HEALTH_PICKUP
+				play_sound( "drill" )
+			Case COOLDOWN_PICKUP
+				play_sound( "air_release" )
+		End Select
 	End Method
 	
 	Method dead%()

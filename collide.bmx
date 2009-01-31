@@ -113,9 +113,9 @@ Function collide_all_objects()
 			result = CollideImage( game.player.hitbox, game.player.pos_x, game.player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, game.player )
 			For pkp = EachIn result
 				'COLLISION! between {player} and {pkp}
-				'give pickup to player
 				game.player.grant_pickup( pkp ) 'i can has lewts?!
-				'dump out early; only the first pickup collided with will be applied this frame
+				pkp.play_categorical_sound()
+				pkp.unmanage()
 				Exit
 			Next
 		End If

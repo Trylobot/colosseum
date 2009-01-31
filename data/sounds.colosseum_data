@@ -99,6 +99,22 @@
 		class: "sound",
 		key: "{path}",
 		object: {
+			path: "sound/drill.ogg",
+			looping: false
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
+			path: "sound/air_release.ogg",
+			looping: false
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/laser_big.ogg",
 			looping: false
 		}
