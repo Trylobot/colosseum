@@ -15,6 +15,8 @@ Type MENU
 	Const TEXT_INPUT_DIALOG% = 20
 	Const CONFIRMATION_DIALOG% = 21
 	Const NOTIFICATION_DIALOG% = 22
+	Const INVENTORY_SHOP% = 30
+	Const VEHICLE_BUILDER% = 40
 	
 	Global title_font:TImagefont
 	Global menu_font:TImageFont
@@ -310,6 +312,13 @@ Type MENU
 					add_option( MENU_OPTION.Create( "OK", default_command, default_argument, True, True ), True )
 					add_option( MENU_OPTION.Create( "cancel", COMMAND_BACK_TO_PARENT_MENU,, True, True ), True )
 					focus = 1
+				End If
+				
+			Case NOTIFICATION_DIALOG
+				If initial_update
+					purge_all_options()
+					add_option( MENU_OPTION.Create( "OK", default_command, default_argument, True, True ), True )
+					focus = 0
 				End If
 			
 		End Select

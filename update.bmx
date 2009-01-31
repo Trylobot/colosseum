@@ -146,7 +146,7 @@ Function update_flags()
 		'if the battle is over (player has won or lost)
 		If Not game.game_in_progress And KeyHit( KEY_R )
 			If Not game.game_over
-				win( screencap() )
+				kill_tally( "LEVEL COMPLETE!", screencap() )
 			End If
 			menu_command( COMMAND_QUIT_LEVEL )
 		End If
