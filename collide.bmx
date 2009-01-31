@@ -156,9 +156,9 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 	And COMPLEX_AGENT( ag ).political_alignment <> game.player.political_alignment ..
 	And profile <> Null ..
 	And proj.source_id = get_player_id()
-		record_player_kill( ag.cash_value )
+		record_player_kill( COMPLEX_AGENT( ag ).cash_value )
 		Local p:PARTICLE = get_particle( "cash_from_kill" )
-		p.str :+ ag.cash_value
+		p.str :+ COMPLEX_AGENT( ag ).cash_value
 		p.pos_x = ag.pos_x
 		p.pos_y = ag.pos_y - 20.0
 		p.auto_manage()

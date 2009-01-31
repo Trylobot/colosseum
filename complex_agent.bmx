@@ -29,6 +29,7 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	Field political_alignment% '{friendly|hostile}
 	Field ai_name$ 'artificial intelligence variant identifier (only used for AI-controlled agents)
+	Field cash_value%
 
 	Field turrets:TURRET[] 'all of this agent's actual turret objects
 	Field turret_anchors:cVEC[] 'discrete anchor points where it is valid to attach a turret
@@ -77,17 +78,17 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	'___________________________________________
 	Function Archetype:Object( ..
-	name$, ..
-	img:TImage, ..
+	name$ = Null, ..
+	img:TImage = Null, ..
 	hitbox:TImage = Null, ..
-	gibs:TImage, ..
+	gibs:TImage = Null, ..
 	ai_name$ = Null, ..
-	cash_value%, ..
-	max_health#, ..
-	mass#, ..
-	frictional_coefficient#, ..
-	driving_force_magnitude#, ..
-	turning_force_magnitude#, ..
+	cash_value% = 0, ..
+	max_health# = 100.0, ..
+	mass# = 100.0, ..
+	frictional_coefficient# = 0.0, ..
+	driving_force_magnitude# = 0.0, ..
+	turning_force_magnitude# = 0.0, ..
 	physics_disabled% = False )
 		Local c:COMPLEX_AGENT = New COMPLEX_AGENT
 		

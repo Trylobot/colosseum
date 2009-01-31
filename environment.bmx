@@ -53,7 +53,6 @@ Type ENVIRONMENT
 	Field hostile_door_list:TList 'TList<DOOR>
 	Field door_lists:TList 'TList<TList<DOOR>>
 	
-	Field level_enemy_count% '[DEPRECATED] number of enemies that could possibly be spawned
 	Field player_kills_at_start% 'kill count at level initialization
 	Field active_friendly_spawners%
 	Field active_friendly_units%
@@ -176,7 +175,9 @@ Type ENVIRONMENT
 		Next
 		'spawning system initialize/reset
 		reset_spawners()
-		player_kills_at_start = profile.kills
+		If human_participation And profile
+			player_kills_at_start = profile.kills
+		End If
 		'success
 		Return True
 	End Method
@@ -205,8 +206,6 @@ Type ENVIRONMENT
 	Method reset_spawners( alignment% = ALIGNMENT_NONE, omit_turrets% = False )
 		If alignment = ALIGNMENT_NONE
 			'flags and counters
-			level_enemies_killed = 0
-			level_enemy_count = lev.enemy_count()
 			active_friendly_units = 0
 			active_friendly_spawners = 0
 			active_hostile_units = 0
@@ -362,18 +361,6 @@ Type ENVIRONMENT
 			'shalt we spawneth teh phat lewts?! perhaps! perhaps.
 			If human_participation
 				spawn_pickup( ag.pos_x, ag.pos_y )
-			End If
-			'complex-agent-specific death routine
-			If COMPLEX_AGENT( ag )
-				'duplicate code, pulled from ENVIRONMENT.kill()
-				Select COMPLEX_AGENT( ag ).political_alignment
-					Case ALIGNMENT_FRIENDLY
-					Case ALIGNMENT_HOSTILE
-				End Select
-				'hostile complex agent death (as in, not allied with the player)
-				If COMPLEX_AGENT( ag ).political_alignment = ALIGNMENT_HOSTILE
-					level_enemies_killed :+ 1
-				End If
 			End If
 		End If
 	End Method

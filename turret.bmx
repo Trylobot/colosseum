@@ -13,6 +13,7 @@ Type TURRET Extends POINT
 	Field parent:COMPLEX_AGENT 'parental complex agent this turret is attached to
 	Field class% '{ammunition|energy}
 	Field img:TImage 'image to be drawn for the "base" of the turret
+	Field cash_value%
 	Field snd_fire:TSound 'sound to be played when the turret is fired
 '	Field snd_turn:TSound 'sound to be played when the turret is turned
 	Field max_ang_vel# 'maximum rotation speed for this turret group
@@ -48,6 +49,7 @@ Type TURRET Extends POINT
 	name$ = Null, ..
 	class%, ..
 	img:TImage = Null, ..
+	cash_value% = 0, ..
 	snd_fire:TSound, ..
 	turret_barrel_count%, ..
 	firing_sequence%[][], ..
@@ -63,6 +65,7 @@ Type TURRET Extends POINT
 		t.name = name
 		t.class = class
 		t.img = img
+		t.cash_value = cash_value
 		t.snd_fire = snd_fire
 		t.turret_barrel_array = New TURRET_BARREL[turret_barrel_count]
 		t.firing_sequence = firing_sequence[..]
@@ -84,6 +87,7 @@ Type TURRET Extends POINT
 			name, ..
 			class, ..
 			img, ..
+			cash_value, ..
 			snd_fire, ..
 			turret_barrel_array.Length, ..
 			firing_sequence, ..

@@ -877,11 +877,11 @@ Function pixel_transform:TImage( img_src:TImage, flip_horizontal% = False, flip_
 	End If
 	Return img_new
 End Function
-
+'______________________________________________________________________________
 Function draw_skulls( y%, max_width%, count% )
 	Local skull:TImage = get_image( "skull" )
 	SetColor( 255, 255, 255 )
-	For Local i% = 0 To game.level_enemies_killed - 1
+	For Local i% = 0 To count - 1
 		DrawImage( skull, 10 + i*(skull.width + 5), 10 )
 	Next
 End Function

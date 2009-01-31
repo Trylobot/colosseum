@@ -142,7 +142,8 @@ Type MENU
 			SetAlpha( 1 )
 			DrawRect( cx+border_width,cy+border_width, width-2*border_width,text_height_factor*GetImageFont().Height() + margin )
 			SetColor( red, green, blue )
-			DrawText_with_outline( name, cx+border_width+margin,cy+border_width+margin/2 )
+			Local dynamic_name$ = resolve_meta_variables( name )
+			DrawText_with_outline( dynamic_name, cx+border_width+margin,cy+border_width+margin/2 )
 		End If
 		'draw each option
 		SetImageFont( menu_font )
@@ -236,8 +237,9 @@ Type MENU
 			i :+ 1
 		Next
 		SetImageFont( menu_font )
-		If (2*margin + TextWidth( name ) + 2*border_width) > width
-			width = (2*margin + TextWidth( name ) + 2*border_width)
+		Local dynamic_name$ = resolve_meta_variables( name )
+		If (2*margin + TextWidth( dynamic_name ) + 2*border_width) > width
+			width = (2*margin + TextWidth( dynamic_name ) + 2*border_width)
 		End If
 		If is_scrollable( menu_type )
 			width :+ scrollbar_width

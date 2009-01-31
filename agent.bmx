@@ -8,7 +8,6 @@ EndRem
 Function Create_AGENT:AGENT( ..
 img:TImage = Null, ..
 gibs:TImage = Null, ..
-cash_value% = 0, ..
 max_health# = 1.0, ..
 mass# = 1.0, ..
 frictional_coefficient# = 0.0, ..
@@ -18,7 +17,6 @@ destruct_on_contact% = False )
 	ag.img = img
 	ag.hitbox = img
 	ag.gibs = gibs
-	ag.cash_value = cash_value
 	ag.max_health = max_health
 	ag.mass = mass
 	ag.frictional_coefficient = frictional_coefficient
@@ -31,7 +29,6 @@ Function Copy_AGENT:AGENT( other:AGENT )
 	Return Create_AGENT( ..
 		other.img, ..
 		other.gibs, ..
-		other.cash_value, ..
 		other.max_health, ..
 		other.mass, ..
 		other.frictional_coefficient, ..
@@ -46,7 +43,6 @@ Type AGENT Extends PHYSICAL_OBJECT
 	Field gibs:TImage 'gib image(s)
 
 	Field max_health# 'maximum health
-	Field cash_value% 'cash to be awarded player on death
 	Field death_emitters:TList 'emitters to be activated on death
 	Field destruct_on_contact% 'whether this agent should die on contact with any complex agents
 
@@ -164,7 +160,6 @@ Function Create_AGENT_from_json:AGENT( json:TJSON )
 	Local a:AGENT = New AGENT
 	a.img = get_image( json.GetString( "img" ))
 	a.gibs = get_image( json.GetString( "gibs" ))
-	a.cash_value = json.GetNumber( "cash_value" )
 	a.max_health = json.GetNumber( "max_health" )
 	a.mass = json.GetNumber( "mass" )
 	a.frictional_coefficient = json.GetNumber( "frictional_coefficient" )

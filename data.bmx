@@ -34,8 +34,8 @@ Global asset_identifiers$[] = ..
 	"turret_barrels", ..
 	"turrets", ..
 	"ai_types", ..
-	"units", ..
 	"player_chassis", ..
+	"units", ..
 	"levels" ]
 	
 Global font_map:TMap = CreateMap()
@@ -47,11 +47,12 @@ Global particle_emitter_map:TMap = CreateMap()
 Global projectile_map:TMap = CreateMap()
 Global projectile_launcher_map:TMap = CreateMap()
 Global widget_map:TMap = CreateMap()
-Global pickup_map:TMap = CreateMap()
+Global pickup_map:TMap = CreateMap() 
+Global turret_barrel_map:TMap = CreateMap()
 Global turret_map:TMap = CreateMap()
 Global ai_type_map:TMap = CreateMap()
-Global unit_map:TMap = CreateMap()
 Global player_chassis_map:TMap = CreateMap()
+Global unit_map:TMap = CreateMap()
 Global level_map:TMap = CreateMap()
 
 '______________________________________________________________________________
@@ -126,6 +127,9 @@ Function load_assets%()
 		Local asset_path$, asset_file:TStream, asset_json:TJSON
 		For Local asset_id$ = EachIn asset_identifiers
 			asset_path = json.GetString( asset_id )
+			?Debug
+			DebugLog( "  load_assets() --> "+asset_path )
+			?
 			asset_file = ReadFile( asset_path )
 			If Not file Then Continue
 			asset_json = TJSON.Create( asset_file )
@@ -141,11 +145,14 @@ End Function
 Function load_objects%( json:TJSON )
 	For Local i% = 0 To TJSONArray(json.Root).Size() - 1
 		Local item:TJSON = TJSON.Create( json.GetObject( String.FromInt( i )))
-		Local key$ = item.GetString( "key" )
+		Local key$ = item.GetString( "key" ) 
 		If key = "{path}" 'special, implicit key
 			key = StripAll( item.GetString( "object.path" ))
 		End If
 		If key And key <> ""
+			?Debug
+			DebugLog( "    load_objects() --> " + key ) 
+			?
 			Select item.GetString( "class" )
 				Case "font"
 					Local f:TImageFont = Create_TImageFont_from_json( TJSON.Create( item.GetObject( "object" )))
@@ -178,7 +185,9 @@ Function load_objects%( json:TJSON )
 				'	
 				'Case "ai_type"
 				'	
-				'Case "complex_agents"
+				'Case "player_chassis"
+				'	
+				'Case "unit"
 				'	
 				'Case "level"
 				'	

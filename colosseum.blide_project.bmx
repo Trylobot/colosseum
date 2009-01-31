@@ -43,12 +43,12 @@ Import brl.gnet
 'GUI
 'guid:e2f17149_9a68_460c_a3de_03fd0d792659
 Private
-TYPE z_e2f17149_9a68_460c_a3de_03fd0d792659_3_0 abstract  'Resource folder
+Type z_e2f17149_9a68_460c_a3de_03fd0d792659_3_0 Abstract  'Resource folder
 End Type
 
 
-TYPE z_blide_bge2f17149_9a68_460c_a3de_03fd0d792659 Abstract
-    Const Name:string = "Colosseum" 'This string contains the name of the program
+Type z_blide_bge2f17149_9a68_460c_a3de_03fd0d792659 Abstract
+    Const Name:String = "Colosseum" 'This string contains the name of the program
     Const MajorVersion:Int = 0  'This Const contains the major version number of the program
     Const MinorVersion:Int = 3  'This Const contains the minor version number of the program
     Const Revision:Int =  0  'This Const contains the revision number of the current program version
@@ -72,7 +72,7 @@ TYPE z_blide_bge2f17149_9a68_460c_a3de_03fd0d792659 Abstract
     ?debug
     Const DebugOn : Int = True    'This const will have the integer value of TRUE if the application was build on debug mode, or false if it was build on release mode
     ?
-    ?not debug
+    ?Not debug
     Const DebugOn : Int = False
     ?
 EndType
