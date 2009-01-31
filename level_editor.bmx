@@ -56,6 +56,18 @@ Function level_editor( lev:LEVEL )
 	Repeat
 		Cls
 		
+		'modifier keys
+		control = KeyDown( KEY_LCONTROL ) | KeyDown( KEY_RCONTROL )
+		alt =     KeyDown( KEY_LALT )     | KeyDown( KEY_RALT )
+		shift =   KeyDown( KEY_LSHIFT )   | KeyDown( KEY_RSHIFT )
+		any_modifiers = control | alt | shift
+		
+		'save level
+		If control And KeyHit( KEY_S )
+			menu_command( COMMAND_SHOW_CHILD_MENU, INTEGER.Create( MENU_ID_SAVE_LEVEL ))
+			Return
+		End If
+		
 		'copied from input.bmx
 		mouse.x = MouseX()
 		mouse.y = MouseY()
@@ -235,12 +247,6 @@ Function level_editor( lev:LEVEL )
 		DrawText( "size: "+lev.width+" x "+lev.height, info_x,info_y ); info_y :+ 1.5*line_h
 		DrawText( "pathing regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
 		DrawText( "spawners: "+lev.spawners.Length, info_x,info_y ); info_y :+ line_h
-		
-		'modifier keys
-		control = KeyDown( KEY_LCONTROL ) | KeyDown( KEY_RCONTROL )
-		alt =     KeyDown( KEY_LALT )     | KeyDown( KEY_RALT )
-		shift =   KeyDown( KEY_LSHIFT )   | KeyDown( KEY_RSHIFT )
-		any_modifiers = control | alt | shift
 		
 		'mode code (LOL! I rhymed) <-- WTF
 		Select mode

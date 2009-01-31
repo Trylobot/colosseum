@@ -255,7 +255,7 @@ Type TJSONObject Extends TJSONValue
 			lines :+ 1
 		Next
 		If lines > 1 Then Return "{~n"+ RepeatString( "~t", level + 1) + s + "~n" + RepeatString( "~t", level) + "}"
-		Return "{ "+ s +" }~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n"
+		Return "{ "+ s +" }"
 	EndMethod		
 	
 	Method GetByName:TJSONValue( name:Object)
@@ -330,7 +330,7 @@ Type TJSONArray Extends TJSONValue
 			lines :+ 1
 		Next
 		If lines > 1 Then Return "[~n" + RepeatString( "~t", level + 1) + s + "~n" + RepeatString( "~t", level) + "]"
-		Return "[ "+ s +" ]~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n~n"
+		Return "[ "+ s +" ]"
 	EndMethod
 	
 	Method GetByIndex:TJSONValue( index:Int)
@@ -746,11 +746,11 @@ Type TJSON
 	
 	Method Write( dest:Object)
 		If TStream(dest) Then
-			TStream(dest).WriteString( Root.ToSource() )
+			TStream(dest).WriteString( Root.ToSource() + "~n" )
 		ElseIf String(dest) Then
 			Local stream:TStream = WriteFile( String(dest))
 			If Not stream Then Return
-			stream.WriteString( Root.ToSource() )
+			stream.WriteString( Root.ToSource() + "~n" )
 			stream.Close()
 		EndIf
 	EndMethod
@@ -1028,7 +1028,7 @@ Function Create_Int_array_array_from_TJSONArray:Int[][]( json:TJSONArray )
 	Return arr
 End Function
 
-Function Create_TJSONArray_from_2D_Int_array:TJSONArray( arr%[,] )
+Function Create_TJSONArray_from_2D_Int_array:TJSONArray( arr%[,], boolean_mode% = False )
 	Local this_json:TJSONArray = TJSONArray( TJSON.NIL )
 	If arr <> Null
 		Local rows%, cols%, r%, c%, dim%[]
@@ -1041,7 +1041,13 @@ Function Create_TJSONArray_from_2D_Int_array:TJSONArray( arr%[,] )
 				For r = 0 To rows - 1
 					Local this_row_json:TJSONArray = TJSONArray.Create( cols )
 					For c = 0 To cols - 1
-						this_row_json.SetByIndex( c, TJSONNumber.Create( arr[r,c] ))
+						Local val:TJSONValue
+						If boolean_mode
+							val = TJSONBoolean.Create( arr[r,c] )
+						Else
+							val = TJSONNumber.Create( arr[r,c] )
+						End If
+						this_row_json.SetByIndex( c, val )
 					Next
 					this_json.SetByIndex( r, this_row_json )
 				Next
@@ -1051,7 +1057,7 @@ Function Create_TJSONArray_from_2D_Int_array:TJSONArray( arr%[,] )
 	Return this_json
 End Function
 
-Function Create_2D_Int_array_from_TJSONArray:Int[,]( json:TJSONArray )
+Function Create_2D_Int_array_from_TJSONArray:Int[,]( json:TJSONArray, boolean_mode% = False )
 	If json = Null Then Return Null
 	Local arr%[,] = Null
 	If json <> Null And Not json.IsNull()
@@ -1064,7 +1070,11 @@ Function Create_2D_Int_array_from_TJSONArray:Int[,]( json:TJSONArray )
 				For r = 0 To rows - 1
 					Local this_row_json:TJSONArray = TJSONArray( json.GetByIndex( r ))
 					For c = 0 To cols - 1
-						arr[r,c] = TJSONNumber( this_row_json.GetByIndex( c )).Value
+						If boolean_mode
+							arr[r,c] = TJSONBoolean( this_row_json.GetByIndex( c )).Value
+						Else
+							arr[r,c] = TJSONNumber( this_row_json.GetByIndex( c )).Value
+						End If
 					Next
 				Next
 			End If

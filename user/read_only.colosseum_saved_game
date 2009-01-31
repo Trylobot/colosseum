@@ -2,29 +2,16 @@
 	name: "read_only",
 	cash: 2725,
 	kills: 21,
-	inventory: [
-		{
-			item_type: "chassis",
-			key: "light_tank"
-		},
-		{
-			item_type: "turret",
-			key: "single_cannon"
-		},
-		{
-			item_type: "turret",
-			key: "machine_gun"
-		}
-	],
+	inventory: null,
 	vehicle: {
 		chassis: "light_tank",
 		turrets: [
 			{
-				turret: "single_cannon",
+				turret: "light_cannon",
 				anchor: 0
 			},
 			{
-				turret: "machine_gun",
+				turret: "light_cannon_coaxial_machine_gun",
 				anchor: 0
 			}
 		]

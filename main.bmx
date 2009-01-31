@@ -59,7 +59,7 @@ End If
 menu_command( COMMAND_LOAD_ASSETS )
 'level editor cache 
 menu_command( COMMAND_NEW_LEVEL )
-'autosave/load
+'autosave/load user profile
 Global autosave_profile_path$ = load_autosave()
 menu_command( COMMAND_LOAD_GAME, autosave_profile_path )
 

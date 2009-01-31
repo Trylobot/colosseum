@@ -11,15 +11,17 @@ Function update_all_objects()
 	'update body
 	If game <> Null And Not game.paused
 		
-		'drawing origin
+		'set drawing origin
 		update_drawing_origin()
-		'flags
+		
+		'count units in-game
+		game.count_units()
+		'player and game-state flags
 		update_flags()
 		
-		'spawner system
+		'spawner systems
 		If game.spawn_enemies
 			game.spawning_system_update()
-			'game.update_AI_spawners_registry()
 		End If
 		
 		'pickups

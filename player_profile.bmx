@@ -48,17 +48,21 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 	prof.cash = json.GetNumber( "cash" )
 	prof.kills = json.GetNumber( "kills" )
 	Local inv:TJSONArray = json.GetArray( "inventory" )
-	prof.inventory = New INVENTORY_DATA[ inv.Size() ]
-	For Local i% = 0 To prof.inventory.Length - 1
-		prof.inventory [i] = Create_INVENTORY_DATA_from_json( TJSON.Create( inv.GetByIndex( i )))
-	Next
+	If inv
+		prof.inventory = New INVENTORY_DATA[ inv.Size() ]
+		For Local i% = 0 To prof.inventory.Length - 1
+			prof.inventory [i] = Create_INVENTORY_DATA_from_json( TJSON.Create( inv.GetByIndex( i )))
+		Next
+	End If
 	prof.vehicle = Create_VEHICLE_DATA_from_json( TJSON.Create( json.GetObject( "vehicle" )))
 	prof.input_method = json.GetNumber( "input_method" )
 	Local prog:TJSONArray = json.GetArray( "progress" )
-	prof.progress = New PROGRESS_DATA[ prog.Size() ]
-	For Local i% = 0 To prof.progress.Length - 1
-		prof.progress[i] = Create_PROGRESS_DATA_from_json( TJSON.Create( prog.GetByIndex( i )))
-	Next
+	If prog
+		prof.progress = New PROGRESS_DATA[ prog.Size() ]
+		For Local i% = 0 To prof.progress.Length - 1
+			prof.progress[i] = Create_PROGRESS_DATA_from_json( TJSON.Create( prog.GetByIndex( i )))
+		Next
+	End If
 	prof.campaign = json.GetString( "campaign" )
 	prof.campaign_level = json.GetNumber( "campaign_level" )
 	Return prof

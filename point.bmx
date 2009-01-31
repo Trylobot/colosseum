@@ -100,32 +100,36 @@ Type POINT Extends MANAGED_OBJECT
 	End Method
 	
 	Method to_json:TJSONObject()
+		Local p:POINT = Create_POINT()
 		Local this_json:TJSONObject = New TJSONObject
-		this_json.SetByName( "pos_x", TJSONNumber.Create( pos_x ))
-		this_json.SetByName( "pos_y", TJSONNumber.Create( pos_y ))
-		this_json.SetByName( "ang", TJSONNumber.Create( ang ))
-		this_json.SetByName( "vel_x", TJSONNumber.Create( vel_x ))
-		this_json.SetByName( "vel_y", TJSONNumber.Create( vel_y ))
-		this_json.SetByName( "ang_vel", TJSONNumber.Create( ang_vel ))
-		this_json.SetByName( "acc_x", TJSONNumber.Create( acc_x ))
-		this_json.SetByName( "acc_y", TJSONNumber.Create( acc_y ))
-		this_json.SetByName( "ang_acc", TJSONNumber.Create( ang_acc ))
+		If pos_x <> p.pos_x     Then this_json.SetByName( "pos_x", TJSONNumber.Create( pos_x ))
+		If pos_y <> p.pos_y     Then this_json.SetByName( "pos_y", TJSONNumber.Create( pos_y ))
+		If ang <> p.ang         Then this_json.SetByName( "ang", TJSONNumber.Create( ang ))
+		If vel_x <> p.vel_x     Then this_json.SetByName( "vel_x", TJSONNumber.Create( vel_x ))
+		If vel_y <> p.vel_y     Then this_json.SetByName( "vel_y", TJSONNumber.Create( vel_y ))
+		If ang_vel <> p.ang_vel Then this_json.SetByName( "ang_vel", TJSONNumber.Create( ang_vel ))
+		If acc_x <> p.acc_x     Then this_json.SetByName( "acc_x", TJSONNumber.Create( acc_x ))
+		If acc_y <> p.acc_y     Then this_json.SetByName( "acc_y", TJSONNumber.Create( acc_y ))
+		If ang_acc <> p.ang_acc Then this_json.SetByName( "ang_acc", TJSONNumber.Create( ang_acc ))
 		Return this_json
 	End Method
 	
 End Type
 
 Function Create_POINT_from_json:POINT( json:TJSON )
-	Local p:POINT = New POINT
-	p.pos_x = json.GetNumber( "pos_x" )
-	p.pos_y = json.GetNumber( "pos_y" )
-	p.ang = json.GetNumber( "ang" )
-	p.vel_x = json.GetNumber( "vel_x" )
-	p.vel_y = json.GetNumber( "vel_y" )
-	p.ang_vel = json.GetNumber( "ang_vel" )
-	p.acc_x = json.GetNumber( "acc_x" )
-	p.acc_y = json.GetNumber( "acc_y" )
-	p.ang_acc = json.GetNumber( "ang_acc" )
+	Local p:POINT
+	'no required fields
+	p = Create_POINT()
+	'read and assign optional fields as available
+	If json.TypeOf( "pos_x" ) <> JSON_UNDEFINED   Then p.pos_x = json.GetNumber( "pos_x" )
+	If json.TypeOf( "pos_y" ) <> JSON_UNDEFINED   Then p.pos_y = json.GetNumber( "pos_y" )
+	If json.TypeOf( "ang" ) <> JSON_UNDEFINED     Then p.ang = json.GetNumber( "ang" )
+	If json.TypeOf( "vel_x" ) <> JSON_UNDEFINED   Then p.vel_x = json.GetNumber( "vel_x" )
+	If json.TypeOf( "vel_y" ) <> JSON_UNDEFINED   Then p.vel_y = json.GetNumber( "vel_y" )
+	If json.TypeOf( "ang_vel" ) <> JSON_UNDEFINED Then p.ang_vel = json.GetNumber( "ang_vel" )
+	If json.TypeOf( "acc_x" ) <> JSON_UNDEFINED   Then p.acc_x = json.GetNumber( "acc_x" )
+	If json.TypeOf( "acc_y" ) <> JSON_UNDEFINED   Then p.acc_y = json.GetNumber( "acc_y" )
+	If json.TypeOf( "ang_acc" ) <> JSON_UNDEFINED Then p.ang_acc = json.GetNumber( "ang_acc" )
 	Return p
 End Function
 

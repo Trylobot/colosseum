@@ -253,6 +253,12 @@ Type ENVIRONMENT
 		End If
 	End Method
 	
+	'refreshes the unit counting cache
+	Method count_units()
+		active_friendly_units = friendly_agent_list.Count()
+		active_hostile_units = hostile_agent_list.Count()
+	End Method
+	
 	'returns a list of agents spawned
 	Method spawning_system_update:TList()
 		Local spawned:TList = CreateList()
@@ -307,10 +313,8 @@ Type ENVIRONMENT
 		Select alignment
 			Case ALIGNMENT_HOSTILE
 				unit.manage( hostile_agent_list )
-				active_hostile_units :+ 1
 			Case ALIGNMENT_FRIENDLY
 				unit.manage( friendly_agent_list )
-				active_friendly_units :+ 1
 		End Select
 		unit.spawn_at( spawn_point, 800 )
 		unit.snap_all_turrets()
@@ -363,9 +367,7 @@ Type ENVIRONMENT
 				'duplicate code, pulled from ENVIRONMENT.kill()
 				Select COMPLEX_AGENT( ag ).political_alignment
 					Case ALIGNMENT_FRIENDLY
-						active_friendly_units :- 1
 					Case ALIGNMENT_HOSTILE
-						active_hostile_units :- 1
 				End Select
 				'hostile complex agent death (as in, not allied with the player)
 				If COMPLEX_AGENT( ag ).political_alignment = ALIGNMENT_HOSTILE

@@ -208,12 +208,13 @@ End Type
 
 Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
 	Local p:PARTICLE
-	'get required fields
+	'reserve space for required fields
 	Local particle_type%
+	'read required fields
 	If json.TypeOf( "particle_type" ) <> JSON_UNDEFINED          Then particle_type = enum( json.GetString( "particle_type" )) Else Return Null
-	'create object with required fields
+	'create object with required fields only
 	p = PARTICLE( PARTICLE.Create( particle_type ))
-	'get optional fields
+	'read and assign optional fields as available
 	If json.TypeOf( "img" ) <> JSON_UNDEFINED                    Then p.img = get_image( json.GetString( "img" ))
 	If json.TypeOf( "frame" ) <> JSON_UNDEFINED                  Then p.frame = json.GetNumber( "frame" )
 	If json.TypeOf( "frame_delay" ) <> JSON_UNDEFINED            Then p.frame_delay = json.GetNumber( "frame_delay" )
@@ -239,7 +240,6 @@ Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
 	If json.TypeOf( "alpha_delta" ) <> JSON_UNDEFINED            Then p.alpha_delta = json.GetNumber( "alpha_delta" )
 	If json.TypeOf( "scale" ) <> JSON_UNDEFINED                  Then p.scale = json.GetNumber( "scale" )
 	If json.TypeOf( "scale_delta" ) <> JSON_UNDEFINED            Then p.scale_delta = json.GetNumber( "scale_delta" )
-	'done
 	Return p
 End Function
 

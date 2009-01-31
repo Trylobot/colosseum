@@ -55,13 +55,19 @@ Function play_level( level_file_path$, player:COMPLEX_AGENT )
 End Function
 '______________________________________________________________________________
 Function create_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA )
+DebugLog "________________________create_player()"
 	If Not v_dat Then Return Null 'no chassis data
 	Local player:COMPLEX_AGENT = get_player_chassis( v_dat.chassis_key )
 	If player
+DebugLog " player loaded  "+player.name
 		For Local t_dat:TURRET_DATA = EachIn v_dat.turrets
 			Local tur:TURRET = get_turret( t_dat.turret_key, False )
-			If Not tur Then Return Null
-			player.add_turret( tur, t_dat.anchor )
+			If tur
+DebugLog "  turret added  "+tur.name
+				player.add_turret( tur, t_dat.anchor )
+			Else
+				Return Null
+			End If
 		Next
 		Return player 'all good
 	Else
@@ -408,7 +414,11 @@ Function menu_command( command_code%, argument:Object = Null )
 		'________________________________________
 		Case COMMAND_PLAY_LEVEL
 			If profile And profile.vehicle
-				play_level( String(argument), create_player( profile.vehicle ))
+				Local playa:COMPLEX_AGENT = create_player( profile.vehicle )
+				If playa
+					menu_command( COMMAND_BACK_TO_PARENT_MENU )
+					play_level( String(argument), playa )
+				End If
 			End If
 		'________________________________________
 		Case COMMAND_NEW_GAME

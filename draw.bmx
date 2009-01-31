@@ -720,7 +720,7 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 		color_cache[ 1, i ] = TColor.Create_by_HSL( 0.0, 0.0, 0.55 + Rnd( 0.00, 0.10 ), True )
 	Next
 	For Local i% = 0 To 49 'dist = {*}
-		color_cache[ 2, i ] = TColor.Create_by_HSL( 0.0, 0.0, 0.30 + Rnd( 0.00, 0.05 ), True )
+		color_cache[ 2, i ] = TColor.Create_by_HSL( lev.hue, lev.saturation, lev.luminosity + Rnd( 0.00, 0.05 ), True )
 	Next
 	Local color:TColor
 	'for: each "blocking" region
@@ -879,16 +879,27 @@ Function pixel_transform:TImage( img_src:TImage, flip_horizontal% = False, flip_
 End Function
 '______________________________________________________________________________
 Function win()
+	SetOrigin( 0, 0 )
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	
 	Local skull:TImage = get_image( "skull" )
+	
 	Repeat
 		Cls()
 		
+		SetColor( 255, 255, 255 )
 		For Local i% = 0 To game.level_enemies_killed - 1
 			DrawImage( skull, 10 + i*(skull.width + 5), 10 )
 		Next
 		
+		SetColor( 212, 32, 32 )
 		DrawText_with_outline( "enter to continue", window_w/2, window_h - 20 )
 		
 		Flip( 1 )
-	Until KeyHit( KEY_ENTER )
+	Until KeyHit( KEY_ENTER )	Or KeyHit( KEY_ESCAPE ) Or AppTerminate()
+	If AppTerminate() Then End
+	
 End Function

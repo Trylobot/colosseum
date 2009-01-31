@@ -274,7 +274,7 @@ Type MENU
 				disable_option( "resume" )
 			End If
 		End If
-
+		
 		If Not focus_is_valid()
 			focus = default_focus
 			If Not focus_is_valid()
@@ -311,6 +311,12 @@ Type MENU
 				End If
 			
 		End Select
+		
+		If menu_id = MENU_ID_SAVE_LEVEL
+			'if one exists, focus on the option that shares the name of the current level editor cache
+			set_focus( level_editor_cache.name )
+		End If
+		
 	End Method
 	
 	Method focus_is_valid%()
@@ -339,7 +345,7 @@ Type MENU
 	Method find_option%( key$ )
 		key = key.ToLower()
 		For Local i% = 0 To options.Length - 1
-			If key = options[i].name.ToLower()
+			If options[i].name.ToLower().Find( key ) <> -1 'key found
 				Return i
 			End If
 		Next

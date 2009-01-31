@@ -420,14 +420,10 @@ Function load_autosave$()
 	End If
 End Function
 '______________________________________________________________________________
-Function save_autosave( profile_path$ )
+Function save_autosave( profile_path$ ) 'new bug!
 	Local file:TStream, json:TJSON
-	
-	If profile_path <> Null
-		json = TJSON.Create( "{autosave:~q"+profile_path+"~q}" )
-	Else 'profile_path = Null
-		json = TJSON.Create( "{autosave:null}" )
-	End If
+	json = TJSON.Create( New TJSONObject )
+	json.SetValue( "autosave", TJSONString.Create( profile_path ))
 	file = WriteFile( autosave_path )
 	If file
 		json.Write( file )

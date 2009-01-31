@@ -9,8 +9,8 @@ Const LINE_TYPE_HORIZONTAL% = 1
 Const LINE_TYPE_VERTICAL% = 2
 
 'this needs to move to PATHING_REGIONS future object definition
-Const PATH_PASSABLE% = 0 'indicates normal cost grid cell
-Const PATH_BLOCKED% = 1 'indicates entirely impassable grid cell
+Const PATH_PASSABLE% = False 'empty cell
+Const PATH_BLOCKED% = True 'blocked cell
 
 'this needs to move to CELL
 Const COORDINATE_INVALID% = -1
@@ -20,6 +20,7 @@ Function Create_LEVEL:LEVEL( width%, height% )
 	lev.name = "new level"
 	lev.width = width; lev.height = height
 	lev.row_count = 1; lev.col_count = 1
+	lev.hue = 0; lev.saturation = 0; lev.luminosity = 0.30
 	lev.horizontal_divs = [ 0, lev.height ]
 	lev.vertical_divs = [ 0, lev.width ]
 	lev.path_regions = New Int[ lev.row_count, lev.col_count ]
@@ -31,6 +32,7 @@ End Function
 Type LEVEL Extends MANAGED_OBJECT
 	Field width%, height% 'dimensions in whole pixels
 	Field row_count%, col_count% 'number of cells
+	Field hue#, saturation#, luminosity# 'base color for the walls
 	Field horizontal_divs%[], vertical_divs%[] 'dividers
 	Field path_regions%[,] '{PASSABLE|BLOCKED}[w,h]
 	Field spawners:SPAWNER[]
@@ -398,9 +400,12 @@ Type LEVEL Extends MANAGED_OBJECT
 		this_json.SetByName( "height", TJSONNumber.Create( height ))
 		this_json.SetByName( "row_count", TJSONNumber.Create( row_count ))
 		this_json.SetByName( "col_count", TJSONNumber.Create( col_count ))
+		this_json.SetByName( "hue", TJSONNumber.Create( hue ))
+		this_json.SetByName( "saturation", TJSONNumber.Create( saturation ))
+		this_json.SetByName( "luminosity", TJSONNumber.Create( luminosity ))
 		this_json.SetByName( "horizontal_divs", Create_TJSONArray_from_Int_array( horizontal_divs ))
 		this_json.SetByName( "vertical_divs", Create_TJSONArray_from_Int_array( vertical_divs ))
-		this_json.SetByName( "path_regions", Create_TJSONArray_from_2D_Int_array( path_regions ))
+		this_json.SetByName( "path_regions", Create_TJSONArray_from_2D_Int_array( path_regions, True ))
 		If spawners <> Null And spawners.Length > 0
 			Local spawners_json:TJSONArray = TJSONArray.Create( spawners.Length )
 			For Local index% = 0 To spawners.Length - 1
@@ -431,9 +436,12 @@ Function Create_LEVEL_from_json:LEVEL( json:TJSON )
 	lev.height = json.GetNumber( "height" )
 	lev.row_count = json.GetNumber( "row_count" )
 	lev.col_count = json.GetNumber( "col_count" )
+	lev.hue = json.GetNumber( "hue" )
+	lev.saturation = json.GetNumber( "saturation" )
+	lev.luminosity = json.GetNumber( "luminosity" )
 	lev.horizontal_divs = json.GetArrayInt( "horizontal_divs" )
 	lev.vertical_divs = json.GetArrayInt( "vertical_divs" )
-	lev.path_regions = Create_2D_Int_array_from_TJSONArray( json.GetArray( "path_regions" ))
+	lev.path_regions = Create_2D_Int_array_from_TJSONArray( json.GetArray( "path_regions" ), True )
 	Local spawners_json:TJSONArray = json.GetArray( "spawners" )
 	If spawners_json <> Null And spawners_json.Size() > 0
 		lev.spawners = New SPAWNER[spawners_json.Size()]
