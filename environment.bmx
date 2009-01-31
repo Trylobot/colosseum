@@ -73,6 +73,7 @@ Type ENVIRONMENT
 	Field waiting_for_player_to_exit_arena%
 	Field spawn_enemies%
 	Field auto_reset_spawners%
+	Field player_has_munitions_based_turrets%
 
 	Field player_spawn_point:POINT 'reference to the spawnpoint that will spawn or has spawned that player
 	Field player_brain:CONTROL_BRAIN 'reference to that player's brain object
@@ -360,7 +361,7 @@ Type ENVIRONMENT
 			ag.die()
 			'shalt we spawneth teh phat lewts?! perhaps! perhaps.
 			If human_participation
-				spawn_pickup( ag.pos_x, ag.pos_y )
+				spawn_pickup( ag.pos_x, ag.pos_y,, (Not player_has_munitions_based_turrets) )
 			End If
 		End If
 	End Method
@@ -386,6 +387,14 @@ Type ENVIRONMENT
 		player_brain.manage( control_brain_list )
 		player_engine_ignition = False
 		player_engine_running = False
+		'pickup spawning switch
+		player_has_munitions_based_turrets = False
+		For Local t:TURRET = EachIn player.turrets
+			If t.class = TURRET_CLASS_AMMUNITION
+				player_has_munitions_based_turrets = True
+				Exit
+			End If
+		Next
 	End Method
 	
 	Method respawn_player()
@@ -428,7 +437,7 @@ Type ENVIRONMENT
 '		End If
 '	End Method
 	
-	Method spawn_pickup( x%, y%, probability_override# = -1.0 ) 'request; depends on probability
+	Method spawn_pickup( x%, y%, probability_override# = -1.0, omit_ammunition% = False ) 'request; depends on probability
 		Local pkp:PICKUP
 		Local threshold#
 		If probability_override <> -1.0
@@ -437,11 +446,46 @@ Type ENVIRONMENT
 			threshold = PICKUP_PROBABILITY
 		End If
 		If Rnd( 0.0, 1.0 ) < threshold
-			Local index% = Rand( 0, pickup_archetype.Length - 1 )
-			pkp = pickup_archetype[index]
-			If pkp <> Null
+			'pick an archetype (leave out ammo types if none of player's turrets use ammo)
+			Local pickup_class%
+			If omit_ammunition
+				pickup_class = Rand( 1, 2 )
+			Else 
+				pickup_class = Rand( 0, 2 )
+			End If
+			'count how many pickups are of the correct type
+			Local count% = 0
+			For Local pkp:PICKUP = EachIn pickup_archetype
+				If pkp.pickup_type = pickup_class Then count :+ 1
+			Next
+			'valid archetypes enumeration
+			Local valid_pickup_archetypes%[count]
+			Local index% = 0
+			For Local i% = 0 To pickup_archetype.Length - 1
+				If pkp.pickup_type = pickup_class
+					valid_pickup_archetypes[index] = pickup_archetype[i]
+					index :+ 1
+				End If
+			Next
+			'deck size is the summation of n for n=1 to n=count
+			Local size% = 0
+			For Local i% = 1 To count
+				size :+ i
+			Next
+			'populate a deck of "cards"
+			Local deck%[size]
+			Local n% = 1
+			For Local i% = 0 To count - 1
+				For Local k% = 0 To n - 1
+					deck[i+k] = valid_pickup_archetypes[i]
+				Next
+				n :+ 1
+			Next
+			pkp = pickup_archetype[deck[Rand( 0, deck.Length - 1 )]]
+			If pkp
 				pkp = pkp.clone()
-				pkp.pos_x = x; pkp.pos_y = y
+				pkp.pos_x = x
+				pkp.pos_y = y
 				pkp.auto_manage()
 			End If
 		End If
