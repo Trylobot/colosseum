@@ -125,14 +125,15 @@ Function load_assets%()
 		Local asset_path$, asset_file:TStream, asset_json:TJSON
 		For Local asset_id$ = EachIn asset_identifiers
 			asset_path = json.GetString( asset_id )
-			?Debug
 			DebugLog( "  load_assets() --> "+asset_path )
-			?
 			asset_file = ReadFile( asset_path )
-			If Not file Then Continue
-			asset_json = TJSON.Create( asset_file )
-			If Not asset_json.isNull() And TJSONArray(asset_json.Root) 'read successful
-				load_objects( asset_json )
+			If file
+				asset_json = TJSON.Create( asset_file )
+				If Not asset_json.isNull() And TJSONArray(asset_json.Root) 'read successful
+					load_objects( asset_json )
+				End If
+			Else
+				DebugLog( "    file could not be read" )
 			End If
 		Next
 		Return True
@@ -148,25 +149,28 @@ Function load_objects%( json:TJSON )
 			key = StripAll( item.GetString( "object.path" ))
 		End If
 		If key And key <> ""
-			?Debug
 			DebugLog( "    load_objects() --> " + key ) 
-			?
 			Select item.GetString( "class" )
 				Case "font"
 					Local f:TImageFont = Create_TImageFont_from_json( TJSON.Create( item.GetObject( "object" )))
-					If f Then font_map.Insert( key, f )
+					If f Then font_map.Insert( key, f ) ..
+					Else DebugLog( "      ERROR: FAILED TO LOAD" )
 				Case "sound"
 					Local s:TSound = Create_TSound_from_json( TJSON.Create( item.GetObject( "object" )))
-					If s Then sound_map.Insert( key, s )
+					If s Then sound_map.Insert( key, s ) ..
+					Else DebugLog( "      ERROR: FAILED TO LOAD" )
 				Case "image"
 					Local i:TImage = Create_TImage_from_json( TJSON.Create( item.GetObject( "object" )))
-					If i Then image_map.Insert( key, i )
+					If i Then image_map.Insert( key, i ) ..
+					Else DebugLog( "      ERROR: FAILED TO LOAD" )
 				Case "prop"
 					Local p:AGENT = Create_AGENT_from_json( TJSON.Create( item.GetObject( "object" )))
-					If p Then prop_map.Insert( key, p )
+					If p Then prop_map.Insert( key, p ) ..
+					Else DebugLog( "      ERROR: FAILED TO LOAD" )
 				Case "particle"
 					Local p:PARTICLE = Create_PARTICLE_from_json( TJSON.Create( item.GetObject( "object" )))
-					If p Then particle_map.Insert( key, p )
+					If p Then particle_map.Insert( key, p ) ..
+					Else DebugLog( "      ERROR: FAILED TO LOAD" )
 				'Case "particle_emitter"
 				'	
 				'Case "projectile"
@@ -437,34 +441,6 @@ Function save_autosave( profile_path$ ) 'new bug!
 		file.Close()
 	End If
 End Function
-'______________________________________________________________________________
-Function enum%( literal$ )
-	Select literal
-		
-		Case "LAYER_UNSPECIFIED"
-			Return LAYER_UNSPECIFIED
-		Case "LAYER_FOREGROUND"
-			Return LAYER_FOREGROUND
-		Case "LAYER_BACKGROUND"
-			Return LAYER_BACKGROUND
-		
-		Case "PARTICLE_TYPE_IMG"
-			Return PARTICLE_TYPE_IMG
-		Case "PARTICLE_TYPE_ANIM"
-			Return PARTICLE_TYPE_ANIM
-		Case "PARTICLE_TYPE_STR"
-			Return PARTICLE_TYPE_STR
-		
-		Case "ANIMATION_DIRECTION_FORWARDS"
-			Return ANIMATION_DIRECTION_FORWARDS
-		Case "ANIMATION_DIRECTION_BACKWARDS"
-			Return ANIMATION_DIRECTION_BACKWARDS
-		
-		
-		
-		Default
-			Return -1
-			
-	End Select
-End Function
+
+
 

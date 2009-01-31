@@ -978,23 +978,33 @@ EndFunction
 
 Public
 
-Function Create_TJSONArray_from_Int_array:TJSONArray( arr%[] )
+Function Create_TJSONArray_from_Int_array:TJSONArray( arr%[], boolean_mode% = False  )
 	If arr = Null Or arr.Length = 0
 		Return TJSONArray( TJSON.NIL )
 	End If
 	Local this_json:TJSONArray = TJSONArray.Create( arr.Length )
 	For Local index% = 0 To arr.Length - 1
-		this_json.SetByIndex( index, TJSONNumber.Create( arr[index] ))
+		Local val:TJSONValue
+		If boolean_mode
+			val = TJSONBoolean.Create( arr[index] )
+		Else 'Not boolean_mode
+			val = TJSONNumber.Create( arr[index] )
+		End If
+		this_json.SetByIndex( index, val )
 	Next
 	Return this_json
 End Function
 
-Function Create_Int_array_from_TJSONArray:Int[]( json:TJSONArray )
+Function Create_Int_array_from_TJSONArray:Int[]( json:TJSONArray, boolean_mode% = False  )
 	If json = Null Then Return Null
 	Local index%
 	Local arr%[] = New Int[json.Size()]
 	For index = 0 To json.Size() - 1
-		arr[index] = TJSONNumber( json.GetByIndex( index )).Value
+		If boolean_mode
+			arr[index] = TJSONBoolean( json.getbyindex( index )).Value
+		Else 'Not boolean_mode
+			arr[index] = TJSONNumber( json.GetByIndex( index )).Value
+		End If
 	Next
 	Return arr
 End Function

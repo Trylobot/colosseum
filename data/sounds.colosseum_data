@@ -43,7 +43,7 @@
 		class: "sound",
 		key: "{path}",
 		object: {
-			path: "sound/laser.ogg",
+			path: "sound/laser_small.ogg",
 			looping: false
 		}
 	},
@@ -92,6 +92,14 @@
 		key: "{path}",
 		object: {
 			path: "sound/reload.ogg",
+			looping: false
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
+			path: "sound/laser_big.ogg",
 			looping: false
 		}
 	}

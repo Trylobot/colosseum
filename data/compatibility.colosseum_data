@@ -1,0 +1,20 @@
+[
+	{
+		inherits_from: null,
+		chassis_key: "light_tank",
+		turret_keys: [
+			"light_cannon",
+			"light_cannon_coaxial_machine_gun",
+			"light_laser",
+		]
+	},
+	{
+		inherits_from: "light_tank",
+		chassis_key: "medium_tank",
+		turret_keys: [
+			"dual_light_cannon",
+			"dual_light_cannon_coaxial_machine_gun",
+			"medium_laser",
+		]
+	}
+]

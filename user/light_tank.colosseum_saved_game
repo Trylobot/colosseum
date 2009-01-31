@@ -1,7 +1,7 @@
 {
-	name: "read_only",
-	cash: 7100,
-	kills: 65,
+	name: "light_tank",
+	cash: 0,
+	kills: 0,
 	inventory: null,
 	vehicle: {
 		chassis: "light_tank",
@@ -17,16 +17,7 @@
 		]
 	},
 	input_method: 2,
-	progress: [
-		{
-			campaign: "basic",
-			completed: [
-				false,
-				false,
-				false
-			]
-		}
-	],
+	progress: null,
 	campaign: null,
 	campaign_level: null
 }

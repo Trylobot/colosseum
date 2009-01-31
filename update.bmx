@@ -132,8 +132,7 @@ Function update_flags()
 					'open the friendly doors
 					game.open_doors( ALIGNMENT_FRIENDLY )
 				End If
-			'else, player has entered the arena
-			Else 'point_inside_arena( player )
+			Else 'player has entered the arena
 				game.player_in_locker = False
 				game.waiting_for_player_to_enter_arena = False
 				game.open_doors( ALIGNMENT_HOSTILE )
@@ -145,6 +144,7 @@ Function update_flags()
 		End If
 		'if the battle is over (player has won or lost)
 		If Not game.game_in_progress And KeyHit( KEY_R )
+			game.player_engine_running = False
 			If Not game.game_over
 				kill_tally( "LEVEL COMPLETE!", screencap() )
 			End If

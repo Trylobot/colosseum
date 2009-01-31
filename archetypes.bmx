@@ -29,7 +29,7 @@ End Function
 
 '______________________________________________________________________________
 '[ PARTICLE EMITTERS ]
-Global particle_emitter_archetype:EMITTER[25]; reset_index();
+Global particle_emitter_archetype:EMITTER[27]; reset_index();
 
 Global PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD% = postfix_index()
@@ -47,6 +47,8 @@ Global PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_MACHINE_GUN_RICOCHET_SPARK% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_LASER_MUZZLE_FLARE% = postfix_index()
+Global PARTICLE_EMITTER_INDEX_LASER_DISCARD_ENERGY_CORE% = postfix_index()
+Global PARTICLE_EMITTER_INDEX_MEDIUM_LASER_MUZZLE_FLARE% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_LASER_EXPLOSION% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_LASER_SECONDARY_EXPLOSION% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_LASER_IMPACT_HALO% = postfix_index()
@@ -64,7 +66,7 @@ Function set_particle_emitter_archetypes()
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_MEDIUM] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "tank_tread_trail_medium",,,,,,, 100, 100,,, 0, 0 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "explosion",,,,,,,,,,, 250,300, 1.0,1.0, -0.100,-0.100, 1.0,1.0, -0.050,-0.050, 1.0,1.0, 1.0,1.0, 0.8,0.8, -0.002,-0.002, -0.035,-0.035, -0.030,-0.030 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "cannon_muzzle_flash",,,,,,,,,,, 50, 50 ))
-	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "cannon_shell_casing",, True, True,,, True,,,,, 2200, 2200 ))
+	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_SHELL_CASING] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "cannon_shell_casing",, True, True,,, True,,,,, 2200, 2300 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_SMOKE] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "cannon_muzzle_smoke",,, True,,,,,, 10, 12, 500, 1000, 0.08, 0.16, -0.002, -0.004, 0.15, 0.75, 0.0010, 0.0100 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "explosion",,,,,,,,,,, 300,350, 1.0,1.0, -0.100,-0.100, 0.350, 0.400, -0.0075, -0.0075, 1.0,1.0, 1.0,1.0, 0.8,0.8, -0.002,-0.002, -0.035,-0.035, -0.030,-0.030 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_RICOCHET_SPARK] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "ricochet_spark",,,, True, True,,,, 1,5, 150,150, 1,1, -0.120,-0.120, 0.25, 0.68 ))
@@ -74,6 +76,8 @@ Function set_particle_emitter_archetypes()
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "machine_gun_muzzle_smoke",,, True,,,,,, 6, 8, 300, 600, 0.06, 0.12, -0.002, -0.004, 0.15, 0.75, 0.0010, 0.0100 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_RICOCHET_SPARK] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "ricochet_spark",,,, True, True,,,,,, 150,150, 1, 1, -0.120,-0.120, 0.38, 0.42, 0, 0 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_MUZZLE_FLARE] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "laser_muzzle_flare",,,,,,,,,,, 50, 50 ))
+	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_DISCARD_ENERGY_CORE] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "discarded_energy_core",, True, True,,, True,,,,, 2100, 2200 ))
+	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MEDIUM_LASER_MUZZLE_FLARE] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "medium_laser_muzzle_flare",,,,,,,,,,, 50, 50 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "explosion",,,,,,,,,,, 250,300, 1.0,1.0, -0.100,-0.100, 0.275,0.300, -0.0065,-0.0065, 1.0,1.0, 0.65,0.65, 0.65,0.65 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_SECONDARY_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "explosion",,,, True, True,,,, 5,8, 300,300, 1.0,1.0, -0.100,-0.100, 0.100,0.120, -0.0050,-0.0050, 1.0,1.0, 0.65,0.65, 0.65,0.65 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_IMPACT_HALO] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "impact_halo",,,,,,,,,,, 100,100, 0.5,0.5, 0,0, 0.20,0.20, -0.0080,-0.0080, 1.0,1.0, 0.75,0.75, 0.75,0.75 ))
@@ -87,11 +91,12 @@ End Function
 
 '______________________________________________________________________________
 '[ PROJECTILES ]
-Global projectile_archetype:PROJECTILE[10]; reset_index()
+Global projectile_archetype:PROJECTILE[5]; reset_index()
 
 Global PROJECTILE_INDEX_TANK_CANNON% = postfix_index()
 Global PROJECTILE_INDEX_MACHINE_GUN% = postfix_index()
 Global PROJECTILE_INDEX_LASER% = postfix_index()
+Global PROJECTILE_INDEX_BIG_LASER% = postfix_index()
 Global PROJECTILE_INDEX_ROCKET% = postfix_index()
 	
 Function set_projectile_archetypes()
@@ -107,7 +112,12 @@ Function set_projectile_archetypes()
 		projectile_archetype[PROJECTILE_INDEX_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
 		projectile_archetype[PROJECTILE_INDEX_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_SECONDARY_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0, 5,8, 0,359.999, 1.3,2.5 )
 		projectile_archetype[PROJECTILE_INDEX_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_IMPACT_HALO], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
-		projectile_map.Insert( "laser", projectile_archetype[PROJECTILE_INDEX_LASER] )
+		projectile_map.Insert( "laser_red", projectile_archetype[PROJECTILE_INDEX_LASER] )
+	projectile_archetype[PROJECTILE_INDEX_BIG_LASER] = PROJECTILE( PROJECTILE.Create( get_image( "laser_big" ), get_sound( "laser_hit" ), 40.00,,,, 0.0001,, True ))
+		projectile_archetype[PROJECTILE_INDEX_BIG_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
+		projectile_archetype[PROJECTILE_INDEX_BIG_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_SECONDARY_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0, 5,8, 0,359.999, 1.3,2.5 )
+		projectile_archetype[PROJECTILE_INDEX_BIG_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_IMPACT_HALO], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
+		projectile_map.Insert( "laser_big", projectile_archetype[PROJECTILE_INDEX_BIG_LASER] )
 	projectile_archetype[PROJECTILE_INDEX_ROCKET] = PROJECTILE( PROJECTILE.Create( get_image( "rocket" ), get_sound( "cannon_hit" ), 100.00, 2000.0, 50.0, 4.00, 0.0400, 0.00025 ))
 		projectile_archetype[PROJECTILE_INDEX_ROCKET].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_THRUST], PROJECTILE_MEMBER_EMITTER_CONSTANT ).attach_at( -11, 0 )
 		projectile_archetype[PROJECTILE_INDEX_ROCKET].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_SMOKE_TRAIL], PROJECTILE_MEMBER_EMITTER_CONSTANT ).attach_at( -11, 0, 0, 10, -30, 30 )
@@ -118,23 +128,25 @@ End Function
 
 '______________________________________________________________________________
 '[ PROJECTILE LAUNCHERS ] (emitters)
-Global projectile_launcher_archetype:EMITTER[10]; reset_index()
+Global projectile_launcher_archetype:EMITTER[5]; reset_index()
 
 Global PROJECTILE_LAUNCHER_INDEX_TANK_CANNON% = postfix_index()
 Global PROJECTILE_LAUNCHER_INDEX_MACHINE_GUN% = postfix_index()
 Global PROJECTILE_LAUNCHER_INDEX_LASER% = postfix_index()
+Global PROJECTILE_LAUNCHER_INDEX_MEDIUM_LASER% = postfix_index()
 Global PROJECTILE_LAUNCHER_INDEX_ROCKET% = postfix_index()
 
 Function set_projectile_launcher_archetypes()
 	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_TANK_CANNON] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, "tank_cannon",, True, False, False, True, True ))
 	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_MACHINE_GUN] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, "machine_gun",, True, False, False, True, True ))
-	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_LASER] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, "laser",, False, False, False, True, True ))
+	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_LASER] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, "laser_red",, False, False, False, True, True ))
+	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_MEDIUM_LASER] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, "laser_big",, False, False, False, True, True ))
 	projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_ROCKET] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PROJECTILE, "rocket",, True, False, False, True, True ))
 End Function
 	
 '______________________________________________________________________________
 '[ WIDGETS ]
-Global widget_archetype:WIDGET[10]; reset_index()
+Global widget_archetype:WIDGET[6]; reset_index()
 
 Global WIDGET_INDEX_AI_LIGHTBULB% = postfix_index()
 Global WIDGET_INDEX_ARENA_DOOR% = postfix_index()
@@ -166,7 +178,7 @@ End Function
 
 '______________________________________________________________________________
 '[ PICKUPS ]
-Global pickup_archetype:PICKUP[10]; reset_index()
+Global pickup_archetype:PICKUP[6]; reset_index()
 
 Global PICKUP_INDEX_HEALTH% = postfix_index()
 Global PICKUP_INDEX_CANNON_AMMO_5% = postfix_index()
@@ -186,7 +198,7 @@ End Function
 
 '______________________________________________________________________________
 '[ TURRET BARRELS ]
-Global turret_barrel_archetype:TURRET_BARREL[20]; reset_index()
+Global turret_barrel_archetype:TURRET_BARREL[11]; reset_index()
 
 Global TURRET_BARREL_INDEX_LIGHT_CANNON% = postfix_index()
 Global TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN% = postfix_index()
@@ -194,6 +206,7 @@ Global TURRET_BARREL_INDEX_LIGHT_LASER% = postfix_index()
 Global TURRET_BARREL_INDEX_DUAL_LIGHT_CANNON_LEFT% = postfix_index()
 Global TURRET_BARREL_INDEX_DUAL_LIGHT_CANNON_RIGHT% = postfix_index()
 Global TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN_2% = postfix_index()
+Global TURRET_BARREL_INDEX_MEDIUM_LASER% = postfix_index()
 Global TURRET_BARREL_INDEX_EMPLACEMENT_LIGHT_MACHINE_GUN% = postfix_index()
 Global TURRET_BARREL_INDEX_EMPLACEMENT_LIGHT_CANNON% = postfix_index()
 Global TURRET_BARREL_INDEX_EMPLACEMENT_ROCKET_LAUNCHER% = postfix_index()
@@ -213,6 +226,7 @@ Function set_turret_barrel_archetypes()
 	turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_LASER] = Create_TURRET_BARREL( Null, 250 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_LASER].add_launcher( projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_LASER] ).attach_at( 20, 0, 0, 0, 0, 0, 8.00, 8.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_MUZZLE_FLARE] ).attach_at( 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_DISCARD_ENERGY_CORE] ).attach_at( 0, 5,,,,, 0.3, 0.4, 82, 98,,,,, -8, 8, -3.5, 3.5 )
 	turret_barrel_archetype[TURRET_BARREL_INDEX_DUAL_LIGHT_CANNON_LEFT] = Create_TURRET_BARREL( get_image( "player_tank_turret_med_barrel_left" ), 485, -9 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_DUAL_LIGHT_CANNON_LEFT].add_launcher( projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_TANK_CANNON] ).attach_at( 24, -2, 0, 0, 0, 0, 4.00, 4.40, 0, 0, 0, 0, 0, 0, -1.0, 1.0, 0, 0, 0, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_DUAL_LIGHT_CANNON_LEFT].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_CANNON_MUZZLE_FLASH] ).attach_at( 24, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -228,6 +242,10 @@ Function set_turret_barrel_archetypes()
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN_2].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH] ).attach_at( 5, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN_2].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE] ).attach_at( 5, 4, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN_2].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING] ).attach_at( 0, 5, 0, 0, 0, 0, 0.3, 0.4, 85, 95, 0, 0, 0, 0, -5, 5, -5, 5, 0, 0 )
+	turret_barrel_archetype[TURRET_BARREL_INDEX_MEDIUM_LASER] = Create_TURRET_BARREL( Null, 300 )
+		turret_barrel_archetype[TURRET_BARREL_INDEX_MEDIUM_LASER].add_launcher( projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_MEDIUM_LASER] ).attach_at( 20, 0, 0, 0, 0, 0, 8.00, 8.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+		turret_barrel_archetype[TURRET_BARREL_INDEX_MEDIUM_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MEDIUM_LASER_MUZZLE_FLARE] ).attach_at( 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+		turret_barrel_archetype[TURRET_BARREL_INDEX_MEDIUM_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_DISCARD_ENERGY_CORE] ).attach_at( 0, 5,,,,, 0.3, 0.4, 82, 98,,,,, -8, 8, -3.5, 3.5 )
 	turret_barrel_archetype[TURRET_BARREL_INDEX_EMPLACEMENT_LIGHT_MACHINE_GUN] = Create_TURRET_BARREL( get_image( "enemy_machine-gun_emplacement_turret-barrel" ), 50, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_EMPLACEMENT_LIGHT_MACHINE_GUN].add_launcher( projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_MACHINE_GUN] ).attach_at( 16, 0, 0, 0, 0, 0, 2.50, 3.00, 0, 0, 0, 0, 0, 0, -4.0, 4.0, 0, 0, 0, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_EMPLACEMENT_LIGHT_MACHINE_GUN].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH] ).attach_at( 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
@@ -250,13 +268,14 @@ End Function
 
 '______________________________________________________________________________
 '[ TURRETS ]
-Global turret_archetype:TURRET[20]; reset_index()
+Global turret_archetype:TURRET[10]; reset_index()
 
 Global TURRET_INDEX_TANK_SINGLE_CANNON% = postfix_index()
 Global TURRET_INDEX_TANK_MACHINE_GUN% = postfix_index()
 Global TURRET_INDEX_TANK_LASER% = postfix_index()
 Global TURRET_INDEX_TANK_DUAL_CANNON% = postfix_index()
 Global TURRET_INDEX_MED_TANK_MACHINE_GUN% = postfix_index()
+Global TURRET_INDEX_MED_TANK_LASER% = postfix_index()
 Global TURRET_INDEX_MACHINE_GUN_TURRET% = postfix_index()
 Global TURRET_INDEX_CANNON_TURRET% = postfix_index()
 Global TURRET_INDEX_ROCKET_TURRET% = postfix_index()
@@ -269,7 +288,7 @@ Function set_turret_archetypes()
 	turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN] = TURRET( TURRET.Create( "0.50 machine-gun", TURRET_CLASS_AMMUNITION, Null, 750, get_sound( "mgun" ), 1, [[0]], 2.25, INFINITY, 25.0, 1.50, 2.75, 0.0210, 1500, 250.0 ))
 		turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN], 0 ).attach_at( 0, 0 )
 		turret_map.Insert( "light_cannon_coaxial_machine_gun", turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN] )
-	turret_archetype[TURRET_INDEX_TANK_LASER] = TURRET( TURRET.Create( "10 MW laser", TURRET_CLASS_ENERGY, get_image( "laser_turret_base-barrel" ), 2125, get_sound( "laser" ), 1, [[0]], 2.25, INFINITY, 50.0, 5.50, 5.75, 0.0090, 3000, 400.0 ))
+	turret_archetype[TURRET_INDEX_TANK_LASER] = TURRET( TURRET.Create( "10 MW laser", TURRET_CLASS_ENERGY, get_image( "laser_turret_base-barrel" ), 2125, get_sound( "laser_small" ), 1, [[0]], 2.25, INFINITY, 50.0, 5.50, 5.75, 0.0090, 3000, 400.0 ))
 		turret_archetype[TURRET_INDEX_TANK_LASER].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_LASER], 0 ).attach_at( 0, 0 )
 		turret_map.Insert( "light_laser", turret_archetype[TURRET_INDEX_TANK_LASER] )
 	turret_archetype[TURRET_INDEX_TANK_DUAL_CANNON] = TURRET( TURRET.Create( "105mm cannon (2x)", TURRET_CLASS_AMMUNITION, get_image( "player_tank_turret_med_base" ), 4000, get_sound( "cannon" ), 2, [[0],[1]], 2.00, 40,,,,,, 500.0 ))
@@ -279,6 +298,9 @@ Function set_turret_archetypes()
 	turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN] = TURRET( TURRET.Create( "0.50 machine-gun", TURRET_CLASS_AMMUNITION, Null, 1000, get_sound( "mgun" ), 1, [[0]], 2.00, INFINITY, 25.0, 1.50, 2.50, 0.0210, 1500, 200.0 ))
 		turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN_2], 0 ).attach_at( 0, 0 )
 		turret_map.Insert( "dual_light_cannon_coaxial_machine_gun", turret_archetype[TURRET_INDEX_MED_TANK_MACHINE_GUN] )
+	turret_archetype[TURRET_INDEX_MED_TANK_LASER] = TURRET( TURRET.Create( "50 MW laser", TURRET_CLASS_ENERGY, get_image( "medium_laser_turret_base-barrel" ), 6500, get_sound( "laser_big" ), 1, [[0]], 2.00, INFINITY, 50.0, 5.50, 5.75, 0.0090, 3000, 600.0 ))
+		turret_archetype[TURRET_INDEX_MED_TANK_LASER].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_MEDIUM_LASER], 0 ).attach_at( 0, 0 )
+		turret_map.Insert( "medium_laser", turret_archetype[TURRET_INDEX_MED_TANK_LASER] )
 	turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET] = TURRET( TURRET.Create( , TURRET_CLASS_AMMUNITION, get_image( "enemy_stationary-emplacement-1_turret-base" ),, get_sound( "mgun" ), 1, [[0]], 0.80, INFINITY, 25.0, 2.0, 3.0, 0.0175, 2000, 300.0 ))
 		turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_EMPLACEMENT_LIGHT_MACHINE_GUN], 0 ).attach_at( 0, 0 )
 		turret_map.Insert( "stationary_emplacement_machine_gun", turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET] )

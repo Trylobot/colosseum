@@ -211,7 +211,7 @@ Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
 	'reserve space for required fields
 	Local particle_type%
 	'read required fields
-	If json.TypeOf( "particle_type" ) <> JSON_UNDEFINED          Then particle_type = enum( json.GetString( "particle_type" )) Else Return Null
+	If json.TypeOf( "particle_type" ) <> JSON_UNDEFINED          Then particle_type = json.GetNumber( "particle_type" ) Else Return Null
 	'create object with required fields only
 	p = PARTICLE( PARTICLE.Create( particle_type ))
 	'read and assign optional fields as available
@@ -220,7 +220,7 @@ Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
 	If json.TypeOf( "frame_delay" ) <> JSON_UNDEFINED            Then p.frame_delay = json.GetNumber( "frame_delay" )
 	If json.TypeOf( "str" ) <> JSON_UNDEFINED                    Then p.str = json.GetString( "str" )
 	If json.TypeOf( "font" ) <> JSON_UNDEFINED                   Then p.font = get_font( json.GetString( "font" ))
-	If json.TypeOf( "layer" ) <> JSON_UNDEFINED                  Then p.layer = enum( json.GetString( "layer" ))
+	If json.TypeOf( "layer" ) <> JSON_UNDEFINED                  Then p.layer = json.GetNumber( "layer" )
 	If json.TypeOf( "retain" ) <> JSON_UNDEFINED                 Then p.retain = json.GetBoolean( "retain" )
 	If json.TypeOf( "frictional_coefficient" ) <> JSON_UNDEFINED Then p.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
 	If json.TypeOf( "red" ) <> JSON_UNDEFINED                    Then p.red = json.GetNumber( "red" )

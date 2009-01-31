@@ -39,12 +39,14 @@ Type PLAYER_PROFILE
 		For Local i% = 0 To inventory.Length - 1
 			inv.SetByIndex( i, inventory[i].to_json() )
 		Next
+		this_json.SetByName( "inventory", inv )
 		this_json.SetByName( "vehicle", vehicle.to_json() )
 		this_json.SetByName( "input_method", TJSONNumber.Create( input_method ))
 		Local prog:TJSONArray = TJSONArray.Create( progress.Length )
 		For Local i% = 0 To progress.Length - 1
 			prog.SetByIndex( i, progress[i].to_json() )
 		Next
+		this_json.SetByName( "progress", prog )
 		this_json.SetByName( "campaign", TJSONString.Create( campaign ))
 		this_json.SetByName( "campaign_level", TJSONNumber.Create( campaign_level ))
 		Return this_json
@@ -60,7 +62,7 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 	If inv
 		prof.inventory = New INVENTORY_DATA[ inv.Size() ]
 		For Local i% = 0 To prof.inventory.Length - 1
-			prof.inventory [i] = Create_INVENTORY_DATA_from_json( TJSON.Create( inv.GetByIndex( i )))
+			prof.inventory[i] = Create_INVENTORY_DATA_from_json( TJSON.Create( inv.GetByIndex( i )))
 		Next
 	End If
 	prof.vehicle = Create_VEHICLE_DATA_from_json( TJSON.Create( json.GetObject( "vehicle" )))
@@ -101,7 +103,14 @@ Type VEHICLE_DATA
 	Field chassis_key$
 	Field turrets:TURRET_DATA[]
 	Method to_json:TJSONObject()
-		
+		Local this_json:TJSONObject = New TJSONObject
+		this_json.SetByName( "chassis_key", TJSONString.Create( chassis_key ))
+		Local turs:TJSONArray = TJSONArray.Create( turrets.Length )
+		For Local i% = 0 To turrets.Length - 1
+			turs.SetByIndex( i, turrets[i].to_json() )
+		Next
+		this_json.SetByName( "turrets", turs )
+		Return this_json
 	End Method
 End Type
 Function Create_VEHICLE_DATA_from_json:VEHICLE_DATA( json:TJSON )
@@ -119,7 +128,10 @@ Type TURRET_DATA
 	Field turret_key$
 	Field anchor%
 	Method to_json:TJSONObject()
-		
+		Local this_json:TJSONObject = New TJSONObject
+		this_json.SetByName( "turret_key", TJSONString.Create( "turret_key" ))
+		this_json.SetByName( "anchor", TJSONNumber.Create( anchor ))
+		Return this_json
 	End Method
 End Type
 Function Create_TURRET_DATA_from_json:TURRET_DATA( json:TJSON )
@@ -133,13 +145,16 @@ Type PROGRESS_DATA
 	Field campaign_key$
 	Field completed%[]
 	Method to_json:TJSONObject()
-		
+		Local this_json:TJSONObject = New TJSONObject
+		this_json.SetByName( "campaign_key", TJSONString.Create( campaign_key ))
+		this_json.SetByName( "completed", Create_TJSONArray_from_Int_array( completed, True ))
+		Return this_json
 	End Method
 End Type
 Function Create_PROGRESS_DATA_from_json:PROGRESS_DATA( json:TJSON )
 	Local pd:PROGRESS_DATA = New PROGRESS_DATA
 	pd.campaign_key = json.GetString( "campaign" )
-	pd.completed = Create_Int_array_from_TJSONArray( json.GetArray( "completed" ))
+	pd.completed = Create_Int_array_from_TJSONArray( json.GetArray( "completed" ), True )
 	Return pd
 End Function
 

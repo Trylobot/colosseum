@@ -127,6 +127,16 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/medium_laser_turret_base-barrel.png",
+			handle_x: 6.5,
+			handle_y: 6.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/box.png",
 			handle_x: 8.5,
 			handle_y: 8.5,
@@ -328,6 +338,16 @@
 		key: "{path}",
 		object: {
 			path: "art/laser_muzzle_flare.png",
+			handle_x: 1.5,
+			handle_y: 7.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/medium_laser_muzzle_flare.png",
 			handle_x: 1.5,
 			handle_y: 7.5,
 			frames: 1
@@ -864,6 +884,16 @@
 			path: "art/skull5.png",
 			handle_x: 0,
 			handle_y: 0,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/discarded_energy_core.png",
+			handle_x: 2.5,
+			handle_y: 2.5
 			frames: 1
 		}
 	}
