@@ -414,13 +414,9 @@ Type ENVIRONMENT
 			threshold = PICKUP_PROBABILITY
 		End If
 		If Rnd( 0.0, 1.0 ) < threshold
-			'pick an archetype (leave out ammo types if none of player's turrets use ammo)
-			Local pickup_class%
-			If omit_ammunition
-				pickup_class = Rand( 1, 2 )
-			Else 
-				pickup_class = Rand( 0, 2 )
-			End If
+			'pick an archetype
+			Local pickup_class% = Rand( 0, 2 )
+			If omit_ammunition And pickup_class = AMMO_PICKUP Then Return
 			'count how many pickups are of the correct type
 			Local count% = 0
 			For Local pkp:PICKUP = EachIn pickup_archetype

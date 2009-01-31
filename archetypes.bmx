@@ -29,7 +29,7 @@ End Function
 
 '______________________________________________________________________________
 '[ PARTICLE EMITTERS ]
-Global particle_emitter_archetype:EMITTER[27]; reset_index();
+Global particle_emitter_archetype:EMITTER[29]; reset_index();
 
 Global PARTICLE_EMITTER_INDEX_TANK_TREAD_DEBRIS% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD% = postfix_index()
@@ -51,6 +51,8 @@ Global PARTICLE_EMITTER_INDEX_LASER_DISCARD_ENERGY_CORE% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_MEDIUM_LASER_MUZZLE_FLARE% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_LASER_EXPLOSION% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_LASER_SECONDARY_EXPLOSION% = postfix_index()
+Global PARTICLE_EMITTER_INDEX_MEDIUM_LASER_EXPLOSION% = postfix_index()
+Global PARTICLE_EMITTER_INDEX_MEDIUM_LASER_SECONDARY_EXPLOSION% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_LASER_IMPACT_HALO% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_ROCKET_THRUST% = postfix_index()
 Global PARTICLE_EMITTER_INDEX_ROCKET_CASING% = postfix_index()
@@ -80,6 +82,8 @@ Function set_particle_emitter_archetypes()
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MEDIUM_LASER_MUZZLE_FLARE] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "medium_laser_muzzle_flare",,,,,,,,,,, 50, 50 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "explosion",,,,,,,,,,, 250,300, 1.0,1.0, -0.100,-0.100, 0.275,0.300, -0.0065,-0.0065, 1.0,1.0, 0.65,0.65, 0.65,0.65 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_SECONDARY_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "explosion",,,, True, True,,,, 5,8, 300,300, 1.0,1.0, -0.100,-0.100, 0.100,0.120, -0.0050,-0.0050, 1.0,1.0, 0.65,0.65, 0.65,0.65 ))
+	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MEDIUM_LASER_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "explosion",,,,,,,,,,, 250,300, 1.0,1.0, -0.100,-0.100, 0.275,0.300, -0.0065,-0.0065, 0.65,0.65, 0.65,0.65, 1.00,1.00 ))
+	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MEDIUM_LASER_SECONDARY_EXPLOSION] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "explosion",,,, True, True,,,, 5,8, 300,300, 1.0,1.0, -0.100,-0.100, 0.100,0.120, -0.0050,-0.0050, 0.65,0.65, 0.65,0.65, 1.00,1.00 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_IMPACT_HALO] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "impact_halo",,,,,,,,,,, 100,100, 0.5,0.5, 0,0, 0.20,0.20, -0.0080,-0.0080, 1.0,1.0, 0.75,0.75, 0.75,0.75 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_THRUST] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "rocket_thrust", MODE_ENABLED_FOREVER,,,,,, 10, 15,,, 10, 15, 0.50, 0.75, 0, 0, 0.25, 1.00, 0, 0 ))
 	particle_emitter_archetype[PARTICLE_EMITTER_INDEX_ROCKET_CASING] = EMITTER( EMITTER.Archetype( EMITTER_TYPE_PARTICLE, "rocket_casing",, True, True,,, True,,,,, 2200, 2200 ))
@@ -114,8 +118,8 @@ Function set_projectile_archetypes()
 		projectile_archetype[PROJECTILE_INDEX_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_IMPACT_HALO], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
 		projectile_map.Insert( "laser_red", projectile_archetype[PROJECTILE_INDEX_LASER] )
 	projectile_archetype[PROJECTILE_INDEX_BIG_LASER] = PROJECTILE( PROJECTILE.Create( get_image( "laser_big" ), get_sound( "laser_hit" ), 40.00,,,, 0.0001,, True ))
-		projectile_archetype[PROJECTILE_INDEX_BIG_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
-		projectile_archetype[PROJECTILE_INDEX_BIG_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_SECONDARY_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0, 5,8, 0,359.999, 1.3,2.5 )
+		projectile_archetype[PROJECTILE_INDEX_BIG_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MEDIUM_LASER_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
+		projectile_archetype[PROJECTILE_INDEX_BIG_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MEDIUM_LASER_SECONDARY_EXPLOSION], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0, 5,8, 0,359.999, 1.3,2.5 )
 		projectile_archetype[PROJECTILE_INDEX_BIG_LASER].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_LASER_IMPACT_HALO], PROJECTILE_MEMBER_EMITTER_PAYLOAD ).attach_at( 0, 0 )
 		projectile_map.Insert( "laser_big", projectile_archetype[PROJECTILE_INDEX_BIG_LASER] )
 	projectile_archetype[PROJECTILE_INDEX_ROCKET] = PROJECTILE( PROJECTILE.Create( get_image( "rocket" ), get_sound( "cannon_hit" ), 100.00, 2000.0, 50.0, 4.00, 0.0400, 0.00025 ))
