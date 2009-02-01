@@ -254,8 +254,7 @@ Type TJSONObject Extends TJSONValue
 			s :+ o._key.ToString() +": "+ TJSONValue(o._value).ToSource( level + 1)
 			lines :+ 1
 		Next
-		If lines > 1 Then Return "{~n"+ RepeatString( "~t", level + 1) + s + "~n" + RepeatString( "~t", level) + "}"
-		Return "{ "+ s +" }"
+		Return "{~n"+ RepeatString( "~t", LEVEL + 1) + s + "~n" + RepeatString( "~t", LEVEL) + "}"
 	EndMethod		
 	
 	Method GetByName:TJSONValue( name:Object)
@@ -329,8 +328,7 @@ Type TJSONArray Extends TJSONValue
 			s :+ o.ToSource( level + 1)
 			lines :+ 1
 		Next
-		If lines > 1 Then Return "[~n" + RepeatString( "~t", level + 1) + s + "~n" + RepeatString( "~t", level) + "]"
-		Return "[ "+ s +" ]"
+		Return "[~n" + RepeatString( "~t", LEVEL + 1) + s + "~n" + RepeatString( "~t", LEVEL) + "]"
 	EndMethod
 	
 	Method GetByIndex:TJSONValue( index:Int)

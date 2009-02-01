@@ -49,20 +49,24 @@ Type PLAYER_PROFILE
 		End Select
 		If profile.cash > cost
 			profile.cash :- cost
-			Local q% = search_inventory( query_item )
-			Local item:INVENTORY_DATA
-			If q >= 0
-				item = inventory[q]
-			End If
-			If item
-				item.count :+ 1
-			Else
-				If inventory
-					inventory = inventory[..(inventory.Length + 1)]
-					inventory[inventory.Length - 1] = query_item.clone()
-				Else 'Not inventory
-					inventory = [ query_item.clone() ]
-				End If
+			add_part( query_item )
+		End If
+	End Method
+	
+	Method add_part( new_item:INVENTORY_DATA )
+		Local q% = search_inventory( new_item )
+		Local item:INVENTORY_DATA
+		If q >= 0
+			item = inventory[q]
+		End If
+		If item
+			item.count :+ 1
+		Else
+			If inventory
+				inventory = inventory[..(inventory.Length + 1)]
+				inventory[inventory.Length - 1] = new_item.clone()
+			Else 'Not inventory
+				inventory = [ new_item.clone() ]
 			End If
 		End If
 	End Method
@@ -82,26 +86,31 @@ Type PLAYER_PROFILE
 		End If
 		If item
 			If item.count > 0
-				item.count :- 1
 				profile.cash :+ cost
+				remove_part( q )
 			End If
-			If item.count <= 0
-				If inventory.Length > 1
-					Local new_inventory:INVENTORY_DATA[inventory.Length - 1]
-					If q > 0
-						For Local i% = 0 To q - 1
-							new_inventory[i] = inventory[i]
-						Next
-					End If
-					If q < inventory.Length - 1
-						For Local i% = q + 1 To inventory.Length - 1
-							new_inventory[i - 1] = inventory[i]
-						Next
-					End If
-					inventory = new_inventory
-				Else 'inventory.Length <= 1
-					inventory = Null
+		End If
+	End Method
+	
+	Method remove_part( item_index% )
+		Local item:INVENTORY_DATA = inventory[item_index]
+		item.count :- 1
+		If item.count <= 0
+			If inventory.Length > 1
+				Local new_inventory:INVENTORY_DATA[inventory.Length - 1]
+				If item_index > 0
+					For Local i% = 0 To item_index - 1
+						new_inventory[i] = inventory[i]
+					Next
 				End If
+				If item_index < inventory.Length - 1
+					For Local i% = item_index + 1 To inventory.Length - 1
+						new_inventory[i - 1] = inventory[i]
+					Next
+				End If
+				inventory = new_inventory
+			Else 'inventory.Length <= 1
+				inventory = Null
 			End If
 		End If
 	End Method
@@ -221,7 +230,7 @@ Type VEHICLE_DATA
 End Type
 Function Create_VEHICLE_DATA_from_json:VEHICLE_DATA( json:TJSON )
 	Local vd:VEHICLE_DATA = New VEHICLE_DATA
-	vd.chassis_key = json.GetString( "chassis" )
+	vd.chassis_key = json.GetString( "chassis_key" )
 	Local ts:TJSONArray = json.GetArray( "turrets" )
 	vd.turrets = New TURRET_DATA[ ts.Size() ]
 	For Local i% = 0 To vd.turrets.Length - 1
@@ -235,14 +244,14 @@ Type TURRET_DATA
 	Field anchor%
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
-		this_json.SetByName( "turret_key", TJSONString.Create( "turret_key" ))
+		this_json.SetByName( "turret_key", TJSONString.Create( turret_key ))
 		this_json.SetByName( "anchor", TJSONNumber.Create( anchor ))
 		Return this_json
 	End Method
 End Type
 Function Create_TURRET_DATA_from_json:TURRET_DATA( json:TJSON )
 	Local td:TURRET_DATA = New TURRET_DATA
-	td.turret_key = json.GetString( "turret" )
+	td.turret_key = json.GetString( "turret_key" )
 	td.anchor = json.GetNumber( "anchor" )
 	Return td
 End Function

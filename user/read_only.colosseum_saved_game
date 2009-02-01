@@ -1,17 +1,58 @@
 {
 	name: "read_only",
-	cash: 1000000,
+	cash: 978375,
 	kills: 1000,
-	inventory: null,
+	inventory: [
+		{
+			item_type: "chassis",
+			key: "light_tank",
+			count: 1
+		},
+		{
+			item_type: "chassis",
+			key: "medium_tank",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "dual_light_cannon",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "dual_light_cannon_coaxial_machine_gun",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "light_cannon",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "light_cannon_coaxial_machine_gun",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "light_laser",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "medium_laser",
+			count: 1
+		}
+	],
 	vehicle: {
-		chassis: "light_tank",
+		chassis_key: "light_tank",
 		turrets: [
 			{
-				turret: "light_cannon",
+				turret_key: "light_cannon",
 				anchor: 0
 			},
 			{
-				turret: "light_cannon_coaxial_machine_gun",
+				turret_key: "light_cannon_coaxial_machine_gun",
 				anchor: 0
 			}
 		]
@@ -19,7 +60,7 @@
 	input_method: 2,
 	progress: [
 		{
-			campaign: "basic",
+			campaign_key: "",
 			completed: [
 				false,
 				false,
@@ -27,6 +68,6 @@
 			]
 		}
 	],
-	campaign: null,
-	campaign_level: null
+	campaign: "",
+	campaign_level: 0
 }
