@@ -879,41 +879,34 @@ Function pixel_transform:TImage( img_src:TImage, flip_horizontal% = False, flip_
 	Return img_new
 End Function
 '______________________________________________________________________________
-Function draw_skulls( x_override% = -1, y%, max_width%, count% )
+Function draw_skulls( x%, y%, max_width%, count% )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
-	Local skull:TImage = get_image( "skull" )
-	Local skull5:TImage = get_image( "skull5" )
-	Local skull_count% = 0
-	Local skull5_count% = 0
-	Local w% = skull.width + 2
-	Local h% = skull.height + 2
-	Local i% = 0
-	While count >= 5
-		skull5_count :+ 1
-		count :- 5
-		i :+ 1
-	End While
-	While count >= 1
-		skull_count :+ 1
-		count :- 1
-		i :+ 1
-	End While
-	Local x%
-	If x_override = -1 Then x_override = window_w/2 - (skull5_count + skull_count)*w/2
-	x = x_override
-	y :+ 0
-	If skull5_count > 0
-		For i = 0 To skull5_count - 1
-			DrawImage( skull5, x + i*w, y )
-		Next
-		x = x_override
-		y :+ h
-	End If
-	'For i = skull5_count To skull5_count + skull_count - 1
-	For i = 0 To skull_count - 1
-		DrawImage( skull, x + i*w, y )
+	Local denominations%[] = [ 1, 5, 25 ]
+	Local images:TImage[] = [ ..
+		get_image( "skull" ), ..
+		get_image( "skull5" ), ..
+		get_image( "skull25" ) ]
+	Local skull_count%[3]
+	Local w% = images[0].width + 2
+	'count instances of each denomination
+	For Local i% = denominations.Length - 1 To 0 Step -1
+		While count >= denominations[i]
+			skull_count[i] :+ 1
+			count :- denominations[i]
+		End While
+	Next
+	'x = window_w/2 - (skull5_count + skull_count)*w/2
+	Local orig_x% = x
+	For Local i% = denominations.Length - 1 To 0 Step -1
+		If skull_count[i] > 0
+			For Local k% = 0 To skull_count[i] - 1
+				DrawImage( images[i], x + k*images[i].width + 2, y )
+			Next
+			x = orig_x
+			y :+ images[i].height + 2
+		End If
 	Next
 End Function
 
