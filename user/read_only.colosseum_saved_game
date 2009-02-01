@@ -1,7 +1,7 @@
 {
 	name: "read_only",
-	cash: 7100,
-	kills: 65,
+	cash: 1000000,
+	kills: 1000,
 	inventory: null,
 	vehicle: {
 		chassis: "light_tank",

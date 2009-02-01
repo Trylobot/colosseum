@@ -26,6 +26,95 @@ Type PLAYER_PROFILE
 		src_path = generate_src_path()
 	End Method
 	
+	Method count_inventory%( query_item:INVENTORY_DATA )
+		Local q% = search_inventory( query_item )
+		Local item:INVENTORY_DATA
+		If q >= 0
+			item = inventory[q]
+		End If
+		If item
+			Return item.count
+		Else
+			Return 0
+		End If
+	End Method
+	
+	Method buy_part( query_item:INVENTORY_DATA )
+		Local cost% = 0
+		Select query_item.item_type
+			Case "chassis"
+				cost = get_player_chassis( query_item.key ).cash_value
+			Case "turret"
+				cost = get_turret( query_item.key ).cash_value
+		End Select
+		If profile.cash > cost
+			profile.cash :- cost
+			Local q% = search_inventory( query_item )
+			Local item:INVENTORY_DATA
+			If q >= 0
+				item = inventory[q]
+			End If
+			If item
+				item.count :+ 1
+			Else
+				If inventory
+					inventory = inventory[..(inventory.Length + 1)]
+					inventory[inventory.Length - 1] = query_item.clone()
+				Else 'Not inventory
+					inventory = [ query_item.clone() ]
+				End If
+			End If
+		End If
+	End Method
+	
+	Method sell_part( query_item:INVENTORY_DATA )
+		Local cost% = 0
+		Select query_item.item_type
+			Case "chassis"
+				cost = get_player_chassis( query_item.key ).cash_value
+			Case "turret"
+				cost = get_turret( query_item.key ).cash_value
+		End Select
+		Local q% = search_inventory( query_item )
+		Local item:INVENTORY_DATA
+		If q >= 0
+			item = inventory[q]
+		End If
+		If item
+			If item.count > 0
+				item.count :- 1
+				profile.cash :+ cost
+			End If
+			If item.count <= 0
+				If inventory.Length > 1
+					Local new_inventory:INVENTORY_DATA[inventory.Length - 1]
+					If q > 0
+						For Local i% = 0 To q - 1
+							new_inventory[i] = inventory[i]
+						Next
+					End If
+					If q < inventory.Length - 1
+						For Local i% = q + 1 To inventory.Length - 1
+							new_inventory[i - 1] = inventory[i]
+						Next
+					End If
+					inventory = new_inventory
+				Else 'inventory.Length <= 1
+					inventory = Null
+				End If
+			End If
+		End If
+	End Method
+	
+	Method search_inventory%( query_item:INVENTORY_DATA )
+		If inventory
+			For Local i% = 0 To inventory.Length - 1
+				If inventory[i].eq( query_item ) Then Return i
+			Next
+		End If
+		Return -1
+	End Method
+	
 	Method generate_src_path$()
 		Return user_path + name + "." + saved_game_file_ext
 	End Method
@@ -82,21 +171,38 @@ End Function
 '______________________________________________________________________________
 'helper classes
 '_________________
+Function Create_INVENTORY_DATA:INVENTORY_DATA( item_type$, key$, count% = 1 )
+	Local item:INVENTORY_DATA = New INVENTORY_DATA
+	item.item_type = item_type
+	item.key = key
+	item.count = count
+	Return item
+End Function
 Type INVENTORY_DATA
 	Field item_type$
 	Field key$
+	Field count%
+	Method clone:INVENTORY_DATA()
+		Return Create_INVENTORY_DATA( item_type, key, count )
+	End Method
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "item_type", TJSONString.Create( item_type ))
 		this_json.SetByName( "key", TJSONString.Create( key ))
+		this_json.SetByName( "count", TJSONNumber.Create( count ))
 		Return this_json
+	End Method
+	Method eq%( other:INVENTORY_DATA )
+		If Not other Then Return False
+		Return item_type = other.item_type And key = other.key
 	End Method
 End Type
 Function Create_INVENTORY_DATA_from_json:INVENTORY_DATA( json:TJSON ) 
-	Local id:INVENTORY_DATA = New INVENTORY_DATA
-	id.item_type = json.GetString( "item_type" ) 
-	id.key = json.GetString( "key" ) 
-	Return id
+	Local item:INVENTORY_DATA = New INVENTORY_DATA
+	item.item_type = json.GetString( "item_type" ) 
+	item.key = json.GetString( "key" )
+	item.count = json.GetNumber( "count" )
+	Return item
 End Function
 '_________________
 Type VEHICLE_DATA

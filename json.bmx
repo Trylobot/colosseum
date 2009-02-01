@@ -233,8 +233,8 @@ Type TJSONObject Extends TJSONValue
 		Local s:String, lines:Int = 0
 		If List.Count() <= 0 Then Return "{}"
 		For Local o:TNode = EachIn List
-			If lines > 0 Then s :+ ", "
-			s :+ o._key.ToString() +": "
+			If lines > 0 Then s :+ ","
+			s :+ o._key.ToString() +":"
 			Local jsv:TJSONValue = TJSONValue(o._value)
 			If jsv.Class = JSON_STRING Then
 				s :+ jsv.ToSource()
@@ -243,7 +243,7 @@ Type TJSONObject Extends TJSONValue
 			EndIf
 			lines :+ 1
 		Next
-		Return "{ "+ s +" }"
+		Return "{"+ s +"}"
 	EndMethod
 	
 	Method ToSource:String( level:Int = 0)
@@ -310,7 +310,7 @@ Type TJSONArray Extends TJSONValue
 		Local s:String, lines:Int = 0
 		If Items.Length <= 0 Then Return "[]"
 		For Local o:TJSONValue = EachIn Items
-			If lines > 0 Then s :+ ", "			
+			If lines > 0 Then s :+ ","			
 			If o.Class = JSON_STRING Then
 				s :+ o.ToSource()
 			Else
@@ -318,7 +318,7 @@ Type TJSONArray Extends TJSONValue
 			EndIf			
 			lines :+ 1
 		Next
-		Return "[ "+ s +" ]"
+		Return "["+ s +"]"
 	EndMethod	
 	
 	Method ToSource:String( level:Int = 0)

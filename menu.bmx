@@ -12,10 +12,10 @@ Type MENU
 	Const VERTICAL_LIST% = 10
 	Const VERTICAL_LIST_WITH_SUBSECTION% = 11
 	Const VERTICAL_LIST_WITH_FILES% = 12
+	Const VERTICAL_LIST_WITH_INVENTORY% = 13
 	Const TEXT_INPUT_DIALOG% = 20
 	Const CONFIRMATION_DIALOG% = 21
 	Const NOTIFICATION_DIALOG% = 22
-	Const INVENTORY_SHOP% = 30
 	Const VEHICLE_BUILDER% = 40
 	
 	Global title_font:TImagefont
@@ -165,7 +165,7 @@ Type MENU
 			End If
 			opt = options[i]
 			If opt <> Null And opt.visible And option_is_in_window( i )
-				Local name$ = resolve_meta_variables( opt.name )
+				Local name$ = resolve_meta_variables( opt.name, opt.argument )
 				opt.draw( name, cx, cy, (focus = i) )
 				bounding_box[i] = Create_BOX( last_x, cy, width, TextHeight( name ))
 				cy :+ text_height_factor*GetImageFont().Height() + margin
@@ -229,7 +229,7 @@ Type MENU
 			Else
 				SetImageFont( menu_font )
 			End If
-			Local opt_name_dynamic$ = resolve_meta_variables( opt.name )
+			Local opt_name_dynamic$ = resolve_meta_variables( opt.name, opt.argument )
 			If (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width) > width
 				width = (2*margin + TextWidth( opt_name_dynamic ) + 2*border_width)
 			End If
@@ -293,6 +293,44 @@ Type MENU
 				For Local file$ = EachIn find_files( path, preferred_file_extension )
 					add_option( MENU_OPTION.Create( StripDir( file ), default_command, file, True, True ))
 				Next
+			
+			Case VERTICAL_LIST_WITH_INVENTORY
+				purge_dynamic_options()
+				Local items:TList = CreateList()
+				'create a list of inventory items using the path to indicate the source
+				If path = "catalog"
+					For Local chassis_key$ = EachIn MapKeys( player_chassis_map )
+						items.AddLast( Create_INVENTORY_DATA( "chassis", chassis_key ))
+					Next
+					For Local turret_key$ = EachIn MapKeys( turret_map )
+						items.AddLast( Create_INVENTORY_DATA( "turret", turret_key ))
+					Next
+				Else If path = "inventory"
+					For Local item:INVENTORY_DATA = EachIn profile.inventory
+						items.AddLast( item )
+					Next
+				End If
+				'build the menu options from the list
+				For Local item:INVENTORY_DATA = EachIn items
+					Select item.item_type
+						Case "chassis"
+							Local chassis:COMPLEX_AGENT = get_player_chassis( item.key, False )
+							add_option( MENU_OPTION.Create( ..
+								"$"+pad( format_number( chassis.cash_value ), 7,, False )+ ..
+								chassis.name+ ..
+								" [chassis] %%owned%%", ..
+								default_command, item ))
+						Case "turret"
+							Local tur:TURRET = get_turret( item.key, False )
+							If tur.name.Length > 0
+								add_option( MENU_OPTION.Create( ..
+									"$"+pad( format_number( tur.cash_value ), 7,, False )+ ..
+									tur.name+ ..
+									" [turret]  %%owned%%", ..
+									default_command, item ))
+							End If
+					End Select
+				Next
 				
 			Case TEXT_INPUT_DIALOG
 				If initial_update
@@ -332,7 +370,7 @@ Type MENU
 	
 	Method focus_is_valid%()
 		Local f_opt:MENU_OPTION = get_focus()
-		Return f_opt <> Null And f_opt.visible And f_opt.enabled
+		Return (f_opt And f_opt.visible And f_opt.enabled)
 	End Method
 	Method get_focus:MENU_OPTION()
 		If focus >= 0 And focus < options.Length
@@ -424,7 +462,10 @@ Type MENU
 End Type
 
 Function is_scrollable%( menu_type% )
-	Return (menu_type = MENU.VERTICAL_LIST_WITH_FILES Or menu_type = MENU.VERTICAL_LIST_WITH_SUBSECTION)
+	Return ..
+		menu_type = MENU.VERTICAL_LIST_WITH_FILES Or ..
+		menu_type = MENU.VERTICAL_LIST_WITH_SUBSECTION Or ..
+		menu_type = MENU.VERTICAL_LIST_WITH_INVENTORY
 End Function
 
 

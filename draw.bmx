@@ -883,12 +883,14 @@ Function draw_skulls( x%, y%, max_width%, count% )
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
-	Local denominations%[] = [ 1, 5, 25 ]
+	Local denominations%[] = [ 1, 5, 25, 250 ]
 	Local images:TImage[] = [ ..
 		get_image( "skull" ), ..
 		get_image( "skull5" ), ..
-		get_image( "skull25" ) ]
-	Local skull_count%[3]
+		get_image( "skull25" ), ..
+		get_image( "skull250" )]
+	Local skull_count%[4]
+	
 	Local w% = images[0].width + 2
 	'count instances of each denomination
 	For Local i% = denominations.Length - 1 To 0 Step -1
@@ -902,6 +904,9 @@ Function draw_skulls( x%, y%, max_width%, count% )
 	For Local i% = denominations.Length - 1 To 0 Step -1
 		If skull_count[i] > 0
 			For Local k% = 0 To skull_count[i] - 1
+				If (x + (k + 1)*images[i].width + 2) > window_w - 20
+					y :+ images[i].height + 2
+				End If
 				DrawImage( images[i], x + k*images[i].width + 2, y )
 			Next
 			x = orig_x
