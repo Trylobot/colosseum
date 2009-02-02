@@ -23,6 +23,11 @@ Function draw_all_graphics()
 	'game content
 	If game <> Null
 		draw_game()
+		SetColor( 255, 255, 255 )
+		SetRotation( 0 )
+		SetAlpha( 1 )
+		SetScale( 1, 1 )
+		SetLineWidth( 1 )
 	End If
 	
 	'menus and such
@@ -245,8 +250,8 @@ Function draw_main_screen()
 	x = 1 + 20
 	y = window_h - h*2 - 1 - 20
 	If game = main_game Then y :- 50
-	DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole, aka Tylerbot; music by NickPerrin; JSON binding by grable", x, y ); y :+ h
-	DrawText_with_outline( "special thanks to Kaze, SniperAceX, Firelord88, ZieramsFolly; written in BlitzMax", x, y ); y :+ h
+	DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole (aka Tylerbot); music by NickPerrin; JSON binding by grable", x, y ); y :+ h
+	DrawText_with_outline( "special thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, and Firelord88; written in BlitzMax", x, y ); y :+ h
 	
 End Function
 '______________________________________________________________________________
@@ -640,21 +645,21 @@ Function DrawText_with_glow( str$, x%, y% )
 	DrawText( str, x, y )
 End Function
 
-Const ARROW_UP% = 0
-Const ARROW_RIGHT% = 1
-Const ARROW_DOWN% = 2
-Const ARROW_LEFT% = 3
-Function draw_arrow( arrow_type%, x#, y#, height% )
-	Select arrow_type
-		Case ARROW_UP
-			DrawPoly( [ x,y, x,y+height, x+height/2,y+height/2 ])
-		Case ARROW_RIGHT
-			DrawPoly( [ x,y, x,y+height, x+height/2,y+height/2 ])
-		Case ARROW_DOWN
-			DrawPoly( [ x,y, x,y+height, x-height/2,y+height/2 ])
-		Case ARROW_LEFT
-			DrawPoly( [ x,y, x,y+height, x-height/2,y+height/2 ])
-	End Select
+Function DrawLine_awesome( x1#, y1#, x2#, y2# )
+	SetAlpha( 1 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	SetColor( 0, 0, 0 )
+	DrawOval( x1 - 5, y1 - 5, 10, 10 )
+	DrawOval( x2 - 5, y2 - 5, 10, 10 )
+	SetLineWidth( 5 )
+	DrawLine( x1, y1, x2, y2 )
+	SetColor( 255, 255, 255 )
+	DrawOval( x1 - 3, y1 - 3, 6, 6 )
+	DrawOval( x2 - 3, y2 - 3, 6, 6 )
+	SetLineWidth( 2 )
+	DrawLine( x1, y1, x2, y2 )
+	SetLineWidth( 1 )
 End Function
 
 '______________________________________________________________________________

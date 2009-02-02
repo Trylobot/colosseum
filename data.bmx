@@ -36,6 +36,7 @@ Global asset_identifiers$[] = ..
 	"ai_types", ..
 	"player_chassis", ..
 	"units", ..
+	"compatibility", ..
 	"levels" ]
 	
 Global font_map:TMap = CreateMap()
@@ -53,6 +54,7 @@ Global turret_map:TMap = CreateMap()
 Global ai_type_map:TMap = CreateMap()
 Global player_chassis_map:TMap = CreateMap()
 Global unit_map:TMap = CreateMap()
+Global compatibility_map:TMap = CreateMap()
 Global level_map:TMap = CreateMap()
 
 '______________________________________________________________________________
@@ -109,6 +111,10 @@ Function get_unit:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, w
 	Return unit
 End Function
 '________________________________
+Function get_compatibility:COMPATIBILITY_DATA( key$ ) 'returns read-only reference
+	Return COMPATIBILITY_DATA( compatibility_map.ValueForKey( key ))
+End Function
+'________________________________
 Function get_level:LEVEL( key$, copy% = True ) 'returns read-only reference
 	Local lev:LEVEL = LEVEL( level_map.ValueForKey( key ))
 	'If copy Then Return ...
@@ -142,35 +148,34 @@ Function load_assets%()
 End Function
 '______________________________________________________________________________
 Function load_objects%( json:TJSON )
+	Local failed_to_load$ = "      ERROR: FAILED TO LOAD"
 	For Local i% = 0 To TJSONArray(json.Root).Size() - 1
 		Local item:TJSON = TJSON.Create( json.GetObject( String.FromInt( i )))
-		Local key$ = item.GetString( "key" ) 
-		If key = "{path}" 'special, implicit key
-			key = StripAll( item.GetString( "object.path" ))
-		End If
+		Local key$ = item.GetString( "key" )
+		Select key 'special implicit keys for certain objects
+			Case "{path}"
+				key = StripAll( item.GetString( "object.path" ))
+			Case "{chassis_key}"
+				key = item.GetString( "object.chassis_key" )
+		End Select
 		If key And key <> ""
 			DebugLog( "    load_objects() --> " + key ) 
 			Select item.GetString( "class" )
 				Case "font"
 					Local f:TImageFont = Create_TImageFont_from_json( TJSON.Create( item.GetObject( "object" )))
-					If f Then font_map.Insert( key, f ) ..
-					Else DebugLog( "      ERROR: FAILED TO LOAD" )
+					If f Then font_map.Insert( key, f ) Else DebugLog failed_to_load
 				Case "sound"
 					Local s:TSound = Create_TSound_from_json( TJSON.Create( item.GetObject( "object" )))
-					If s Then sound_map.Insert( key, s ) ..
-					Else DebugLog( "      ERROR: FAILED TO LOAD" )
+					If s Then sound_map.Insert( key, s ) Else DebugLog failed_to_load
 				Case "image"
 					Local i:TImage = Create_TImage_from_json( TJSON.Create( item.GetObject( "object" )))
-					If i Then image_map.Insert( key, i ) ..
-					Else DebugLog( "      ERROR: FAILED TO LOAD" )
+					If i Then image_map.Insert( key, i ) Else DebugLog failed_to_load
 				Case "prop"
 					Local p:AGENT = Create_AGENT_from_json( TJSON.Create( item.GetObject( "object" )))
-					If p Then prop_map.Insert( key, p ) ..
-					Else DebugLog( "      ERROR: FAILED TO LOAD" )
+					If p Then prop_map.Insert( key, p ) Else DebugLog failed_to_load
 				Case "particle"
 					Local p:PARTICLE = Create_PARTICLE_from_json( TJSON.Create( item.GetObject( "object" )))
-					If p Then particle_map.Insert( key, p ) ..
-					Else DebugLog( "      ERROR: FAILED TO LOAD" )
+					If p Then particle_map.Insert( key, p ) Else DebugLog failed_to_load
 				'Case "particle_emitter"
 				'	
 				'Case "projectile"
@@ -191,6 +196,9 @@ Function load_objects%( json:TJSON )
 				'	
 				'Case "unit"
 				'	
+				Case "compatibility"
+					Local cd:COMPATIBILITY_DATA = Create_COMPATIBILITY_DATA_from_json( TJSON.Create( item.GetObject( "object" )))
+					If cd Then compatibility_map.Insert( key, cd ) Else DebugLog failed_to_load
 				'Case "level"
 				'	
 			End Select
@@ -233,7 +241,8 @@ End Function
 Function Create_TImage_from_json:TImage( json:TJSON )
 	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%
 	Local img:TImage
-	AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
+	'AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
+	AutoImageFlags( FILTEREDIMAGE )
 	path = json.GetString( "path" )
 	frames = json.GetNumber( "frames" )
 	If frames >= 1
@@ -438,5 +447,10 @@ Function save_autosave( profile_path$ ) 'new bug!
 	End If
 End Function
 
-
+Function unfilter_image:TImage( img:TImage )
+	If Not img Then Return Null
+	Local new_img:TImage = LoadImage( img.pixmaps[0], 0 )'img.flags&(~MIPMAPPEDIMAGE) )
+	SetImageHandle( new_img, img.handle_x, img.handle_y )
+	Return new_img
+End Function
 

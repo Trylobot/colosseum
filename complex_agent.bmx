@@ -269,6 +269,8 @@ Type COMPLEX_AGENT Extends AGENT
 				SetColor( 96, 96, 255 )
 			Case ALIGNMENT_HOSTILE
 				SetColor( 255, 96, 96 )
+			Default
+				SetColor( 255, 255, 255 )
 		End Select
 		SetAlpha( 0.15*alpha_override )
 		SetScale( 0.3*scale_override*(img.width-2)/17.0, 0.3*scale_override*(img.width-2)/17.0 )
@@ -455,10 +457,10 @@ Type COMPLEX_AGENT Extends AGENT
 	Method grant_pickup( pkp:PICKUP )
 		Select pkp.pickup_type
 			
-			Case AMMO_PICKUP
+			Case PICKUP.AMMO
 				Local tur_list:TList = CreateList()
 				For Local t:TURRET = EachIn turrets
-					If t.class = TURRET_CLASS_AMMUNITION And t.max_ammo <> INFINITY Then tur_list.AddLast( t )
+					If t.class = TURRET.AMMUNITION And t.max_ammo <> INFINITY Then tur_list.AddLast( t )
 				Next
 				Local lowest_cur_ammo% = -1, lowest_cur_ammo_turret:TURRET
 				For Local t:TURRET = EachIn tur_list
@@ -469,11 +471,11 @@ Type COMPLEX_AGENT Extends AGENT
 				Next
 				If lowest_cur_ammo_turret <> Null Then lowest_cur_ammo_turret.re_stock( pkp.pickup_amount )
 			
-			Case HEALTH_PICKUP
+			Case PICKUP.HEALTH
 				cur_health :+ pkp.pickup_amount
 				If cur_health > max_health Then cur_health = max_health
 			
-			Case COOLDOWN_PICKUP
+			Case PICKUP.COOLDOWN
 				Local tur_list:TList = CreateList()
 				For Local t:TURRET = EachIn turrets
 					If t.max_heat <> INFINITY Then tur_list.AddLast( t )
@@ -631,6 +633,18 @@ Type COMPLEX_AGENT Extends AGENT
 		add_emitter( Copy_EMITTER( particle_emitter_archetype[archetype] ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y )
 		add_emitter( Copy_EMITTER( particle_emitter_archetype[archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y )
 		add_emitter( Copy_EMITTER( particle_emitter_archetype[archetype] ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y )
+	End Method
+	
+	Method set_images_unfiltered()
+		img = unfilter_image( img )
+		If left_track Then left_track.img = unfilter_image( left_track.img )
+		If right_track Then right_track.img = unfilter_image( right_track.img )
+		For Local t:TURRET = EachIn turrets
+			t.img = unfilter_image( t.img )
+			For Local tb:TURRET_BARREL = EachIn t.turret_barrel_array
+				tb.img = unfilter_image( tb.img )
+			Next
+		Next
 	End Method
 		
 End Type

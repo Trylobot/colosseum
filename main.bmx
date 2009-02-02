@@ -95,11 +95,10 @@ init_graphics()
 'debug_dirtyrects()
 'debug_doors()
 'debug_win()
+menu_command( COMMAND_EDIT_VEHICLE )
 ?
 
-If show_ai_menu_game
-	init_ai_menu_game()
-End If
+init_ai_menu_game() 'ignored if Not show_ai_menu_game
 
 Const time_per_frame_min% = 1000 / 60
 Local before%

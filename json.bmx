@@ -1096,11 +1096,20 @@ Function Create_String_array_from_TJSONArray:String[]( json:TJSONArray )
 	Local index%
 	Local arr$[] = New String[json.Size()]
 	For index = 0 To json.Size() - 1
-		arr[index] = TJSONString( json.GetByIndex( index )).Value
+		Local jval:TJSONString = TJSONString( json.GetByIndex( index ))
+		If jval Then arr[index] = jval.Value
 	Next
 	Return arr
 End Function
 
+Function Create_TJSONArray_from_String_array:TJSONArray( str$[] )
+	If Not str Then Return Null
+	Local arr:TJSONArray = TJSONArray.Create( str.Length )
+	For Local i% = 0 To str.Length - 1
+		arr.SetByIndex( i, TJSONString.Create( str[i] ))
+	Next
+	Return arr
+End Function
 '
 'MARK: various test cases, each in its own Rem/EndRem block
 '

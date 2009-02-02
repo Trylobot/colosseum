@@ -5,12 +5,11 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const AMMO_PICKUP% = 0
-Const HEALTH_PICKUP% = 1
-Const COOLDOWN_PICKUP% = 2
-
 Type PICKUP Extends MANAGED_OBJECT
-	
+	Const AMMO% = 1
+	Const HEALTH% = 2
+	Const COOLDOWN% = 3
+
 	Field img:TImage 'image to be drawn
 	Field pickup_type% 'pickup type indicator
 	Field pickup_amount% 'magnitude of pickup
@@ -72,11 +71,11 @@ Type PICKUP Extends MANAGED_OBJECT
 	
 	Method play_categorical_sound()
 		Select pickup_type
-			Case AMMO_PICKUP
+			Case PICKUP.AMMO
 				play_sound( get_sound( "reload" ))
-			Case HEALTH_PICKUP
+			Case PICKUP.HEALTH
 				play_sound( get_sound( "drill" ))
-			Case COOLDOWN_PICKUP
+			Case PICKUP.COOLDOWN
 				play_sound( get_sound( "air_release" ))
 		End Select
 	End Method

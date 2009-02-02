@@ -26,6 +26,49 @@ Type PLAYER_PROFILE
 		src_path = generate_src_path()
 	End Method
 	
+	Method buy_part( query_item:INVENTORY_DATA )
+		If can_buy( query_item )
+			Local cost% = get_cost( query_item )
+			profile.cash :- cost
+			add_part( query_item )
+		End If
+	End Method
+	
+	Method sell_part( query_item:INVENTORY_DATA )
+		If can_sell( query_item )
+			Local cost% = get_cost( query_item )
+			Local item_index% = search_inventory( query_item )
+			profile.cash :+ cost
+			remove_part( item_index )
+		End If
+	End Method
+	
+	Method can_buy%( query_item:INVENTORY_DATA )
+		Local cost% = 0
+		Select query_item.item_type
+			Case "chassis"
+				cost = get_player_chassis( query_item.key ).cash_value
+			Case "turret"
+				cost = get_turret( query_item.key ).cash_value
+		End Select
+		If profile.cash >= cost
+			Return True
+		End If
+	End Method
+	
+	Method can_sell%( query_item:INVENTORY_DATA )
+		Return count_inventory( query_item ) >= 1
+	End Method
+	
+	Method get_cost%( query_item:INVENTORY_DATA )
+		Select query_item.item_type
+			Case "chassis"
+				Return get_player_chassis( query_item.key ).cash_value
+			Case "turret"
+				Return get_turret( query_item.key ).cash_value
+		End Select
+	End Method
+	
 	Method count_inventory%( query_item:INVENTORY_DATA )
 		Local q% = search_inventory( query_item )
 		Local item:INVENTORY_DATA
@@ -39,18 +82,13 @@ Type PLAYER_PROFILE
 		End If
 	End Method
 	
-	Method buy_part( query_item:INVENTORY_DATA )
-		Local cost% = 0
-		Select query_item.item_type
-			Case "chassis"
-				cost = get_player_chassis( query_item.key ).cash_value
-			Case "turret"
-				cost = get_turret( query_item.key ).cash_value
-		End Select
-		If profile.cash > cost
-			profile.cash :- cost
-			add_part( query_item )
+	Method search_inventory%( query_item:INVENTORY_DATA )
+		If inventory
+			For Local i% = 0 To inventory.Length - 1
+				If inventory[i].eq( query_item ) Then Return i
+			Next
 		End If
+		Return -1
 	End Method
 	
 	Method add_part( new_item:INVENTORY_DATA )
@@ -67,27 +105,6 @@ Type PLAYER_PROFILE
 				inventory[inventory.Length - 1] = new_item.clone()
 			Else 'Not inventory
 				inventory = [ new_item.clone() ]
-			End If
-		End If
-	End Method
-	
-	Method sell_part( query_item:INVENTORY_DATA )
-		Local cost% = 0
-		Select query_item.item_type
-			Case "chassis"
-				cost = get_player_chassis( query_item.key ).cash_value
-			Case "turret"
-				cost = get_turret( query_item.key ).cash_value
-		End Select
-		Local q% = search_inventory( query_item )
-		Local item:INVENTORY_DATA
-		If q >= 0
-			item = inventory[q]
-		End If
-		If item
-			If item.count > 0
-				profile.cash :+ cost
-				remove_part( q )
 			End If
 		End If
 	End Method
@@ -113,15 +130,6 @@ Type PLAYER_PROFILE
 				inventory = Null
 			End If
 		End If
-	End Method
-	
-	Method search_inventory%( query_item:INVENTORY_DATA )
-		If inventory
-			For Local i% = 0 To inventory.Length - 1
-				If inventory[i].eq( query_item ) Then Return i
-			Next
-		End If
-		Return -1
 	End Method
 	
 	Method generate_src_path$()
@@ -187,13 +195,16 @@ Function Create_INVENTORY_DATA:INVENTORY_DATA( item_type$, key$, count% = 1 )
 	item.count = count
 	Return item
 End Function
+
 Type INVENTORY_DATA
 	Field item_type$
 	Field key$
 	Field count%
+	
 	Method clone:INVENTORY_DATA()
 		Return Create_INVENTORY_DATA( item_type, key, count )
 	End Method
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "item_type", TJSONString.Create( item_type ))
@@ -201,11 +212,13 @@ Type INVENTORY_DATA
 		this_json.SetByName( "count", TJSONNumber.Create( count ))
 		Return this_json
 	End Method
+	
 	Method eq%( other:INVENTORY_DATA )
 		If Not other Then Return False
 		Return item_type = other.item_type And key = other.key
 	End Method
 End Type
+
 Function Create_INVENTORY_DATA_from_json:INVENTORY_DATA( json:TJSON ) 
 	Local item:INVENTORY_DATA = New INVENTORY_DATA
 	item.item_type = json.GetString( "item_type" ) 
@@ -217,6 +230,43 @@ End Function
 Type VEHICLE_DATA
 	Field chassis_key$
 	Field turrets:TURRET_DATA[]
+	
+	Method add_turret( td:TURRET_DATA )
+		If turrets
+			turrets = turrets[..turrets.Length+1]
+			turrets[turrets.Length-1] = td
+		Else
+			turrets = [ td ]
+		End If
+	End Method
+	
+	Method remove_turret( td:TURRET_DATA )
+'		For Local tur_index
+'			Local tur:TURRET_DATA
+'			If tur.eq( td )
+'				'found
+'				
+'				
+'				If turrets.Length > 1
+'					Local new_inventory:INVENTORY_DATA[turrets.Length - 1]
+'					If item_index > 0
+'						For Local i% = 0 To item_index - 1
+'							new_inventory[i] = turrets[i]
+'						Next
+'					End If
+'					If item_index < turrets.Length - 1
+'						For Local i% = item_index + 1 To turrets.Length - 1
+'							new_inventory[i - 1] = turrets[i]
+'						Next
+'					End If
+'					turrets = new_inventory
+'				Else 'inventory.Length <= 1
+'					turrets = Null
+'				End If
+'			End If
+'		Next
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "chassis_key", TJSONString.Create( chassis_key ))
@@ -228,6 +278,7 @@ Type VEHICLE_DATA
 		Return this_json
 	End Method
 End Type
+
 Function Create_VEHICLE_DATA_from_json:VEHICLE_DATA( json:TJSON )
 	Local vd:VEHICLE_DATA = New VEHICLE_DATA
 	vd.chassis_key = json.GetString( "chassis_key" )
@@ -242,6 +293,11 @@ End Function
 Type TURRET_DATA
 	Field turret_key$
 	Field anchor%
+	
+	Method eq%( other:TURRET_DATA )
+		Return (turret_key = other.turret_key And anchor = other.anchor)
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "turret_key", TJSONString.Create( turret_key ))
@@ -249,6 +305,7 @@ Type TURRET_DATA
 		Return this_json
 	End Method
 End Type
+
 Function Create_TURRET_DATA_from_json:TURRET_DATA( json:TJSON )
 	Local td:TURRET_DATA = New TURRET_DATA
 	td.turret_key = json.GetString( "turret_key" )
@@ -259,6 +316,7 @@ End Function
 Type PROGRESS_DATA
 	Field campaign_key$
 	Field completed%[]
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "campaign_key", TJSONString.Create( campaign_key ))
@@ -266,6 +324,7 @@ Type PROGRESS_DATA
 		Return this_json
 	End Method
 End Type
+
 Function Create_PROGRESS_DATA_from_json:PROGRESS_DATA( json:TJSON )
 	Local pd:PROGRESS_DATA = New PROGRESS_DATA
 	pd.campaign_key = json.GetString( "campaign" )

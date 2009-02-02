@@ -332,7 +332,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Const friendly_blocking_scalar_projection_distance# = 15.0
 	Method any_friendly_blocking%()
-If KeyDown( KEY_F4 ) Then DebugStop
 		If target <> Null
 			Local allied_agent_list:TList = CreateList()
 			Select avatar.political_alignment
@@ -368,8 +367,6 @@ If KeyDown( KEY_F4 ) Then DebugStop
 		End If
 	End Method
 	
-	Const path_calculation_delay% = 100
-	Global last_path_calculation_ts%
 	Method get_path_to_target:TList()
 		If target <> Null And now() - last_path_calculation_ts > path_calculation_delay
 			last_path_calculation_ts = now()
@@ -378,6 +375,8 @@ If KeyDown( KEY_F4 ) Then DebugStop
 			Return Null
 		End If
 	End Method
+	Const path_calculation_delay% = 100
+	Global last_path_calculation_ts%
 	
 	Method input_control()
 		Select input_type

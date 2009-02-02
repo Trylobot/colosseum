@@ -298,36 +298,46 @@ Type MENU
 				purge_dynamic_options()
 				Local items:TList = CreateList()
 				'create a list of inventory items using the path to indicate the source
-				If path = "catalog"
-					For Local chassis_key$ = EachIn MapKeys( player_chassis_map )
-						items.AddLast( Create_INVENTORY_DATA( "chassis", chassis_key ))
-					Next
-					For Local turret_key$ = EachIn MapKeys( turret_map )
-						items.AddLast( Create_INVENTORY_DATA( "turret", turret_key ))
-					Next
-				Else If path = "inventory"
-					For Local item:INVENTORY_DATA = EachIn profile.inventory
-						items.AddLast( item )
-					Next
-				End If
+				Select path
+					Case "catalog"
+						For Local chassis_key$ = EachIn MapKeys( player_chassis_map )
+							items.AddLast( Create_INVENTORY_DATA( "chassis", chassis_key ))
+						Next
+						For Local turret_key$ = EachIn MapKeys( turret_map )
+							items.AddLast( Create_INVENTORY_DATA( "turret", turret_key ))
+						Next
+					Case "inventory"
+						For Local item:INVENTORY_DATA = EachIn profile.inventory
+							items.AddLast( item )
+						Next
+				End Select
 				'build the menu options from the list
+				Local enabled%
 				For Local item:INVENTORY_DATA = EachIn items
+					Select path
+						Case "catalog"
+							enabled = profile.can_buy( item )
+						Case "inventory"
+							enabled = True
+					End Select
 					Select item.item_type
 						Case "chassis"
 							Local chassis:COMPLEX_AGENT = get_player_chassis( item.key, False )
 							add_option( MENU_OPTION.Create( ..
 								"$"+pad( format_number( chassis.cash_value ), 7,, False )+ ..
 								chassis.name+ ..
-								" [chassis] %%owned%%", ..
-								default_command, item ))
+								" ["+pad(item.item_type, 7,, False)+"] "+ ..
+								"%%owned%%", ..
+								default_command, item, True, enabled ))
 						Case "turret"
 							Local tur:TURRET = get_turret( item.key, False )
 							If tur.name.Length > 0
 								add_option( MENU_OPTION.Create( ..
 									"$"+pad( format_number( tur.cash_value ), 7,, False )+ ..
 									tur.name+ ..
-									" [turret]  %%owned%%", ..
-									default_command, item ))
+									" ["+pad(item.item_type, 7,, False)+"] "+ ..
+									"%%owned%%", ..
+									default_command, item, True, enabled ))
 							End If
 					End Select
 				Next

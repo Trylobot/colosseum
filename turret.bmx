@@ -5,13 +5,15 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const TURRET_CLASS_ENERGY% = 0
-Const TURRET_CLASS_AMMUNITION% = 1
-
 Type TURRET Extends POINT
+	Const ENERGY% = 1
+	Const AMMUNITION% = 2
+	Const PRIMARY% = 1
+	Const SECONDARY% = 2
 	
 	Field parent:COMPLEX_AGENT 'parental complex agent this turret is attached to
 	Field class% '{ammunition|energy}
+	Field priority% '{primary|secondary}
 	Field img:TImage 'image to be drawn for the "base" of the turret
 	Field cash_value%
 	Field snd_fire:TSound 'sound to be played when the turret is fired
@@ -47,7 +49,7 @@ Type TURRET Extends POINT
 	
 	Function Create:Object( ..
 	name$ = Null, ..
-	class%, ..
+	class%, priority%, ..
 	img:TImage = Null, ..
 	cash_value% = 0, ..
 	snd_fire:TSound, ..
@@ -64,6 +66,7 @@ Type TURRET Extends POINT
 		'static fields
 		t.name = name
 		t.class = class
+		t.priority = priority
 		t.img = img
 		t.cash_value = cash_value
 		t.snd_fire = snd_fire
@@ -86,6 +89,7 @@ Type TURRET Extends POINT
 		Local t:TURRET = TURRET( TURRET.Create( ..
 			name, ..
 			class, ..
+			priority, ..
 			img, ..
 			cash_value, ..
 			snd_fire, ..

@@ -390,7 +390,7 @@ Type ENVIRONMENT
 		'pickup spawning switch
 		player_has_munitions_based_turrets = False
 		For Local t:TURRET = EachIn player.turrets
-			If t.class = TURRET_CLASS_AMMUNITION
+			If t.class = TURRET.AMMUNITION
 				player_has_munitions_based_turrets = True
 				Exit
 			End If
@@ -415,8 +415,8 @@ Type ENVIRONMENT
 		End If
 		If Rnd( 0.0, 1.0 ) < threshold
 			'pick an archetype
-			Local pickup_class% = Rand( 0, 2 )
-			If omit_ammunition And pickup_class = AMMO_PICKUP Then Return
+			Local pickup_class% = Rand( 1, 3 )
+			If omit_ammunition And pickup_class = PICKUP.AMMO Then Return
 			'count how many pickups are of the correct type
 			Local count% = 0
 			For Local pkp:PICKUP = EachIn pickup_archetype
@@ -437,13 +437,14 @@ Type ENVIRONMENT
 				size :+ i
 			Next
 			'populate a deck of "cards"
+			'more common cards get multiple copies (to be picked more often statistically)
 			Local deck%[size]
-			Local n% = 1
+			Local n% = count
 			For Local i% = 0 To count - 1
 				For Local k% = 0 To n - 1
 					deck[i+k] = valid_pickup_archetypes[i]
 				Next
-				n :+ 1
+				n :- 1
 			Next
 			Local pkp:PICKUP = pickup_archetype[deck[Rand( 0, deck.Length - 1 )]]
 			If pkp

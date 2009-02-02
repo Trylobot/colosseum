@@ -13,6 +13,7 @@ Type MENU_OPTION
 	Field enabled% 'this option can be selected? {true|false}
 	Field red%, green%, blue% 'color
 	Field always_bright% 'drawing cue
+	Field tooltip:Object 'flexible tooltip object displayed when option has focus
 	
 	Function Create:MENU_OPTION( ..
 	name$, ..
@@ -55,6 +56,10 @@ Type MENU_OPTION
 		Else
 			DrawText_with_outline( resolved_name, x, y )
 		End If
+	End Method
+	
+	Method draw_tooltip( x%, y% )
+		
 	End Method
 	
 	Method width%()

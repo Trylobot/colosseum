@@ -22,6 +22,18 @@ Function get_all_input()
 		FLAG_ignore_mouse_1 = False
 	End If
 	
+	'win
+	If game And game.human_participation
+		If Not game.game_in_progress And KeyHit( KEY_R )
+			game.player_engine_running = False
+			tweak_engine_idle()
+			If Not game.game_over
+				kill_tally( "LEVEL COMPLETE!", screencap() )
+			End If
+			menu_command( COMMAND_QUIT_LEVEL )
+		End If
+	End If
+	
 	'navigate menu and select option
 	If FLAG_in_menu
 		Local m:MENU = get_current_menu()

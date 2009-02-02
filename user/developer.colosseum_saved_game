@@ -1,0 +1,38 @@
+{
+	name: "developer",
+	cash: 14875,
+	kills: 1289,
+	inventory: [
+		{
+			item_type: "",
+			key: "",
+			count: 0
+		}
+	],
+	vehicle: {
+		chassis_key: "light_tank",
+		turrets: [
+			{
+				turret_key: "light_cannon",
+				anchor: 0
+			},
+			{
+				turret_key: "light_machine_gun",
+				anchor: 0
+			}
+		]
+	},
+	input_method: 2,
+	progress: [
+		{
+			campaign_key: "",
+			completed: [
+				false,
+				false,
+				false
+			]
+		}
+	],
+	campaign: "",
+	campaign_level: 0
+}

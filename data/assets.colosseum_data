@@ -14,5 +14,6 @@
 	ai_types: "data/ai_types.colosseum_data",
 	player_chassis: "data/player_chassis.colosseum_data",
 	units: "data/units.colosseum_data",
+	compatibility: "data/compatibility.colosseum_data",
 	levels: "data/levels.colosseum_data"
 }

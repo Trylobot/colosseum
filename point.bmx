@@ -65,11 +65,13 @@ Type POINT Extends MANAGED_OBJECT
 	End Method
 	
 	Method dist_to#( other:Object )
+		If Not other Then Return 0
 		If cVEC( other ) Then Return Sqr( Pow(cVEC( other ).x-pos_x,2) + Pow(cVEC( other ).y-pos_y,2) )
 		Return Sqr( Pow(POINT(other).pos_x-pos_x,2) + Pow(POINT(other).pos_y-pos_y,2) )
 	End Method
 
 	Method ang_to#( other:Object )
+		If Not other Then Return 0
 		If cVEC( other ) Then Return ATan2( cVEC( other ).y-pos_y, cVEC( other ).x-pos_x )
 		Return ATan2( POINT(other).pos_y-pos_y, POINT(other).pos_x-pos_x )
 	End Method
