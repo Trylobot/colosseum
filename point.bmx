@@ -64,6 +64,9 @@ Type POINT Extends MANAGED_OBJECT
 		ang = ang_wrap( ang + ang_vel )
 	End Method
 	
+	Method draw( alpha_override#, scale_override# ) 'dummy method (for virtual's sake!)
+	End Method
+	
 	Method dist_to#( other:Object )
 		If Not other Then Return 0
 		If cVEC( other ) Then Return Sqr( Pow(cVEC( other ).x-pos_x,2) + Pow(cVEC( other ).y-pos_y,2) )
@@ -98,6 +101,7 @@ Type POINT Extends MANAGED_OBJECT
 			Local pos:cVEC = cVEC( argument )
 			pos_x = pos.x
 			pos_y = pos.y
+			ang = 0
 		End If
 	End Method
 	

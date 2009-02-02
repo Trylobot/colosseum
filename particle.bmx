@@ -121,7 +121,7 @@ Type PARTICLE Extends POINT
 		End If
 	End Method
 	
-	Method draw( alpha_override# = 1.0, scale_override# = 1.0, hide_widgets% = False )
+	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
 		SetColor( red*255, green*255, blue*255 )
 		SetAlpha( alpha*alpha_override )
 		SetScale( scale*scale_override, scale*scale_override )

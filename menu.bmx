@@ -280,13 +280,6 @@ Type MENU
 			End If
 		End If
 		
-		If Not focus_is_valid()
-			focus = default_focus
-			If Not focus_is_valid()
-				increment_focus()
-			End If
-		End If
-
 		Select menu_type
 			
 			Case VERTICAL_LIST_WITH_FILES
@@ -372,6 +365,13 @@ Type MENU
 			
 		End Select
 		
+		If Not focus_is_valid()
+			focus = default_focus
+			If Not focus_is_valid()
+				increment_focus()
+			End If
+		End If
+
 		If menu_id = MENU_ID_SAVE_LEVEL
 			'if one exists, focus on the option that shares the name of the current level editor cache
 			set_focus( level_editor_cache.name )
@@ -459,7 +459,7 @@ Type MENU
 			If opt_box <> Null ..
 			And x >= opt_box.x And x <= opt_box.x + opt_box.w ..
 			And y >= opt_box.y And y <= opt_box.y + opt_box.h
-				If options[i].visible And options[i].enabled And menu_type <> TEXT_INPUT_DIALOG
+				If i < options.Length And options[i].visible And options[i].enabled And menu_type <> TEXT_INPUT_DIALOG
 					focus = i
 					Return True
 				Else

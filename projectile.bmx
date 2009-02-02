@@ -94,7 +94,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		End If
 	End Method
 	
-	Method draw()
+	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
 		SetRotation( ang )
 		DrawImage( img, pos_x, pos_y )
 	End Method

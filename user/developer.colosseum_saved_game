@@ -1,8 +1,49 @@
 {
 	name: "developer",
-	cash: 5000,
+	cash: 0,
 	kills: 1249,
-	inventory: null,
+	inventory: [
+		{
+			item_type: "chassis",
+			key: "light_tank",
+			count: 1
+		},
+		{
+			item_type: "chassis",
+			key: "medium_tank",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "light_cannon",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "light_machine_gun",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "dual_light_cannon",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "medium_machine_gun",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "light_laser",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "medium_laser",
+			count: 1
+		}
+	],
 	vehicle: {
 		chassis_key: "light_tank",
 		is_unit: false,

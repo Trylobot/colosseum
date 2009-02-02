@@ -18,6 +18,22 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 	mouse_shadow.add_turret_anchor( cVEC.Create( 0, 0 ))
 	Local title$ = "customize vehicle"
 	
+	'cache inventory items
+	Local inventory:POINT[profile.inventory.Length]
+	For Local i% = 0 Until profile.inventory.Length
+		Local item:INVENTORY_DATA = profile.inventory[i]
+		Select item.item_type
+			Case "chassis"
+				Local ch:COMPLEX_AGENT = get_player_chassis( item.key )
+				ch.set_images_unfiltered()
+				inventory[i] = ch
+			Case "turret"
+				Local t:TURRET = get_turret( item.key )
+				t.set_images_unfiltered()
+				inventory[i] = t
+		End Select
+	Next
+	
 	SetClsColor( 19, 19, 33 )
 	Repeat
 		Cls()
@@ -65,24 +81,39 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 					mouse_shadow.add_turret( get_turret( v_dat.turret_key[closest_turret_anchor_i][i] ), closest_turret_anchor_i )
 				Next
 				mouse_shadow.set_images_unfiltered()
+				'remove all the turrets on the anchor point
+				
 			End If
 		Else If mouse_dragging And Not MouseDown( 1 ) And mouse_down_1
 			mouse_dragging = False
 			mouse_drag_start = Null
+			If closest_turret_anchor 'concluded a drag op near a turret anchor
+				'attach the mouse_shadow turret to the player object and the vehicle data, and update its on-screen avatar
+				
+			End If
 		End If
 		
 		'draw player in current state
 		player.draw( 0.5, 8.0 )
 		
 		'draw inventory
-		SetImageFont( get_font( "consolas_12" ))
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		SetRotation( 0 )
 		SetScale( 1, 1 )
-		For Local i% = 0 Until profile.inventory.Length
-			Local item:INVENTORY_DATA = profile.inventory[i]
-			DrawText_with_outline( item.key, 10, 50 + i*TextHeight( item.key ))
+		SetImageFont( get_font( "consolas_14" ))
+		DrawText_with_outline( "inventory", 10, 60 )
+		SetImageFont( get_font( "consolas_12" ))
+		Local inv_y% = 80
+		For Local i% = 0 Until inventory.Length
+			Local name$ = ""
+			If COMPLEX_AGENT(inventory[i]) Then name = COMPLEX_AGENT(inventory[i]).name
+			If TURRET(inventory[i]) Then name = TURRET(inventory[i]).name
+			DrawText_with_outline( name, 10, inv_y + i*TextHeight(name) )
+'			If some_condition
+'				inventory[i].move_to( mouse )
+'				inventory[i].draw( 0.5, 3.0 )
+'			End If
 		Next
 		
 		'closest turret anchor (if any)
@@ -93,8 +124,7 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 		
 		'mouse shadow
 		If mouse_dragging
-			mouse_shadow.move_to( Copy_POINT( mouse ).add_pos( -10, -10 ))
-			mouse_shadow.update()
+			mouse_shadow.move_to( mouse, True )
 			mouse_shadow.draw( 0.5, 3.0 )
 		End If
 		

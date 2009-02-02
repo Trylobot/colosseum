@@ -259,7 +259,7 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
-	Method draw( alpha_override# = 1.0, scale_override# = 1.0, hide_widgets% = False )
+	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
 		If spawning
 			alpha_override :* time_alpha_pct( spawn_begin_ts, spawn_time, True )
 		End If
@@ -279,15 +279,13 @@ Type COMPLEX_AGENT Extends AGENT
 			DrawImage( get_image( "halo" ), pos_x, pos_y )
 		End If
 		'widgets behind
-		If Not hide_widgets
-			For Local widget_list:TList = EachIn all_widget_lists
-				For Local w:WIDGET = EachIn widget_list
-					If w.layer = LAYER_BEHIND_PARENT
-						w.draw( alpha_override, scale_override )
-					End If
-				Next
+		For Local widget_list:TList = EachIn all_widget_lists
+			For Local w:WIDGET = EachIn widget_list
+				If w.layer = LAYER_BEHIND_PARENT
+					w.draw( alpha_override, scale_override )
+				End If
 			Next
-		End If
+		Next
 		SetColor( 255, 255, 255 )
 		SetAlpha( alpha_override )
 		SetScale( scale_override, scale_override )
@@ -306,15 +304,13 @@ Type COMPLEX_AGENT Extends AGENT
 			DrawImage( img, pos_x, pos_y )
 		End If
 		'widgets in front of
-		If Not hide_widgets
-			For Local widget_list:TList = EachIn all_widget_lists
-				For Local w:WIDGET = EachIn widget_list
-					If w.layer = LAYER_IN_FRONT_OF_PARENT
-						w.draw( alpha_override, scale_override )
-					End If
-				Next
+		For Local widget_list:TList = EachIn all_widget_lists
+			For Local w:WIDGET = EachIn widget_list
+				If w.layer = LAYER_IN_FRONT_OF_PARENT
+					w.draw( alpha_override, scale_override )
+				End If
 			Next
-		End If
+		Next
 		'turrets
 		For Local t:TURRET = EachIn turrets
 			t.draw( alpha_override, scale_override )
@@ -396,7 +392,7 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method snap_all_turrets()
 		For Local t:TURRET = EachIn turrets
-			t.ang = ang
+			t.move_to( Self )
 		Next
 	End Method
 	'___________________________________________
@@ -645,10 +641,7 @@ Type COMPLEX_AGENT Extends AGENT
 		If left_track Then left_track.img = unfilter_image( left_track.img )
 		If right_track Then right_track.img = unfilter_image( right_track.img )
 		For Local t:TURRET = EachIn turrets
-			t.img = unfilter_image( t.img )
-			For Local tb:TURRET_BARREL = EachIn t.turret_barrel_array
-				tb.img = unfilter_image( tb.img )
-			Next
+			t.set_images_unfiltered()
 		Next
 	End Method
 		
