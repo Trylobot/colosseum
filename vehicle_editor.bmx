@@ -5,15 +5,17 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Const ANCHOR_HOVER_RADIUS% = 150
+Const ANCHOR_HOVER_RADIUS% = 100
 
 Function vehicle_editor( v_dat:VEHICLE_DATA )
 	Local mouse:POINT = Create_POINT( MouseX(), MouseY() )
-	Local last_mouse:POINT = Copy_POINT( mouse )
+	'Local last_mouse:POINT = Copy_POINT( mouse )
 	Local mouse_drag_start:POINT
 	Local mouse_dragging%
 	Local mouse_down_1%
 	Local player:COMPLEX_AGENT = bake_player( v_dat )
+	Local mouse_shadow:COMPLEX_AGENT = New COMPLEX_AGENT
+	mouse_shadow.add_turret_anchor( cVEC.Create( 0, 0 ))
 	Local title$ = "customize vehicle"
 	
 	SetClsColor( 19, 19, 33 )
@@ -35,7 +37,7 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 		DrawText_with_outline( title, 10, 10 )
 		
 		'mouse
-		last_mouse = Copy_POINT( mouse )
+		'last_mouse = Copy_POINT( mouse )
 		mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
 		
 		'mouse hover over closest anchor
@@ -53,20 +55,18 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 		Next
 
 		'click/drag detection
-		If MouseDown( 1 ) And Not mouse_down_1 And Not mouse_dragging
+		If Not mouse_dragging And MouseDown( 1 ) And Not mouse_down_1
 			mouse_dragging = True
 			mouse_drag_start = Copy_POINT( mouse )
-			
-			If closest_turret_anchor
-				'started drag near a turret anchor
-				'is there anything attached?
-				For Local turret_i% = EachIn player.turret_systems[closest_turret_anchor_i]
-					
+			mouse_shadow.remove_all_turrets()
+			If closest_turret_anchor 'started a drag op near a turret anchor
+				'attach a copy of any turret attached to the closest anchor to the mouse shadow
+				For Local i% = 0 Until v_dat.turret_key[closest_turret_anchor_i].Length
+					mouse_shadow.add_turret( get_turret( v_dat.turret_key[closest_turret_anchor_i][i] ), closest_turret_anchor_i )
 				Next
+				mouse_shadow.set_images_unfiltered()
 			End If
-			
-			
-		Else If Not MouseDown( 1 ) And mouse_down_1 And mouse_dragging
+		Else If mouse_dragging And Not MouseDown( 1 ) And mouse_down_1
 			mouse_dragging = False
 			mouse_drag_start = Null
 		End If
@@ -74,13 +74,36 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 		'draw player in current state
 		player.draw( 0.5, 8.0 )
 		
+		'draw inventory
+		SetImageFont( get_font( "consolas_12" ))
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetRotation( 0 )
+		SetScale( 1, 1 )
+		For Local i% = 0 Until profile.inventory.Length
+			Local item:INVENTORY_DATA = profile.inventory[i]
+			DrawText_with_outline( item.key, 10, 50 + i*TextHeight( item.key ))
+		Next
+		
 		'closest turret anchor (if any)
 		If closest_turret_anchor
+			SetAlpha( 1.2 - mouse.dist_to( closest_turret_anchor )/ANCHOR_HOVER_RADIUS )
 			DrawLine_awesome( mouse.pos_x, mouse.pos_y, closest_turret_anchor.x, closest_turret_anchor.y )
 		End If
 		
+		'mouse shadow
+		If mouse_dragging
+			mouse_shadow.move_to( Copy_POINT( mouse ).add_pos( -10, -10 ))
+			mouse_shadow.update()
+			mouse_shadow.draw( 0.5, 3.0 )
+		End If
+		
 		'mouse state
-		If MouseDown( 1 ) Then mouse_down_1 = True Else mouse_down_1 = False
+		If MouseDown( 1 )
+			mouse_down_1 = True
+		Else
+			mouse_down_1 = False
+		End If
 		
 		Flip( 1 )
 	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()

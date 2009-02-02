@@ -264,17 +264,20 @@ Type COMPLEX_AGENT Extends AGENT
 			alpha_override :* time_alpha_pct( spawn_begin_ts, spawn_time, True )
 		End If
 		'colored glow/shadow to display political alignment
-		Select political_alignment
-			Case ALIGNMENT_FRIENDLY
-				SetColor( 96, 96, 255 )
-			Case ALIGNMENT_HOSTILE
-				SetColor( 255, 96, 96 )
-			Default
-				SetColor( 255, 255, 255 )
-		End Select
-		SetAlpha( 0.15*alpha_override )
-		SetScale( 0.3*scale_override*(img.width-2)/17.0, 0.3*scale_override*(img.width-2)/17.0 )
-		DrawImage( get_image( "halo" ), pos_x, pos_y )
+		If img
+			Select political_alignment
+				Case ALIGNMENT_FRIENDLY
+					SetColor( 96, 96, 255 )
+				Case ALIGNMENT_HOSTILE
+					SetColor( 255, 96, 96 )
+				Default
+					SetColor( 255, 255, 255 )
+			End Select
+			SetAlpha( 0.15*alpha_override )
+			Local glow_scale# = 0.3*scale_override*(img.width-2)/17.0
+			SetScale( glow_scale, glow_scale )
+			DrawImage( get_image( "halo" ), pos_x, pos_y )
+		End If
 		'widgets behind
 		If Not hide_widgets
 			For Local widget_list:TList = EachIn all_widget_lists
@@ -294,12 +297,14 @@ Type COMPLEX_AGENT Extends AGENT
 			left_track.draw( alpha_override, scale_override )
 			right_track.draw( alpha_override, scale_override )
 		End If
-		'chassis
-		SetColor( 255, 255, 255 )
-		SetAlpha( alpha_override )
-		SetScale( scale_override, scale_override )
-		SetRotation( ang )
-		If img <> Null Then DrawImage( img, pos_x, pos_y )
+		'chassis image
+		If img
+			SetColor( 255, 255, 255 )
+			SetAlpha( alpha_override )
+			SetScale( scale_override, scale_override )
+			SetRotation( ang )
+			DrawImage( img, pos_x, pos_y )
+		End If
 		'widgets in front of
 		If Not hide_widgets
 			For Local widget_list:TList = EachIn all_widget_lists

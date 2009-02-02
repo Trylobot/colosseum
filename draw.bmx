@@ -586,11 +586,11 @@ Function draw_percentage_bar( x%, y%, w%, h%, pct#, a# = 1.0, r% = 255, g% = 255
 	End If
 End Function
 
-Function draw_scrollbar( x%, y%, w%, h%, total_size%, window_offset%, window_size% )
+Function draw_scrollbar( x%, y%, w%, h%, total_size%, window_offset%, window_size%, r% = 64, g% = 64, b% = 64 )
 	SetLineWidth( 1 )
 	Local offset# = (h-2*border_width)*Float(window_offset)/Float(total_size)
 	Local size# = (h-2*border_width)*Float(window_size)/Float(total_size)
-	SetColor( 64, 64, 64 )
+	SetColor( r, g, b )
 	SetAlpha( 1 )
 	DrawRectLines( x, y, w, h )
 	SetAlpha( 0.3333 )
@@ -598,7 +598,7 @@ Function draw_scrollbar( x%, y%, w%, h%, total_size%, window_offset%, window_siz
 	DrawRect( ..
 		x+border_width, y+border_width, ..
 		w-2*border_width, h-2*border_width )
-	SetColor( 64, 64, 64 )
+	SetColor( r, g, b )
 	SetAlpha( 1 )
 	DrawRect( ..
 		x+border_width + 1, y+border_width + offset + 1, ..
@@ -646,7 +646,6 @@ Function DrawText_with_glow( str$, x%, y% )
 End Function
 
 Function DrawLine_awesome( x1#, y1#, x2#, y2# )
-	SetAlpha( 1 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	SetColor( 0, 0, 0 )

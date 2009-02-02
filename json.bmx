@@ -2,23 +2,19 @@ Rem
 	json.bmx
 	This is a COLOSSEUM project BlitzMax source file.
 	original author: grable
-	author: Tyler W Cole
-	Downloaded from http://www.blitzbasic.com/codearcs/codearcs_bmx/2066.bmx at 12:57 PM on Sunday, August 24th, 2008
+	derivative author: Tyler W Cole
+	downloaded from http://www.blitzbasic.com/codearcs/codearcs_bmx/2066.bmx at 12:57 PM on Sunday, August 24th, 2008
 EndRem
 
 'SuperStrict
 
-'Import brl.LinkedList
-'Import brl.Map
+'Import BRL.LinkedList
+'Import BRL.Map
 
 Rem
-**********************************************************************************************************************************
-* JSON Reader/Writer and generic handling
-*
+
+	'TJSONValue is the generic container for all JSON data types
 	
-**********************************************************************************************************************************
-* TJSONValue is the generic container for all JSON data types
-*	
 	Type TJSONValue
 		' determines the type of value
 		Field Class:Int 
@@ -117,28 +113,8 @@ Rem
 		"users.joe.age"		' direct access
 		"users.joe.medals.0" 	' array index, arrays are 0 based
 	
-**********************************************************************************************************************************
-* usage example:
-*		
-	Local json:TJSON = TJSON.Create( "{ string: 'abc', number: 1.0, boolean: true, object: { field: null }, array: [1,2,3] }")
+endrem
 		
-	Print json.GetValue("string").ToString()			' prints "abc"
-	Print json.GetValue("object.field").ToString()	' prints "null"
-	Print json.GetValue("array").ToString()			' prints "[1,2,3]"
-	Print json.GetValue("array.1").ToString()			' prints "2"
-		
-**********************************************************************************************************************************
-* NOTES
-*
-	most of the TJSON.GetXXX methods returns the JSON NULL type on failure if not specified
-	all identifiers are CASE SENSITIVE
-	the parser is as close as i could get it with my current understanding of JSON, please let me know if i missed something
-	see the bottom of this source file for more examples, or check out http://json.org/ for more info on JSON
-	
-EndRem
-
-
-
 '
 ' JSON value classes
 '
@@ -1110,117 +1086,24 @@ Function Create_TJSONArray_from_String_array:TJSONArray( str$[] )
 	Next
 	Return arr
 End Function
-'
-'MARK: various test cases, each in its own Rem/EndRem block
-'
 
-'Print TJSON.Create( "[[0,0,0,0,0,0,0],[1,0,0,1,0]]" ).ToSource()
-'Print TJSON.Create( "{x:5,y:10,z:1658}" ).ToSource()
+Function Create_String_array_array_from_TJSONArray:String[][]( json:TJSONArray )
+	If json = Null Then Return Null
+	Local index%
+	Local arr$[][] = New String[][json.Size()]
+	For index = 0 To json.Size() - 1
+		Local jval:TJSONArray = TJSONArray( json.GetByIndex( index ))
+		If jval Then arr[index] = Create_String_array_from_TJSONArray( jval )
+	Next
+	Return arr
+End Function
 
-Rem
-Local array:TJSONValue = TJSONArray.Create( 4)
-array.SetByIndex( 0, TJSONString.Create( "string value"))
-array.SetByIndex( 1, TJSONNumber.Create( 1.5))
-array.SetByIndex( 2, TJSONBoolean.Create( True))
-array.SetByIndex( 3, TJSON.NIL)
+Function Create_TJSONArray_from_String_array_array:TJSONArray( str$[][] )
+	If Not str Then Return Null
+	Local arr:TJSONArray = TJSONArray.Create( str.Length )
+	For Local i% = 0 To str.Length - 1
+		arr.SetByIndex( i, Create_TJSONArray_from_String_array( str[i] ))
+	Next
+	Return arr
+End Function
 
-Local object_:TJSONValue = New TJSONObject
-object_.SetByName( "first", TJSONString.Create( "string value"))
-object_.SetByName( "second", TJSONNumber.Create( 1.5))
-object_.SetByName( "third", TJSONBoolean.Create( True))
-object_.SetByName( "fourth", TJSON.NIL)
-
-
-Local json:TJSON = TJSON.Create( New TJSONObject)
-json.Root.SetByName( "first", TJSONString.Create( "string value"))
-json.Root.SetByName( "second", TJSONNumber.Create( 1.5))
-json.Root.SetByName( "third", TJSONBoolean.Create( True))
-json.Root.SetByName( "fourth", TJSON.NIL)
-json.Root.SetByName( "array", array)
-json.Root.SetByName( "object", object_)
-
-Print json.ToSource()
-EndRem
-
-
-Rem
-Local jsop:TJSONParser = New TJSONParser
-Local json:TJSON = New TJSON
-jsop.Source = LoadString( "test.json")
-Print jsop.Source
-json.Root = jsop.Parse()
-If Not json.Root Then
-	Print "~noops"
-	End
-EndIf
-EndRem
-
-
-Rem
-Local json:TJSON = TJSON.Create( "[ 1,2,~q3.4 + 2~q,4,5 ]")
-Print "--------------------------------------------------------------------"
-Print json.ToSource()
-Print "--------------------------------------------------------------------"
-For Local s:String = EachIn json.GetArrayString("root")
-	Print s
-Next
-EndRem
-
-
-Rem
-Const TEST_JSON:String = ..
-"{" +..
-"	first: ~qString value~q," +..
-"	second: 1.5," +..
-"	third: true," +..
-"	fourth: null," +..
-"	~qthis is an array~q: [" +..
-"		~qstring value~q," +..
-"		1.5," +..
-"		true," +..
-"		null" +..
-"	]," +..
-"	~qthis is an object~q: {" +..
-"	first: ~qstring value~q," +..
-"	second: 1.5," +..
-"	third: true," +..
-"	fourth: null" +..
-"	}" +..
-"}"
-
-'Local json:TJSON = TJSON.Create( LoadString( "test.json"))
-Local json:TJSON = TJSON.Create( TEST_JSON)
-
-
-' change some values
-'json.SetValue( "fifth", New TJSONObject)
-'json.SetValue( "this is an array.4", New TJSONObject)
-'json.SetValue( "this is an object.fifth", New TJSONObject)
-
-Print "--------------------------------------------------------------------"
-Print json.ToString()
-Print "--------------------------------------------------------------------"
-Print json.ToSource()
-Print "--------------------------------------------------------------------"
-Print json.GetValue( "first").ToString()
-Print json.GetValue( "second").ToString()
-Print json.GetValue( "third").ToString()
-Print json.GetValue( "fourth").ToString()
-Print json.GetValue( "fifth").ToString()
-Print "--------------------------------------------------------------------"
-Print json.GetValue( "this is an array").ToString()
-Print "--------------------------------------------------------------------"
-Print json.GetValue( "this is an object").ToString()
-Print "--------------------------------------------------------------------"
-Print json.GetValue( "this is an array.0").ToString()
-Print json.GetValue( "this is an array.1").ToString()
-Print json.GetValue( "this is an array.2").ToString()
-Print json.GetValue( "this is an array.3").ToString()
-Print json.GetValue( "this is an array.4").ToString()
-Print "--------------------------------------------------------------------"
-Print json.GetValue( "this is an object.first").ToString()
-Print json.GetValue( "this is an object.second").ToString()
-Print json.GetValue( "this is an object.third").ToString()
-Print json.GetValue( "this is an object.fourth").ToString()
-Print json.GetValue( "this is an object.fifth").ToString()
-EndRem

@@ -181,6 +181,7 @@ Type MENU
 				End If
 			Next
 			If Not all_options_in_window
+				
 				draw_scrollbar( ..
 					x + width - scrollbar_width, ..
 					y + 3*margin + (1 + static_option_count)*(text_height_factor*title_font.Height()) + 0, ..

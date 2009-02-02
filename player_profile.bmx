@@ -132,6 +132,18 @@ Type PLAYER_PROFILE
 		End If
 	End Method
 	
+	Method set_vehicle_chassis( key$, is_unit% = False )
+		
+	End Method
+	
+	Method add_vehicle_turret( key$, anchor% )
+		
+	End Method
+	
+	Method remove_vehicle_turret( key$, anchor% )
+		
+	End Method
+	
 	Method generate_src_path$()
 		Return user_path + name + "." + saved_game_file_ext
 	End Method
@@ -141,18 +153,26 @@ Type PLAYER_PROFILE
 		this_json.SetByName( "name", TJSONString.Create( name ))
 		this_json.SetByName( "cash", TJSONNumber.Create( cash ))
 		this_json.SetByName( "kills", TJSONNumber.Create( kills ))
-		Local inv:TJSONArray = TJSONArray.Create( inventory.Length )
-		For Local i% = 0 To inventory.Length - 1
-			inv.SetByIndex( i, inventory[i].to_json() )
-		Next
-		this_json.SetByName( "inventory", inv )
+		If inventory
+			Local inv:TJSONArray = TJSONArray.Create( inventory.Length )
+			For Local i% = 0 Until inventory.Length
+				inv.SetByIndex( i, inventory[i].to_json() )
+			Next
+			this_json.SetByName( "inventory", inv )
+		Else
+			this_json.SetByName( "inventory", Null )
+		End If
 		this_json.SetByName( "vehicle", vehicle.to_json() )
 		this_json.SetByName( "input_method", TJSONNumber.Create( input_method ))
-		Local prog:TJSONArray = TJSONArray.Create( progress.Length )
-		For Local i% = 0 To progress.Length - 1
-			prog.SetByIndex( i, progress[i].to_json() )
-		Next
-		this_json.SetByName( "progress", prog )
+		If progress
+			Local prog:TJSONArray = TJSONArray.Create( progress.Length )
+			For Local i% = 0 Until progress.Length
+				prog.SetByIndex( i, progress[i].to_json() )
+			Next
+			this_json.SetByName( "progress", prog )
+		Else
+			this_json.SetByName( "progress", Null )
+		End If
 		this_json.SetByName( "campaign", TJSONString.Create( campaign ))
 		this_json.SetByName( "campaign_level", TJSONNumber.Create( campaign_level ))
 		Return this_json
@@ -185,9 +205,8 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 	Return prof
 End Function
 
+'PLAYER_PROFILE private classes
 '______________________________________________________________________________
-'helper classes
-'_________________
 Function Create_INVENTORY_DATA:INVENTORY_DATA( item_type$, key$, count% = 1 )
 	Local item:INVENTORY_DATA = New INVENTORY_DATA
 	item.item_type = item_type
@@ -226,55 +245,18 @@ Function Create_INVENTORY_DATA_from_json:INVENTORY_DATA( json:TJSON )
 	item.count = json.GetNumber( "count" )
 	Return item
 End Function
-'_________________
+
+'______________________________________________________________________________
 Type VEHICLE_DATA
 	Field chassis_key$
-	Field turrets:TURRET_DATA[]
-	
-	Method add_turret( td:TURRET_DATA )
-		If turrets
-			turrets = turrets[..turrets.Length+1]
-			turrets[turrets.Length-1] = td
-		Else
-			turrets = [ td ]
-		End If
-	End Method
-	
-	Method remove_turret( td:TURRET_DATA )
-'		For Local tur_index
-'			Local tur:TURRET_DATA
-'			If tur.eq( td )
-'				'found
-'				
-'				
-'				If turrets.Length > 1
-'					Local new_inventory:INVENTORY_DATA[turrets.Length - 1]
-'					If item_index > 0
-'						For Local i% = 0 To item_index - 1
-'							new_inventory[i] = turrets[i]
-'						Next
-'					End If
-'					If item_index < turrets.Length - 1
-'						For Local i% = item_index + 1 To turrets.Length - 1
-'							new_inventory[i - 1] = turrets[i]
-'						Next
-'					End If
-'					turrets = new_inventory
-'				Else 'inventory.Length <= 1
-'					turrets = Null
-'				End If
-'			End If
-'		Next
-	End Method
+	Field is_unit%
+	Field turret_key$[][]
 	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "chassis_key", TJSONString.Create( chassis_key ))
-		Local turs:TJSONArray = TJSONArray.Create( turrets.Length )
-		For Local i% = 0 To turrets.Length - 1
-			turs.SetByIndex( i, turrets[i].to_json() )
-		Next
-		this_json.SetByName( "turrets", turs )
+		this_json.SetByName( "is_unit", TJSONBoolean.Create( is_unit ))
+		this_json.SetByName( "turret_key", Create_TJSONArray_from_String_array_array( turret_key ))
 		Return this_json
 	End Method
 End Type
@@ -282,37 +264,12 @@ End Type
 Function Create_VEHICLE_DATA_from_json:VEHICLE_DATA( json:TJSON )
 	Local vd:VEHICLE_DATA = New VEHICLE_DATA
 	vd.chassis_key = json.GetString( "chassis_key" )
-	Local ts:TJSONArray = json.GetArray( "turrets" )
-	vd.turrets = New TURRET_DATA[ ts.Size() ]
-	For Local i% = 0 To vd.turrets.Length - 1
-		vd.turrets[i] = Create_TURRET_DATA_from_json( TJSON.Create( ts.GetByIndex( i )))
-	Next
+	vd.is_unit = json.GetBoolean( "is_unit" )
+	vd.turret_key = Create_String_array_array_from_TJSONArray( json.GetArray( "turret_key" ))
 	Return vd
 End Function
-'________________
-Type TURRET_DATA
-	Field turret_key$
-	Field anchor%
-	
-	Method eq%( other:TURRET_DATA )
-		Return (turret_key = other.turret_key And anchor = other.anchor)
-	End Method
-	
-	Method to_json:TJSONObject()
-		Local this_json:TJSONObject = New TJSONObject
-		this_json.SetByName( "turret_key", TJSONString.Create( turret_key ))
-		this_json.SetByName( "anchor", TJSONNumber.Create( anchor ))
-		Return this_json
-	End Method
-End Type
 
-Function Create_TURRET_DATA_from_json:TURRET_DATA( json:TJSON )
-	Local td:TURRET_DATA = New TURRET_DATA
-	td.turret_key = json.GetString( "turret_key" )
-	td.anchor = json.GetNumber( "anchor" )
-	Return td
-End Function
-'__________________
+'______________________________________________________________________________
 Type PROGRESS_DATA
 	Field campaign_key$
 	Field completed%[]

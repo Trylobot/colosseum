@@ -22,31 +22,33 @@ Type PHYSICAL_OBJECT Extends POINT
 			force_list.Clear()
 			Return
 		End If
-		'reset acceleration and angular acceleration
-		acc_x = 0; acc_y = 0; ang_acc = 0
-		'net force and torque
-		For Local f:FORCE = EachIn force_list
-			f.update()
-			If f.managed()
-				Select f.physics_type
-					Case PHYSICS_FORCE
-						If f.combine_ang_with_parent_ang
-							acc_x :+ f.magnitude_cur*Cos( f.direction + ang ) / mass
-							acc_y :+ f.magnitude_cur*Sin( f.direction + ang ) / mass
-						Else
-							acc_x :+ f.magnitude_cur*Cos( f.direction ) / mass
-							acc_y :+ f.magnitude_cur*Sin( f.direction ) / mass
-						End If
-					Case PHYSICS_TORQUE
-						ang_acc :+ f.magnitude_cur / mass
-				End Select
-			End If
-		Next
-		'friction
-		acc_x :+ frictional_coefficient*( -vel_x ) / mass ..
-		acc_y :+ frictional_coefficient*( -vel_y ) / mass ..
-		'angular friction
-		ang_acc :+ frictional_coefficient*( -ang_vel ) / mass ..
+		If Not force_list.IsEmpty()
+			'reset acceleration and angular acceleration
+			acc_x = 0; acc_y = 0; ang_acc = 0
+			'net force and torque
+			For Local f:FORCE = EachIn force_list
+				f.update()
+				If f.managed()
+					Select f.physics_type
+						Case PHYSICS_FORCE
+							If f.combine_ang_with_parent_ang
+								acc_x :+ f.magnitude_cur*Cos( f.direction + ang ) / mass
+								acc_y :+ f.magnitude_cur*Sin( f.direction + ang ) / mass
+							Else
+								acc_x :+ f.magnitude_cur*Cos( f.direction ) / mass
+								acc_y :+ f.magnitude_cur*Sin( f.direction ) / mass
+							End If
+						Case PHYSICS_TORQUE
+							ang_acc :+ f.magnitude_cur / mass
+					End Select
+				End If
+			Next
+			'friction
+			acc_x :+ frictional_coefficient*( -vel_x ) / mass
+			acc_y :+ frictional_coefficient*( -vel_y ) / mass
+			'angular friction
+			ang_acc :+ frictional_coefficient*( -ang_vel ) / mass
+		End If
 		'update point variables
 		Super.update()
 	End Method
