@@ -53,6 +53,8 @@ Function level_editor( lev:LEVEL )
 	SetImageFont( normal_font )
 	Local line_h% = GetImageFont().Height() - 1
 	
+	Local kill_signal% = False
+	
 	Repeat
 		Cls
 		
@@ -667,8 +669,10 @@ Function level_editor( lev:LEVEL )
 		End If
 
 		Flip( 1 )
-	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
-	If AppTerminate() Then End
+		
+		kill_signal = AppTerminate()
+	Until KeyHit( KEY_ESCAPE ) Or kill_signal
+	If kill_signal Then End
 	
 End Function
 

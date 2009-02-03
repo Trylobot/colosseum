@@ -9,10 +9,6 @@ Const ANCHOR_HOVER_RADIUS% = 100
 Const CHASSIS_HOVER_RADIUS% = 125
 Const INVENTORY_SIDEBAR_WIDTH% = 190
 
-Function show_error( err$ )
-	DebugLog err
-End Function
-
 Function vehicle_editor( v_dat:VEHICLE_DATA )
 	Local mouse:POINT = Create_POINT( MouseX(), MouseY() )
 	Local mouse_dragging%
@@ -23,6 +19,7 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 	mouse_shadow.add_turret_anchor( cVEC.Create( 0, 0 ))
 	Local mouse_items:INVENTORY_DATA[]
 	Local title$ = "customize vehicle"
+	Local kill_signal%
 	
 	'cache inventory items
 	Local inventory:POINT[profile.inventory.Length]
@@ -40,6 +37,27 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 				t.set_images_unfiltered()
 				inventory[i] = t
 		End Select
+	Next
+	
+	'chassis being used
+	For Local i% = 0 Until profile.inventory.Length
+		'chassis search
+		If profile.inventory[i].item_type = "chassis" And profile.inventory[i].key = v_dat.chassis_key
+			unused_inventory_count[i] :- 1
+			Exit 'only 1 could be possible; done
+		End If
+	Next
+	'turrets being used
+	For Local i% = 0 Until profile.inventory.Length
+		For Local anchor% = 0 Until v_dat.turret_key.Length
+			If v_dat.turret_key[anchor]
+				For Local t% = 0 Until v_dat.turret_key[anchor].Length
+					If profile.inventory[i].item_type = "turret" And profile.inventory[i].key = v_dat.turret_key[anchor][t]
+						unused_inventory_count[i] :- 1
+					End If
+				Next
+			End If
+		Next
 	Next
 	
 	SetClsColor( 19, 19, 33 )
@@ -87,12 +105,12 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 		SetAlpha( 1 )
 		SetRotation( 0 )
 		SetScale( 1, 1 )
-		SetImageFont( get_font( "consolas_14" ))
-		SetColor( 127, 127, 127 )
+		SetImageFont( get_font( "consolas_italic_18" ))
+		SetColor( 127, 127, 164 )
 		DrawText_with_outline( "inventory", 10, 60 )
 		SetColor( 255, 255, 255 )
 		SetImageFont( get_font( "consolas_12" ))
-		Local inv_y% = 80
+		Local inv_y% = 84
 		For Local i% = 0 Until inventory.Length
 			Local name$ = ""
 			If COMPLEX_AGENT(inventory[i]) Then name = COMPLEX_AGENT(inventory[i]).name
@@ -103,7 +121,9 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 				If unused_inventory_count[i] > 1 Then name = "("+format_number(unused_inventory_count[i])+") "+name
 			End If
 			Local listing_rect:BOX = Create_BOX( 5, inv_y + i*TextHeight(name), TextWidth(name) + 10, 12 )
+			'if hovering over the inventory listing and it has not yet been used ..
 			If Not mouse_dragging ..
+			And unused_inventory_count[i] > 0 ..
 			And mouse.pos_x >= listing_rect.x And mouse.pos_x <= listing_rect.x + listing_rect.w ..
 			And mouse.pos_y >= listing_rect.y And mouse.pos_y <= listing_rect.y + listing_rect.h
 				If hover_inventory_listing < 0 Then hover_inventory_listing = i
@@ -137,7 +157,12 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 				DrawRectLines( listing_rect.x, listing_rect.y, listing_rect.w, listing_rect.h )
 			End If
 			SetAlpha( 1 )
-			'draw the text of the item description
+			If unused_inventory_count[i] <= 0
+				SetColor( 96, 96, 96 )
+			Else
+				SetColor( 255, 255, 255 )
+			End If
+			'regardless of the hover state, show the text of the item's description
 			DrawText_with_outline( name, 10, inv_y + i*TextHeight(name) )
 		Next
 		
@@ -149,20 +174,22 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 		If Not mouse_dragging And MouseDown( 1 ) And Not mouse_down_1 'STARTED a drag
 			mouse_dragging = True
 			mouse_shadow.remove_all_turrets()
-			If closest_turret_anchor 'started a drag op near a turret anchor
-				'attach a copy of any turret attached to the closest anchor to the mouse shadow
-				mouse_items = New INVENTORY_DATA[v_dat.turret_key[closest_turret_anchor_i].Length]
-				For Local i% = 0 Until v_dat.turret_key[closest_turret_anchor_i].Length
-					mouse_items[i] = Create_INVENTORY_DATA( "turret", v_dat.turret_key[closest_turret_anchor_i][i] )
-					mouse_shadow.add_turret( get_turret( v_dat.turret_key[closest_turret_anchor_i][i] ), closest_turret_anchor_i )
-				Next
-				mouse_shadow.set_images_unfiltered()
+			If closest_turret_anchor And Not v_dat.is_unit 'started a drag op near a turret anchor
 				'remove the turrets from the vehicle data and refresh the player object
-				Local result$ = v_dat.remove_turrets( closest_turret_anchor_i )
-				If result <> "success" 
-					show_error( result )
-				Else 'Not error
+				Local result:Object = v_dat.remove_turrets( closest_turret_anchor_i )
+				If String[](result)
 					player = bake_player( v_dat )
+					Local returned_turret_keys$[] = String[](result)
+					'attach a copy of any turret attached to the closest anchor to the mouse shadow
+					mouse_items = New INVENTORY_DATA[returned_turret_keys.Length]
+					For Local i% = 0 Until returned_turret_keys.Length
+						mouse_items[i] = Create_INVENTORY_DATA( "turret", returned_turret_keys[i] )
+						mouse_shadow.add_turret( get_turret( mouse_items[i].key ), closest_turret_anchor_i )
+					Next
+					mouse_shadow.set_images_unfiltered()
+					DebugLog " dragging turrets:[ "+", ".Join(returned_turret_keys)+" ] from anchor "+closest_turret_anchor_i
+				Else If String(result)
+					show_error( String(result) )
 				End If
 			Else If hover_inventory_listing >= 0 'started a drag op near an inventory item
 				dragging_inventory_i = hover_inventory_listing
@@ -178,20 +205,29 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 					mouse_shadow.set_images_unfiltered()
 					mouse_items = [ profile.inventory[hover_inventory_listing].clone() ]
 				End If
+				DebugLog " dragging item:"+profile.inventory[hover_inventory_listing].to_json().ToString()
 			End If
 		Else If mouse_dragging And Not MouseDown( 1 ) And mouse_down_1 'FINISHED a drag
 			mouse_dragging = False
 			If mouse_shadow.img And chassis_hover 'finished a drag op near the chassis with a chassis
-				Local is_unit% = False
-				v_dat.set( mouse_items[0].key, is_unit ) 'change the chassis
+				'return the current chassis to the inventory
+				For Local i% = 0 Until profile.inventory.Length
+					If profile.inventory[i].key = mouse_items[0].key
+						unused_inventory_count[i] :+ 1
+						Exit
+					End If
+				Next
+				v_dat.set( mouse_items[0].key, False ) 'change the chassis
 				player = bake_player( v_dat )
-			Else If closest_turret_anchor 'finished a drag op near a turret anchor with turret(s)
+				DebugLog " changed chassis to "+mouse_items[0].key
+			Else If closest_turret_anchor And Not v_dat.is_unit 'finished a drag op near a turret anchor with turret(s)
 				If dragging_inventory_i >= 0 'dragging from INVENTORY
 					Local result$ = v_dat.add_turret( profile.inventory[dragging_inventory_i].key, closest_turret_anchor_i )
-					If result <> "success" 
-						show_error( result )
-					Else 'Not error
+					If result = "success" 
 						player = bake_player( v_dat )
+						DebugLog " added turret "+profile.inventory[dragging_inventory_i].key+" to anchor "+closest_turret_anchor_i
+					Else 'Not error
+						show_error( result )
 					End If
 				Else 'dragging from EXISTING CHASSIS (potentially many turrets)
 					'attach the turrets to the player at the nearest anchor
@@ -199,11 +235,10 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 					For Local k% = 0 Until mouse_items.Length
 						new_turret_keys[k] = mouse_items[k].key
 					Next
-					Local error$
 					Local returned_turret_keys$[]
-					Local returned_value:Object = v_dat.replace_turrets( new_turret_keys, closest_turret_anchor_i )
-					If String[](returned_value)
-						returned_turret_keys = String[](returned_value)
+					Local result:Object = v_dat.replace_turrets( new_turret_keys, closest_turret_anchor_i )
+					If String[](result)
+						returned_turret_keys = String[](result)
 						player = bake_player( v_dat )
 						For Local r% = 0 Until returned_turret_keys.Length
 							Local item:INVENTORY_DATA = Create_INVENTORY_DATA( "turret", returned_turret_keys[r] )
@@ -213,22 +248,25 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 								End If
 							Next
 						Next
-					Else If String(returned_value) 'error
-						error = String(returned_value)
-						show_error( error )
+						DebugLog " added turrets:[ "+", ".Join(returned_turret_keys)+" ] to anchor "+closest_turret_anchor_i
+					Else If String(result) 'error
+						show_error( String(result) )
 					End If
 				End If
-			Else If mouse.pos_x <= INVENTORY_SIDEBAR_WIDTH 'finished a drag op in the inventory sidebar with {anything}
+			Else If Not v_dat.is_unit 'finished a drag near neither the chassis nor any of its turret anchors; drop it into the inventory
 				If dragging_inventory_i >= 0 'dragging from inventory
 					unused_inventory_count[dragging_inventory_i] :+ 1
-				Else
-					For Local m% = 0 To mouse_items.Length
+				Else If mouse_items 'dragging from chassis anchor
+					Local item_strings$[mouse_items.Length]
+					For Local m% = 0 Until mouse_items.Length
 						For Local i% = 0 Until profile.inventory.Length
 							If mouse_items[m].eq( profile.inventory[i] )
 								unused_inventory_count[i] :+ 1
 							End If
 						Next
+						item_strings[m] = mouse_items[m].to_json().ToString()
 					Next
+					DebugLog " returned items:[ "+", ".Join(item_strings)+" ] to the inventory"
 				End If
 			End If
 			'reset the mouse shadow
@@ -283,8 +321,10 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 		End If
 		
 		Flip( 1 )
-	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
-	End
+		
+		kill_signal = AppTerminate()
+	Until KeyHit( KEY_ESCAPE ) Or kill_signal
+	If kill_signal Then End
 	
 	SetClsColor( 0, 0, 0 )
 End Function
@@ -295,10 +335,15 @@ Function bake_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, abort_on_error% = False 
 	player.move_to( Create_POINT( window_w/2, window_h/2, 0 ), True )
 	player.update()
 	?Debug
-	DebugLog "bake_player________~n"+v_dat.to_json().ToSource()
+	DebugLog " bake_player()~n"+v_dat.to_json().ToSource()
 	?
 	Return player
 End Function
+
+Function show_error( err$ )
+	DebugLog " "+err
+End Function
+
 
 'helper classes
 '____________________________

@@ -246,12 +246,13 @@ Type VEHICLE_DATA
 	End Method
 	
 	Method add_turret$( key$, anchor% ) 'returns error message if unsuccessful
+DebugStop
 		'stock unit
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
 		If anchor < turret_key.Length
 			Local t:TURRET = get_turret( key )
-			If Not t Then Return "FATAL ERROR. TURRET NOT FOUND."
-			If turret_key[anchor] = Null
+			If Not t Then Return "FATAL ERROR: turret_map["+key+"] not found."
+			If Not turret_key[anchor]
 				If t.priority = TURRET.PRIMARY
 					turret_key[anchor] = [ key, "" ]
 				Else If t.priority = TURRET.SECONDARY
@@ -263,11 +264,11 @@ Type VEHICLE_DATA
 					Return "This turret won't fit onto that chassis."
 				End If
 				'adding a primary turret can only be done if there are no turrets at all attached to this anchor
-				If turrets_of_priority_attached_to_anchor( TURRET.PRIMARY, anchor ) <= 0
+				If turrets_of_priority_attached_to_anchor( TURRET.PRIMARY, anchor ) >= 1
 					Return "That socket already has a large turret."
 				End If
 				'adding a secondary turret can only be done if there are no secondary turrets attached to this anchor
-				If turrets_of_priority_attached_to_anchor( TURRET.SECONDARY, anchor ) <= 0
+				If turrets_of_priority_attached_to_anchor( TURRET.SECONDARY, anchor ) >= 1
 					Return "That socket already has a small turret."
 				End If
 				'all good, add it
@@ -278,7 +279,7 @@ Type VEHICLE_DATA
 				End If
 			End If
 		End If
-		Return Null 'no error
+		Return "success"
 	End Method
 	
 	Method replace_turrets:Object( keys$[], anchor% ) 'returns the old array if successful
@@ -298,12 +299,13 @@ Type VEHICLE_DATA
 		Return old_turrets 'success
 	End Method
 	
-	Method remove_turrets$( anchor% )
+	Method remove_turrets:Object( anchor% ) 'returns the old array if successful
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
+		Local old_turrets$[] = turret_key[anchor][..]
 		If anchor < turret_key.Length
 			turret_key[anchor] = Null
 		End If
-		Return Null 'success
+		Return old_turrets
 	End Method
 	
 	Method chassis_compatible_with_turret%( key$ ) 'checks the compatibility array for the existence of the given turret key
