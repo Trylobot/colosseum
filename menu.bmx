@@ -7,6 +7,7 @@ EndRem
 '______________________________________________________________________________
 Const border_width% = 1
 Const scrollbar_width% = 20
+Const text_height_factor# = 0.70
 
 Type MENU
 	Const VERTICAL_LIST% = 10
@@ -126,10 +127,9 @@ Type MENU
 	Method draw( x%, y%, border% = True, dark_overlay_alpha# = 0 )
 		last_x = x; last_y = y
 		Local cx% = x, cy% = y, opt:MENU_OPTION
-		Local text_height_factor# = 0.70
 		'calculate dimensions
 		If Not dimensions_cached
-			calculate_dimensions( text_height_factor )
+			calculate_dimensions()
 		End If
 		'draw the borders, backgrounds and title text
 		SetImageFont( title_font )
@@ -172,25 +172,20 @@ Type MENU
 			End If
 		Next
 		'draw scrollable subsection visual cues
-		If is_scrollable( menu_type )
-			Local all_options_in_window% = True
-			For Local i% = 0 To options.Length
-				If Not option_is_in_window( i )
-					all_options_in_window = False
-					Exit
-				End If
-			Next
-			If Not all_options_in_window
-				
-				draw_scrollbar( ..
-					x + width - scrollbar_width, ..
-					y + 3*margin + (1 + static_option_count)*(text_height_factor*title_font.Height()) + 0, ..
-					scrollbar_width, ..
-					height - (3*margin + 2*(text_height_factor*title_font.Height())) + 1, ..
-					options.Length - static_option_count, ..
-					scroll_offset, ..
-					dynamic_options_displayed )
+		If is_scrollable( menu_type ) And Not all_options_in_window()
+			Local scrollbar_rect:BOX = get_scrollbar_rect( x, y )
+			Local color% = 64
+			If  mouse.x >= scrollbar_rect.x And mouse.x <= scrollbar_rect.x + scrollbar_rect.w ..
+			And mouse.y >= scrollbar_rect.y And mouse.y <= scrollbar_rect.y + scrollbar_rect.h
+				color = 196
 			End If
+			draw_scrollbar( ..
+				scrollbar_rect.x, scrollbar_rect.y, ..
+				scrollbar_rect.w, scrollbar_rect.h, ..
+				options.Length - static_option_count, ..
+				scroll_offset, ..
+				dynamic_options_displayed, ..
+				color, color, color )
 		End If
 		'text input stuff
 		If menu_type = TEXT_INPUT_DIALOG
@@ -216,7 +211,7 @@ Type MENU
 		DrawRect( x-border_width,y-border_width, width,height )
 	End Method
 	
-	Method calculate_dimensions( text_height_factor# = 1.0 )
+	Method calculate_dimensions()
 		dimensions_cached = True
 		width = 0
 		height = 0
@@ -252,6 +247,14 @@ Type MENU
 	
 	Method recalculate_dimensions() 'forces a re-calculation of the window dimensions at the next draw step
 		Self.dimensions_cached = False
+	End Method
+	
+	Method get_scrollbar_rect:BOX( menu_x%, menu_y% )
+		Return Create_BOX( ..
+			menu_x + width - scrollbar_width, ..
+			menu_y + 3*margin + (1 + static_option_count)*(text_height_factor*title_font.Height()) + 0, ..
+			scrollbar_width, ..
+			height - (3*margin + 2*(text_height_factor*title_font.Height())) + 1 )	
 	End Method
 	
 	Method update( initial_update% = False )
@@ -456,18 +459,32 @@ Type MENU
 		Local opt_box:BOX
 		For Local i% = 0 To bounding_box.Length - 1
 			opt_box = bounding_box[i]
-			If opt_box <> Null ..
-			And x >= opt_box.x And x <= opt_box.x + opt_box.w ..
-			And y >= opt_box.y And y <= opt_box.y + opt_box.h
-				If i < options.Length And options[i].visible And options[i].enabled And menu_type <> TEXT_INPUT_DIALOG
-					focus = i
-					Return True
-				Else
-					Return False
+			If opt_box
+				opt_box = opt_box.clone()
+				If is_scrollable( menu_type ) And Not all_options_in_window()
+					opt_box.w :- scrollbar_width
+				End If
+				If  x >= opt_box.x And x <= opt_box.x + opt_box.w ..
+				And y >= opt_box.y And y <= opt_box.y + opt_box.h
+					If i < options.Length And options[i].visible And options[i].enabled And menu_type <> TEXT_INPUT_DIALOG
+						focus = i
+						Return True
+					Else
+						Return False
+					End If
 				End If
 			End If
 		Next
 		Return False
+	End Method
+	
+	Method all_options_in_window%()
+		For Local i% = 0 To options.Length
+			If Not option_is_in_window( i )
+				Return False
+			End If
+		Next
+		Return True
 	End Method
 	
 End Type

@@ -41,9 +41,9 @@ Function get_all_input()
 		If KeyHit( KEY_ESCAPE ) And current_menu <> 0 And get_current_menu().menu_id <> MENU_ID_PAUSED
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		End If
-		If KeyHit( KEY_DOWN ) 'Or KeyHit( KEY_RIGHT )
+		If KeyHit( KEY_DOWN )
 			m.increment_focus()
-		Else If KeyHit( KEY_UP ) 'Or KeyHit( KEY_LEFT )
+		Else If KeyHit( KEY_UP )
 			m.decrement_focus()
 		End If
 		If KeyHit( KEY_ENTER )
