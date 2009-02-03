@@ -70,6 +70,15 @@ Type PLAYER_PROFILE
 		End Select
 	End Method
 	
+	Method checklist%( item_list:TList )
+		For Local item:INVENTORY_DATA = EachIn item_list
+			If count_inventory( item ) < item.count
+				Return False 'not enough of an item
+			End If
+		Next
+		Return True 'everything checks out
+	End Method
+	
 	Method count_inventory%( query_item:INVENTORY_DATA )
 		Local q% = search_inventory( query_item )
 		Local item:INVENTORY_DATA
