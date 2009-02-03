@@ -176,7 +176,7 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 			mouse_shadow.remove_all_turrets()
 			dragging_inventory_i = -1
 			
-			If closest_turret_anchor And Not v_dat.is_unit 'And v_dat.count_turrets( closest_turret_anchor_i ) > 0 'started a drag op near a turret anchor
+			If closest_turret_anchor And Not v_dat.is_unit And v_dat.count_turrets( closest_turret_anchor_i ) > 0 'started a drag op near a turret anchor
 				'remove the turrets from the vehicle data and refresh the player object
 				Local returned_turret_keys$[] = v_dat.get_turrets( closest_turret_anchor_i )
 				Local result$ = v_dat.remove_turrets( closest_turret_anchor_i )

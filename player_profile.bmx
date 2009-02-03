@@ -352,7 +352,7 @@ Type VEHICLE_DATA
 			If turret_keys[anchor]
 				Local count% = 0
 				For Local key$ = EachIn turret_keys[anchor]
-					If key Then count :+ 1
+					If get_turret( key, False ) Then count :+ 1
 				Next
 				Return count
 			Else
