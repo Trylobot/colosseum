@@ -10,6 +10,7 @@ Type PLAYER_PROFILE
 	Field cash%
 	Field kills%
 	Field inventory:INVENTORY_DATA[]
+	Field damaged_inventory:INVENTORY_DATA[]
 	Field vehicle:VEHICLE_DATA
 	Field input_method%
 	Field progress:PROGRESS_DATA[]
@@ -150,6 +151,15 @@ Type PLAYER_PROFILE
 		Else
 			this_json.SetByName( "inventory", Null )
 		End If
+		If damaged_inventory
+			Local inv:TJSONArray = TJSONArray.Create( damaged_inventory.Length )
+			For Local i% = 0 Until damaged_inventory.Length
+				inv.SetByIndex( i, damaged_inventory[i].to_json() )
+			Next
+			this_json.SetByName( "damaged_inventory", inv )
+		Else
+			this_json.SetByName( "damaged_inventory", Null )
+		End If
 		this_json.SetByName( "vehicle", vehicle.to_json() )
 		this_json.SetByName( "input_method", TJSONNumber.Create( input_method ))
 		If progress
@@ -177,6 +187,13 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 		prof.inventory = New INVENTORY_DATA[ inv.Size() ]
 		For Local i% = 0 To prof.inventory.Length - 1
 			prof.inventory[i] = Create_INVENTORY_DATA_from_json( TJSON.Create( inv.GetByIndex( i )))
+		Next
+	End If
+	inv = json.GetArray( "damaged_inventory" )
+	If inv
+		prof.damaged_inventory = New INVENTORY_DATA[ inv.Size() ]
+		For Local i% = 0 To prof.damaged_inventory.Length - 1
+			prof.damaged_inventory[i] = Create_INVENTORY_DATA_from_json( TJSON.Create( inv.GetByIndex( i )))
 		Next
 	End If
 	prof.vehicle = Create_VEHICLE_DATA_from_json( TJSON.Create( json.GetObject( "vehicle" )))
@@ -246,9 +263,15 @@ Type VEHICLE_DATA
 	Field is_unit%
 	Field turret_keys$[][]
 	
-	Method set( new_chassis_key$, new_is_unit% = False )
+	Method set_chassis( new_chassis_key$, new_is_unit% = False )
 		chassis_key = new_chassis_key
 		is_unit = new_is_unit
+		If Not is_unit
+			Local cmp_ag:COMPLEX_AGENT = get_player_chassis( chassis_key )
+			If cmp_ag Then turret_keys = New String[][cmp_ag.turret_anchors.Length]
+		Else
+			turret_keys = Null
+		End If
 	End Method
 	
 	Method add_turret$( key$, anchor% ) 'returns error message if unsuccessful
@@ -289,8 +312,8 @@ Type VEHICLE_DATA
 		Return "success"
 	End Method
 	
-	Method replace_turrets:Object( keys$[], anchor% ) 'returns the old array if successful
-DebugStop
+	Method replace_turrets$( keys$[], anchor%, old_keys$[] Var ) 'returns the old array if successful
+		If Not keys Then Return Null
 		'stock unit
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
 		'if any of the turrets are incompatible, abort with error
@@ -300,20 +323,24 @@ DebugStop
 			End If
 		Next
 		'all good, replace it
-		Local old_turrets$[] = turret_keys[anchor][..]
-		If anchor < turret_keys.Length
-			turret_keys[anchor] = keys
+		If turret_keys
+			old_keys = turret_keys[anchor][..]
+			If anchor < turret_keys.Length
+				turret_keys[anchor] = keys[..]
+			End If
 		End If
-		Return old_turrets 'success
+		Return "success"
 	End Method
 	
-	Method remove_turrets:Object( anchor% ) 'returns the old array if successful
+	Method remove_turrets$( anchor%, old_keys$[] Var ) 'returns the old array if successful
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
-		Local old_turrets$[] = turret_keys[anchor][..]
-		If anchor < turret_keys.Length
-			turret_keys[anchor] = Null
+		If turret_keys
+			old_keys = turret_keys[anchor][..]
+			If anchor < turret_keys.Length
+				turret_keys[anchor] = Null
+			End If
 		End If
-		Return old_turrets
+		Return "success"
 	End Method
 	
 	Method chassis_compatible_with_turret%( key$ ) 'checks the compatibility array for the existence of the given turret key
@@ -340,7 +367,11 @@ DebugStop
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "chassis_key", TJSONString.Create( chassis_key ))
 		this_json.SetByName( "is_unit", TJSONBoolean.Create( is_unit ))
-		this_json.SetByName( "turret_keys", Create_TJSONArray_from_String_array_array( turret_keys ))
+		If turret_keys
+			this_json.SetByName( "turret_keys", Create_TJSONArray_from_String_array_array( turret_keys ))
+		Else
+			this_json.SetByName( "turret_keys", Null )
+		End If
 		Return this_json
 	End Method
 End Type
@@ -349,6 +380,7 @@ Function Create_VEHICLE_DATA_from_json:VEHICLE_DATA( json:TJSON )
 	Local vd:VEHICLE_DATA = New VEHICLE_DATA
 	vd.chassis_key = json.GetString( "chassis_key" )
 	vd.is_unit = json.GetBoolean( "is_unit" )
+	vd.set_chassis( vd.chassis_key, vd.is_unit )
 	vd.turret_keys = Create_String_array_array_from_TJSONArray( json.GetArray( "turret_keys" ))
 	Return vd
 End Function

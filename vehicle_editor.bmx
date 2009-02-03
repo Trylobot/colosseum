@@ -178,13 +178,14 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 			
 			If closest_turret_anchor And Not v_dat.is_unit 'started a drag op near a turret anchor
 				'remove the turrets from the vehicle data and refresh the player object
-				Local result:Object = v_dat.remove_turrets( closest_turret_anchor_i )
-				If result
+				Local returned_turret_keys$[]
+				Local result$ = v_dat.remove_turrets( closest_turret_anchor_i, returned_turret_keys )
+				If result = "success" 'removed turrets successfully
 					dragging_anchor = closest_turret_anchor_i
-					If String[](result)
-						player = bake_player( v_dat )
-						Local returned_turret_keys$[] = String[](result)
-						'attach a copy of any turret attached to the closest anchor to the mouse shadow
+					player = bake_player( v_dat )
+					DebugLog " dragging turrets:[ "+", ".Join(returned_turret_keys)+" ] from anchor "+closest_turret_anchor_i
+					'attach a copy of any turret attached to the closest anchor to the mouse shadow
+					If returned_turret_keys
 						mouse_items = New INVENTORY_DATA[returned_turret_keys.Length]
 						For Local i% = 0 Until returned_turret_keys.Length
 							mouse_items[i] = Create_INVENTORY_DATA( "turret", returned_turret_keys[i] )
@@ -194,12 +195,11 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 							End If
 						Next
 						mouse_shadow.set_images_unfiltered()
-						DebugLog " dragging turrets:[ "+", ".Join(returned_turret_keys)+" ] from anchor "+closest_turret_anchor_i
-					Else If String(result)
-						show_error( String(result) )
 					End If
+				Else 'error
+					show_error( result )
 				End If
-			
+				
 			Else If hover_inventory_listing >= 0 'started a drag op near an inventory item
 				dragging_inventory_i = hover_inventory_listing
 				unused_inventory_count[hover_inventory_listing] :- 1
@@ -220,7 +220,7 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 		Else If mouse_dragging And Not MouseDown( 1 ) And mouse_down_1 'FINISHED a drag
 			mouse_dragging = False
 			
-			If mouse_shadow.img And chassis_hover 'finished a drag op near the chassis with a chassis
+			If mouse_shadow.img And chassis_hover 'dropped a chassis on the chassis
 				'return the current chassis to the inventory
 				For Local i% = 0 Until profile.inventory.Length
 					If profile.inventory[i].key = v_dat.chassis_key
@@ -228,7 +228,8 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 						Exit
 					End If
 				Next
-				v_dat.set( mouse_items[0].key, False ) 'change the chassis
+				'use the new one
+				v_dat.set_chassis( mouse_items[0].key, False ) 'change the chassis
 				player = bake_player( v_dat )
 				DebugLog " changed chassis to "+mouse_items[0].key
 			
@@ -239,7 +240,7 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 					If result = "success"
 						player = bake_player( v_dat )
 						DebugLog " added turret "+profile.inventory[dragging_inventory_i].key+" to anchor "+closest_turret_anchor_i
-					Else 'Not error
+					Else 'error
 						show_error( result )
 						unused_inventory_count[dragging_inventory_i] :+ 1
 					End If
@@ -251,21 +252,23 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 						new_turret_keys[k] = mouse_items[k].key
 					Next
 					Local returned_turret_keys$[]
-					Local result:Object = v_dat.replace_turrets( new_turret_keys, closest_turret_anchor_i )
-					If String[](result)
-						returned_turret_keys = String[](result)
+					Local result$ = v_dat.replace_turrets( new_turret_keys, closest_turret_anchor_i, returned_turret_keys )
+					If result = "success" 'replaced old turrets
 						player = bake_player( v_dat )
-						For Local r% = 0 Until returned_turret_keys.Length
-							Local item:INVENTORY_DATA = Create_INVENTORY_DATA( "turret", returned_turret_keys[r] )
-							For Local i% = 0 Until profile.inventory.Length
-								If item.eq( profile.inventory[i] )
-									unused_inventory_count[i] :+ 1
-								End If
+						DebugLog " added turrets:[ "+", ".Join(new_turret_keys)+" ] to anchor "+closest_turret_anchor_i
+						'if any, return the old turrets to the inventory
+						If returned_turret_keys
+							For Local r% = 0 Until returned_turret_keys.Length
+								Local item:INVENTORY_DATA = Create_INVENTORY_DATA( "turret", returned_turret_keys[r] )
+								For Local i% = 0 Until profile.inventory.Length
+									If item.eq( profile.inventory[i] )
+										unused_inventory_count[i] :+ 1
+									End If
+								Next
 							Next
-						Next
-						DebugLog " added turrets:[ "+", ".Join(returned_turret_keys)+" ] to anchor "+closest_turret_anchor_i
-					Else If String(result) 'error
-						show_error( String(result) )
+						End If
+					Else 'error
+						show_error( result )
 					End If
 				End If
 			
@@ -351,7 +354,7 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 End Function
 
 Function bake_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, abort_on_error% = False )
-	Local player:COMPLEX_AGENT = create_player( v_dat, abort_on_error )
+	Local player:COMPLEX_AGENT = create_player( v_dat, abort_on_error, False )
 	player.set_images_unfiltered()
 	player.move_to( Create_POINT( window_w/2, window_h/2, 0 ), True )
 	player.update()

@@ -1088,7 +1088,7 @@ Function Create_TJSONArray_from_String_array:TJSONArray( str$[] )
 End Function
 
 Function Create_String_array_array_from_TJSONArray:String[][]( json:TJSONArray )
-	If json = Null Then Return Null
+	If Not json Or json.IsNull() Then Return Null
 	Local index%
 	Local arr$[][] = New String[][json.Size()]
 	For index = 0 To json.Size() - 1

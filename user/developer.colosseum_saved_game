@@ -6,7 +6,7 @@
 		{
 			item_type: "chassis",
 			key: "light_tank",
-			count: 1
+			count: 2
 		},
 		{
 			item_type: "chassis",
@@ -21,7 +21,7 @@
 		{
 			item_type: "turret",
 			key: "light_machine_gun",
-			count: 1
+			count: 2
 		},
 		{
 			item_type: "turret",
@@ -31,7 +31,7 @@
 		{
 			item_type: "turret",
 			key: "medium_machine_gun",
-			count: 1
+			count: 3
 		},
 		{
 			item_type: "turret",
@@ -44,14 +44,12 @@
 			count: 1
 		}
 	],
+	damaged_inventory: null,
 	vehicle: {
 		chassis_key: "medium_tank",
 		is_unit: false,
 		turret_keys: [
-			[
-				"light_laser",
-				"medium_machine_gun"
-			]
+			
 		]
 	},
 	input_method: 2,
