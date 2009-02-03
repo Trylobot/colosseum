@@ -230,7 +230,8 @@ Type TJSONObject Extends TJSONValue
 			s :+ o._key.ToString() +": "+ TJSONValue(o._value).ToSource( level + 1)
 			lines :+ 1
 		Next
-		Return "{~n"+ RepeatString( "~t", LEVEL + 1) + s + "~n" + RepeatString( "~t", LEVEL) + "}"
+		If lines > 1 Then Return "{~n"+ RepeatString( "~t", level + 1) + s + "~n" + RepeatString( "~t", level) + "}"
+		Return "{ "+ s +" }"
 	EndMethod		
 	
 	Method GetByName:TJSONValue( name:Object)
@@ -294,7 +295,7 @@ Type TJSONArray Extends TJSONValue
 			lines :+ 1
 		Next
 		Return "["+ s +"]"
-	EndMethod	
+	EndMethod
 	
 	Method ToSource:String( level:Int = 0)
 		If Items.Length <= 0 Then Return "[]"
@@ -304,7 +305,8 @@ Type TJSONArray Extends TJSONValue
 			s :+ o.ToSource( level + 1)
 			lines :+ 1
 		Next
-		Return "[~n" + RepeatString( "~t", LEVEL + 1) + s + "~n" + RepeatString( "~t", LEVEL) + "]"
+		If lines > 1 Then Return "[~n" + RepeatString( "~t", LEVEL + 1) + s + "~n" + RepeatString( "~t", LEVEL) + "]"
+		Return "[ "+ s +" ]"
 	EndMethod
 	
 	Method GetByIndex:TJSONValue( index:Int)
@@ -1102,7 +1104,12 @@ Function Create_TJSONArray_from_String_array_array:TJSONArray( str$[][] )
 	If Not str Then Return Null
 	Local arr:TJSONArray = TJSONArray.Create( str.Length )
 	For Local i% = 0 To str.Length - 1
-		arr.SetByIndex( i, Create_TJSONArray_from_String_array( str[i] ))
+		Local jval:TJSONValue = Create_TJSONArray_from_String_array( str[i] )
+		If jval
+			arr.SetByIndex( i, jval )
+		Else
+			arr.SetByIndex( i, TJSON.NIL )
+		End If
 	Next
 	Return arr
 End Function

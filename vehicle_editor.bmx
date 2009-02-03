@@ -176,10 +176,10 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 			mouse_shadow.remove_all_turrets()
 			dragging_inventory_i = -1
 			
-			If closest_turret_anchor And Not v_dat.is_unit 'started a drag op near a turret anchor
+			If closest_turret_anchor And Not v_dat.is_unit 'And v_dat.count_turrets( closest_turret_anchor_i ) > 0 'started a drag op near a turret anchor
 				'remove the turrets from the vehicle data and refresh the player object
-				Local returned_turret_keys$[]
-				Local result$ = v_dat.remove_turrets( closest_turret_anchor_i, returned_turret_keys )
+				Local returned_turret_keys$[] = v_dat.get_turrets( closest_turret_anchor_i )
+				Local result$ = v_dat.remove_turrets( closest_turret_anchor_i )
 				If result = "success" 'removed turrets successfully
 					dragging_anchor = closest_turret_anchor_i
 					player = bake_player( v_dat )
@@ -251,8 +251,8 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 					For Local k% = 0 Until mouse_items.Length
 						new_turret_keys[k] = mouse_items[k].key
 					Next
-					Local returned_turret_keys$[]
-					Local result$ = v_dat.replace_turrets( new_turret_keys, closest_turret_anchor_i, returned_turret_keys )
+					Local returned_turret_keys$[] = v_dat.get_turrets( closest_turret_anchor_i )
+					Local result$ = v_dat.replace_turrets( new_turret_keys, closest_turret_anchor_i )
 					If result = "success" 'replaced old turrets
 						player = bake_player( v_dat )
 						DebugLog " added turrets:[ "+", ".Join(new_turret_keys)+" ] to anchor "+closest_turret_anchor_i

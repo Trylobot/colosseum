@@ -49,7 +49,7 @@
 		chassis_key: "medium_tank",
 		is_unit: false,
 		turret_keys: [
-			
+			null
 		]
 	},
 	input_method: 2,
