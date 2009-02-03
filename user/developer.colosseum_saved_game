@@ -48,21 +48,17 @@
 	vehicle: {
 		chassis_key: "medium_tank",
 		is_unit: false,
-		turret_keys: [
-			null
-		]
+		turret_keys: [ null ]
 	},
 	input_method: 2,
-	progress: [
-		{
+	progress: [ {
 			campaign_key: "",
 			completed: [
 				false,
 				false,
 				false
 			]
-		}
-	],
+		} ],
 	campaign: "",
 	campaign_level: 0
 }

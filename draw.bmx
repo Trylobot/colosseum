@@ -42,13 +42,6 @@ Function draw_all_graphics()
 		End If
 	End If
 	
-	'info
-	SetImageFont( get_font( "consolas_14" ))
-	SetColor( 100, 149, 237 ) 'Cornflower Blue
-	'SetColor( 255, 255, 127 ) 'Title Yellow
-	SetAlpha( time_alpha_pct( info_change_ts + info_stay_time, info_fade_time, False ))
-	DrawText_with_outline( info, 30, 70 )
-	
 	'instaquit
 	If KeyDown( KEY_ESCAPE ) And esc_held And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
 		draw_instaquit_progress()
@@ -231,25 +224,34 @@ End Function
 'Menu and GUI
 Function draw_main_screen()
 	Local x%, y%, h%
+	x = 15
 	
 	'title
-	x = 25; y = 25
+	y = 15
 	SetColor( 255, 255, 127 )
 	SetAlpha( 1 )
 	SetImageFont( get_font( "consolas_bold_50" ))
 	DrawText_with_outline( My.Application.AssemblyInfo, x, y )
 	
+	'info
+	SetImageFont( get_font( "consolas_14" ))
+	SetColor( 100, 149, 237 ) 'Cornflower Blue
+	'SetColor( 255, 255, 127 ) 'Title Yellow
+	SetAlpha( time_alpha_pct( info_change_ts + info_stay_time, info_fade_time, False ))
+	y = 55
+	DrawText_with_outline( info, x, y)
+	
 	'menu options
-	x = 30; y = 96
+	y = 81
 	draw_menus( x, y )
 	
 	'copyright stuff
 	SetColor( 157, 157, 157 )
 	SetImageFont( get_font( "consolas_10" ))
-	h = 0.75*GetImageFont().Height()
-	x = 1 + 20
-	y = window_h - h*2 - 1 - 20
-	If game = main_game Then y :- 50
+	h = 0.75*TextHeight( info )
+	x = 1
+	y = window_h - h*2 - 1
+	'If game = main_game Then y :- 50
 	DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole (aka Tylerbot); music by NickPerrin; JSON binding by grable", x, y ); y :+ h
 	DrawText_with_outline( "special thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, and Firelord88; written in BlitzMax", x, y ); y :+ h
 	
