@@ -193,7 +193,8 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 	Return prof
 End Function
 
-'PLAYER_PROFILE private classes
+
+'private helper classes
 '______________________________________________________________________________
 Function Create_INVENTORY_DATA:INVENTORY_DATA( item_type$, key$, count% = 1 )
 	Local item:INVENTORY_DATA = New INVENTORY_DATA
@@ -251,7 +252,6 @@ Type VEHICLE_DATA
 	End Method
 	
 	Method add_turret$( key$, anchor% ) 'returns error message if unsuccessful
-DebugStop
 		'stock unit
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
 		If anchor < turret_keys.Length
@@ -261,19 +261,19 @@ DebugStop
 			If Not chassis_compatible_with_turret( key )
 				Return "This turret won't fit onto that chassis."
 			End If
-			If Not turret_keys[anchor]
+			If turret_keys[anchor] = Null
 				If t.priority = TURRET.PRIMARY
-					turret_keys[anchor] = [ key, "" ]
+					turret_keys[anchor] = [ key, String(Null) ]
 				Else If t.priority = TURRET.SECONDARY
-					turret_keys[anchor] = [ "", key ]
+					turret_keys[anchor] = [ String(Null), key ]
 				End If
 			Else 'turret_key[anchor] <> Null
 				'adding a primary turret can only be done if there are no turrets at all attached to this anchor
-				If turrets_of_priority_attached_to_anchor( TURRET.PRIMARY, anchor ) >= 1
+				If t.priority = TURRET.PRIMARY And turrets_of_priority_attached_to_anchor( TURRET.PRIMARY, anchor ) >= 1
 					Return "That socket already has a large turret."
 				End If
 				'adding a secondary turret can only be done if there are no secondary turrets attached to this anchor
-				If turrets_of_priority_attached_to_anchor( TURRET.SECONDARY, anchor ) >= 1
+				If t.priority = TURRET.SECONDARY And turrets_of_priority_attached_to_anchor( TURRET.SECONDARY, anchor ) >= 1
 					Return "That socket already has a small turret."
 				End If
 				'all good, add it
@@ -282,20 +282,21 @@ DebugStop
 				Else If t.priority = TURRET.SECONDARY
 					turret_keys[anchor] = [ turret_keys[anchor][0], key ]
 				End If
-				Return "success"
 			End If
 		Else
 			Return "FATAL ERROR: anchor "+anchor+" is not defined on this vehicle."
 		End If
+		Return "success"
 	End Method
 	
 	Method replace_turrets:Object( keys$[], anchor% ) 'returns the old array if successful
+DebugStop
 		'stock unit
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
 		'if any of the turrets are incompatible, abort with error
 		For Local key$ = EachIn keys
 			If Not chassis_compatible_with_turret( key )
-				Return "One of these turrets won't fit onto that chassis."
+				Return "One of the turrets won't fit onto that chassis."
 			End If
 		Next
 		'all good, replace it
@@ -328,7 +329,7 @@ DebugStop
 			Local count% = 0
 			For Local key$ = EachIn turret_keys[anchor]
 				Local t:TURRET = get_turret( key, False )
-				If t.priority = priority Then count :+ 1
+				If t And t.priority = priority Then count :+ 1
 			Next
 			Return count
 		End If

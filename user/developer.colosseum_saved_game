@@ -45,10 +45,13 @@
 		}
 	],
 	vehicle: {
-		chassis_key: "light_tank",
+		chassis_key: "medium_tank",
 		is_unit: false,
 		turret_keys: [
-			
+			[
+				"light_laser",
+				"medium_machine_gun"
+			]
 		]
 	},
 	input_method: 2,
