@@ -911,7 +911,8 @@ Function draw_skulls( x%, y%, max_width%, count% )
 				If (x + (k + 1)*images[i].width + 2) > window_w - 20
 					y :+ images[i].height + 2
 				End If
-				DrawImage( images[i], x + k*images[i].width + 2, y )
+				DrawText( pad( String.FromInt(denominations[i]), 3,, True ), x-12, y+10 )
+				DrawImage( images[i], 40 + x + k*images[i].width + 2, y )
 			Next
 			x = orig_x
 			y :+ images[i].height + 2

@@ -132,18 +132,6 @@ Type PLAYER_PROFILE
 		End If
 	End Method
 	
-	Method set_vehicle_chassis( key$, is_unit% = False )
-		
-	End Method
-	
-	Method add_vehicle_turret( key$, anchor% )
-		
-	End Method
-	
-	Method remove_vehicle_turret( key$, anchor% )
-		
-	End Method
-	
 	Method generate_src_path$()
 		Return user_path + name + "." + saved_game_file_ext
 	End Method
@@ -251,6 +239,80 @@ Type VEHICLE_DATA
 	Field chassis_key$
 	Field is_unit%
 	Field turret_key$[][]
+	
+	Method set( new_chassis_key$, new_is_unit% = False )
+		chassis_key = new_chassis_key
+		is_unit = new_is_unit
+	End Method
+	
+	Method add_turret$( key$, anchor% ) 'returns error message if unsuccessful
+		'stock unit
+		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
+		If anchor < turret_key.Length
+			Local t:TURRET = get_turret( key )
+			If Not t Then Return "FATAL ERROR. TURRET NOT FOUND."
+			If turret_key[anchor] = Null
+				If t.priority = TURRET.PRIMARY
+					turret_key[anchor] = [ key, "" ]
+				Else If t.priority = TURRET.SECONDARY
+					turret_key[anchor] = [ "", key ]
+				End If
+			Else 'turret_key[anchor] <> Null
+				'adding a turret can only be done if the chassis is compatible
+				If Not chassis_compatible_with_turret( key )
+					Return "This turret won't fit onto that chassis."
+				End If
+				'adding a primary turret can only be done if there are no turrets at all attached to this anchor
+				If turrets_of_priority_attached_to_anchor( TURRET.PRIMARY, anchor ) <= 0
+					Return "That socket already has a large turret."
+				End If
+				'adding a secondary turret can only be done if there are no secondary turrets attached to this anchor
+				If turrets_of_priority_attached_to_anchor( TURRET.SECONDARY, anchor ) <= 0
+					Return "That socket already has a small turret."
+				End If
+				'all good, add it
+				If t.priority = TURRET.PRIMARY
+					turret_key[anchor][0] = key
+				Else If t.priority = TURRET.SECONDARY
+					turret_key[anchor][1] = key
+				End If
+			End If
+		End If
+		Return Null 'no error
+	End Method
+	
+	Method replace_turrets:Object( keys$[], anchor% ) 'returns the old array if successful
+		'stock unit
+		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
+		'if any of the turrets are incompatible, abort with error
+		For Local key$ = EachIn keys
+			If Not chassis_compatible_with_turret( key )
+				Return "One of these turrets won't fit onto that chassis."
+			End If
+		Next
+		'all good, replace it
+		Local old_turrets$[] = turret_key[anchor][..]
+		If anchor < turret_key.Length
+			turret_key[anchor] = keys
+		End If
+		Return old_turrets 'success
+	End Method
+	
+	Method remove_turrets$( anchor% )
+		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
+		If anchor < turret_key.Length
+			turret_key[anchor] = Null
+		End If
+		Return Null 'success
+	End Method
+	
+	Method chassis_compatible_with_turret%( key$ ) 'checks the compatibility array for the existence of the given turret key
+		Return True
+	End Method
+	
+	Method turrets_of_priority_attached_to_anchor%( priority%, anchor% )
+		Return 0
+	End Method
 	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject

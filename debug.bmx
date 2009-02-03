@@ -391,7 +391,7 @@ Function debug_overlay()
 End Function
 
 Function debug_win()
-	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 99 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 1249 )
 	End
 End Function
 
