@@ -528,7 +528,7 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	'___________________________________________
 	Method add_turret:TURRET( other_t:TURRET, anchor_index% )
-		If anchor_index >= 0 And anchor_index < turret_anchors.Length
+		If other_t And anchor_index >= 0 And anchor_index < turret_anchors.Length
 			Local t:TURRET = other_t.clone()
 			t.set_parent( Self )
 			If turrets = Null

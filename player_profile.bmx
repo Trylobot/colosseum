@@ -212,6 +212,15 @@ Type INVENTORY_DATA
 		Return Create_INVENTORY_DATA( item_type, key, count )
 	End Method
 	
+	Method eq%( other:INVENTORY_DATA )
+		If Not other Then Return False
+		Return item_type = other.item_type And key = other.key
+	End Method
+	
+	Method to_string$()
+		Return item_type+"."+key
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "item_type", TJSONString.Create( item_type ))
@@ -220,10 +229,6 @@ Type INVENTORY_DATA
 		Return this_json
 	End Method
 	
-	Method eq%( other:INVENTORY_DATA )
-		If Not other Then Return False
-		Return item_type = other.item_type And key = other.key
-	End Method
 End Type
 
 Function Create_INVENTORY_DATA_from_json:INVENTORY_DATA( json:TJSON ) 
@@ -238,7 +243,7 @@ End Function
 Type VEHICLE_DATA
 	Field chassis_key$
 	Field is_unit%
-	Field turret_key$[][]
+	Field turret_keys$[][]
 	
 	Method set( new_chassis_key$, new_is_unit% = False )
 		chassis_key = new_chassis_key
@@ -246,22 +251,23 @@ Type VEHICLE_DATA
 	End Method
 	
 	Method add_turret$( key$, anchor% ) 'returns error message if unsuccessful
+DebugStop
 		'stock unit
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
-		If anchor < turret_key.Length
+		If anchor < turret_keys.Length
 			Local t:TURRET = get_turret( key )
-			If Not t Then Return "FATAL ERROR: turret_map["+key+"] not found."
-			If Not turret_key[anchor]
+			If Not t Then Return "FATAL ERROR: turret."+key+" not found."
+			'adding a turret can only be done if the chassis is compatible
+			If Not chassis_compatible_with_turret( key )
+				Return "This turret won't fit onto that chassis."
+			End If
+			If Not turret_keys[anchor]
 				If t.priority = TURRET.PRIMARY
-					turret_key[anchor] = [ key, "" ]
+					turret_keys[anchor] = [ key, "" ]
 				Else If t.priority = TURRET.SECONDARY
-					turret_key[anchor] = [ "", key ]
+					turret_keys[anchor] = [ "", key ]
 				End If
 			Else 'turret_key[anchor] <> Null
-				'adding a turret can only be done if the chassis is compatible
-				If Not chassis_compatible_with_turret( key )
-					Return "This turret won't fit onto that chassis."
-				End If
 				'adding a primary turret can only be done if there are no turrets at all attached to this anchor
 				If turrets_of_priority_attached_to_anchor( TURRET.PRIMARY, anchor ) >= 1
 					Return "That socket already has a large turret."
@@ -272,13 +278,15 @@ Type VEHICLE_DATA
 				End If
 				'all good, add it
 				If t.priority = TURRET.PRIMARY
-					turret_key[anchor][0] = key
+					turret_keys[anchor] = [ key, turret_keys[anchor][1] ]
 				Else If t.priority = TURRET.SECONDARY
-					turret_key[anchor][1] = key
+					turret_keys[anchor] = [ turret_keys[anchor][0], key ]
 				End If
+				Return "success"
 			End If
+		Else
+			Return "FATAL ERROR: anchor "+anchor+" is not defined on this vehicle."
 		End If
-		Return "success"
 	End Method
 	
 	Method replace_turrets:Object( keys$[], anchor% ) 'returns the old array if successful
@@ -291,35 +299,47 @@ Type VEHICLE_DATA
 			End If
 		Next
 		'all good, replace it
-		Local old_turrets$[] = turret_key[anchor][..]
-		If anchor < turret_key.Length
-			turret_key[anchor] = keys
+		Local old_turrets$[] = turret_keys[anchor][..]
+		If anchor < turret_keys.Length
+			turret_keys[anchor] = keys
 		End If
 		Return old_turrets 'success
 	End Method
 	
 	Method remove_turrets:Object( anchor% ) 'returns the old array if successful
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
-		Local old_turrets$[] = turret_key[anchor][..]
-		If anchor < turret_key.Length
-			turret_key[anchor] = Null
+		Local old_turrets$[] = turret_keys[anchor][..]
+		If anchor < turret_keys.Length
+			turret_keys[anchor] = Null
 		End If
 		Return old_turrets
 	End Method
 	
 	Method chassis_compatible_with_turret%( key$ ) 'checks the compatibility array for the existence of the given turret key
-		Return True
+		Local cd:COMPATIBILITY_DATA = get_compatibility( chassis_key )
+		For Local tur$ = EachIn cd.turret_keys
+			If tur = key Then Return True
+		Next
+		Return False
 	End Method
 	
 	Method turrets_of_priority_attached_to_anchor%( priority%, anchor% )
-		Return 0
+		If anchor < turret_keys.Length
+			Local count% = 0
+			For Local key$ = EachIn turret_keys[anchor]
+				Local t:TURRET = get_turret( key, False )
+				If t.priority = priority Then count :+ 1
+			Next
+			Return count
+		End If
+		Return -1
 	End Method
 	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "chassis_key", TJSONString.Create( chassis_key ))
 		this_json.SetByName( "is_unit", TJSONBoolean.Create( is_unit ))
-		this_json.SetByName( "turret_key", Create_TJSONArray_from_String_array_array( turret_key ))
+		this_json.SetByName( "turret_keys", Create_TJSONArray_from_String_array_array( turret_keys ))
 		Return this_json
 	End Method
 End Type
@@ -328,7 +348,7 @@ Function Create_VEHICLE_DATA_from_json:VEHICLE_DATA( json:TJSON )
 	Local vd:VEHICLE_DATA = New VEHICLE_DATA
 	vd.chassis_key = json.GetString( "chassis_key" )
 	vd.is_unit = json.GetBoolean( "is_unit" )
-	vd.turret_key = Create_String_array_array_from_TJSONArray( json.GetArray( "turret_key" ))
+	vd.turret_keys = Create_String_array_array_from_TJSONArray( json.GetArray( "turret_keys" ))
 	Return vd
 End Function
 
@@ -350,5 +370,50 @@ Function Create_PROGRESS_DATA_from_json:PROGRESS_DATA( json:TJSON )
 	pd.campaign_key = json.GetString( "campaign" )
 	pd.completed = Create_Int_array_from_TJSONArray( json.GetArray( "completed" ), True )
 	Return pd
+End Function
+
+'____________________________
+Type COMPATIBILITY_DATA
+	Field chassis_key$
+	Field inherits_from$
+	Field turret_keys$[]
+	
+	Method clone:COMPATIBILITY_DATA()
+		Local cd:COMPATIBILITY_DATA = New COMPATIBILITY_DATA
+		cd.chassis_key = chassis_key
+		cd.inherits_from = inherits_from
+		cd.turret_keys = turret_keys[..]
+		Return cd
+	End Method
+	
+	Method inherit( other_cd:COMPATIBILITY_DATA )
+		If turret_keys
+			If other_cd.turret_keys
+				Local old_size% = turret_keys.Length
+				turret_keys = turret_keys[..(turret_keys.Length+other_cd.turret_keys.Length)]
+				For Local i% = 0 Until other_cd.turret_keys.Length
+					turret_keys[i + old_size] = other_cd.turret_keys[i]
+				Next
+			End If
+		Else
+			turret_keys = other_cd.turret_keys[..]
+		End If
+	End Method
+	
+	Method to_json:TJSONObject()
+		Local this_json:TJSONObject = New TJSONObject
+		this_json.SetByName( "chassis_key", TJSONString.Create( chassis_key ))
+		this_json.SetByName( "inherits_from", TJSONString.Create( inherits_from ))
+		this_json.SetByName( "turret_keys", Create_TJSONArray_from_String_array( turret_keys ))
+		Return this_json
+	End Method
+End Type
+
+Function Create_COMPATIBILITY_DATA_from_json:COMPATIBILITY_DATA( json:TJSON )
+	Local cd:COMPATIBILITY_DATA = New COMPATIBILITY_DATA
+	cd.chassis_key = json.GetString( "chassis_key" )
+	cd.inherits_from = json.GetString( "inherits_from" )
+	cd.turret_keys = Create_String_array_from_TJSONArray( json.GetArray( "turret_keys" ))
+	Return cd
 End Function
 

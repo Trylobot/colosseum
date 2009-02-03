@@ -1,6 +1,6 @@
 {
 	name: "developer",
-	cash: 0,
+	cash: 5000,
 	kills: 1249,
 	inventory: [
 		{
@@ -45,12 +45,10 @@
 		}
 	],
 	vehicle: {
-		chassis_key: "medium_tank",
+		chassis_key: "light_tank",
 		is_unit: false,
-		turret_key: [
-			[
-				"light_cannon"
-			]
+		turret_keys: [
+			
 		]
 	},
 	input_method: 2,
