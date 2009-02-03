@@ -48,7 +48,9 @@
 		chassis_key: "medium_tank",
 		is_unit: false,
 		turret_key: [
-			
+			[
+				"light_cannon"
+			]
 		]
 	},
 	input_method: 2,

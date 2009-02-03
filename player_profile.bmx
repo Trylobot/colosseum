@@ -246,7 +246,6 @@ Type VEHICLE_DATA
 	End Method
 	
 	Method add_turret$( key$, anchor% ) 'returns error message if unsuccessful
-DebugStop
 		'stock unit
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
 		If anchor < turret_key.Length
