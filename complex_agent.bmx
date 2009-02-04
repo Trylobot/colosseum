@@ -637,7 +637,7 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Method set_images_unfiltered()
-		img = unfilter_image( img )
+		If img Then img = unfilter_image( img )
 		If left_track Then left_track.img = unfilter_image( left_track.img )
 		If right_track Then right_track.img = unfilter_image( right_track.img )
 		For Local t:TURRET = EachIn turrets

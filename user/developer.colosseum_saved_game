@@ -21,7 +21,7 @@
 	],
 	damaged_inventory: null,
 	vehicle: {
-		chassis_key: "medium_tank",
+		chassis_key: "",
 		is_unit: false,
 		turret_keys: [ null ]
 	},

@@ -263,9 +263,9 @@ Type TURRET Extends POINT
 	End Method
 	
 	Method set_images_unfiltered()
-		img = unfilter_image( img )
+		If img Then img = unfilter_image( img )
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
-			tb.img = unfilter_image( tb.img )
+			If tb.img Then tb.img = unfilter_image( tb.img )
 		Next
 	End Method
 	

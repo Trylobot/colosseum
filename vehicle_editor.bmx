@@ -6,12 +6,13 @@ EndRem
 
 '______________________________________________________________________________
 Const ANCHOR_HOVER_RADIUS% = 100
-Const CHASSIS_HOVER_RADIUS% = 125
+Const CHASSIS_HOVER_RADIUS% = 200
 Const INVENTORY_SIDEBAR_WIDTH% = 190
 
 Function vehicle_editor( v_dat:VEHICLE_DATA )
 	Local mouse:POINT = Create_POINT( MouseX(), MouseY() )
 	Local mouse_dragging%
+	Local dragging_gladiator% = False
 	Local dragging_inventory_i% = -1
 	Local dragging_anchor% = -1
 	Local mouse_down_1%
@@ -22,6 +23,9 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 	Local title$ = "customize vehicle"
 	Local kill_signal%
 	
+	'gladiator thingy
+	Local stock_gladiator:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
+
 	'cache inventory items
 	Local inventory:POINT[profile.inventory.Length]
 	Local unused_inventory_count%[profile.inventory.Length]
@@ -97,8 +101,36 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 			End If
 		Next
 		
+		'chassis hover detection
 		Local chassis_hover% = False
 		If mouse.dist_to( player ) <= CHASSIS_HOVER_RADIUS chassis_hover = True
+		
+		'draw stock gladiator button
+		Local hover_gladiator% = False
+		SetImageFont( get_font( "consolas_12" ))
+		Local gladiator_y% = 84
+		Local stock_name$ = "(free) gladiator chassis"
+		Local stock_rect:BOX = Create_BOX( 5, gladiator_y, TextWidth(stock_name) + 10, 12 )
+		If Not mouse_dragging ..
+		And mouse.pos_x >= stock_rect.x And mouse.pos_x <= stock_rect.x + stock_rect.w ..
+		And mouse.pos_y >= stock_rect.y And mouse.pos_y <= stock_rect.y + stock_rect.h
+			hover_gladiator = True
+			'draw the gladiator object near the mouse
+			stock_gladiator.move_to( mouse, True )
+			stock_gladiator.draw( 0.5, 3.0 )
+			'draw a highlight box around the item description
+			SetRotation( 0 )
+			SetScale( 1, 1 )
+			SetColor( 255, 255, 255 )
+			SetAlpha( 0.3333 )
+			DrawRect( stock_rect.x, stock_rect.y, stock_rect.w, stock_rect.h )
+			SetAlpha( 1 )
+			DrawRectLines( stock_rect.x, stock_rect.y, stock_rect.w, stock_rect.h )
+		End If
+		SetScale( 1, 1 )
+		SetColor( 255, 255, 255 )
+		'regardless of the hover state, show the text of the item's description
+		DrawText_with_outline( stock_name, 10, gladiator_y )
 		
 		'draw inventory (and calculate any mouse-hover inventory items)
 		Local hover_inventory_listing% = -1
@@ -111,7 +143,7 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 		DrawText_with_outline( "inventory", 10, 60 )
 		SetColor( 255, 255, 255 )
 		SetImageFont( get_font( "consolas_12" ))
-		Local inv_y% = 84
+		Local inv_y% = 98
 		For Local i% = 0 Until inventory.Length
 			Local name$ = ""
 			If COMPLEX_AGENT(inventory[i]) Then name = COMPLEX_AGENT(inventory[i]).name
@@ -129,7 +161,7 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 			And mouse.pos_y >= listing_rect.y And mouse.pos_y <= listing_rect.y + listing_rect.h
 				hover_inventory_listing = i
 				'move the actual object representing the inventory item to the mouse position
-				inventory[i].move_to( Copy_POINT( mouse ).add_pos( 0, 0 ))
+				inventory[i].move_to( mouse, True )
 				'if the item is a turret, and the turret has no base, draw a "fake base" for it
 				If TURRET(inventory[i])
 					Local t:TURRET = TURRET(inventory[i])
@@ -148,11 +180,11 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 				End If
 				'draw the inventory item
 				inventory[i].draw( 0.5, 3.0 )
+				'draw a highlight box around the item description
 				SetRotation( 0 )
 				SetScale( 1, 1 )
 				SetColor( 255, 255, 255 )
 				SetAlpha( 0.3333 )
-				'draw a highlight box around the item description
 				DrawRect( listing_rect.x, listing_rect.y, listing_rect.w, listing_rect.h )
 				SetAlpha( 1 )
 				DrawRectLines( listing_rect.x, listing_rect.y, listing_rect.w, listing_rect.h )
@@ -167,8 +199,30 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 			DrawText_with_outline( name, 10, inv_y + i*TextHeight(name) )
 		Next
 		
+		'chassis drag destination goes _under_ the chassis object, oddly
+		If chassis_hover And Not closest_turret_anchor
+			SetAlpha( 0.085 )
+			SetColor( 255, 255, 255 )
+			SetScale( 1, 1 )
+			DrawOval( player.pos_x - CHASSIS_HOVER_RADIUS, player.pos_y - CHASSIS_HOVER_RADIUS, 2*CHASSIS_HOVER_RADIUS, 2*CHASSIS_HOVER_RADIUS ) 
+		End If
+
 		'draw player in current state
-		player.draw( 0.5, 8.0 )
+		If player.img 'valid player
+			player.draw( 0.5, 8.0 )
+		Else 'invalid player
+			SetImageFont( get_font( "consolas_12" ))
+			'draw a placeholder for the chassis, so the user knows what to do
+			SetAlpha( 0.085 )
+			SetColor( 255, 255, 255 )
+			SetScale( 1, 1 )
+			DrawRect( window_w/2 - 50, window_h/2 - 50, 100, 100 )
+			SetAlpha( 0.15 )
+			DrawRectLines( window_w/2 - 50, window_h/2 - 50, 100, 100 )
+			SetAlpha( 0.3 )
+			DrawText( " chassis", window_w/2 - 30, window_h/2 - 12 )
+			DrawText( "goes here", window_w/2 - 30, window_h/2 )
+		End If
 		
 		'click/drag detection
 		If Not mouse_dragging And MouseDown( 1 ) And Not mouse_down_1 'STARTED a drag
@@ -200,10 +254,20 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 					show_error( result )
 				End If
 				
+			Else If chassis_hover And player.img 'yanked a valid chassis
+				mouse_shadow = player
+				player = New COMPLEX_AGENT
+				player.move_to( Create_cVEC( window_w/2, window_h/2 ), True )
+				If v_dat.is_unit
+					mouse_items = [ Create_INVENTORY_DATA( "unit", v_dat.chassis_key )]
+				Else 'Not v_dat.is_unit
+					mouse_items = [ Create_INVENTORY_DATA( "chassis", v_dat.chassis_key )]
+				End If
+				v_dat.chassis_key = ""
+			
 			Else If hover_inventory_listing >= 0 'started a drag op near an inventory item
 				dragging_inventory_i = hover_inventory_listing
 				unused_inventory_count[hover_inventory_listing] :- 1
-				mouse_dragging = True
 				'attach the inventory turret to or set the chassis of the mouse shadow
 				If COMPLEX_AGENT(inventory[hover_inventory_listing])
 					mouse_shadow = COMPLEX_AGENT( COMPLEX_AGENT.Copy( COMPLEX_AGENT(inventory[hover_inventory_listing]) ))
@@ -215,25 +279,19 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 					mouse_items = [ profile.inventory[hover_inventory_listing].clone() ]
 				End If
 				DebugLog " dragging item:"+profile.inventory[hover_inventory_listing].to_string()
+			
+			Else If hover_gladiator
+				dragging_gladiator = True
+				'attach the gladiator to the mouse chassis
+				mouse_shadow = get_unit( "machine_gun_quad" )
+				mouse_items = [ Create_INVENTORY_DATA( "unit", "machine_gun_quad" )]
+				DebugLog " dragging item:unit.machine_gun_quad"
 			End If
 		
 		Else If mouse_dragging And Not MouseDown( 1 ) And mouse_down_1 'FINISHED a drag
 			mouse_dragging = False
 			
-			If mouse_shadow.img And chassis_hover 'dropped a chassis on the chassis
-				'return the current chassis to the inventory
-				For Local i% = 0 Until profile.inventory.Length
-					If profile.inventory[i].key = v_dat.chassis_key
-						unused_inventory_count[i] :+ 1
-						Exit
-					End If
-				Next
-				'use the new one
-				v_dat.set_chassis( mouse_items[0].key, False ) 'change the chassis
-				player = bake_player( v_dat )
-				DebugLog " changed chassis to "+mouse_items[0].key
-			
-			Else If closest_turret_anchor And Not v_dat.is_unit 'dropped onto a turret anchor
+			If closest_turret_anchor And Not v_dat.is_unit 'dropped onto a turret anchor
 			
 				If dragging_inventory_i >= 0 'dropped turret from inventory onto a turret anchor; add it to vehicle data and bake
 					Local result$ = v_dat.add_turret( profile.inventory[dragging_inventory_i].key, closest_turret_anchor_i )
@@ -272,6 +330,23 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 					End If
 				End If
 			
+			Else If mouse_shadow.img And chassis_hover 'dropped a chassis on the chassis
+				'return the current chassis to the inventory
+				For Local i% = 0 Until profile.inventory.Length
+					If profile.inventory[i].key = v_dat.chassis_key
+						unused_inventory_count[i] :+ 1
+						Exit
+					End If
+				Next
+				'use the new one
+				If mouse_items[0].item_type = "unit"
+					v_dat.set_chassis( mouse_items[0].key, True ) 'change the chassis
+				Else If mouse_items[0].item_type = "chassis"
+					v_dat.set_chassis( mouse_items[0].key, False ) 'change the chassis
+				End If
+				player = bake_player( v_dat )
+				DebugLog " changed chassis to "+mouse_items[0].to_string()
+			
 			Else If Not v_dat.is_unit 'finished a drag near neither the chassis nor any of its turret anchors; drop it into the inventory
 				
 				If dragging_inventory_i >= 0 'dragging from inventory
@@ -292,6 +367,7 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 			End If
 			
 			'reset the mouse shadow
+			dragging_gladiator = False
 			dragging_inventory_i = -1
 			dragging_anchor = -1
 			mouse_shadow = New COMPLEX_AGENT
@@ -300,20 +376,9 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 		End If
 		
 		'drag destinations draw
-		If mouse_shadow.img And chassis_hover
-			SetAlpha( 0.15 )
-			SetColor( 255, 255, 255 )
-			SetScale( 1, 1 )
-			DrawOval( player.pos_x - CHASSIS_HOVER_RADIUS, player.pos_y - CHASSIS_HOVER_RADIUS, 2*CHASSIS_HOVER_RADIUS, 2*CHASSIS_HOVER_RADIUS ) 
-		Else If closest_turret_anchor
+		If closest_turret_anchor
 			SetAlpha( 1.2 - mouse.dist_to( closest_turret_anchor )/ANCHOR_HOVER_RADIUS )
 			DrawLine_awesome( mouse.pos_x, mouse.pos_y, closest_turret_anchor.x, closest_turret_anchor.y )
-		Else If mouse_dragging And mouse.pos_x <= INVENTORY_SIDEBAR_WIDTH
-			SetAlpha( 0.15 )
-			SetColor( 255, 255, 255 )
-			SetScale( 1, 1 )
-			SetImageFont( get_font( "consolas_bold_24" ))
-			DrawRect( 0, 21 + TextHeight( title ), INVENTORY_SIDEBAR_WIDTH, window_h ) 
 		End If
 		
 		'mouse shadow
@@ -355,6 +420,7 @@ End Function
 
 Function bake_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, abort_on_error% = False )
 	Local player:COMPLEX_AGENT = create_player( v_dat, abort_on_error, False )
+	If Not player Then player = New COMPLEX_AGENT
 	player.set_images_unfiltered()
 	player.move_to( Create_POINT( window_w/2, window_h/2, 0 ), True )
 	player.update()
