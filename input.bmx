@@ -5,7 +5,8 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-'Keyboard Input
+'Input
+Global mouse_last_z% = 0
 Function get_all_input()
 	
 	'mouse update
@@ -41,9 +42,9 @@ Function get_all_input()
 		If KeyHit( KEY_ESCAPE ) And current_menu <> 0 And get_current_menu().menu_id <> MENU_ID_PAUSED
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		End If
-		If KeyHit( KEY_DOWN )
+		If KeyHit( KEY_DOWN ) Or MouseZ() < mouse_last_z
 			m.increment_focus()
-		Else If KeyHit( KEY_UP )
+		Else If KeyHit( KEY_UP ) Or MouseZ() > mouse_last_z
 			m.decrement_focus()
 		End If
 		If KeyHit( KEY_ENTER )
@@ -55,8 +56,10 @@ Function get_all_input()
 			m.update()
 		End If
 		'mouseover of menu items
-		Local target_valid% = m.select_by_coords%( mouse.x, mouse.y )
-		If MouseHit( 1 ) And target_valid
+		'Local target_valid% = m.select_by_coords( mouse.x, mouse.y )
+		'If MouseHit( 1 ) And target_valid
+		m.select_by_coords( mouse.x, mouse.y )
+		If MouseHit( 1 )
 			m.execute_current_option()
 		End If
 	Else 'Not FLAG_in_menu And Not FLAG_in_shop
@@ -83,6 +86,8 @@ Function get_all_input()
 			FLAG_draw_help = Not FLAG_draw_help
 		End If
 	End If
+	
+	mouse_last_z = MouseZ()
 	
 	'music enable/disable
 	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
@@ -190,8 +195,14 @@ Type CONSOLE
 End Type
 
 '______________________________________________________________________________
-Type KB
-	
-End Type
+Local scrollbar_positions%[]
+
+Function scrollbar_control()
+	If get_current_menu().hovering_on_scrollbar( mouse.x, mouse.y )
+		If MouseDown( 1 )
+			get_current_menu().increment_focus()
+		End If
+	End If
+End Function
 
 

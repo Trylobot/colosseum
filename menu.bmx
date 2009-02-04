@@ -249,14 +249,6 @@ Type MENU
 		Self.dimensions_cached = False
 	End Method
 	
-	Method get_scrollbar_rect:BOX( menu_x%, menu_y% )
-		Return Create_BOX( ..
-			menu_x + width - scrollbar_width, ..
-			menu_y + 3*margin + (1 + static_option_count)*(text_height_factor*title_font.Height()) + 0, ..
-			scrollbar_width, ..
-			height - (3*margin + 2*(text_height_factor*title_font.Height())) + 1 )	
-	End Method
-	
 	Method update( initial_update% = False )
 		If initial_update
 			focus = default_focus
@@ -294,6 +286,10 @@ Type MENU
 			Case VERTICAL_LIST_WITH_INVENTORY
 				purge_dynamic_options()
 				Local items:TList = CreateList()
+				Local dmg_items:TList = CreateList()
+				Local item_lists:TList = CreateList()
+				item_lists.AddLast( items )
+				item_lists.AddLast( dmg_items )
 				'create a list of inventory items using the path to indicate the source
 				Select path
 					Case "catalog"
@@ -307,36 +303,59 @@ Type MENU
 						For Local item:INVENTORY_DATA = EachIn profile.inventory
 							items.AddLast( item )
 						Next
+						For Local item:INVENTORY_DATA = EachIn profile.damaged_inventory
+							dmg_items.AddLast( item )
+						Next
 				End Select
 				'build the menu options from the list
 				Local enabled%
-				For Local item:INVENTORY_DATA = EachIn items
-					Select path
-						Case "catalog"
-							enabled = profile.can_buy( item )
-						Case "inventory"
-							enabled = True
-					End Select
-					Select item.item_type
-						Case "chassis"
-							Local chassis:COMPLEX_AGENT = get_player_chassis( item.key, False )
-							add_option( MENU_OPTION.Create( ..
-								"$"+pad( format_number( chassis.cash_value ), 7,, False )+ ..
-								chassis.name+ ..
-								" ["+pad(item.item_type, 7,, False)+"] "+ ..
-								"%%owned%%", ..
-								default_command, item, True, enabled ))
-						Case "turret"
-							Local tur:TURRET = get_turret( item.key, False )
-							If tur.name.Length > 0
+				Local damaged% = False
+				For Local list:TList = EachIn item_lists
+					For Local item:INVENTORY_DATA = EachIn list
+						Select path
+							Case "catalog"
+								enabled = profile.can_buy( item )
+							Case "inventory"
+								enabled = True
+						End Select
+						Select item.item_type
+							Case "chassis"
+								Local chassis:COMPLEX_AGENT = get_player_chassis( item.key, False )
+								Local cost% = chassis.cash_value
+								Local indicator$ = ""
+								Local r% = 255, g% = 255, b% = 255
+								If damaged
+									cost = 0.5 * cost
+									indicator = "* "
+									r = 255; g = 212; b = 212
+								End If
 								add_option( MENU_OPTION.Create( ..
-									"$"+pad( format_number( tur.cash_value ), 7,, False )+ ..
-									tur.name+ ..
+									indicator+"$"+pad( format_number( cost ), 7,, False )+ ..
+									chassis.name+ ..
 									" ["+pad(item.item_type, 7,, False)+"] "+ ..
 									"%%owned%%", ..
-									default_command, item, True, enabled ))
-							End If
-					End Select
+									default_command, item, True, enabled, r, g, b ))
+							Case "turret"
+								Local tur:TURRET = get_turret( item.key, False )
+								Local cost% = tur.cash_value
+								Local indicator$ = ""
+								Local r% = 255, g% = 255, b% = 255
+								If damaged
+									cost = 0.5 * cost
+									indicator = "* "
+									r = 255; g = 212; b = 212
+								End If
+								If tur.name.Length > 0
+									add_option( MENU_OPTION.Create( ..
+										indicator+"$"+pad( format_number( cost ), 7,, False )+ ..
+										tur.name+ ..
+										" ["+pad(item.item_type, 7,, False)+"] "+ ..
+										"%%owned%%", ..
+										default_command, item, True, enabled, r, g, b ))
+								End If
+						End Select
+					Next
+					damaged = True
 				Next
 				
 			Case TEXT_INPUT_DIALOG
@@ -425,13 +444,13 @@ Type MENU
 		Return index > static_option_count + scroll_offset + dynamic_options_displayed-1
 	End Method
 	
-	Method increment_focus()
-		move_focus( 1 )
+	Method increment_focus( wrap% = True )
+		move_focus( 1, wrap )
 	End Method
-	Method decrement_focus()
-		move_focus( -1 )
+	Method decrement_focus( wrap% = True )
+		move_focus( -1, wrap )
 	End Method
-	Method move_focus( direction% = 0 )
+	Method move_focus( direction% = 0, wrap% = True )
 		'focused element (skip + wrap)
 		Local count% = 0
 		Repeat
@@ -478,6 +497,17 @@ Type MENU
 		Return False
 	End Method
 	
+	Method hovering_on_scrollbar%( x%, y% )
+		If is_scrollable( menu_type ) And Not all_options_in_window()
+			Local scrollbar_rect:BOX = get_scrollbar_rect( last_x, last_y )
+			If  x >= scrollbar_rect.x And x <= scrollbar_rect.x + scrollbar_rect.w ..
+			And y >= scrollbar_rect.y And y <= scrollbar_rect.y + scrollbar_rect.h
+				Return True
+			End If
+		End If
+		Return False
+	End Method
+	
 	Method all_options_in_window%()
 		For Local i% = 0 To options.Length
 			If Not option_is_in_window( i )
@@ -485,6 +515,17 @@ Type MENU
 			End If
 		Next
 		Return True
+	End Method
+	
+	Method get_scrollbar_rect:BOX( menu_x%, menu_y% )
+		Return Create_BOX( ..
+			menu_x + width - scrollbar_width, ..
+			menu_y + 3*margin + (1 + static_option_count)*(text_height_factor*title_font.Height()) + 0, ..
+			scrollbar_width, ..
+			height - (3*margin + 2*(text_height_factor*title_font.Height())) + 1 )	
+	End Method
+	
+	Method get_scrollbar_inner_rect:BOX( menu_x%, menu_y% )
 	End Method
 	
 End Type

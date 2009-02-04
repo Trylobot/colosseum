@@ -169,7 +169,11 @@ Type PLAYER_PROFILE
 		Else
 			this_json.SetByName( "damaged_inventory", Null )
 		End If
-		this_json.SetByName( "vehicle", vehicle.to_json() )
+		If vehicle
+			this_json.SetByName( "vehicle", vehicle.to_json() )
+		Else
+			this_json.SetByName( "vehicle", Null )
+		End If
 		this_json.SetByName( "input_method", TJSONNumber.Create( input_method ))
 		If progress
 			Local prog:TJSONArray = TJSONArray.Create( progress.Length )

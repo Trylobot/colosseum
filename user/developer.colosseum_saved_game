@@ -1,17 +1,12 @@
 {
 	name: "developer",
-	cash: 5625,
+	cash: 14625,
 	kills: 1272,
 	inventory: [
 		{
-			item_type: "chassis",
-			key: "medium_tank",
-			count: 1
-		},
-		{
 			item_type: "turret",
 			key: "dual_light_cannon",
-			count: 2
+			count: 1
 		},
 		{
 			item_type: "turret",
@@ -44,7 +39,18 @@
 			count: 2
 		}
 	],
-	damaged_inventory: null,
+	damaged_inventory: [
+		{
+			item_type: "chassis",
+			key: "medium_tank",
+			count: 1
+		},
+		{
+			item_type: "turret",
+			key: "dual_light_cannon",
+			count: 2
+		}
+	],
 	vehicle: {
 		chassis_key: "medium_tank",
 		is_unit: false,
