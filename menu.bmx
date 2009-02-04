@@ -255,23 +255,14 @@ Type MENU
 		End If
 		
 		If menu_id = MENU_ID_MAIN_MENU
-			'profile dependent options
-			If profile <> Null 'loaded
+			If profile
 				enable_option( "loading bay" )
 				enable_option( "save" )
-				enable_option( "multiplayer" )
 				enable_option( "preferences" )
-			Else 'not loaded
+			Else
 				disable_option( "loading bay" )
 				disable_option( "save" )
-				disable_option( "multiplayer" )
 				disable_option( "preferences" )
-			End If
-			'main_game dependent options
-			If main_game <> Null And main_game.game_in_progress 'main_game started
-				enable_option( "resume" )
-			Else
-				disable_option( "resume" )
 			End If
 		End If
 		
@@ -286,10 +277,6 @@ Type MENU
 			Case VERTICAL_LIST_WITH_INVENTORY
 				purge_dynamic_options()
 				Local items:TList = CreateList()
-				Local dmg_items:TList = CreateList()
-				Local item_lists:TList = CreateList()
-				item_lists.AddLast( items )
-				item_lists.AddLast( dmg_items )
 				'create a list of inventory items using the path to indicate the source
 				Select path
 					Case "catalog"
@@ -303,51 +290,42 @@ Type MENU
 						For Local item:INVENTORY_DATA = EachIn profile.inventory
 							items.AddLast( item )
 						Next
-						For Local item:INVENTORY_DATA = EachIn profile.damaged_inventory
-							dmg_items.AddLast( item )
-						Next
 				End Select
 				'build the menu options from the list
-				Local enabled%
-				Local damaged% = False
-				For Local list:TList = EachIn item_lists
-					For Local item:INVENTORY_DATA = EachIn list
-						Select path
-							Case "catalog"
-								enabled = profile.can_buy( item )
-							Case "inventory"
-								enabled = True
-						End Select
-						Local indicator$ = ""
-						Local r% = 255, g% = 255, b% = 255
-						If damaged
-							indicator = "* "
-							r = 255; g = 200; b = 200
-						End If
-						Select item.item_type
-							Case "chassis"
-								Local chassis:COMPLEX_AGENT = get_player_chassis( item.key, False )
-								Local cost% = chassis.cash_value
+				For Local item:INVENTORY_DATA = EachIn items
+					Local enabled%
+					Select path
+						Case "catalog"
+							enabled = profile.can_buy( item )
+						Case "inventory"
+							enabled = True
+					End Select
+					Local indicator$ = ""
+					Local r% = 255, g% = 255, b% = 255
+					If item.damaged
+						indicator = "* "
+						r = 255; g = 200; b = 200
+					End If
+					Select item.item_type
+						Case "chassis"
+							Local chassis:COMPLEX_AGENT = get_player_chassis( item.key, False )
+							add_option( MENU_OPTION.Create( ..
+								indicator+"$"+pad( format_number( profile.get_cost( item )), 7,, False )+ ..
+								chassis.name+ ..
+								" ["+item.item_type+"] "+ ..
+								"%%owned%%", ..
+								default_command, item, True, enabled, r, g, b ))
+						Case "turret"
+							Local tur:TURRET = get_turret( item.key, False )
+							If tur.name.Length > 0
 								add_option( MENU_OPTION.Create( ..
-									indicator+"$"+pad( format_number( cost ), 7,, False )+ ..
-									chassis.name+ ..
+									indicator+"$"+pad( format_number( profile.get_cost( item )), 7,, False )+ ..
+									tur.name+ ..
 									" ["+pad(item.item_type, 7,, False)+"] "+ ..
 									"%%owned%%", ..
 									default_command, item, True, enabled, r, g, b ))
-							Case "turret"
-								Local tur:TURRET = get_turret( item.key, False )
-								Local cost% = tur.cash_value
-								If tur.name.Length > 0
-									add_option( MENU_OPTION.Create( ..
-										indicator+"$"+pad( format_number( cost ), 7,, False )+ ..
-										tur.name+ ..
-										" ["+pad(item.item_type, 7,, False)+"] "+ ..
-										"%%owned%%", ..
-										default_command, item, True, enabled, r, g, b ))
-								End If
-						End Select
-					Next
-					damaged = True
+							End If
+					End Select
 				Next
 				
 			Case TEXT_INPUT_DIALOG

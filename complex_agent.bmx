@@ -362,6 +362,14 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 	End Method
 	'___________________________________________
+	Method fire_all( priority% )
+		If Not spawning
+			For Local t:TURRET = EachIn turrets
+				If t.priority = priority Then t.fire()
+			Next
+		End If
+	End Method
+	'___________________________________________
 	Method fire_blanks_all()
 		For Local t:TURRET = EachIn turrets
 			t.fire_blanks_all()

@@ -35,9 +35,9 @@ Type PLAYER_PROFILE
 		End If
 	End Method
 	
-	Method sell_part( query_item:INVENTORY_DATA, damaged% = False )
+	Method sell_part( query_item:INVENTORY_DATA )
 		If can_sell( query_item )
-			Local cost% = get_cost( query_item, damaged )
+			Local cost% = get_cost( query_item )
 			Local item_index% = search_inventory( query_item )
 			profile.cash :+ cost
 			remove_part( item_index )
@@ -61,9 +61,9 @@ Type PLAYER_PROFILE
 		Return count_inventory( query_item ) >= 1
 	End Method
 	
-	Method get_cost%( query_item:INVENTORY_DATA, damaged% = False )
+	Method get_cost%( query_item:INVENTORY_DATA )
 		Local factor# = 1.0
-		If damaged Then factor = 0.5
+		If query_item.damaged Then factor = 0.5
 		Select query_item.item_type
 			Case "chassis"
 				Return get_player_chassis( query_item.key ).cash_value * factor
@@ -81,14 +81,11 @@ Type PLAYER_PROFILE
 		Return True 'everything checks out
 	End Method
 	
-	Method count_inventory%( query_item:INVENTORY_DATA, damaged% = False )
-		Local item_collection:INVENTORY_DATA[]
-		If Not damaged Then item_collection = inventory ..
-		Else item_collection = damaged_inventory
-		Local q% = search_inventory( query_item, damaged )
+	Method count_inventory%( query_item:INVENTORY_DATA )
+		Local q% = search_inventory( query_item )
 		Local item:INVENTORY_DATA
 		If q >= 0
-			item = item_collection[q]
+			item = inventory[q]
 		End If
 		If item
 			Return item.count
@@ -97,68 +94,53 @@ Type PLAYER_PROFILE
 		End If
 	End Method
 	
-	Method search_inventory%( query_item:INVENTORY_DATA, damaged% = False )
-		Local item_collection:INVENTORY_DATA[]
-		If Not damaged Then item_collection = inventory ..
-		Else item_collection = damaged_inventory
-		If item_collection
-			For Local i% = 0 To item_collection.Length - 1
-				If item_collection[i].eq( query_item ) Then Return i
+	Method search_inventory%( query_item:INVENTORY_DATA )
+		If inventory
+			For Local i% = 0 To inventory.Length - 1
+				If inventory[i].eq( query_item ) Then Return i
 			Next
 		End If
 		Return -1
 	End Method
 	
-	Method add_part( new_item:INVENTORY_DATA, damaged% = False )
-		Local item_collection:INVENTORY_DATA[]
-		If Not damaged Then item_collection = inventory ..
-		Else item_collection = damaged_inventory
-		Local q% = search_inventory( new_item, damaged )
+	Method add_part( new_item:INVENTORY_DATA )
+		Local q% = search_inventory( new_item )
 		Local item:INVENTORY_DATA
 		If q >= 0
-			item = item_collection[q]
+			item = inventory[q]
 		End If
-		If item 'named item exists currently
+		If item
 			item.count :+ 1
-		Else 'item does not yet exist
-			If item_collection
-				item_collection = item_collection[..(item_collection.Length + 1)]
-				item_collection[item_collection.Length - 1] = new_item.clone()
-			Else 'Not item_collection
-				item_collection = [ new_item.clone() ]
+		Else
+			If inventory
+				inventory = inventory[..(inventory.Length + 1)]
+				inventory[inventory.Length - 1] = new_item.clone()
+			Else 'Not inventory
+				inventory = [ new_item.clone() ]
 			End If
-			If Not damaged Then inventory = item_collection ..
-			Else damaged_inventory = item_collection
 		End If
 	End Method
 	
-	Method remove_part:INVENTORY_DATA( item_index%, damaged% = False )
-		Local item_collection:INVENTORY_DATA[]
-		If Not damaged Then item_collection = inventory ..
-		Else item_collection = damaged_inventory
-		If item_collection
-			Local item:INVENTORY_DATA = item_collection[item_index]
-			item.count :- 1
-			If item.count <= 0
-				If item_collection.Length > 1
-					Local new_item_collection:INVENTORY_DATA[item_collection.Length - 1]
-					If item_index > 0
-						For Local i% = 0 To item_index - 1
-							new_item_collection[i] = item_collection[i]
-						Next
-					End If
-					If item_index < item_collection.Length - 1
-						For Local i% = item_index + 1 To item_collection.Length - 1
-							new_item_collection[i - 1] = item_collection[i]
-						Next
-					End If
-					If Not damaged Then inventory = new_item_collection ..
-					Else damaged_inventory = new_item_collection
-					Return item
-				Else 'inventory.Length <= 1
-					If Not damaged Then inventory = Null ..
-					Else damaged_inventory = Null
+	Method remove_part:INVENTORY_DATA( item_index% )
+		Local item:INVENTORY_DATA = inventory[item_index]
+		item.count :- 1
+		If item.count <= 0
+			If inventory.Length > 1
+				Local new_inventory:INVENTORY_DATA[inventory.Length - 1]
+				If item_index > 0
+					For Local i% = 0 To item_index - 1
+						new_inventory[i] = inventory[i]
+					Next
 				End If
+				If item_index < inventory.Length - 1
+					For Local i% = item_index + 1 To inventory.Length - 1
+						new_inventory[i - 1] = inventory[i]
+					Next
+				End If
+				inventory = new_inventory
+				Return item
+			Else 'inventory.Length <= 1
+				inventory = Null
 			End If
 		End If
 		Return Null
@@ -168,10 +150,11 @@ Type PLAYER_PROFILE
 		Local index% = search_inventory( query_item )
 		If index >= 0
 			Local item:INVENTORY_DATA = remove_part( index )
-			add_part( item, True )
+			item.damaged = True
+			add_part( item )
 		End If
 	End Method
-	
+
 	Method generate_src_path$()
 		Return user_path + name + "." + saved_game_file_ext
 	End Method

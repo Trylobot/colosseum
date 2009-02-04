@@ -6,6 +6,8 @@ EndRem
 
 '______________________________________________________________________________
 'Physics and Timing Update
+Global damage_incurred% = False
+
 Function update_all_objects()
 	
 	'update body
@@ -109,34 +111,30 @@ End Function
 Function update_flags()
 	'flag updates for games with human participation
 	If game.human_participation
-		'game over
-		If game.player.dead() And Not game.game_over 'player just died? (omgwtf)
+		'player death
+		If game.player.dead() 'player just died? (omgwtf)
 			game.game_in_progress = False
 			game.game_over = True
 			game.player_engine_running = False
 			tweak_engine_idle()
-			If profile And profile.vehicle
-				profile.damage_part( profile.vehicle.select_random_part() )
-			End If
+			damage_incurred = True
 		End If
-		'no more enemies (either still to spawn or still alive)?
-		If game.battle_in_progress And game.active_hostile_spawners = 0 And game.hostile_agent_list.Count() = 0 'And game.level_enemies_killed >= game.level_enemy_count
+		'enemies all dead
+		If game.battle_in_progress And game.active_hostile_spawners = 0 And game.hostile_agent_list.Count() = 0
 			game.game_in_progress = False
 			game.battle_in_progress = False
 			game.battle_state_toggle_ts = now()
 			game.close_doors( ALIGNMENT_HOSTILE )
 			game.spawn_enemies = False
 		End If
-		'if waiting for player to enter arena
+		'waiting on player to start
 		If game.waiting_for_player_to_enter_arena
-			'if player has not entered the arena
-			If game.player.dist_to( game.player_spawn_point ) < SPAWN_POINT_POLITE_DISTANCE 'game.point_inside_arena( game.player )
-				'if the player has started the engine
+			'player not entered arena
+			If game.player.dist_to( game.player_spawn_point ) < SPAWN_POINT_POLITE_DISTANCE
 				If game.player_engine_running
-					'open the friendly doors
 					game.open_doors( ALIGNMENT_FRIENDLY )
 				End If
-			Else 'player has entered the arena
+			Else 'player entered arena
 				game.player_in_locker = False
 				game.waiting_for_player_to_enter_arena = False
 				game.open_doors( ALIGNMENT_HOSTILE )
@@ -147,7 +145,7 @@ Function update_flags()
 			End If
 		End If
 	End If
-	'flag updates for any game
+	'global state flag updates
 	If game And game.auto_reset_spawners
 		If game.active_friendly_spawners <= 0 And game.active_friendly_units <= 0
 			game.reset_spawners( ALIGNMENT_FRIENDLY )

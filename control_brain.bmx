@@ -442,10 +442,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				If input_type = INPUT_KEYBOARD
 					'turret(s) fire
 					If KeyDown( KEY_SPACE )
-						avatar.fire( 0 )
+						avatar.fire_all( TURRET.PRIMARY )
 					End If
 					If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
-						avatar.fire( 1 )
+						avatar.fire_all( TURRET.SECONDARY )
 					End If
 					'If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
 					'	avatar.fire_turret_group( 2 )
@@ -453,10 +453,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 					'turret(s) fire
 					If MouseDown( 1 ) And Not FLAG_ignore_mouse_1
-						avatar.fire( 0 )
+						avatar.fire_all( TURRET.PRIMARY )
 					End If
 					If MouseDown( 2 )
-						avatar.fire( 1 )
+						avatar.fire_all( TURRET.SECONDARY )
 					End If
 				End If
 					

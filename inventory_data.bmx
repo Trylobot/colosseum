@@ -17,6 +17,7 @@ Type INVENTORY_DATA
 	Field item_type$
 	Field key$
 	Field count%
+	Field damaged%
 	
 	Method clone:INVENTORY_DATA()
 		Return Create_INVENTORY_DATA( item_type, key, count )
@@ -24,7 +25,10 @@ Type INVENTORY_DATA
 	
 	Method eq%( other:INVENTORY_DATA )
 		If Not other Then Return False
-		Return item_type = other.item_type And key = other.key
+		Return ..
+			item_type = other.item_type And ..
+			key = other.key And ..
+			damaged = other.damaged
 	End Method
 	
 	Method to_string$()
@@ -36,6 +40,7 @@ Type INVENTORY_DATA
 		this_json.SetByName( "item_type", TJSONString.Create( item_type ))
 		this_json.SetByName( "key", TJSONString.Create( key ))
 		this_json.SetByName( "count", TJSONNumber.Create( count ))
+		this_json.SetByName( "damaged", TJSONBoolean.Create( damaged ))
 		Return this_json
 	End Method
 	
@@ -46,6 +51,7 @@ Function Create_INVENTORY_DATA_from_json:INVENTORY_DATA( json:TJSON )
 	item.item_type = json.GetString( "item_type" ) 
 	item.key = json.GetString( "key" )
 	item.count = json.GetNumber( "count" )
+	item.damaged = json.GetBoolean( "damaged" )
 	Return item
 End Function
 

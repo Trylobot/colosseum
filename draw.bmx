@@ -251,9 +251,10 @@ Function draw_main_screen()
 	h = 0.75*TextHeight( info )
 	x = 1
 	y = window_h - h*2 - 1
-	'If game = main_game Then y :- 50
-	DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole (aka Tylerbot); music by NickPerrin; JSON binding by grable", x, y ); y :+ h
-	DrawText_with_outline( "special thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, and Firelord88; written in BlitzMax", x, y ); y :+ h
+	If game <> main_game
+		DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole (aka Tylerbot); music by NickPerrin; JSON binding by grable", x, y ); y :+ h
+		DrawText_with_outline( "special thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, and Firelord88; written in BlitzMax", x, y ); y :+ h
+	End If
 	
 End Function
 '______________________________________________________________________________

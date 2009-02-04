@@ -9,7 +9,8 @@ Const ANCHOR_HOVER_RADIUS% = 100
 Const CHASSIS_HOVER_RADIUS% = 200
 Const INVENTORY_SIDEBAR_WIDTH% = 190
 
-Function vehicle_editor( v_dat:VEHICLE_DATA )
+Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
+	v_dat = v_dat.clone()
 	Local mouse:POINT = Create_POINT( MouseX(), MouseY() )
 	Local mouse_dragging%
 	Local dragging_gladiator% = False
@@ -429,15 +430,16 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 	SetClsColor( 0, 0, 0 )
 	FlushKeys()
 	FlushMouse()
+	Return v_dat
 End Function
 
-Function bake_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, abort_on_error% = False )
-	Local player:COMPLEX_AGENT = create_player( v_dat, abort_on_error, False )
+Function bake_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA )
+	Local player:COMPLEX_AGENT = create_player( v_dat, False )
 	If Not player Then player = New COMPLEX_AGENT
 	player.set_images_unfiltered()
 	player.move_to( Create_POINT( window_w/2, window_h/2, 0 ), True )
 	?Debug
-	If v_dat Then DebugLog " bake_player()~n"+v_dat.to_json().ToSource()
+	If v_dat Then DebugLog " player vehicle data~n"+v_dat.to_json().ToSource()
 	?
 	Return player
 End Function
