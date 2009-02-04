@@ -10,6 +10,17 @@ Type VEHICLE_DATA
 	Field is_unit%
 	Field turret_keys$[][]
 	
+	Method clone:VEHICLE_DATA()
+		Local vd:VEHICLE_DATA = New VEHICLE_DATA
+		vd.chassis_key = chassis_key
+		vd.is_unit = is_unit
+		vd.turret_keys = New String[][turret_keys.Length]
+		For Local i% = 0 Until turret_keys.Length
+			vd.turret_keys[i] = turret_keys[i][..]
+		Next
+		Return vd
+	End Method
+	
 	Method set_chassis( new_chassis_key$, new_is_unit% = False )
 		chassis_key = new_chassis_key
 		is_unit = new_is_unit

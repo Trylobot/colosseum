@@ -22,6 +22,7 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 	Local mouse_items:INVENTORY_DATA[]
 	Local title$ = "customize vehicle"
 	Local kill_signal%
+	Local v_dat_backup:VEHICLE_DATA
 	
 	'gladiator thingy
 	Local stock_gladiator:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
@@ -256,14 +257,20 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 				
 			Else If chassis_hover And player.img 'yanked a valid chassis
 				mouse_shadow = player
-				player = New COMPLEX_AGENT
-				player.move_to( Create_cVEC( window_w/2, window_h/2 ), True )
 				If v_dat.is_unit
 					mouse_items = [ Create_INVENTORY_DATA( "unit", v_dat.chassis_key )]
 				Else 'Not v_dat.is_unit
 					mouse_items = [ Create_INVENTORY_DATA( "chassis", v_dat.chassis_key )]
+					For Local anchor% = 0 Until v_dat.turret_keys.Length
+						For Local t% = 0 Until v_dat.turret_keys[anchor].Length
+							mouse_items = mouse_items[..mouse_items.Length+1]
+							mouse_items[mouse_items.Length-1] = Create_INVENTORY_DATA( "turret", v_dat.turret_keys[anchor][t] )
+						Next
+					Next
 				End If
-				v_dat.chassis_key = ""
+				v_dat_backup = v_dat.clone()
+				v_dat = New VEHICLE_DATA
+				player = bake_player( v_dat )
 			
 			Else If hover_inventory_listing >= 0 'started a drag op near an inventory item
 				dragging_inventory_i = hover_inventory_listing
@@ -343,6 +350,10 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 					v_dat.set_chassis( mouse_items[0].key, True ) 'change the chassis
 				Else If mouse_items[0].item_type = "chassis"
 					v_dat.set_chassis( mouse_items[0].key, False ) 'change the chassis
+					If mouse_items.Length > 1
+						v_dat = v_dat_backup
+						v_dat_backup = New VEHICLE_DATA
+					End If
 				End If
 				player = bake_player( v_dat )
 				DebugLog " changed chassis to "+mouse_items[0].to_string()
@@ -423,9 +434,8 @@ Function bake_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, abort_on_error% = False 
 	If Not player Then player = New COMPLEX_AGENT
 	player.set_images_unfiltered()
 	player.move_to( Create_POINT( window_w/2, window_h/2, 0 ), True )
-	player.update()
 	?Debug
-	DebugLog " bake_player()~n"+v_dat.to_json().ToSource()
+	If v_dat Then DebugLog " bake_player()~n"+v_dat.to_json().ToSource()
 	?
 	Return player
 End Function
