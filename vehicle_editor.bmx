@@ -427,6 +427,8 @@ Function vehicle_editor( v_dat:VEHICLE_DATA )
 	If kill_signal Then End
 	
 	SetClsColor( 0, 0, 0 )
+	FlushKeys()
+	FlushMouse()
 End Function
 
 Function bake_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, abort_on_error% = False )

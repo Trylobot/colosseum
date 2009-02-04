@@ -140,6 +140,29 @@ Type VEHICLE_DATA
 		Return -1
 	End Method
 	
+	Method select_random_part:INVENTORY_DATA()
+		If is_unit Then Return Null
+		Local count% = 0
+		Local parts:TList = CreateList()
+		If chassis_key And chassis_key.Length > 0
+			parts.AddLast( Create_INVENTORY_DATA( "chassis", chassis_key ))
+			count :+ 1
+		End If
+		If turret_keys
+			For Local anchor% = 0 Until turret_keys.Length
+				If turret_keys[anchor]
+					For Local t% = 0 Until turret_keys[anchor].Length
+						If turret_keys[anchor][t] And turret_keys[anchor][t].Length > 0
+							parts.AddLast( Create_INVENTORY_DATA( "turret", turret_keys[anchor][t] ))
+							count :+ 1
+						End If
+					Next
+				End If
+			Next
+		End If
+		Return INVENTORY_DATA( parts.ValueAtIndex( Rand( 0, count - 1 )))
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "chassis_key", TJSONString.Create( chassis_key ))

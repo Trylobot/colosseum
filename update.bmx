@@ -110,11 +110,14 @@ Function update_flags()
 	'flag updates for games with human participation
 	If game.human_participation
 		'game over
-		If game.player.dead() 'player just died? (omgwtf)
+		If game.player.dead() And Not game.game_over 'player just died? (omgwtf)
 			game.game_in_progress = False
 			game.game_over = True
 			game.player_engine_running = False
 			tweak_engine_idle()
+			If profile And profile.vehicle
+				profile.damage_part( profile.vehicle.select_random_part() )
+			End If
 		End If
 		'no more enemies (either still to spawn or still alive)?
 		If game.battle_in_progress And game.active_hostile_spawners = 0 And game.hostile_agent_list.Count() = 0 'And game.level_enemies_killed >= game.level_enemy_count

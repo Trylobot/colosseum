@@ -318,17 +318,16 @@ Type MENU
 							Case "inventory"
 								enabled = True
 						End Select
+						Local indicator$ = ""
+						Local r% = 255, g% = 255, b% = 255
+						If damaged
+							indicator = "* "
+							r = 255; g = 200; b = 200
+						End If
 						Select item.item_type
 							Case "chassis"
 								Local chassis:COMPLEX_AGENT = get_player_chassis( item.key, False )
 								Local cost% = chassis.cash_value
-								Local indicator$ = ""
-								Local r% = 255, g% = 255, b% = 255
-								If damaged
-									cost = 0.5 * cost
-									indicator = "* "
-									r = 255; g = 212; b = 212
-								End If
 								add_option( MENU_OPTION.Create( ..
 									indicator+"$"+pad( format_number( cost ), 7,, False )+ ..
 									chassis.name+ ..
@@ -338,13 +337,6 @@ Type MENU
 							Case "turret"
 								Local tur:TURRET = get_turret( item.key, False )
 								Local cost% = tur.cash_value
-								Local indicator$ = ""
-								Local r% = 255, g% = 255, b% = 255
-								If damaged
-									cost = 0.5 * cost
-									indicator = "* "
-									r = 255; g = 212; b = 212
-								End If
 								If tur.name.Length > 0
 									add_option( MENU_OPTION.Create( ..
 										indicator+"$"+pad( format_number( cost ), 7,, False )+ ..

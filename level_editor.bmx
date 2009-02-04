@@ -674,6 +674,8 @@ Function level_editor( lev:LEVEL )
 	Until KeyHit( KEY_ESCAPE ) Or kill_signal
 	If kill_signal Then End
 	
+	FlushKeys()
+	FlushMouse()
 End Function
 
 Function class_to_string$( class% )
