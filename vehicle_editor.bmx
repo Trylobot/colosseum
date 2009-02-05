@@ -17,6 +17,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 	Local mouse:POINT = Create_POINT( MouseX(), MouseY() )
 	Local mouse_dragging%
 	Local dragging_gladiator% = False
+	Local dragging_chassis% = False
 	Local dragging_inventory_i% = -1
 	Local dragging_anchor% = -1
 	Local mouse_down_1%
@@ -126,7 +127,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		And mouse.pos_y >= stock_rect.y And mouse.pos_y <= stock_rect.y + stock_rect.h
 			hover_gladiator = True
 			'draw the gladiator object near the mouse
-			stock_gladiator.move_to( mouse, True )
+			stock_gladiator.move_to( mouse, True, True )
 			stock_gladiator.scale_all( MOUSE_SHADOW_SCALE )
 			stock_gladiator.draw( 0.5, MOUSE_SHADOW_SCALE )
 			'draw a highlight box around the item description
@@ -172,7 +173,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 			And mouse.pos_y >= listing_rect.y And mouse.pos_y <= listing_rect.y + listing_rect.h
 				hover_inventory_listing = i
 				'move the actual object representing the inventory item to the mouse position
-				inventory[i].move_to( mouse, True )
+				inventory[i].move_to( mouse, True, True )
 				'if the item is a turret, and the turret has no base, draw a "fake base" for it
 				If TURRET(inventory[i])
 					Local t:TURRET = TURRET(inventory[i])
@@ -214,7 +215,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		Next
 		
 		'chassis drag destination goes _under_ the chassis object, oddly
-		If chassis_hover And (Not closest_turret_anchor Or mouse_shadow.img)
+		If chassis_hover And (Not closest_turret_anchor Or dragging_chassis)
 			SetAlpha( 0.085 )
 			SetColor( 255, 255, 255 )
 			SetScale( 1, 1 )
@@ -223,7 +224,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 
 		'draw player in current state
 		If player.img 'valid player
-			player.draw( 0.5, STAGE_SCALE )
+			player.draw( 1.0, STAGE_SCALE )
 		Else 'invalid player
 			SetImageFont( get_font( "consolas_12" ))
 			'draw a placeholder for the chassis, so the user knows what to do
@@ -269,8 +270,11 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				End If
 				
 			Else If chassis_hover And player.img 'yanked a valid chassis
+				dragging_chassis = True
 				mouse_shadow = player
+				mouse_shadow.scale_all( 1/STAGE_SCALE )
 				mouse_shadow.scale_all( MOUSE_SHADOW_SCALE )
+				mouse_shadow.move_to( mouse, True, True )
 				If v_dat.is_unit
 					mouse_items = [ Create_INVENTORY_DATA( "unit", v_dat.chassis_key )]
 				Else 'Not v_dat.is_unit
@@ -291,6 +295,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				unused_inventory_count[hover_inventory_listing] :- 1
 				'attach the inventory turret to or set the chassis of the mouse shadow
 				If COMPLEX_AGENT(inventory[hover_inventory_listing])
+					dragging_chassis = True
 					mouse_shadow = COMPLEX_AGENT( COMPLEX_AGENT.Copy( COMPLEX_AGENT(inventory[hover_inventory_listing]) ))
 					mouse_items = [ profile.inventory[hover_inventory_listing].clone() ]
 				Else If TURRET(inventory[hover_inventory_listing])
@@ -302,6 +307,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				DebugLog " dragging item:"+profile.inventory[hover_inventory_listing].to_string()
 			
 			Else If hover_gladiator 'started dragging the stock gladiator
+				dragging_chassis = True
 				dragging_gladiator = True
 				'attach the gladiator to the mouse chassis
 				mouse_shadow = get_unit( "machine_gun_quad" )
@@ -314,7 +320,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		Else If mouse_dragging And Not MouseDown( 1 ) And mouse_down_1 'FINISHED a drag
 			mouse_dragging = False
 			
-			If closest_turret_anchor And Not v_dat.is_unit 'dropped onto a turret anchor
+			If closest_turret_anchor And Not dragging_chassis 'dropped onto a turret anchor
 			
 				If dragging_inventory_i >= 0 'dropped turret from inventory onto a turret anchor; add it to vehicle data and bake
 					Local result$ = v_dat.add_turret( profile.inventory[dragging_inventory_i].key, closest_turret_anchor_i )
@@ -353,7 +359,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 					End If
 				End If
 			
-			Else If mouse_shadow.img And chassis_hover 'dropped a chassis on the chassis
+			Else If dragging_chassis And chassis_hover 'dropped a chassis on the chassis
 				'return the current chassis to the inventory
 				For Local i% = 0 Until profile.inventory.Length
 					If profile.inventory[i].key = v_dat.chassis_key
@@ -396,6 +402,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 			'reset the mouse shadow
 			dragging_gladiator = False
 			dragging_inventory_i = -1
+			dragging_chassis = False
 			dragging_anchor = -1
 			mouse_shadow = New COMPLEX_AGENT
 			mouse_shadow.add_turret_anchor( Create_cVEC( 0, 0 ))
@@ -403,7 +410,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		End If
 		
 		'drag destinations draw
-		If closest_turret_anchor And Not mouse_shadow.img 'show closest turret anchor if not dragging a chassis
+		If closest_turret_anchor And Not dragging_chassis 'show closest turret anchor if not dragging a chassis
 			SetAlpha( 1.2 - mouse.dist_to( closest_turret_anchor )/ANCHOR_HOVER_RADIUS )
 			DrawLine_awesome( mouse.pos_x, mouse.pos_y, closest_turret_anchor.x, closest_turret_anchor.y )
 		End If
@@ -411,6 +418,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		'mouse shadow
 		If mouse_dragging
 			mouse_shadow.move_to( mouse, True )
+			mouse_shadow.update()
 			mouse_shadow.draw( 0.5, MOUSE_SHADOW_SCALE )
 			For Local t:TURRET = EachIn mouse_shadow.turrets
 				If Not t.img
@@ -450,9 +458,6 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 	FlushKeys()
 	FlushMouse()
 
-	?Debug
-	If v_dat Then DebugLog " player vehicle data~n"+v_dat.to_json().ToSource()
-	?
 	Return v_dat
 End Function
 
@@ -460,14 +465,8 @@ Function bake_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, scale# = 1.0 )
 	Local player:COMPLEX_AGENT = create_player( v_dat, False )
 	If Not player Then player = New COMPLEX_AGENT
 	player.set_images_unfiltered()
-	player.move_to( Create_POINT( window_w/2, window_h/2, 0 ), True )
-	If player.turrets.Length >= 1
-		DebugLog "player.turrets[0].offset = "+player.turrets[0].offset
-	End If
 	player.scale_all( scale )
-	If player.turrets.Length >= 1
-		DebugLog "player.turrets[0].offset = "+player.turrets[0].offset
-	End If
+	player.move_to( Create_POINT( window_w/2, window_h/2, 0 ), True, True )
 	Return player
 End Function
 

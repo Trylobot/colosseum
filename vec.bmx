@@ -35,8 +35,12 @@ Type cVEC 'cartesian coordinate system 2D vector
 		Return ATan2( y, x )
 	End Method
 	
-	Method to_string$()
-		Return "( "+x+", "+y+" )"
+	Method to_string$( as_int% = False )
+		If as_int
+			Return "( "+Int(x)+", "+Int(y)+" )"
+		Else
+			Return "( "+x+", "+y+" )"
+		End If
 	End Method
 End Type
 '______________________________________________________________________________
@@ -60,6 +64,14 @@ Type pVEC 'polar coordinate system 2D vector
 	
 	Method y#()
 		Return (r * Sin( a ))
+	End Method
+	
+	Method to_string$( as_int% = False )
+		If as_int
+			Return "( "+Int(x())+", "+Int(y())+" )"
+		Else
+			Return "( "+x()+", "+y()+" )"
+		End If
 	End Method
 End Type
 

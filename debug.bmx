@@ -388,13 +388,24 @@ Function debug_overlay()
 			
 	End If
 	
+	If game And game.player
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetScale( 1, 1 )
+		SetRotation( 0 )
+		SetImageFont( get_font( "consolas_12" ))
+		Local p_delta:cVEC = Create_cVEC( p_current.x - p_last.x, p_current.y - p_last.y )
+		DrawText_with_outline( p_delta.to_string( True ), game.player.pos_x, game.player.pos_y + 25 )
+	End If
+	
 End Function
+Global p_last:cVEC = New cVEC
+Global p_current:cVEC = New cVEC
 
-Function debug_win()
-	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 1249 )
-	End
-End Function
-
+'Function debug_win()
+'	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 1249 )
+'	End
+'End Function
 
 ''______________________________________________________________________________
 'Function debug_doors()

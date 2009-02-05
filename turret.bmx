@@ -255,7 +255,7 @@ Type TURRET Extends POINT
 		Return EMITTER( EMITTER.Copy( other_em, emitter_list, Self ))
 	End Method
 	
-	Method move_to( argument:Object, DUMMY_PARAMETER% = False )
+	Method move_to( argument:Object, dummy1% = False, dummy2% = False )
 		Super.move_to( argument )
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
 			tb.move_to( Self )

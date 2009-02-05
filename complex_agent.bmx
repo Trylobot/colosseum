@@ -191,6 +191,8 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method update()
 		Super.update()
+'p_last = p_current
+'p_current = Self.to_cvec()
 		
 		'smooth out and constrain velocity
 		Local vel# = vector_length( vel_x, vel_y )
@@ -322,9 +324,10 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
-	Method move_to( argument:Object, snap_turrets% = False )
+	Method move_to( argument:Object, snap_turrets% = False, perform_update% = False )
 		Super.move_to( argument )
 		If snap_turrets Then snap_all_turrets()
+		If perform_update Then update()
 	End Method
 	'___________________________________________
 	Method spawn_at( p:POINT, time% )

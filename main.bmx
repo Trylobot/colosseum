@@ -101,7 +101,7 @@ init_graphics()
 init_ai_menu_game() 'ignored if Not show_ai_menu_game
 
 Const time_per_frame_min% = 1000 / 60
-Local before%
+Global before%
 info_change_ts = now()
 '______________________________________________________________________________
 'MAIN GAME LOOP
