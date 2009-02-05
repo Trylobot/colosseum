@@ -5,11 +5,16 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-Function Create_INVENTORY_DATA:INVENTORY_DATA( item_type$, key$, count% = 1 )
+Function Create_INVENTORY_DATA:INVENTORY_DATA( ..
+item_type$, ..
+key$, ..
+count% = 1, ..
+damaged% = False )
 	Local item:INVENTORY_DATA = New INVENTORY_DATA
 	item.item_type = item_type
 	item.key = key
 	item.count = count
+	item.damaged = damaged
 	Return item
 End Function
 
@@ -20,7 +25,11 @@ Type INVENTORY_DATA
 	Field damaged%
 	
 	Method clone:INVENTORY_DATA()
-		Return Create_INVENTORY_DATA( item_type, key, count )
+		Return Create_INVENTORY_DATA( ..
+			item_type, ..
+			key, ..
+			count, ..
+			damaged )
 	End Method
 	
 	Method eq%( other:INVENTORY_DATA )

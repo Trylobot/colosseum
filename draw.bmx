@@ -291,7 +291,8 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 				'shop decorations
 				If m.menu_type = MENU.VERTICAL_LIST_WITH_INVENTORY
 					'draw the object to which the focused menu option refers, off to the side a bit.
-					Local inventory_object:POINT = POINT( bake_item( INVENTORY_DATA( m.get_focus().argument )))
+					Local item:INVENTORY_DATA = INVENTORY_DATA( m.get_focus().argument )
+					Local inventory_object:POINT = POINT( bake_item( item ))
 					If inventory_object
 						cx :+ m.width + 10
 						cy :+ m.get_focus_offset()
@@ -300,7 +301,7 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 							TURRET(inventory_object).scale_all( MOUSE_SHADOW_SCALE )
 							If TURRET(inventory_object).img
 								cx :+ 3*TURRET(inventory_object).img.handle_x
-							Else
+							Else 'ghost base for turrets with none
 								SetColor( 255, 255, 255 )
 								SetAlpha( 0.15 )
 								DrawRect( cx, cy, 25, 25 )
@@ -314,8 +315,17 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 								cx :+ 3*COMPLEX_AGENT(inventory_object).img.handle_x
 							End If
 						End If
+						Local a# = 1.0
+						If item.damaged Then a = 0.15
 						inventory_object.move_to( Create_cVEC( cx, cy + 12.5 ), True )
-						inventory_object.draw( 1.0, 3.0 )
+						inventory_object.draw( a, MOUSE_SHADOW_SCALE )
+						If item.damaged
+							SetColor( 255, 127, 127 )
+							SetAlpha( 1 )
+							SetScale( 1, 1 )
+							SetRotation( -20 )
+							DrawText_with_outline( "DAMAGED!", x + m.width + 15, cy + 12.5 )
+						End If
 					End If
 				End If
 			Else 'not current menu (or 1 before in case of popup)

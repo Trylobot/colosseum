@@ -120,26 +120,32 @@ Type PLAYER_PROFILE
 		End If
 	End Method
 	
-	Method remove_part:INVENTORY_DATA( item_index% )
-		Local item:INVENTORY_DATA = inventory[item_index]
-		item.count :- 1
-		If item.count <= 0
-			If inventory.Length > 1
-				Local new_inventory:INVENTORY_DATA[inventory.Length - 1]
-				If item_index > 0
-					For Local i% = 0 To item_index - 1
-						new_inventory[i] = inventory[i]
-					Next
+	Method remove_part:INVENTORY_DATA( item_index%, count% = 1 )
+		If item_index >= 0 And item_index < inventory.Length
+			Local item:INVENTORY_DATA = inventory[item_index]
+			If item.count >= count 'have enough
+				Local removed_item:INVENTORY_DATA = item.clone() 'create a copy of the item
+				removed_item.count = count 'requested units to be returned
+				item.count :- count 'remove requested units from self inventory
+				If item.count <= 0 'none left of this item
+					If inventory.Length > 1 'inventory has other items
+						Local new_inventory:INVENTORY_DATA[inventory.Length - 1]
+						If item_index > 0 'item is not the "first" item
+							For Local i% = 0 To item_index - 1
+								new_inventory[i] = inventory[i]
+							Next
+						End If
+						If item_index < inventory.Length - 1 'item is not the "last" item
+							For Local i% = item_index + 1 To inventory.Length - 1
+								new_inventory[i - 1] = inventory[i]
+							Next
+						End If
+						inventory = new_inventory 'resized inventory, excluding the zero'd item
+					Else 'inventory.Length <= 1
+						inventory = Null 'no other items left
+					End If
 				End If
-				If item_index < inventory.Length - 1
-					For Local i% = item_index + 1 To inventory.Length - 1
-						new_inventory[i - 1] = inventory[i]
-					Next
-				End If
-				inventory = new_inventory
-				Return item
-			Else 'inventory.Length <= 1
-				inventory = Null
+				Return removed_item 'return requested item
 			End If
 		End If
 		Return Null
