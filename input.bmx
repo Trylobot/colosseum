@@ -23,23 +23,20 @@ Function get_all_input()
 		FLAG_ignore_mouse_1 = False
 	End If
 	
-	'win
-	If game And game.human_participation
-		If Not game.game_in_progress And KeyHit( KEY_R )
-			game.player_engine_running = False
-			tweak_engine_idle()
-			If Not game.game_over
-				kill_tally( "LEVEL COMPLETE!", screencap() )
-			End If
-			menu_command( COMMAND_QUIT_LEVEL )
-		End If
-	End If
-	
 	'navigate menu and select option
 	If FLAG_in_menu
 		Local m:MENU = get_current_menu()
+		'text input controls comes before anything else
+		If m.menu_type = MENU.TEXT_INPUT_DIALOG
+			If KeyHit( KEY_ENTER )
+				m.execute_current_option()
+			End If
+			m.input_box = m.input_listener.update( m.input_box )
+			m.update()
+		End If
 		'menu navigation controls
-		If KeyHit( KEY_ESCAPE ) And current_menu <> 0 And get_current_menu().menu_id <> MENU_ID_PAUSED
+		If KeyHit( KEY_ESCAPE ) Or KeyHit( KEY_BACKSPACE ) ..
+		And (current_menu > 0 And get_current_menu().menu_id <> MENU_ID_PAUSED)
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		End If
 		If KeyHit( KEY_DOWN ) Or MouseZ() < mouse_last_z
@@ -50,16 +47,11 @@ Function get_all_input()
 		If KeyHit( KEY_ENTER )
 			m.execute_current_option()
 		End If
-		'text input controls
-		If m.menu_type = MENU.TEXT_INPUT_DIALOG
-			m.input_box = m.input_listener.update( m.input_box )
-			m.update()
-		End If
 		'mouseover of menu items
 		'Local target_valid% = m.select_by_coords( mouse.x, mouse.y )
 		'If MouseHit( 1 ) And target_valid
 		m.select_by_coords( mouse.x, mouse.y )
-		If MouseHit( 1 )
+		If MouseHit( 1 ) And get_current_menu().menu_type <> MENU.TEXT_INPUT_DIALOG
 			m.execute_current_option()
 		End If
 	Else 'Not FLAG_in_menu And Not FLAG_in_shop
@@ -87,12 +79,24 @@ Function get_all_input()
 		End If
 	End If
 	
+	'win/kill_tally
+	If game And game.human_participation
+		If Not game.game_in_progress And KeyHit( KEY_R )
+			game.player_engine_running = False
+			tweak_engine_idle()
+			If Not game.game_over
+				kill_tally( "LEVEL COMPLETE!", screencap() )
+			End If
+			menu_command( COMMAND_QUIT_LEVEL )
+		End If
+	End If
+	
 	mouse_last_z = MouseZ()
 	
 	'music enable/disable
 	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
 	
-	'insta-quit feature
+	'insta-quit
 	escape_key_update()
 	
 	'screenshot

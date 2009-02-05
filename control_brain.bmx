@@ -313,12 +313,12 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Method see_target%()
 		If target <> Null
 			'last_look_target_ts = now()
-			Local av:cVEC = cVEC( cVEC.Create( avatar.pos_x, avatar.pos_y ))
-			Local targ:cVEC = cVEC( cVEC.Create( target.pos_x, target.pos_y ))
+			Local av:cVEC = Create_cVEC( avatar.pos_x, avatar.pos_y )
+			Local targ:cVEC = Create_cVEC( target.pos_x, target.pos_y )
 			'for each wall in the level
 			For Local wall:BOX = EachIn game.walls
 				'if the line connecting this brain's avatar with its target intersects the wall
-				If line_intersects_rect( av,targ, cVEC( cVEC.Create(wall.x, wall.y)), cVEC( cVEC.Create(wall.w, wall.h)) )
+				If line_intersects_rect( av,targ, Create_cVEC(wall.x, wall.y), Create_cVEC(wall.w, wall.h) )
 					'then the avatar cannot see its target
 					Return False
 				End If

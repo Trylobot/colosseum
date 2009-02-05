@@ -49,6 +49,14 @@
 	},
 	{
 		class: "font",
+		key: "consolas_italic_12",
+		object: {
+			path: "fonts/consolas_italic.ttf",
+			size: 12
+		}
+	},
+	{
+		class: "font",
 		key: "consolas_italic_18",
 		object: {
 			path: "fonts/consolas_italic.ttf",

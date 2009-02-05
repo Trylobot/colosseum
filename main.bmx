@@ -116,35 +116,26 @@ Repeat
 	Else
 		game = main_game 'normal play
 	End If
-	
 	'input
 	get_all_input()
-	
 	'simulation speed, never faster than 60 hertz
 	If (now() - before) > time_per_frame_min
 		before = now()
-		
 		'collision detection & resolution
 		collide_all_objects()
 		'physics engine update
 		update_all_objects()
-		
 	EndIf
-	
 	'clear buffer
 	Cls()
-	
 	'draw to buffer
 	draw_all_graphics()
 	?Debug
 	debug_main()
 	?
-	
 	'show buffer
 	Flip( 1 )
-	
 	'audio
 	play_all_audio()
-	
 Until AppTerminate()
 

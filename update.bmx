@@ -107,26 +107,18 @@ Function update_drawing_origin()
 	End If
 End Function
 '______________________________________________________________________________
-'Game State Flags, Mouse, and Drawing Origin Update
 Function update_flags()
+	'global state flag updates
+	If game And game.auto_reset_spawners
+		If game.active_friendly_spawners <= 0 And game.active_friendly_units <= 0
+			game.reset_spawners( ALIGNMENT_FRIENDLY )
+		End If
+		If game.active_hostile_spawners <= 0 And game.active_hostile_units <= 0
+			game.reset_spawners( ALIGNMENT_HOSTILE )
+		End If
+	End If
 	'flag updates for games with human participation
 	If game.human_participation
-		'player death
-		If game.player.dead() 'player just died? (omgwtf)
-			game.game_in_progress = False
-			game.game_over = True
-			game.player_engine_running = False
-			tweak_engine_idle()
-			damage_incurred = True
-		End If
-		'enemies all dead
-		If game.battle_in_progress And game.active_hostile_spawners = 0 And game.hostile_agent_list.Count() = 0
-			game.game_in_progress = False
-			game.battle_in_progress = False
-			game.battle_state_toggle_ts = now()
-			game.close_doors( ALIGNMENT_HOSTILE )
-			game.spawn_enemies = False
-		End If
 		'waiting on player to start
 		If game.waiting_for_player_to_enter_arena
 			'player not entered arena
@@ -144,14 +136,21 @@ Function update_flags()
 				game.spawn_enemies = True
 			End If
 		End If
-	End If
-	'global state flag updates
-	If game And game.auto_reset_spawners
-		If game.active_friendly_spawners <= 0 And game.active_friendly_units <= 0
-			game.reset_spawners( ALIGNMENT_FRIENDLY )
+		'enemies all dead
+		If game.battle_in_progress And game.active_hostile_spawners = 0 And game.hostile_agent_list.Count() = 0
+			game.game_in_progress = False
+			game.battle_in_progress = False
+			game.battle_state_toggle_ts = now()
+			game.close_doors( ALIGNMENT_HOSTILE )
+			game.spawn_enemies = False
 		End If
-		If game.active_hostile_spawners <= 0 And game.active_hostile_units <= 0
-			game.reset_spawners( ALIGNMENT_HOSTILE )
+		'player death
+		If game.player.dead() 'player just died? (omgwtf)
+			game.game_in_progress = False
+			game.game_over = True
+			game.player_engine_running = False
+			tweak_engine_idle()
+			damage_incurred = True
 		End If
 	End If
 End Function

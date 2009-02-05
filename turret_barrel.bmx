@@ -71,9 +71,11 @@ Type TURRET_BARREL Extends POINT
 	End Method
 	
 	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
-		If img <> Null
+		If img
 			SetRotation( ang )
-			DrawImage( img, pos_x + recoil_cur * Cos( ang ), pos_y + recoil_cur * Sin( ang ))
+			DrawImage( img, ..
+				pos_x + scale_override * recoil_cur * Cos( ang ), ..
+				pos_y + scale_override * recoil_cur * Sin( ang ))
 		End If
 	End Method
 	

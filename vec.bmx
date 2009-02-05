@@ -15,23 +15,28 @@ Type cVEC 'cartesian coordinate system 2D vector
 	Field x# 'x axis vector component
 	Field y# 'y axis vector component
 	
-	Method New()
+	Method scale:cVEC( scalar# )
+		Return Create_cVEC( x * scalar, y * scalar )
 	End Method
 	
-	Function Create:cVEC( x#, y# )
-		Local v:cVEC = New cVEC
-		v.x = x; v.y = y
-		Return v
-	End Function
+	Method add:cVEC( other:cVEC )
+		Return Create_cVEC( x + other.x, y + other.y )
+	End Method
+	
 	Method clone:cVEC()
-		Return cVEC( cVEC.Create( x, y ))
+		Return Create_cVEC( x, y )
 	End Method
 	
 	Method r#()
 		Return Sqr( Pow( x, 2 ) + Pow( y, 2 ))
 	End Method
+	
 	Method a#()
 		Return ATan2( y, x )
+	End Method
+	
+	Method to_string$()
+		Return "( "+x+", "+y+" )"
 	End Method
 End Type
 '______________________________________________________________________________
@@ -45,21 +50,14 @@ Type pVEC 'polar coordinate system 2D vector
 	Field r# 'radius vector component
 	Field a# 'angle vector component (theta)
 	
-	Method New()
-	End Method
-	
-	Function Create:pVEC( r#, a# )
-		Local v:pVEC = New pVEC
-		v.r = r; v.a = a
-		Return v
-	End Function
 	Method clone:pVEC()
-		Return pVEC( pVEC.Create( r, a ))
+		Return Create_pVEC( r, a )
 	End Method
 	
 	Method x#()
 		Return (r * Cos( a ))
 	End Method
+	
 	Method y#()
 		Return (r * Sin( a ))
 	End Method

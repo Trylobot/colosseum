@@ -325,13 +325,13 @@ Type LEVEL Extends MANAGED_OBJECT
 		If in_bounds( c )
 			Select corner
 				Case CELL.CORNER_TOP_LEFT
-					Return cVEC.Create( vertical_divs[c.col], horizontal_divs[c.row] )
+					Return Create_cVEC( vertical_divs[c.col], horizontal_divs[c.row] )
 				Case CELL.CORNER_TOP_RIGHT
-					Return cVEC.Create( vertical_divs[c.col+1], horizontal_divs[c.row] )
+					Return Create_cVEC( vertical_divs[c.col+1], horizontal_divs[c.row] )
 				Case CELL.CORNER_BOTTOM_RIGHT
-					Return cVEC.Create( vertical_divs[c.col+1], horizontal_divs[c.row+1] )
+					Return Create_cVEC( vertical_divs[c.col+1], horizontal_divs[c.row+1] )
 				Case CELL.CORNER_BOTTOM_LEFT
-					Return cVEC.Create( vertical_divs[c.col], horizontal_divs[c.row+1] )
+					Return Create_cVEC( vertical_divs[c.col], horizontal_divs[c.row+1] )
 			End Select
 		Else
 			Return Null
@@ -357,7 +357,7 @@ Type LEVEL Extends MANAGED_OBJECT
 			Local y_min% = horizontal_divs[c.row]
 			Local y_max% = horizontal_divs[c.row+1]
 			Local y_diff_qtr% = 0.25 * (y_max - y_min)
-			Return cVEC.Create( ..
+			Return Create_cVEC( ..
 				Rand( x_min + x_diff_qtr, x_max - x_diff_qtr ), ..
 				Rand( y_min + y_diff_qtr, y_max - y_diff_qtr ))
 		'Else

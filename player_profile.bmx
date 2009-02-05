@@ -10,7 +10,6 @@ Type PLAYER_PROFILE
 	Field cash%
 	Field kills%
 	Field inventory:INVENTORY_DATA[]
-	Field damaged_inventory:INVENTORY_DATA[]
 	Field vehicle:VEHICLE_DATA
 	Field input_method%
 	Field progress:PROGRESS_DATA[]
@@ -173,15 +172,6 @@ Type PLAYER_PROFILE
 		Else
 			this_json.SetByName( "inventory", Null )
 		End If
-		If damaged_inventory
-			Local inv:TJSONArray = TJSONArray.Create( damaged_inventory.Length )
-			For Local i% = 0 Until damaged_inventory.Length
-				inv.SetByIndex( i, damaged_inventory[i].to_json() )
-			Next
-			this_json.SetByName( "damaged_inventory", inv )
-		Else
-			this_json.SetByName( "damaged_inventory", Null )
-		End If
 		If vehicle
 			this_json.SetByName( "vehicle", vehicle.to_json() )
 		Else
@@ -214,12 +204,11 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 		For Local i% = 0 To prof.inventory.Length - 1
 			prof.inventory[i] = Create_INVENTORY_DATA_from_json( TJSON.Create( inv.GetByIndex( i )))
 		Next
-	End If
-	inv = json.GetArray( "damaged_inventory" )
-	If inv
-		prof.damaged_inventory = New INVENTORY_DATA[ inv.Size() ]
-		For Local i% = 0 To prof.damaged_inventory.Length - 1
-			prof.damaged_inventory[i] = Create_INVENTORY_DATA_from_json( TJSON.Create( inv.GetByIndex( i )))
+		'check inventory; remove those with low count or invalid identifiers
+		For Local i% = prof.inventory.Length - 1 To 0 Step -1
+			If prof.inventory[i].count < 1
+				prof.remove_part( i )
+			End If
 		Next
 	End If
 	prof.vehicle = Create_VEHICLE_DATA_from_json( TJSON.Create( json.GetObject( "vehicle" )))

@@ -292,8 +292,8 @@ Type COMPLEX_AGENT Extends AGENT
 		SetRotation( ang )
 		'tracks
 		If right_track <> Null And left_track <> Null
-			left_track.draw( alpha_override, scale_override )
-			right_track.draw( alpha_override, scale_override )
+			left_track.draw( alpha_override )
+			right_track.draw( alpha_override )
 		End If
 		'chassis image
 		If img
@@ -651,6 +651,14 @@ Type COMPLEX_AGENT Extends AGENT
 		For Local t:TURRET = EachIn turrets
 			t.set_images_unfiltered()
 		Next
+	End Method
+	
+	Method scale_all( scale# )
+		For Local t:TURRET = EachIn turrets
+			t.scale_all( scale )
+		Next
+		If left_track Then left_track.scale = scale
+		If right_track Then right_track.scale = scale
 	End Method
 		
 End Type

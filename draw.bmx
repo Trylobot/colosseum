@@ -234,11 +234,11 @@ Function draw_main_screen()
 	DrawText_with_outline( My.Application.AssemblyInfo, x, y )
 	
 	'info
-	SetImageFont( get_font( "consolas_14" ))
-	SetColor( 100, 149, 237 ) 'Cornflower Blue
-	'SetColor( 255, 255, 127 ) 'Title Yellow
+	SetImageFont( get_font( "consolas_italic_12" ))
+	'SetColor( 100, 149, 237 ) 'Cornflower Blue
+	SetColor( 255, 255, 127 ) 'Title Yellow
 	SetAlpha( time_alpha_pct( info_change_ts + info_stay_time, info_fade_time, False ))
-	y = 55
+	y = 57
 	DrawText_with_outline( info, x, y)
 	
 	'menu options
@@ -262,25 +262,80 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 	If tabbed_view 'new "tabbed" menu drawing method
 		SetAlpha( 1 )
 		Local cx% = x, cy% = y
-		Local w% = 20, h% = 14
-		Local border% = 3
+		Local breadcrumb_h% = 14
+		Local border% = 1
+		Local alpha#
+		Local blink%
+		Local popup% = MENU.is_popup( get_menu( menu_stack[current_menu] ).menu_type )
 		For Local i% = 0 To current_menu
 			Local m:MENU = get_menu( menu_stack[i] )
-			If i < current_menu
-				SetColor( 64, 64, 64 )
-				DrawRect( cx, cy, w, h )
-				SetColor( m.red/2, m.green/2, m.blue/2 )
-				DrawRect( cx+border, cy+border, w-border*2, h-border*2 )
-				cx :+ w-border
-			Else 'i == current_menu
+			If i = current_menu Or ( popup And i = current_menu - 1 )
 				cx = x
 				cy = y
 				If i > 0
-					cy :+ h-border
+					cy :+ breadcrumb_h - border
 				End If
-				m.draw( cx, cy )
+				blink = True
+				If popup
+					If i = current_menu
+						SetColor( 0, 0, 0 )
+						SetAlpha( 0.5 )
+						DrawRect( 0, 0, window_w, window_h )
+						'cx :+ 25
+						cy :+ get_menu( menu_stack[i - 1] ).get_focus_offset()
+					Else 'i <> current_menu
+						blink = False
+					End If
+				End If
+				m.draw( cx, cy,,, blink )
+				'shop decorations
+				If m.menu_type = MENU.VERTICAL_LIST_WITH_INVENTORY
+					'draw the object to which the focused menu option refers, off to the side a bit.
+					Local inventory_object:POINT = POINT( bake_item( INVENTORY_DATA( m.get_focus().argument )))
+					If inventory_object
+						cx :+ m.width + 10
+						cy :+ m.get_focus_offset()
+						If TURRET(inventory_object)
+							TURRET(inventory_object).set_images_unfiltered()
+							TURRET(inventory_object).scale_all( MOUSE_SHADOW_SCALE )
+							If TURRET(inventory_object).img
+								cx :+ 3*TURRET(inventory_object).img.handle_x
+							Else
+								SetColor( 255, 255, 255 )
+								SetAlpha( 0.15 )
+								DrawRect( cx, cy, 25, 25 )
+								DrawRectLines( cx, cy, 25, 25 )
+								cx :+ 12.5
+							End If
+						Else If COMPLEX_AGENT(inventory_object)
+							COMPLEX_AGENT(inventory_object).set_images_unfiltered()
+							COMPLEX_AGENT(inventory_object).scale_all( MOUSE_SHADOW_SCALE )
+							If COMPLEX_AGENT(inventory_object).img
+								cx :+ 3*COMPLEX_AGENT(inventory_object).img.handle_x
+							End If
+						End If
+						inventory_object.move_to( Create_cVEC( cx, cy + 12.5 ), True )
+						inventory_object.draw( 1.0, 3.0 )
+					End If
+				End If
+			Else 'not current menu (or 1 before in case of popup)
+				SetAlpha( 1 )
+				cx :+ 2
+				SetImageFont( get_font( "consolas_10" ))
+				Local width% = TextWidth( m.short_name ) + 4*border + 4
+				SetColor( 64, 64, 64 )
+				DrawRect( cx, cy, width, breadcrumb_h )
+				SetColor( m.red/2, m.green/2, m.blue/2 )
+				DrawRect( cx+border, cy+border, width - 2*border, breadcrumb_h - 2*border )
+				SetColor( m.red, m.green, m.blue )
+				DrawText_with_outline( m.short_name, cx+border+4, cy+border+1, 0.333 )
+				SetColor( 0, 0, 0 )
+				SetAlpha( 0.3 )
+				DrawRect( cx, cy, width, breadcrumb_h )
+				cx :+ width
 			End If
 		Next
+	
 	Else 'older "menu stack" menu drawing method
 		'calculate menu overlay alphas
 		Local menu_overlay_alpha#[] = New Float[current_menu+1]
@@ -397,7 +452,7 @@ Function draw_reticle()
 				'lag-behind reticle
 				'initialization
 				If last_pos = Null Then last_pos = Copy_POINT( p_tur )
-				If lag_aimer = Null Then lag_aimer = cVEC.Create( p_tur.pos_x + 50*Cos( p_tur.ang ), p_tur.pos_y + 50*Sin( p_tur.ang ) )
+				If lag_aimer = Null Then lag_aimer = Create_cVEC( p_tur.pos_x + 50*Cos( p_tur.ang ), p_tur.pos_y + 50*Sin( p_tur.ang ) )
 				Local ang_to_mouse# = p_tur.ang_to( game.mouse )
 				Local dist_from_lag_aimer_to_mouse# = vector_diff_length( lag_aimer.x, lag_aimer.y, game.mouse.x, game.mouse.y )
 				Local dist_to_ptur# = p_tur.dist_to( lag_aimer )
@@ -406,7 +461,7 @@ Function draw_reticle()
 				last_pos = Copy_POINT( p_tur )
 				'if angle of separation is not too close to zero
 				If Abs( ang_wrap( p_tur.ang - ang_to_mouse )) > (40.0 / dist_from_lag_aimer_to_mouse)
-					lag_aimer = intersection( lag_aimer, game.mouse, cVEC.Create( p_tur.pos_x, p_tur.pos_y ), cVEC.Create( p_tur.pos_x + Cos( p_tur.ang ), p_tur.pos_y + Sin( p_tur.ang )))
+					lag_aimer = intersection( lag_aimer, game.mouse, Create_cVEC( p_tur.pos_x, p_tur.pos_y ), Create_cVEC( p_tur.pos_x + Cos( p_tur.ang ), p_tur.pos_y + Sin( p_tur.ang )))
 					SetAlpha( 0.01 * Min( dist_from_lag_aimer_to_mouse, dist_to_ptur ) - 0.1 )
 					SetRotation( p_tur.ang )
 					DrawImage( img_reticle, lag_aimer.x, lag_aimer.y )
@@ -625,15 +680,18 @@ Function DrawText_with_shadow( str$, x#, y# )
 	DrawText( str, x, y )
 End Function
 
-Function DrawText_with_outline( str$, x#, y# )
-	Local r%, g%, b%
+Function DrawText_with_outline( str$, x#, y#, outline_alpha# = 1.0 )
+	Local r%, g%, b%, a#
 	GetColor( r%, g%, b% )
+	a = GetAlpha()
 	SetColor( 0, 0, 0 )
+	SetAlpha( outline_alpha )
 	DrawText( str, x + 1, y + 1 )
 	DrawText( str, x - 1, y + 1 )
 	DrawText( str, x + 1, y - 1 )
 	DrawText( str, x - 1, y - 1 )
 	SetColor( r, g, b )
+	SetAlpha( a )
 	DrawText( str, x, y )
 End Function
 
@@ -804,18 +862,13 @@ Function draw_instaquit_progress()
 	SetOrigin( 0, 0 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
-
 	Local alpha_multiplier# = time_alpha_pct( esc_press_ts + esc_held_progress_bar_show_time_required, esc_held_progress_bar_show_time_required )
-
 	SetAlpha( 0.5 * alpha_multiplier )
 	SetColor( 0, 0, 0 )
 	DrawRect( 0,0, window_w,window_h )
-
 	SetAlpha( 1.0 * alpha_multiplier )
 	SetColor( 255, 255, 255 )
-	'draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required - 50 ))
 	draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required - 50 ))
-
 	Local str$ = "continue holding ESC to quit"
 	SetImageFont( get_font( "consolas_bold_24" ))
 	DrawText_with_outline( str, window_w/2-TextWidth( str )/2, window_h/2+30 )

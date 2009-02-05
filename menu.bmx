@@ -17,7 +17,18 @@ Type MENU
 	Const TEXT_INPUT_DIALOG% = 20
 	Const CONFIRMATION_DIALOG% = 21
 	Const NOTIFICATION_DIALOG% = 22
-	Const VEHICLE_BUILDER% = 40
+	
+	Function is_popup%( menu_type% )
+		Select menu_type
+			Case TEXT_INPUT_DIALOG
+				Return True
+			Case CONFIRMATION_DIALOG
+				Return True
+			Case NOTIFICATION_DIALOG
+				Return True
+		End Select
+		Return False
+	End Function
 	
 	Global title_font:TImagefont
 	Global menu_font:TImageFont
@@ -33,6 +44,7 @@ Type MENU
 	Field menu_type% 'menu class
 	
 	Field name$ 'menu title string
+	Field short_name$
 	Field width%, height% 'cached dimensions
 	Field dimensions_cached% 'flag
 	Field red%, green%, blue% 'title bar color
@@ -64,7 +76,7 @@ Type MENU
 	End Method
 	
 	Function Create:MENU( ..
-	name$, ..
+	name$, short_name$, ..
 	red%, green%, blue%, ..
 	menu_id%, menu_type%, ..
 	margin%, default_focus% = -1, ..
@@ -73,7 +85,7 @@ Type MENU
 	dynamic_options_displayed% = 1, ..
 	options:MENU_OPTION[] = Null )
 		Local m:MENU = New MENU
-		m.name = name
+		m.name = name; m.short_name = short_name
 		m.red = red; m.green = green; m.blue = blue
 		m.menu_id = menu_id
 		m.menu_type = menu_type
@@ -124,7 +136,7 @@ Type MENU
 		End If
 	End Method
 	
-	Method draw( x%, y%, border% = True, dark_overlay_alpha# = 0 )
+	Method draw( x%, y%, border% = True, dark_overlay_alpha# = 0, blink% = True )
 		last_x = x; last_y = y
 		Local cx% = x, cy% = y, opt:MENU_OPTION
 		'calculate dimensions
@@ -166,7 +178,8 @@ Type MENU
 			opt = options[i]
 			If opt <> Null And opt.visible And option_is_in_window( i )
 				Local name$ = resolve_meta_variables( opt.name, opt.argument )
-				opt.draw( name, cx, cy, (focus = i) )
+				opt.draw( name, cx, cy, (focus = i), blink )
+				SetAlpha( 1 )
 				bounding_box[i] = Create_BOX( last_x, cy, width, TextHeight( name ))
 				cy :+ text_height_factor*GetImageFont().Height() + margin
 			End If
@@ -208,7 +221,7 @@ Type MENU
 		'fade-out (used for menus which are "in the background")
 		SetAlpha( dark_overlay_alpha )
 		SetColor( 0, 0, 0 )
-		DrawRect( x-border_width,y-border_width, width,height )
+		DrawRect( x-border_width,y-border_width, width+1,height+1 )
 	End Method
 	
 	Method calculate_dimensions()
@@ -259,10 +272,12 @@ Type MENU
 				enable_option( "loading bay" )
 				enable_option( "save" )
 				enable_option( "preferences" )
+				set_command( "new game", COMMAND_SHOW_CHILD_MENU )
 			Else
 				disable_option( "loading bay" )
 				disable_option( "save" )
 				disable_option( "preferences" )
+				set_command( "new game", COMMAND_NEW_GAME )
 			End If
 		End If
 		
@@ -313,7 +328,7 @@ Type MENU
 								indicator+"$"+pad( format_number( profile.get_cost( item )), 7,, False )+ ..
 								chassis.name+ ..
 								" ["+item.item_type+"] "+ ..
-								"%%owned%%", ..
+								"%%profile.count_inventory(this)%%", ..
 								default_command, item, True, enabled, r, g, b ))
 						Case "turret"
 							Local tur:TURRET = get_turret( item.key, False )
@@ -321,8 +336,8 @@ Type MENU
 								add_option( MENU_OPTION.Create( ..
 									indicator+"$"+pad( format_number( profile.get_cost( item )), 7,, False )+ ..
 									tur.name+ ..
-									" ["+pad(item.item_type, 7,, False)+"] "+ ..
-									"%%owned%%", ..
+									" ["+item.item_type+"] "+ ..
+									"%%profile.count_inventory(this)%%", ..
 									default_command, item, True, enabled, r, g, b ))
 							End If
 					End Select
@@ -368,7 +383,23 @@ Type MENU
 			'if one exists, focus on the option that shares the name of the current level editor cache
 			set_focus( level_editor_cache.name )
 		End If
-		
+	End Method
+	
+	Method get_focus_offset%()
+		Local focus_offset% = 0
+		'title
+		focus_offset :+ margin + (text_height_factor*menu_font.Height() + margin) + 2*border_width
+		'each option
+		For Local i% = 0 Until focus 'skip the last option
+			If options[i].visible
+				If i < static_option_count
+					focus_offset :+ text_height_factor*menu_font.Height() + margin
+				Else
+					focus_offset :+ text_height_factor*menu_font_small.Height() + margin
+				End If
+			End If
+		Next
+		Return focus_offset
 	End Method
 	
 	Method focus_is_valid%()
@@ -402,6 +433,11 @@ Type MENU
 			End If
 		Next
 		Return -1
+	End Method
+	
+	Method set_command( key$, new_command_code% )
+		Local index% = find_option( key )
+		If index >= 0 Then options[index].command_code = new_command_code
 	End Method
 	
 	Method option_is_in_window%( index% )

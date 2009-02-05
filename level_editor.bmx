@@ -70,9 +70,10 @@ Function level_editor( lev:LEVEL )
 			Return
 		End If
 		
-		'copied from input.bmx
 		mouse.x = MouseX()
 		mouse.y = MouseY()
+		
+		'for instaquit
 		escape_key_update()
 
 		SetColor( 255, 255, 255 )
@@ -191,6 +192,8 @@ Function level_editor( lev:LEVEL )
 		SetColor( 255, 255, 255 )
 		info_x :+ 6; info_y :+ 3
 		
+		SetImageFont( normal_font )
+
 		'mode help
 		DrawText( ""+..
 			EDIT_LEVEL_MODE_BASIC+":pan "+..
@@ -667,11 +670,15 @@ Function level_editor( lev:LEVEL )
 		Else 'Not MouseDown( 2 )
 			mouse_down_2 = False
 		End If
-
+		
+		If KeyDown( KEY_ESCAPE ) And esc_held And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
+			draw_instaquit_progress()
+		End If
+	
 		Flip( 1 )
 		
 		kill_signal = AppTerminate()
-	Until KeyHit( KEY_ESCAPE ) Or kill_signal
+	Until escape_key_release() Or KeyHit( KEY_BACKSPACE ) Or kill_signal
 	If kill_signal Then End
 	
 	FlushKeys()

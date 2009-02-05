@@ -82,7 +82,7 @@ Type VEHICLE_DATA
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
 		'if any of the turrets are incompatible, abort with error
 		For Local key$ = EachIn keys
-			If Not chassis_compatible_with_turret( key )
+			If key And key.Length > 0 And Not chassis_compatible_with_turret( key )
 				Return "One of the turrets won't fit onto that chassis."
 			End If
 		Next

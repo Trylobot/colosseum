@@ -167,9 +167,9 @@ Type TURRET Extends POINT
 		SetScale( scale_override, scale_override )
 		SetRotation( ang )
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
-			tb.draw()
+			tb.draw( alpha_override, scale_override )
 		Next
-		If img <> Null
+		If img
 			DrawImage( img, pos_x, pos_y )
 		End If
 	End Method
@@ -266,6 +266,13 @@ Type TURRET Extends POINT
 		If img Then img = unfilter_image( img )
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
 			If tb.img Then tb.img = unfilter_image( tb.img )
+		Next
+	End Method
+	
+	Method scale_all( scale# )
+		attach_at( off_x * scale, off_y * scale )
+		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
+			tb.attach_at( tb.attach_x * scale, tb.attach_y * scale )
 		Next
 	End Method
 	

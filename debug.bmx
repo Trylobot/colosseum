@@ -6,8 +6,8 @@ EndRem
 
 ?Debug
 ''______________________________________________________________________________
-Global debug_origin:cVEC = cVEC.Create( 0, 0 )
-Global real_origin:cVEC = cVEC.Create( 0, 0 )
+Global debug_origin:cVEC = Create_cVEC( 0, 0 )
+Global real_origin:cVEC = Create_cVEC( 0, 0 )
 Global global_start:CELL
 Global global_goal:CELL
 '______________________________________________________________________________
@@ -358,7 +358,7 @@ Function debug_overlay()
 			SetLineWidth( 1 )
 			SetColor( 196, 196, 196 )
 			SetAlpha( 0.20 )
-			Local av:cVEC = cVEC( cVEC.Create( cb.avatar.pos_x, cb.avatar.pos_y ))
+			Local av:cVEC = Create_cVEC( cb.avatar.pos_x, cb.avatar.pos_y )
 			Local allied_agent_list:TList = CreateList()
 			Select cb.avatar.political_alignment
 				Case ALIGNMENT_FRIENDLY

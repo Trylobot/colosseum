@@ -163,7 +163,7 @@ End Function
 Function remove_origin_cVEC:cVEC( v:cVEC )
 	Local ox#, oy#
 	GetOrigin( ox, oy )
-	Return cVEC.Create( v.x - ox, v.y - oy )
+	Return Create_cVEC( v.x - ox, v.y - oy )
 End Function
 
 Function remove_origin:POINT( p:POINT )
@@ -278,10 +278,10 @@ Function line_intersects_line%( v1:cVEC, v2:cVEC, v3:cVEC, v4:cVEC )
 End Function
 '______________________________________________________________________________
 Function line_intersects_rect%( v1:cVEC, v2:cVEC, r:cVEC, r_dim:cVEC )
-	Local lower_left:cVEC = cVEC( cVEC.Create( r.x, r.y+r_dim.y ))
-	Local upper_right:cVEC = cVEC( cVEC.Create( r.x+r_dim.x, r.y ))
-	Local upper_left:cVEC = cVEC( cVEC.Create( r.x, r.y ))
-	Local lower_right:cVEC = cVEC( cVEC.Create( r.x+r_dim.x, r.y+r_dim.y ))
+	Local lower_left:cVEC = Create_cVEC( r.x, r.y+r_dim.y )
+	Local upper_right:cVEC = Create_cVEC( r.x+r_dim.x, r.y )
+	Local upper_left:cVEC = Create_cVEC( r.x, r.y )
+	Local lower_right:cVEC = Create_cVEC( r.x+r_dim.x, r.y+r_dim.y )
 	
 	'is line completely encased by rect? 
 	Rem (will never happen in my game)

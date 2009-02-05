@@ -38,11 +38,13 @@ Type MENU_OPTION
 		Return Create( name, command_code, argument, visible, enabled )
 	End Method
 	
-	Method draw( resolved_name$, x%, y%, focused% = False )
+	Method draw( resolved_name$, x%, y%, focused% = False, blink% = True )
 		Local mult# = 1.0, glow% = False
+		SetAlpha( 1 )
 		If Not always_bright
 			If focused
 				glow = True
+				If blink Then SetAlpha( 0.75 + 0.25 * Sin( now() Mod 1000 ))
 			Else If enabled And visible 'Not focused
 				mult = 0.5
 			Else If visible 'Not enabled And Not focused

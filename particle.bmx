@@ -121,17 +121,17 @@ Type PARTICLE Extends POINT
 		End If
 	End Method
 	
-	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
+	Method draw( alpha_override# = 1.0, scale_override# = 1.0 ) 'scale_override is not used for this object
 		SetColor( red*255, green*255, blue*255 )
 		SetAlpha( alpha*alpha_override )
-		SetScale( scale*scale_override, scale*scale_override )
+		SetScale( scale, scale )
 		
 		Select particle_type
 			Case PARTICLE_TYPE_IMG, PARTICLE_TYPE_ANIM
 				If img <> Null
-					If parent <> Null
+					If parent
 						SetRotation( ang + parent.ang )
-						DrawImage( img, parent.pos_x + scale*scale_override*offset*Cos( offset_ang + parent.ang ), parent.pos_y + scale*scale_override*offset*Sin( offset_ang + parent.ang ), frame )
+						DrawImage( img, parent.pos_x + scale*offset*Cos( offset_ang + parent.ang ), parent.pos_y + scale*offset*Sin( offset_ang + parent.ang ), frame )
 					Else
 						SetRotation( ang )
 						DrawImage( img, pos_x, pos_y, frame )
@@ -140,12 +140,12 @@ Type PARTICLE Extends POINT
 			Case PARTICLE_TYPE_STR
 				If font <> Null And str <> Null
 					SetImageFont( font )
-					If parent <> Null
+					If parent
 						SetRotation( ang + parent.ang )
 						DrawText_with_outline( str, parent.pos_x + offset*Cos( offset_ang + parent.ang ) - text_width/2, parent.pos_y + offset*Sin( offset_ang + parent.ang ) - text_height/2 )
 					Else
 						SetRotation( ang )
-						DrawText_with_outline( str, pos_x - scale*scale_override*text_width/2, pos_y - scale*scale_override*text_height/2 )
+						DrawText_with_outline( str, pos_x - scale*text_width/2, pos_y - scale*text_height/2 )
 					End If
 				End If
 		End Select

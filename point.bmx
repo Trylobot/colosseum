@@ -120,6 +120,10 @@ Type POINT Extends MANAGED_OBJECT
 		Return this_json
 	End Method
 	
+	Method to_cvec:cVEC()
+		Return Create_cVEC( pos_x, pos_y )
+	End Method
+	
 End Type
 
 Function Create_POINT_from_json:POINT( json:TJSON )
