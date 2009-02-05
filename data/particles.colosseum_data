@@ -190,7 +190,7 @@
 		key: "discarded_energy_core",
 		object: {
 			particle_type: 0,
-			img: "mgun_shell_casing",
+			img: "discarded_energy_core",
 			layer: 1,
 			retain: true,
 			frictional_coefficient: 0.0100

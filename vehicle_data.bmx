@@ -42,24 +42,20 @@ Type VEHICLE_DATA
 			If Not chassis_compatible_with_turret( key )
 				Return "This turret won't fit onto that chassis."
 			End If
-			If turret_keys[anchor] = Null
-				If t.priority = TURRET.PRIMARY
-					turret_keys[anchor] = [ key, String(Null) ]
-				Else If t.priority = TURRET.SECONDARY
-					turret_keys[anchor] = [ String(Null), key ]
-				End If
+			If Not turret_keys[anchor]
+				turret_keys[anchor] = [ key ]
 			Else 'turret_key[anchor] <> Null
 				'adding a primary turret can only be done if there are no turrets at all attached to this anchor
-				If t.priority = TURRET.PRIMARY And turrets_of_priority_attached_to_anchor( TURRET.PRIMARY, anchor ) >= 1
+				If t.priority = TURRET.PRIMARY And turrets_of_priority_attached_to_anchor( TURRET.PRIMARY, anchor ) > 0
 					Return "That socket already has a large turret."
 				End If
 				'adding a secondary turret can only be done if there are no secondary turrets attached to this anchor
-				If t.priority = TURRET.SECONDARY And turrets_of_priority_attached_to_anchor( TURRET.SECONDARY, anchor ) >= 1
+				If t.priority = TURRET.SECONDARY And turrets_of_priority_attached_to_anchor( TURRET.SECONDARY, anchor ) > 0
 					Return "That socket already has a small turret."
 				End If
 				'all good, add it
 				If t.priority = TURRET.PRIMARY
-					turret_keys[anchor] = [ key, turret_keys[anchor][1] ]
+					turret_keys[anchor] = [ key, turret_keys[anchor][0] ]
 				Else If t.priority = TURRET.SECONDARY
 					turret_keys[anchor] = [ turret_keys[anchor][0], key ]
 				End If

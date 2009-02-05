@@ -1,12 +1,29 @@
 {
 	name: "developer",
-	cash: 20150,
+	cash: 8650,
 	kills: 1278,
-	inventory: null,
+	inventory: [
+		{
+			item_type: "chassis",
+			key: "medium_tank",
+			count: 1,
+			damaged: false
+		},
+		{
+			item_type: "turret",
+			key: "medium_laser",
+			count: 1,
+			damaged: false
+		}
+	],
 	vehicle: {
-		chassis_key: "machine_gun_quad",
-		is_unit: true,
-		turret_keys: null
+		chassis_key: "medium_tank",
+		is_unit: false,
+		turret_keys: [
+			[
+				"medium_laser"
+			]
+		]
 	},
 	input_method: 2,
 	progress: null,

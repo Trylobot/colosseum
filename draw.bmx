@@ -680,12 +680,14 @@ Function DrawText_with_shadow( str$, x#, y# )
 	DrawText( str, x, y )
 End Function
 
-Function DrawText_with_outline( str$, x#, y#, outline_alpha# = 1.0 )
+Function DrawText_with_outline( str$, x#, y#, outline_alpha# = -1.0 )
 	Local r%, g%, b%, a#
 	GetColor( r%, g%, b% )
 	a = GetAlpha()
 	SetColor( 0, 0, 0 )
-	SetAlpha( outline_alpha )
+	If outline_alpha <> -1.0
+		SetAlpha( outline_alpha )
+	End If
 	DrawText( str, x + 1, y + 1 )
 	DrawText( str, x - 1, y + 1 )
 	DrawText( str, x + 1, y - 1 )
