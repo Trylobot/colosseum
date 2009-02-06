@@ -450,6 +450,7 @@ End Function
 
 '______________________________________________________________________________
 Global last_pos:POINT
+Global cur_alpha#, last_alpha#
 Global lag_aimer:cVEC
 
 Function draw_reticle()
@@ -471,8 +472,18 @@ Function draw_reticle()
 				last_pos = Copy_POINT( p_tur )
 				'if angle of separation is not too close to zero
 				If Abs( ang_wrap( p_tur.ang - ang_to_mouse )) > (40.0 / dist_from_lag_aimer_to_mouse)
-					lag_aimer = intersection( lag_aimer, game.mouse, Create_cVEC( p_tur.pos_x, p_tur.pos_y ), Create_cVEC( p_tur.pos_x + Cos( p_tur.ang ), p_tur.pos_y + Sin( p_tur.ang )))
-					SetAlpha( 0.01 * Min( dist_from_lag_aimer_to_mouse, dist_to_ptur ) - 0.1 )
+					lag_aimer = intersection( lag_aimer, game.mouse, p_tur.to_cvec(), p_tur.to_cvec().add( Create_cVEC( p_tur.pos_x * Cos( p_tur.ang ), p_tur.pos_y * Sin( p_tur.ang ))))
+					Local show_radius# = 75
+					Local hide_radius# = 150
+					If dist_from_lag_aimer_to_mouse <= show_radius
+						cur_alpha = dist_from_lag_aimer_to_mouse / show_radius
+					Else If dist_from_lag_aimer_to_mouse <= hide_radius
+						cur_alpha = 1 - ((dist_from_lag_aimer_to_mouse - show_radius) / (hide_radius - show_radius))
+					Else
+						cur_alpha = 0
+					End If
+					SetAlpha(( cur_alpha + last_alpha ) / 2.0 )
+					last_alpha = cur_alpha
 					SetRotation( p_tur.ang )
 					DrawImage( img_reticle, lag_aimer.x, lag_aimer.y )
 				Else
