@@ -94,15 +94,15 @@ init_graphics()
 'debug_spawner()
 'debug_dirtyrects()
 'debug_doors()
-debug_kill_tally()
+'debug_kill_tally()
 'menu_command( COMMAND_EDIT_VEHICLE )
 ?
 
 init_ai_menu_game() 'ignored if Not show_ai_menu_game
 
-Const time_per_frame_min% = 1000 / 60
+Const time_per_frame_min# = 16.666666666666666666666666666667
 Global before%
-info_change_ts = now()
+
 '______________________________________________________________________________
 'MAIN GAME LOOP
 Repeat
@@ -118,15 +118,17 @@ Repeat
 	End If
 	'input
 	get_all_input()
-	'simulation speed, never faster than 60 hertz
 	If (now() - before) > time_per_frame_min
-		before = now()
+		'timescale
+		calculate_timescale()
 		'collision detection & resolution
 		collide_all_objects()
 		'physics engine update
 		update_all_objects()
-	EndIf
-	'clear buffer
+		'begin next physics-timescale-frame
+		before = now()
+	End If
+	'clear graphics buffer
 	Cls()
 	'draw to buffer
 	draw_all_graphics()

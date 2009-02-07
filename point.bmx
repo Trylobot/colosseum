@@ -47,21 +47,17 @@ Type POINT Extends MANAGED_OBJECT
 	Method New()
 	End Method
 	
-'	Method clone:POINT()
-'		Return Create_POINT( pos_x, pos_y, ang, vel_x, vel_y, ang_vel, acc_x, acc_y, ang_acc )
-'	End Method
-	
 	Method update()
 		'velocity
-		vel_x :+ acc_x
-		vel_y :+ acc_y
+		vel_x :+ timescale * acc_x
+		vel_y :+ timescale * acc_y
 		'position
-		pos_x :+ vel_x
-		pos_y :+ vel_y
+		pos_x :+ timescale * vel_x
+		pos_y :+ timescale * vel_y
 		'angular velocity
-		ang_vel :+ ang_acc
+		ang_vel :+ timescale * ang_acc
 		'orientation
-		ang = ang_wrap( ang + ang_vel )
+		ang = ang_wrap( ang + timescale * ang_vel )
 	End Method
 	
 	Method draw( alpha_override#, scale_override# ) 'dummy method (for virtual's sake!)

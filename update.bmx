@@ -5,6 +5,14 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Global timescale#
+Const timescale_constant_factor# = 0.65
+
+Function calculate_timescale()
+	timescale = timescale_constant_factor * Float(now() - before)/Float(time_per_frame_min)
+End Function
+
+'______________________________________________________________________________
 'Physics and Timing Update
 Global damage_incurred% = False
 
