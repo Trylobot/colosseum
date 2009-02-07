@@ -191,8 +191,6 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method update()
 		Super.update()
-'p_last = p_current
-'p_current = Self.to_cvec()
 		
 		'smooth out and constrain velocity
 		Local vel# = vector_length( vel_x, vel_y )

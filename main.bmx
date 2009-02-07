@@ -94,7 +94,7 @@ init_graphics()
 'debug_spawner()
 'debug_dirtyrects()
 'debug_doors()
-'debug_win()
+debug_kill_tally()
 'menu_command( COMMAND_EDIT_VEHICLE )
 ?
 

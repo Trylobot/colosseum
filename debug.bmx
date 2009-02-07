@@ -402,10 +402,20 @@ End Function
 Global p_last:cVEC = New cVEC
 Global p_current:cVEC = New cVEC
 
-'Function debug_win()
-'	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 1249 )
-'	End
-'End Function
+Function debug_kill_tally()
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 1 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 4 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 9 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 10 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 19 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 49 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 50 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 100 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 102 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 999 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 1000 )
+	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 1249 )
+End Function
 
 ''______________________________________________________________________________
 'Function debug_doors()

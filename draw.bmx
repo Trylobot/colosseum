@@ -482,7 +482,7 @@ Function draw_reticle()
 					Else
 						cur_alpha = 0
 					End If
-					SetAlpha(( cur_alpha + last_alpha ) / 2.0 )
+					SetAlpha(( cur_alpha + 3 * last_alpha ) / 4.0 )
 					last_alpha = cur_alpha
 					SetRotation( p_tur.ang )
 					DrawImage( img_reticle, lag_aimer.x, lag_aimer.y )
