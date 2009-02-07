@@ -40,6 +40,21 @@ Type INVENTORY_DATA
 			damaged = other.damaged
 	End Method
 	
+	Method compare%( with_object:Object ) ' return true if Self is "greater than" other
+		Local other:INVENTORY_DATA = INVENTORY_DATA(with_object)
+		If other
+			If item_type <> other.item_type 'chassis items are always the greatest
+				If item_type = "chassis" Then Return 65535 ..
+				Else If other.item_type = "chassis" Then Return -65535
+			Else 'item types are the same
+				'compare the costs
+				'Return get_inventory_object_cost( item_type, key ) - get_inventory_object_cost( other.item_type, other.key )
+				Return get_inventory_object_cost( other.item_type, other.key ) - get_inventory_object_cost( item_type, key )
+			End If
+		End If
+		Return False
+	EndMethod
+
 	Method to_string$()
 		Return item_type+"."+key
 	End Method

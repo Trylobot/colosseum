@@ -159,7 +159,9 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		Local h% = TextHeight( "A" )
 		Local inv_y% = 107
 		For Local i% = 0 Until inventory.Length
-			If Not profile.inventory[i].damaged
+			If profile.inventory[i].damaged
+				'inv_y :- i*h 'back up
+			Else
 				Local name$ = ""
 				Local compatible% = True
 				If COMPLEX_AGENT(inventory[i])

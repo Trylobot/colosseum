@@ -128,7 +128,7 @@
 		key: "{path}",
 		object: {
 			path: "art/medium_laser_turret_base-barrel.png",
-			handle_x: 6.5,
+			handle_x: 8.5,
 			handle_y: 6.5,
 			frames: 1
 		}
@@ -911,8 +911,18 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/discarded_energy_core.png",
-			handle_x: 2.5,
+			path: "art/discarded_energy_core_red.png",
+			handle_x: 3,
+			handle_y: 2.5
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/discarded_energy_core_big.png",
+			handle_x: 3.5,
 			handle_y: 2.5
 			frames: 1
 		}

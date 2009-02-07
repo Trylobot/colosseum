@@ -64,14 +64,12 @@ Type PLAYER_PROFILE
 	End Method
 	
 	Method get_cost%( query_item:INVENTORY_DATA )
-		Local factor# = 1.0
-		If query_item.damaged Then factor = 0.5
-		Select query_item.item_type
-			Case "chassis"
-				Return get_player_chassis( query_item.key ).cash_value * factor
-			Case "turret"
-				Return get_turret( query_item.key ).cash_value * factor
-		End Select
+		If query_item
+			Local factor# = 1.0
+			If query_item.damaged Then factor = 0.5
+			Return get_inventory_object_cost( query_item.item_type, query_item.key )
+		End If
+		Return 0
 	End Method
 	
 	Method checklist%( item_list:TList )
@@ -164,7 +162,8 @@ Type PLAYER_PROFILE
 	End Method
 	
 	Method sort_inventory()
-		
+		'inventory.Sort() 'chassis end up at the bottom
+		inventory.Sort( True ) 'no change
 	End Method
 
 	Method generate_src_path$()

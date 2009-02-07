@@ -187,17 +187,6 @@
 	},
 	{
 		class: "particle",
-		key: "discarded_energy_core",
-		object: {
-			particle_type: 0,
-			img: "discarded_energy_core",
-			layer: 1,
-			retain: true,
-			frictional_coefficient: 0.0100
-		}
-	},
-	{
-		class: "particle",
 		key: "medium_laser_muzzle_flare",
 		object: {
 			particle_type: 0,
@@ -269,6 +258,28 @@
 		object: {
 			particle_type: 1,
 			img: "door_servo",
+		}
+	},
+	{
+		class: "particle",
+		key: "discarded_energy_core_red",
+		object: {
+			particle_type: 0,
+			img: "discarded_energy_core_red",
+			layer: 1,
+			retain: false,
+			frictional_coefficient: 0.0150
+		}
+	},
+	{
+		class: "particle",
+		key: "discarded_energy_core_big",
+		object: {
+			particle_type: 0,
+			img: "discarded_energy_core_big",
+			layer: 1,
+			retain: false,
+			frictional_coefficient: 0.0150
 		}
 	}
 ]

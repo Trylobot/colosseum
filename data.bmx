@@ -126,6 +126,22 @@ Function get_level:LEVEL( key$, copy% = True ) 'returns read-only reference
 	Return lev
 End Function
 
+'________________________________
+Function get_inventory_object_cost%( item_type$, item_key$ )
+	Select item_type
+		Case "chassis"
+			Local cmp_ag:COMPLEX_AGENT = get_player_chassis( item_key )
+			If cmp_ag Then Return cmp_ag.cash_value ..
+			Else Return 0
+		Case "turret"
+			Local tur:TURRET = get_turret( item_key )
+			If tur Then Return tur.cash_value ..
+			Else Return 0
+		Default
+			Return 0
+	End Select
+End Function
+
 '_____________________________________________________________________________
 Function load_assets%()
 	Local file:TStream = ReadFile( data_path + default_assets_file_name )

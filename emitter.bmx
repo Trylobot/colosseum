@@ -129,6 +129,8 @@ Type EMITTER Extends MANAGED_OBJECT
 		End If
 	End Method
 	Method emit_particle( p:PARTICLE, list:TList = Null ) '(private)
+		If Not p Then Return
+
 		'position
 		Local dist_actual# = dist.get()
 		Local dist_ang_actual# = dist_ang.get()
@@ -195,7 +197,8 @@ Type EMITTER Extends MANAGED_OBJECT
 			
 	End Method
 	Method emit_projectile( p:PROJECTILE, list:TList = Null ) '(private)
-		
+		If Not p Then Return	
+	
 		'position
 		Local dist_actual# = dist.get()
 		Local dist_ang_actual# = dist_ang.get()

@@ -417,6 +417,15 @@ Function debug_kill_tally()
 	kill_tally( "LEVEL COMPLETE!", LoadImage( "test/debug_win.png" ), 1249 )
 End Function
 
+Function debug_print_profile_inventory()
+	Local str$ = " profile.inventory_________________~n"
+	For Local item:INVENTORY_DATA = EachIn profile.inventory
+		str :+ "   "+item.to_string()+"~n"
+	Next
+	DebugLog str
+	
+End Function
+
 ''______________________________________________________________________________
 'Function debug_doors()
 '	Local spawn:POINT = Create_POINT( window_w/2, window_h/2 )
