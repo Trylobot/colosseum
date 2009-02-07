@@ -97,8 +97,8 @@ End Function
 '______________________________________________________________________________
 Function update_drawing_origin()
 	If game.human_participation And game.player <> Null
-		game.mouse.x = game.player.pos_x + (2.0 * (mouse.x - window_w/2.0))
-		game.mouse.y = game.player.pos_y + (2.0 * (mouse.y - window_h/2.0))
+		game.mouse.x = game.player.pos_x + (2.0 * (mouse.pos_x - window_w/2.0))
+		game.mouse.y = game.player.pos_y + (2.0 * (mouse.pos_y - window_h/2.0))
 		Select game.player_brain.input_type
 			Case CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
 				game.drawing_origin.x = window_w/2.0 - (game.player.pos_x + game.mouse.x)/2.0

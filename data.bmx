@@ -8,7 +8,7 @@ EndRem
 Global settings_file_ext$ = "colosseum_settings"
 Global data_file_ext$ = "colosseum_data"
 Global level_file_ext$ = "colosseum_level"
-Global saved_game_file_ext$ = "colosseum_saved_game"
+Global saved_game_file_ext$ = "colosseum_profile"
 Global autosave_path$ = "user/autosave.colosseum_data"
 
 Global art_path$ = "art/"
@@ -113,8 +113,10 @@ End Function
 '________________________________
 Function get_compatibility:COMPATIBILITY_DATA( key$ ) 'returns read-only reference (recursive inheritance expansion)
 	Local cd:COMPATIBILITY_DATA = COMPATIBILITY_DATA( compatibility_map.ValueForKey( key ))
-	If cd Then cd = cd.clone()
-	If cd.inherits_from Then cd.inherit( get_compatibility( cd.inherits_from ))
+	If cd
+		cd = cd.clone()
+		If cd.inherits_from Then cd.inherit( get_compatibility( cd.inherits_from ))
+	End If
 	Return cd
 End Function
 '________________________________

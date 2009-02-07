@@ -32,6 +32,13 @@ Type COMPATIBILITY_DATA
 		End If
 	End Method
 	
+	Method is_compatible_with%( query_key$ )
+		For Local turret_key$ = EachIn turret_keys
+			If turret_key = query_key Then Return True
+		Next
+		Return False
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "chassis_key", TJSONString.Create( chassis_key ))

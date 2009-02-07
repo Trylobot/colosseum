@@ -118,10 +118,10 @@ Type VEHICLE_DATA
 	
 	Method chassis_compatible_with_turret%( key$ ) 'checks the compatibility array for the existence of the given turret key
 		Local cd:COMPATIBILITY_DATA = get_compatibility( chassis_key )
-		For Local tur$ = EachIn cd.turret_keys
-			If tur = key Then Return True
-		Next
-		Return False
+		If cd
+			Return cd.is_compatible_with( key )
+		End If
+		Return True
 	End Method
 	
 	Method turrets_of_priority_attached_to_anchor%( priority%, anchor% )

@@ -50,10 +50,13 @@ Type PLAYER_PROFILE
 				cost = get_player_chassis( query_item.key ).cash_value
 			Case "turret"
 				cost = get_turret( query_item.key ).cash_value
+			Default
+				Return False
 		End Select
 		If profile.cash >= cost
 			Return True
 		End If
+		Return False
 	End Method
 	
 	Method can_sell%( query_item:INVENTORY_DATA )
@@ -158,6 +161,10 @@ Type PLAYER_PROFILE
 			item.damaged = True
 			add_part( item )
 		End If
+	End Method
+	
+	Method sort_inventory()
+		
 	End Method
 
 	Method generate_src_path$()

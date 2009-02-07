@@ -188,8 +188,8 @@ Type MENU
 		If is_scrollable( menu_type ) And Not all_options_in_window()
 			Local scrollbar_rect:BOX = get_scrollbar_rect( x, y )
 			Local color% = 64
-			If  mouse.x >= scrollbar_rect.x And mouse.x <= scrollbar_rect.x + scrollbar_rect.w ..
-			And mouse.y >= scrollbar_rect.y And mouse.y <= scrollbar_rect.y + scrollbar_rect.h
+			If  mouse.pos_x >= scrollbar_rect.x And mouse.pos_x <= scrollbar_rect.x + scrollbar_rect.w ..
+			And mouse.pos_y >= scrollbar_rect.y And mouse.pos_y <= scrollbar_rect.y + scrollbar_rect.h
 				color = 196
 			End If
 			draw_scrollbar( ..
@@ -269,15 +269,15 @@ Type MENU
 		
 		If menu_id = MENU_ID_MAIN_MENU
 			If profile
-				enable_option( "loading bay" )
+				enable_option( "play game" )
 				enable_option( "save" )
 				enable_option( "preferences" )
-				set_command( "new game", COMMAND_SHOW_CHILD_MENU )
+				set_command( "create new profile", COMMAND_SHOW_CHILD_MENU )
 			Else
-				disable_option( "loading bay" )
+				disable_option( "play game" )
 				disable_option( "save" )
 				disable_option( "preferences" )
-				set_command( "new game", COMMAND_NEW_GAME )
+				set_command( "create new profile", COMMAND_NEW_GAME )
 			End If
 		End If
 		

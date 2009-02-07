@@ -70,8 +70,8 @@ Function level_editor( lev:LEVEL )
 			Return
 		End If
 		
-		mouse.x = MouseX()
-		mouse.y = MouseY()
+		mouse.pos_x = MouseX()
+		mouse.pos_y = MouseY()
 		
 		'for instaquit
 		escape_key_update()
@@ -81,7 +81,7 @@ Function level_editor( lev:LEVEL )
 		SetAlpha( 0.5 )
 		SetRotation( 0 )
 		'mouse delta line
-		DrawLine( mouse.x - mouse_delta.x, mouse.y - mouse_delta.y, mouse.x, mouse.y )		
+		DrawLine( mouse.pos_x - mouse_delta.x, mouse.pos_y - mouse_delta.y, mouse.pos_x, mouse.pos_y )		
 		
 		'draw the gridsnap lines
 		If gridsnap > 1
@@ -207,36 +207,36 @@ Function level_editor( lev:LEVEL )
 		Select mode
 			Case EDIT_LEVEL_MODE_BASIC
 				DrawText( "mode "+EDIT_LEVEL_MODE_BASIC+" -> camera pan", info_x,info_y )
-				DrawText( "click and drag to pan", mouse.x+10,mouse.y )
-				DrawText( "enter to edit level name", mouse.x+10,mouse.y+10 )
+				DrawText( "click and drag to pan", mouse.pos_x+10,mouse.pos_y )
+				DrawText( "enter to edit level name", mouse.pos_x+10,mouse.pos_y+10 )
 			Case EDIT_LEVEL_MODE_DIVIDERS
 				DrawText( "mode "+EDIT_LEVEL_MODE_DIVIDERS+" -> dividers", info_x,info_y )
-				DrawText( "click to split", mouse.x+10,mouse.y )
-				DrawText( "right-click to toggle axis", mouse.x+10,mouse.y+10 )
-				DrawText( "ctrl+click to drag", mouse.x+10,mouse.y+20 )
-				DrawText( "alt+click to join", mouse.x+10,mouse.y+30 )
+				DrawText( "click to split", mouse.pos_x+10,mouse.pos_y )
+				DrawText( "right-click to toggle axis", mouse.pos_x+10,mouse.pos_y+10 )
+				DrawText( "ctrl+click to drag", mouse.pos_x+10,mouse.pos_y+20 )
+				DrawText( "alt+click to join", mouse.pos_x+10,mouse.pos_y+30 )
 			Case EDIT_LEVEL_MODE_PATH_REGIONS
 				DrawText( "mode "+EDIT_LEVEL_MODE_PATH_REGIONS+" -> path regions", info_x,info_y )
-				DrawText( "click block out area", mouse.x+10,mouse.y )
-				DrawText( "right-click to clear area", mouse.x+10,mouse.y+10 )
+				DrawText( "click block out area", mouse.pos_x+10,mouse.pos_y )
+				DrawText( "right-click to clear area", mouse.pos_x+10,mouse.pos_y+10 )
 			Case EDIT_LEVEL_MODE_SPAWNER_SYSTEM
 				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_SYSTEM+" -> spawner system", info_x,info_y )
-				DrawText( "click to add new", mouse.x+10,mouse.y )
-				DrawText( "ctrl+click & drag to move", mouse.x+10,mouse.y+10 )
-				DrawText( "alt+click to delete", mouse.x+10,mouse.y+20 )
-				DrawText( "shift+click to set angle", mouse.x+10,mouse.y+30 )
+				DrawText( "click to add new", mouse.pos_x+10,mouse.pos_y )
+				DrawText( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+10 )
+				DrawText( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+20 )
+				DrawText( "shift+click to set angle", mouse.pos_x+10,mouse.pos_y+30 )
 			Case EDIT_LEVEL_MODE_SPAWNER_DETAILS
 				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_DETAILS+" -> spawner details", info_x,info_y )
-				DrawText( "hover to edit nearest spawner", mouse.x+10,mouse.y )
-				DrawText( "up/down to select squad", mouse.x+10,mouse.y+10 )
-				DrawText( "left/right to change enemy type", mouse.x+10,mouse.y+20 )
-				DrawText( "insert/delete to add/remove squad member", mouse.x+10,mouse.y+30 )
-				DrawText( "home/end to change class", mouse.x+10,mouse.y+40 )
-				DrawText( "pgup/pgdn to change alignment", mouse.x+10,mouse.y+50 )
-				DrawText( "enter to edit wait time", mouse.x+10,mouse.y+60 )
+				DrawText( "hover to edit nearest spawner", mouse.pos_x+10,mouse.pos_y )
+				DrawText( "up/down to select squad", mouse.pos_x+10,mouse.pos_y+10 )
+				DrawText( "left/right to change enemy type", mouse.pos_x+10,mouse.pos_y+20 )
+				DrawText( "insert/delete to add/remove squad member", mouse.pos_x+10,mouse.pos_y+30 )
+				DrawText( "home/end to change class", mouse.pos_x+10,mouse.pos_y+40 )
+				DrawText( "pgup/pgdn to change alignment", mouse.pos_x+10,mouse.pos_y+50 )
+				DrawText( "enter to edit wait time", mouse.pos_x+10,mouse.pos_y+60 )
 			Case EDIT_LEVEL_MODE_PROPS
 				DrawText( "mode "+EDIT_LEVEL_MODE_PROPS+" -> props", info_x,info_y )
-				DrawText( "click to add new", mouse.x+10,mouse.y )
+				DrawText( "click to add new", mouse.pos_x+10,mouse.pos_y )
 				'...
 		End Select; info_y :+ line_h
 		DrawText( "numpad +/- gridsnap zoom", info_x,info_y ); info_y :+ 2*line_h
@@ -263,11 +263,11 @@ Function level_editor( lev:LEVEL )
 				'pan
 				If MouseDown( 1 )
 					If Not mouse_down_1
-						drag_mouse_start = mouse.clone()
+						drag_mouse_start = Copy_POINT( mouse ).to_cvec()
 						drag_pos_start = Create_POINT( x, y )
 					Else
-						x = round_to_nearest( drag_pos_start.pos_x + (mouse.x - drag_mouse_start.x), gridsnap )
-						y = round_to_nearest( drag_pos_start.pos_y + (mouse.y - drag_mouse_start.y), gridsnap )
+						x = round_to_nearest( drag_pos_start.pos_x + (mouse.pos_x - drag_mouse_start.x), gridsnap )
+						y = round_to_nearest( drag_pos_start.pos_y + (mouse.pos_y - drag_mouse_start.y), gridsnap )
 					End If
 				End If
 				If KeyHit( KEY_ENTER )
@@ -285,8 +285,8 @@ Function level_editor( lev:LEVEL )
 			
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_DIVIDERS
-				gridsnap_mouse.x = round_to_nearest( mouse.x, gridsnap )
-				gridsnap_mouse.y = round_to_nearest( mouse.y, gridsnap )
+				gridsnap_mouse.x = round_to_nearest( mouse.pos_x, gridsnap )
+				gridsnap_mouse.y = round_to_nearest( mouse.pos_y, gridsnap )
 				SetColor( 255, 255, 255 )
 				SetLineWidth( 3 )
 				'toggle divider_axis
@@ -368,15 +368,15 @@ Function level_editor( lev:LEVEL )
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
 				If MouseDown( 1 )
-					lev.set_path_region_from_xy( mouse.x-x,mouse.y-y, PATH_BLOCKED )
+					lev.set_path_region_from_xy( mouse.pos_x-x,mouse.pos_y-y, PATH_BLOCKED )
 				Else If MouseDown( 2 )
-					lev.set_path_region_from_xy( mouse.x-x,mouse.y-y, PATH_PASSABLE )
+					lev.set_path_region_from_xy( mouse.pos_x-x,mouse.pos_y-y, PATH_PASSABLE )
 				End If
 				
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_SPAWNER_SYSTEM
-				gridsnap_mouse.x = round_to_nearest( mouse.x-x, gridsnap )
-				gridsnap_mouse.y = round_to_nearest( mouse.y-y, gridsnap )
+				gridsnap_mouse.x = round_to_nearest( mouse.pos_x-x, gridsnap )
+				gridsnap_mouse.y = round_to_nearest( mouse.pos_y-y, gridsnap )
 				new_spawner.pos.pos_x = gridsnap_mouse.x
 				new_spawner.pos.pos_y = gridsnap_mouse.y
 				Select new_spawner.alignment
@@ -421,12 +421,12 @@ Function level_editor( lev:LEVEL )
 						DrawLine( MouseX(),MouseY(), closest_sp.pos.pos_x+x,closest_sp.pos.pos_y+y )
 						If control
 							If Not mouse_down_1 And MouseDown( 1 )
-								drag_mouse_start = mouse.clone()
+								drag_mouse_start = Copy_POINT( mouse ).to_cvec()
 								drag_pos_start = Copy_POINT( closest_sp.pos )
 							End If
 							If MouseDown( 1 )
-								closest_sp.pos.pos_x = round_to_nearest( drag_pos_start.pos_x + (mouse.x - drag_mouse_start.x), gridsnap )
-								closest_sp.pos.pos_y = round_to_nearest( drag_pos_start.pos_y + (mouse.y - drag_mouse_start.y), gridsnap )
+								closest_sp.pos.pos_x = round_to_nearest( drag_pos_start.pos_x + (mouse.pos_x - drag_mouse_start.x), gridsnap )
+								closest_sp.pos.pos_y = round_to_nearest( drag_pos_start.pos_y + (mouse.pos_y - drag_mouse_start.y), gridsnap )
 							End If
 						Else If alt
 							If mouse_down_1 And Not MouseDown( 1 )
@@ -465,7 +465,7 @@ Function level_editor( lev:LEVEL )
 				Local closest_sp:SPAWNER = Null
 				For Local sp:SPAWNER = EachIn lev.spawners
 					If closest_sp = Null Or ..
-					closest_sp.pos.dist_to( Create_POINT( mouse.x, mouse.y )) > sp.pos.dist_to( Create_POINT( mouse.x, mouse.y ))
+					closest_sp.pos.dist_to( Create_POINT( mouse.pos_x, mouse.pos_y )) > sp.pos.dist_to( Create_POINT( mouse.pos_x, mouse.pos_y ))
 						closest_sp = sp
 					End If
 				Next
@@ -594,8 +594,8 @@ Function level_editor( lev:LEVEL )
 			
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_PROPS
-				gridsnap_mouse.x = round_to_nearest( mouse.x-x, gridsnap )
-				gridsnap_mouse.y = round_to_nearest( mouse.y-y, gridsnap )
+				gridsnap_mouse.x = round_to_nearest( mouse.pos_x-x, gridsnap )
+				gridsnap_mouse.y = round_to_nearest( mouse.pos_y-y, gridsnap )
 				new_prop.pos.pos_x = gridsnap_mouse.x
 				new_prop.pos.pos_y = gridsnap_mouse.y
 				If Not any_modifiers
@@ -642,12 +642,12 @@ Function level_editor( lev:LEVEL )
 						DrawLine( MouseX(),MouseY(), closest_pd.pos.pos_x+x,closest_pd.pos.pos_y+y )
 						If control
 							If Not mouse_down_1 And MouseDown( 1 )
-								drag_mouse_start = mouse.clone()
+								drag_mouse_start = Copy_POINT( mouse ).to_cvec()
 								drag_pos_start = Copy_POINT( closest_pd.pos )
 							End If
 							If MouseDown( 1 )
-								closest_pd.pos.pos_x = round_to_nearest( drag_pos_start.pos_x + (mouse.x - drag_mouse_start.x), gridsnap )
-								closest_pd.pos.pos_y = round_to_nearest( drag_pos_start.pos_y + (mouse.y - drag_mouse_start.y), gridsnap )
+								closest_pd.pos.pos_x = round_to_nearest( drag_pos_start.pos_x + (mouse.pos_x - drag_mouse_start.x), gridsnap )
+								closest_pd.pos.pos_y = round_to_nearest( drag_pos_start.pos_y + (mouse.pos_y - drag_mouse_start.y), gridsnap )
 							End If
 						Else If alt
 							If mouse_down_1 And Not MouseDown( 1 )

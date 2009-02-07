@@ -60,9 +60,9 @@ Type FORCE Extends MANAGED_OBJECT
 	End Function
 
 	Method update()
-		If dead()
-			unmanage()
-		End If
+		If dead() Then unmanage()
+		If      control_pct > 1.0  Then control_pct = 1.0 ..
+		Else If control_pct < -1.0 Then control_pct = -1.0
 		magnitude_cur = control_pct*magnitude_max
 	End Method
 	

@@ -95,7 +95,7 @@ init_graphics()
 'debug_dirtyrects()
 'debug_doors()
 'debug_kill_tally()
-'menu_command( COMMAND_EDIT_VEHICLE )
+menu_command( COMMAND_EDIT_VEHICLE )
 ?
 
 init_ai_menu_game() 'ignored if Not show_ai_menu_game

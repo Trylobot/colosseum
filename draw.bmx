@@ -729,18 +729,22 @@ Function DrawText_with_glow( str$, x%, y% )
 	DrawText( str, x, y )
 End Function
 
-Function DrawLine_awesome( x1#, y1#, x2#, y2# )
+Function DrawLine_awesome( x1#, y1#, x2#, y2#, balls% = True, outer_width% = 5, inner_width% = 2 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	SetColor( 0, 0, 0 )
-	DrawOval( x1 - 5, y1 - 5, 10, 10 )
-	DrawOval( x2 - 5, y2 - 5, 10, 10 )
-	SetLineWidth( 5 )
+	If balls
+		DrawOval( x1 - 5, y1 - 5, 10, 10 )
+		DrawOval( x2 - 5, y2 - 5, 10, 10 )
+	End If
+	SetLineWidth( outer_width )
 	DrawLine( x1, y1, x2, y2 )
 	SetColor( 255, 255, 255 )
-	DrawOval( x1 - 3, y1 - 3, 6, 6 )
-	DrawOval( x2 - 3, y2 - 3, 6, 6 )
-	SetLineWidth( 2 )
+	If balls
+		DrawOval( x1 - 3, y1 - 3, 6, 6 )
+		DrawOval( x2 - 3, y2 - 3, 6, 6 )
+	End If
+	SetLineWidth( inner_width )
 	DrawLine( x1, y1, x2, y2 )
 	SetLineWidth( 1 )
 End Function

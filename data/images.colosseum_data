@@ -118,8 +118,8 @@
 		key: "{path}",
 		object: {
 			path: "art/laser_turret_base-barrel.png",
-			handle_x: 6.5,
-			handle_y: 6.5,
+			handle_x: 5.5,
+			handle_y: 5.5,
 			frames: 1
 		}
 	},

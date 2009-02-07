@@ -14,7 +14,7 @@ Const MOUSE_SHADOW_SCALE# = 3.0
 
 Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 	v_dat = v_dat.clone()
-	Local mouse:POINT = Create_POINT( MouseX(), MouseY() )
+	'Local mouse:POINT = Create_POINT( MouseX(), MouseY() )
 	Local mouse_dragging%
 	Local dragging_gladiator% = False
 	Local dragging_chassis% = False
@@ -77,6 +77,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 	SetClsColor( 19, 19, 33 )
 	Repeat
 		Cls()
+		tooltip = ""
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		SetRotation( 0 )
@@ -155,63 +156,79 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		DrawText_with_outline( "inventory", 10, 60 )
 		SetColor( 255, 255, 255 )
 		SetImageFont( get_font( "consolas_12" ))
+		Local h% = TextHeight( "A" )
 		Local inv_y% = 107
 		For Local i% = 0 Until inventory.Length
-			Local name$ = ""
-			If COMPLEX_AGENT(inventory[i]) Then name = COMPLEX_AGENT(inventory[i]).name
-			If TURRET(inventory[i]) Then name = TURRET(inventory[i]).name
-			If name = ""
-				Continue 'skip blank names
-			Else 'name = "{item_name}"
-				name = format_number(unused_inventory_count[i])+" "+name
-			End If
-			Local listing_rect:BOX = Create_BOX( 5, inv_y + i*TextHeight(name), TextWidth(name) + 10, 12 )
-			'if hovering over the inventory listing and it has not yet been used ..
-			If Not mouse_dragging ..
-			And unused_inventory_count[i] > 0 ..
-			And mouse.pos_x >= listing_rect.x And mouse.pos_x <= listing_rect.x + listing_rect.w ..
-			And mouse.pos_y >= listing_rect.y And mouse.pos_y <= listing_rect.y + listing_rect.h
-				hover_inventory_listing = i
-				'move the actual object representing the inventory item to the mouse position
-				inventory[i].move_to( mouse, True, True )
-				'if the item is a turret, and the turret has no base, draw a "fake base" for it
-				If TURRET(inventory[i])
-					Local t:TURRET = TURRET(inventory[i])
-					t.scale_all( MOUSE_SHADOW_SCALE )
-					If Not t.img
-						SetRotation( 0 )
-						SetScale( 1, 1 )
-						SetColor( 255, 255, 255 )
-						SetAlpha( 0.20 )
-						DrawRect( t.pos_x - 8, t.pos_y - 8, 16, 16 )
-						SetAlpha( 0.20 )
-						DrawRectLines( t.pos_x - 8, t.pos_y - 8, 16, 16 )
-						SetAlpha( 0.10 )
-						DrawLine( t.pos_x - 8, t.pos_y, t.pos_x + 8 - 1, t.pos_y )
-						DrawLine( t.pos_x, t.pos_y - 8, t.pos_x, t.pos_y + 8 - 1 )
-					End If
-				Else If COMPLEX_AGENT(inventory[i])
-					COMPLEX_AGENT(inventory[i]).scale_all( MOUSE_SHADOW_SCALE )
+			If Not profile.inventory[i].damaged
+				Local name$ = ""
+				Local compatible% = True
+				If COMPLEX_AGENT(inventory[i])
+					name = COMPLEX_AGENT(inventory[i]).name
+				Else If TURRET(inventory[i])
+					name = TURRET(inventory[i]).name
+					compatible = v_dat.chassis_compatible_with_turret( profile.inventory[i].key )
 				End If
-				'draw the inventory item
-				inventory[i].draw( 0.5, MOUSE_SHADOW_SCALE )
-				'draw a highlight box around the item description
-				SetRotation( 0 )
-				SetScale( 1, 1 )
-				SetColor( 255, 255, 255 )
-				SetAlpha( 0.3333 )
-				DrawRect( listing_rect.x, listing_rect.y, listing_rect.w, listing_rect.h )
+				If v_dat.is_unit
+					compatible = False
+				End If
+				If name = ""
+					Continue 'skip blank names
+				Else 'name = "{item_name}"
+					name = format_number(unused_inventory_count[i])+" "+name
+				End If
+				Local listing_rect:BOX = Create_BOX( 5, inv_y + i*h, TextWidth(name) + 10, 12 )
+				'if hovering over the inventory listing and it has not yet been used ..
+				If Not mouse_dragging ..
+				And compatible ..
+				And unused_inventory_count[i] > 0 ..
+				And mouse.pos_x >= listing_rect.x And mouse.pos_x <= listing_rect.x + listing_rect.w ..
+				And mouse.pos_y >= listing_rect.y And mouse.pos_y <= listing_rect.y + listing_rect.h
+					hover_inventory_listing = i
+					'move the actual object representing the inventory item to the mouse position
+					inventory[i].move_to( mouse, True, True )
+					'if the item is a turret, and the turret has no base, draw a "fake base" for it
+					If TURRET(inventory[i])
+						Local t:TURRET = TURRET(inventory[i])
+						t.scale_all( MOUSE_SHADOW_SCALE )
+						If Not t.img
+							SetRotation( 0 )
+							SetScale( 1, 1 )
+							SetColor( 255, 255, 255 )
+							SetAlpha( 0.20 )
+							DrawRect( t.pos_x - 8, t.pos_y - 8, 16, 16 )
+							SetAlpha( 0.20 )
+							DrawRectLines( t.pos_x - 8, t.pos_y - 8, 16, 16 )
+							SetAlpha( 0.10 )
+							DrawLine( t.pos_x - 8, t.pos_y, t.pos_x + 8 - 1, t.pos_y )
+							DrawLine( t.pos_x, t.pos_y - 8, t.pos_x, t.pos_y + 8 - 1 )
+						End If
+					Else If COMPLEX_AGENT(inventory[i])
+						COMPLEX_AGENT(inventory[i]).scale_all( MOUSE_SHADOW_SCALE )
+					End If
+					'draw the inventory item
+					inventory[i].draw( 0.5, MOUSE_SHADOW_SCALE )
+					'draw a highlight box around the item description
+					SetRotation( 0 )
+					SetScale( 1, 1 )
+					SetColor( 255, 255, 255 )
+					SetAlpha( 0.3333 )
+					DrawRect( listing_rect.x, listing_rect.y, listing_rect.w, listing_rect.h )
+					SetAlpha( 1 )
+					DrawRectLines( listing_rect.x, listing_rect.y, listing_rect.w, listing_rect.h )
+				End If
 				SetAlpha( 1 )
-				DrawRectLines( listing_rect.x, listing_rect.y, listing_rect.w, listing_rect.h )
+				If unused_inventory_count[i] <= 0
+					SetColor( 96, 96, 96 )
+				Else
+					SetColor( 255, 255, 255 )
+				End If
+				'regardless of the hover state, show the text of the item's description
+				DrawText_with_outline( name, 10, inv_y + i*h )
+				'incompatibility show
+				If Not compatible
+					DrawLine_awesome( 8, inv_y + (i + 0.333)*h, TextWidth(name) + 8, inv_y + (i + 0.333)*h, False, 3, 1 )
+				End If
 			End If
-			SetAlpha( 1 )
-			If unused_inventory_count[i] <= 0
-				SetColor( 96, 96, 96 )
-			Else
-				SetColor( 255, 255, 255 )
-			End If
-			'regardless of the hover state, show the text of the item's description
-			DrawText_with_outline( name, 10, inv_y + i*TextHeight(name) )
 		Next
 		
 		'chassis drag destination goes _under_ the chassis object, oddly
@@ -380,10 +397,11 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				player = bake_player( v_dat, STAGE_SCALE )
 				DebugLog " changed chassis to "+mouse_items[0].to_string()
 			
-			Else If Not v_dat.is_unit 'finished a drag near neither the chassis nor any of its turret anchors; drop it into the inventory
+			Else 'finished a drag near neither the chassis nor any of its turret anchors; drop it into the inventory
 				
 				If dragging_inventory_i >= 0 'dragging from inventory
 					unused_inventory_count[dragging_inventory_i] :+ 1
+					DebugLog " returned "+profile.inventory[dragging_inventory_i].to_string()+" to the inventory"
 				
 				Else If mouse_items 'dragging from chassis anchor
 					Local item_strings$[mouse_items.Length]
@@ -437,6 +455,9 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 			Next
 		End If
 		
+		'tooltip
+		show_tooltip()
+		
 		'mouse state
 		If MouseDown( 1 )
 			mouse_down_1 = True
@@ -472,5 +493,15 @@ End Function
 
 Function show_error( err$ )
 	DebugLog " "+err
+End Function
+
+Global tooltip$ = ""
+Function show_tooltip()
+	SetImageFont( get_font( "consolas_12" ))
+	SetAlpha( 1 )
+	SetRotation( 0 )
+	SetColor( 255, 255, 255 )
+	SetScale( 1, 1 )
+	DrawText_with_outline( tooltip, mouse.pos_x - TextWidth( tooltip )/2.0, mouse.pos_y + TextHeight( tooltip ) + 2 )
 End Function
 

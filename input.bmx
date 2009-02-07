@@ -6,14 +6,17 @@ EndRem
 
 '______________________________________________________________________________
 'Input
+Global mouse:POINT = Create_POINT( MouseX(), MouseY() )
+Global mouse_delta:cVEC = New cVEC
 Global mouse_last_z% = 0
+
 Function get_all_input()
 	
 	'mouse update
-	mouse_delta.x = MouseX() - mouse.x
-	mouse_delta.y = MouseY() - mouse.y
-	mouse.x = MouseX()
-	mouse.y = MouseY()
+	mouse_delta.x = MouseX() - mouse.pos_x
+	mouse_delta.y = MouseY() - mouse.pos_y
+	mouse.pos_x = MouseX()
+	mouse.pos_y = MouseY()
 	If Not FLAG_in_menu And game <> Null And game.human_participation And game.player_brain <> Null And profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
 		HideMouse()
 	Else
@@ -50,7 +53,7 @@ Function get_all_input()
 		'mouseover of menu items
 		'Local target_valid% = m.select_by_coords( mouse.x, mouse.y )
 		'If MouseHit( 1 ) And target_valid
-		m.select_by_coords( mouse.x, mouse.y )
+		m.select_by_coords( mouse.pos_x, mouse.pos_y )
 		If MouseHit( 1 ) And get_current_menu().menu_type <> MENU.TEXT_INPUT_DIALOG
 			m.execute_current_option()
 		End If
@@ -138,7 +141,7 @@ End Function
 Local scrollbar_positions%[]
 
 Function scrollbar_control()
-	If get_current_menu().hovering_on_scrollbar( mouse.x, mouse.y )
+	If get_current_menu().hovering_on_scrollbar( mouse.pos_x, mouse.pos_y )
 		If MouseDown( 1 )
 			get_current_menu().increment_focus()
 		End If
