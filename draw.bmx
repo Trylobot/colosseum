@@ -456,66 +456,26 @@ Global lag_aimer:cVEC
 Function draw_reticle()
 	If game.human_participation
 		If game.player.turrets <> Null
-			Local p_tur:TURRET = game.player.turrets[0]
+			Local tur:TURRET = game.player.turrets[0]
 			Local img_reticle:TImage = get_image( "reticle" )
-			
+			'KEYBOARD/MOUSE
 			If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-				'lag-behind reticle
-				'initialization
-				If last_pos = Null Then last_pos = Copy_POINT( p_tur )
-				If lag_aimer = Null Then lag_aimer = Create_cVEC( p_tur.pos_x + 50*Cos( p_tur.ang ), p_tur.pos_y + 50*Sin( p_tur.ang ) )
-				Local ang_to_mouse# = p_tur.ang_to( game.mouse )
-				Local dist_from_lag_aimer_to_mouse# = vector_diff_length( lag_aimer.x, lag_aimer.y, game.mouse.x, game.mouse.y )
-				Local dist_to_ptur# = p_tur.dist_to( lag_aimer )
-				lag_aimer.x :+ p_tur.pos_x - last_pos.pos_x
-				lag_aimer.y :+ p_tur.pos_y - last_pos.pos_y
-				last_pos = Copy_POINT( p_tur )
-				'if angle of separation is not too close to zero
-				If Abs( ang_wrap( p_tur.ang - ang_to_mouse )) > (40.0 / dist_from_lag_aimer_to_mouse)
-					lag_aimer = intersection( lag_aimer, game.mouse, p_tur.to_cvec(), p_tur.to_cvec().add( Create_cVEC( p_tur.pos_x * Cos( p_tur.ang ), p_tur.pos_y * Sin( p_tur.ang ))))
-					Local show_radius# = 75
-					Local hide_radius# = 150
-					If dist_from_lag_aimer_to_mouse <= show_radius
-						cur_alpha = dist_from_lag_aimer_to_mouse / show_radius
-					Else If dist_from_lag_aimer_to_mouse <= hide_radius
-						cur_alpha = 1 - ((dist_from_lag_aimer_to_mouse - show_radius) / (hide_radius - show_radius))
-					Else
-						cur_alpha = 0
-					End If
-					SetAlpha(( cur_alpha + 3 * last_alpha ) / 4.0 )
-					last_alpha = cur_alpha
-					SetRotation( p_tur.ang )
-					DrawImage( img_reticle, lag_aimer.x, lag_aimer.y )
-				Else
-					lag_aimer = game.mouse.clone()
+				'turret ghost reticle
+				Local distance_from_turret_to_mouse# = tur.dist_to( game.mouse ) 
+				If distance_from_turret_to_mouse > 2*img_reticle.width
+					SetRotation( tur.ang )
+					Local turret_ghost_reticle:cVEC = Create_cVEC( tur.pos_x + distance_from_turret_to_mouse * Cos( tur.ang ), tur.pos_y + distance_from_turret_to_mouse * Sin( tur.ang ))
+					Local ang_diff# = ang_wrap( tur.ang_to( game.mouse ) - tur.ang )
+					SetAlpha( 1 - ang_diff/180.0 )
 				End If
 				'actual mouse reticle
-				SetRotation( p_tur.ang_to( game.mouse ))
+				SetRotation( tur.ang_to( game.mouse ))
 				SetAlpha( 1.0 )
 				DrawImage( img_reticle, game.mouse.x, game.mouse.y )
-				''if the reticle is not visible, show an indicator on the edge of the screen
-				'SetAlpha( Sin( now() Mod 2000 ))
-				'Local arrow:TImage = get_image( "arrow" )
-				'If game.mouse.x + game.drawing_origin.x < 0
-				'	SetRotation( 180 )
-				'	'DrawImage( arrow, 0, game.mouse.y )
-				'Else If game.mouse.x + game.drawing_origin.x > window_w
-				'	SetRotation( 0 )
-				'	'DrawImage( arrow, window_w, game.mouse.y )
-				'End If
-				'If game.mouse.y + game.drawing_origin.y < 0
-				'	SetRotation( 90 )
-				'	'DrawImage( arrow, game.mouse.x, 0 )
-				'Else If game.mouse.y + game.drawing_origin.y > window_w
-				'	SetRotation( -90 )
-				'	'DrawImage( arrow, game.mouse.x, window_h )
-				'End If
-				'SetAlpha( 1 )
-				
+			'KEYBOARD ONLY
 			Else If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD
-				SetRotation( p_tur.ang )
-				DrawImage( img_reticle, p_tur.pos_x + 85*Cos( p_tur.ang ), p_tur.pos_y + 85*Sin( p_tur.ang ))
-			
+				SetRotation( tur.ang )
+				DrawImage( img_reticle, tur.pos_x + 85*Cos( tur.ang ), tur.pos_y + 85*Sin( tur.ang ))
 			End If
 		End If
 	End If
