@@ -12,7 +12,8 @@ Type CONSOLE
 		Local bg:TImage = screencap()
 		Local str$ = initial_value
 		SetImageFont( font )
-		
+		Local cursor% = str.Length
+		Local char_width% = TextWidth( "W" )
 		Repeat
 			Cls()
 			SetColor( 255, 255, 255 )
@@ -35,23 +36,21 @@ Type CONSOLE
 			'instaquit
 			escape_key_update()
 			
-			'erase last character
+			'erase character immediately before the cursor, and decrement the cursor
 			If KeyHit( KEY_BACKSPACE )
 				str = str[..(str.Length-1)]
 			End If
 
 			'normal input
-			'If max_size = INFINITY Or str.Length < max_size
-				Local char$ = get_char()
-				If char <> ""
-					str :+ char
-					'cursor_index :+ 1
-				End If
-			'End If
+			Local char$ = get_char()
+			If char <> ""
+				str :+ char
+				'cursor_index :+ 1
+			End If
 			
 			DrawText_with_outline( str, x, y )
 			SetAlpha( 0.5 + Sin(now() Mod 360) )
-			DrawText( "|", x + TextWidth( str ) - 2, y )
+			DrawText( "|", x + char_width*cursor - 4, y )
 			
 			'instaquit
 			If KeyDown( KEY_ESCAPE ) And esc_held And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required

@@ -77,13 +77,20 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 	SetClsColor( 19, 19, 33 )
 	Repeat
 		Cls()
+		'mouse
+		'last_mouse = Copy_POINT( mouse )
+		mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
+		
+		'for instaquit
+		escape_key_update()
+
 		tooltip = ""
 		SetColor( 255, 255, 255 )
 		SetAlpha( 1 )
 		SetRotation( 0 )
 		SetScale( 1, 1 )
 		
-		'title
+		'draw title
 		SetImageFont( get_font( "consolas_bold_24" ))
 		SetColor( 0, 0, 0 )
 		SetAlpha( 0.5 )
@@ -93,13 +100,16 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		SetAlpha( 1 )
 		DrawText_with_outline( title, 10, 10 )
 		
-		'mouse
-		'last_mouse = Copy_POINT( mouse )
-		mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
+		Local warning_y% = 10
+		If Not v_dat.is_unit And v_dat.count_all_turrets() <= 0
+			Local warning_x% = 60 + TextWidth( title )
+			SetColor( 255, 255, 255 )
+			DrawImage( get_image( "warning" ), warning_x, warning_y - 3 )
+			SetImageFont( get_font( "consolas_12" ))
+			SetColor( 255, 216, 0 )
+			DrawText_with_outline( "This vehicle needs at least one turret", warning_x + 20, warning_y )
+		End If
 		
-		'for instaquit
-		escape_key_update()
-
 		'closest turret anchor detection, if any
 		Local closest_turret_anchor:cVEC = Null
 		Local closest_turret_anchor_i% = -1

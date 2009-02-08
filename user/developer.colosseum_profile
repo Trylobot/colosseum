@@ -59,11 +59,9 @@
 		}
 	],
 	vehicle: {
-		chassis_key: "medium_tank",
+		chassis_key: "",
 		is_unit: false,
-		turret_keys: [
-			null
-		]
+		turret_keys: null
 	},
 	input_method: 2,
 	progress: null,

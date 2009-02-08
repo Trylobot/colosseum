@@ -112,6 +112,16 @@ Type VEHICLE_DATA
 		Return "success"
 	End Method
 	
+	Method count_all_turrets%()
+		Local count% = 0
+		If turret_keys
+			For Local a% = 0 Until turret_keys.Length
+				count :+ count_turrets( a )
+			Next
+		End If
+		Return count
+	End Method
+	
 	Method count_turrets%( anchor% )
 		If turret_keys
 			If turret_keys[anchor]

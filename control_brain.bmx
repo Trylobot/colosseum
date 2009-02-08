@@ -392,11 +392,16 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					Else
 						avatar.drive( 0.0 )
 					EndIf
+					'backwards driving turn inversion
+					Local sign% = 1
+					If avatar.driving_force.control_pct < 0
+						sign = -1
+					End If
 					'angular velocity
 					If KeyDown( KEY_D )
-						avatar.turn( 1.0 )
+						avatar.turn( sign * 1.0 )
 					ElseIf KeyDown( KEY_A )
-						avatar.turn( -1.0 )
+						avatar.turn( sign * -1.0 )
 					Else
 						avatar.turn( 0.0 )
 					EndIf
@@ -447,9 +452,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
 						avatar.fire_all( TURRET.SECONDARY )
 					End If
-					'If KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
-					'	avatar.fire_turret_group( 2 )
-					'End If
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
 					'turret(s) fire
 					If MouseDown( 1 ) And Not FLAG_ignore_mouse_1

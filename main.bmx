@@ -95,8 +95,8 @@ init_graphics()
 'debug_dirtyrects()
 'debug_doors()
 'debug_kill_tally()
-'menu_command( COMMAND_EDIT_VEHICLE )
-menu_command( COMMAND_EDIT_LEVEL )
+menu_command( COMMAND_EDIT_VEHICLE )
+'menu_command( COMMAND_EDIT_LEVEL )
 ?
 
 init_ai_menu_game() 'does nothing if applicable performance setting is disabled
