@@ -64,7 +64,7 @@ Type PLAYER_PROFILE
 		If query_item
 			Local factor# = 1.0
 			If query_item.damaged Then factor = 0.5
-			Return get_inventory_object_cost( query_item.item_type, query_item.key )
+			Return factor * get_inventory_object_cost( query_item.item_type, query_item.key )
 		End If
 		Return 0
 	End Method
@@ -159,8 +159,7 @@ Type PLAYER_PROFILE
 	End Method
 	
 	Method sort_inventory()
-		'inventory.Sort() 'chassis end up at the bottom
-		inventory.Sort( True ) 'no change
+		inventory.Sort()
 	End Method
 
 	Method generate_src_path$()

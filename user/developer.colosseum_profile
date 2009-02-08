@@ -1,29 +1,11 @@
 {
 	name: "developer",
-	cash: 575,
-	kills: 1363,
+	cash: 5200,
+	kills: 1401,
 	inventory: [
 		{
 			item_type: "turret",
-			key: "medium_laser",
-			count: 2,
-			damaged: false
-		},
-		{
-			item_type: "turret",
-			key: "dual_light_cannon",
-			count: 1,
-			damaged: false
-		},
-		{
-			item_type: "turret",
-			key: "light_laser",
-			count: 2,
-			damaged: false
-		},
-		{
-			item_type: "turret",
-			key: "medium_machine_gun",
+			key: "light_machine_gun",
 			count: 1,
 			damaged: false
 		},
@@ -35,8 +17,32 @@
 		},
 		{
 			item_type: "turret",
-			key: "light_machine_gun",
+			key: "medium_machine_gun",
 			count: 1,
+			damaged: false
+		},
+		{
+			item_type: "turret",
+			key: "light_laser",
+			count: 2,
+			damaged: false
+		},
+		{
+			item_type: "turret",
+			key: "dual_light_cannon",
+			count: 1,
+			damaged: false
+		},
+		{
+			item_type: "turret",
+			key: "medium_laser",
+			count: 2,
+			damaged: false
+		},
+		{
+			item_type: "chassis",
+			key: "light_tank",
+			count: 3,
 			damaged: false
 		},
 		{
@@ -50,18 +56,17 @@
 			key: "medium_tank",
 			count: 3,
 			damaged: false
-		},
-		{
-			item_type: "chassis",
-			key: "light_tank",
-			count: 3,
-			damaged: false
 		}
 	],
 	vehicle: {
-		chassis_key: "",
+		chassis_key: "medium_tank",
 		is_unit: false,
-		turret_keys: null
+		turret_keys: [
+			[
+				"dual_light_cannon",
+				"medium_machine_gun"
+			]
+		]
 	},
 	input_method: 2,
 	progress: null,

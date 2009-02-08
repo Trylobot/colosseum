@@ -42,15 +42,16 @@ Type INVENTORY_DATA
 	
 	Method compare%( with_object:Object ) ' return true if Self is "greater than" other
 		Local other:INVENTORY_DATA = INVENTORY_DATA(with_object)
+		Local my_const% = 0
+		If item_type = "chassis"
+			my_const = 1000000
+		End If
 		If other
-			If item_type <> other.item_type 'chassis items are always the greatest
-				If item_type = "chassis" Then Return 65535 ..
-				Else If other.item_type = "chassis" Then Return -65535
-			Else 'item types are the same
-				'compare the costs
-				'Return get_inventory_object_cost( item_type, key ) - get_inventory_object_cost( other.item_type, other.key )
-				Return get_inventory_object_cost( other.item_type, other.key ) - get_inventory_object_cost( item_type, key )
+			Local other_const% = 0
+			If other.item_type = "chassis"
+				other_const = 1000000
 			End If
+			Return (my_const + get_inventory_object_cost( item_type, key )) - (other_const + get_inventory_object_cost( other.item_type, other.key ))
 		End If
 		Return False
 	EndMethod
