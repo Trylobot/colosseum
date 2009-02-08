@@ -246,12 +246,15 @@ Function draw_main_screen()
 	draw_menus( x, y )
 	
 	'copyright stuff
+	SetAlpha( 1 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
 	SetColor( 157, 157, 157 )
 	SetImageFont( get_font( "consolas_10" ))
 	h = 0.75*TextHeight( info )
 	x = 1
 	y = window_h - h*2 - 1
-	If game <> main_game
+	If Not game Or game <> main_game
 		DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole (aka Tylerbot); music by NickPerrin; JSON binding by grable", x, y ); y :+ h
 		DrawText_with_outline( "special thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, and Firelord88; written in BlitzMax", x, y ); y :+ h
 	End If
@@ -361,9 +364,6 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 			get_menu( menu_stack[i] ).draw( x + i*20, y + i*20,, menu_overlay_alpha[i])
 		Next
 	End If
-	SetAlpha( 1 )
-	SetRotation( 0 )
-	SetScale( 1, 1 )
 End Function
 '______________________________________________________________________________
 Function draw_arena_bg()
