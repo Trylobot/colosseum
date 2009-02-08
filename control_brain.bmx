@@ -408,10 +408,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				Else 'Not game.player_engine_running
 					avatar.drive( 0.0 )
 					avatar.turn( 0.0 )
-					'start engine
-					If KeyHit( KEY_E ) And Not game.player_engine_ignition
-						game.player_engine_ignition = True
-					End If
 				End If
 				'turret aim control
 				If input_type = INPUT_KEYBOARD

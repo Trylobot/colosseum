@@ -154,16 +154,22 @@ Function draw_game()
 	draw_reticle()
 	SetRotation( 0 )
 	
-	If game.human_participation And Not game.game_over
+	If game.human_participation
+		'you win message
+		If Not game.game_in_progress
+			SetColor( 255, 255, 255 )
+			SetAlpha( 1 )
+			SetScale( 1, 1 )
+			SetImageFont( get_font( "consolas_bold_100" ))
+			DrawText_with_outline( "YOU WIN!", window_w/2 - TextWidth("YOU WIN!")/2, TextHeight("A") + 10 )
+		End If
 		'player tips
 		Local player_msg$ = Null
 		SetImageFont( get_font( "consolas_12" ))
 		If Not game.player_engine_running
-			player_msg = "[E] engine ignition"
-		Else If game.player_in_locker And game.waiting_for_player_to_enter_arena
-			player_msg = "[W] drive forward"
-		Else If Not game.battle_in_progress And game.waiting_for_player_to_exit_arena
-			player_msg = "[R] return to loading bay"
+			player_msg = "F1 for help"
+		Else If Not game.game_in_progress
+			player_msg = "press enter"
 		End If
 		If player_msg <> Null
 			DrawText_with_outline( player_msg, game.player.pos_x - TextWidth( player_msg )/2, game.player.pos_y + game.player.img.height + 3 )
@@ -208,12 +214,6 @@ Function draw_game()
 		Local h% = GetImageFont().Height()
 		SetColor( 255, 0, 0 )
 		DrawText_with_outline( "GAME OVER", window_w/2 - w/2, window_h/2 - h/2 )
-		SetColor( 255, 255, 255 )
-		SetAlpha( 1 )
-		SetScale( 1, 1 )
-		SetImageFont( get_font( "consolas_12" ))
-		Local r_msg$ = "[R] return to loading bay" 
-		DrawText_with_outline( r_msg, Int(window_w/2 - TextWidth( r_msg )/2), Int(window_h/2 + h/3 ))
 	End If
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
@@ -965,5 +965,25 @@ Function draw_skulls( x%, y%, max_width%, count% )
 	Next
 End Function
 
-
+Function draw_fuzzy( img:TImage )
+	If img
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetRotation( 0 )
+		SetScale( 1, 1 )
+		DrawImage( img, 0, 0 )
+		SetAlpha( 0.333333 )
+		SetBlend( LIGHTBLEND )
+		DrawImage( img, 2, 0 )
+		DrawImage( img, 0, 2 )
+		DrawImage( img, 0, -2 )
+		DrawImage( img, -2, 0 )
+		SetAlpha( 0.666666 )
+		SetBlend( ALPHABLEND )
+		SetColor( 0, 0, 0 )
+		DrawRect( 0, 0, window_w, window_h )
+		SetAlpha( 1 )
+		SetColor( 255, 255, 255 )
+	End If
+End Function
 

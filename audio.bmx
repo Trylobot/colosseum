@@ -8,6 +8,7 @@ EndRem
 'Audio
 Global audio_channels:TList = CreateList()
 
+
 Function play_all_audio()
 	play_bg_music()
 	
@@ -67,6 +68,8 @@ Function start_player_engine()
 	game.player_engine_ignition = False
 End Function
 
+Global engine_start_ts%
+
 Function tweak_engine_idle()
 	If Not game.player_engine_running	
 		If engine_start <> Null
@@ -90,6 +93,7 @@ Function tweak_engine_idle()
 				CueSound( get_sound( "engine_idle_loop" ), engine_idle )
 				SetChannelVolume( engine_idle, 0.5 )
 				ResumeChannel( engine_idle )
+				engine_start_ts = now()
 			End If
 		End If
 		If engine_start = Null
@@ -98,9 +102,11 @@ Function tweak_engine_idle()
 				engine_idle = AllocChannel()
 				CueSound( get_sound( "engine_idle_loop" ), engine_idle )
 				ResumeChannel( engine_idle )
+				engine_start_ts = now()
 			End If
 			Local p_speed# = Sqr( Pow(game.player.vel_x,2) + Pow(game.player.vel_y,2) )
-			SetChannelVolume( engine_idle, 0.5 + ( 0.5 * (p_speed / 2.0) ))
+			Local factor# = 10000.0/(Float(now() - engine_start_ts) + 10000.0)
+			SetChannelVolume( engine_idle, factor * (0.5 + ( 0.5 * (p_speed / 2.0))) )
 			SetChannelRate( engine_idle, 1.0 + (p_speed / 2.0) )
 		End If
 	End If

@@ -84,7 +84,7 @@ Function get_all_input()
 	
 	'win/kill_tally
 	If game And game.human_participation
-		If Not game.game_in_progress And KeyHit( KEY_R )
+		If Not game.game_in_progress And KeyHit( KEY_ENTER )
 			game.player_engine_running = False
 			tweak_engine_idle()
 			If Not game.game_over
