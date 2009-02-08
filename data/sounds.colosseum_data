@@ -3,8 +3,8 @@
 		class: "sound",
 		key: "{path}",
 		object: {
-			path: "sound/victory_8-bit.ogg",
-			looping: true
+			path: "sound/victory.ogg",
+			looping: false
 		}
 	},
 	{

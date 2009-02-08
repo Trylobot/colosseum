@@ -155,14 +155,6 @@ Function draw_game()
 	SetRotation( 0 )
 	
 	If game.human_participation
-		'you win message
-		If Not game.game_in_progress
-			SetColor( 255, 255, 255 )
-			SetAlpha( 1 )
-			SetScale( 1, 1 )
-			SetImageFont( get_font( "consolas_bold_100" ))
-			DrawText_with_outline( "YOU WIN!", window_w/2 - TextWidth("YOU WIN!")/2, TextHeight("A") + 10 )
-		End If
 		'player tips
 		Local player_msg$ = Null
 		SetImageFont( get_font( "consolas_12" ))
@@ -185,6 +177,14 @@ Function draw_game()
 		For Local health_bit:WIDGET = EachIn health_bits
 			health_bit.draw()
 		Next
+		'win message
+		If Not game.game_in_progress
+			SetColor( 255, 255, 255 )
+			SetScale( 1, 1 )
+			SetImageFont( get_font( "consolas_bold_100" ))
+			SetAlpha( time_alpha_pct( game.battle_state_toggle_ts, 1200 ))
+			DrawText_with_glow( "YOU WIN!", window_w/2 - TextWidth("YOU WIN!")/2, 10 )
+		End If
 		'help screen
 		If FLAG_draw_help
 			Local img_help_kb:TImage = get_image( "help_kb" )

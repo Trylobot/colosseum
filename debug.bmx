@@ -263,6 +263,7 @@ Function debug_overlay()
 	If spawn_alignment <> ALIGNMENT_NONE
 		If spawn_agent = Null
 			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[spawn_archetype], spawn_alignment ))
+			spawn_agent.scale_all( 1.50 )
 			spawn_agent.ang = Rand( 360 )
 			spawn_agent.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, -spawn_agent.mass/100.0 )))
 		End If

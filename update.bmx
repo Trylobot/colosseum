@@ -151,6 +151,7 @@ Function update_flags()
 			game.battle_state_toggle_ts = now()
 			game.close_doors( ALIGNMENT_HOSTILE )
 			game.spawn_enemies = False
+			play_sound( get_sound( "victory" ))
 		End If
 		'player death
 		If game.player.dead() 'player just died? (omgwtf)

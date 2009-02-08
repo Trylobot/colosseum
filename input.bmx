@@ -88,7 +88,7 @@ Function get_all_input()
 			game.player_engine_running = False
 			tweak_engine_idle()
 			If Not game.game_over
-				kill_tally( "LEVEL COMPLETE!", screencap() )
+				kill_tally( "", screencap() )
 			End If
 			menu_command( COMMAND_QUIT_LEVEL )
 		End If
