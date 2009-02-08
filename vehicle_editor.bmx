@@ -100,14 +100,15 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		SetAlpha( 1 )
 		DrawText_with_outline( title, 10, 10 )
 		
+		'no turrets warning
 		Local warning_y% = 10
 		If Not v_dat.is_unit And v_dat.count_all_turrets() <= 0
-			Local warning_x% = 60 + TextWidth( title )
+			Local warning_x% = 50 + TextWidth( title )
 			SetColor( 255, 255, 255 )
-			DrawImage( get_image( "warning" ), warning_x, warning_y - 3 )
+			DrawImage( get_image( "warning" ), warning_x, warning_y - 4 )
 			SetImageFont( get_font( "consolas_12" ))
 			SetColor( 255, 216, 0 )
-			DrawText_with_outline( "This vehicle needs at least one turret", warning_x + 20, warning_y )
+			DrawText_with_outline( "This vehicle needs at least one turret", warning_x + 22, warning_y )
 		End If
 		
 		'closest turret anchor detection, if any
@@ -310,8 +311,8 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 			Else If chassis_hover And player.img 'yanked a valid chassis
 				dragging_chassis = True
 				mouse_shadow = player
-				mouse_shadow.scale_all( 1/STAGE_SCALE )
-				mouse_shadow.scale_all( MOUSE_SHADOW_SCALE )
+				'mouse_shadow.scale_all( 1/STAGE_SCALE )
+				'mouse_shadow.scale_all( MOUSE_SHADOW_SCALE )
 				mouse_shadow.move_to( mouse, True, True )
 				If v_dat.is_unit
 					mouse_items = [ Create_INVENTORY_DATA( "unit", v_dat.chassis_key )]
@@ -335,6 +336,8 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				If COMPLEX_AGENT(inventory[hover_inventory_listing])
 					dragging_chassis = True
 					mouse_shadow = COMPLEX_AGENT( COMPLEX_AGENT.Copy( COMPLEX_AGENT(inventory[hover_inventory_listing]) ))
+					mouse_shadow.scale_all( 1/MOUSE_SHADOW_SCALE )
+					mouse_shadow.scale_all( STAGE_SCALE )
 					mouse_items = [ profile.inventory[hover_inventory_listing].clone() ]
 				Else If TURRET(inventory[hover_inventory_listing])
 					mouse_shadow.remove_all_turrets()
@@ -350,7 +353,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				'attach the gladiator to the mouse chassis
 				mouse_shadow = get_unit( "machine_gun_quad" )
 				mouse_shadow.set_images_unfiltered()
-				mouse_shadow.scale_all( MOUSE_SHADOW_SCALE )
+				mouse_shadow.scale_all( STAGE_SCALE )
 				mouse_items = [ Create_INVENTORY_DATA( "unit", "machine_gun_quad" )]
 				DebugLog " dragging item:unit.machine_gun_quad"
 			End If
@@ -407,9 +410,9 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				Next
 				'use the new one
 				If mouse_items[0].item_type = "unit"
-					v_dat.set_chassis( mouse_items[0].key, True ) 'change the chassis
+					v_dat.set_chassis( mouse_items[0].key, True ) 'change the chassis to a unit
 				Else If mouse_items[0].item_type = "chassis"
-					v_dat.set_chassis( mouse_items[0].key, False ) 'change the chassis
+					v_dat.set_chassis( mouse_items[0].key, False ) 'change the chassis to a player chassis potentially with turrets
 					If mouse_items.Length > 1
 						v_dat = v_dat_backup
 						v_dat_backup = New VEHICLE_DATA
@@ -457,8 +460,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		'mouse shadow
 		If mouse_dragging
 			mouse_shadow.move_to( mouse, True )
-			mouse_shadow.update()
-			mouse_shadow.draw( 0.5, MOUSE_SHADOW_SCALE )
+			mouse_shadow.draw( 0.33333, STAGE_SCALE )
 			For Local t:TURRET = EachIn mouse_shadow.turrets
 				If Not t.img
 					SetRotation( 0 )
@@ -504,11 +506,12 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 End Function
 
 Function bake_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, scale# = 1.0 )
-	Local player:COMPLEX_AGENT = create_player( v_dat, False )
+	Local player:COMPLEX_AGENT = create_player( v_dat, False, False )
 	If Not player Then player = New COMPLEX_AGENT
 	player.set_images_unfiltered()
 	player.scale_all( scale )
 	player.move_to( Create_POINT( window_w/2, window_h/2, 0 ), True, True )
+	'If v_dat Then DebugLog " bake_player()~n"+v_dat.to_json().ToSource()
 	Return player
 End Function
 

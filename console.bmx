@@ -36,9 +36,18 @@ Type CONSOLE
 			'instaquit
 			escape_key_update()
 			
+			'cursor move
+			If KeyHit( KEY_LEFT )
+				cursor :- 1
+				If cursor < 0 Then cursor = 0
+			Else If KeyHit( KEY_RIGHT )
+				cursor :+ 1
+				If cursor > str.Length Then cursor = str.Length
+			End If
+			
 			'erase character immediately before the cursor, and decrement the cursor
 			If KeyHit( KEY_BACKSPACE )
-				str = str[..(str.Length-1)]
+				str = str[..cursor] + str[cursor+1..]
 			End If
 
 			'normal input
@@ -68,13 +77,6 @@ Type CONSOLE
 		'cursor reset (why is this even necessary?!)
 		'If reset_cursor Then cursor_index = str.Length
 		'arrow keys + backspace/delete
-		'If KeyHit( KEY_LEFT ) 'move cursor left
-		'	cursor_index :- 1
-		'	If cursor_index < 0 Then cursor_index = 0
-		'Else If KeyHit( KEY_RIGHT ) 'move cursor right
-		'	cursor_index :+ 1
-		'	If cursor_index > str.Length-1 Then cursor_index = str.Length-1
-		'End If
 		If KeyHit( KEY_BACKSPACE ) '.. 'erase character left of cursor and move cursor left
 			str = str[..(str.Length-1)]
 		'Else If KeyHit( KEY_DELETE ) '.. 'erase character right of cursor
