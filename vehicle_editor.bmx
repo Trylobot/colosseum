@@ -101,9 +101,15 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		DrawText_with_outline( title, 10, 10 )
 		
 		'no turrets warning
+		Local warning_x% = 50 + TextWidth( title )
 		Local warning_y% = 10
-		If Not v_dat.is_unit And v_dat.count_all_turrets() <= 0
-			Local warning_x% = 50 + TextWidth( title )
+		If Not v_dat.is_unit And v_dat.chassis_key = ""
+			SetColor( 255, 255, 255 )
+			DrawImage( get_image( "warning" ), warning_x, warning_y - 4 )
+			SetImageFont( get_font( "consolas_12" ))
+			SetColor( 255, 216, 0 )
+			DrawText_with_outline( "This vehicle needs a chassis", warning_x + 22, warning_y )
+		Else If Not v_dat.is_unit And v_dat.count_all_turrets() <= 0
 			SetColor( 255, 255, 255 )
 			DrawImage( get_image( "warning" ), warning_x, warning_y - 4 )
 			SetImageFont( get_font( "consolas_12" ))
@@ -179,7 +185,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 					name = COMPLEX_AGENT(inventory[i]).name
 				Else If TURRET(inventory[i])
 					name = TURRET(inventory[i]).name
-					compatible = v_dat.chassis_compatible_with_turret( profile.inventory[i].key )
+					compatible = (v_dat.chassis_key <> "" And v_dat.chassis_compatible_with_turret( profile.inventory[i].key ))
 				End If
 				If v_dat.is_unit
 					compatible = False
@@ -253,8 +259,13 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 			End If
 		Next
 		
-		'chassis drag destination goes _under_ the chassis object, oddly
-		If chassis_hover And (Not closest_turret_anchor Or dragging_chassis)
+		'drag destinations: chassis hover, turret anchor hover
+		Local gonna_show_turret_anchor_line% = ..
+			(Not v_dat.is_unit ..
+			And closest_turret_anchor ..
+			And Not dragging_chassis ..
+			And (v_dat.count_turrets( closest_turret_anchor_i ) > 0 Or mouse_items))
+		If chassis_hover And Not gonna_show_turret_anchor_line
 			SetAlpha( 0.085 )
 			SetColor( 255, 255, 255 )
 			SetScale( 1, 1 )
@@ -452,7 +463,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		End If
 		
 		'turret anchor indicator
-		If closest_turret_anchor And Not dragging_chassis 'show closest turret anchor if not dragging a chassis
+		If gonna_show_turret_anchor_line
 			SetAlpha( 1.2 - mouse.dist_to( closest_turret_anchor )/ANCHOR_HOVER_RADIUS )
 			DrawLine_awesome( mouse.pos_x, mouse.pos_y, closest_turret_anchor.x, closest_turret_anchor.y )
 		End If

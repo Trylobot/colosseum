@@ -23,13 +23,13 @@
 		},
 		{
 			item_type: "turret",
-			key: "light_cannon",
+			key: "medium_machine_gun",
 			count: 1,
 			damaged: false
 		},
 		{
 			item_type: "turret",
-			key: "medium_machine_gun",
+			key: "light_cannon",
 			count: 1,
 			damaged: false
 		},
@@ -43,13 +43,13 @@
 			item_type: "chassis",
 			key: "medium_tank",
 			count: 1,
-			damaged: false
+			damaged: true
 		},
 		{
 			item_type: "chassis",
 			key: "medium_tank",
 			count: 1,
-			damaged: true
+			damaged: false
 		},
 		{
 			item_type: "chassis",
