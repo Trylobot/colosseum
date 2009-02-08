@@ -20,9 +20,6 @@ Type PLAYER_PROFILE
 		
 	Method New()
 		name = "new_profile"
-		cash = 0
-		kills = 0
-		input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
 		src_path = generate_src_path()
 	End Method
 	

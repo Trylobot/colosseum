@@ -913,7 +913,7 @@
 		object: {
 			path: "art/discarded_energy_core_red.png",
 			handle_x: 3,
-			handle_y: 2.5
+			handle_y: 2.5,
 			frames: 1
 		}
 	},
@@ -923,7 +923,17 @@
 		object: {
 			path: "art/discarded_energy_core_big.png",
 			handle_x: 3.5,
-			handle_y: 2.5
+			handle_y: 2.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/lock.png",
+			handle_x: 0,
+			handle_y: 0,
 			frames: 1
 		}
 	}

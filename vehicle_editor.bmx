@@ -222,13 +222,22 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				If unused_inventory_count[i] <= 0
 					SetColor( 96, 96, 96 )
 				Else
-					SetColor( 255, 255, 255 )
+					If compatible
+						SetColor( 255, 255, 255 )
+					Else
+						SetColor( 196, 127, 127 )
+					End If
 				End If
 				'regardless of the hover state, show the text of the item's description
 				DrawText_with_outline( name, 10, inv_y + i*h )
 				'incompatibility show
 				If Not compatible
-					DrawLine_awesome( 8, inv_y + (i + 0.333)*h, TextWidth(name) + 8, inv_y + (i + 0.333)*h, False, 3, 1 )
+					'DrawLine_awesome( 8, inv_y + (i + 0.333)*h, TextWidth(name) + 8, inv_y + (i + 0.333)*h, False, 3, 1 )
+					SetRotation( 0 )
+					SetScale( 1, 1 )
+					SetColor( 255, 255, 255 )
+					SetAlpha( 1 )
+					DrawImage( get_image( "lock" ), TextWidth(name) + 15, inv_y + i*h - 3 )
 				End If
 			End If
 		Next

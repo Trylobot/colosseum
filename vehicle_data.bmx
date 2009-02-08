@@ -5,6 +5,17 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Function Create_VEHICLE_DATA:VEHICLE_DATA( ..
+chassis_key$ = Null, ..
+is_unit% = False, ..
+turret_keys$[][] = Null )
+	Local vd:VEHICLE_DATA = New VEHICLE_DATA
+	vd.chassis_key = chassis_key
+	vd.is_unit = is_unit
+	vd.turret_keys = turret_keys
+	Return vd
+End Function
+
 Type VEHICLE_DATA
 	Field chassis_key$
 	Field is_unit%
