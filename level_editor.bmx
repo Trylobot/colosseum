@@ -36,7 +36,6 @@ Function level_editor( lev:LEVEL )
 	Local grid_sizes%[] = [ 1, 2, 5, 8, 10, 12, 15, 20, 25 ]
 	Local gridsnap% = grid_sizes[current_grid_size]
 	Local mode% = EDIT_LEVEL_MODE_BASIC
-	Local FLAG_text_mode%
 	Local x% = gridsnap, y% = gridsnap
 	Local info_x%, info_y%
 	Local mouse_down_1%, mouse_down_2%
@@ -45,7 +44,6 @@ Function level_editor( lev:LEVEL )
 	
 	Local cursor% = 0
 	Local cursor_archetype% = 0
-	Local kb_handler:CONSOLE = New CONSOLE
 	Local sp_delay_time$
 	
 	Local normal_font:TImageFont = get_font( "consolas_12" )
@@ -53,10 +51,8 @@ Function level_editor( lev:LEVEL )
 	SetImageFont( normal_font )
 	Local line_h% = GetImageFont().Height() - 1
 	
-	Local kill_signal% = False
-	
 	Repeat
-		Cls
+		Cls()
 		
 		'modifier keys
 		control = KeyDown( KEY_LCONTROL ) | KeyDown( KEY_RCONTROL )
@@ -80,8 +76,8 @@ Function level_editor( lev:LEVEL )
 		SetLineWidth( 1 )
 		SetAlpha( 0.5 )
 		SetRotation( 0 )
-		'mouse delta line
-		DrawLine( mouse.pos_x - mouse_delta.x, mouse.pos_y - mouse_delta.y, mouse.pos_x, mouse.pos_y )		
+		''mouse delta line
+		'DrawLine( mouse.pos_x - mouse_delta.x, mouse.pos_y - mouse_delta.y, mouse.pos_x, mouse.pos_y )		
 		
 		'draw the gridsnap lines
 		If gridsnap > 1
@@ -158,27 +154,25 @@ Function level_editor( lev:LEVEL )
 		Next
 		
 		'change modes detection
-		If Not FLAG_text_mode
-			If      KeyHit( KEY_1 ) Then mode = EDIT_LEVEL_MODE_BASIC ..
-			Else If KeyHit( KEY_2 ) Then mode = EDIT_LEVEL_MODE_DIVIDERS ..
-			Else If KeyHit( KEY_3 ) Then mode = EDIT_LEVEL_MODE_PATH_REGIONS ..
-			Else If KeyHit( KEY_4 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_SYSTEM ..
-			Else If KeyHit( KEY_5 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_DETAILS ..
-			Else If KeyHit( KEY_6 ) Then mode = EDIT_LEVEL_MODE_PROPS
-			
-			If KeyHit( KEY_NUMADD )
-				current_grid_size :+ 1
-				If current_grid_size > grid_sizes.Length - 1 Then current_grid_size = 0
-				gridsnap = grid_sizes[current_grid_size]
-				x = gridsnap
-				y = gridsnap
-			Else If KeyHit( KEY_NUMSUBTRACT )
-				current_grid_size :- 1
-				If current_grid_size < 0 Then current_grid_size = grid_sizes.Length - 1
-				gridsnap = grid_sizes[current_grid_size]
-				x = gridsnap
-				y = gridsnap
-			End If
+		If      KeyHit( KEY_1 ) Then mode = EDIT_LEVEL_MODE_BASIC ..
+		Else If KeyHit( KEY_2 ) Then mode = EDIT_LEVEL_MODE_DIVIDERS ..
+		Else If KeyHit( KEY_3 ) Then mode = EDIT_LEVEL_MODE_PATH_REGIONS ..
+		Else If KeyHit( KEY_4 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_SYSTEM ..
+		Else If KeyHit( KEY_5 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_DETAILS ..
+		Else If KeyHit( KEY_6 ) Then mode = EDIT_LEVEL_MODE_PROPS
+		
+		If KeyHit( KEY_NUMADD )
+			current_grid_size :+ 1
+			If current_grid_size > grid_sizes.Length - 1 Then current_grid_size = 0
+			gridsnap = grid_sizes[current_grid_size]
+			x = gridsnap
+			y = gridsnap
+		Else If KeyHit( KEY_NUMSUBTRACT )
+			current_grid_size :- 1
+			If current_grid_size < 0 Then current_grid_size = grid_sizes.Length - 1
+			gridsnap = grid_sizes[current_grid_size]
+			x = gridsnap
+			y = gridsnap
 		End If
 		
 		'unconditionally draw level info panel and editor help
@@ -271,16 +265,8 @@ Function level_editor( lev:LEVEL )
 					End If
 				End If
 				If KeyHit( KEY_ENTER )
-					FLAG_text_mode = Not FLAG_text_mode
 					FlushKeys()
-				End If
-				If FLAG_text_mode
-					lev.name = kb_handler.update( lev.name, max_level_name_length )
-					SetAlpha( 0.5 + Sin(now() Mod 360) )
-					SetImageFont( bigger_font )
-					DrawText( "|", info_x + TextWidth( lev.name ) - 2, title_y )
-					SetImageFont( normal_font )
-					SetAlpha( 1 )
+					lev.name = CONSOLE.get_input( lev.name,, info_x, title_y, bigger_font )
 				End If
 			
 			'____________________________________________________________________________________________________
@@ -496,6 +482,7 @@ Function level_editor( lev:LEVEL )
 						For Local r% = 0 To sp.count_squads()-1
 							For Local c% = 0 To sp.count_squadmembers( r )-1
 								Local ag:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[sp.squads[r][c]] ))
+								ag.scale_all( 0.75 )
 								ag.pos_x = info_x + cell_size + c*cell_size - cell_size/2
 								ag.pos_y = info_y + cell_size + r*cell_size - cell_size/2
 								ag.ang = -90
@@ -519,75 +506,63 @@ Function level_editor( lev:LEVEL )
 					Next
 
 					If KeyHit( KEY_ENTER ) And cursor >= 0 And cursor < sp.count_squads()
-						FLAG_text_mode = Not FLAG_text_mode
 						FlushKeys()
-						If FLAG_text_mode
-							sp_delay_time = "" 'String.FromInt( sp.delay_time[cursor] )
-						Else 'Not FLAG_text_mode
-							sp.delay_time[cursor] = sp_delay_time.ToInt()
-						End If
+						sp.delay_time[cursor] = CONSOLE.get_input( sp.delay_time[cursor],, window_w - 50, info_y + cursor*cell_size + line_h/3, normal_font ).ToInt()
 					End If
-					If FLAG_text_mode And cursor >= 0 And cursor < sp.count_squads()
-						sp_delay_time = kb_handler.update( sp_delay_time )
-						DrawText( sp_delay_time, window_w - 50, info_y + cursor*cell_size + line_h/3 )
-						SetAlpha( 0.5 + Sin(now() Mod 360) )
-						DrawText( "|", window_w - 50 + TextWidth( sp_delay_time ) - 2, info_y + cursor*cell_size + line_h/3 )
-						SetAlpha( 1 )
-					Else 'Not FLAG_text_mode
-						If cursor >= 0 And cursor < sp.count_squads()
-							DrawText( String.FromInt( sp.delay_time[cursor] ), window_w - 50, info_y + cursor*cell_size + line_h/3 )
+					If cursor >= 0 And cursor < sp.count_squads()
+						DrawText( String.FromInt( sp.delay_time[cursor] ), window_w - 50, info_y + cursor*cell_size + line_h/3 )
+					End If
+					Local cursor_squadmembers% = sp.count_squadmembers( cursor )
+					Local ag:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[cursor_archetype] ))
+					ag.scale_all( 0.75 )
+					ag.pos_x = info_x + cell_size + cursor_squadmembers*cell_size - cell_size/2
+					ag.pos_y = info_y + cell_size + cursor*cell_size - cell_size/2
+					ag.ang = -90
+					ag.snap_all_turrets()
+					ag.update()
+					ag.draw( 0.5 + Sin(now() Mod 360), 0.75 )
+					SetRotation( 0 )
+					SetScale( 1, 1 )
+					
+					If KeyHit( KEY_PAGEUP )
+						sp.alignment :- 1
+						If sp.alignment < 0 Then sp.alignment = 2
+					End If
+					If KeyHit( KEY_PAGEDOWN )
+						sp.alignment :+ 1
+						If sp.alignment > 2 Then sp.alignment = 0
+					End If
+					If KeyHit( KEY_HOME )
+						sp.class = SPAWNER.class_GATED_FACTORY
+					End If
+					If KeyHit( KEY_END )
+						sp.class = SPAWNER.class_TURRET_ANCHOR
+					End If
+					If KeyHit( KEY_LEFT )
+						cursor_archetype :- 1
+						If cursor_archetype < 0 Then cursor_archetype = unit_archetype.Length-1
+					End If
+					If KeyHit( KEY_RIGHT )
+						cursor_archetype :+ 1
+						If cursor_archetype > unit_archetype.Length-1 Then cursor_archetype = 0
+					End If
+					If KeyHit( KEY_UP )
+						cursor :- 1
+						If cursor < 0 Then cursor = sp.count_squads()
+					End If
+					If KeyHit( KEY_DOWN )
+						cursor :+ 1
+						If cursor > sp.count_squads() Then cursor = 0
+					End If
+					If KeyHit( KEY_INSERT )
+						If cursor >= sp.squads.Length
+							sp.add_new_squad()
 						End If
-						Local cursor_squadmembers% = sp.count_squadmembers( cursor )
-						Local ag:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[cursor_archetype] ))
-						ag.pos_x = info_x + cell_size + cursor_squadmembers*cell_size - cell_size/2
-						ag.pos_y = info_y + cell_size + cursor*cell_size - cell_size/2
-						ag.ang = -90
-						ag.snap_all_turrets()
-						ag.update()
-						ag.draw( 0.5 + Sin(now() Mod 360), 0.75 )
-						SetRotation( 0 )
-						SetScale( 1, 1 )
-						
-						If KeyHit( KEY_PAGEUP )
-							sp.alignment :- 1
-							If sp.alignment < 0 Then sp.alignment = 2
-						End If
-						If KeyHit( KEY_PAGEDOWN )
-							sp.alignment :+ 1
-							If sp.alignment > 2 Then sp.alignment = 0
-						End If
-						If KeyHit( KEY_HOME )
-							sp.class = SPAWNER.class_GATED_FACTORY
-						End If
-						If KeyHit( KEY_END )
-							sp.class = SPAWNER.class_TURRET_ANCHOR
-						End If
-						If KeyHit( KEY_LEFT )
-							cursor_archetype :- 1
-							If cursor_archetype < 0 Then cursor_archetype = unit_archetype.Length-1
-						End If
-						If KeyHit( KEY_RIGHT )
-							cursor_archetype :+ 1
-							If cursor_archetype > unit_archetype.Length-1 Then cursor_archetype = 0
-						End If
-						If KeyHit( KEY_UP )
-							cursor :- 1
-							If cursor < 0 Then cursor = sp.count_squads()
-						End If
-						If KeyHit( KEY_DOWN )
-							cursor :+ 1
-							If cursor > sp.count_squads() Then cursor = 0
-						End If
-						If KeyHit( KEY_INSERT )
-							If cursor >= sp.squads.Length
-								sp.add_new_squad()
-							End If
-							sp.add_new_squadmember( cursor, cursor_archetype )
-						End If
-						If KeyHit( KEY_DELETE )
-							If cursor < sp.squads.Length
-								sp.remove_last_squadmember( cursor )
-							End If
+						sp.add_new_squadmember( cursor, cursor_archetype )
+					End If
+					If KeyHit( KEY_DELETE )
+						If cursor < sp.squads.Length
+							sp.remove_last_squadmember( cursor )
 						End If
 					End If
 				End If
@@ -675,12 +650,13 @@ Function level_editor( lev:LEVEL )
 			draw_instaquit_progress()
 		End If
 	
-		Flip( 1 )
+		Flip( True )
 		
-		kill_signal = AppTerminate()
-	Until escape_key_release() Or KeyHit( KEY_BACKSPACE ) Or kill_signal
-	If kill_signal Then End
-	
+		If AppTerminate() Then End
+		If escape_key_release() Or KeyDown( KEY_BACKSPACE ) Then Exit
+		
+	Forever
+		
 	FlushKeys()
 	FlushMouse()
 End Function

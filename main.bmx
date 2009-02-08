@@ -95,10 +95,11 @@ init_graphics()
 'debug_dirtyrects()
 'debug_doors()
 'debug_kill_tally()
-menu_command( COMMAND_EDIT_VEHICLE )
+'menu_command( COMMAND_EDIT_VEHICLE )
+menu_command( COMMAND_EDIT_LEVEL )
 ?
 
-init_ai_menu_game() 'ignored if Not show_ai_menu_game
+init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 
 Const time_per_frame_min# = 16.666666666666666666666666666667
 Global before%

@@ -362,6 +362,8 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 		Next
 	End If
 	SetAlpha( 1 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
 End Function
 '______________________________________________________________________________
 Function draw_arena_bg()

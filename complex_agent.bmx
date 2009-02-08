@@ -655,11 +655,16 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Method scale_all( scale# )
+		If left_track Then left_track.scale = scale
+		If right_track Then right_track.scale = scale
+		For Local list:TList = EachIn Self.all_widget_lists
+			For Local w:WIDGET = EachIn list
+				w.attach_at( w.attach_x * scale, w.attach_y * scale, w.ang_offset )
+			Next
+		Next
 		For Local t:TURRET = EachIn turrets
 			t.scale_all( scale )
 		Next
-		If left_track Then left_track.scale = scale
-		If right_track Then right_track.scale = scale
 	End Method
 		
 End Type
