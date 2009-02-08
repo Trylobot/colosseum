@@ -6,7 +6,7 @@ EndRem
 
 '______________________________________________________________________________
 Global timescale#
-Const timescale_constant_factor# = 0.85
+Const timescale_constant_factor# = 0.80
 
 Function calculate_timescale()
 	timescale = timescale_constant_factor * Float(now() - before)/Float(time_per_frame_min)

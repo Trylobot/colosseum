@@ -451,7 +451,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 			mouse_items = Null
 		End If
 		
-		'drag destinations draw
+		'turret anchor indicator
 		If closest_turret_anchor And Not dragging_chassis 'show closest turret anchor if not dragging a chassis
 			SetAlpha( 1.2 - mouse.dist_to( closest_turret_anchor )/ANCHOR_HOVER_RADIUS )
 			DrawLine_awesome( mouse.pos_x, mouse.pos_y, closest_turret_anchor.x, closest_turret_anchor.y )

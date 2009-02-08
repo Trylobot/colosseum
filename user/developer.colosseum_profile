@@ -1,7 +1,7 @@
 {
 	name: "developer",
-	cash: 12600,
-	kills: 1333,
+	cash: 16200,
+	kills: 1363,
 	inventory: [
 		{
 			item_type: "turret",
@@ -59,9 +59,14 @@
 		}
 	],
 	vehicle: {
-		chassis_key: "",
+		chassis_key: "light_tank",
 		is_unit: false,
-		turret_keys: null
+		turret_keys: [
+			[
+				"light_cannon",
+				"light_machine_gun"
+			]
+		]
 	},
 	input_method: 2,
 	progress: null,
