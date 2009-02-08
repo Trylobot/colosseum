@@ -43,7 +43,7 @@ Type VEHICLE_DATA
 		End If
 	End Method
 	
-	Method add_turret$( key$, anchor% ) 'returns error message if unsuccessful
+	Method add_turret$( key$, anchor%, allow_replacement% = False ) 'returns error message if unsuccessful
 		'stock unit
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
 		If anchor < turret_keys.Length
@@ -56,20 +56,21 @@ Type VEHICLE_DATA
 			If Not turret_keys[anchor]
 				turret_keys[anchor] = [ key ]
 			Else 'turret_key[anchor] <> Null
-				'adding a primary turret can only be done if there are no turrets at all attached to this anchor
-				If t.priority = TURRET.PRIMARY And turrets_of_priority_attached_to_anchor( TURRET.PRIMARY, anchor ) > 0
-					Return "That socket already has a large turret."
-				End If
-				'adding a secondary turret can only be done if there are no secondary turrets attached to this anchor
-				If t.priority = TURRET.SECONDARY And turrets_of_priority_attached_to_anchor( TURRET.SECONDARY, anchor ) > 0
-					Return "That socket already has a small turret."
-				End If
-				'all good, add it
+				Local result$ = "success"
 				If t.priority = TURRET.PRIMARY
+					If turrets_of_priority_attached_to_anchor( TURRET.PRIMARY, anchor ) > 0
+						result = "That socket already has a large turret."
+						If Not allow_replacement Then Return result
+					End If
 					turret_keys[anchor] = [ key, turret_keys[anchor][0] ]
 				Else If t.priority = TURRET.SECONDARY
+					If turrets_of_priority_attached_to_anchor( TURRET.SECONDARY, anchor ) > 0
+						result = "That socket already has a small turret."
+						If Not allow_replacement Then Return result
+					End If
 					turret_keys[anchor] = [ turret_keys[anchor][0], key ]
 				End If
+				Return result
 			End If
 		Else
 			Return "FATAL ERROR: anchor "+anchor+" is not defined on this vehicle."

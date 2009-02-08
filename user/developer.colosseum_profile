@@ -1,7 +1,7 @@
 {
 	name: "developer",
-	cash: 8775,
-	kills: 1446,
+	cash: 8800,
+	kills: 1447,
 	inventory: [
 		{
 			item_type: "turret",
@@ -11,14 +11,14 @@
 		},
 		{
 			item_type: "turret",
-			key: "light_cannon",
-			count: 2,
+			key: "medium_machine_gun",
+			count: 1,
 			damaged: false
 		},
 		{
 			item_type: "turret",
-			key: "medium_machine_gun",
-			count: 1,
+			key: "light_cannon",
+			count: 2,
 			damaged: false
 		},
 		{

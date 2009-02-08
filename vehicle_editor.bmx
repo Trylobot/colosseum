@@ -373,15 +373,34 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 			mouse_dragging = False
 			
 			If closest_turret_anchor And Not dragging_chassis 'dropped onto a turret anchor
-			
 				If dragging_inventory_i >= 0 'dropped turret from inventory onto a turret anchor; add it to vehicle data and bake
-					Local result$ = v_dat.add_turret( profile.inventory[dragging_inventory_i].key, closest_turret_anchor_i )
+					Local returned_turret_keys$[] = v_dat.get_turrets( closest_turret_anchor_i )
+					Local result$ = v_dat.add_turret( profile.inventory[dragging_inventory_i].key, closest_turret_anchor_i, True )
 					If result = "success"
 						player = bake_player( v_dat, STAGE_SCALE )
 						DebugLog " added turret "+profile.inventory[dragging_inventory_i].key+" to anchor "+closest_turret_anchor_i
 					Else 'error
-						show_error( result )
-						unused_inventory_count[dragging_inventory_i] :+ 1
+						If result.Find( "That socket already has a " ) <> -1
+							Local t:TURRET = get_turret( profile.inventory[dragging_inventory_i].key )
+							'loop through each of the old turrets, trying to add them
+							'any failures should be returned to inventory
+							For Local t_key$ = EachIn returned_turret_keys
+								Local sub_result$ = v_dat.add_turret( t_key, closest_turret_anchor_i )
+								If sub_result <> "success"
+									'add back to inventory
+									For Local i% = 0 Until profile.inventory.Length
+										Local tur_item:INVENTORY_DATA = Create_INVENTORY_DATA( "turret", t_key )
+										If tur_item.eq( profile.inventory[i] )
+											unused_inventory_count[i] :+ 1
+										End If
+									Next
+								End If
+							Next
+						Else
+							show_error( result )
+							unused_inventory_count[dragging_inventory_i] :+ 1
+						End If
+						player = bake_player( v_dat, STAGE_SCALE )
 					End If
 				
 				Else 'dropped a mess of turrets from the existing chassis
