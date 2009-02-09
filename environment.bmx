@@ -293,7 +293,7 @@ Type ENVIRONMENT
 							'restart delay timer
 							spawn_ts[i] = now()
 							'close door
-							If spawner_door[i] Then spawner_door[i].close()
+							'If spawner_door[i] Then spawner_door[i].close()
 							'if that last squad was the last squad of the current spawner
 							If cur.row > sp.squads.Length-1
 								'active spawner counter update
