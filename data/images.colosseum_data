@@ -727,6 +727,16 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/ghost_reticle.png",
+			handle_x: 3.5,
+			handle_y: 3.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/door_bg.png",
 			handle_x: 35.0,
 			handle_y: 74.0,

@@ -32,6 +32,7 @@ Type ENVIRONMENT
 	Field spawn_ts%[] 'for each spawner, the timestamp of the spawn process start
 	Field last_spawned:COMPLEX_AGENT[] 'for each spawner, a reference to the last spawned enemy (so they don't overlap)
 	Field spawn_counter%[] 'for each spawner, a count of how many enemies have been spawned so far
+	Field spawner_door:DOOR[] 'for each spawner, a door (potentially)
 	
 	Field particle_list_background:TList 'TList<PARTICLE>
 	Field particle_list_foreground:TList 'TList<PARTICLE>
@@ -168,13 +169,7 @@ Type ENVIRONMENT
 			prop.manage( prop_list )
 			prop.move_to( pd.pos )
 		Next
-		'doors
-		For Local sp:SPAWNER = EachIn lev.spawners
-			If sp.class = SPAWNER.class_GATED_FACTORY
-				add_door( sp.pos, sp.alignment )
-			End If
-		Next
-		'spawning system initialize/reset
+		'spawning system
 		reset_spawners()
 		If human_participation And profile
 			player_kills_at_start = profile.kills
@@ -200,12 +195,14 @@ Type ENVIRONMENT
 		End If
 	End Method
 	
-	Method add_door( p:POINT, alignment% )
-		Create_DOOR( p ).manage( political_door_list( alignment ))
+	Method add_door:DOOR( p:POINT, alignment% )
+		Local d:DOOR = Create_DOOR( p )
+		d.manage( political_door_list( alignment ))
+		Return d
 	End Method
 
 	Method reset_spawners( alignment% = ALIGNMENT_NONE, omit_turrets% = False )
-		If alignment = ALIGNMENT_NONE
+		If alignment = ALIGNMENT_NONE 'ALL
 			'flags and counters
 			active_friendly_units = 0
 			active_friendly_spawners = 0
@@ -216,12 +213,16 @@ Type ENVIRONMENT
 			spawn_ts = New Int[lev.spawners.Length]
 			last_spawned = New COMPLEX_AGENT[lev.spawners.Length]
 			spawn_counter = New Int[lev.spawners.Length]
+			spawner_door = New DOOR[lev.spawners.Length]
 			For Local i% = 0 To lev.spawners.Length-1
 				If omit_turrets And lev.spawners[i].class = SPAWNER.class_TURRET_ANCHOR Then Continue
 				spawn_cursor[i] = New CELL
 				spawn_ts[i] = now()
 				last_spawned[i] = Null
 				spawn_counter[i] = 0
+				If lev.spawners[i].class = SPAWNER.class_GATED_FACTORY
+					spawner_door[i] = add_door( lev.spawners[i].pos, lev.spawners[i].alignment )
+				End If
 				If lev.spawners[i].alignment = ALIGNMENT_FRIENDLY
 					active_friendly_spawners :+ 1
 				Else If lev.spawners[i].alignment = ALIGNMENT_HOSTILE
@@ -265,7 +266,7 @@ Type ENVIRONMENT
 		Local spawned:TList = CreateList()
 		'for each spawner
 		Local sp:SPAWNER, cur:CELL, ts%, last:COMPLEX_AGENT, counter%
-		For Local i% = 0 To lev.spawners.Length-1
+		For Local i% = 0 Until lev.spawners.Length
 			sp = lev.spawners[i]
 			cur = spawn_cursor[i]
 			ts = spawn_ts[i]
@@ -275,6 +276,7 @@ Type ENVIRONMENT
 			If counter < sp.size
 				'if it is time to spawn this spawner's current squad
 				If now() - ts >= sp.delay_time[cur.row]
+					If spawner_door[i] Then spawner_door[i].open()
 					'if this squad has just been started, or the last spawned enemy is away, dead or null
 					If cur.col = 0 Or last = Null Or last.dead() Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
 						Local brain:CONTROL_BRAIN = spawn_unit( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
@@ -290,6 +292,8 @@ Type ENVIRONMENT
 							cur.row :+ 1
 							'restart delay timer
 							spawn_ts[i] = now()
+							'close door
+							If spawner_door[i] Then spawner_door[i].close()
 							'if that last squad was the last squad of the current spawner
 							If cur.row > sp.squads.Length-1
 								'active spawner counter update

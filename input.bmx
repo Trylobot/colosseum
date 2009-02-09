@@ -51,10 +51,10 @@ Function get_all_input()
 			m.execute_current_option()
 		End If
 		'mouseover of menu items
-		'Local target_valid% = m.select_by_coords( mouse.x, mouse.y )
-		'If MouseHit( 1 ) And target_valid
-		m.select_by_coords( mouse.pos_x, mouse.pos_y )
-		If MouseHit( 1 ) And get_current_menu().menu_type <> MENU.TEXT_INPUT_DIALOG
+		Local target_valid% = m.select_by_coords( mouse.pos_x, mouse.pos_y )
+		If MouseHit( 1 ) And target_valid
+		'm.select_by_coords( mouse.pos_x, mouse.pos_y )
+		'If MouseHit( 1 ) And get_current_menu().menu_type <> MENU.TEXT_INPUT_DIALOG
 			m.execute_current_option()
 		End If
 	Else 'Not FLAG_in_menu And Not FLAG_in_shop
