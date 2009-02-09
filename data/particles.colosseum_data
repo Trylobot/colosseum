@@ -281,5 +281,15 @@
 			retain: false,
 			frictional_coefficient: 0.0150
 		}
+	},
+	{
+		class: "particle",
+		key: "shockwave",
+		object: {
+			particle_type: 0,
+			img: "shockwave",
+			layer: 2,
+			retain: false,
+		}
 	}
 ]
