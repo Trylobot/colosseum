@@ -13,6 +13,36 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/apc_chassis.png",
+			handle_x: 13.5,
+			handle_y: 9.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/apc_turret_base.png",
+			handle_x: 3.5,
+			handle_y: 5.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/apc_turret_barrel.png",
+			handle_x: 1.5,
+			handle_y: 2.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/light_tank_track.png",
 			handle_x: 12.5,
 			handle_y: 3.0,

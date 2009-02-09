@@ -321,6 +321,9 @@ Function set_turret_archetypes()
 	turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN] = TURRET( TURRET.Create( , TURRET.AMMUNITION, TURRET.PRIMARY, get_image( "enemy_light_mgun_turret_base" ),, get_sound( "mgun" ), 1, [[0]], 2.00, INFINITY, 25.0, 5.0, 5.5, 0.0175, 2000, 250.0 ))
 		turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_MACHINE_GUN], 0 ).attach_at( 0, 0 )
 		turret_map.Insert( "mounted_sub_machine_gun", turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN] )
+	turret_archetype[TURRET_INDEX_APC_MACHINE_GUN] = TURRET( TURRET.Create( "apc machine gun", TURRET.AMMUNITION, TURRET.PRIMARY, get_image( "apc_turret_base" ),, get_sound( "mgun" ), 2, [[0],[1]], 2.25, INFINITY, 25.0, 1.50, 2.75, 0.0210, 1250, 300.0 ))
+		
+		turret_map.Insert( "apc_machine_gun", turret_archetype[TURRET_INDEX_APC_MACHINE_GUN] )
 End Function
 
 '______________________________________________________________________________
@@ -360,8 +363,9 @@ End Function
 
 '______________________________________________________________________________
 '[ UNITS ]
-Global unit_archetype:COMPLEX_AGENT[8]; reset_index()
+Global unit_archetype:COMPLEX_AGENT[9]; reset_index()
 
+Global UNIT_INDEX_APC% = postfix_index()
 Global UNIT_INDEX_MR_THE_BOX% = postfix_index()
 Global UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT% = postfix_index()
 Global UNIT_INDEX_CANNON_TURRET_EMPLACEMENT% = postfix_index()
@@ -372,6 +376,13 @@ Global UNIT_INDEX_LIGHT_TANK% = postfix_index()
 Global UNIT_INDEX_CARRIER% = postfix_index()
 
 Function set_unit_archetypes()		
+	unit_archetype[UNIT_INDEX_APC] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "apc", get_image( "apc_chassis" ), get_image( "apc_chassis" ),, "vehicle", 250, 375, 650.0, 75.0, 65.0, 90.0 ))
+		unit_archetype[UNIT_INDEX_APC].add_death_package()
+		unit_archetype[UNIT_INDEX_APC].add_trail_package( PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL,, 11, 8 )
+		unit_archetype[UNIT_INDEX_APC].add_dust_cloud_package( , 11, 8, 0, 2, -45, 45, 0.2, 0.8 )
+		unit_archetype[UNIT_INDEX_APC].add_turret_anchor( Create_cVEC( 0, 0 ))
+		unit_archetype[UNIT_INDEX_APC].add_turret( turret_archetype[TURRET_INDEX_APC_MACHINE_GUN], 0 )
+		unit_map.Insert( "apc", unit_archetype[UNIT_INDEX_APC] )
 	unit_archetype[UNIT_INDEX_MR_THE_BOX] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mr_the_box", get_image( "box" ),, get_image( "box_gib" ), "wildlife", 25, 35, 350.0, 8.0, 6.0, 12.0 ))
 		unit_archetype[UNIT_INDEX_MR_THE_BOX].add_death_package()
 		unit_map.Insert( "mr_the_box", unit_archetype[UNIT_INDEX_MR_THE_BOX] )
