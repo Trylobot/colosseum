@@ -321,7 +321,7 @@ Function draw_menus( x%, y%, tabbed_view% = True )
 						End If
 						Local a# = 1.0
 						If item.damaged Then a = 0.15
-						inventory_object.move_to( Create_cVEC( cx, cy + 12.5 ), True )
+						inventory_object.move_to( Create_cVEC( cx, cy + 12.5 ), True, True )
 						inventory_object.draw( a, MOUSE_SHADOW_SCALE )
 						If item.damaged
 							SetColor( 255, 127, 127 )

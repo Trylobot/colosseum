@@ -206,7 +206,7 @@ End Function
 
 '______________________________________________________________________________
 '[ TURRET BARRELS ]
-Global turret_barrel_archetype:TURRET_BARREL[12]; reset_index()
+Global turret_barrel_archetype:TURRET_BARREL[13]; reset_index()
 
 Global TURRET_BARREL_INDEX_LIGHT_CANNON% = postfix_index()
 Global TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN% = postfix_index()
@@ -220,6 +220,7 @@ Global TURRET_BARREL_INDEX_EMPLACEMENT_LIGHT_CANNON% = postfix_index()
 Global TURRET_BARREL_INDEX_EMPLACEMENT_ROCKET_LAUNCHER% = postfix_index()
 Global TURRET_BARREL_INDEX_LIGHT_MACHINE_GUN% = postfix_index()
 Global TURRET_BARREL_APC_MACHINE_GUN_BARREL% = postfix_index()
+Global TURRET_BARREL_RIPPER_MACHINE_GUN_BARREL% = postfix_index()
 
 Function set_turret_barrel_archetypes()
 	turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CANNON] = Create_TURRET_BARREL( get_image( "player_tank_turret_barrel" ), 650, -7 )
@@ -278,11 +279,16 @@ Function set_turret_barrel_archetypes()
 		turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH] ).attach_at( 7, 0 )
 		turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE] ).attach_at( 7, 0, 3, 9, 0, 45, 0.01, 0.03, 0, 45 )
 		turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING] ).attach_at( -5, 0, 0, 0, 0, 0, 0.3, 0.4, 160, 200, 0, 0, 0, 0, -5, 5, -5, 5, 0, 0 )
+	turret_barrel_archetype[TURRET_BARREL_RIPPER_MACHINE_GUN_BARREL] = Create_TURRET_BARREL( get_image( "ripper_machine_gun_turret_barrel" ), 59, -6 )
+		turret_barrel_archetype[TURRET_BARREL_RIPPER_MACHINE_GUN_BARREL].add_launcher( projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_MACHINE_GUN] ).attach_at( 10, 0,,,,, 4.30, 4.70,,,,,,, -2.2, 2.2 )
+		turret_barrel_archetype[TURRET_BARREL_RIPPER_MACHINE_GUN_BARREL].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH] ).attach_at( 10, 0 )
+		turret_barrel_archetype[TURRET_BARREL_RIPPER_MACHINE_GUN_BARREL].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE] ).attach_at( 10, 0, 3, 9, 0, 45, 0.01, 0.03, 0, 45 )
+		turret_barrel_archetype[TURRET_BARREL_RIPPER_MACHINE_GUN_BARREL].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING] ).attach_at( -8, 0, 0, 0, 0, 0, 0.3, 0.4, 160, 200, 0, 0, 0, 0, -5, 5, -5, 5, 0, 0 )
 End Function
 
 '______________________________________________________________________________
 '[ TURRETS ]
-Global turret_archetype:TURRET[11]; reset_index()
+Global turret_archetype:TURRET[12]; reset_index()
 
 Global TURRET_INDEX_TANK_SINGLE_CANNON% = postfix_index()
 Global TURRET_INDEX_TANK_MACHINE_GUN% = postfix_index()
@@ -295,6 +301,7 @@ Global TURRET_INDEX_CANNON_TURRET% = postfix_index()
 Global TURRET_INDEX_ROCKET_TURRET% = postfix_index()
 Global TURRET_INDEX_LIGHT_MACHINE_GUN% = postfix_index()
 Global TURRET_INDEX_APC_MACHINE_GUN% = postfix_index()
+Global TURRET_INDEX_RIPPER_MACHINE_GUN% = postfix_index()
 
 Function set_turret_archetypes()
 	turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON] = TURRET( TURRET.Create( "light cannon", TURRET.AMMUNITION, TURRET.PRIMARY, get_image( "player_tank_turret_base" ), 1000, get_sound( "cannon" ), 1, [[0]], 2.25, 40,,,,,, 500.0 ))
@@ -332,6 +339,11 @@ Function set_turret_archetypes()
 		turret_archetype[TURRET_INDEX_APC_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL], 0 ).attach_at( 3, -1 )
 		turret_archetype[TURRET_INDEX_APC_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL], 1 ).attach_at( 3, 1 )
 		turret_map.Insert( "apc_machine_gun", turret_archetype[TURRET_INDEX_APC_MACHINE_GUN] )
+	turret_archetype[TURRET_INDEX_RIPPER_MACHINE_GUN] = TURRET( TURRET.Create( "ripper machine-gun", TURRET.AMMUNITION, TURRET.PRIMARY, get_image( "ripper_machine_gun_turret_base" ), 4500, get_sound( "mgun" ), 3, [[0],[1],[2]], 2.00, INFINITY, 30.0, 1.50, 2.75, 0.0210, 1250, 400.0 ))
+		turret_archetype[TURRET_INDEX_RIPPER_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_RIPPER_MACHINE_GUN_BARREL], 0 ).attach_at( 5, -2 )
+		turret_archetype[TURRET_INDEX_RIPPER_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_RIPPER_MACHINE_GUN_BARREL], 1 ).attach_at( 5, 0 )
+		turret_archetype[TURRET_INDEX_RIPPER_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_RIPPER_MACHINE_GUN_BARREL], 2 ).attach_at( 5, 2 )
+		turret_map.Insert( "ripper_machine_gun", turret_archetype[TURRET_INDEX_RIPPER_MACHINE_GUN] )
 End Function
 
 '______________________________________________________________________________

@@ -21,7 +21,8 @@
 			turret_keys: [
 				"dual_light_cannon",
 				"medium_machine_gun",
-				"medium_laser"
+				"medium_laser",
+				"ripper_machine_gun"
 			]
 		}
 	}
