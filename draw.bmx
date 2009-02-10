@@ -178,9 +178,10 @@ Function draw_game()
 			health_bit.draw()
 		Next
 		'win message
-		If Not game.game_in_progress
+		If Not game.game_in_progress And Not game.player.dead()
 			SetColor( 255, 255, 255 )
 			SetScale( 1, 1 )
+			SetRotation( 0 )
 			SetImageFont( get_font( "consolas_bold_100" ))
 			SetAlpha( time_alpha_pct( game.battle_state_toggle_ts, 1200 ))
 			DrawText_with_glow( "YOU WIN!", window_w/2 - TextWidth("YOU WIN!")/2, 10 )
@@ -245,7 +246,7 @@ Function draw_main_screen()
 	y = 81
 	draw_menus( x, y )
 	
-	'copyright stuff
+	'credits/copyright stuff
 	SetAlpha( 1 )
 	SetRotation( 0 )
 	SetScale( 1, 1 )
@@ -255,7 +256,7 @@ Function draw_main_screen()
 	x = 1
 	y = window_h - h*2 - 1
 	If Not game Or game <> main_game
-		DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole (aka Tylerbot); music by NickPerrin; JSON binding by grable", x, y ); y :+ h
+		DrawText_with_outline( "Colosseum (c) 2008 Tyler W.R. Cole (aka Tylerbot); music by Yoshi-1up; JSON binding by grable", x, y ); y :+ h
 		DrawText_with_outline( "special thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, and Firelord88; written in BlitzMax", x, y ); y :+ h
 	End If
 	

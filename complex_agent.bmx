@@ -203,7 +203,7 @@ Type COMPLEX_AGENT Extends AGENT
 			vel_y = 0
 		End If
 		
-		'turret groups
+		'turrets
 		For Local t:TURRET = EachIn turrets
 			t.update()
 		Next

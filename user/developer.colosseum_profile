@@ -1,8 +1,50 @@
 {
 	name: "developer",
-	cash: 25075,
-	kills: 1529,
+	cash: 39887,
+	kills: 1534,
 	inventory: [
+		{
+			item_type: "turret",
+			key: "light_machine_gun",
+			count: 1,
+			damaged: true
+		},
+		{
+			item_type: "turret",
+			key: "medium_machine_gun",
+			count: 1,
+			damaged: true
+		},
+		{
+			item_type: "turret",
+			key: "light_cannon",
+			count: 2,
+			damaged: true
+		},
+		{
+			item_type: "turret",
+			key: "light_laser",
+			count: 1,
+			damaged: true
+		},
+		{
+			item_type: "turret",
+			key: "dual_light_cannon",
+			count: 1,
+			damaged: true
+		},
+		{
+			item_type: "turret",
+			key: "medium_laser",
+			count: 2,
+			damaged: true
+		},
+		{
+			item_type: "turret",
+			key: "light_machine_gun",
+			count: 1,
+			damaged: false
+		},
 		{
 			item_type: "turret",
 			key: "medium_machine_gun",
@@ -36,7 +78,13 @@
 		{
 			item_type: "chassis",
 			key: "light_tank",
-			count: 3,
+			count: 1,
+			damaged: true
+		},
+		{
+			item_type: "chassis",
+			key: "light_tank",
+			count: 1,
 			damaged: false
 		},
 		{
@@ -46,38 +94,8 @@
 			damaged: false
 		},
 		{
-			item_type: "turret",
-			key: "medium_machine_gun",
-			count: 1,
-			damaged: true
-		},
-		{
-			item_type: "turret",
-			key: "light_cannon",
-			count: 2,
-			damaged: true
-		},
-		{
-			item_type: "turret",
-			key: "light_laser",
-			count: 1,
-			damaged: true
-		},
-		{
-			item_type: "turret",
-			key: "dual_light_cannon",
-			count: 1,
-			damaged: true
-		},
-		{
-			item_type: "turret",
-			key: "medium_laser",
-			count: 2,
-			damaged: true
-		},
-		{
 			item_type: "chassis",
-			key: "light_tank",
+			key: "medium_tank",
 			count: 3,
 			damaged: true
 		}

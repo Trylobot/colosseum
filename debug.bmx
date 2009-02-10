@@ -53,6 +53,7 @@ Function debug_main()
 			debug_origin.y :+ 1
 		End If
 	End If
+	If KeyHit( KEY_F4 ) Then DebugStop
 End Function
 '______________________________________________________________________________
 Function debug_get_map_keys()

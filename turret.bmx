@@ -103,9 +103,10 @@ Type TURRET Extends POINT
 			cooling_coefficient, ..
 			overheat_delay, ..
 			effective_range ))
-		'turret barrels
-		For Local tb% = 0 To turret_barrel_array.Length - 1
-			t.add_turret_barrel( turret_barrel_array[tb], tb )
+		'copy all turret barrels
+		For Local tb_index% = 0 Until turret_barrel_array.Length
+			Local tb:TURRET_BARREL = turret_barrel_array[tb_index]
+			t.add_turret_barrel( tb, tb_index ).attach_at( tb.attach_x, tb.attach_y )
 		Next
 		'copy all emitters
 		For Local em:EMITTER = EachIn emitter_list

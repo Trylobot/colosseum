@@ -45,11 +45,15 @@ Type INVENTORY_DATA
 		Local my_const% = 0
 		If item_type = "chassis"
 			my_const = 1000000
+		Else If damaged
+			my_const = -1000000
 		End If
 		If other
 			Local other_const% = 0
 			If other.item_type = "chassis"
 				other_const = 1000000
+			Else If other.damaged
+				other_const = -1000000
 			End If
 			Return (my_const + get_inventory_object_cost( item_type, key )) - (other_const + get_inventory_object_cost( other.item_type, other.key ))
 		End If

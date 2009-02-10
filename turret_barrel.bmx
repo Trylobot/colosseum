@@ -47,20 +47,20 @@ Type TURRET_BARREL Extends POINT
 	End Method
 	
 	Method update()
-		'velocity (updates by parent's current velocity)
-		vel_x = parent.vel_x
-		vel_y = parent.vel_y
-		'position (updates by parent's current position)
-		pos_x = parent.pos_x + attach_r * Cos( attach_a + parent.ang )
-		pos_y = parent.pos_y + attach_r * Sin( attach_a + parent.ang )
-		'angle (includes parent's)
-		ang = parent.ang
-		'recoil position
+		'recoil
 		If ready_to_fire() Or parent.out_of_ammo() 'not reloading
 			recoil_cur = 0
 		Else If Not parent.out_of_ammo() 'reloading
 			recoil_cur = recoil_max * (1.0 - Float(now() - last_reloaded_ts) / Float(reload_time))
 		End If
+		'velocity (pass-through by parent's current velocity)
+		vel_x = parent.vel_x
+		vel_y = parent.vel_y
+		'angle (includes parent's)
+		ang = parent.ang
+		'position (updates by parent's current position)
+		pos_x = parent.pos_x + attach_r * Cos( attach_a + ang ) + recoil_cur * Cos( ang )
+		pos_y = parent.pos_y + attach_r * Sin( attach_a + ang ) + recoil_cur * Sin( ang )
 		'emitters
 		launcher.update()
 		launcher.emit()
@@ -73,9 +73,7 @@ Type TURRET_BARREL Extends POINT
 	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
 		If img
 			SetRotation( ang )
-			DrawImage( img, ..
-				pos_x + scale_override * recoil_cur * Cos( ang ), ..
-				pos_y + scale_override * recoil_cur * Sin( ang ))
+			DrawImage( img, pos_x, pos_y )
 		End If
 	End Method
 	

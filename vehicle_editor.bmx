@@ -30,8 +30,10 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 	Local v_dat_backup:VEHICLE_DATA
 	
 	'gladiator thingy
-	Local stock_gladiator:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
+	Local stock_gladiator_key$ = "apc"
+	Local stock_gladiator:COMPLEX_AGENT = get_unit( stock_gladiator_key )
 	stock_gladiator.set_images_unfiltered()
+	stock_gladiator.scale_all( MOUSE_SHADOW_SCALE )
 
 	'cache inventory items
 	Local inventory:POINT[profile.inventory.Length]
@@ -100,21 +102,29 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		SetAlpha( 1 )
 		DrawText_with_outline( title, 10, 10 )
 		
-		'no turrets warning
+		'warning: no chassis / no turrets
+		'info: non-customizable unit
 		Local warning_x% = 50 + TextWidth( title )
 		Local warning_y% = 10
-		If Not v_dat.is_unit And v_dat.chassis_key = ""
+		If v_dat.is_unit
 			SetColor( 255, 255, 255 )
-			DrawImage( get_image( "warning" ), warning_x, warning_y - 4 )
+			DrawImage( get_image( "information" ), warning_x, warning_y - 4 )
 			SetImageFont( get_font( "consolas_12" ))
-			SetColor( 255, 216, 0 )
-			DrawText_with_outline( "This vehicle needs a chassis", warning_x + 22, warning_y )
-		Else If Not v_dat.is_unit And v_dat.count_all_turrets() <= 0
-			SetColor( 255, 255, 255 )
-			DrawImage( get_image( "warning" ), warning_x, warning_y - 4 )
-			SetImageFont( get_font( "consolas_12" ))
-			SetColor( 255, 216, 0 )
-			DrawText_with_outline( "This vehicle needs at least one turret", warning_x + 22, warning_y )
+			DrawText_with_outline( "This vehicle cannot be edited", warning_x + 22, warning_y )
+		Else
+			If v_dat.chassis_key = ""
+				SetColor( 255, 255, 255 )
+				DrawImage( get_image( "warning" ), warning_x, warning_y - 4 )
+				SetImageFont( get_font( "consolas_12" ))
+				SetColor( 255, 216, 0 )
+				DrawText_with_outline( "This vehicle needs a chassis", warning_x + 22, warning_y )
+			Else If v_dat.count_all_turrets() <= 0
+				SetColor( 255, 255, 255 )
+				DrawImage( get_image( "warning" ), warning_x, warning_y - 4 )
+				SetImageFont( get_font( "consolas_12" ))
+				SetColor( 255, 216, 0 )
+				DrawText_with_outline( "This vehicle needs at least one turret", warning_x + 22, warning_y )
+			End If
 		End If
 		
 		'closest turret anchor detection, if any
@@ -127,26 +137,30 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				'hovering near an anchor
 				closest_turret_anchor = anchor
 				closest_turret_anchor_i = i
+				'tooltip = "turret anchor"
 			End If
 		Next
 		
 		'chassis hover detection
 		Local chassis_hover% = False
-		If mouse.dist_to( player ) <= CHASSIS_HOVER_RADIUS chassis_hover = True
+		If mouse.dist_to( player ) <= CHASSIS_HOVER_RADIUS
+			chassis_hover = True
+'			'tooltip = "chassis"
+		End If
 		
 		'draw stock gladiator button
 		Local hover_gladiator% = False
 		SetImageFont( get_font( "consolas_12" ))
 		Local gladiator_y% = 86
-		Local stock_name$ = "(free) gladiator chassis"
+		Local stock_name$ = "standard-issue gladiator"
 		Local stock_rect:BOX = Create_BOX( 5, gladiator_y, TextWidth(stock_name) + 10, 12 )
 		If Not mouse_dragging ..
 		And mouse.pos_x >= stock_rect.x And mouse.pos_x <= stock_rect.x + stock_rect.w ..
 		And mouse.pos_y >= stock_rect.y And mouse.pos_y <= stock_rect.y + stock_rect.h
 			hover_gladiator = True
+			'tooltip = "inventory item"
 			'draw the gladiator object near the mouse
 			stock_gladiator.move_to( mouse, True, True )
-			stock_gladiator.scale_all( MOUSE_SHADOW_SCALE )
 			stock_gladiator.draw( 0.5, MOUSE_SHADOW_SCALE )
 			'draw a highlight box around the item description
 			SetRotation( 0 )
@@ -176,7 +190,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		Local h% = TextHeight( "A" )
 		Local inv_y% = 107
 		For Local i% = 0 Until inventory.Length
-			If profile.inventory[i].damaged
+			If profile.inventory[i].damaged 'Or v_dat.is_unit
 				inv_y :- h
 			Else
 				Local name$ = ""
@@ -203,8 +217,10 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				And mouse.pos_x >= listing_rect.x And mouse.pos_x <= listing_rect.x + listing_rect.w ..
 				And mouse.pos_y >= listing_rect.y And mouse.pos_y <= listing_rect.y + listing_rect.h
 					hover_inventory_listing = i
+					'tooltip = "inventory item"
 					'move the actual object representing the inventory item to the mouse position
-					inventory[i].move_to( mouse, True, True )
+					inventory[i].move_to( mouse, True )
+					'inventory[i].update()
 					'if the item is a turret, and the turret has no base, draw a "fake base" for it
 					If TURRET(inventory[i])
 						Local t:TURRET = TURRET(inventory[i])
@@ -362,11 +378,11 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				dragging_chassis = True
 				dragging_gladiator = True
 				'attach the gladiator to the mouse chassis
-				mouse_shadow = get_unit( "machine_gun_quad" )
+				mouse_shadow = get_unit( stock_gladiator_key )
 				mouse_shadow.set_images_unfiltered()
 				mouse_shadow.scale_all( STAGE_SCALE )
-				mouse_items = [ Create_INVENTORY_DATA( "unit", "machine_gun_quad" )]
-				DebugLog " dragging item:unit.machine_gun_quad"
+				mouse_items = [ Create_INVENTORY_DATA( "unit", stock_gladiator_key )]
+				DebugLog " dragging item: unit."+stock_gladiator_key
 			End If
 		
 		Else If mouse_dragging And Not MouseDown( 1 ) And mouse_down_1 'FINISHED a drag
@@ -481,6 +497,13 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 			mouse_items = Null
 		End If
 		
+		'mouse state refresh
+		If MouseDown( 1 )
+			mouse_down_1 = True
+		Else
+			mouse_down_1 = False
+		End If
+		
 		'turret anchor indicator
 		If gonna_show_turret_anchor_line
 			SetAlpha( 1.2 - mouse.dist_to( closest_turret_anchor )/ANCHOR_HOVER_RADIUS )
@@ -490,6 +513,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		'mouse shadow
 		If mouse_dragging
 			mouse_shadow.move_to( mouse, True )
+			mouse_shadow.update()
 			mouse_shadow.draw( 0.33333, STAGE_SCALE )
 			For Local t:TURRET = EachIn mouse_shadow.turrets
 				If Not t.img
@@ -510,13 +534,6 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		
 		'tooltip
 		show_tooltip()
-		
-		'mouse state
-		If MouseDown( 1 )
-			mouse_down_1 = True
-		Else
-			mouse_down_1 = False
-		End If
 		
 		If KeyDown( KEY_ESCAPE ) And esc_held And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
 			draw_instaquit_progress()
@@ -541,7 +558,7 @@ Function bake_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, scale# = 1.0 )
 	player.set_images_unfiltered()
 	player.scale_all( scale )
 	player.move_to( Create_POINT( window_w/2, window_h/2, 0 ), True, True )
-	'If v_dat Then DebugLog " bake_player()~n"+v_dat.to_json().ToSource()
+	player.update()
 	Return player
 End Function
 

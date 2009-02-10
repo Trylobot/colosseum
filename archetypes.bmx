@@ -206,7 +206,7 @@ End Function
 
 '______________________________________________________________________________
 '[ TURRET BARRELS ]
-Global turret_barrel_archetype:TURRET_BARREL[11]; reset_index()
+Global turret_barrel_archetype:TURRET_BARREL[12]; reset_index()
 
 Global TURRET_BARREL_INDEX_LIGHT_CANNON% = postfix_index()
 Global TURRET_BARREL_INDEX_LIGHT_CO_AXIAL_MACHINE_GUN% = postfix_index()
@@ -219,6 +219,7 @@ Global TURRET_BARREL_INDEX_EMPLACEMENT_LIGHT_MACHINE_GUN% = postfix_index()
 Global TURRET_BARREL_INDEX_EMPLACEMENT_LIGHT_CANNON% = postfix_index()
 Global TURRET_BARREL_INDEX_EMPLACEMENT_ROCKET_LAUNCHER% = postfix_index()
 Global TURRET_BARREL_INDEX_LIGHT_MACHINE_GUN% = postfix_index()
+Global TURRET_BARREL_APC_MACHINE_GUN_BARREL% = postfix_index()
 
 Function set_turret_barrel_archetypes()
 	turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_CANNON] = Create_TURRET_BARREL( get_image( "player_tank_turret_barrel" ), 650, -7 )
@@ -272,11 +273,16 @@ Function set_turret_barrel_archetypes()
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_MACHINE_GUN].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH] ).attach_at( 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_MACHINE_GUN].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE] ).attach_at( 8, 0, 3, 9, 0, 45, 0.01, 0.03, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 		turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_MACHINE_GUN].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING] ).attach_at( 1, 1, 0, 0, 0, 0, 0.3, 0.4, 85, 95, 0, 0, 0, 0, -5, 5, -5, 5, 0, 0 )
+	turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL] = Create_TURRET_BARREL( get_image( "apc_turret_barrel" ), 70, -3 )
+		turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL].add_launcher( projectile_launcher_archetype[PROJECTILE_LAUNCHER_INDEX_MACHINE_GUN] ).attach_at( 7, 0,,,,, 4.30, 4.70,,,,,,, -2.2, 2.2 )
+		turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_FLASH] ).attach_at( 7, 0 )
+		turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_MUZZLE_SMOKE] ).attach_at( 7, 0, 3, 9, 0, 45, 0.01, 0.03, 0, 45 )
+		turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL].add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_MACHINE_GUN_SHELL_CASING] ).attach_at( -5, 0, 0, 0, 0, 0, 0.3, 0.4, 160, 200, 0, 0, 0, 0, -5, 5, -5, 5, 0, 0 )
 End Function
 
 '______________________________________________________________________________
 '[ TURRETS ]
-Global turret_archetype:TURRET[10]; reset_index()
+Global turret_archetype:TURRET[11]; reset_index()
 
 Global TURRET_INDEX_TANK_SINGLE_CANNON% = postfix_index()
 Global TURRET_INDEX_TANK_MACHINE_GUN% = postfix_index()
@@ -288,6 +294,7 @@ Global TURRET_INDEX_MACHINE_GUN_TURRET% = postfix_index()
 Global TURRET_INDEX_CANNON_TURRET% = postfix_index()
 Global TURRET_INDEX_ROCKET_TURRET% = postfix_index()
 Global TURRET_INDEX_LIGHT_MACHINE_GUN% = postfix_index()
+Global TURRET_INDEX_APC_MACHINE_GUN% = postfix_index()
 
 Function set_turret_archetypes()
 	turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON] = TURRET( TURRET.Create( "light cannon", TURRET.AMMUNITION, TURRET.PRIMARY, get_image( "player_tank_turret_base" ), 1000, get_sound( "cannon" ), 1, [[0]], 2.25, 40,,,,,, 500.0 ))
@@ -321,8 +328,9 @@ Function set_turret_archetypes()
 	turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN] = TURRET( TURRET.Create( , TURRET.AMMUNITION, TURRET.PRIMARY, get_image( "enemy_light_mgun_turret_base" ),, get_sound( "mgun" ), 1, [[0]], 2.00, INFINITY, 25.0, 5.0, 5.5, 0.0175, 2000, 250.0 ))
 		turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_INDEX_LIGHT_MACHINE_GUN], 0 ).attach_at( 0, 0 )
 		turret_map.Insert( "mounted_sub_machine_gun", turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN] )
-	turret_archetype[TURRET_INDEX_APC_MACHINE_GUN] = TURRET( TURRET.Create( "apc machine gun", TURRET.AMMUNITION, TURRET.PRIMARY, get_image( "apc_turret_base" ),, get_sound( "mgun" ), 2, [[0],[1]], 2.25, INFINITY, 25.0, 1.50, 2.75, 0.0210, 1250, 300.0 ))
-		
+	turret_archetype[TURRET_INDEX_APC_MACHINE_GUN] = TURRET( TURRET.Create( , TURRET.AMMUNITION, TURRET.PRIMARY, get_image( "apc_turret_base" ),, get_sound( "mgun" ), 2, [[0],[1]], 2.25, INFINITY, 25.0, 1.50, 2.75, 0.0210, 1250, 300.0 ))
+		turret_archetype[TURRET_INDEX_APC_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL], 0 ).attach_at( 3, -1 )
+		turret_archetype[TURRET_INDEX_APC_MACHINE_GUN].add_turret_barrel( turret_barrel_archetype[TURRET_BARREL_APC_MACHINE_GUN_BARREL], 1 ).attach_at( 3, 1 )
 		turret_map.Insert( "apc_machine_gun", turret_archetype[TURRET_INDEX_APC_MACHINE_GUN] )
 End Function
 
@@ -365,7 +373,6 @@ End Function
 '[ UNITS ]
 Global unit_archetype:COMPLEX_AGENT[9]; reset_index()
 
-Global UNIT_INDEX_APC% = postfix_index()
 Global UNIT_INDEX_MR_THE_BOX% = postfix_index()
 Global UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT% = postfix_index()
 Global UNIT_INDEX_CANNON_TURRET_EMPLACEMENT% = postfix_index()
@@ -374,15 +381,9 @@ Global UNIT_INDEX_MOBILE_MINI_BOMB% = postfix_index()
 Global UNIT_INDEX_LIGHT_QUAD% = postfix_index()
 Global UNIT_INDEX_LIGHT_TANK% = postfix_index()
 Global UNIT_INDEX_CARRIER% = postfix_index()
+Global UNIT_INDEX_APC% = postfix_index()
 
 Function set_unit_archetypes()		
-	unit_archetype[UNIT_INDEX_APC] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "apc", get_image( "apc_chassis" ), get_image( "apc_chassis" ),, "vehicle", 250, 375, 650.0, 75.0, 65.0, 90.0 ))
-		unit_archetype[UNIT_INDEX_APC].add_death_package()
-		unit_archetype[UNIT_INDEX_APC].add_trail_package( PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL,, 11, 8 )
-		unit_archetype[UNIT_INDEX_APC].add_dust_cloud_package( , 11, 8, 0, 2, -45, 45, 0.2, 0.8 )
-		unit_archetype[UNIT_INDEX_APC].add_turret_anchor( Create_cVEC( 0, 0 ))
-		unit_archetype[UNIT_INDEX_APC].add_turret( turret_archetype[TURRET_INDEX_APC_MACHINE_GUN], 0 )
-		unit_map.Insert( "apc", unit_archetype[UNIT_INDEX_APC] )
 	unit_archetype[UNIT_INDEX_MR_THE_BOX] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mr_the_box", get_image( "box" ),, get_image( "box_gib" ), "wildlife", 25, 35, 350.0, 8.0, 6.0, 12.0 ))
 		unit_archetype[UNIT_INDEX_MR_THE_BOX].add_death_package()
 		unit_map.Insert( "mr_the_box", unit_archetype[UNIT_INDEX_MR_THE_BOX] )
@@ -441,5 +442,12 @@ Function set_unit_archetypes()
 		unit_archetype[UNIT_INDEX_CARRIER].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 1 )
 		unit_archetype[UNIT_INDEX_CARRIER].add_factory_unit( UNIT_INDEX_MOBILE_MINI_BOMB, 4 )
 		unit_map.Insert( "armed_carrier", unit_archetype[UNIT_INDEX_CARRIER] )
+	unit_archetype[UNIT_INDEX_APC] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "apc", get_image( "apc_chassis" ), get_image( "apc_chassis" ),, "vehicle", 250, 375, 400, 25.0, 35.0, 55.0 )) '650.0, 75.0, 65.0, 90.0 ))
+		unit_archetype[UNIT_INDEX_APC].add_death_package()
+		unit_archetype[UNIT_INDEX_APC].add_trail_package( PARTICLE_EMITTER_INDEX_TANK_TREAD_TRAIL_SMALL,, 11, 8 )
+		unit_archetype[UNIT_INDEX_APC].add_dust_cloud_package( , 11, 8, 0, 2, -45, 45, 0.2, 0.8 )
+		unit_archetype[UNIT_INDEX_APC].add_turret_anchor( Create_cVEC( 0, 0 ))
+		unit_archetype[UNIT_INDEX_APC].add_turret( turret_archetype[TURRET_INDEX_APC_MACHINE_GUN], 0 )
+		unit_map.Insert( "apc", unit_archetype[UNIT_INDEX_APC] )
 End Function
 
