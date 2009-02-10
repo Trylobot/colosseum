@@ -466,12 +466,10 @@ Function draw_reticle()
 			If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
 				'turret ghost reticle
 				Local distance_from_turret_to_mouse# = tur.dist_to( game.mouse ) 
-				If distance_from_turret_to_mouse > 2*img_reticle.width
-					SetRotation( tur.ang )
-					Local ang_diff# = ang_wrap( tur.ang_to( game.mouse ) - tur.ang )
-					SetAlpha( 1 - Abs(ang_diff)/22.5 )
-					DrawImage( img_ghost_reticle, tur.pos_x + distance_from_turret_to_mouse * Cos( tur.ang ), tur.pos_y + distance_from_turret_to_mouse * Sin( tur.ang ))
-				End If
+				SetRotation( tur.ang )
+				Local ang_diff# = ang_wrap( tur.ang_to( game.mouse ) - tur.ang )
+				SetAlpha( 1 - Abs(ang_diff)/22.5 )
+				DrawImage( img_ghost_reticle, tur.pos_x + distance_from_turret_to_mouse * Cos( tur.ang ), tur.pos_y + distance_from_turret_to_mouse * Sin( tur.ang ))
 				'actual mouse reticle
 				SetRotation( tur.ang_to( game.mouse ))
 				SetAlpha( 1.0 )
