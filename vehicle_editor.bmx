@@ -145,7 +145,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		Local chassis_hover% = False
 		If mouse.dist_to( player ) <= CHASSIS_HOVER_RADIUS
 			chassis_hover = True
-'			'tooltip = "chassis"
+			'tooltip = "chassis"
 		End If
 		
 		'draw stock gladiator button
