@@ -412,6 +412,13 @@ Type COMPLEX_AGENT Extends AGENT
 		Return Null
 	End Method
 	'___________________________________________
+	Method get_turret_system_pos:POINT( index% )
+		If index < turret_systems.Length
+			Return POINT(turrets[turret_systems[index][0]])
+		End If
+		Return Null
+	End Method
+	'___________________________________________
 	Method get_turret_system_max_ang_vel#( index% )
 		If index < turret_systems.Length
 			Return turrets[turret_systems[index][0]].max_ang_vel

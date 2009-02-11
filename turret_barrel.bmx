@@ -48,11 +48,13 @@ Type TURRET_BARREL Extends POINT
 	
 	Method update()
 		'recoil
-		If ready_to_fire() Or parent.out_of_ammo() 'not reloading
-			recoil_cur = 0
-		Else If Not parent.out_of_ammo() 'reloading
-			recoil_cur = recoil_max * (1.0 - Float(now() - last_reloaded_ts) / Float(reload_time))
+		Local recoil_pct#
+		If (now() - last_reloaded_ts) < reload_time
+			recoil_pct = Float(now() - last_reloaded_ts)/Float(reload_time)
+		Else
+			recoil_pct = 1.0
 		End If
+		recoil_cur = recoil_max * (1.0 - recoil_pct)
 		'velocity (pass-through by parent's current velocity)
 		vel_x = parent.vel_x
 		vel_y = parent.vel_y
@@ -99,7 +101,7 @@ Type TURRET_BARREL Extends POINT
 	Method ready_to_fire%()
 		Return ..
 			(parent <> Null) And ..
-			(parent.cur_ammo <> 0) And ..
+			(Not parent.out_of_ammo()) And ..
 			((now() - last_reloaded_ts) >= reload_time) And ..
 			(parent.max_heat = INFINITY Or parent.cur_heat < parent.max_heat )
 	End Method

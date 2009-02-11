@@ -139,7 +139,7 @@ Type TURRET Extends POINT
 		'angular velocity
 		ang_vel = control_pct * max_ang_vel
 		'angle (includes parent's)
-		ang = ang_wrap( ang + ang_vel + parent.ang_vel )
+		ang = ang_wrap( ang + timescale * ang_vel + timescale * parent.ang_vel )
 		'barrels
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
 			tb.update()
@@ -207,6 +207,8 @@ Type TURRET Extends POINT
 	
 	Method turn( new_control_pct# )
 		control_pct = new_control_pct
+		If control_pct > 1.0 Then control_pct = 1.0 ..
+		Else If control_pct < -1.0 Then control_pct = -1.0
 	End Method
 	
 	Method re_stock( count% )

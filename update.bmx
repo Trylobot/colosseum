@@ -5,8 +5,17 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Const time_per_frame_min% = 8 '16
+Global before%
 Global timescale#
-Const timescale_constant_factor# = 0.80
+Const timescale_constant_factor# = 0.40 '0.80
+
+Function frame_time_elapsed%() 'true or false: the amount of time required for a physics frame has indeed elapsed?
+	Return (now() - before) > time_per_frame_min
+End Function
+Function reset_frame_timer()
+	before = now()
+End Function
 
 Function calculate_timescale()
 	timescale = timescale_constant_factor * Float(now() - before)/Float(time_per_frame_min)

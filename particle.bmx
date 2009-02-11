@@ -104,17 +104,17 @@ Type PARTICLE Extends POINT
 	
 	Method update()
 		'friction
-		vel_x :- vel_x*frictional_coefficient
-		vel_y :- vel_y*frictional_coefficient
-		ang_vel :- ang_vel*frictional_coefficient
+		vel_x :- vel_x * frictional_coefficient
+		vel_y :- vel_y * frictional_coefficient
+		ang_vel :- ang_vel * frictional_coefficient
 		'update velocity, position, angular velocity and orientation
 		Super.update()
 		'update alpha
-		alpha :+ alpha_delta
+		alpha :+ timescale * alpha_delta
 		'update scale
-		scale :+ scale_delta
+		scale :+ timescale * scale_delta
 		'color
-		red :+ red_delta; green :+ green_delta; blue :+ blue_delta
+		red :+ timescale * red_delta; green :+ timescale * green_delta; blue :+ timescale * blue_delta
 		'animation
 		If particle_type = PARTICLE_TYPE_ANIM And frame_delay <> INFINITY And (now() - last_frame_advance_ts) >= frame_delay
 			advance_frame()

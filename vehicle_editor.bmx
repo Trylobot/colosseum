@@ -219,12 +219,10 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 					hover_inventory_listing = i
 					'tooltip = "inventory item"
 					'move the actual object representing the inventory item to the mouse position
-					inventory[i].move_to( mouse, True )
-					'inventory[i].update()
+					inventory[i].move_to( mouse, True, True )
 					'if the item is a turret, and the turret has no base, draw a "fake base" for it
 					If TURRET(inventory[i])
 						Local t:TURRET = TURRET(inventory[i])
-						t.scale_all( MOUSE_SHADOW_SCALE )
 						If Not t.img
 							SetRotation( 0 )
 							SetScale( 1, 1 )
@@ -237,8 +235,6 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 							DrawLine( t.pos_x - 8, t.pos_y, t.pos_x + 8 - 1, t.pos_y )
 							DrawLine( t.pos_x, t.pos_y - 8, t.pos_x, t.pos_y + 8 - 1 )
 						End If
-					Else If COMPLEX_AGENT(inventory[i])
-						COMPLEX_AGENT(inventory[i]).scale_all( MOUSE_SHADOW_SCALE )
 					End If
 					'draw the inventory item
 					inventory[i].draw( 0.5, MOUSE_SHADOW_SCALE )

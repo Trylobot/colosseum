@@ -420,22 +420,14 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						avatar.turn_turret_system( 0, 0.0 )
 					EndIf
 				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-					For Local index% = 0 To avatar.turret_systems.Length-1
-						Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.ang_to( game.mouse ))
+					For Local index% = 0 Until avatar.turret_systems.Length
+						Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.get_turret_system_pos( index ).ang_to( game.mouse ))
 						Local diff_mag# = Abs( diff )
 						Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
-						If diff_mag > 5.0*max_ang_vel
-							If diff < 0
-								avatar.turn_turret_system( 0, 1.0 )
-							Else 'diff > 0
-								avatar.turn_turret_system( 0, -1.0 )
-							End If
-						Else
-							If diff < 0
-								avatar.turn_turret_system( 0, diff_mag /( max_ang_vel * 5.0 ))
-							Else 'diff > 0
-								avatar.turn_turret_system( 0, -diff_mag /( max_ang_vel * 5.0 ))
-							End If
+						If diff_mag >= max_ang_vel
+							avatar.turn_turret_system( index, -Sgn(diff) )
+						Else 'diff_mag < max_ang_vel
+							avatar.turn_turret_system( index, -Sgn(diff)*(diff_mag/max_ang_vel) )
 						End If
 					Next
 				End If
