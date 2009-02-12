@@ -9,6 +9,7 @@ EndRem
 Global mouse:POINT = Create_POINT( MouseX(), MouseY() )
 Global mouse_delta:cVEC = New cVEC
 Global mouse_last_z% = 0
+Global dragging_scrollbar% = False
 
 Function get_all_input()
 	
@@ -52,10 +53,64 @@ Function get_all_input()
 		End If
 		'mouseover of menu items
 		Local target_valid% = m.select_by_coords( mouse.pos_x, mouse.pos_y )
-		If MouseHit( 1 ) And target_valid
-		'm.select_by_coords( mouse.pos_x, mouse.pos_y )
-		'If MouseHit( 1 ) And get_current_menu().menu_type <> MENU.TEXT_INPUT_DIALOG
-			m.execute_current_option()
+		If MouseHit( 1 )
+			If target_valid
+				m.execute_current_option()
+			End If
+		End If
+		'dragging of scrollbar
+		If mouse_clicked_1() And m.hovering_on_scrollbar( mouse.pos_x, mouse.pos_y )
+			dragging_scrollbar = True
+		Else If mouse_released_1()
+			dragging_scrollbar = False
+		End If
+		If dragging_scrollbar
+			'mouse position is already known ... get the scrollbar's bounding box
+			Local bar:BOX = m.get_scrollbar_rect( m.last_x, m.last_y )
+SetColor( 255, 0, 0 )
+SetAlpha( 0.3333 )
+DrawRect( bar.x, bar.y, bar.w, bar.h )
+			'determine the number of scrollbar positions
+			Local positions% = m.options.Length - m.static_option_count + 1
+			'determine the percentage of the scrollbar rect that the inner rect occupies
+			'Local filled_pct# = Float(m.dynamic_options_displayed) / Float(m.options.Length - m.static_option_count)
+			'Local empty_pct# = 1 - filled_pct
+			'Local empty_h# = Float(bar.h) * empty_pct
+			'determine the y-value for each of the scrollbar positions
+			Local y_val#[] = New Float[positions]
+			For Local i% = 0 Until y_val.Length
+				y_val[i] = Float(i)/Float(positions) * Float(bar.h)
+SetColor( 255, 255, 255 )
+SetAlpha( 0.3333 )
+SetRotation( 0 )
+SetScale( 1, 1 )
+SetLineWidth( 1 )
+DrawLine( bar.x, bar.y + y_val[i], bar.x + 100, bar.y + y_val[i] )
+			Next
+			'compare each of these y-values to the y-value of the mouse (relative to the top of the scrollbar's bounding box)
+			Local mouse_relative_y% = mouse.pos_y - bar.y
+			Local closest_y_val_i% = 0
+			If mouse_relative_y >= 0
+				Local dist_from_mouse_to_closest_y_val# = INFINITY
+				For Local i% = 0 Until y_val.Length
+					If dist_from_mouse_to_closest_y_val = INFINITY ..
+					Or Abs( mouse_relative_y - y_val[i] ) < dist_from_mouse_to_closest_y_val
+						dist_from_mouse_to_closest_y_val = Abs( mouse_relative_y - y_val[i] )
+						closest_y_val_i = i
+					End If
+				Next
+			End If
+SetLineWidth( 3 )
+DrawLine( bar.x, bar.y + y_val[closest_y_val_i], bar.x + 100, bar.y + y_val[closest_y_val_i] )
+			'change the scrollbar offset to the offset corresponding to the nearest y-value with respect to the mouse
+			m.focus = closest_y_val_i + m.static_option_count
+			'if the focus is out of the window, increment or decrement it until it is once again in the window
+			While m.focus >= m.static_option_count And m.option_above_window( m.focus )
+				m.increment_focus()
+			End While
+			While m.focus < m.options.Length And m.option_below_window( m.focus )
+				m.decrement_focus()
+			End While
 		End If
 	Else 'Not FLAG_in_menu And Not FLAG_in_shop
 		'pause game
@@ -82,6 +137,8 @@ Function get_all_input()
 		End If
 	End If
 	
+	mouse_state_update()
+	
 	'win/kill_tally
 	If game And game.human_participation
 		If Not game.game_in_progress And KeyHit( KEY_ENTER )
@@ -106,7 +163,26 @@ Function get_all_input()
 	If KeyHit( KEY_F12 )
 		screenshot()
 	End If
+	
+End Function
 
+'______________________________________________________________________________
+Global mouse_down_1% = False
+
+Function mouse_clicked_1%()
+	Return (Not mouse_down_1 And MouseDown( 1 ))
+End Function
+
+Function mouse_released_1%()
+	Return (mouse_down_1 And Not MouseDown( 1 ))
+End Function
+
+Function mouse_state_update()
+	If MouseDown( 1 )
+		mouse_down_1 = True
+	Else
+		mouse_down_1 = False
+	End If
 End Function
 
 '______________________________________________________________________________
@@ -135,17 +211,4 @@ Function escape_key_update()
 		esc_held = False
 	End If
 End Function
-
-
-'______________________________________________________________________________
-Local scrollbar_positions%[]
-
-Function scrollbar_control()
-	If get_current_menu().hovering_on_scrollbar( mouse.pos_x, mouse.pos_y )
-		If MouseDown( 1 )
-			get_current_menu().increment_focus()
-		End If
-	End If
-End Function
-
 

@@ -96,9 +96,9 @@ init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 'debug_dirtyrects()
 'debug_doors()
 'debug_kill_tally()
-'menu_command( COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOADING_BAY) )
 'menu_command( COMMAND_EDIT_VEHICLE )
 'menu_command( COMMAND_EDIT_LEVEL )
+menu_command( COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CHOOSE_RESOLUTION) )
 ?
 
 '______________________________________________________________________________
@@ -114,8 +114,10 @@ Repeat
 	Else
 		game = main_game 'normal play
 	End If
+Cls()
 	'input
 	get_all_input()
+	'timing & physics
 	If frame_time_elapsed()
 		'next timescale calculate and reset
 		calculate_timescale()
@@ -125,8 +127,8 @@ Repeat
 		'physics engine update
 		update_all_objects()
 	End If
-	'clear graphics buffer
-	Cls()
+'	'clear graphics buffer
+'	Cls()
 	'draw to buffer
 	draw_all_graphics()
 	?Debug
