@@ -67,7 +67,7 @@ Type TURRET_BARREL Extends POINT
 		launcher.update()
 		launcher.emit()
 		For Local em:EMITTER = EachIn emitter_list
-If em.archetype_index = "cannon_shell_casing" And em.mode = MODE_ENABLED_WITH_COUNTER Then DebugStop
+'If em.archetype_index = "cannon_shell_casing" And em.mode = MODE_ENABLED_WITH_COUNTER Then DebugStop
 			em.update()
 			em.emit()
 		Next
