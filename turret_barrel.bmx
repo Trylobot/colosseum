@@ -48,13 +48,7 @@ Type TURRET_BARREL Extends POINT
 	
 	Method update()
 		'recoil
-		Local recoil_pct#
-		If (now() - last_reloaded_ts) < reload_time
-			recoil_pct = Float(now() - last_reloaded_ts)/Float(reload_time)
-		Else
-			recoil_pct = 1.0
-		End If
-		recoil_cur = recoil_max * (1.0 - recoil_pct)
+		recoil_cur = recoil_max * (1.0 - reloaded_pct())
 		'velocity (pass-through by parent's current velocity)
 		vel_x = parent.vel_x
 		vel_y = parent.vel_y
@@ -67,7 +61,6 @@ Type TURRET_BARREL Extends POINT
 		launcher.update()
 		launcher.emit()
 		For Local em:EMITTER = EachIn emitter_list
-'If em.archetype_index = "cannon_shell_casing" And em.mode = MODE_ENABLED_WITH_COUNTER Then DebugStop
 			em.update()
 			em.emit()
 		Next
@@ -105,6 +98,14 @@ Type TURRET_BARREL Extends POINT
 			(Not parent.out_of_ammo()) And ..
 			((now() - last_reloaded_ts) >= reload_time) And ..
 			(parent.max_heat = INFINITY Or parent.cur_heat < parent.max_heat )
+	End Method
+	
+	Method reloaded_pct#()
+		If (now() - last_reloaded_ts) < reload_time
+			Return Float(now() - last_reloaded_ts)/Float(reload_time)
+		Else
+			Return 1.0
+		End If
 	End Method
 	
 	Method add_launcher:EMITTER( new_launcher:EMITTER )

@@ -1,7 +1,7 @@
 {
 	name: "developer",
-	cash: 44762,
-	kills: 1669,
+	cash: 45637,
+	kills: 1681,
 	inventory: [
 		{
 			item_type: "turret",
@@ -47,14 +47,14 @@
 		},
 		{
 			item_type: "turret",
-			key: "light_cannon",
-			count: 2,
+			key: "medium_machine_gun",
+			count: 1,
 			damaged: false
 		},
 		{
 			item_type: "turret",
-			key: "medium_machine_gun",
-			count: 1,
+			key: "light_cannon",
+			count: 2,
 			damaged: false
 		},
 		{
@@ -107,14 +107,9 @@
 		}
 	],
 	vehicle: {
-		chassis_key: "light_tank",
-		is_unit: false,
-		turret_keys: [
-			[
-				"light_cannon",
-				"light_machine_gun"
-			]
-		]
+		chassis_key: "apc",
+		is_unit: true,
+		turret_keys: null
 	},
 	input_method: 2,
 	progress: null,

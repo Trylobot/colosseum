@@ -236,7 +236,11 @@ Type TURRET Extends POINT
 	End Method
 	
 	Method reloaded_pct#()
-		Return 0.5
+		Local pct# = 1.0
+		For Local tb% = EachIn firing_sequence[firing_state]
+			pct = Min( pct, turret_barrel_array[tb].reloaded_pct() )
+		Next
+		Return pct
 	End Method
 	
 	Method play_firing_sound()
