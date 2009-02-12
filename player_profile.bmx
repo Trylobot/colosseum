@@ -12,6 +12,7 @@ Type PLAYER_PROFILE
 	Field inventory:INVENTORY_DATA[]
 	Field vehicle:VEHICLE_DATA
 	Field input_method%
+	Field invert_reverse_steering%
 	Field progress:PROGRESS_DATA[]
 	Field campaign$
 	Field campaign_level%
@@ -186,6 +187,7 @@ Type PLAYER_PROFILE
 			this_json.SetByName( "vehicle", Null )
 		End If
 		this_json.SetByName( "input_method", TJSONNumber.Create( input_method ))
+		this_json.SetByName( "invert_reverse_steering", TJSONBoolean.Create( invert_reverse_steering ))
 		If progress
 			Local prog:TJSONArray = TJSONArray.Create( progress.Length )
 			For Local i% = 0 Until progress.Length
@@ -221,6 +223,7 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 	End If
 	prof.vehicle = Create_VEHICLE_DATA_from_json( TJSON.Create( json.GetObject( "vehicle" )))
 	prof.input_method = json.GetNumber( "input_method" )
+	prof.invert_reverse_steering = json.GetBoolean( "invert_reverse_steering" )
 	Local prog:TJSONArray = json.GetArray( "progress" )
 	If prog
 		prof.progress = New PROGRESS_DATA[ prog.Size() ]

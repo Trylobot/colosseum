@@ -112,6 +112,7 @@
 		turret_keys: null
 	},
 	input_method: 2,
+	invert_reverse_steering: false,
 	progress: null,
 	campaign: "",
 	campaign_level: 0

@@ -387,7 +387,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					EndIf
 					'backwards driving turn inversion
 					Local sign% = 1
-					If avatar.driving_force.control_pct < 0
+					If avatar.driving_force.control_pct < 0 And profile.invert_reverse_steering
 						sign = -1
 					End If
 					'angular velocity
