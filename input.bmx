@@ -67,11 +67,8 @@ Function get_all_input()
 		If dragging_scrollbar
 			'mouse position is already known ... get the scrollbar's bounding box
 			Local bar:BOX = m.get_scrollbar_rect( m.last_x, m.last_y )
-SetColor( 255, 0, 0 )
-SetAlpha( 0.3333 )
-DrawRect( bar.x, bar.y, bar.w, bar.h )
 			'determine the number of scrollbar positions
-			Local positions% = m.options.Length - m.static_option_count + 1
+			Local positions% = m.options.Length - m.static_option_count
 			'determine the percentage of the scrollbar rect that the inner rect occupies
 			'Local filled_pct# = Float(m.dynamic_options_displayed) / Float(m.options.Length - m.static_option_count)
 			'Local empty_pct# = 1 - filled_pct
@@ -80,12 +77,6 @@ DrawRect( bar.x, bar.y, bar.w, bar.h )
 			Local y_val#[] = New Float[positions]
 			For Local i% = 0 Until y_val.Length
 				y_val[i] = Float(i)/Float(positions) * Float(bar.h)
-SetColor( 255, 255, 255 )
-SetAlpha( 0.3333 )
-SetRotation( 0 )
-SetScale( 1, 1 )
-SetLineWidth( 1 )
-DrawLine( bar.x, bar.y + y_val[i], bar.x + 100, bar.y + y_val[i] )
 			Next
 			'compare each of these y-values to the y-value of the mouse (relative to the top of the scrollbar's bounding box)
 			Local mouse_relative_y% = mouse.pos_y - bar.y
@@ -100,8 +91,6 @@ DrawLine( bar.x, bar.y + y_val[i], bar.x + 100, bar.y + y_val[i] )
 					End If
 				Next
 			End If
-SetLineWidth( 3 )
-DrawLine( bar.x, bar.y + y_val[closest_y_val_i], bar.x + 100, bar.y + y_val[closest_y_val_i] )
 			'change the scrollbar offset to the offset corresponding to the nearest y-value with respect to the mouse
 			m.focus = closest_y_val_i + m.static_option_count
 			'if the focus is out of the window, increment or decrement it until it is once again in the window
@@ -111,6 +100,7 @@ DrawLine( bar.x, bar.y + y_val[closest_y_val_i], bar.x + 100, bar.y + y_val[clos
 			While m.focus < m.options.Length And m.option_below_window( m.focus )
 				m.decrement_focus()
 			End While
+			m.center_scrolling_window()
 		End If
 	Else 'Not FLAG_in_menu And Not FLAG_in_shop
 		'pause game
