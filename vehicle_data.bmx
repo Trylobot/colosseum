@@ -43,37 +43,33 @@ Type VEHICLE_DATA
 		End If
 	End Method
 	
-	Method add_turret$( key$, anchor%, allow_replacement% = False ) 'returns error message if unsuccessful
+	Method add_turret$( key$, anchor% ) 'returns error message if unsuccessful
 		'stock unit
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
-		If anchor < turret_keys.Length
-			Local t:TURRET = get_turret( key )
-			If Not t Then Return "FATAL ERROR: turret."+key+" not found."
-			'adding a turret can only be done if the chassis is compatible
-			If Not chassis_compatible_with_turret( key )
-				Return "This turret won't fit onto that chassis."
-			End If
-			If Not turret_keys[anchor]
-				turret_keys[anchor] = [ key ]
-			Else 'turret_key[anchor] <> Null
-				Local result$ = "success"
-				If t.priority = TURRET.PRIMARY
+		'invalid anchor
+		If anchor >= turret_keys.Length Then Return "FATAL ERROR: anchor "+anchor+" is not defined on this vehicle."
+		'normal
+		Local t:TURRET = get_turret( key )
+		If Not t Then Return "FATAL ERROR: turret."+key+" not found."
+		'compatibile?
+		If Not chassis_compatible_with_turret( key )
+			Return "This turret won't fit onto that chassis."
+		End If
+		If Not turret_keys[anchor]
+			turret_keys[anchor] = [ key ]
+		Else 'turret_key[anchor] <> Null
+			Select t.priority
+				Case TURRET.PRIMARY
 					If turrets_of_priority_attached_to_anchor( TURRET.PRIMARY, anchor ) > 0
-						result = "That socket already has a large turret."
-						If Not allow_replacement Then Return result
+						Return "That socket already has a large turret."
 					End If
 					turret_keys[anchor] = [ key, turret_keys[anchor][0] ]
-				Else If t.priority = TURRET.SECONDARY
+				Case TURRET.SECONDARY
 					If turrets_of_priority_attached_to_anchor( TURRET.SECONDARY, anchor ) > 0
-						result = "That socket already has a small turret."
-						If Not allow_replacement Then Return result
+						Return "That socket already has a small turret."
 					End If
 					turret_keys[anchor] = [ turret_keys[anchor][0], key ]
-				End If
-				Return result
-			End If
-		Else
-			Return "FATAL ERROR: anchor "+anchor+" is not defined on this vehicle."
+			End Select
 		End If
 		Return "success"
 	End Method
@@ -84,7 +80,7 @@ Type VEHICLE_DATA
 		End If
 	End Method
 	
-	Method replace_turrets$( keys$[], anchor% ) 'returns the old array if successful
+	Method replace_turrets$( keys$[], anchor% )
 		If Not keys Then Return Null
 		'stock unit
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
@@ -103,7 +99,7 @@ Type VEHICLE_DATA
 		Return "success"
 	End Method
 	
-	Method remove_turrets$( anchor% ) 'returns the old array if successful
+	Method remove_turrets$( anchor% )
 		If is_unit Then Return "This vehicle is standard-issue, and not customizable."
 		If turret_keys
 			If anchor < turret_keys.Length

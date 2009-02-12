@@ -128,18 +128,18 @@ Type TURRET Extends POINT
 	End Method
 	
 	Method update()
-		'velocity (updates by parent's current velocity)
 		If parent
+			'velocity (updates by parent's current velocity)
 			vel_x = parent.vel_x
 			vel_y = parent.vel_y
+			'position (updates by parent's current position)
+			pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang )
+			pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang )
+			'angular velocity
+			ang_vel = control_pct * max_ang_vel
+			'angle (includes parent's)
+			ang = ang_wrap( ang + timescale * ang_vel + timescale * parent.ang_vel )
 		End If
-		'position (updates by parent's current position)
-		pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang )
-		pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang )
-		'angular velocity
-		ang_vel = control_pct * max_ang_vel
-		'angle (includes parent's)
-		ang = ang_wrap( ang + timescale * ang_vel + timescale * parent.ang_vel )
 		'barrels
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
 			tb.update()
@@ -258,11 +258,12 @@ Type TURRET Extends POINT
 		Return EMITTER( EMITTER.Copy( other_em, emitter_list, Self ))
 	End Method
 	
-	Method move_to( argument:Object, dummy1% = False, dummy2% = False )
+	Method move_to( argument:Object, snap_turrets% = False, perform_update% = False )
 		Super.move_to( argument )
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
 			tb.move_to( Self )
 		Next
+		If perform_update Then update()
 	End Method
 	
 	Method set_images_unfiltered()

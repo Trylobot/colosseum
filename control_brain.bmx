@@ -424,10 +424,11 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 						Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.get_turret_system_pos( index ).ang_to( game.mouse ))
 						Local diff_mag# = Abs( diff )
 						Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
-						If diff_mag >= max_ang_vel
+						Local threshold# = 3 * max_ang_vel
+						If diff_mag >= threshold
 							avatar.turn_turret_system( index, -Sgn(diff) )
 						Else 'diff_mag < max_ang_vel
-							avatar.turn_turret_system( index, -Sgn(diff)*(diff_mag/max_ang_vel) )
+							avatar.turn_turret_system( index, -diff/threshold )
 						End If
 					Next
 				End If

@@ -22,8 +22,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 	Local dragging_anchor% = -1
 	Local mouse_down_1%
 	Local player:COMPLEX_AGENT = bake_player( v_dat, STAGE_SCALE )
-	Local mouse_shadow:COMPLEX_AGENT = New COMPLEX_AGENT
-	mouse_shadow.add_turret_anchor( Create_cVEC( 0, 0 ))
+	Local mouse_shadow:COMPLEX_AGENT
 	Local mouse_items:INVENTORY_DATA[]
 	Local title$ = "customize vehicle"
 	Local kill_signal%
@@ -304,7 +303,8 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 		'click/drag detection
 		If Not mouse_dragging And MouseDown( 1 ) And Not mouse_down_1 'STARTED a drag
 			mouse_dragging = True
-			mouse_shadow.remove_all_turrets()
+			mouse_shadow = New COMPLEX_AGENT
+			mouse_shadow.add_turret_anchor( Create_cVEC( 0, 0 ))
 			dragging_inventory_i = -1
 			
 			If closest_turret_anchor And Not v_dat.is_unit And v_dat.count_turrets( closest_turret_anchor_i ) > 0 'started a drag op near a turret anchor
@@ -314,7 +314,7 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 				If result = "success" 'removed turrets successfully
 					dragging_anchor = closest_turret_anchor_i
 					player = bake_player( v_dat, STAGE_SCALE )
-					DebugLog " dragging turrets:[ "+", ".Join(returned_turret_keys)+" ] from anchor "+closest_turret_anchor_i
+					DebugLog " dragging turrets: [ "+", ".Join(returned_turret_keys)+" ] from anchor "+closest_turret_anchor_i
 					'attach a copy of any turret attached to the closest anchor to the mouse shadow
 					If returned_turret_keys
 						mouse_items = New INVENTORY_DATA[returned_turret_keys.Length]
@@ -322,10 +322,11 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 							mouse_items[i] = Create_INVENTORY_DATA( "turret", returned_turret_keys[i] )
 							Local t:TURRET = get_turret( mouse_items[i].key )
 							If t
-								mouse_shadow.add_turret( t, closest_turret_anchor_i )
+								mouse_shadow.add_turret( t, 0 )
 							End If
 						Next
 						mouse_shadow.set_images_unfiltered()
+						mouse_shadow.scale_all( STAGE_SCALE )
 					End If
 				Else 'error
 					show_error( result )
@@ -363,12 +364,13 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 					mouse_shadow.scale_all( STAGE_SCALE )
 					mouse_items = [ profile.inventory[hover_inventory_listing].clone() ]
 				Else If TURRET(inventory[hover_inventory_listing])
-					mouse_shadow.remove_all_turrets()
 					mouse_shadow.add_turret( TURRET(inventory[hover_inventory_listing]), 0 )
 					mouse_shadow.set_images_unfiltered()
+					mouse_shadow.scale_all( 1/MOUSE_SHADOW_SCALE )
+					mouse_shadow.scale_all( STAGE_SCALE )
 					mouse_items = [ profile.inventory[hover_inventory_listing].clone() ]
 				End If
-				DebugLog " dragging item:"+profile.inventory[hover_inventory_listing].to_string()
+				DebugLog " dragging item: "+profile.inventory[hover_inventory_listing].to_string()
 			
 			Else If hover_gladiator 'started dragging the stock gladiator
 				dragging_chassis = True
@@ -386,33 +388,36 @@ Function vehicle_editor:VEHICLE_DATA( v_dat:VEHICLE_DATA )
 			
 			If closest_turret_anchor And Not dragging_chassis 'dropped onto a turret anchor
 				If dragging_inventory_i >= 0 'dropped turret from inventory onto a turret anchor; add it to vehicle data and bake
-					Local returned_turret_keys$[] = v_dat.get_turrets( closest_turret_anchor_i )
-					Local result$ = v_dat.add_turret( profile.inventory[dragging_inventory_i].key, closest_turret_anchor_i, True )
+					Local result$ = v_dat.add_turret( profile.inventory[dragging_inventory_i].key, closest_turret_anchor_i )
 					If result = "success"
 						player = bake_player( v_dat, STAGE_SCALE )
 						DebugLog " added turret "+profile.inventory[dragging_inventory_i].key+" to anchor "+closest_turret_anchor_i
-					Else 'error
-						If result.Find( "That socket already has a " ) <> -1
-							Local t:TURRET = get_turret( profile.inventory[dragging_inventory_i].key )
-							'loop through each of the old turrets, trying to add them
-							'any failures should be returned to inventory
-							For Local t_key$ = EachIn returned_turret_keys
-								Local sub_result$ = v_dat.add_turret( t_key, closest_turret_anchor_i )
-								If sub_result <> "success"
-									'add back to inventory
-									For Local i% = 0 Until profile.inventory.Length
-										Local tur_item:INVENTORY_DATA = Create_INVENTORY_DATA( "turret", t_key )
-										If tur_item.eq( profile.inventory[i] )
-											unused_inventory_count[i] :+ 1
-										End If
-									Next
+					Else If result.Find( "That socket already has a" ) <> -1 'error
+						Local do_replacement% = False
+						Local old_turret_keys$[] = v_dat.get_turrets( closest_turret_anchor_i )
+						Local replaced_turret_index%
+						If result = "That socket already has a large turret."
+							do_replacement = True
+							replaced_turret_index = 0
+						Else If result = "That socket already has a small turret."
+							do_replacement = True
+							replaced_turret_index = 1
+						End If
+						If do_replacement
+							'physically replace turret
+							v_dat.turret_keys[closest_turret_anchor_i][replaced_turret_index] = profile.inventory[dragging_inventory_i].key
+							'add replaced turret back to inventory
+							For Local i% = 0 Until profile.inventory.Length
+								Local tur_item:INVENTORY_DATA = Create_INVENTORY_DATA( "turret", old_turret_keys[replaced_turret_index] )
+								If tur_item.eq( profile.inventory[i] )
+									unused_inventory_count[i] :+ 1
 								End If
 							Next
-						Else
-							show_error( result )
-							unused_inventory_count[dragging_inventory_i] :+ 1
 						End If
 						player = bake_player( v_dat, STAGE_SCALE )
+					Else
+						show_error( result )
+						unused_inventory_count[dragging_inventory_i] :+ 1
 					End If
 				
 				Else 'dropped a mess of turrets from the existing chassis
