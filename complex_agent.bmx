@@ -320,9 +320,13 @@ Type COMPLEX_AGENT Extends AGENT
 			s.draw()
 		Next
 		'projectile impact flash
-		If flash
+		If flash And img
 			flash = False
 			SetBlend( LIGHTBLEND )
+			SetColor( 255, 255, 255 )
+			SetAlpha( alpha_override )
+			SetScale( scale_override, scale_override )
+			SetRotation( ang )
 			DrawImage( img, pos_x, pos_y )
 			SetBlend( ALPHABLEND )
 		End If
