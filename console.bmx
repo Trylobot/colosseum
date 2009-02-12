@@ -13,6 +13,7 @@ Type CONSOLE
 		Local str$ = initial_value
 		SetImageFont( font )
 		Local cursor% = str.Length
+		Local selection% = 0
 		Local char_width% = TextWidth( "W" )
 		Repeat
 			Cls()
@@ -20,17 +21,25 @@ Type CONSOLE
 			'instaquit
 			escape_key_update()
 			
-			'cursor move
+			'cursor/selection move
 			If KeyHit( KEY_LEFT )
 				cursor :- 1
 				If cursor < 0 Then cursor = 0
 			Else If KeyHit( KEY_RIGHT )
 				cursor :+ 1
 				If cursor > str.Length Then cursor = str.Length
+			Else If KeyHit( KEY_HOME )
+				cursor = 0
+			Else If KeyHit( KEY_END )
+				cursor = str.Length
 			End If
 			
 			'erase character immediately before the cursor, and decrement the cursor
 			If KeyHit( KEY_BACKSPACE )
+				str = str[..cursor-1] + str[cursor..]
+				cursor :- 1
+				If cursor < 0 Then cursor = 0
+			Else If KeyHit( KEY_DELETE )
 				str = str[..cursor] + str[cursor+1..]
 			End If
 
@@ -38,7 +47,8 @@ Type CONSOLE
 			Local char$ = get_char()
 			If char <> ""
 				str :+ char
-				'cursor_index :+ 1
+				cursor :+ 1
+				If cursor > str.Length Then cursor = str.Length
 			End If
 			
 			DrawText_with_outline( str, x, y )

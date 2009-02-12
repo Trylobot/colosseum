@@ -99,6 +99,9 @@ init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 'menu_command( COMMAND_EDIT_VEHICLE )
 'menu_command( COMMAND_EDIT_LEVEL )
 'menu_command( COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CHOOSE_RESOLUTION) )
+Repeat
+	DebugLog " ~q" + CONSOLE.get_input( "",, window_w/4, window_h/2, get_font( "consolas_bold_24" )) + "~q"
+Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
 ?
 
 '______________________________________________________________________________
