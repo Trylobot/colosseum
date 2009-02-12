@@ -196,25 +196,18 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Method aim_turrets( targ:AGENT = Null )
 		For Local index% = 0 To avatar.turret_systems.Length-1
 			Local diff#
-			If targ <> Null
-				diff = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.turrets[avatar.turret_systems[index][0]].ang_to( targ ))
-			Else 'targ = null
+			If targ
+				diff = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.get_turret_system_pos( index ).ang_to( targ ))
+			Else
 				diff = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.ang )
 			End If
 			Local diff_mag# = Abs( diff )
 			Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
-			If diff_mag > 5.0*max_ang_vel
-				If diff < 0
-					avatar.turn_turret_system( index, 1.0 )
-				Else 'diff > 0
-					avatar.turn_turret_system( index, -1.0 )
-				End If
-			Else
-				If diff < 0
-					avatar.turn_turret_system( index, diff_mag /( max_ang_vel * 5.0 ))
-				Else 'diff > 0
-					avatar.turn_turret_system( index, -diff_mag /( max_ang_vel * 5.0 ))
-				End If
+			Local threshold# = 3 * max_ang_vel
+			If diff_mag >= threshold
+				avatar.turn_turret_system( index, -Sgn(diff) )
+			Else 'diff_mag < max_ang_vel
+				avatar.turn_turret_system( index, -diff/threshold )
 			End If
 		Next
 	End Method

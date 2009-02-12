@@ -96,8 +96,8 @@ init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 'debug_dirtyrects()
 'debug_doors()
 'debug_kill_tally()
-menu_command( COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOADING_BAY) )
-menu_command( COMMAND_EDIT_VEHICLE )
+'menu_command( COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_LOADING_BAY) )
+'menu_command( COMMAND_EDIT_VEHICLE )
 'menu_command( COMMAND_EDIT_LEVEL )
 ?
 

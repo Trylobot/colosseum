@@ -28,7 +28,7 @@ Type TURRET Extends POINT
 	Field max_heat#
 	Field heat_per_shot_min#
 	Field heat_per_shot_max#
-	Field cooling_coefficient#
+	Field cooling_rate#
 	Field overheat_delay%
 	Field effective_range# 'effective range of turret (mostly for AI)
 	Field emitter_list:TList 'list of all emitters to be enabled (with count) when turret fires
@@ -57,9 +57,9 @@ Type TURRET Extends POINT
 	firing_sequence%[][], ..
 	max_ang_vel#, ..
 	max_ammo% = INFINITY, ..
-	max_heat# = INFINITY, ..
+	heat_based% = False, ..
 	heat_per_shot_min# = 0.0, heat_per_shot_max# = 0.0, ..
-	cooling_coefficient# = 0.0, ..
+	cooling_rate# = 0.0, ..
 	overheat_delay% = 0, ..
 	effective_range# = 0.0 )
 		Local t:TURRET = New TURRET
@@ -74,9 +74,9 @@ Type TURRET Extends POINT
 		t.firing_sequence = firing_sequence[..]
 		t.max_ang_vel = max_ang_vel
 		t.max_ammo = max_ammo
-		t.max_heat = max_heat
+		If heat_based Then t.max_heat = 1.00 Else t.max_heat = INFINITY
 		t.heat_per_shot_min = heat_per_shot_min; t.heat_per_shot_max = heat_per_shot_max
-		t.cooling_coefficient = cooling_coefficient
+		t.cooling_rate = cooling_rate
 		t.overheat_delay = overheat_delay
 		t.effective_range = effective_range
 		'dynamic fields
@@ -97,10 +97,10 @@ Type TURRET Extends POINT
 			firing_sequence, ..
 			max_ang_vel, ..
 			max_ammo, ..
-			max_heat, ..
+			(max_heat <> INFINITY), ..
 			heat_per_shot_min, ..
 			heat_per_shot_max, ..
-			cooling_coefficient, ..
+			cooling_rate, ..
 			overheat_delay, ..
 			effective_range ))
 		'copy all turret barrels
@@ -159,7 +159,8 @@ Type TURRET Extends POINT
 			em.emit()
 		Next
 		'heat/cooling
-		If Not overheated() Then cur_heat :- cur_heat*cooling_coefficient
+		If Not overheated() Then cur_heat :- timescale * cooling_rate
+		If cur_heat < 0 Then cur_heat = 0
 	End Method
 	
 	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )

@@ -532,7 +532,7 @@ Function draw_HUD()
 		DrawImage( get_image( "halo" ), x + TextWidth(str)/2.0, y+1-3 + TextHeight(str)/2.0 )
 	End If
 	x :+ w + HORIZONTAL_HUD_MARGIN
-	SetImageFont( get_font( "consolas_bold_12" ))
+	SetImageFont( get_font( "consolas_10" ))
 	SetAlpha( 1 )
 	
 	'player ammo, overheat & charge indicators
@@ -544,7 +544,7 @@ Function draw_HUD()
 		y = y1
 		If t.name <> Null And t.name <> ""
 			SetColor( 196, 196, 196 );
-			DrawText_with_outline( t.name, x, y+1 ); 'x :+ TextWidth( t.name ) + 3
+			DrawText_with_outline( t.name, x, y-3 ); 'x :+ TextWidth( t.name ) + 3
 		End If
 		y = y2
 		temp_x = x; temp_y = y

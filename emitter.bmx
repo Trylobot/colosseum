@@ -348,7 +348,7 @@ Type EMITTER Extends MANAGED_OBJECT
 	ang_vel_min_new# = 0.0, ang_vel_max_new# = 0.0, ..
 	ang_acc_min_new# = 0.0, ang_acc_max_new# = 0.0 )
 		attach_x = off_x_new; attach_y = off_y_new
-		cartesian_to_polar( off_x_new, off_y_new, offset, offset_ang )
+		cartesian_to_polar( attach_x, attach_y, offset, offset_ang )
 		dist.set( dist_min_new, dist_max_new )
 		dist_ang.set( dist_ang_min_new, dist_ang_max_new )
 		vel.set( vel_min_new, vel_max_new )

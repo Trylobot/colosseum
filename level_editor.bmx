@@ -24,8 +24,9 @@ Function level_editor( lev:LEVEL )
 	Local new_spawner:SPAWNER = New SPAWNER
 	Local closest_sp:SPAWNER = Null
 	Local new_prop:PROP_DATA = New PROP_DATA
-	Local new_prop_archetype% = 0
 	Local prop_keys$[] = get_keys( prop_map )
+	Local new_prop_archetype% = 0
+	new_prop.archetype = prop_keys[new_prop_archetype]
 	Local closest_pd:PROP_DATA = Null
 
 	Local nearest_div%
@@ -451,7 +452,7 @@ Function level_editor( lev:LEVEL )
 				Local closest_sp:SPAWNER = Null
 				For Local sp:SPAWNER = EachIn lev.spawners
 					If closest_sp = Null Or ..
-					closest_sp.pos.dist_to( Create_POINT( mouse.pos_x, mouse.pos_y )) > sp.pos.dist_to( Create_POINT( mouse.pos_x, mouse.pos_y ))
+					closest_sp.pos.add_pos( x, y ).dist_to( Create_POINT( mouse.pos_x, mouse.pos_y )) > sp.pos.dist_to( Create_POINT( mouse.pos_x, mouse.pos_y ))
 						closest_sp = sp
 					End If
 				Next
@@ -589,11 +590,13 @@ Function level_editor( lev:LEVEL )
 						new_prop.archetype = prop_keys[ new_prop_archetype ]
 					End If
 					Local prop:AGENT = get_prop( new_prop.archetype )
-					prop.pos_x = gridsnap_mouse.x+x
-					prop.pos_y = gridsnap_mouse.y+y
-					SetColor( 255, 255, 255 )
-					SetAlpha( 0.33333 )
-					prop.draw()
+					If prop
+						prop.pos_x = gridsnap_mouse.x+x
+						prop.pos_y = gridsnap_mouse.y+y
+						SetColor( 255, 255, 255 )
+						SetAlpha( 0.33333 )
+						prop.draw()
+					End If
 				Else
 					If Not MouseDown( 1 )
 						closest_pd = Null
