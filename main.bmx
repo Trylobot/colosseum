@@ -114,7 +114,6 @@ Repeat
 	Else
 		game = main_game 'normal play
 	End If
-Cls()
 	'input
 	get_all_input()
 	'timing & physics
@@ -127,8 +126,8 @@ Cls()
 		'physics engine update
 		update_all_objects()
 	End If
-'	'clear graphics buffer
-'	Cls()
+	'clear graphics buffer
+	Cls()
 	'draw to buffer
 	draw_all_graphics()
 	?Debug

@@ -69,10 +69,6 @@ Function get_all_input()
 			Local bar:BOX = m.get_scrollbar_rect( m.last_x, m.last_y )
 			'determine the number of scrollbar positions
 			Local positions% = m.options.Length - m.static_option_count
-			'determine the percentage of the scrollbar rect that the inner rect occupies
-			'Local filled_pct# = Float(m.dynamic_options_displayed) / Float(m.options.Length - m.static_option_count)
-			'Local empty_pct# = 1 - filled_pct
-			'Local empty_h# = Float(bar.h) * empty_pct
 			'determine the y-value for each of the scrollbar positions
 			Local y_val#[] = New Float[positions]
 			For Local i% = 0 Until y_val.Length
