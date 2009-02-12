@@ -235,6 +235,10 @@ Type TURRET Extends POINT
 		Return (now() - last_overheat_ts) < overheat_delay
 	End Method
 	
+	Method reloaded_pct#()
+		Return 0.5
+	End Method
+	
 	Method play_firing_sound()
 		If snd_fire <> Null
 			Local ch:TChannel = AllocChannel()

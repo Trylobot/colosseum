@@ -100,20 +100,11 @@ Function get_all_input()
 		End If
 	Else 'Not FLAG_in_menu And Not FLAG_in_shop
 		'pause game
-		If game <> Null And game.human_participation
-			'pressed (and released) ESCAPE
+		If game And game.human_participation
 			If escape_key_release() 'KeyHit( KEY_ESCAPE )
-				If Not game.game_over
-					If Not FLAG_in_menu
-						FLAG_in_menu = True
-						If game.game_in_progress
-							menu_command( COMMAND_PAUSE )
-						End If
-					End If
-				Else 'game.game_over
-					menu_command( COMMAND_QUIT_LEVEL )
+				If Not game.paused
+					menu_command( COMMAND_PAUSE )
 				End If
-				'clear unused keystrokes
 				FlushKeys()
 			End If
 		End If
@@ -150,6 +141,10 @@ Function get_all_input()
 		screenshot()
 	End If
 	
+End Function
+
+Function reset_mouse( ang# )
+	MoveMouse( window_w/2 + 30 * Cos( ang ), window_h/2 + 30 * Sin( ang ))
 End Function
 
 '______________________________________________________________________________

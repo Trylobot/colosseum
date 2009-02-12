@@ -51,6 +51,7 @@ Function collide_all_objects()
 				If proj.source_id <> ag.id
 					'COLLISION! between {proj} & {ag}
 					collision_projectile_agent( proj, ag )
+					ag.flash = True
 				End If
 			Next
 		Next

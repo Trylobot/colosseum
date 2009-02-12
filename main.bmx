@@ -98,7 +98,7 @@ init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 'debug_kill_tally()
 'menu_command( COMMAND_EDIT_VEHICLE )
 'menu_command( COMMAND_EDIT_LEVEL )
-menu_command( COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CHOOSE_RESOLUTION) )
+'menu_command( COMMAND_SHOW_CHILD_MENU, INTEGER.Create(MENU_ID_CHOOSE_RESOLUTION) )
 ?
 
 '______________________________________________________________________________

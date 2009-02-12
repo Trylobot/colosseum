@@ -1026,5 +1026,35 @@
 			handle_y: 75.5,
 			frames: 1
 		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/reload_bar.png",
+			handle_x: 0,
+			handle_y: 0,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/reload_marker.png",
+			handle_x: 0,
+			handle_y: 0,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/recharge_bar.png",
+			handle_x: 0,
+			handle_y: 0,
+			frames: 1
+		}
 	}
 ]

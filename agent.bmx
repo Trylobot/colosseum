@@ -48,6 +48,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 
 	Field cur_health# 'current health
 	Field last_collided_agent_id% 'id of last agent collided with (for self-destructing agents)
+	Field flash% 'whether to "flash" as the result of a projectile impact
 	
 	Method New()
 		force_list = CreateList()
@@ -60,6 +61,12 @@ Type AGENT Extends PHYSICAL_OBJECT
 		SetScale( scale_override, scale_override )
 		SetRotation( ang )
 		DrawImage( img, pos_x, pos_y )
+'		If flash
+'			flash = False
+'			SetBlend( LIGHTBLEND )
+'			DrawImage( img, pos_x, pos_y )
+'			SetBlend( ALPHABLEND )
+'		End If
 	End Method
 	
 	Method dead%()

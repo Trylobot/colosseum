@@ -319,6 +319,13 @@ Type COMPLEX_AGENT Extends AGENT
 		For Local s:PARTICLE = EachIn stickies
 			s.draw()
 		Next
+		'projectile impact flash
+		If flash
+			flash = False
+			SetBlend( LIGHTBLEND )
+			DrawImage( img, pos_x, pos_y )
+			SetBlend( ALPHABLEND )
+		End If
 	End Method
 	
 	'___________________________________________
