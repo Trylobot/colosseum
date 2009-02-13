@@ -385,7 +385,13 @@ Function debug_overlay()
 End Function
 
 Function debug_kill_tally()
-	kill_tally( "total kills",, 1249 )
+	kill_tally( "total kills",, 1 )
+	kill_tally( "total kills",, 2 )
+	kill_tally( "total kills",, 3 )
+	kill_tally( "total kills",, 4 )
+	kill_tally( "total kills",, 5 )
+	kill_tally( "total kills",, 6 )
+	kill_tally( "total kills",, 7 )
 End Function
 
 Function debug_print_profile_inventory()

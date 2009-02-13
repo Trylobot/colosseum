@@ -1,17 +1,11 @@
 {
 	name: "developer",
-	cash: 52187,
-	kills: 1814,
+	cash: 56087,
+	kills: 1898,
 	inventory: [
 		{
 			item_type: "turret",
 			key: "light_machine_gun",
-			count: 1,
-			damaged: true
-		},
-		{
-			item_type: "turret",
-			key: "medium_machine_gun",
 			count: 1,
 			damaged: true
 		},
@@ -23,6 +17,12 @@
 		},
 		{
 			item_type: "turret",
+			key: "medium_machine_gun",
+			count: 1,
+			damaged: true
+		},
+		{
+			item_type: "turret",
 			key: "light_laser",
 			count: 1,
 			damaged: true
@@ -30,6 +30,12 @@
 		{
 			item_type: "turret",
 			key: "dual_light_cannon",
+			count: 1,
+			damaged: true
+		},
+		{
+			item_type: "turret",
+			key: "ripper_machine_gun",
 			count: 1,
 			damaged: true
 		},
@@ -47,14 +53,14 @@
 		},
 		{
 			item_type: "turret",
-			key: "medium_machine_gun",
-			count: 1,
+			key: "light_cannon",
+			count: 2,
 			damaged: false
 		},
 		{
 			item_type: "turret",
-			key: "light_cannon",
-			count: 2,
+			key: "medium_machine_gun",
+			count: 1,
 			damaged: false
 		},
 		{
@@ -72,7 +78,7 @@
 		{
 			item_type: "turret",
 			key: "ripper_machine_gun",
-			count: 2,
+			count: 1,
 			damaged: false
 		},
 		{
@@ -96,14 +102,14 @@
 		{
 			item_type: "chassis",
 			key: "medium_tank",
-			count: 5,
-			damaged: true
+			count: 1,
+			damaged: false
 		},
 		{
 			item_type: "chassis",
 			key: "medium_tank",
-			count: 1,
-			damaged: false
+			count: 5,
+			damaged: true
 		}
 	],
 	vehicle: {
@@ -111,7 +117,8 @@
 		is_unit: false,
 		turret_keys: [
 			[
-				"ripper_machine_gun"
+				"dual_light_cannon",
+				"medium_machine_gun"
 			]
 		]
 	},
