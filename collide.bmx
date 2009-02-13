@@ -150,19 +150,31 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 	Next
 	'process damage, death, cash and pickups resulting from it
 	game.deal_damage( ag, proj.damage )
-	'if a kill was made, show the player how much cash they got for killing this enemy, if they killed it
+	'if the player killed an enemy with this projectile, reward player
 	If ag.dead() ..
+	And profile ..
 	And game.human_participation ..
-	And COMPLEX_AGENT( ag ) ..
-	And COMPLEX_AGENT( ag ).political_alignment <> game.player.political_alignment ..
-	And profile <> Null ..
-	And proj.source_id = get_player_id()
-		record_player_kill( COMPLEX_AGENT( ag ).cash_value )
-		Local p:PARTICLE = get_particle( "cash_from_kill" )
-		p.str :+ COMPLEX_AGENT( ag ).cash_value
-		p.pos_x = ag.pos_x
-		p.pos_y = ag.pos_y - 20.0
-		p.auto_manage()
+	And proj.source_id = get_player_id() ..
+	And COMPLEX_AGENT( ag )
+		If COMPLEX_AGENT( ag ).political_alignment <> game.player.political_alignment
+			'killed enemy
+			record_player_kill( COMPLEX_AGENT( ag ).cash_value )
+			Local p:PARTICLE = get_particle( "cash_from_kill" )
+			p.str = "$" + COMPLEX_AGENT( ag ).cash_value
+			p.pos_x = ag.pos_x
+			p.pos_y = ag.pos_y - 20.0
+			p.auto_manage()
+		Else 'COMPLEX_AGENT( ag ).political_alignment == game.player.political_alignment
+			'killed ally
+			record_player_friendly_fire_kill( FRIENDLY_FIRE_PUNISHMENT_AMOUNT )
+			Local p:PARTICLE = get_particle( "cash_from_kill" )
+			p.str = "$-" + FRIENDLY_FIRE_PUNISHMENT_AMOUNT
+			p.font = get_font( "consolas_italic_14" )
+			p.red = 1.0; p.green = 0.3333; p.blue = 0.3333
+			p.pos_x = ag.pos_x
+			p.pos_y = ag.pos_y - 20.0
+			p.auto_manage()
+		End If
 	End If
 	'activate projectile impact emitter
 	proj.impact( ag )

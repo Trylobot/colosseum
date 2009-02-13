@@ -289,20 +289,12 @@ Function debug_overlay()
 	If cb <> Null And cb.managed()
 		
 		'manipulate by keyboard
-		If KeyDown( KEY_1 ) And game.player <> Null
-			cb.target = game.player
+		If KeyHit( KEY_T )
+			game.player.unmanage()
+			game.player = cb.avatar
+			game.player_brain.avatar = game.player
+			cb.unmanage()
 		End If
-		If KeyDown( KEY_2 )
-			cb.path = cb.get_path_to_target()
-		End If
-		If KeyDown( KEY_3 )
-			'cb.sighted_target = cb.see_target()
-			'cb.see_target_DEBUG()
-		End If
-		If KeyDown( KEY_4 ) And game.player <> Null
-			game.player_brain.path = game.find_path( game.player.pos_x, game.player.pos_y, game.mouse.x, game.mouse.y )
-		End If
-		
 		If KeyHit( KEY_X )
 			If Not cb.avatar.is_deployed
 				cb.avatar.deploy()
