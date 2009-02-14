@@ -380,35 +380,35 @@ Function Create_EMITTER_from_json:EMITTER( json:TJSON )
 	If json.TypeOf( "mode" ) <> JSON_UNDEFINED                            Then e.mode = json.GetNumber( "mode" )
 	If json.TypeOf( "combine_vel_with_parent_vel" ) <> JSON_UNDEFINED     Then e.combine_vel_with_parent_vel = json.GetBoolean( "combine_vel_with_parent_vel" )
 	If json.TypeOf( "combine_vel_ang_with_parent_ang" ) <> JSON_UNDEFINED Then e.combine_vel_ang_with_parent_ang = json.GetBoolean( "combine_vel_ang_with_parent_ang" )
-	If json.TypeOf( "inherit_ang_from_dist_ang" ) <> JSON_UNDEFINED
-	If json.TypeOf( "inherit_vel_ang_from_ang" ) <> JSON_UNDEFINED
-	If json.TypeOf( "inherit_acc_ang_from_vel_ang" ) <> JSON_UNDEFINED
-	If json.TypeOf( "interval_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "interval_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "count_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "count_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "life_time_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "life_time_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "alpha_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "alpha_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "alpha_delta_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "alpha_delta_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "scale_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "scale_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "scale_delta_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "scale_delta_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "red_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "red_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "green_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "green_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "blue_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "blue_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "red_delta_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "red_delta_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "green_delta_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "green_delta_max" ) <> JSON_UNDEFINED
-	If json.TypeOf( "blue_delta_min" ) <> JSON_UNDEFINED
-	If json.TypeOf( "blue_delta_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "inherit_ang_from_dist_ang" ) <> JSON_UNDEFINED       Then e.inherit_ang_from_dist_ang = json.GetBoolean( "inherit_ang_from_dist_ang" )
+	If json.TypeOf( "inherit_vel_ang_from_ang" ) <> JSON_UNDEFINED        Then e.inherit_vel_ang_from_ang = json.GetBoolean( "inherit_vel_ang_from_ang" )
+	If json.TypeOf( "inherit_acc_ang_from_vel_ang" ) <> JSON_UNDEFINED    Then e.inherit_acc_ang_from_vel_ang = json.GetBoolean( "inherit_acc_ang_from_vel_ang" )
+	If json.TypeOf( "interval_min" ) <> JSON_UNDEFINED                    Then e.interval_min = json.GetNumber( "interval_min" )
+	If json.TypeOf( "interval_max" ) <> JSON_UNDEFINED                    Then e.interval_max = json.GetNumber( "interval_max" )
+	If json.TypeOf( "count_min" ) <> JSON_UNDEFINED                       Then e.count_min = json.GetNumber( "count_min" )
+	If json.TypeOf( "count_max" ) <> JSON_UNDEFINED                       Then e.count_max = json.GetNumber( "count_max" )
+	If json.TypeOf( "life_time_min" ) <> JSON_UNDEFINED                   Then e.life_time_min = json.GetNumber( "life_time_min" )
+	If json.TypeOf( "life_time_max" ) <> JSON_UNDEFINED                   Then e.life_time_max = json.GetNumber( "life_time_max" )
+	If json.TypeOf( "alpha_min" ) <> JSON_UNDEFINED                       Then e.alpha_min = json.GetNumber( "alpha_min" )
+	If json.TypeOf( "alpha_max" ) <> JSON_UNDEFINED                       Then e.alpha_max = json.GetNumber( "alpha_max" )
+	If json.TypeOf( "alpha_delta_min" ) <> JSON_UNDEFINED                 Then e.alpha_delta_min = json.GetNumber( "alpha_delta_min" )
+	If json.TypeOf( "alpha_delta_max" ) <> JSON_UNDEFINED                 Then e.alpha_delta_max = json.GetNumber( "alpha_delta_max" )
+	If json.TypeOf( "scale_min" ) <> JSON_UNDEFINED                       Then e.scale_min = json.GetNumber( "scale_min" )
+	If json.TypeOf( "scale_max" ) <> JSON_UNDEFINED                       Then e.scale_max = json.GetNumber( "scale_max" )
+	If json.TypeOf( "scale_delta_min" ) <> JSON_UNDEFINED                 Then e.scale_delta_min = json.GetNumber( "scale_delta_min" )
+	If json.TypeOf( "scale_delta_max" ) <> JSON_UNDEFINED                 Then e.scale_delta_max = json.GetNumber( "scale_delta_max" )
+	If json.TypeOf( "red_min" ) <> JSON_UNDEFINED                         Then e.red_min = json.GetNumber( "red_min" )
+	If json.TypeOf( "red_max" ) <> JSON_UNDEFINED                         Then e.red_max = json.GetNumber( "red_max" )
+	If json.TypeOf( "green_min" ) <> JSON_UNDEFINED                       Then e.green_min = json.GetNumber( "green_min" )
+	If json.TypeOf( "green_max" ) <> JSON_UNDEFINED                       Then e.green_max = json.GetNumber( "green_max" )
+	If json.TypeOf( "blue_min" ) <> JSON_UNDEFINED                        Then e.blue_min = json.GetNumber( "blue_min" )
+	If json.TypeOf( "blue_max" ) <> JSON_UNDEFINED                        Then e.blue_max = json.GetNumber( "blue_max" )
+	If json.TypeOf( "red_delta_min" ) <> JSON_UNDEFINED                   Then e.red_delta_min = json.GetNumber( "red_delta_min" )
+	If json.TypeOf( "red_delta_max" ) <> JSON_UNDEFINED                   Then e.red_delta_max = json.GetNumber( "red_delta_max" )
+	If json.TypeOf( "green_delta_min" ) <> JSON_UNDEFINED                 Then e.green_delta_min = json.GetNumber( "green_delta_min" )
+	If json.TypeOf( "green_delta_max" ) <> JSON_UNDEFINED                 Then e.green_delta_max = json.GetNumber( "green_delta_max" )
+	If json.TypeOf( "blue_delta_min" ) <> JSON_UNDEFINED                  Then e.blue_delta_min = json.GetNumber( "blue_delta_min" )
+	If json.TypeOf( "blue_delta_max" ) <> JSON_UNDEFINED                  Then e.blue_delta_max = json.GetNumber( "blue_delta_max" )
 	Return e
 End Function
 
