@@ -211,7 +211,7 @@ Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
 	'reserve space for required fields
 	Local particle_type%
 	'read required fields
-	If json.TypeOf( "particle_type" ) <> JSON_UNDEFINED          Then particle_type = json.GetNumber( "particle_type" ) Else Return Null
+	If json.TypeOf( "particle_type" ) <> JSON_UNDEFINED Then particle_type = json.GetNumber( "particle_type" ) Else Return Null
 	'create object with required fields only
 	p = PARTICLE( PARTICLE.Create( particle_type ))
 	'read and assign optional fields as available

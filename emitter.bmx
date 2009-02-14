@@ -18,7 +18,7 @@ Type EMITTER Extends MANAGED_OBJECT
 	Field parent:POINT 'parent object (for position and angle offsets)
 	Field trigger_event% 'optional parent field to indicate the event that triggers this emitter
 	Field emitter_type% 'emitter type (particle/projectile)
-	Field archetype_index$ 'particle archetype
+	Field particle_archetype$ 'particle archetype key of particle to be emitted
 	Field mode% 'emitter mode (off/counter/timer)
 	Field interval:RANGE_Int 'delay between particles
 	Field interval_cur% '(private) delay between particles - pre-calculated
@@ -242,7 +242,7 @@ Type EMITTER Extends MANAGED_OBJECT
 	'and also, this function should allow for the initialization of the attach_to() in one call
 	Function Archetype:Object( ..
 	emitter_type%, ..
-	archetype_index$, ..
+	particle_archetype$, ..
 	mode% = MODE_DISABLED, ..
 	combine_vel_with_parent_vel% = False, ..
 	combine_vel_ang_with_parent_ang% = False, ..
@@ -262,7 +262,7 @@ Type EMITTER Extends MANAGED_OBJECT
 		
 		'static fields
 		em.emitter_type = emitter_type
-		em.archetype_index = archetype_index
+		em.particle_archetype = particle_archetype
 		em.mode = mode
 		em.combine_vel_with_parent_vel = combine_vel_with_parent_vel
 		em.combine_vel_ang_with_parent_ang = combine_vel_ang_with_parent_ang
@@ -293,7 +293,7 @@ Type EMITTER Extends MANAGED_OBJECT
 		'initialization
 		Local em:EMITTER = EMITTER( Archetype( ..
 			other.emitter_type, ..
-			other.archetype_index, ..
+			other.particle_archetype, ..
 			other.mode, ..
 			other.combine_vel_with_parent_vel, ..
 			other.combine_vel_ang_with_parent_ang, ..
@@ -364,6 +364,52 @@ End Type
 
 Function Copy_EMITTER:EMITTER( other_em:EMITTER )
 	Return EMITTER( EMITTER.Copy( other_em ))
+End Function
+
+Function Create_EMITTER_from_json:EMITTER( json:TJSON )
+	Local e:EMITTER
+	'required fields
+	Local emitter_type%
+	Local particle_archetype$
+	'read required fields
+	If json.TypeOf( "emitter_type" ) <> JSON_UNDEFINED       Then emitter_type = json.GetNumber( "emitter_type" ) Else Return Null
+	If json.TypeOf( "particle_archetype" ) <> JSON_UNDEFINED Then particle_archetype = json.GetString( "particle_archetype" ) Else Return Null
+	'create object with only required fields
+	e = EMITTER( EMITTER.Archetype( emitter_type, particle_archetype ))
+	'read and assign optional fields as available
+	If json.TypeOf( "mode" ) <> JSON_UNDEFINED                            Then e.mode = json.GetNumber( "mode" )
+	If json.TypeOf( "combine_vel_with_parent_vel" ) <> JSON_UNDEFINED     Then e.combine_vel_with_parent_vel = json.GetBoolean( "combine_vel_with_parent_vel" )
+	If json.TypeOf( "combine_vel_ang_with_parent_ang" ) <> JSON_UNDEFINED Then e.combine_vel_ang_with_parent_ang = json.GetBoolean( "combine_vel_ang_with_parent_ang" )
+	If json.TypeOf( "inherit_ang_from_dist_ang" ) <> JSON_UNDEFINED
+	If json.TypeOf( "inherit_vel_ang_from_ang" ) <> JSON_UNDEFINED
+	If json.TypeOf( "inherit_acc_ang_from_vel_ang" ) <> JSON_UNDEFINED
+	If json.TypeOf( "interval_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "interval_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "count_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "count_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "life_time_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "life_time_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "alpha_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "alpha_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "alpha_delta_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "alpha_delta_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "scale_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "scale_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "scale_delta_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "scale_delta_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "red_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "red_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "green_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "green_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "blue_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "blue_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "red_delta_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "red_delta_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "green_delta_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "green_delta_max" ) <> JSON_UNDEFINED
+	If json.TypeOf( "blue_delta_min" ) <> JSON_UNDEFINED
+	If json.TypeOf( "blue_delta_max" ) <> JSON_UNDEFINED
+	Return e
 End Function
 
 
