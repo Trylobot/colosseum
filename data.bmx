@@ -89,7 +89,7 @@ End Function
 '________________________________
 Function get_particle_emitter:EMITTER( key$, copy% = True )
 	key = key.toLower()
-	Local em:EMITTER = EMITTER( particle_emitter_map.ValueForKey(key) )
+	Local em:EMITTER = EMITTER( particle_emitter_map.ValueForKey( key ))
 	If copy And em Then Return EMITTER( EMITTER.Copy( em ))
 	Return em
 End Function
@@ -99,6 +99,13 @@ Function get_projectile:PROJECTILE( key$, source_id% = NULL_ID, copy% = True )
 	Local proj:PROJECTILE = PROJECTILE( projectile_map.ValueForKey( key ))
 	If copy And proj Then Return proj.clone( source_id )
 	Return proj
+End Function
+'________________________________
+Function get_projectile_launcher:EMITTER( key$, copy% = True )
+	key = key.toLower()
+	Local lchr:EMITTER = EMITTER( projectile_launcher_map.ValueForKey( key ))
+	If copy And lchr Then Return EMITTER( EMITTER.Copy( lchr ))
+	Return lchr
 End Function
 '________________________________
 Function get_turret:TURRET( key$, copy% = True )
@@ -222,8 +229,9 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				Case "projectile"
 					Local proj:PROJECTILE = Create_PROJECTILE_from_json( TJSON.Create( item.GetObject( "object" )))
 					If proj Then projectile_map.Insert( key, proj ) Else load_error( source_file + "." + key )
-				'Case "projectile_launcher"
-				'	
+				Case "projectile_launcher"
+					Local lchr:EMITTER = Create_EMITTER_from_json( TJSON.Create( item.GetObject( "object" )))
+					If lchr Then projectile_launcher_map.Insert( key, lchr ) Else load_error( source_file + "." + key )
 				'Case "widget"
 				'	
 				'Case "pickup"
