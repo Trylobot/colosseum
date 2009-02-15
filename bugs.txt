@@ -2,4 +2,8 @@
 	After getting game over, immediately exited to main menu
 		recommend flushkeys() after getting game over
 	
+	While watching the AI Menu Game on my slow work laptop, I noticed that enemies were able to travel through walls
+		recommend wall collision re-write so that it is impossible for anyone to be inside of a wall
+		for instance, move them outside the wall instead of just nudging them
+	
 	

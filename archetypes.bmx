@@ -6,7 +6,6 @@ EndRem
 
 '______________________________________________________________________________
 Function load_all_archetypes()
-'	set_projectile_launcher_archetypes()
 	set_widget_archetypes()
 	set_pickup_archetypes()
 	set_turret_barrel_archetypes()

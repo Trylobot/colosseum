@@ -24,10 +24,10 @@ Type PICKUP Extends MANAGED_OBJECT
 	End Method
 	
 	Function Create:Object( ..
-	img:TImage, ..
-	pickup_type%, ..
-	pickup_amount%, ..
-	life_time%, ..
+	img:TImage = Null, ..
+	pickup_type% = 0, ..
+	pickup_amount% = 0, ..
+	life_time% = 0, ..
 	pos_x# = 0.0, pos_y# = 0.0, ..
 	alpha# = 1.0 )
 		Local p:PICKUP = New PICKUP
@@ -56,7 +56,7 @@ Type PICKUP Extends MANAGED_OBJECT
 		prune()
 		If managed()
 			Local age_pct# = Float(now() - created_ts) / Float(life_time)
-			If      age_pct < 0.20 Then alpha = (age_pct / 0.20) ..
+			If      age_pct < 0.20 Then alpha = 6 * (age_pct / 0.20) ..
 			Else If age_pct < 0.80 Then alpha = 1.0 ..
 			Else                        alpha = 1.0 - ((age_pct - 0.80) / 0.25)
 		End If
@@ -98,4 +98,14 @@ Type PICKUP Extends MANAGED_OBJECT
 	
 End Type
 
-
+Function Create_PICKUP_from_json:PICKUP( json:TJSON )
+	Local p:PICKUP
+	'no required fields
+	p = PICKUP.Create()
+	'optional fields
+	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED     Then p.img = get_image( json.GetString( "image_key" ))
+	If json.TypeOf( "pickup_type" ) <> JSON_UNDEFINED   Then p.pickup_type = json.GetNumber( "pickup_type" )
+	If json.TypeOf( "pickup_amount" ) <> JSON_UNDEFINED Then p.pickup_amount = json.GetNumber( "pickup_amount" )
+	If json.TypeOf( "life_time" ) <> JSON_UNDEFINED     Then p.life_time = json.GetNumber( "life_time" )
+	Return p
+End Function
