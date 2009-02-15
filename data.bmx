@@ -59,59 +59,76 @@ Global level_map:TMap = CreateMap()
 
 '______________________________________________________________________________
 Function get_font:TImageFont( key$ ) 'returns read-only reference
+	key = key.toLower()
 	Return TImageFont( font_map.ValueForKey( key ))
 End Function
 '________________________________
 Function get_sound:TSound( key$ ) 'returns read-only reference
+	key = key.toLower()
 	Return TSound( sound_map.ValueForKey( key ))
 End Function
 '________________________________
 Function get_image:TImage( key$ ) 'returns read-only reference
+	key = key.toLower()
 	Return TImage( image_map.ValueForKey( key ))
 End Function
 '________________________________
 Function get_prop:AGENT( key$, copy% = True )
+	key = key.toLower()
 	Local ag:AGENT = AGENT( prop_map.ValueForKey( key ))
 	If copy And ag Then Return Copy_AGENT( ag )
 	Return ag
 End Function
 '________________________________
 Function get_particle:PARTICLE( key$, new_frame% = 0, copy% = True )
+	key = key.toLower()
 	Local part:PARTICLE = PARTICLE( particle_map.ValueForKey( key ))
 	If copy And part Then Return part.clone( new_frame )
 	Return part
 End Function
 '________________________________
+Function get_particle_emitter:EMITTER( key$, copy% = True )
+	key = key.toLower()
+	Local em:EMITTER = EMITTER( particle_emitter_map.ValueForKey(key) )
+	If copy And em Then Return EMITTER( EMITTER.Copy( em ))
+	Return em
+End Function
+'________________________________
 Function get_projectile:PROJECTILE( key$, source_id% = NULL_ID, copy% = True )
+	key = key.toLower()
 	Local proj:PROJECTILE = PROJECTILE( projectile_map.ValueForKey( key ))
 	If copy And proj Then Return proj.clone( source_id )
 	Return proj
 End Function
-
 '________________________________
 Function get_turret:TURRET( key$, copy% = True )
+	key = key.toLower()
 	Local tur:TURRET = TURRET( turret_map.ValueForKey( key ))
 	If copy And tur Then Return tur.clone()
 	Return tur
 End Function
 '________________________________
 Function get_ai_type:AI_TYPE( key$ ) 'returns read-only reference
+	key = key.toLower()
 	Return AI_TYPE( ai_type_map.ValueForKey( key ))
 End Function
 '________________________________
 Function get_player_chassis:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
+	key = key.toLower()
 	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_chassis_map.ValueForKey( key ))
 	If copy And comp_ag Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( comp_ag ))
 	Return comp_ag
 End Function
 '________________________________
 Function get_unit:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
+	key = key.toLower()
 	Local unit:COMPLEX_AGENT = COMPLEX_AGENT( unit_map.ValueForKey( key ))
 	If copy And unit Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit ))
 	Return unit
 End Function
 '________________________________
 Function get_compatibility:COMPATIBILITY_DATA( key$ ) 'returns read-only reference (recursive inheritance expansion)
+	key = key.toLower()
 	Local cd:COMPATIBILITY_DATA = COMPATIBILITY_DATA( compatibility_map.ValueForKey( key ))
 	If cd
 		cd = cd.clone()
@@ -121,10 +138,12 @@ Function get_compatibility:COMPATIBILITY_DATA( key$ ) 'returns read-only referen
 End Function
 '________________________________
 Function get_level:LEVEL( key$, copy% = True ) 'returns read-only reference
+	key = key.toLower()
 	Local lev:LEVEL = LEVEL( level_map.ValueForKey( key ))
 	'If copy Then Return ...
 	Return lev
 End Function
+
 
 '________________________________
 Function get_inventory_object_cost%( item_type$, item_key$ )
@@ -157,7 +176,7 @@ Function load_assets%()
 			If file
 				asset_json = TJSON.Create( asset_file )
 				If Not asset_json.isNull() And TJSONArray(asset_json.Root) 'read successful
-					load_objects( asset_json )
+					load_objects( asset_json, StripAll( asset_path ))
 				End If
 			Else
 				DebugLog( "    file could not be read" )
@@ -169,9 +188,8 @@ Function load_assets%()
 	Return False
 End Function
 '______________________________________________________________________________
-Function load_objects%( json:TJSON )
-	Local failed_to_load$ = "      ERROR: FAILED TO LOAD"
-	For Local i% = 0 To TJSONArray(json.Root).Size() - 1
+Function load_objects%( json:TJSON, source_file$ = Null )
+	For Local i% = 0 To TJSONArray( json.Root ).Size() - 1
 		Local item:TJSON = TJSON.Create( json.GetObject( String.FromInt( i )))
 		Local key$ = item.GetString( "key" )
 		Select key 'special implicit keys for certain objects
@@ -185,23 +203,25 @@ Function load_objects%( json:TJSON )
 			Select item.GetString( "class" )
 				Case "font"
 					Local f:TImageFont = Create_TImageFont_from_json( TJSON.Create( item.GetObject( "object" )))
-					If f Then font_map.Insert( key, f ) Else DebugLog failed_to_load
+					If f Then font_map.Insert( key, f ) Else load_error( source_file + "." + key )
 				Case "sound"
 					Local s:TSound = Create_TSound_from_json( TJSON.Create( item.GetObject( "object" )))
-					If s Then sound_map.Insert( key, s ) Else DebugLog failed_to_load
+					If s Then sound_map.Insert( key, s ) Else load_error( source_file + "." + key )
 				Case "image"
 					Local i:TImage = Create_TImage_from_json( TJSON.Create( item.GetObject( "object" )))
-					If i Then image_map.Insert( key, i ) Else DebugLog failed_to_load
+					If i Then image_map.Insert( key, i ) Else load_error( source_file + "." + key )
 				Case "prop"
 					Local p:AGENT = Create_AGENT_from_json( TJSON.Create( item.GetObject( "object" )))
-					If p Then prop_map.Insert( key, p ) Else DebugLog failed_to_load
+					If p Then prop_map.Insert( key, p ) Else load_error( source_file + "." + key )
 				Case "particle"
 					Local p:PARTICLE = Create_PARTICLE_from_json( TJSON.Create( item.GetObject( "object" )))
-					If p Then particle_map.Insert( key, p ) Else DebugLog failed_to_load
-				'Case "particle_emitter"
-				'	
-				'Case "projectile"
-				'	
+					If p Then particle_map.Insert( key, p ) Else load_error( source_file + "." + key )
+				Case "particle_emitter"
+					Local em:EMITTER = Create_EMITTER_from_json( TJSON.Create( item.GetObject( "object" )))
+					If em Then particle_emitter_map.Insert( key, em ) Else load_error( source_file + "." + key )
+				Case "projectile"
+					Local proj:PROJECTILE = Create_PROJECTILE_from_json( TJSON.Create( item.GetObject( "object" )))
+					If proj Then projectile_map.Insert( key, proj ) Else load_error( source_file + "." + key )
 				'Case "projectile_launcher"
 				'	
 				'Case "widget"
@@ -220,12 +240,18 @@ Function load_objects%( json:TJSON )
 				'	
 				Case "compatibility"
 					Local cd:COMPATIBILITY_DATA = Create_COMPATIBILITY_DATA_from_json( TJSON.Create( item.GetObject( "object" )))
-					If cd Then compatibility_map.Insert( key, cd ) Else DebugLog failed_to_load
+					If cd Then compatibility_map.Insert( key, cd ) Else load_error( source_file + "." + key )
 				'Case "level"
 				'	
 			End Select
 		End If
 	Next
+End Function
+
+Function load_error( message$ = Null )
+	DebugLog "      ERROR: FAILED TO LOAD"
+	If message Then Notify( "Error: could not load " + message, True )
+	End
 End Function
 
 '______________________________________________________________________________

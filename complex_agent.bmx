@@ -650,22 +650,22 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	'___________________________________________
 	Method add_dust_cloud_package( offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0, dist_min# = 0.0, dist_max# = 0.0, dist_ang_min# = 0.0, dist_ang_max# = 0.0, vel_min# = 0.0, vel_max# = 0.0 )
-		add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD], EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
-		add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD], EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
-		add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD], EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
-		add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_TANK_TREAD_DUST_CLOUD], EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
+		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
+		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
+		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
+		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
 	End Method
 	'___________________________________________
-	Method add_trail_package( archetype%, offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0 )
-		add_emitter( particle_emitter_archetype[archetype], EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y )
-		add_emitter( particle_emitter_archetype[archetype], EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y )
-		add_emitter( particle_emitter_archetype[archetype], EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y )
-		add_emitter( particle_emitter_archetype[archetype], EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y )
+	Method add_trail_package( archetype$, offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0 )
+		add_emitter( get_particle_emitter( archetype, False ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y )
+		add_emitter( get_particle_emitter( archetype, False ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y )
+		add_emitter( get_particle_emitter( archetype, False ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y )
+		add_emitter( get_particle_emitter( archetype, False ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y )
 	End Method
 	'___________________________________________
 	Method add_death_package()
-		add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_EXPLOSION], EVENT_DEATH ).attach_at( 0, 0 )
-		add_emitter( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SHOCKWAVE], EVENT_DEATH ).attach_at( 0, 0 )
+		add_emitter( get_particle_emitter( "EXPLOSION", False ), EVENT_DEATH ).attach_at( 0, 0 )
+		add_emitter( get_particle_emitter( "SHOCKWAVE", False ), EVENT_DEATH ).attach_at( 0, 0 )
 	End Method
 	
 	Method set_images_unfiltered()

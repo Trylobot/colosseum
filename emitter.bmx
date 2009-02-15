@@ -18,7 +18,7 @@ Type EMITTER Extends MANAGED_OBJECT
 	Field parent:POINT 'parent object (for position and angle offsets)
 	Field trigger_event% 'optional parent field to indicate the event that triggers this emitter
 	Field emitter_type% 'emitter type (particle/projectile)
-	Field particle_archetype$ 'particle archetype key of particle to be emitted
+	Field emitter_object:Object 'object to be emitted, class is either (PARTICLE|PROJECTILE)
 	Field mode% 'emitter mode (off/counter/timer)
 	Field interval:RANGE_Int 'delay between particles
 	Field interval_cur% '(private) delay between particles - pre-calculated
@@ -115,9 +115,9 @@ Type EMITTER Extends MANAGED_OBJECT
 			'create a new object (particle/projectile) and set it up
 			Select emitter_type
 				Case EMITTER_TYPE_PARTICLE
-					emit_particle( get_particle( archetype_index, PARTICLE_FRAME_RANDOM ), list )
+					emit_particle( PARTICLE( emitter_object ).clone( PARTICLE_FRAME_RANDOM ), list )
 				Case EMITTER_TYPE_PROJECTILE
-					emit_projectile( get_projectile( archetype_index, source_id ), list )
+					emit_projectile( PROJECTILE( emitter_object ).clone( source_id ), list )
 			End Select
 			
 			'interval
@@ -128,6 +128,7 @@ Type EMITTER Extends MANAGED_OBJECT
 			
 		End If
 	End Method
+	
 	Method emit_particle( p:PARTICLE, list:TList = Null ) '(private)
 		If Not p Then Return
 
@@ -196,6 +197,7 @@ Type EMITTER Extends MANAGED_OBJECT
 		End If
 			
 	End Method
+	
 	Method emit_projectile( p:PROJECTILE, list:TList = Null ) '(private)
 		If Not p Then Return	
 	
@@ -242,7 +244,7 @@ Type EMITTER Extends MANAGED_OBJECT
 	'and also, this function should allow for the initialization of the attach_to() in one call
 	Function Archetype:Object( ..
 	emitter_type%, ..
-	particle_archetype$, ..
+	emitter_object:Object, ..
 	mode% = MODE_DISABLED, ..
 	combine_vel_with_parent_vel% = False, ..
 	combine_vel_ang_with_parent_ang% = False, ..
@@ -262,7 +264,7 @@ Type EMITTER Extends MANAGED_OBJECT
 		
 		'static fields
 		em.emitter_type = emitter_type
-		em.particle_archetype = particle_archetype
+		em.emitter_object = emitter_object
 		em.mode = mode
 		em.combine_vel_with_parent_vel = combine_vel_with_parent_vel
 		em.combine_vel_ang_with_parent_ang = combine_vel_ang_with_parent_ang
@@ -293,7 +295,7 @@ Type EMITTER Extends MANAGED_OBJECT
 		'initialization
 		Local em:EMITTER = EMITTER( Archetype( ..
 			other.emitter_type, ..
-			other.particle_archetype, ..
+			other.emitter_object, ..
 			other.mode, ..
 			other.combine_vel_with_parent_vel, ..
 			other.combine_vel_ang_with_parent_ang, ..
@@ -370,12 +372,19 @@ Function Create_EMITTER_from_json:EMITTER( json:TJSON )
 	Local e:EMITTER
 	'required fields
 	Local emitter_type%
-	Local particle_archetype$
+	Local emitter_object_key$
+	Local emitter_object:Object
 	'read required fields
 	If json.TypeOf( "emitter_type" ) <> JSON_UNDEFINED       Then emitter_type = json.GetNumber( "emitter_type" ) Else Return Null
-	If json.TypeOf( "particle_archetype" ) <> JSON_UNDEFINED Then particle_archetype = json.GetString( "particle_archetype" ) Else Return Null
+	If json.TypeOf( "emitter_object_key" ) <> JSON_UNDEFINED Then emitter_object_key = json.GetString( "emitter_object_key" ) Else Return Null
+	If emitter_type = EMITTER_TYPE_PARTICLE
+		emitter_object = get_particle( emitter_object_key,, False )
+	Else If emitter_type = EMITTER_TYPE_PROJECTILE
+		emitter_object = get_projectile( emitter_object_key,, False )
+	End If
+	If Not emitter_object Then Return Null
 	'create object with only required fields
-	e = EMITTER( EMITTER.Archetype( emitter_type, particle_archetype ))
+	e = EMITTER( EMITTER.Archetype( emitter_type, emitter_object ))
 	'read and assign optional fields as available
 	If json.TypeOf( "mode" ) <> JSON_UNDEFINED                            Then e.mode = json.GetNumber( "mode" )
 	If json.TypeOf( "combine_vel_with_parent_vel" ) <> JSON_UNDEFINED     Then e.combine_vel_with_parent_vel = json.GetBoolean( "combine_vel_with_parent_vel" )
@@ -383,33 +392,66 @@ Function Create_EMITTER_from_json:EMITTER( json:TJSON )
 	If json.TypeOf( "inherit_ang_from_dist_ang" ) <> JSON_UNDEFINED       Then e.inherit_ang_from_dist_ang = json.GetBoolean( "inherit_ang_from_dist_ang" )
 	If json.TypeOf( "inherit_vel_ang_from_ang" ) <> JSON_UNDEFINED        Then e.inherit_vel_ang_from_ang = json.GetBoolean( "inherit_vel_ang_from_ang" )
 	If json.TypeOf( "inherit_acc_ang_from_vel_ang" ) <> JSON_UNDEFINED    Then e.inherit_acc_ang_from_vel_ang = json.GetBoolean( "inherit_acc_ang_from_vel_ang" )
-	If json.TypeOf( "interval_min" ) <> JSON_UNDEFINED                    Then e.interval_min = json.GetNumber( "interval_min" )
-	If json.TypeOf( "interval_max" ) <> JSON_UNDEFINED                    Then e.interval_max = json.GetNumber( "interval_max" )
-	If json.TypeOf( "count_min" ) <> JSON_UNDEFINED                       Then e.count_min = json.GetNumber( "count_min" )
-	If json.TypeOf( "count_max" ) <> JSON_UNDEFINED                       Then e.count_max = json.GetNumber( "count_max" )
-	If json.TypeOf( "life_time_min" ) <> JSON_UNDEFINED                   Then e.life_time_min = json.GetNumber( "life_time_min" )
-	If json.TypeOf( "life_time_max" ) <> JSON_UNDEFINED                   Then e.life_time_max = json.GetNumber( "life_time_max" )
-	If json.TypeOf( "alpha_min" ) <> JSON_UNDEFINED                       Then e.alpha_min = json.GetNumber( "alpha_min" )
-	If json.TypeOf( "alpha_max" ) <> JSON_UNDEFINED                       Then e.alpha_max = json.GetNumber( "alpha_max" )
-	If json.TypeOf( "alpha_delta_min" ) <> JSON_UNDEFINED                 Then e.alpha_delta_min = json.GetNumber( "alpha_delta_min" )
-	If json.TypeOf( "alpha_delta_max" ) <> JSON_UNDEFINED                 Then e.alpha_delta_max = json.GetNumber( "alpha_delta_max" )
-	If json.TypeOf( "scale_min" ) <> JSON_UNDEFINED                       Then e.scale_min = json.GetNumber( "scale_min" )
-	If json.TypeOf( "scale_max" ) <> JSON_UNDEFINED                       Then e.scale_max = json.GetNumber( "scale_max" )
-	If json.TypeOf( "scale_delta_min" ) <> JSON_UNDEFINED                 Then e.scale_delta_min = json.GetNumber( "scale_delta_min" )
-	If json.TypeOf( "scale_delta_max" ) <> JSON_UNDEFINED                 Then e.scale_delta_max = json.GetNumber( "scale_delta_max" )
-	If json.TypeOf( "red_min" ) <> JSON_UNDEFINED                         Then e.red_min = json.GetNumber( "red_min" )
-	If json.TypeOf( "red_max" ) <> JSON_UNDEFINED                         Then e.red_max = json.GetNumber( "red_max" )
-	If json.TypeOf( "green_min" ) <> JSON_UNDEFINED                       Then e.green_min = json.GetNumber( "green_min" )
-	If json.TypeOf( "green_max" ) <> JSON_UNDEFINED                       Then e.green_max = json.GetNumber( "green_max" )
-	If json.TypeOf( "blue_min" ) <> JSON_UNDEFINED                        Then e.blue_min = json.GetNumber( "blue_min" )
-	If json.TypeOf( "blue_max" ) <> JSON_UNDEFINED                        Then e.blue_max = json.GetNumber( "blue_max" )
-	If json.TypeOf( "red_delta_min" ) <> JSON_UNDEFINED                   Then e.red_delta_min = json.GetNumber( "red_delta_min" )
-	If json.TypeOf( "red_delta_max" ) <> JSON_UNDEFINED                   Then e.red_delta_max = json.GetNumber( "red_delta_max" )
-	If json.TypeOf( "green_delta_min" ) <> JSON_UNDEFINED                 Then e.green_delta_min = json.GetNumber( "green_delta_min" )
-	If json.TypeOf( "green_delta_max" ) <> JSON_UNDEFINED                 Then e.green_delta_max = json.GetNumber( "green_delta_max" )
-	If json.TypeOf( "blue_delta_min" ) <> JSON_UNDEFINED                  Then e.blue_delta_min = json.GetNumber( "blue_delta_min" )
-	If json.TypeOf( "blue_delta_max" ) <> JSON_UNDEFINED                  Then e.blue_delta_max = json.GetNumber( "blue_delta_max" )
+	If json.TypeOf( "interval_min" ) <> JSON_UNDEFINED                    Then e.interval.low = json.GetNumber( "interval_min" )
+	If json.TypeOf( "interval_max" ) <> JSON_UNDEFINED                    Then e.interval.high = json.GetNumber( "interval_max" )
+	If json.TypeOf( "count_min" ) <> JSON_UNDEFINED                       Then e.count.low = json.GetNumber( "count_min" )
+	If json.TypeOf( "count_max" ) <> JSON_UNDEFINED                       Then e.count.high = json.GetNumber( "count_max" )
+	If json.TypeOf( "life_time_min" ) <> JSON_UNDEFINED                   Then e.life_time.low = json.GetNumber( "life_time_min" )
+	If json.TypeOf( "life_time_max" ) <> JSON_UNDEFINED                   Then e.life_time.high = json.GetNumber( "life_time_max" )
+	If json.TypeOf( "alpha_min" ) <> JSON_UNDEFINED                       Then e.alpha.low = json.GetNumber( "alpha_min" )
+	If json.TypeOf( "alpha_max" ) <> JSON_UNDEFINED                       Then e.alpha.high = json.GetNumber( "alpha_max" )
+	If json.TypeOf( "alpha_delta_min" ) <> JSON_UNDEFINED                 Then e.alpha_delta.low = json.GetNumber( "alpha_delta_min" )
+	If json.TypeOf( "alpha_delta_max" ) <> JSON_UNDEFINED                 Then e.alpha_delta.high = json.GetNumber( "alpha_delta_max" )
+	If json.TypeOf( "scale_min" ) <> JSON_UNDEFINED                       Then e.scale.low = json.GetNumber( "scale_min" )
+	If json.TypeOf( "scale_max" ) <> JSON_UNDEFINED                       Then e.scale.high = json.GetNumber( "scale_max" )
+	If json.TypeOf( "scale_delta_min" ) <> JSON_UNDEFINED                 Then e.scale_delta.low = json.GetNumber( "scale_delta_min" )
+	If json.TypeOf( "scale_delta_max" ) <> JSON_UNDEFINED                 Then e.scale_delta.high = json.GetNumber( "scale_delta_max" )
+	If json.TypeOf( "red_min" ) <> JSON_UNDEFINED                         Then e.red.low = json.GetNumber( "red_min" )
+	If json.TypeOf( "red_max" ) <> JSON_UNDEFINED                         Then e.red.high = json.GetNumber( "red_max" )
+	If json.TypeOf( "green_min" ) <> JSON_UNDEFINED                       Then e.green.low = json.GetNumber( "green_min" )
+	If json.TypeOf( "green_max" ) <> JSON_UNDEFINED                       Then e.green.high = json.GetNumber( "green_max" )
+	If json.TypeOf( "blue_min" ) <> JSON_UNDEFINED                        Then e.blue.low = json.GetNumber( "blue_min" )
+	If json.TypeOf( "blue_max" ) <> JSON_UNDEFINED                        Then e.blue.high = json.GetNumber( "blue_max" )
+	If json.TypeOf( "red_delta_min" ) <> JSON_UNDEFINED                   Then e.red_delta.low = json.GetNumber( "red_delta_min" )
+	If json.TypeOf( "red_delta_max" ) <> JSON_UNDEFINED                   Then e.red_delta.high = json.GetNumber( "red_delta_max" )
+	If json.TypeOf( "green_delta_min" ) <> JSON_UNDEFINED                 Then e.green_delta.low = json.GetNumber( "green_delta_min" )
+	If json.TypeOf( "green_delta_max" ) <> JSON_UNDEFINED                 Then e.green_delta.high = json.GetNumber( "green_delta_max" )
+	If json.TypeOf( "blue_delta_min" ) <> JSON_UNDEFINED                  Then e.blue_delta.low = json.GetNumber( "blue_delta_min" )
+	If json.TypeOf( "blue_delta_max" ) <> JSON_UNDEFINED                  Then e.blue_delta.high = json.GetNumber( "blue_delta_max" )
 	Return e
 End Function
 
+Function Create_EMITTER_from_json_reference:EMITTER( json:TJSON )
+	Local e:EMITTER
+	If json.TypeOf( "particle_emitter_key" ) <> JSON_UNDEFINED Then e = get_particle_emitter( json.GetString( "particle_emitter_key" ))
+	If Not e Then Return Null
+	If json.TypeOf( "attach_at" ) <> JSON_UNDEFINED
+		Local obj:TJSONObject = json.GetObject( "attach_at" )
+		If obj And Not obj.IsNull()
+			Local attach_at:TJSON = TJSON.Create( obj )
+			e.attach_at( ..
+				attach_at.GetNumber( "offset_x" ), ..
+				attach_at.GetNumber( "offset_y" ), ..
+				attach_at.GetNumber( "dist_min" ), ..
+				attach_at.GetNumber( "dist_max" ), ..
+				attach_at.GetNumber( "dist_ang_min" ), ..
+				attach_at.GetNumber( "dist_ang_max" ), ..
+				attach_at.GetNumber( "vel_min" ), ..
+				attach_at.GetNumber( "vel_max" ), ..
+				attach_at.GetNumber( "vel_ang_min" ), ..
+				attach_at.GetNumber( "vel_ang_max" ), ..
+				attach_at.GetNumber( "acc_min" ), ..
+				attach_at.GetNumber( "acc_max" ), ..
+				attach_at.GetNumber( "acc_ang_min" ), ..
+				attach_at.GetNumber( "acc_ang_max" ), ..
+				attach_at.GetNumber( "ang_min" ), ..
+				attach_at.GetNumber( "ang_max" ), ..
+				attach_at.GetNumber( "ang_vel_min" ), ..
+				attach_at.GetNumber( "ang_vel_max" ), ..
+				attach_at.GetNumber( "ang_acc_min" ), ..
+				attach_at.GetNumber( "ang_acc_max" ))
+		End If
+	End If
+	Return e
+End Function
 

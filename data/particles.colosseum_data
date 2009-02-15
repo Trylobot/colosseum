@@ -4,7 +4,7 @@
 		key: "tank_tread_debris",
 		object: {
 			particle_type: 0,
-			img: "debris",
+			image_key: "debris",
 			layer: 2,
 			retain: true,
 			frictional_coefficient: 0.05
@@ -15,7 +15,7 @@
 		key: "tank_tread_trail_small",
 		object: {
 			particle_type: 0,
-			img: "trail_3",
+			image_key: "trail_3",
 			layer: 2,
 			retain: true
 		}
@@ -25,7 +25,7 @@
 		key: "tank_tread_trail_medium",
 		object: {
 			particle_type: 0,
-			img: "trail_5",
+			image_key: "trail_5",
 			layer: 2,
 			retain: true
 		}
@@ -35,7 +35,7 @@
 		key: "light_tank_track",
 		object: {
 			particle_type: 1,
-			img: "light_tank_track",
+			image_key: "light_tank_track",
 		}
 	},
 	{
@@ -43,7 +43,7 @@
 		key: "med_tank_track",
 		object: {
 			particle_type: 1,
-			img: "med_tank_track",
+			image_key: "med_tank_track",
 		}
 	},
 	{
@@ -51,7 +51,7 @@
 		key: "cannon_muzzle_flash",
 		object: {
 			particle_type: 0,
-			img: "muzzle_flash",
+			image_key: "muzzle_flash",
 			layer: 1
 		}
 	},
@@ -60,7 +60,7 @@
 		key: "cannon_shell_casing",
 		object: {
 			particle_type: 0,
-			img: "projectile_shell_casing",
+			image_key: "projectile_shell_casing",
 			layer: 1,
 			retain: true,
 			frictional_coefficient: 0.0100
@@ -71,7 +71,7 @@
 		key: "cannon_muzzle_smoke",
 		object: {
 			particle_type: 0,
-			img: "muzzle_smoke",
+			image_key: "muzzle_smoke",
 			layer: 1
 		}
 	},
@@ -80,7 +80,7 @@
 		key: "explosion",
 		object: {
 			particle_type: 0,
-			img: "white_circle",
+			image_key: "white_circle",
 			layer: 1,
 			retain: false,
 			frictional_coefficient: 0.0850
@@ -91,7 +91,7 @@
 		key: "dust",
 		object: {
 			particle_type: 0,
-			img: "white_circle",
+			image_key: "white_circle",
 			layer: 2,
 			retain: false,
 			frictional_coefficient: 0.0850
@@ -102,7 +102,7 @@
 		key: "ricochet_spark",
 		object: {
 			particle_type: 0,
-			img: "spark",
+			image_key: "spark",
 			layer: 1,
 			retain: false,
 			frictional_coefficient: 0.0150
@@ -113,7 +113,7 @@
 		key: "impact_halo",
 		object: {
 			particle_type: 0,
-			img: "halo",
+			image_key: "halo",
 			layer: 2,
 			retain: false
 		}
@@ -123,7 +123,7 @@
 		key: "halo",
 		object: {
 			particle_type: 0,
-			img: "halo",
+			image_key: "halo",
 			layer: 2,
 			retain: false,
 			life_time: 200,
@@ -136,7 +136,7 @@
 		key: "soft_glow",
 		object: {
 			particle_type: 0,
-			img: "halo",
+			image_key: "halo",
 			layer: 1,
 			retain: false,
 			life_time: 1250,
@@ -151,7 +151,7 @@
 		key: "machine_gun_muzzle_flash",
 		object: {
 			particle_type: 0,
-			img: "mgun_muzzle_flash",
+			image_key: "mgun_muzzle_flash",
 			layer: 1
 		}
 	},
@@ -160,7 +160,7 @@
 		key: "machine_gun_shell_casing",
 		object: {
 			particle_type: 0,
-			img: "mgun_shell_casing",
+			image_key: "mgun_shell_casing",
 			layer: 1,
 			retain: true,
 			frictional_coefficient: 0.0100
@@ -171,7 +171,7 @@
 		key: "machine_gun_muzzle_smoke",
 		object: {
 			particle_type: 0,
-			img: "mgun_muzzle_smoke",
+			image_key: "mgun_muzzle_smoke",
 			layer: 1
 		}
 	},
@@ -180,7 +180,7 @@
 		key: "laser_muzzle_flare",
 		object: {
 			particle_type: 0,
-			img: "laser_muzzle_flare",
+			image_key: "laser_muzzle_flare",
 			layer: 1,
 			retain: false
 		}
@@ -190,7 +190,7 @@
 		key: "medium_laser_muzzle_flare",
 		object: {
 			particle_type: 0,
-			img: "medium_laser_muzzle_flare",
+			image_key: "medium_laser_muzzle_flare",
 			layer: 1,
 			retain: false
 		}
@@ -200,7 +200,7 @@
 		key: "rocket_thrust",
 		object: {
 			particle_type: 0,
-			img: "rocket_thrust",
+			image_key: "rocket_thrust",
 			layer: 2
 		}
 	},
@@ -209,7 +209,7 @@
 		key: "rocket_casing",
 		object: {
 			particle_type: 0,
-			img: "rocket_casing",
+			image_key: "rocket_casing",
 			layer: 1,
 			retain: true,
 			frictional_coefficient: 0.0100
@@ -220,7 +220,7 @@
 		key: "rocket_smoke_trail",
 		object: {
 			particle_type: 0,
-			img: "muzzle_smoke",
+			image_key: "muzzle_smoke",
 			layer: 1
 		}
 	},
@@ -247,7 +247,7 @@
 		key: "laser",
 		object: {
 			particle_type: 0,
-			img: "laser",
+			image_key: "laser",
 			layer: 1,
 			retain: false
 		}
@@ -257,7 +257,7 @@
 		key: "door_servo",
 		object: {
 			particle_type: 1,
-			img: "door_servo",
+			image_key: "door_servo",
 		}
 	},
 	{
@@ -265,7 +265,7 @@
 		key: "discarded_energy_core_red",
 		object: {
 			particle_type: 0,
-			img: "discarded_energy_core_red",
+			image_key: "discarded_energy_core_red",
 			layer: 1,
 			retain: false,
 			frictional_coefficient: 0.0150
@@ -276,7 +276,7 @@
 		key: "discarded_energy_core_big",
 		object: {
 			particle_type: 0,
-			img: "discarded_energy_core_big",
+			image_key: "discarded_energy_core_big",
 			layer: 1,
 			retain: false,
 			frictional_coefficient: 0.0150
@@ -287,7 +287,7 @@
 		key: "shockwave",
 		object: {
 			particle_type: 0,
-			img: "shockwave",
+			image_key: "shockwave",
 			layer: 2,
 			retain: false,
 		}

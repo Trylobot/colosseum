@@ -16,7 +16,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	Field explosive_force_magnitude#
 	Field radius# 'radius of damage spread
 	Field max_vel# 'absolute maximum speed (enforced)
-	Field ignore_other_projectiles% 'whether to ignore collisions with other projectiles {true|false}
+	Field ignore_other_projectiles% 'DEPRECATED 'whether to ignore collisions with other projectiles {true|false}
 	Field source_id% '(private) reference to entity which emitted this projectile; allows for collisions with it to be ignored
 	Field emitter_list_constant:TList
 	Field emitter_list_payload:TList
@@ -145,3 +145,39 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	End Method
 	
 End Type
+
+Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
+	Local p:PROJECTILE
+	'no required fields
+	p = PROJECTILE( PROJECTILE.Create() )
+	'read and assign optional fields as available
+	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED                 Then p.img = get_image( json.GetString( "image_key" ))
+	If json.TypeOf( "impact_sound_key" ) <> JSON_UNDEFINED          Then p.snd_impact = get_sound( json.GetString( "impact_sound_key" ))
+	If json.TypeOf( "damage" ) <> JSON_UNDEFINED                    Then p.damage = json.GetNumber( "damage" )
+	If json.TypeOf( "explosive_force_magnitude" ) <> JSON_UNDEFINED Then p.explosive_force_magnitude = json.GetNumber( "explosive_force_magnitude" )
+	If json.TypeOf( "radius" ) <> JSON_UNDEFINED                    Then p.radius = json.GetNumber( "radius" )
+	If json.TypeOf( "max_vel" ) <> JSON_UNDEFINED                   Then p.max_vel = json.GetNumber( "max_vel" )
+	If json.TypeOf( "mass" ) <> JSON_UNDEFINED                      Then p.mass = json.GetNumber( "mass" )
+	If json.TypeOf( "ignore_other_projectiles" ) <> JSON_UNDEFINED  Then p.ignore_other_projectiles = json.GetBoolean( "ignore_other_projectiles" )
+	If json.TypeOf( "constant_emitters" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "constant_emitters" )
+		If array And Not array.IsNull()
+			For Local i% = 0 Until array.Size()
+				Local em:EMITTER = Create_EMITTER_from_json_reference( TJSON.Create( array.GetByIndex( i )))
+				If em Then p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_CONSTANT )
+			Next
+		End If
+	End If
+	If json.TypeOf( "payload_emitters" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "payload_emitters" )
+		If array And Not array.IsNull()
+			For Local i% = 0 Until array.Size()
+				Local em:EMITTER = Create_EMITTER_from_json_reference( TJSON.Create( array.GetByIndex( i )))
+				If em Then p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_PAYLOAD )
+			Next
+		End If
+	End If
+	Return p
+End Function
+
+

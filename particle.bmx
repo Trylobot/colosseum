@@ -95,8 +95,10 @@ Type PARTICLE Extends POINT
 	End Function
 	
 	Method clone:PARTICLE( new_frame% = 0 )
-		If new_frame = PARTICLE_FRAME_RANDOM
+		If new_frame = PARTICLE_FRAME_RANDOM And img
 			new_frame = Rand( 0, img.frames.Length - 1 )
+		Else
+			new_frame = 0
 		End If
 		Return PARTICLE( PARTICLE.Create( ..
 			particle_type, img, new_frame, frame_delay, str, font, layer, retain, frictional_coefficient, red, green, blue, red_delta, green_delta, blue_delta, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
@@ -215,7 +217,7 @@ Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
 	'create object with required fields only
 	p = PARTICLE( PARTICLE.Create( particle_type ))
 	'read and assign optional fields as available
-	If json.TypeOf( "img" ) <> JSON_UNDEFINED                    Then p.img = get_image( json.GetString( "img" ))
+	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED              Then p.img = get_image( json.GetString( "image_key" ))
 	If json.TypeOf( "frame" ) <> JSON_UNDEFINED                  Then p.frame = json.GetNumber( "frame" )
 	If json.TypeOf( "frame_delay" ) <> JSON_UNDEFINED            Then p.frame_delay = json.GetNumber( "frame_delay" )
 	If json.TypeOf( "str" ) <> JSON_UNDEFINED                    Then p.str = json.GetString( "str" )

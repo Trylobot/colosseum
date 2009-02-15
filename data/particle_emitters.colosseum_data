@@ -1,11 +1,11 @@
 [
 	{
-		class: "particle",
+		class: "particle_emitter",
 		key: "tank_tread_debris",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "tank_tread_debris",
-			combine_vel_ang_with_parent_ang: True,
+			emitter_object_key: "tank_tread_debris",
+			combine_vel_ang_with_parent_ang: true,
 			interval_min: 100,
 			interval_max: 150,
 			count_min: 0,
@@ -15,16 +15,16 @@
 			alpha_min: 0.75,
 			alpha_max: 0.75,
 			alpha_delta_min: -0.0012,
-			alpha_delta_max: -0.0025,
+			alpha_delta_max: -0.0025
 		}
 	},
 	{
-		class: "particle",
+		class: "particle_emitter",
 		key: "tank_tread_dust_cloud",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "dust",
-			combine_vel_ang_with_parent_ang: True,
+			emitter_object_key: "dust",
+			combine_vel_ang_with_parent_ang: true,
 			interval_min: 50,
 			interval_max: 100,
 			life_time_min: 3000,
@@ -42,15 +42,15 @@
 			green_min: 125,
 			green_max: 255,
 			blue_min: 125,
-			blue_max: 255,
+			blue_max: 255
 		}
 	},
 	{
-		class: "particle",
+		class: "particle_emitter",
 		key: "tank_tread_trail_small",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "tank_tread_trail_small",
+			emitter_object_key: "tank_tread_trail_small",
 			interval_min: 100,
 			interval_max: 100,
 			life_time_min: 0,
@@ -58,11 +58,11 @@
 		}
 	},
 	{
-		class: "particle",
+		class: "particle_emitter",
 		key: "tank_tread_trail_medium",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "tank_tread_trail_medium",
+			emitter_object_key: "tank_tread_trail_medium",
 			interval_min: 100,
 			interval_max: 100,
 			life_time_min: 0,
@@ -70,11 +70,11 @@
 		}
 	},
 	{
-		class: "particle",
+		class: "particle_emitter",
 		key: "explosion",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "explosion",
+			emitter_object_key: "explosion",
 			life_time_min: 250,
 			life_time_max: 300,
 			alpha_min: 1.0,
@@ -100,11 +100,11 @@
 		}
 	},
 	{
-		class: "particle",
+		class: "particle_emitter",
 		key: "shockwave",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "shockwave",
+			emitter_object_key: "shockwave",
 			life_time_min: 450,
 			life_time_max: 650,
 			alpha_min: 0.80,
@@ -118,35 +118,35 @@
 		}
 	},
 	{
-		class: "particle",
+		class: "particle_emitter",
 		key: "cannon_muzzle_flash",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "cannon_muzzle_flash",
+			emitter_object_key: "cannon_muzzle_flash",
 			life_time_min: 50,
 			life_time_max: 50
 		}
 	},
 	{
-		class: "particle",
+		class: "particle_emitter",
 		key: "cannon_shell_casing",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "cannon_shell_casing",
-			combine_vel_with_parent_vel: True,
-			combine_vel_ang_with_parent_ang: True,
-			inherit_acc_ang_from_vel_ang: True,
+			emitter_object_key: "cannon_shell_casing",
+			combine_vel_with_parent_vel: true,
+			combine_vel_ang_with_parent_ang: true,
+			inherit_acc_ang_from_vel_ang: true,
 			life_time_min: 2200,
 			life_time_max: 2300
 		}
 	},
 	{
-		class: "particle",
+		class: "particle_emitter",
 		key: "cannon_muzzle_smoke",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "cannon_muzzle_smoke",
-			combine_vel_ang_with_parent_ang: True,
+			emitter_object_key: "cannon_muzzle_smoke",
+			combine_vel_ang_with_parent_ang: true,
 			count_min: 10,
 			count_max: 12,
 			life_time_min: 500,
@@ -162,11 +162,11 @@
 		}
 	},
 	{
-		class: "particle",
+		class: "particle_emitter",
 		key: "cannon_explosion",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "explosion",
+			emitter_object_key: "explosion",
 			life_time_min: 300,
 			life_time_max: 350,
 			alpha_min: 1.0,
@@ -192,13 +192,13 @@
 		}
 	},
 	{
-		class: "particle",
+		class: "particle_emitter",
 		key: "cannon_ricochet_spark",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "ricochet_spark",
-			inherit_ang_from_dist_ang: True,
-			inherit_vel_ang_from_ang: True,
+			emitter_object_key: "ricochet_spark",
+			inherit_ang_from_dist_ang: true,
+			inherit_vel_ang_from_ang: true,
 			count_min: 1,
 			count_max: 5,
 			life_time_min: 150,
@@ -216,7 +216,7 @@
 		key: "cannon_impact_halo",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "impact_halo",
+			emitter_object_key: "impact_halo",
 			life_time_min: 100,
 			life_time_max: 100,
 			alpha_min: 0.5,
@@ -234,7 +234,7 @@
 		key: "machine_gun_muzzle_flash",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "machine_gun_muzzle_flash",
+			emitter_object_key: "machine_gun_muzzle_flash",
 			life_time_min: 25,
 			life_time_max: 25
 		}
@@ -244,10 +244,10 @@
 		key: "machine_gun_shell_casing",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "machine_gun_shell_casing",
-			combine_vel_with_parent_vel: True,
-			combine_vel_ang_with_parent_ang: True,
-			inherit_acc_ang_from_vel_ang: True,
+			emitter_object_key: "machine_gun_shell_casing",
+			combine_vel_with_parent_vel: true,
+			combine_vel_ang_with_parent_ang: true,
+			inherit_acc_ang_from_vel_ang: true,
 			life_time_min: 1400,
 			life_time_max: 1800
 		}
@@ -257,8 +257,8 @@
 		key: "machine_gun_muzzle_smoke",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "machine_gun_muzzle_smoke",
-			combine_vel_ang_with_parent_ang: True,
+			emitter_object_key: "machine_gun_muzzle_smoke",
+			combine_vel_ang_with_parent_ang: true,
 			count_min: 6,
 			count_max: 8,
 			life_time_min: 300,
@@ -278,9 +278,9 @@
 		key: "machine_gun_ricochet_spark",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "ricochet_spark",
-			inherit_ang_from_dist_ang: True,
-			inherit_vel_ang_from_ang: True,
+			emitter_object_key: "ricochet_spark",
+			inherit_ang_from_dist_ang: true,
+			inherit_vel_ang_from_ang: true,
 			life_time_min: 150,
 			life_time_max: 150,
 			alpha_min: 1,
@@ -298,7 +298,7 @@
 		key: "laser_muzzle_flare",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "laser_muzzle_flare",
+			emitter_object_key: "laser_muzzle_flare",
 			life_time_min: 50,
 			life_time_max: 50
 		}
@@ -308,7 +308,7 @@
 		key: "laser_explosion",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "explosion",
+			emitter_object_key: "explosion",
 			life_time_min: 250,
 			life_time_max: 300,
 			alpha_min: 1.0,
@@ -332,9 +332,9 @@
 		key: "laser_secondary_explosion",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "explosion",
-			inherit_ang_from_dist_ang: True,
-			inherit_vel_ang_from_ang: True,
+			emitter_object_key: "explosion",
+			inherit_ang_from_dist_ang: true,
+			inherit_vel_ang_from_ang: true,
 			count_min: 5,
 			count_max: 8,
 			life_time_min: 300,
@@ -360,10 +360,10 @@
 		key: "laser_discard_energy_core",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "discarded_energy_core_red",
-			combine_vel_with_parent_vel: True,
-			combine_vel_ang_with_parent_ang: True,
-			inherit_acc_ang_from_vel_ang: True,
+			emitter_object_key: "discarded_energy_core_red",
+			combine_vel_with_parent_vel: true,
+			combine_vel_ang_with_parent_ang: true,
+			inherit_acc_ang_from_vel_ang: true,
 			life_time_min: 3000,
 			life_time_max: 3300,
 			alpha_delta_min: -0.0060,
@@ -375,7 +375,7 @@
 		key: "medium_laser_muzzle_flare",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "medium_laser_muzzle_flare",
+			emitter_object_key: "medium_laser_muzzle_flare",
 			life_time_min: 50,
 			life_time_max: 50
 		}
@@ -385,7 +385,7 @@
 		key: "medium_laser_explosion",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "explosion",
+			emitter_object_key: "explosion",
 			life_time_min: 250,
 			life_time_max: 300,
 			alpha_min: 1.0,
@@ -409,9 +409,9 @@
 		key: "medium_laser_secondary_explosion",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "explosion",
-			inherit_ang_from_dist_ang: True,
-			inherit_vel_ang_from_ang: True,
+			emitter_object_key: "explosion",
+			inherit_ang_from_dist_ang: true,
+			inherit_vel_ang_from_ang: true,
 			count_min: 5,
 			count_max: 8,
 			life_time_min: 300,
@@ -437,10 +437,10 @@
 		key: "medium_laser_discard_energy_core",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "discarded_energy_core_big",
-			combine_vel_with_parent_vel: True,
-			combine_vel_ang_with_parent_ang: True,
-			inherit_acc_ang_from_vel_ang: True,
+			emitter_object_key: "discarded_energy_core_big",
+			combine_vel_with_parent_vel: true,
+			combine_vel_ang_with_parent_ang: true,
+			inherit_acc_ang_from_vel_ang: true,
 			life_time_min: 3000,
 			life_time_max: 3300,
 			alpha_delta_min: -0.0060,
@@ -452,7 +452,7 @@
 		key: "laser_impact_halo",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "impact_halo",
+			emitter_object_key: "impact_halo",
 			life_time_min: 100,
 			life_time_max: 100,
 			alpha_min: 0.5,
@@ -476,7 +476,7 @@
 		key: "rocket_thrust",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "rocket_thrust",
+			emitter_object_key: "rocket_thrust",
 			mode: 3,
 			interval_min: 10,
 			interval_max: 15,
@@ -497,10 +497,10 @@
 		key: "rocket_casing",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "rocket_casing",
-			combine_vel_with_parent_vel: True,
-			combine_vel_ang_with_parent_ang: True,
-			inherit_acc_ang_from_vel_ang: True,
+			emitter_object_key: "rocket_casing",
+			combine_vel_with_parent_vel: true,
+			combine_vel_ang_with_parent_ang: true,
+			inherit_acc_ang_from_vel_ang: true,
 			life_time_min: 2200,
 			life_time_max: 2200
 		}
@@ -510,7 +510,7 @@
 		key: "rocket_smoke_trail",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "rocket_smoke_trail",
+			emitter_object_key: "rocket_smoke_trail",
 			mode: 3,
 			interval_min: 25,
 			interval_max: 50,
@@ -533,8 +533,8 @@
 		key: "quad_wheel_debris",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "tank_tread_debris",
-			combine_vel_ang_with_parent_ang: True,
+			emitter_object_key: "tank_tread_debris",
+			combine_vel_ang_with_parent_ang: true,
 			interval_min: 100,
 			interval_max: 150,
 			count_min: 0,
@@ -552,7 +552,7 @@
 		key: "quad_wheel_trail",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "tank_tread_trail_small",
+			emitter_object_key: "tank_tread_trail_small",
 			interval_min: 100,
 			interval_max: 100,
 			life_time_min: 50,
@@ -568,11 +568,11 @@
 		key: "spawner",
 		object: {
 			emitter_type: 0,
-			particle_archetype: "laser",
+			emitter_object_key: "laser",
 			mode: 2,
-			inherit_ang_from_dist_ang: True,
-			inherit_vel_ang_from_ang: True,
-			inherit_acc_ang_from_vel_ang: True,
+			inherit_ang_from_dist_ang: true,
+			inherit_vel_ang_from_ang: true,
+			inherit_acc_ang_from_vel_ang: true,
 			interval_min: 10,
 			interval_max: 25,
 			life_time_min: 500,

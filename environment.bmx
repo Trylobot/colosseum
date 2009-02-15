@@ -329,7 +329,7 @@ Type ENVIRONMENT
 		'_____________________________________________________________________
 		'the following should come from an emitter event attached to the agent
 		Local pt:POINT = Create_POINT( unit.pos_x, unit.pos_y )
-		Local em:EMITTER = EMITTER( EMITTER.Copy( particle_emitter_archetype[PARTICLE_EMITTER_INDEX_SPAWNER] ))
+		Local em:EMITTER = get_particle_emitter( "spawner" )
 		em.manage( environmental_emitter_list )
 		em.parent = pt
 		em.attach_at( ,, 30,60, -180,180,,,,, -0.04,-0.08 )

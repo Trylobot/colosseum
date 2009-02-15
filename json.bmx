@@ -280,7 +280,8 @@ Type TJSONArray Extends TJSONValue
 	EndMethod
 	
 	Method Size:Int()
-		Return Items.Length
+		If Items Then Return Items.Length ..
+		Else Return 0
 	End Method
 
 	Method ToString:String()

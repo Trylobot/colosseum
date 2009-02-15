@@ -1,0 +1,5 @@
+	
+	After getting game over, immediately exited to main menu
+		recommend flushkeys() after getting game over
+	
+	

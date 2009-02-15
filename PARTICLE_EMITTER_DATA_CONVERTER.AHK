@@ -18,7 +18,7 @@ F12::
 	object = 
 	
 	; argument names
-	arg_names = emitter_type,particle_archetype,mode,combine_vel_with_parent_vel,combine_vel_ang_with_parent_ang,inherit_ang_from_dist_ang,inherit_vel_ang_from_ang,inherit_acc_ang_from_vel_ang,interval_min,interval_max,count_min,count_max,life_time_min,life_time_max,alpha_min,alpha_max,alpha_delta_min,alpha_delta_max,scale_min,scale_max,scale_delta_min,scale_delta_max,red_min,red_max,green_min,green_max,blue_min,blue_max,red_delta_min,red_delta_max,green_delta_min,green_delta_max,blue_delta_min,blue_delta_max
+	arg_names = emitter_type,emitter_object_key,mode,combine_vel_with_parent_vel,combine_vel_ang_with_parent_ang,inherit_ang_from_dist_ang,inherit_vel_ang_from_ang,inherit_acc_ang_from_vel_ang,interval_min,interval_max,count_min,count_max,life_time_min,life_time_max,alpha_min,alpha_max,alpha_delta_min,alpha_delta_max,scale_min,scale_max,scale_delta_min,scale_delta_max,red_min,red_max,green_min,green_max,blue_min,blue_max,red_delta_min,red_delta_max,green_delta_min,green_delta_max,blue_delta_min,blue_delta_max
 	StringSplit, args, arg_names, `,
 	
 	; argument processing

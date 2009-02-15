@@ -164,14 +164,17 @@ Type AGENT Extends PHYSICAL_OBJECT
 End Type
 
 Function Create_AGENT_from_json:AGENT( json:TJSON )
-	Local a:AGENT = New AGENT
-	a.img = get_image( json.GetString( "img" ))
-	a.gibs = get_image( json.GetString( "gibs" ))
-	a.max_health = json.GetNumber( "max_health" )
-	a.mass = json.GetNumber( "mass" )
-	a.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
-	a.physics_disabled = json.GetBoolean( "physics_disabled" )
-	a.destruct_on_contact = json.GetBoolean( "destruct_on_contact" )
+	Local a:AGENT
+	'no required fields
+	a = Create_AGENT()
+	'read and assign optional fields as available
+	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED              Then a.img = get_image( json.GetString( "image_key" ))
+	If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED         Then a.gibs = get_image( json.GetString( "gibs_image_key" ))
+	If json.TypeOf( "max_health" ) <> JSON_UNDEFINED             Then a.max_health = json.GetNumber( "max_health" )
+	If json.TypeOf( "mass" ) <> JSON_UNDEFINED                   Then a.mass = json.GetNumber( "mass" )
+	If json.TypeOf( "frictional_coefficient" ) <> JSON_UNDEFINED Then a.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
+	If json.TypeOf( "physics_disabled" ) <> JSON_UNDEFINED       Then a.physics_disabled = json.GetBoolean( "physics_disabled" )
+	If json.TypeOf( "destruct_on_contact" ) <> JSON_UNDEFINED    Then a.destruct_on_contact = json.GetBoolean( "destruct_on_contact" )
 	Return a
 End Function
 

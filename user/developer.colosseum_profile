@@ -11,14 +11,14 @@
 		},
 		{
 			item_type: "turret",
-			key: "light_cannon",
-			count: 2,
+			key: "medium_machine_gun",
+			count: 1,
 			damaged: true
 		},
 		{
 			item_type: "turret",
-			key: "medium_machine_gun",
-			count: 1,
+			key: "light_cannon",
+			count: 2,
 			damaged: true
 		},
 		{
@@ -53,14 +53,14 @@
 		},
 		{
 			item_type: "turret",
-			key: "light_cannon",
-			count: 2,
+			key: "medium_machine_gun",
+			count: 1,
 			damaged: false
 		},
 		{
 			item_type: "turret",
-			key: "medium_machine_gun",
-			count: 1,
+			key: "light_cannon",
+			count: 2,
 			damaged: false
 		},
 		{
@@ -90,14 +90,8 @@
 		{
 			item_type: "chassis",
 			key: "light_tank",
-			count: 1,
+			count: 2,
 			damaged: true
-		},
-		{
-			item_type: "chassis",
-			key: "light_tank",
-			count: 1,
-			damaged: false
 		},
 		{
 			item_type: "chassis",
@@ -113,16 +107,15 @@
 		}
 	],
 	vehicle: {
-		chassis_key: "medium_tank",
+		chassis_key: "light_tank",
 		is_unit: false,
 		turret_keys: [
 			[
-				"dual_light_cannon",
-				"medium_machine_gun"
+				"light_laser"
 			]
 		]
 	},
-	input_method: 2,
+	input_method: 1,
 	invert_reverse_steering: false,
 	progress: null,
 	campaign: "",
