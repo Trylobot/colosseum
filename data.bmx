@@ -192,15 +192,18 @@ Function load_assets%()
 		Local asset_path$, asset_file:TStream, asset_json:TJSON
 		For Local asset_id$ = EachIn asset_identifiers
 			asset_path = json.GetString( asset_id )
+			Local source_file$ = StripAll( asset_path )
 			DebugLog( "  load_assets() --> "+asset_path )
 			asset_file = ReadFile( asset_path )
 			If file
+				global_error_message = source_file + "~n"
 				asset_json = TJSON.Create( asset_file )
 				If Not asset_json.isNull() And TJSONArray(asset_json.Root) 'read successful
-					load_objects( asset_json, StripAll( asset_path ))
+					load_objects( asset_json, source_file )
 				End If
 			Else
-				DebugLog( "    file could not be read!" )
+				global_error_message :+ "file could not be opened for read."
+				load_error()
 			End If
 		Next
 		DebugLog( "~n~n" )
@@ -223,57 +226,59 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 		End Select
 		If key And key <> ""
 			DebugLog( "    load_objects() --> " + key )
+			global_error_message = source_file + "/" + key + "~n"
 			Local object_json:TJSON = TJSON.Create( item.GetObject( "object" ))
 			Select item.GetString( "class" )
 				Case "font"
 					Local f:TImageFont = Create_TImageFont_from_json( object_json )
-					If f Then font_map.Insert( key, f ) Else load_error( source_file + "." + key )
+					If f Then font_map.Insert( key, f ) Else load_error()
 				Case "sound"
 					Local s:TSound = Create_TSound_from_json( object_json )
-					If s Then sound_map.Insert( key, s ) Else load_error( source_file + "." + key )
+					If s Then sound_map.Insert( key, s ) Else load_error()
 				Case "image"
 					Local i:TImage = Create_TImage_from_json( object_json )
-					If i Then image_map.Insert( key, i ) Else load_error( source_file + "." + key )
+					If i Then image_map.Insert( key, i ) Else load_error()
 				Case "prop"
 					Local p:AGENT = Create_AGENT_from_json( object_json )
-					If p Then prop_map.Insert( key, p ) Else load_error( source_file + "." + key )
+					If p Then prop_map.Insert( key, p ) Else load_error()
 				Case "particle"
 					Local p:PARTICLE = Create_PARTICLE_from_json( object_json )
-					If p Then particle_map.Insert( key, p ) Else load_error( source_file + "." + key )
+					If p Then particle_map.Insert( key, p ) Else load_error()
 				Case "particle_emitter"
 					Local em:EMITTER = Create_EMITTER_from_json( object_json )
-					If em Then particle_emitter_map.Insert( key, em ) Else load_error( source_file + "." + key )
+					If em Then particle_emitter_map.Insert( key, em ) Else load_error()
 				Case "projectile"
 					Local proj:PROJECTILE = Create_PROJECTILE_from_json( object_json )
-					If proj Then projectile_map.Insert( key, proj ) Else load_error( source_file + "." + key )
+					If proj Then projectile_map.Insert( key, proj ) Else load_error()
 				Case "projectile_launcher"
 					Local lchr:EMITTER = Create_EMITTER_from_json( object_json )
-					If lchr Then projectile_launcher_map.Insert( key, lchr ) Else load_error( source_file + "." + key )
+					If lchr Then projectile_launcher_map.Insert( key, lchr ) Else load_error()
 				Case "widget"
 					Local w:WIDGET = Create_WIDGET_from_json( object_json )
-					If w Then widget_map.Insert( key, w ) Else load_error( source_file + "." + key )
+					If w Then widget_map.Insert( key, w ) Else load_error()
 				Case "pickup"
 					Local pkp:PICKUP = Create_PICKUP_from_json( object_json )
-					If pkp Then pickup_map.Insert( key, pkp ) Else load_error( source_file + "." + key )
+					If pkp Then pickup_map.Insert( key, pkp ) Else load_error()
 				'Case "turret_barrel"
 				'Case "turret"
 				Case "ai_type"
 					Local ai:AI_TYPE = Create_AI_TYPE_from_json( object_json )
-					If ai Then ai_type_map.Insert( key, ai ) Else load_error( source_file + "." + key )
+					If ai Then ai_type_map.Insert( key, ai ) Else load_error()
 				'Case "player_chassis"
 				'Case "unit"
 				Case "compatibility"
 					Local cd:COMPATIBILITY_DATA = Create_COMPATIBILITY_DATA_from_json( object_json )
-					If cd Then compatibility_map.Insert( key, cd ) Else load_error( source_file + "." + key )
+					If cd Then compatibility_map.Insert( key, cd ) Else load_error()
 				'Case "level"
 			End Select
 		End If
 	Next
 End Function
 
-Function load_error( message$ = Null )
-	DebugLog "      ERROR: FAILED TO LOAD"
-	If message Then Notify( "Error: could not load " + message, True )
+Global global_error_message$
+Function load_error()
+	DebugLog "      ERROR: " + global_error_message
+	If global_error_message Then Notify( "ERROR: " + global_error_message, True )
 	End
 End Function
 

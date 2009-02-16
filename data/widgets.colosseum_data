@@ -25,9 +25,6 @@
 		key: "{image_key}",
 		object: {
 			image_key: "door",
-			layer: LAYER_IN_FRONT_OF_PARENT,
-			repeat_mode: REPEAT_MODE_CYCLIC_WRAP,
-			initially_transforming: false,
 			states: [
 				{
 					pos_x: 0,

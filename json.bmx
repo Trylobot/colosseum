@@ -663,12 +663,13 @@ Type TJSONParser
 			Error( "expected ~qtrue~q,~qfalse~q Or ~qnull~q")
 			Return Null
 		Else
-			DebugLog "unknown character: " + c + " => " + Chr(c)
+			Error( "unknown character: " + Chr(c) )
 		EndIf
 	EndMethod
 	
 	Method Error( msg:String)
-		DebugLog "JSON-PARSER-ERROR[ index:"+Index+" ]: " + msg
+		global_error_message :+ "JSON_PARSER_ERROR; index: "+Index+"; " + msg
+		load_error()
 	EndMethod
 EndType
 

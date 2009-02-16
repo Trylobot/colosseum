@@ -6,4 +6,6 @@
 		recommend wall collision re-write so that it is impossible for anyone to be inside of a wall
 		for instance, move them outside the wall instead of just nudging them
 	
-	
+	All the widgets are messed up now
+		the lightbulbs flash black
+		the doors are invisible
