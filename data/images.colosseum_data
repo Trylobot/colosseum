@@ -857,12 +857,23 @@
 	},
 	{
 		class: "image",
-		key: "{path}",
+		key: "bay_door_clockwise",
 		object: {
 			path: "art/bay_door.png",
 			handle_x: 3,
 			handle_y: 2,
 			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "bay_door_counter_clockwise",
+		object: {
+			path: "art/bay_door.png",
+			handle_x: 3,
+			handle_y: 10,
+			frames: 1,
+			flip_vertical: true
 		}
 	},
 	{

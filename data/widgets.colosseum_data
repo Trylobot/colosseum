@@ -1,0 +1,112 @@
+[
+	{
+		class: "widget",
+		key: "{image_key}",
+		object: {
+			image_key: "lightbulb",
+			states: [
+				{
+					alpha: 0,
+					scale_x: 0.75,
+					scale_y: 0.75,
+					transition_time: 100
+				},
+				{
+					alpha: 0.75,
+					scale_x: 1.25,
+					scale_y: 1.25,
+					transition_time: 100
+				}
+			]
+		}
+	},
+	{
+		class: "widget",
+		key: "{image_key}",
+		object: {
+			image_key: "door",
+			layer: LAYER_IN_FRONT_OF_PARENT,
+			repeat_mode: REPEAT_MODE_CYCLIC_WRAP,
+			initially_transforming: false,
+			states: [
+				{
+					pos_x: 0,
+					transition_time: 1750
+				},
+				{
+					pos_x: 32,
+					transition_time: 925
+				}
+			]
+		}
+	},
+	{
+		class: "widget",
+		key: "{image_key}",
+		object: {
+			image_key: "bay_door_clockwise",
+			states: [
+				{
+					ang: 0,
+					transition_time: 1000
+				},
+				{
+					ang: 90,
+					transition_time: 1000
+				}
+			]
+		}
+	},
+	{
+		class: "widget",
+		key: "{image_key}",
+		object: {
+			image_key: "bay_door_counter_clockwise",
+			states: [
+				{
+					ang: 0,
+					transition_time: 1000
+				},
+				{
+					ang: -90,
+					transition_time: 1000
+				}
+			]
+		}
+	},
+	{
+		class: "widget",
+		key: "{image_key}",
+		object: {
+			image_key: "ramp",
+			layer: 0,
+			states: [
+				{
+					pos_x: 0,
+					transition_time: 1000
+				},
+				{
+					pos_x: -11,
+					transition_time: 1000
+				}
+			]
+		}
+	},
+	{
+		class: "widget",
+		key: "{image_key}",
+		object: {
+			image_key: "spinner",
+			states: [
+				{
+					ang: -180,
+					transition_time: 1000
+				},
+				{
+					ang: 180,
+					transition_time: 1000
+				}
+			]
+		}
+	}
+]

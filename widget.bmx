@@ -46,14 +46,12 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Method
 	
 	Function Create:Object( ..
-	name$ = Null, ..
 	img:TImage, ..
 	layer% = LAYER_IN_FRONT_OF_PARENT, ..
 	visible% = True, ..
 	repeat_mode% = REPEAT_MODE_CYCLIC_WRAP, ..
 	initially_transforming% = False )
 		Local w:WIDGET = New WIDGET
-		w.name = name
 		w.img = img
 		w.layer = layer
 		w.visible = visible
@@ -81,7 +79,6 @@ Type WIDGET Extends MANAGED_OBJECT
 	
 	Method clone:WIDGET()
 		Local w:WIDGET = WIDGET( WIDGET.Create( ..
-			name, ..
 			img, ..
 			layer, ..
 			visible, ..
@@ -248,3 +245,29 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Method
 	
 End Type
+
+Function Create_WIDGET_from_json:WIDGET( json:TJSON )
+	Local w:WIDGET
+	'required fields
+	Local image_key$
+	Local img:TImage
+	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED Then image_key = json.GetString( "image_key" ) Else Return Null
+	img = get_image( image_key )
+	If Not img Then Return Null
+	w = WIDGET( WIDGET.Create( img ))
+	'optional fields
+	If json.TypeOf( "layer" ) <> JSON_UNDEFINED                  Then w.layer = json.GetNumber( "layer" )
+	If json.TypeOf( "visible" ) <> JSON_UNDEFINED                Then w.visible = json.GetBoolean( "visible" )
+	If json.TypeOf( "repeat_mode" ) <> JSON_UNDEFINED            Then w.repeat_mode = json.GetNumber( "repeat_mode" )
+	If json.TypeOf( "initially_transforming" ) <> JSON_UNDEFINED Then w.transforming = json.GetBoolean( "initially_transforming" )
+	If json.TypeOf( "states" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "states" )
+		If array And Not array.IsNull()
+			For Local i% = 0 Until array.Size()
+				Local st:TRANSFORM_STATE = Create_TRANSFORM_STATE_from_json( TJSON.Create( array.GetByIndex( i )))
+				If st Then w.add_state( st )
+			Next
+		End If
+	End If
+	Return w
+End Function

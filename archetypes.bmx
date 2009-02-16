@@ -6,7 +6,6 @@ EndRem
 
 '______________________________________________________________________________
 Function load_all_archetypes()
-	set_widget_archetypes()
 	set_turret_barrel_archetypes()
 	set_turret_archetypes()
 	set_player_chassis_archetypes()
@@ -20,38 +19,6 @@ End Function
 Function postfix_index%( amount% = 1 )
 	array_index :+ amount
 	Return (array_index - amount)
-End Function
-
-'______________________________________________________________________________
-'[ WIDGETS ]
-Global widget_archetype:WIDGET[6]; reset_index()
-
-Global WIDGET_INDEX_AI_LIGHTBULB% = postfix_index()
-Global WIDGET_INDEX_ARENA_DOOR% = postfix_index()
-Global WIDGET_INDEX_BAY_DOOR_CLOCKWISE% = postfix_index()
-Global WIDGET_INDEX_BAY_DOOR_COUNTER_CLOCKWISE% = postfix_index()
-Global WIDGET_INDEX_RAMP_EXTENDER% = postfix_index()
-Global WIDGET_INDEX_SPINNER% = postfix_index()
-
-Function set_widget_archetypes()
-	widget_archetype[WIDGET_INDEX_AI_LIGHTBULB] = WIDGET( WIDGET.Create( "lightbulb", get_image( "lightbulb" )))
-		widget_archetype[WIDGET_INDEX_AI_LIGHTBULB].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.0, 0.75, 0.75, 100 )))
-		widget_archetype[WIDGET_INDEX_AI_LIGHTBULB].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( ,,,,,, 0.75, 1.25, 1.25, 100 )))
-	widget_archetype[WIDGET_INDEX_ARENA_DOOR] = WIDGET( WIDGET.Create( "door", get_image( "door" ), LAYER_IN_FRONT_OF_PARENT,, REPEAT_MODE_CYCLIC_WRAP, False ))
-		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0, 255, 255, 255, 1, 1, 1, 1750 )))
-		widget_archetype[WIDGET_INDEX_ARENA_DOOR].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 32, 0, 0, 255, 255, 255, 1, 1, 1, 925 )))
-	widget_archetype[WIDGET_INDEX_BAY_DOOR_CLOCKWISE] = WIDGET( WIDGET.Create( "bay door clockwise", get_image( "bay_door" )))
-		widget_archetype[WIDGET_INDEX_BAY_DOOR_CLOCKWISE].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0,,,,,,, 1000 )))
-		widget_archetype[WIDGET_INDEX_BAY_DOOR_CLOCKWISE].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 90,,,,,,, 1000 )))
-	widget_archetype[WIDGET_INDEX_BAY_DOOR_COUNTER_CLOCKWISE] = WIDGET( WIDGET.Create( "bay door counter-clockwise", pixel_transform( get_image( "bay_door" ),, True )))
-		widget_archetype[WIDGET_INDEX_BAY_DOOR_COUNTER_CLOCKWISE].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0,,,,,,, 1000 )))
-		widget_archetype[WIDGET_INDEX_BAY_DOOR_COUNTER_CLOCKWISE].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, -90,,,,,,, 1000 )))
-	widget_archetype[WIDGET_INDEX_RAMP_EXTENDER] = WIDGET( WIDGET.Create( "ramp", get_image( "ramp" ), LAYER_BEHIND_PARENT))
-		widget_archetype[WIDGET_INDEX_RAMP_EXTENDER].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 0,,,,,,, 1000 )))
-		widget_archetype[WIDGET_INDEX_RAMP_EXTENDER].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( -11, 0, 0,,,,,,, 1000 )))
-	widget_archetype[WIDGET_INDEX_SPINNER] = WIDGET( WIDGET.Create( "spinner", get_image( "spinner" )))
-		widget_archetype[WIDGET_INDEX_SPINNER].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, -180,,,,,,, 1000 )))
-		widget_archetype[WIDGET_INDEX_SPINNER].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 180,,,,,,, 1000 )))
 End Function
 
 '______________________________________________________________________________
@@ -255,7 +222,7 @@ Function set_unit_archetypes()
 		unit_map.Insert( "rocket_emplacement", unit_archetype[UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT] )
 	unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mini_bomb", get_image( "nme_mobile_bomb" ),, get_image( "bomb_gibs" ), "bomb", 75, 50, 200, 10.0, 7.50, 30.0 ))
 		unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB].add_death_package()
-		unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB].add_widget( widget_archetype[WIDGET_INDEX_AI_LIGHTBULB], WIDGET_AI_LIGHTBULB ).attach_at( 0, 0 )
+		unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB].add_widget( get_widget( "lightbulb" ), WIDGET_AI_LIGHTBULB ).attach_at( 0, 0 )
 		unit_map.Insert( "mini_bomb", unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB] )
 	unit_archetype[UNIT_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine_gun_quad", get_image( "enemy_quad_chassis" ),, get_image( "quad_gibs" ), "vehicle", 100, 50, 400, 25.0, 35.0, 55.0 ))
 		unit_archetype[UNIT_INDEX_LIGHT_QUAD].add_death_package()
@@ -283,10 +250,10 @@ Function set_unit_archetypes()
 		unit_archetype[UNIT_INDEX_CARRIER].add_motivator_package( "med_tank_track", 1, 8.5 )
 		unit_archetype[UNIT_INDEX_CARRIER].add_trail_package( "TANK_TREAD_TRAIL_MEDIUM",, 16, 8 )
 		unit_archetype[UNIT_INDEX_CARRIER].add_dust_cloud_package( , 16, 8, 0, 2, -45, 45, 0.2, 0.8 )
-		unit_archetype[UNIT_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_BAY_DOOR_CLOCKWISE], WIDGET_DEPLOY ).attach_at( -16, -9,, True )
-		unit_archetype[UNIT_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_BAY_DOOR_COUNTER_CLOCKWISE], WIDGET_DEPLOY ).attach_at( -16, 9,, True )
-		unit_archetype[UNIT_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_RAMP_EXTENDER], WIDGET_DEPLOY ).attach_at( -15, 0,, True )
-		unit_archetype[UNIT_INDEX_CARRIER].add_widget( widget_archetype[WIDGET_INDEX_SPINNER], WIDGET_DEPLOY ).attach_at( 10, 0,, True )
+		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "DOOR_CLOCKWISE" ), WIDGET_DEPLOY ).attach_at( -16, -9,, True )
+		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "BAY_DOOR_COUNTER_CLOCKWISE" ), WIDGET_DEPLOY ).attach_at( -16, 9,, True )
+		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "RAMP" ), WIDGET_DEPLOY ).attach_at( -15, 0,, True )
+		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "SPINNER" ), WIDGET_DEPLOY ).attach_at( 10, 0,, True )
 		unit_archetype[UNIT_INDEX_CARRIER].add_turret_anchor( Create_cVEC( 10, -10 ))
 		unit_archetype[UNIT_INDEX_CARRIER].add_turret_anchor( Create_cVEC( 10, 10 ))
 		unit_archetype[UNIT_INDEX_CARRIER].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 0 )

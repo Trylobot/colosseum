@@ -49,3 +49,19 @@ Type TRANSFORM_STATE
 	
 End Type
 
+Function Create_TRANSFORM_STATE_from_json:TRANSFORM_STATE( json:TJSON )
+	Return TRANSFORM_STATE( TRANSFORM_STATE.Create( ..
+		json.GetNumber( "pos_x" ), ..
+		json.GetNumber( "pos_y" ), ..
+		json.GetNumber( "ang" ), ..
+		json.GetNumber( "red" ), ..
+		json.GetNumber( "green" ), ..
+		json.GetNumber( "blue" ), ..
+		json.GetNumber( "alpha" ), ..
+		json.GetNumber( "scale_x" ), ..
+		json.GetNumber( "scale_y" ), ..
+		json.GetNumber( "transition_time" )))
+End Function
+
+
+

@@ -122,6 +122,13 @@ Function get_turret:TURRET( key$, copy% = True )
 	Return tur
 End Function
 '________________________________
+Function get_widget:WIDGET( key$, copy% = True )
+	key = key.toLower()
+	Local w:WIDGET = WIDGET( widget_map.ValueForKey( key ))
+	If copy And w Then Return w.clone()
+	Return w
+End Function
+'________________________________
 Function get_ai_type:AI_TYPE( key$ ) 'returns read-only reference
 	key = key.toLower()
 	Return AI_TYPE( ai_type_map.ValueForKey( key ))
@@ -193,10 +200,10 @@ Function load_assets%()
 					load_objects( asset_json, StripAll( asset_path ))
 				End If
 			Else
-				DebugLog( "    file could not be read" )
+				DebugLog( "    file could not be read!" )
 			End If
 		Next
-		DebugLog( "  --- load_assets() finished ---~n" )
+		DebugLog( "~n~n" )
 		Return True
 	End If
 	Return False
@@ -209,57 +216,56 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 		Select key 'special implicit keys for certain objects
 			Case "{path}"
 				key = StripAll( item.GetString( "object.path" ))
+			Case "{image_key}"
+				key = item.GetString( "object.image_key" )
 			Case "{chassis_key}"
 				key = item.GetString( "object.chassis_key" )
 		End Select
 		If key And key <> ""
-			DebugLog( "    load_objects() --> " + key ) 
+			DebugLog( "    load_objects() --> " + key )
+			Local object_json:TJSON = TJSON.Create( item.GetObject( "object" ))
 			Select item.GetString( "class" )
 				Case "font"
-					Local f:TImageFont = Create_TImageFont_from_json( TJSON.Create( item.GetObject( "object" )))
+					Local f:TImageFont = Create_TImageFont_from_json( object_json )
 					If f Then font_map.Insert( key, f ) Else load_error( source_file + "." + key )
 				Case "sound"
-					Local s:TSound = Create_TSound_from_json( TJSON.Create( item.GetObject( "object" )))
+					Local s:TSound = Create_TSound_from_json( object_json )
 					If s Then sound_map.Insert( key, s ) Else load_error( source_file + "." + key )
 				Case "image"
-					Local i:TImage = Create_TImage_from_json( TJSON.Create( item.GetObject( "object" )))
+					Local i:TImage = Create_TImage_from_json( object_json )
 					If i Then image_map.Insert( key, i ) Else load_error( source_file + "." + key )
 				Case "prop"
-					Local p:AGENT = Create_AGENT_from_json( TJSON.Create( item.GetObject( "object" )))
+					Local p:AGENT = Create_AGENT_from_json( object_json )
 					If p Then prop_map.Insert( key, p ) Else load_error( source_file + "." + key )
 				Case "particle"
-					Local p:PARTICLE = Create_PARTICLE_from_json( TJSON.Create( item.GetObject( "object" )))
+					Local p:PARTICLE = Create_PARTICLE_from_json( object_json )
 					If p Then particle_map.Insert( key, p ) Else load_error( source_file + "." + key )
 				Case "particle_emitter"
-					Local em:EMITTER = Create_EMITTER_from_json( TJSON.Create( item.GetObject( "object" )))
+					Local em:EMITTER = Create_EMITTER_from_json( object_json )
 					If em Then particle_emitter_map.Insert( key, em ) Else load_error( source_file + "." + key )
 				Case "projectile"
-					Local proj:PROJECTILE = Create_PROJECTILE_from_json( TJSON.Create( item.GetObject( "object" )))
+					Local proj:PROJECTILE = Create_PROJECTILE_from_json( object_json )
 					If proj Then projectile_map.Insert( key, proj ) Else load_error( source_file + "." + key )
 				Case "projectile_launcher"
-					Local lchr:EMITTER = Create_EMITTER_from_json( TJSON.Create( item.GetObject( "object" )))
+					Local lchr:EMITTER = Create_EMITTER_from_json( object_json )
 					If lchr Then projectile_launcher_map.Insert( key, lchr ) Else load_error( source_file + "." + key )
-				'Case "widget"
-				'	
+				Case "widget"
+					Local w:WIDGET = Create_WIDGET_from_json( object_json )
+					If w Then widget_map.Insert( key, w ) Else load_error( source_file + "." + key )
 				Case "pickup"
-					Local pkp:PICKUP = Create_PICKUP_from_json( TJSON.Create( item.GetObject( "object" )))
+					Local pkp:PICKUP = Create_PICKUP_from_json( object_json )
 					If pkp Then pickup_map.Insert( key, pkp ) Else load_error( source_file + "." + key )
 				'Case "turret_barrel"
-				'	
 				'Case "turret"
-				'	
 				Case "ai_type"
-					Local ai:AI_TYPE = Create_AI_TYPE_from_json( TJSON.Create( item.GetObject( "object" )))
+					Local ai:AI_TYPE = Create_AI_TYPE_from_json( object_json )
 					If ai Then ai_type_map.Insert( key, ai ) Else load_error( source_file + "." + key )
 				'Case "player_chassis"
-				'	
 				'Case "unit"
-				'	
 				Case "compatibility"
-					Local cd:COMPATIBILITY_DATA = Create_COMPATIBILITY_DATA_from_json( TJSON.Create( item.GetObject( "object" )))
+					Local cd:COMPATIBILITY_DATA = Create_COMPATIBILITY_DATA_from_json( object_json )
 					If cd Then compatibility_map.Insert( key, cd ) Else load_error( source_file + "." + key )
 				'Case "level"
-				'	
 			End Select
 		End If
 	Next
@@ -304,7 +310,7 @@ Function Create_TSound_from_json:TSound( json:TJSON )
 End Function
 '_____________________________________________________________________________
 Function Create_TImage_from_json:TImage( json:TJSON )
-	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%
+	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
 	Local img:TImage
 	'AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
 	AutoImageFlags( FILTEREDIMAGE )
@@ -319,6 +325,9 @@ Function Create_TImage_from_json:TImage( json:TJSON )
 			img = LoadAnimImage( path, frame_width, frame_height, 0, frames )
 		End If
 		If img
+			flip_horizontal = json.GetBoolean( "flip_horizontal" )
+			flip_vertical = json.GetBoolean( "flip_vertical" )
+			img = pixel_transform( img, flip_horizontal, flip_vertical ) 'does nothing if both are false
 			handle_x = json.GetNumber( "handle_x" )
 			handle_y = json.GetNumber( "handle_y" )
 			SetImageHandle( img, handle_x, handle_y )
