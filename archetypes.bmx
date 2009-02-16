@@ -7,10 +7,10 @@ EndRem
 '______________________________________________________________________________
 Function load_all_archetypes()
 	set_widget_archetypes()
-	set_pickup_archetypes()
+'	set_pickup_archetypes()
 	set_turret_barrel_archetypes()
 	set_turret_archetypes()
-	set_ai_type_archetypes()
+'	set_ai_type_archetypes()
 	set_player_chassis_archetypes()
 	set_unit_archetypes()
 End Function
@@ -75,25 +75,25 @@ Function set_widget_archetypes()
 		widget_archetype[WIDGET_INDEX_SPINNER].add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0, 0, 180,,,,,,, 1000 )))
 End Function
 
-'______________________________________________________________________________
-'[ PICKUPS ]
-Global pickup_archetype:PICKUP[6]; reset_index()
-
-Global PICKUP_INDEX_HEALTH% = postfix_index()
-Global PICKUP_INDEX_CANNON_AMMO_5% = postfix_index()
-Global PICKUP_INDEX_CANNON_AMMO_10% = postfix_index()
-Global PICKUP_INDEX_CANNON_AMMO_15% = postfix_index()
-Global PICKUP_INDEX_CANNON_AMMO_20% = postfix_index()
-Global PICKUP_INDEX_COOLDOWN% = postfix_index()
-
-Function set_pickup_archetypes()
-	pickup_archetype[PICKUP_INDEX_HEALTH] = PICKUP( PICKUP.Create( get_image( "pickup_health" ), PICKUP.HEALTH, 200, 60000 ))
-	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_5] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_5" ), PICKUP.AMMO, 5, 60000 ))
-	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_10] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_10" ), PICKUP.AMMO, 10, 60000 ))
-	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_15] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_15" ), PICKUP.AMMO, 15, 60000 ))
-	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_20] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_20" ), PICKUP.AMMO, 20, 60000 ))
-	pickup_archetype[PICKUP_INDEX_COOLDOWN] = PICKUP( PICKUP.Create( get_image( "pickup_cooldown" ), PICKUP.COOLDOWN, 4000, 60000 ))
-End Function
+''______________________________________________________________________________
+''[ PICKUPS ]
+'Global pickup_archetype:PICKUP[6]; reset_index()
+'
+'Global PICKUP_INDEX_HEALTH% = postfix_index()
+'Global PICKUP_INDEX_CANNON_AMMO_5% = postfix_index()
+'Global PICKUP_INDEX_CANNON_AMMO_10% = postfix_index()
+'Global PICKUP_INDEX_CANNON_AMMO_15% = postfix_index()
+'Global PICKUP_INDEX_CANNON_AMMO_20% = postfix_index()
+'Global PICKUP_INDEX_COOLDOWN% = postfix_index()
+'
+'Function set_pickup_archetypes()
+'	pickup_archetype[PICKUP_INDEX_HEALTH] = PICKUP( PICKUP.Create( get_image( "pickup_health" ), PICKUP.HEALTH, 200, 60000 ))
+'	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_5] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_5" ), PICKUP.AMMO, 5, 60000 ))
+'	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_10] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_10" ), PICKUP.AMMO, 10, 60000 ))
+'	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_15] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_15" ), PICKUP.AMMO, 15, 60000 ))
+'	pickup_archetype[PICKUP_INDEX_CANNON_AMMO_20] = PICKUP( PICKUP.Create( get_image( "pickup_ammo_main_20" ), PICKUP.AMMO, 20, 60000 ))
+'	pickup_archetype[PICKUP_INDEX_COOLDOWN] = PICKUP( PICKUP.Create( get_image( "pickup_cooldown" ), PICKUP.COOLDOWN, 4000, 60000 ))
+'End Function
 
 '______________________________________________________________________________
 '[ TURRET BARRELS ]
@@ -237,16 +237,16 @@ Function set_turret_archetypes()
 		turret_map.Insert( "ripper_machine_gun", turret_archetype[TURRET_INDEX_RIPPER_MACHINE_GUN] )
 End Function
 
-'______________________________________________________________________________
-'[ AI_TYPE ]
-Function set_ai_type_archetypes()
-	ai_type_map.Insert( "wildlife", Create_AI_TYPE( False, True, False, False ))
-	ai_type_map.Insert( "turret", Create_AI_TYPE( True, False, False, False ))
-	ai_type_map.Insert( "bomb", Create_AI_TYPE( False, True, True, False ))
-	ai_type_map.Insert( "vehicle", Create_AI_TYPE( True, True, False, False ))
-	ai_type_map.Insert( "carrier", Create_AI_TYPE( False, True, False, True ))
-	ai_type_map.Insert( "armed_carrier", Create_AI_TYPE( True, True, False, True ))
-End Function
+''______________________________________________________________________________
+''[ AI_TYPE ]
+'Function set_ai_type_archetypes()
+'	ai_type_map.Insert( "wildlife", Create_AI_TYPE( False, True, False, False ))
+'	ai_type_map.Insert( "turret", Create_AI_TYPE( True, False, False, False ))
+'	ai_type_map.Insert( "bomb", Create_AI_TYPE( False, True, True, False ))
+'	ai_type_map.Insert( "vehicle", Create_AI_TYPE( True, True, False, False ))
+'	ai_type_map.Insert( "carrier", Create_AI_TYPE( False, True, False, True ))
+'	ai_type_map.Insert( "armed_carrier", Create_AI_TYPE( True, True, False, True ))
+'End Function
 
 '______________________________________________________________________________
 '[ PLAYER_CHASSIS ]

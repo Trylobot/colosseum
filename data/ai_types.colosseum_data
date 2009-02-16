@@ -1,0 +1,62 @@
+[
+	{
+		class: "ai_type",
+		key: "wildlife",
+		object: {
+			has_turrets: false,
+			can_move: true,
+			can_self_destruct: false,
+			is_carrier: false
+		}
+	},
+	{
+		class: "ai_type",
+		key: "turret",
+		object: {
+			has_turrets: true,
+			can_move: false,
+			can_self_destruct: false,
+			is_carrier: false
+		}
+	},
+	{
+		class: "ai_type",
+		key: "bomb",
+		object: {
+			has_turrets: false,
+			can_move: true,
+			can_self_destruct: true,
+			is_carrier: false
+		}
+	},
+	{
+		class: "ai_type",
+		key: "vehicle",
+		object: {
+			has_turrets: true,
+			can_move: true,
+			can_self_destruct: false,
+			is_carrier: false
+		}
+	},
+	{
+		class: "ai_type",
+		key: "carrier",
+		object: {
+			has_turrets: false,
+			can_move: true,
+			can_self_destruct: false,
+			is_carrier: true
+		}
+	},
+	{
+		class: "ai_type",
+		key: "armed_carrier",
+		object: {
+			has_turrets: true,
+			can_move: true,
+			can_self_destruct: false,
+			is_carrier: true
+		}
+	}
+]

@@ -101,7 +101,7 @@ End Type
 Function Create_PICKUP_from_json:PICKUP( json:TJSON )
 	Local p:PICKUP
 	'no required fields
-	p = PICKUP.Create()
+	p = PICKUP( PICKUP.Create() )
 	'optional fields
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED     Then p.img = get_image( json.GetString( "image_key" ))
 	If json.TypeOf( "pickup_type" ) <> JSON_UNDEFINED   Then p.pickup_type = json.GetNumber( "pickup_type" )
@@ -109,3 +109,5 @@ Function Create_PICKUP_from_json:PICKUP( json:TJSON )
 	If json.TypeOf( "life_time" ) <> JSON_UNDEFINED     Then p.life_time = json.GetNumber( "life_time" )
 	Return p
 End Function
+
+

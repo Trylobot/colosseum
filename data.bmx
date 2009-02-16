@@ -108,6 +108,13 @@ Function get_projectile_launcher:EMITTER( key$, copy% = True )
 	Return lchr
 End Function
 '________________________________
+Function get_pickup:PICKUP( key$, copy% = True )
+	key = key.toLower()
+	Local pkp:PICKUP = PICKUP( pickup_map.ValueForKey( key ))
+	If copy And pkp Then Return pkp.clone()
+	Return pkp
+End Function
+'________________________________
 Function get_turret:TURRET( key$, copy% = True )
 	key = key.toLower()
 	Local tur:TURRET = TURRET( turret_map.ValueForKey( key ))
@@ -234,14 +241,16 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 					If lchr Then projectile_launcher_map.Insert( key, lchr ) Else load_error( source_file + "." + key )
 				'Case "widget"
 				'	
-				'Case "pickup"
-				'	
+				Case "pickup"
+					Local pkp:PICKUP = Create_PICKUP_from_json( TJSON.Create( item.GetObject( "object" )))
+					If pkp Then pickup_map.Insert( key, pkp ) Else load_error( source_file + "." + key )
 				'Case "turret_barrel"
 				'	
 				'Case "turret"
 				'	
-				'Case "ai_type"
-				'	
+				Case "ai_type"
+					Local ai:AI_TYPE = Create_AI_TYPE_from_json( TJSON.Create( item.GetObject( "object" )))
+					If ai Then ai_type_map.Insert( key, ai ) Else load_error( source_file + "." + key )
 				'Case "player_chassis"
 				'	
 				'Case "unit"

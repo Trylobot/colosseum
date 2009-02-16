@@ -418,6 +418,11 @@ Type ENVIRONMENT
 			threshold = PICKUP_PROBABILITY
 		End If
 		If Rnd( 0.0, 1.0 ) < threshold
+			'cache the pickups
+			Local pickup_archetype:TList = CreateList()
+			For Local key$ = EachIn pickup_map.Keys()
+				pickup_archetype.AddLast( get_pickup( key ))
+			Next
 			'pick an archetype
 			Local pickup_class% = Rand( 1, 3 )
 			If omit_ammunition And pickup_class = PICKUP.AMMO Then Return
@@ -426,14 +431,16 @@ Type ENVIRONMENT
 			For Local pkp:PICKUP = EachIn pickup_archetype
 				If pkp.pickup_type = pickup_class Then count :+ 1
 			Next
+			If count = 0 Then Return
 			'valid archetypes enumeration
+			Local i% = 0, index% = 0
 			Local valid_pickup_archetypes%[count]
-			Local index% = 0
-			For Local i% = 0 To pickup_archetype.Length - 1
-				If pickup_archetype[i].pickup_type = pickup_class
+			For Local pkp:PICKUP = EachIn pickup_archetype
+				If pkp.pickup_type = pickup_class
 					valid_pickup_archetypes[index] = i
 					index :+ 1
 				End If
+				i :+ 1
 			Next
 			'deck size is the summation of n for n=1 to n=count
 			Local size% = 0
@@ -450,7 +457,7 @@ Type ENVIRONMENT
 				Next
 				n :- 1
 			Next
-			Local pkp:PICKUP = pickup_archetype[deck[Rand( 0, deck.Length - 1 )]]
+			Local pkp:PICKUP = PICKUP( pickup_archetype.valueAtIndex( deck[Rand( 0, deck.Length - 1 )]))
 			If pkp
 				pkp = pkp.clone()
 				pkp.pos_x = x
