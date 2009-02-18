@@ -119,3 +119,8 @@ Type TURRET_BARREL Extends POINT
 	End Method
 	
 End Type
+
+Function Create_TURRET_BARREL_from_json:TURRET_BARREL( json:TJSON )
+	Return New TURRET_BARREL
+End Function
+

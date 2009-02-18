@@ -115,6 +115,13 @@ Function get_pickup:PICKUP( key$, copy% = True )
 	Return pkp
 End Function
 '________________________________
+Function get_turret_barrel:TURRET_BARREL( key$, copy% = True )
+	key = key.toLower()
+	Local tb:TURRET_BARREL = TURRET_BARREL( turret_barrel_map.ValueForKey( key ))
+	If copy And tb Then Return TURRET_BARREL( tb.clone())
+	Return tb
+End Function
+'________________________________
 Function get_turret:TURRET( key$, copy% = True )
 	key = key.toLower()
 	Local tur:TURRET = TURRET( turret_map.ValueForKey( key ))
@@ -259,7 +266,9 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				Case "pickup"
 					Local pkp:PICKUP = Create_PICKUP_from_json( object_json )
 					If pkp Then pickup_map.Insert( key, pkp ) Else load_error()
-				'Case "turret_barrel"
+				Case "turret_barrel"
+					Local tb:TURRET_BARREL = Create_TURRET_BARREL_from_json( object_json )
+					If tb Then turret_barrel_map.Insert( key, tb ) Else load_error()
 				'Case "turret"
 				Case "ai_type"
 					Local ai:AI_TYPE = Create_AI_TYPE_from_json( object_json )

@@ -423,7 +423,8 @@ End Function
 
 Function Create_EMITTER_from_json_reference:EMITTER( json:TJSON )
 	Local e:EMITTER
-	If json.TypeOf( "particle_emitter_key" ) <> JSON_UNDEFINED Then e = get_particle_emitter( json.GetString( "particle_emitter_key" ))
+	If json.TypeOf( "particle_emitter_key" ) <> JSON_UNDEFINED    Then e = get_particle_emitter( json.GetString( "particle_emitter_key" ))
+	If json.TypeOf( "projectile_launcher_key" ) <> JSON_UNDEFINED Then e = get_projectile_launcher( json.GetString( "projectile_launcher_key" ))
 	If Not e Then Return Null
 	If json.TypeOf( "attach_at" ) <> JSON_UNDEFINED
 		Local obj:TJSONObject = json.GetObject( "attach_at" )

@@ -1,0 +1,662 @@
+[
+	{
+		class: "turret_barrel",
+		key: "light_cannon",
+		object: {
+			image_key: "player_tank_turret_barrel",
+			reload_time: 650,
+			recoil_max: -7,
+			launcher: {
+				projectile_launcher_key: "tank_cannon",
+				attach_at: {
+					offset_x: 20,
+					vel_min: 4.00,
+					vel_max: 4.40,
+					ang_min: -1.0,
+					ang_max: 1.0
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "cannon_muzzle_flash",
+					attach_at: {
+						offset_x: 20
+					}
+				},
+				{
+					particle_emitter_key: "cannon_muzzle_smoke",
+					attach_at: {
+						offset_x: 20,
+						dist_min: 3,
+						dist_max: 6,
+						dist_ang_min: -45,
+						dist_ang_max: 45,
+						vel_min: 0.05,
+						vel_max: 0.40,
+						vel_ang_min: -45,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "cannon_shell_casing",
+					attach_at: {
+						offset_x: 3,
+						offset_y: 3,
+						vel_min: 0.4,
+						vel_max: 0.6,
+						vel_ang_min: 80,
+						vel_ang_max: 100,
+						ang_min: -10,
+						ang_max: 10,
+						ang_vel_min: -3.5,
+						ang_vel_max: 3.5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "light_co_axial_machine_gun",
+		object: {
+			image_key: "player_tank_mgun_turret",
+			reload_time: 62,
+			launcher: {
+				projectile_launcher_key: "machine_gun",
+				attach_at: {
+					offset_x: 14,
+					offset_y: 2,
+					vel_min: 4.30,
+					vel_max: 4.70,
+					ang_min: -2.2,
+					ang_max: 2.2
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "machine_gun_muzzle_flash",
+					attach_at: {
+						offset_x: 14,
+						offset_y: 2
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_muzzle_smoke",
+					attach_at: {
+						offset_x: 14,
+						offset_y: 2,
+						dist_min: 3,
+						dist_max: 9,
+						dist_ang_max: 45,
+						vel_min: 0.01,
+						vel_max: 0.03,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_shell_casing",
+					attach_at: {
+						offset_x: 8,
+						offset_y: 2,
+						vel_min: 0.3,
+						vel_max: 0.4,
+						vel_ang_min: 85,
+						vel_ang_max: 95,
+						ang_min: -5,
+						ang_max: 5,
+						ang_vel_min: -5,
+						ang_vel_max: 5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "light_laser",
+		object: {
+			image_key: null,
+			reload_time: 250,
+			launcher: {
+				projectile_launcher_key: "laser_red",
+				attach_at: {
+					offset_x: 11.5,
+					vel_min: 8.00,
+					vel_max: 8.00
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "laser_muzzle_flare",
+					attach_at: {
+						offset_x: 11.5
+					}
+				},
+				{
+					particle_emitter_key: "laser_discard_energy_core",
+					attach_at: {
+						offset_y: 5,
+						vel_min: 0.3,
+						vel_max: 0.4,
+						vel_ang_min: 82,
+						vel_ang_max: 98,
+						ang_min: -8,
+						ang_max: 8,
+						ang_vel_min: -3.5,
+						ang_vel_max: 3.5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "dual_light_cannon_left",
+		object: {
+			image_key: "player_tank_turret_med_barrel_left",
+			reload_time: 450,
+			recoil_max: -9,
+			launcher: {
+				projectile_launcher_key: "tank_cannon",
+				attach_at: {
+					offset_x: 24,
+					offset_y: -2,
+					vel_min: 4.00,
+					vel_max: 4.40,
+					ang_min: -1.0,
+					ang_max: 1.0
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "cannon_muzzle_flash",
+					attach_at: {
+						offset_x: 24,
+						offset_y: -2
+					}
+				},
+				{
+					particle_emitter_key: "cannon_muzzle_smoke",
+					attach_at: {
+						offset_x: 24,
+						offset_y: -2,
+						dist_min: 3,
+						dist_max: 6,
+						dist_ang_min: -45,
+						dist_ang_max: 45,
+						vel_min: 0.05,
+						vel_max: 0.40,
+						vel_ang_min: -45,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "cannon_shell_casing",
+					attach_at: {
+						offset_x: 17,
+						offset_y: -3,
+						vel_min: 0.4,
+						vel_max: 0.6,
+						vel_ang_min: 260,
+						vel_ang_max: 280,
+						ang_min: -10,
+						ang_max: 10,
+						ang_vel_min: -3.5,
+						ang_vel_max: 3.5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "dual_light_cannon_right",
+		object: {
+			image_key: "player_tank_turret_med_barrel_right",
+			reload_time: 450,
+			recoil_max: -9,
+			launcher: {
+				projectile_launcher_key: "tank_cannon",
+				attach_at: {
+					offset_x: 24,
+					offset_y: 2,
+					vel_min: 4.00,
+					vel_max: 4.40,
+					ang_min: -1.0,
+					ang_max: 1.0
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "cannon_muzzle_flash",
+					attach_at: {
+						offset_x: 24,
+						offset_y: 2
+					}
+				},
+				{
+					particle_emitter_key: "cannon_muzzle_smoke",
+					attach_at: {
+						offset_x: 24,
+						offset_y: 2,
+						dist_min: 3,
+						dist_max: 6,
+						dist_ang_min: -45,
+						dist_ang_max: 45,
+						vel_min: 0.05,
+						vel_max: 0.40,
+						vel_ang_min: -45,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "cannon_shell_casing",
+					attach_at: {
+						offset_x: 17,
+						offset_y: 3,
+						vel_min: 0.4,
+						vel_max: 0.6,
+						vel_ang_min: 80,
+						vel_ang_max: 100,
+						ang_min: -10,
+						ang_max: 10,
+						ang_vel_min: -3.5,
+						ang_vel_max: 3.5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "light_co_axial_machine_gun_2",
+		object: {
+			image_key: "player_tank_med_mgun_turret_barrel",
+			reload_time: 62,
+			launcher: {
+				projectile_launcher_key: "machine_gun",
+				attach_at: {
+					offset_x: 5,
+					offset_y: 4,
+					vel_min: 4.30,
+					vel_max: 4.70,
+					ang_min: -2.2,
+					ang_max: 2.2
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "machine_gun_muzzle_flash",
+					attach_at: {
+						offset_x: 5,
+						offset_y: 4
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_muzzle_smoke",
+					attach_at: {
+						offset_x: 5,
+						offset_y: 4,
+						dist_min: 3,
+						dist_max: 9,
+						dist_ang_max: 45,
+						vel_min: 0.01,
+						vel_max: 0.03,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_shell_casing",
+					attach_at: {
+						offset_y: 5,
+						vel_min: 0.3,
+						vel_max: 0.4,
+						vel_ang_min: 85,
+						vel_ang_max: 95,
+						ang_min: -5,
+						ang_max: 5,
+						ang_vel_min: -5,
+						ang_vel_max: 5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "medium_laser",
+		object: {
+			image_key: null,
+			reload_time: 300,
+			launcher: {
+				projectile_launcher_key: "laser_big",
+				attach_at: {
+					offset_x: 24.5,
+					vel_min: 8.00,
+					vel_max: 8.00
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "medium_laser_muzzle_flare",
+					attach_at: {
+						offset_x: 24.5
+					}
+				},
+				{
+					particle_emitter_key: "medium_laser_discard_energy_core",
+					attach_at: {
+						offset_y: 5,
+						vel_min: 0.3,
+						vel_max: 0.4,
+						vel_ang_min: 82,
+						vel_ang_max: 98,
+						ang_min: -8,
+						ang_max: 8,
+						ang_vel_min: -3.5,
+						ang_vel_max: 3.5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "emplacement_light_machine_gun",
+		object: {
+			image_key: "enemy_machine-gun_emplacement_turret-barrel",
+			reload_time: 50,
+			launcher: {
+				projectile_launcher_key: "machine_gun",
+				attach_at: {
+					offset_x: 16,
+					vel_min: 2.50,
+					vel_max: 3.00,
+					ang_min: -4.0,
+					ang_max: 4.0
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "machine_gun_muzzle_flash",
+					attach_at: {
+						offset_x: 16
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_muzzle_smoke",
+					attach_at: {
+						offset_x: 16,
+						dist_min: 3,
+						dist_max: 9,
+						dist_ang_max: 45,
+						vel_min: 0.01,
+						vel_max: 0.03,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_shell_casing",
+					attach_at: {
+						offset_x: 9,
+						offset_y: 3,
+						vel_min: 0.4,
+						vel_max: 0.6,
+						vel_ang_min: 70,
+						vel_ang_max: 110,
+						acc_min: -0.004,
+						acc_max: -0.004,
+						ang_min: -5,
+						ang_max: 5,
+						ang_vel_min: -5,
+						ang_vel_max: 5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "emplacement_light_cannon",
+		object: {
+			image_key: "player_tank_turret_barrel",
+			reload_time: 2800,
+			recoil_max: -7,
+			launcher: {
+				projectile_launcher_key: "tank_cannon",
+				attach_at: {
+					offset_x: 20,
+					vel_min: 2.80,
+					vel_max: 3.00,
+					ang_min: -1.5,
+					ang_max: 1.5
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "cannon_muzzle_flash",
+					attach_at: {
+						offset_x: 20
+					}
+				},
+				{
+					particle_emitter_key: "cannon_muzzle_smoke",
+					attach_at: {
+						offset_x: 20,
+						dist_min: 3,
+						dist_max: 6,
+						dist_ang_min: -45,
+						dist_ang_max: 45,
+						vel_min: 0.05,
+						vel_max: 0.40,
+						vel_ang_min: -45,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "cannon_shell_casing",
+					attach_at: {
+						offset_x: 11,
+						offset_y: 1,
+						vel_min: 0.4,
+						vel_max: 0.6,
+						vel_ang_min: 80,
+						vel_ang_max: 100,
+						ang_min: -10,
+						ang_max: 10,
+						ang_vel_min: -3.5,
+						ang_vel_max: 3.5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "emplacement_rocket_launcher",
+		object: {
+			image_key: "enemy_stationary-emplacement-1_turret-barrel",
+			reload_time: 4000,
+			launcher: {
+				projectile_launcher_key: "rocket",
+				attach_at: {
+					acc_min: 0.0020,
+					acc_max: 0.0020
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "rocket_casing",
+					attach_at: {
+						offset_x: -6,
+						vel_min: 0.2,
+						vel_max: 0.5,
+						vel_ang_min: 175,
+						vel_ang_max: 185,
+						ang_vel_min: -5,
+						ang_vel_max: 5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "light_machine_gun",
+		object: {
+			image_key: "enemy_light_mgun_turret_barrel",
+			reload_time: 100,
+			launcher: {
+				projectile_launcher_key: "machine_gun",
+				attach_at: {
+					offset_x: 8,
+					vel_min: 3.0,
+					vel_max: 3.4,
+					ang_min: -2.2,
+					ang_max: 2.2
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "machine_gun_muzzle_flash",
+					attach_at: {
+						offset_x: 8
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_muzzle_smoke",
+					attach_at: {
+						offset_x: 8,
+						dist_min: 3,
+						dist_max: 9,
+						dist_ang_max: 45,
+						vel_min: 0.01,
+						vel_max: 0.03,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_shell_casing",
+					attach_at: {
+						offset_x: 7,
+						offset_y: 1,
+						vel_min: 0.3,
+						vel_max: 0.4,
+						vel_ang_min: 85,
+						vel_ang_max: 95,
+						ang_min: -5,
+						ang_max: 5,
+						ang_vel_min: -5,
+						ang_vel_max: 5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "apc_machine_gun_barrel",
+		object: {
+			image_key: "apc_turret_barrel",
+			reload_time: 70,
+			recoil_max: -3,
+			launcher: {
+				projectile_launcher_key: "machine_gun",
+				attach_at: {
+					offset_x: 7,
+					vel_min: 4.30,
+					vel_max: 4.70,
+					ang_min: -2.2,
+					ang_max: 2.2
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "machine_gun_muzzle_flash",
+					attach_at: {
+						offset_x: 7
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_muzzle_smoke",
+					attach_at: {
+						offset_x: 7,
+						dist_min: 3,
+						dist_max: 9,
+						dist_ang_max: 45,
+						vel_min: 0.01,
+						vel_max: 0.03,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_shell_casing",
+					attach_at: {
+						offset_x: -1,
+						vel_min: 0.3,
+						vel_max: 0.4,
+						vel_ang_min: 160,
+						vel_ang_max: 200,
+						ang_min: -5,
+						ang_max: 5,
+						ang_vel_min: -5,
+						ang_vel_max: 5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "ripper_machine_gun_barrel",
+		object: {
+			image_key: "ripper_machine_gun_turret_barrel",
+			reload_time: 59,
+			recoil_max: -6,
+			launcher: {
+				projectile_launcher_key: "machine_gun",
+				attach_at: {
+					offset_x: 10,
+					vel_min: 4.30,
+					vel_max: 4.70,
+					ang_min: -2.2,
+					ang_max: 2.2
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "machine_gun_muzzle_flash",
+					attach_at: {
+						offset_x: 10
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_muzzle_smoke",
+					attach_at: {
+						offset_x: 10,
+						dist_min: 3,
+						dist_max: 9,
+						dist_ang_max: 45,
+						vel_min: 0.01,
+						vel_max: 0.03,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_shell_casing",
+					attach_at: {
+						offset_x: -4,
+						vel_min: 0.3,
+						vel_max: 0.4,
+						vel_ang_min: 160,
+						vel_ang_max: 200,
+						ang_min: -5,
+						ang_max: 5,
+						ang_vel_min: -5,
+						ang_vel_max: 5
+					}
+				}
+			]
+		}
+	}
+]
