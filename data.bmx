@@ -269,7 +269,9 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				Case "turret_barrel"
 					Local tb:TURRET_BARREL = Create_TURRET_BARREL_from_json( object_json )
 					If tb Then turret_barrel_map.Insert( key, tb ) Else load_error()
-				'Case "turret"
+				Case "turret"
+					Local t:TURRET = Create_TURRET_from_json( object_json )
+					If t Then turret_map.Insert( key, t ) Else load_error()
 				Case "ai_type"
 					Local ai:AI_TYPE = Create_AI_TYPE_from_json( object_json )
 					If ai Then ai_type_map.Insert( key, ai ) Else load_error()

@@ -52,10 +52,10 @@ Type TURRET Extends POINT
 	class%, priority%, ..
 	img:TImage = Null, ..
 	cash_value% = 0, ..
-	snd_fire:TSound, ..
+	snd_fire:TSound = Null, ..
 	turret_barrel_count%, ..
 	firing_sequence%[][], ..
-	max_ang_vel#, ..
+	max_ang_vel# = 0.5, ..
 	max_ammo% = INFINITY, ..
 	heat_based% = False, ..
 	heat_per_shot_min# = 0.0, heat_per_shot_max# = 0.0, ..
@@ -290,3 +290,9 @@ Type TURRET Extends POINT
 	End Method
 	
 End Type
+
+Function Create_TURRET_from_json:TURRET( json:TJSON )
+	
+End Function
+
+
