@@ -8,7 +8,7 @@ EndRem
 '______________________________________________________________________________
 Function Create_TURRET_BARREL:TURRET_BARREL( ..
 img:TImage = Null, ..
-reload_time%, ..
+reload_time% = 1000, ..
 recoil_max# = 0 )
 	Local tb:TURRET_BARREL = New TURRET_BARREL
 	'static fields
@@ -39,7 +39,7 @@ Type TURRET_BARREL Extends POINT
 	
 	Method clone:Object()
 		Local tb:TURRET_BARREL = Create_TURRET_BARREL( img, reload_time, recoil_max )
-		tb.add_launcher( launcher )
+		If launcher Then tb.set_launcher( launcher )
 		For Local em:EMITTER = EachIn emitter_list
 			tb.add_emitter( em )
 		Next
@@ -58,8 +58,10 @@ Type TURRET_BARREL Extends POINT
 		pos_x = parent.pos_x + attach_r * Cos( attach_a + ang ) + recoil_cur * Cos( ang )
 		pos_y = parent.pos_y + attach_r * Sin( attach_a + ang ) + recoil_cur * Sin( ang )
 		'emitters
-		launcher.update()
-		launcher.emit()
+		If launcher
+			launcher.update()
+			launcher.emit()
+		End If
 		For Local em:EMITTER = EachIn emitter_list
 			em.update()
 			em.emit()
@@ -108,7 +110,7 @@ Type TURRET_BARREL Extends POINT
 		End If
 	End Method
 	
-	Method add_launcher:EMITTER( new_launcher:EMITTER )
+	Method set_launcher:EMITTER( new_launcher:EMITTER )
 		launcher = Copy_EMITTER( new_launcher )
 		launcher.parent = Self
 		Return launcher
@@ -117,10 +119,23 @@ Type TURRET_BARREL Extends POINT
 	Method add_emitter:EMITTER( other_em:EMITTER )
 		Return EMITTER( EMITTER.Copy( other_em, emitter_list, Self ))
 	End Method
-	
 End Type
 
 Function Create_TURRET_BARREL_from_json:TURRET_BARREL( json:TJSON )
-	Return New TURRET_BARREL
+	Local t:TURRET_BARREL = New TURRET_BARREL
+	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED   Then t.img = get_image( json.GetString( "image_key" ))
+	If json.TypeOf( "reload_time" ) <> JSON_UNDEFINED Then t.reload_time = json.GetNumber( "reload_time" )
+	If json.TypeOf( "recoil_max" ) <> JSON_UNDEFINED  Then t.recoil_max = json.GetNumber( "recoil_max" )
+	If json.TypeOf( "launcher" ) <> JSON_UNDEFINED    Then t.set_launcher( Create_EMITTER_from_json_reference( TJSON.Create( json.GetObject( "launcher" ))))
+	If json.TypeOf( "launch_emitters" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "launch_emitters" )
+		If array And Not array.IsNull()
+			For Local i% = 0 Until array.Size()
+				Local e:EMITTER = Create_EMITTER_from_json_reference( TJSON.Create( array.GetByIndex( i )))
+				If e Then t.add_emitter( e )
+			Next
+		End If
+	End If
+	Return t
 End Function
 
