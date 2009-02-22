@@ -142,8 +142,9 @@ Function JSON_Class_toString$( class% )
 			Return "boolean"
 		Case JSON_UNDEFINED
 			Return "undefined"
+		Default
+			Return ""
 	End Select
-	Return ""
 End Function
 
 

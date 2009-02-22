@@ -288,11 +288,44 @@ Type TURRET Extends POINT
 			tb.attach_at( tb.attach_x * scale, tb.attach_y * scale )
 		Next
 	End Method
-	
 End Type
 
 Function Create_TURRET_from_json:TURRET( json:TJSON )
-	
+	Local t:TURRET
+	'required fields
+	Local class%
+	Local priority%
+	Local turret_barrel_count%
+	Local firing_sequence%[][]
+	If json.TypeOf( "class" ) <> JSON_UNDEFINED               Then class = json.GetNumber( "class" )
+	If json.TypeOf( "priority" ) <> JSON_UNDEFINED            Then priority = json.GetNumber( "priority" )
+	If json.TypeOf( "turret_barrel_count" ) <> JSON_UNDEFINED Then turret_barrel_count = json.GetNumber( "turret_barrel_count" )
+	If json.TypeOf( "firing_sequence" ) <> JSON_UNDEFINED     Then firing_sequence = Create_Int_array_array_from_TJSONArray( json.GetArray( "firing_sequence" ))
+	'initialization
+	t = TURRET( TURRET.Create( , class, priority,,,, turret_barrel_count, firing_sequence ))
+	'optional fields
+	If json.TypeOf( "name" ) <> JSON_UNDEFINED              Then t.name = json.GetString( "name" )
+	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED         Then t.img = get_image( json.GetString( "image_key" ))
+	If json.TypeOf( "cash_value" ) <> JSON_UNDEFINED        Then t.cash_value = json.GetNumber( "cash_value" )
+	If json.TypeOf( "firing_sound_key" ) <> JSON_UNDEFINED  Then t.snd_fire = get_sound( json.GetString( "firing_sound_key" ))
+	If json.TypeOf( "max_ang_vel" ) <> JSON_UNDEFINED       Then t.max_ang_vel = json.GetNumber( "max_ang_vel" )
+	If json.TypeOf( "max_ammo" ) <> JSON_UNDEFINED          Then t.max_ammo = json.GetNumber( "max_ammo" )
+	If json.TypeOf( "heat_based" ) <> JSON_UNDEFINED        Then If json.GetBoolean( "heat_based" ) Then t.max_heat = 1.00 Else t.max_heat = INFINITY
+	If json.TypeOf( "heat_per_shot_min" ) <> JSON_UNDEFINED Then t.heat_per_shot_min = json.GetNumber( "heat_per_shot_min" )
+	If json.TypeOf( "heat_per_shot_max" ) <> JSON_UNDEFINED Then t.heat_per_shot_max = json.GetNumber( "heat_per_shot_max" )
+	If json.TypeOf( "cooling_rate" ) <> JSON_UNDEFINED      Then t.cooling_rate = json.GetNumber( "cooling_rate" )
+	If json.TypeOf( "overheat_delay" ) <> JSON_UNDEFINED    Then t.overheat_delay = json.GetNumber( "overheat_delay" )
+	If json.TypeOf( "effective_range" ) <> JSON_UNDEFINED   Then t.effective_range = json.GetNumber( "effective_range" )
+	If json.TypeOf( "turret_barrels" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "turret_barrels" )
+		If array And Not array.IsNull()
+			For Local i% = 0 Until array.Size()
+				Local tb:TURRET_BARREL = Create_TURRET_BARREL_from_json_reference( TJSON.Create( array.GetByIndex( i )))
+				If tb Then t.add_turret_barrel( tb, i )
+			Next
+		End If
+	End If
+	Return t
 End Function
 
 

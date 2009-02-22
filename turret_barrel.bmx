@@ -141,3 +141,18 @@ Function Create_TURRET_BARREL_from_json:TURRET_BARREL( json:TJSON )
 	Return t
 End Function
 
+Function Create_TURRET_BARREL_from_json_reference:TURRET_BARREL( json:TJSON )
+	Local tb:TURRET_BARREL
+	If json.TypeOf( "turret_barrel_key" ) <> JSON_UNDEFINED Then tb = get_turret_barrel( json.GetString( "turret_barrel_key" ))
+	If Not tb Then Return Null
+	If json.TypeOf( "attach_at" ) <> JSON_UNDEFINED
+		Local obj:TJSONObject = json.GetObject( "attach_at" )
+		If obj And Not obj.IsNull()
+			Local attach_at:TJSON = TJSON.Create( obj )
+			tb.attach_at( ..
+				attach_at.GetNumber( "offset_x" ), ..
+				attach_at.GetNumber( "offset_y" ))
+		End If
+	End If
+	Return tb
+End Function

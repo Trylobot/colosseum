@@ -269,15 +269,15 @@
 				{
 					turret_barrel_key: "apc_machine_gun_barrel",
 					attach_at: {
-						pos_x: 3,
-						pos_y: -1
+						offset_x: 3,
+						offset_y: -1
 					}
 				},
 				{
 					turret_barrel_key: "apc_machine_gun_barrel",
 					attach_at: {
-						pos_x: 3,
-						pos_y: 1
+						offset_x: 3,
+						offset_y: 1
 					}
 				}
 			]
@@ -306,22 +306,22 @@
 				{
 					turret_barrel_key: "ripper_machine_gun_barrel",
 					attach_at: {
-						pos_x: 5,
-						pos_y: -2
+						offset_x: 5,
+						offset_y: -2
 					}
 				},
 				{
 					turret_barrel_key: "ripper_machine_gun_barrel",
 					attach_at: {
-						pos_x: 5,
-						pos_y: 0
+						offset_x: 5,
+						offset_y: 0
 					}
 				},
 				{
 					turret_barrel_key: "ripper_machine_gun_barrel",
 					attach_at: {
-						pos_x: 5,
-						pos_y: 2
+						offset_x: 5,
+						offset_y: 2
 					}
 				}
 			]
