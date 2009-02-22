@@ -50,17 +50,20 @@ Type TRANSFORM_STATE
 End Type
 
 Function Create_TRANSFORM_STATE_from_json:TRANSFORM_STATE( json:TJSON )
-	Return TRANSFORM_STATE( TRANSFORM_STATE.Create( ..
-		json.GetNumber( "pos_x" ), ..
-		json.GetNumber( "pos_y" ), ..
-		json.GetNumber( "ang" ), ..
-		json.GetNumber( "red" ), ..
-		json.GetNumber( "green" ), ..
-		json.GetNumber( "blue" ), ..
-		json.GetNumber( "alpha" ), ..
-		json.GetNumber( "scale_x" ), ..
-		json.GetNumber( "scale_y" ), ..
-		json.GetNumber( "transition_time" )))
+	Local t:TRANSFORM_STATE
+	'no required fields
+	t = TRANSFORM_STATE( TRANSFORM_STATE.Create() )
+	If json.TypeOf( "pos_x" ) <> JSON_UNDEFINED           Then t.pos_x = json.GetNumber( "pos_x" )
+	If json.TypeOf( "pos_y" ) <> JSON_UNDEFINED           Then t.pos_y = json.GetNumber( "pos_y" )
+	If json.TypeOf( "ang" ) <> JSON_UNDEFINED             Then t.ang = json.GetNumber( "ang" )
+	If json.TypeOf( "red" ) <> JSON_UNDEFINED             Then t.red = json.GetNumber( "red" )
+	If json.TypeOf( "green" ) <> JSON_UNDEFINED           Then t.green = json.GetNumber( "green" )
+	If json.TypeOf( "blue" ) <> JSON_UNDEFINED            Then t.blue = json.GetNumber( "blue" )
+	If json.TypeOf( "alpha" ) <> JSON_UNDEFINED           Then t.alpha = json.GetNumber( "alpha" )
+	If json.TypeOf( "scale_x" ) <> JSON_UNDEFINED         Then t.scale_x = json.GetNumber( "scale_x" )
+	If json.TypeOf( "scale_y" ) <> JSON_UNDEFINED         Then t.scale_y = json.GetNumber( "scale_y" )
+	If json.TypeOf( "transition_time" ) <> JSON_UNDEFINED Then t.transition_time = json.GetNumber( "transition_time" )
+	Return t
 End Function
 
 

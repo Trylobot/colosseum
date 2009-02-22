@@ -122,7 +122,9 @@ Type TURRET_BARREL Extends POINT
 End Type
 
 Function Create_TURRET_BARREL_from_json:TURRET_BARREL( json:TJSON )
-	Local t:TURRET_BARREL = New TURRET_BARREL
+	Local t:TURRET_BARREL
+	'no required fields
+	t = Create_TURRET_BARREL()
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED   Then t.img = get_image( json.GetString( "image_key" ))
 	If json.TypeOf( "reload_time" ) <> JSON_UNDEFINED Then t.reload_time = json.GetNumber( "reload_time" )
 	If json.TypeOf( "recoil_max" ) <> JSON_UNDEFINED  Then t.recoil_max = json.GetNumber( "recoil_max" )
