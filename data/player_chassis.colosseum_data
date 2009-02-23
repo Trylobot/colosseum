@@ -1,0 +1,94 @@
+[
+	{
+		class: "player_chassis",
+		key: "light_tank",
+		object: {
+			name: "war horse chassis",
+			image_key: "player_tank_chassis",
+			hitbox_image_key: "light_tank_hitbox",
+			gibs_image_key: "quad_gibs",
+			cash_value: 1250,
+			max_health: 500,
+			mass: 800,
+			frictional_coefficient: 75,
+			driving_force_magnitude: 75,
+			turning_force_magnitude: 100,
+			death_package: true,
+			motivator_package: {
+				particle_key: "light_tank_track",
+				offset_x: 0,
+				separation_y: 6.5
+			},
+			trail_package: {
+				particle_emitter_key: tank_tread_trail_small",
+				offset_x: 0,
+				separation_x: 12,
+				separation_y: 6
+			},
+			dust_cloud_package: {
+				offset_x: 0,
+				separation_x: 12,
+				separation_y: 7,
+				dist_min: 0,
+				dist_max: 2,
+				dist_ang_min: -45,
+				dist_ang_max: 45,
+				vel_min: 0.2,
+				vel_max: 0.8
+			},
+			turret_anchors: [
+				{
+					offset_x: -5,
+					offset_y: 0
+				}
+			],
+			turrets: null
+		}
+	},
+	{
+		class: "player_chassis",
+		key: "medium_tank",
+		object: {
+			name: "predator chassis",
+			image_key: "player_tank_chassis_med",
+			hitbox_image_key: "medium_tank_hitbox",
+			gibs_image_key: "quad_gibs",
+			cash_value: 5000,
+			max_health: 750,
+			mass: 1200,
+			frictional_coefficient: 125,
+			driving_force_magnitude: 100,
+			turning_force_magnitude: 125,
+			death_package: true,
+			motivator_package: {
+				particle_key: "med_tank_track",
+				offset_x: 0,
+				separation_y: 7.5
+			},
+			trail_package: {
+				particle_emitter_key: tank_tread_trail_medium",
+				offset_x: 0,
+				separation_x: 15,
+				separation_y: 8
+			},
+			dust_cloud_package: {
+				offset_x: 0,
+				separation_x: 15,
+				separation_y: 8,
+				dist_min: 0,
+				dist_max: 2,
+				dist_ang_min: -45,
+				dist_ang_max: 45,
+				vel_min: 0.2,
+				vel_max: 0.8
+			},
+			turret_anchors: [
+				{
+					offset_x: -5,
+					offset_y: 0
+				}
+			],
+			turrets: null
+		}
+	},
+]

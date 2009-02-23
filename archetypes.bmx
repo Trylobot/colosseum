@@ -7,7 +7,7 @@ EndRem
 '______________________________________________________________________________
 Function load_all_archetypes()
 	'set_turret_archetypes()
-	set_player_chassis_archetypes()
+	'set_player_chassis_archetypes()
 	set_unit_archetypes()
 End Function
 
@@ -80,29 +80,29 @@ End Function
 '		turret_map.Insert( "ripper_machine_gun", turret_archetype[TURRET_INDEX_RIPPER_MACHINE_GUN] )
 'End Function
 
-'______________________________________________________________________________
-'[ PLAYER_CHASSIS ]
-Global player_chassis_archetype:COMPLEX_AGENT[2]; reset_index()
-
-Global PLAYER_CHASSIS_INDEX_LIGHT_TANK% = postfix_index()
-Global PLAYER_CHASSIS_INDEX_MEDIUM_TANK% = postfix_index()
-
-Function set_player_chassis_archetypes()
-	player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "war horse chassis", get_image( "player_tank_chassis" ), get_image( "light_tank_hitbox" ), get_image( "quad_gibs" ),, 1250, 500, 800.0, 75.0, 75.0, 100.0 ))
-		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_death_package()
-		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_motivator_package( "light_tank_track", 0, 6.5 )
-		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_trail_package( "TANK_TREAD_TRAIL_SMALL",, 12, 6 )
-		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_dust_cloud_package( , 12, 7, 0, 2, -45, 45, 0.2, 0.8 )
-		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_turret_anchor( Create_cVEC( -5, 0 ))
-		player_chassis_map.Insert( "light_tank", player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK] )
-	player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "predator chassis", get_image( "player_tank_chassis_med" ), get_image( "medium_tank_hitbox" ), get_image( "quad_gibs" ),, 5000, 750, 1200, 125.0, 100.0, 125.0 ))
-		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_death_package()
-		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_motivator_package( "med_tank_track", 0, 7.5 )
-		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_trail_package( "TANK_TREAD_TRAIL_MEDIUM",, 15, 8 )
-		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_dust_cloud_package( , 15, 8, 0, 2, -45, 45, 0.2, 0.8 )
-		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_turret_anchor( Create_cVEC( -5, 0 ))
-		player_chassis_map.Insert( "medium_tank", player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK] )
-End Function
+''______________________________________________________________________________
+''[ PLAYER_CHASSIS ]
+'Global player_chassis_archetype:COMPLEX_AGENT[2]; reset_index()
+'
+'Global PLAYER_CHASSIS_INDEX_LIGHT_TANK% = postfix_index()
+'Global PLAYER_CHASSIS_INDEX_MEDIUM_TANK% = postfix_index()
+'
+'Function set_player_chassis_archetypes()
+'	player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "war horse chassis", get_image( "player_tank_chassis" ), get_image( "light_tank_hitbox" ), get_image( "quad_gibs" ),, 1250, 500, 800.0, 75.0, 75.0, 100.0 ))
+'		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_death_package()
+'		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_motivator_package( "light_tank_track", 0, 6.5 )
+'		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_trail_package( "TANK_TREAD_TRAIL_SMALL",, 12, 6 )
+'		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_dust_cloud_package( , 12, 7,, 2, -45, 45, 0.2, 0.8 )
+'		player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK].add_turret_anchor( Create_cVEC( -5, 0 ))
+'		player_chassis_map.Insert( "light_tank", player_chassis_archetype[PLAYER_CHASSIS_INDEX_LIGHT_TANK] )
+'	player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "predator chassis", get_image( "player_tank_chassis_med" ), get_image( "medium_tank_hitbox" ), get_image( "quad_gibs" ),, 5000, 750, 1200, 125.0, 100.0, 125.0 ))
+'		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_death_package()
+'		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_motivator_package( "med_tank_track", 0, 7.5 )
+'		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_trail_package( "TANK_TREAD_TRAIL_MEDIUM",, 15, 8 )
+'		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_dust_cloud_package( , 15, 8, 0, 2, -45, 45, 0.2, 0.8 )
+'		player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK].add_turret_anchor( Create_cVEC( -5, 0 ))
+'		player_chassis_map.Insert( "medium_tank", player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK] )
+'End Function
 
 '______________________________________________________________________________
 '[ UNITS ]
@@ -118,7 +118,7 @@ Global UNIT_INDEX_LIGHT_TANK% = postfix_index()
 Global UNIT_INDEX_CARRIER% = postfix_index()
 Global UNIT_INDEX_APC% = postfix_index()
 
-Function set_unit_archetypes()		
+Function set_unit_archetypes()
 	unit_archetype[UNIT_INDEX_MR_THE_BOX] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mr_the_box", get_image( "box" ),, get_image( "box_gib" ), "wildlife", 25, 35, 350.0, 8.0, 6.0, 12.0 ))
 		unit_archetype[UNIT_INDEX_MR_THE_BOX].add_death_package()
 		unit_map.Insert( "mr_the_box", unit_archetype[UNIT_INDEX_MR_THE_BOX] )
