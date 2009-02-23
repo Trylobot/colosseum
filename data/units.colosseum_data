@@ -1,13 +1,119 @@
-;
-; AutoHotkey Version: 1.x
-; Language:       English
-; Platform:       Win9x/NT
-; Author:         A.N.Other <myemail@nowhere.com>
-;
-; Script Function:
-;	Template script (you can customize this template by editing "ShellNew\Template.ahk" in your Windows folder)
-;
-
-#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
-SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+[
+	{
+		class: "unit",
+		key: "mr_the_box",
+		object: {
+			name: "mr. the box",
+			image_key: "box",
+			gibs_image_key: "box_gib",
+			ai_name: "wildlife",
+			cash_value: 25,
+			max_health: 35,
+			mass: 350,
+			frictional_coefficient: 8,
+			driving_force_magnitude: 6,
+			turning_force_magnitude: 12,
+			death_package: true
+		}
+	},
+	{
+		class: "unit",
+		key: "machine_gun_emplacement",
+		object: {
+			name: "machine-gun fortification",
+			image_key: "enemy_stationary-emplacement-1_chassis",
+			gibs_image_key: "tower_gibs",
+			ai_name: "turret",
+			cash_value: 100,
+			max_health: 100,
+			mass: 1000,
+			physics_disabled: true,
+			death_package: true,
+			turret_anchors: [
+				{
+					offset_x: 0,
+					offset_y: 0
+				}
+			],
+			turrets: [
+				{
+					turret_key: "stationary_emplacement_machine_gun",
+					anchor: 0
+				}
+			]
+		}
+	},
+	{
+		class: "unit",
+		key: "cannon_emplacement",
+		object: {
+			name: "cannon fortification",
+			image_key: "enemy_stationary-emplacement-1_chassis",
+			gibs_image_key: "tower_gibs",
+			ai_name: "turret",
+			cash_value: 100,
+			max_health: 100,
+			mass: 1000,
+			physics_disabled: true,
+			death_package: true,
+			turret_anchors: [
+				{
+					offset_x: 0,
+					offset_y: 0
+				}
+			],
+			turrets: [
+				{
+					turret_key: "stationary_emplacement_light_cannon",
+					anchor: 0
+				}
+			]
+		}
+	},
+	{
+		class: "unit",
+		key: "rocket_emplacement",
+		object: {
+			name: "rocket fortification",
+			image_key: "enemy_stationary-emplacement-1_chassis",
+			gibs_image_key: "tower_gibs",
+			ai_name: "turret",
+			cash_value: 150,
+			max_health: 100,
+			mass: 1000,
+			physics_disabled: true,
+			death_package: true,
+			turret_anchors: [
+				{
+					offset_x: 0,
+					offset_y: 0
+				}
+			],
+			turrets: [
+				{
+					turret_key: "stationary_emplacement_rocket_launcher",
+					anchor: 0
+				}
+			]
+		}
+	},
+	{
+		class: "unit",
+		key: "mini_bomb",
+		object: {
+			name: "hunter/seeker",
+			image_key: "nme_mobile_bomb",
+			gibs_image_key: "bomb_gibs",
+			ai_name: "bomb",
+			cash_value: 75,
+			max_health: 50,
+			mass: 200,
+			frictional_coefficient: 10,
+			driving_force_magnitude: 7.5,
+			turning_force_magnitude: 30,
+			death_package: true,
+			widgets: [
+			]
+		}
+	},
+]
