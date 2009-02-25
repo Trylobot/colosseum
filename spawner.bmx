@@ -110,18 +110,7 @@ End Type
 Function Create_SPAWNER_from_json:SPAWNER( json:TJSON )
 	Local sp:SPAWNER = New SPAWNER
 	sp.class = json.GetNumber( "class" )
-	'new system
-	'sp.squads = Create_String_array_array_from_TJSONArray( json.GetArray( "squads" ))
-	'old system -- begin
-	Local squads_DEPRECATED%[][] = Create_Int_array_array_from_TJSONArray( json.GetArray( "squads" ))
-	sp.squads = New String[][squads_DEPRECATED.Length]
-	For Local i% = 0 Until sp.squads.Length
-		sp.squads[i] = New String[squads_DEPRECATED[i].Length]
-		For Local m% = 0 Until sp.squads[i].Length
-			sp.squads[i][m] = get_keys( unit_map )[squads_DEPRECATED[i][m]]
-		Next
-	Next
-	'old system -- end
+	sp.squads = Create_String_array_array_from_TJSONArray( json.GetArray( "squads" ))
 	sp.size = sp.count_all_squadmembers()
 	sp.pos = Create_POINT_from_json( TJSON.Create( json.GetObject( "pos" )))
 	sp.delay_time = json.GetArrayInt( "delay_time" )

@@ -123,16 +123,16 @@
 			class: 1,
 			squads: [
 				[
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0,
-					0
+					"apc",
+					"apc",
+					"apc",
+					"apc",
+					"apc",
+					"apc",
+					"apc",
+					"apc",
+					"apc",
+					"apc"
 				]
 			],
 			pos: {

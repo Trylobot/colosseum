@@ -311,29 +311,29 @@
 			class: 1,
 			squads: [
 				[
-					4,
-					4,
-					4,
-					5,
-					5
+					"machine_gun_emplacement",
+					"machine_gun_emplacement",
+					"machine_gun_emplacement",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					6,
-					6
+					"mini_bomb",
+					"mini_bomb"
 				],
 				[
-					6,
-					6
+					"mini_bomb",
+					"mini_bomb"
 				],
 				[
-					7,
-					7
+					"mr_the_box",
+					"mr_the_box"
 				]
 			],
 			pos: {
@@ -355,29 +355,29 @@
 			class: 1,
 			squads: [
 				[
-					4,
-					4,
-					4,
-					5,
-					5
+					"machine_gun_emplacement",
+					"machine_gun_emplacement",
+					"machine_gun_emplacement",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					6,
-					6
+					"mini_bomb",
+					"mini_bomb"
 				],
 				[
-					6,
-					6
+					"mini_bomb",
+					"mini_bomb"
 				],
 				[
-					7,
-					7
+					"mr_the_box",
+					"mr_the_box"
 				]
 			],
 			pos: {
@@ -397,45 +397,69 @@
 		},
 		{
 			class: 2,
-			squads: [ [ 2 ] ],
+			squads: [
+				[
+					"cannon_emplacement"
+				]
+			],
 			pos: {
 				pos_x: 377,
 				pos_y: 256
 			},
-			delay_time: [ 0 ],
+			delay_time: [
+				0
+			],
 			alignment: 2
 		},
 		{
 			class: 2,
-			squads: [ [ 3 ] ],
+			squads: [
+				[
+					"light_tank"
+				]
+			],
 			pos: {
 				pos_x: 258,
 				pos_y: 207,
 				ang: 180
 			},
-			delay_time: [ 0 ],
+			delay_time: [
+				0
+			],
 			alignment: 1
 		},
 		{
 			class: 2,
-			squads: [ [ 1 ] ],
+			squads: [
+				[
+					"armed_carrier"
+				]
+			],
 			pos: {
 				pos_x: 540,
 				pos_y: 140,
 				ang: -135
 			},
-			delay_time: [ 0 ],
+			delay_time: [
+				0
+			],
 			alignment: 2
 		},
 		{
 			class: 2,
-			squads: [ [ 1 ] ],
+			squads: [
+				[
+					"armed_carrier"
+				]
+			],
 			pos: {
 				pos_x: 98,
 				pos_y: 328,
 				ang: 45
 			},
-			delay_time: [ 0 ],
+			delay_time: [
+				0
+			],
 			alignment: 1
 		}
 	],

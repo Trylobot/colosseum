@@ -6,7 +6,7 @@
 	col_count: 19,
 	hue: 0,
 	saturation: 0,
-	luminosity: 0.30,
+	luminosity: 0.3,
 	horizontal_divs: [
 		0,
 		40,
@@ -468,19 +468,19 @@
 			class: 1,
 			squads: [
 				[
-					5,
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					6,
-					6
+					"mini_bomb",
+					"mini_bomb"
 				],
 				[
-					0,
-					0
+					"apc",
+					"apc"
 				]
 			],
 			pos: {
@@ -498,24 +498,24 @@
 			class: 1,
 			squads: [
 				[
-					4,
-					4,
-					4,
-					4
+					"machine_gun_emplacement",
+					"machine_gun_emplacement",
+					"machine_gun_emplacement",
+					"machine_gun_emplacement"
 				],
 				[
-					4,
-					4,
-					4,
-					4
+					"machine_gun_emplacement",
+					"machine_gun_emplacement",
+					"machine_gun_emplacement",
+					"machine_gun_emplacement"
 				],
 				[
-					7,
-					7
+					"mr_the_box",
+					"mr_the_box"
 				],
 				[
-					0,
-					0
+					"apc",
+					"apc"
 				]
 			],
 			pos: {
@@ -535,19 +535,19 @@
 			class: 1,
 			squads: [
 				[
-					6,
-					6,
-					6
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
 				],
 				[
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					0,
-					0
+					"apc",
+					"apc"
 				]
 			],
 			pos: {
@@ -564,45 +564,69 @@
 		},
 		{
 			class: 2,
-			squads: [ [ 3 ] ],
+			squads: [
+				[
+					"light_tank"
+				]
+			],
 			pos: {
 				pos_x: 350,
 				pos_y: 372
 			},
-			delay_time: [ 0 ],
+			delay_time: [
+				0
+			],
 			alignment: 2
 		},
 		{
 			class: 2,
-			squads: [ [ 1 ] ],
+			squads: [
+				[
+					"armed_carrier"
+				]
+			],
 			pos: {
 				pos_x: 225,
 				pos_y: 273,
 				ang: 45
 			},
-			delay_time: [ 0 ],
+			delay_time: [
+				0
+			],
 			alignment: 2
 		},
 		{
 			class: 2,
-			squads: [ [ 1 ] ],
+			squads: [
+				[
+					"armed_carrier"
+				]
+			],
 			pos: {
 				pos_x: 250,
 				pos_y: 477,
 				ang: -90
 			},
-			delay_time: [ 0 ],
+			delay_time: [
+				0
+			],
 			alignment: 2
 		},
 		{
 			class: 2,
-			squads: [ [ 2 ] ],
+			squads: [
+				[
+					"cannon_emplacement"
+				]
+			],
 			pos: {
 				pos_x: 345,
 				pos_y: 75,
 				ang: 90
 			},
-			delay_time: [ 0 ],
+			delay_time: [
+				0
+			],
 			alignment: 2
 		}
 	],

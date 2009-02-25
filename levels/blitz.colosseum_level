@@ -6,7 +6,7 @@
 	col_count: 11,
 	hue: 0,
 	saturation: 0.45,
-	luminosity: 0.60,
+	luminosity: 0.6,
 	horizontal_divs: [
 		0,
 		15,
@@ -171,16 +171,16 @@
 			class: 1,
 			squads: [
 				[
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					6
+					"mini_bomb"
 				],
 				[
-					7
+					"mr_the_box"
 				]
 			],
 			pos: {
@@ -199,16 +199,16 @@
 			class: 1,
 			squads: [
 				[
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					6
+					"mini_bomb"
 				],
 				[
-					7
+					"mr_the_box"
 				]
 			],
 			pos: {
@@ -227,16 +227,16 @@
 			class: 1,
 			squads: [
 				[
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					6
+					"mini_bomb"
 				],
 				[
-					7
+					"mr_the_box"
 				]
 			],
 			pos: {
@@ -255,16 +255,16 @@
 			class: 1,
 			squads: [
 				[
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					6
+					"mini_bomb"
 				],
 				[
-					7
+					"mr_the_box"
 				]
 			],
 			pos: {
@@ -283,16 +283,16 @@
 			class: 1,
 			squads: [
 				[
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					6
+					"mini_bomb"
 				],
 				[
-					7
+					"mr_the_box"
 				]
 			],
 			pos: {
@@ -311,16 +311,16 @@
 			class: 1,
 			squads: [
 				[
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					6
+					"mini_bomb"
 				],
 				[
-					7
+					"mr_the_box"
 				]
 			],
 			pos: {
@@ -339,16 +339,16 @@
 			class: 1,
 			squads: [
 				[
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					6
+					"mini_bomb"
 				],
 				[
-					7
+					"mr_the_box"
 				]
 			],
 			pos: {
@@ -367,16 +367,16 @@
 			class: 1,
 			squads: [
 				[
-					5,
-					5,
-					5,
-					5
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
 				],
 				[
-					6
+					"mini_bomb"
 				],
 				[
-					7
+					"mr_the_box"
 				]
 			],
 			pos: {
