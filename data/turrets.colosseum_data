@@ -29,7 +29,7 @@
 			name: "light machine-gun",
 			class: 2,
 			priority: 2,
-			image_key: Null,
+			image_key: null,
 			cash_value: 750,
 			firing_sound_key: "mgun",
 			turret_barrel_count: 1,
@@ -110,7 +110,7 @@
 			name: "medium machine-gun",
 			class: 2,
 			priority: 2,
-			image_key: Null,
+			image_key: null,
 			cash_value: 1000,
 			firing_sound_key: "mgun",
 			turret_barrel_count: 1,
@@ -323,6 +323,54 @@
 						offset_x: 5,
 						offset_y: 2
 					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret",
+		key: "npc_light_cannon",
+		object: {
+			name: "light cannon",
+			class: 2,
+			priority: 1,
+			image_key: "player_tank_turret_base",
+			firing_sound_key: "cannon",
+			turret_barrel_count: 1,
+			firing_sequence: [[0]],
+			max_ang_vel: 2.25,
+			max_ammo: 40,
+			effective_range: 500.0,
+			turret_barrels: [
+				{
+					turret_barrel_key: "npc_light_cannon",
+					attach_at: null
+				}
+			]
+		}
+	},
+	{
+		class: "turret",
+		key: "npc_light_machine_gun",
+		object: {
+			name: "light machine-gun",
+			class: 2,
+			priority: 2,
+			image_key: null,
+			firing_sound_key: "mgun",
+			turret_barrel_count: 1,
+			firing_sequence: [[0]],
+			max_ang_vel: 2.25,
+			heat_based: true,
+			heat_per_shot_min: 0.0500,
+			heat_per_shot_max: 0.0500,
+			cooling_rate: 0.0040,
+			overheat_delay: 2000,
+			effective_range: 250.0,
+			turret_barrels: [
+				{
+					turret_barrel_key: "npc_light_co_axial_machine_gun",
+					attach_at: null
 				}
 			]
 		}

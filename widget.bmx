@@ -91,6 +91,11 @@ Type WIDGET Extends MANAGED_OBJECT
 		Return w
 	End Method
 
+	'to do: FLAG_mute_offset_ang logic should be reversed;
+	' in other words, muting the offset_ang should happen by default.
+	' and inheriting the ang_offset from the offset_ang should be handled as a special case
+	' requiring an explicit boolean parameter;
+	' perhaps named like "inherit_ang_offset_from_offset_ang"
 	Method attach_at( ..
 	new_attach_x# = 0.0, new_attach_y# = 0.0, ..
 	new_ang_offset# = 0.0, ..

@@ -658,5 +658,117 @@
 				}
 			]
 		}
+	},
+	{
+		class: "turret_barrel",
+		key: "npc_light_cannon",
+		object: {
+			image_key: "player_tank_turret_barrel",
+			reload_time: 2000,
+			recoil_max: -7,
+			launcher: {
+				projectile_launcher_key: "tank_cannon",
+				attach_at: {
+					offset_x: 20,
+					vel_min: 2.40,
+					vel_max: 2.64,
+					ang_min: -1.0,
+					ang_max: 1.0
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "cannon_muzzle_flash",
+					attach_at: {
+						offset_x: 20
+					}
+				},
+				{
+					particle_emitter_key: "cannon_muzzle_smoke",
+					attach_at: {
+						offset_x: 20,
+						dist_min: 3,
+						dist_max: 6,
+						dist_ang_min: -45,
+						dist_ang_max: 45,
+						vel_min: 0.05,
+						vel_max: 0.40,
+						vel_ang_min: -45,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "cannon_shell_casing",
+					attach_at: {
+						offset_x: 3,
+						offset_y: 3,
+						vel_min: 0.4,
+						vel_max: 0.6,
+						vel_ang_min: 80,
+						vel_ang_max: 100,
+						ang_min: -10,
+						ang_max: 10,
+						ang_vel_min: -3.5,
+						ang_vel_max: 3.5
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
+		key: "npc_light_co_axial_machine_gun",
+		object: {
+			image_key: "player_tank_mgun_turret",
+			reload_time: 105,
+			launcher: {
+				projectile_launcher_key: "machine_gun",
+				attach_at: {
+					offset_x: 14,
+					offset_y: 2,
+					vel_min: 2.58,
+					vel_max: 2.82,
+					ang_min: -2.2,
+					ang_max: 2.2
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "machine_gun_muzzle_flash",
+					attach_at: {
+						offset_x: 14,
+						offset_y: 2
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_muzzle_smoke",
+					attach_at: {
+						offset_x: 14,
+						offset_y: 2,
+						dist_min: 3,
+						dist_max: 9,
+						dist_ang_max: 45,
+						vel_min: 0.01,
+						vel_max: 0.03,
+						vel_ang_max: 45
+					}
+				},
+				{
+					particle_emitter_key: "machine_gun_shell_casing",
+					attach_at: {
+						offset_x: 8,
+						offset_y: 2,
+						vel_min: 0.3,
+						vel_max: 0.4,
+						vel_ang_min: 85,
+						vel_ang_max: 95,
+						ang_min: -5,
+						ang_max: 5,
+						ang_vel_min: -5,
+						ang_vel_max: 5
+					}
+				}
+			]
+		}
 	}
 ]

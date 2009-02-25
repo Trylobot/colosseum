@@ -4,21 +4,21 @@ Rem
 	author: Tyler W Cole
 EndRem
 
-'______________________________________________________________________________
-Function load_all_archetypes()
-	'set_turret_archetypes()
-	'set_player_chassis_archetypes()
-	set_unit_archetypes()
-End Function
-
-Global array_index%
-Function reset_index()
-	array_index = 0
-End Function
-Function postfix_index%( amount% = 1 )
-	array_index :+ amount
-	Return (array_index - amount)
-End Function
+''______________________________________________________________________________
+'Function load_all_archetypes()
+'	'set_turret_archetypes()
+'	'set_player_chassis_archetypes()
+'	'set_unit_archetypes()
+'End Function
+'
+'Global array_index%
+'Function reset_index()
+'	array_index = 0
+'End Function
+'Function postfix_index%( amount% = 1 )
+'	array_index :+ amount
+'	Return (array_index - amount)
+'End Function
 
 ''______________________________________________________________________________
 ''[ TURRETS ]
@@ -104,85 +104,85 @@ End Function
 '		player_chassis_map.Insert( "medium_tank", player_chassis_archetype[PLAYER_CHASSIS_INDEX_MEDIUM_TANK] )
 'End Function
 
-'______________________________________________________________________________
-'[ UNITS ]
-Global unit_archetype:COMPLEX_AGENT[9]; reset_index()
-
-Global UNIT_INDEX_MR_THE_BOX% = postfix_index()
-Global UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT% = postfix_index()
-Global UNIT_INDEX_CANNON_TURRET_EMPLACEMENT% = postfix_index()
-Global UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT% = postfix_index()
-Global UNIT_INDEX_MOBILE_MINI_BOMB% = postfix_index()
-Global UNIT_INDEX_LIGHT_QUAD% = postfix_index()
-Global UNIT_INDEX_LIGHT_TANK% = postfix_index()
-Global UNIT_INDEX_CARRIER% = postfix_index()
-Global UNIT_INDEX_APC% = postfix_index()
-
-Function set_unit_archetypes()
-	unit_archetype[UNIT_INDEX_MR_THE_BOX] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mr_the_box", get_image( "box" ),, get_image( "box_gib" ), "wildlife", 25, 35, 350.0, 8.0, 6.0, 12.0 ))
-		unit_archetype[UNIT_INDEX_MR_THE_BOX].add_death_package()
-		unit_map.Insert( "mr_the_box", unit_archetype[UNIT_INDEX_MR_THE_BOX] )
-	unit_archetype[UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine_gun_emplacement", get_image( "enemy_stationary-emplacement-1_chassis" ),, get_image( "tower_gibs" ), "turret", 100, 100, 1000.0, 0, 0, 0, True ))
-		unit_archetype[UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT].add_death_package()
-		unit_archetype[UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT].add_turret_anchor( Create_cVEC( 0, 0 ))
-		unit_archetype[UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET], 0 )
-		unit_map.Insert( "machine_gun_emplacement", unit_archetype[UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT] )
-	unit_archetype[UNIT_INDEX_CANNON_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "cannon_emplacement", get_image( "enemy_stationary-emplacement-1_chassis" ),, get_image( "tower_gibs" ), "turret", 100, 100, 1000.0, 0, 0, 0, True ))
-		unit_archetype[UNIT_INDEX_CANNON_TURRET_EMPLACEMENT].add_death_package()
-		unit_archetype[UNIT_INDEX_CANNON_TURRET_EMPLACEMENT].add_turret_anchor( Create_cVEC( 0, 0 ))
-		unit_archetype[UNIT_INDEX_CANNON_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_CANNON_TURRET], 0 )
-		unit_map.Insert( "cannon_emplacement", unit_archetype[UNIT_INDEX_CANNON_TURRET_EMPLACEMENT] )
-	unit_archetype[UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "rocket_emplacement", get_image( "enemy_stationary-emplacement-1_chassis" ),, get_image( "tower_gibs" ), "turret", 150, 100, 1000.0, 0, 0, 0, True ))
-		unit_archetype[UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT].add_death_package()
-		unit_archetype[UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT].add_turret_anchor( Create_cVEC( 0, 0 ))
-		unit_archetype[UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_ROCKET_TURRET], 0 )
-		unit_map.Insert( "rocket_emplacement", unit_archetype[UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT] )
-	unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mini_bomb", get_image( "nme_mobile_bomb" ),, get_image( "bomb_gibs" ), "bomb", 75, 50, 200, 10.0, 7.50, 30.0 ))
-		unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB].add_death_package()
-		unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB].add_widget( get_widget( "lightbulb" ), WIDGET_AI_LIGHTBULB ).attach_at( 0, 0 )
-		unit_map.Insert( "mini_bomb", unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB] )
-	unit_archetype[UNIT_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine_gun_quad", get_image( "enemy_quad_chassis" ),, get_image( "quad_gibs" ), "vehicle", 100, 50, 400, 25.0, 35.0, 55.0 ))
-		unit_archetype[UNIT_INDEX_LIGHT_QUAD].add_death_package()
-		unit_archetype[UNIT_INDEX_LIGHT_QUAD].add_trail_package( "TANK_TREAD_TRAIL_SMALL",, 3, 4 )
-		unit_archetype[UNIT_INDEX_LIGHT_QUAD].add_dust_cloud_package( , 8, 5, 0, 2, -45, 45, 0.2, 0.8 )
-		unit_archetype[UNIT_INDEX_LIGHT_QUAD].add_turret_anchor( Create_cVEC( -6, 0 ))
-		unit_archetype[UNIT_INDEX_LIGHT_QUAD].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 0 )
-		unit_map.Insert( "machine_gun_quad", unit_archetype[UNIT_INDEX_LIGHT_QUAD] )
-	unit_archetype[UNIT_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "light_tank", get_image( "player_tank_chassis" ), get_image( "light_tank_hitbox" ), get_image( "quad_gibs" ), "vehicle", 300, 175, 800.0, 75.0, 50.0, 65.0 ))
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_death_package()
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_motivator_package( "light_tank_track", 0, 6.5 )
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_trail_package( "TANK_TREAD_TRAIL_SMALL",, 12, 6 )
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_dust_cloud_package( , 12, 7, 0, 2, -45, 45, 0.2, 0.8 )
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_turret_anchor( Create_cVEC( -5, 0 ))
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON], 0 )
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN], 0 )
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].turrets[0].turret_barrel_array[0].reload_time = 2000
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].turrets[0].turret_barrel_array[0].launcher.vel.scale( 0.60 )
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].turrets[1].turret_barrel_array[0].reload_time = 105
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].turrets[1].turret_barrel_array[0].launcher.vel.scale( 0.60 )
-		unit_archetype[UNIT_INDEX_LIGHT_TANK].turrets[1].max_heat = 15.0
-		unit_map.Insert( "light_tank", unit_archetype[UNIT_INDEX_LIGHT_TANK] )
-	unit_archetype[UNIT_INDEX_CARRIER] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "armed_carrier", get_image( "carrier_chassis" ), get_image( "carrier_hitbox" ), get_image( "carrier_gibs" ), "armed_carrier", 375, 300, 1200, 125.0, 70.0, 95.0 ))
-		unit_archetype[UNIT_INDEX_CARRIER].add_death_package()
-		unit_archetype[UNIT_INDEX_CARRIER].add_motivator_package( "med_tank_track", 1, 8.5 )
-		unit_archetype[UNIT_INDEX_CARRIER].add_trail_package( "TANK_TREAD_TRAIL_MEDIUM",, 16, 8 )
-		unit_archetype[UNIT_INDEX_CARRIER].add_dust_cloud_package( , 16, 8, 0, 2, -45, 45, 0.2, 0.8 )
-		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "BAY_DOOR_CLOCKWISE" ), WIDGET_DEPLOY ).attach_at( -16, -9,, True )
-		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "BAY_DOOR_COUNTER_CLOCKWISE" ), WIDGET_DEPLOY ).attach_at( -16, 9,, True )
-		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "RAMP" ), WIDGET_DEPLOY ).attach_at( -15, 0,, True )
-		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "SPINNER" ), WIDGET_DEPLOY ).attach_at( 10, 0,, True )
-		unit_archetype[UNIT_INDEX_CARRIER].add_turret_anchor( Create_cVEC( 10, -10 ))
-		unit_archetype[UNIT_INDEX_CARRIER].add_turret_anchor( Create_cVEC( 10, 10 ))
-		unit_archetype[UNIT_INDEX_CARRIER].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 0 )
-		unit_archetype[UNIT_INDEX_CARRIER].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 1 )
-		unit_archetype[UNIT_INDEX_CARRIER].add_factory_unit( UNIT_INDEX_MOBILE_MINI_BOMB, 4 )
-		unit_map.Insert( "armed_carrier", unit_archetype[UNIT_INDEX_CARRIER] )
-	unit_archetype[UNIT_INDEX_APC] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "apc", get_image( "apc_chassis" ), get_image( "apc_chassis" ), get_image( "quad_gibs" ), "vehicle", 250, 375, 400, 25.0, 35.0, 55.0 )) '650.0, 75.0, 65.0, 90.0 ))
-		unit_archetype[UNIT_INDEX_APC].add_death_package()
-		unit_archetype[UNIT_INDEX_APC].add_trail_package( "TANK_TREAD_TRAIL_SMALL",, 11, 8 )
-		unit_archetype[UNIT_INDEX_APC].add_dust_cloud_package( , 11, 8, 0, 2, -45, 45, 0.2, 0.8 )
-		unit_archetype[UNIT_INDEX_APC].add_turret_anchor( Create_cVEC( 0, 0 ))
-		unit_archetype[UNIT_INDEX_APC].add_turret( turret_archetype[TURRET_INDEX_APC_MACHINE_GUN], 0 )
-		unit_map.Insert( "apc", unit_archetype[UNIT_INDEX_APC] )
-End Function
+''______________________________________________________________________________
+''[ UNITS ]
+'Global unit_archetype:COMPLEX_AGENT[9]; reset_index()
+'
+'Global UNIT_INDEX_MR_THE_BOX% = postfix_index()
+'Global UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT% = postfix_index()
+'Global UNIT_INDEX_CANNON_TURRET_EMPLACEMENT% = postfix_index()
+'Global UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT% = postfix_index()
+'Global UNIT_INDEX_MOBILE_MINI_BOMB% = postfix_index()
+'Global UNIT_INDEX_LIGHT_QUAD% = postfix_index()
+'Global UNIT_INDEX_LIGHT_TANK% = postfix_index()
+'Global UNIT_INDEX_CARRIER% = postfix_index()
+'Global UNIT_INDEX_APC% = postfix_index()
+'
+'Function set_unit_archetypes()
+'	unit_archetype[UNIT_INDEX_MR_THE_BOX] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mr_the_box", get_image( "box" ),, get_image( "box_gib" ), "wildlife", 25, 35, 350.0, 8.0, 6.0, 12.0 ))
+'		unit_archetype[UNIT_INDEX_MR_THE_BOX].add_death_package()
+'		unit_map.Insert( "mr_the_box", unit_archetype[UNIT_INDEX_MR_THE_BOX] )
+'	unit_archetype[UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine_gun_emplacement", get_image( "enemy_stationary-emplacement-1_chassis" ),, get_image( "tower_gibs" ), "turret", 100, 100, 1000.0, 0, 0, 0, True ))
+'		unit_archetype[UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT].add_death_package()
+'		unit_archetype[UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT].add_turret_anchor( Create_cVEC( 0, 0 ))
+'		unit_archetype[UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_MACHINE_GUN_TURRET], 0 )
+'		unit_map.Insert( "machine_gun_emplacement", unit_archetype[UNIT_INDEX_MACHINE_GUN_TURRET_EMPLACEMENT] )
+'	unit_archetype[UNIT_INDEX_CANNON_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "cannon_emplacement", get_image( "enemy_stationary-emplacement-1_chassis" ),, get_image( "tower_gibs" ), "turret", 100, 100, 1000.0, 0, 0, 0, True ))
+'		unit_archetype[UNIT_INDEX_CANNON_TURRET_EMPLACEMENT].add_death_package()
+'		unit_archetype[UNIT_INDEX_CANNON_TURRET_EMPLACEMENT].add_turret_anchor( Create_cVEC( 0, 0 ))
+'		unit_archetype[UNIT_INDEX_CANNON_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_CANNON_TURRET], 0 )
+'		unit_map.Insert( "cannon_emplacement", unit_archetype[UNIT_INDEX_CANNON_TURRET_EMPLACEMENT] )
+'	unit_archetype[UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "rocket_emplacement", get_image( "enemy_stationary-emplacement-1_chassis" ),, get_image( "tower_gibs" ), "turret", 150, 100, 1000.0, 0, 0, 0, True ))
+'		unit_archetype[UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT].add_death_package()
+'		unit_archetype[UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT].add_turret_anchor( Create_cVEC( 0, 0 ))
+'		unit_archetype[UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT].add_turret( turret_archetype[TURRET_INDEX_ROCKET_TURRET], 0 )
+'		unit_map.Insert( "rocket_emplacement", unit_archetype[UNIT_INDEX_ROCKET_TURRET_EMPLACEMENT] )
+'	unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "mini_bomb", get_image( "nme_mobile_bomb" ),, get_image( "bomb_gibs" ), "bomb", 75, 50, 200, 10.0, 7.50, 30.0 ))
+'		unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB].add_death_package()
+'		unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB].add_widget( get_widget( "lightbulb" ), WIDGET_AI_LIGHTBULB ).attach_at( 0, 0 )
+'		unit_map.Insert( "mini_bomb", unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB] )
+'	unit_archetype[UNIT_INDEX_LIGHT_QUAD] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "machine_gun_quad", get_image( "enemy_quad_chassis" ),, get_image( "quad_gibs" ), "vehicle", 100, 50, 400, 25.0, 35.0, 55.0 ))
+'		unit_archetype[UNIT_INDEX_LIGHT_QUAD].add_death_package()
+'		unit_archetype[UNIT_INDEX_LIGHT_QUAD].add_trail_package( "TANK_TREAD_TRAIL_SMALL",, 3, 4 )
+'		unit_archetype[UNIT_INDEX_LIGHT_QUAD].add_dust_cloud_package( , 8, 5, 0, 2, -45, 45, 0.2, 0.8 )
+'		unit_archetype[UNIT_INDEX_LIGHT_QUAD].add_turret_anchor( Create_cVEC( -6, 0 ))
+'		unit_archetype[UNIT_INDEX_LIGHT_QUAD].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 0 )
+'		unit_map.Insert( "machine_gun_quad", unit_archetype[UNIT_INDEX_LIGHT_QUAD] )
+'	unit_archetype[UNIT_INDEX_LIGHT_TANK] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "light_tank", get_image( "player_tank_chassis" ), get_image( "light_tank_hitbox" ), get_image( "quad_gibs" ), "vehicle", 300, 175, 800.0, 75.0, 50.0, 65.0 ))
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_death_package()
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_motivator_package( "light_tank_track", 0, 6.5 )
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_trail_package( "TANK_TREAD_TRAIL_SMALL",, 12, 6 )
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_dust_cloud_package( , 12, 7, 0, 2, -45, 45, 0.2, 0.8 )
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_turret_anchor( Create_cVEC( -5, 0 ))
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_SINGLE_CANNON], 0 )
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].add_turret( turret_archetype[TURRET_INDEX_TANK_MACHINE_GUN], 0 )
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].turrets[0].turret_barrel_array[0].reload_time = 2000
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].turrets[0].turret_barrel_array[0].launcher.vel.scale( 0.60 )
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].turrets[1].turret_barrel_array[0].reload_time = 105
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].turrets[1].turret_barrel_array[0].launcher.vel.scale( 0.60 )
+'		unit_archetype[UNIT_INDEX_LIGHT_TANK].turrets[1].max_heat = ??? '15.0
+'		unit_map.Insert( "light_tank", unit_archetype[UNIT_INDEX_LIGHT_TANK] )
+'	unit_archetype[UNIT_INDEX_CARRIER] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "armed_carrier", get_image( "carrier_chassis" ), get_image( "carrier_hitbox" ), get_image( "carrier_gibs" ), "armed_carrier", 375, 300, 1200, 125.0, 70.0, 95.0 ))
+'		unit_archetype[UNIT_INDEX_CARRIER].add_death_package()
+'		unit_archetype[UNIT_INDEX_CARRIER].add_motivator_package( "med_tank_track", 1, 8.5 )
+'		unit_archetype[UNIT_INDEX_CARRIER].add_trail_package( "TANK_TREAD_TRAIL_MEDIUM",, 16, 8 )
+'		unit_archetype[UNIT_INDEX_CARRIER].add_dust_cloud_package( , 16, 8, 0, 2, -45, 45, 0.2, 0.8 )
+'		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "BAY_DOOR_CLOCKWISE" ), WIDGET_DEPLOY ).attach_at( -16, -9,, True )
+'		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "BAY_DOOR_COUNTER_CLOCKWISE" ), WIDGET_DEPLOY ).attach_at( -16, 9,, True )
+'		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "RAMP" ), WIDGET_DEPLOY ).attach_at( -15, 0,, True )
+'		unit_archetype[UNIT_INDEX_CARRIER].add_widget( get_widget( "SPINNER" ), WIDGET_DEPLOY ).attach_at( 10, 0,, True )
+'		unit_archetype[UNIT_INDEX_CARRIER].add_turret_anchor( Create_cVEC( 10, -10 ))
+'		unit_archetype[UNIT_INDEX_CARRIER].add_turret_anchor( Create_cVEC( 10, 10 ))
+'		unit_archetype[UNIT_INDEX_CARRIER].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 0 )
+'		unit_archetype[UNIT_INDEX_CARRIER].add_turret( turret_archetype[TURRET_INDEX_LIGHT_MACHINE_GUN], 1 )
+'		unit_archetype[UNIT_INDEX_CARRIER].add_factory_unit( UNIT_INDEX_MOBILE_MINI_BOMB, 4 )
+'		unit_map.Insert( "armed_carrier", unit_archetype[UNIT_INDEX_CARRIER] )
+'	unit_archetype[UNIT_INDEX_APC] = COMPLEX_AGENT( COMPLEX_AGENT.Archetype( "apc", get_image( "apc_chassis" ), get_image( "apc_chassis" ), get_image( "quad_gibs" ), "vehicle", 250, 375, 400, 25.0, 35.0, 55.0 )) '650.0, 75.0, 65.0, 90.0 ))
+'		unit_archetype[UNIT_INDEX_APC].add_death_package()
+'		unit_archetype[UNIT_INDEX_APC].add_trail_package( "TANK_TREAD_TRAIL_SMALL",, 11, 8 )
+'		unit_archetype[UNIT_INDEX_APC].add_dust_cloud_package( , 11, 8, 0, 2, -45, 45, 0.2, 0.8 )
+'		unit_archetype[UNIT_INDEX_APC].add_turret_anchor( Create_cVEC( 0, 0 ))
+'		unit_archetype[UNIT_INDEX_APC].add_turret( turret_archetype[TURRET_INDEX_APC_MACHINE_GUN], 0 )
+'		unit_map.Insert( "apc", unit_archetype[UNIT_INDEX_APC] )
+'End Function
 

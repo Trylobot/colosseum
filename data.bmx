@@ -59,105 +59,89 @@ Global level_map:TMap = CreateMap()
 
 '______________________________________________________________________________
 Function get_font:TImageFont( key$ ) 'returns read-only reference
-	key = key.toLower()
-	Return TImageFont( font_map.ValueForKey( key ))
+	Return TImageFont( font_map.ValueForKey( key.toLower() ))
 End Function
 '________________________________
 Function get_sound:TSound( key$ ) 'returns read-only reference
-	key = key.toLower()
-	Return TSound( sound_map.ValueForKey( key ))
+	Return TSound( sound_map.ValueForKey( key.toLower() ))
 End Function
 '________________________________
 Function get_image:TImage( key$ ) 'returns read-only reference
-	key = key.toLower()
-	Return TImage( image_map.ValueForKey( key ))
+	Return TImage( image_map.ValueForKey( key.toLower() ))
 End Function
 '________________________________
 Function get_prop:AGENT( key$, copy% = True )
-	key = key.toLower()
-	Local ag:AGENT = AGENT( prop_map.ValueForKey( key ))
+	Local ag:AGENT = AGENT( prop_map.ValueForKey( key.toLower() ))
 	If copy And ag Then Return Copy_AGENT( ag )
 	Return ag
 End Function
 '________________________________
 Function get_particle:PARTICLE( key$, new_frame% = 0, copy% = True )
-	key = key.toLower()
-	Local part:PARTICLE = PARTICLE( particle_map.ValueForKey( key ))
+	Local part:PARTICLE = PARTICLE( particle_map.ValueForKey( key.toLower() ))
 	If copy And part Then Return part.clone( new_frame )
 	Return part
 End Function
 '________________________________
 Function get_particle_emitter:EMITTER( key$, copy% = True )
-	key = key.toLower()
-	Local em:EMITTER = EMITTER( particle_emitter_map.ValueForKey( key ))
+	Local em:EMITTER = EMITTER( particle_emitter_map.ValueForKey( key.toLower() ))
 	If copy And em Then Return EMITTER( EMITTER.Copy( em ))
 	Return em
 End Function
 '________________________________
 Function get_projectile:PROJECTILE( key$, source_id% = NULL_ID, copy% = True )
-	key = key.toLower()
-	Local proj:PROJECTILE = PROJECTILE( projectile_map.ValueForKey( key ))
+	Local proj:PROJECTILE = PROJECTILE( projectile_map.ValueForKey( key.toLower() ))
 	If copy And proj Then Return proj.clone( source_id )
 	Return proj
 End Function
 '________________________________
 Function get_projectile_launcher:EMITTER( key$, copy% = True )
-	key = key.toLower()
-	Local lchr:EMITTER = EMITTER( projectile_launcher_map.ValueForKey( key ))
+	Local lchr:EMITTER = EMITTER( projectile_launcher_map.ValueForKey( key.toLower() ))
 	If copy And lchr Then Return EMITTER( EMITTER.Copy( lchr ))
 	Return lchr
 End Function
 '________________________________
 Function get_pickup:PICKUP( key$, copy% = True )
-	key = key.toLower()
-	Local pkp:PICKUP = PICKUP( pickup_map.ValueForKey( key ))
+	Local pkp:PICKUP = PICKUP( pickup_map.ValueForKey( key.toLower() ))
 	If copy And pkp Then Return pkp.clone()
 	Return pkp
 End Function
 '________________________________
 Function get_turret_barrel:TURRET_BARREL( key$, copy% = True )
-	key = key.toLower()
-	Local tb:TURRET_BARREL = TURRET_BARREL( turret_barrel_map.ValueForKey( key ))
+	Local tb:TURRET_BARREL = TURRET_BARREL( turret_barrel_map.ValueForKey( key.toLower() ))
 	If copy And tb Then Return TURRET_BARREL( tb.clone())
 	Return tb
 End Function
 '________________________________
 Function get_turret:TURRET( key$, copy% = True )
-	key = key.toLower()
-	Local tur:TURRET = TURRET( turret_map.ValueForKey( key ))
+	Local tur:TURRET = TURRET( turret_map.ValueForKey( key.toLower() ))
 	If copy And tur Then Return tur.clone()
 	Return tur
 End Function
 '________________________________
 Function get_widget:WIDGET( key$, copy% = True )
-	key = key.toLower()
-	Local w:WIDGET = WIDGET( widget_map.ValueForKey( key ))
+	Local w:WIDGET = WIDGET( widget_map.ValueForKey( key.toLower() ))
 	If copy And w Then Return w.clone()
 	Return w
 End Function
 '________________________________
 Function get_ai_type:AI_TYPE( key$ ) 'returns read-only reference
-	key = key.toLower()
-	Return AI_TYPE( ai_type_map.ValueForKey( key ))
+	Return AI_TYPE( ai_type_map.ValueForKey( key.toLower() ))
 End Function
 '________________________________
 Function get_player_chassis:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
-	key = key.toLower()
-	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_chassis_map.ValueForKey( key ))
+	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_chassis_map.ValueForKey( key.toLower() ))
 	If copy And comp_ag Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( comp_ag ))
 	Return comp_ag
 End Function
 '________________________________
 Function get_unit:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
-	key = key.toLower()
-	Local unit:COMPLEX_AGENT = COMPLEX_AGENT( unit_map.ValueForKey( key ))
+	Local unit:COMPLEX_AGENT = COMPLEX_AGENT( unit_map.ValueForKey( key.toLower() ))
 	If copy And unit Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit ))
 	Return unit
 End Function
 '________________________________
 Function get_compatibility:COMPATIBILITY_DATA( key$ ) 'returns read-only reference (recursive inheritance expansion)
-	key = key.toLower()
-	Local cd:COMPATIBILITY_DATA = COMPATIBILITY_DATA( compatibility_map.ValueForKey( key ))
+	Local cd:COMPATIBILITY_DATA = COMPATIBILITY_DATA( compatibility_map.ValueForKey( key.toLower() ))
 	If cd
 		cd = cd.clone()
 		If cd.inherits_from Then cd.inherit( get_compatibility( cd.inherits_from ))
@@ -166,8 +150,7 @@ Function get_compatibility:COMPATIBILITY_DATA( key$ ) 'returns read-only referen
 End Function
 '________________________________
 Function get_level:LEVEL( key$, copy% = True ) 'returns read-only reference
-	key = key.toLower()
-	Local lev:LEVEL = LEVEL( level_map.ValueForKey( key ))
+	Local lev:LEVEL = LEVEL( level_map.ValueForKey( key.toLower() ))
 	'If copy Then Return ...
 	Return lev
 End Function
@@ -232,6 +215,7 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				key = item.GetString( "object.chassis_key" )
 		End Select
 		If key And key <> ""
+			key = key.toLower()
 			DebugLog( "    load_objects() --> " + key )
 			global_error_message = source_file + "/" + key + "~n"
 			Local object_json:TJSON = TJSON.Create( item.GetObject( "object" ))
@@ -275,8 +259,12 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				Case "ai_type"
 					Local ai:AI_TYPE = Create_AI_TYPE_from_json( object_json )
 					If ai Then ai_type_map.Insert( key, ai ) Else load_error()
-				'Case "player_chassis"
-				'Case "unit"
+				Case "player_chassis"
+					Local p_cha:COMPLEX_AGENT = Create_COMPLEX_AGENT_from_json( object_json )
+					If p_cha Then player_chassis_map.Insert( key, p_cha ) Else load_error()
+				Case "unit"
+					Local u:COMPLEX_AGENT = Create_COMPLEX_AGENT_from_json( object_json )
+					If u Then unit_map.Insert( key, u ) Else load_error()
 				Case "compatibility"
 					Local cd:COMPATIBILITY_DATA = Create_COMPATIBILITY_DATA_from_json( object_json )
 					If cd Then compatibility_map.Insert( key, cd ) Else load_error()
