@@ -177,10 +177,10 @@
 					"machine_gun_quad"
 				],
 				[
-					"mini_bomb"
+					"light_tank"
 				],
 				[
-					"mr_the_box"
+					"armed_carrier"
 				]
 			],
 			pos: {
@@ -205,10 +205,10 @@
 					"machine_gun_quad"
 				],
 				[
-					"mini_bomb"
+					"light_tank"
 				],
 				[
-					"mr_the_box"
+					"armed_carrier"
 				]
 			],
 			pos: {
@@ -233,10 +233,10 @@
 					"machine_gun_quad"
 				],
 				[
-					"mini_bomb"
+					"light_tank"
 				],
 				[
-					"mr_the_box"
+					"armed_carrier"
 				]
 			],
 			pos: {
@@ -261,10 +261,10 @@
 					"machine_gun_quad"
 				],
 				[
-					"mini_bomb"
+					"light_tank"
 				],
 				[
-					"mr_the_box"
+					"armed_carrier"
 				]
 			],
 			pos: {
@@ -289,10 +289,10 @@
 					"machine_gun_quad"
 				],
 				[
-					"mini_bomb"
+					"light_tank"
 				],
 				[
-					"mr_the_box"
+					"armed_carrier"
 				]
 			],
 			pos: {
@@ -317,10 +317,10 @@
 					"machine_gun_quad"
 				],
 				[
-					"mini_bomb"
+					"light_tank"
 				],
 				[
-					"mr_the_box"
+					"armed_carrier"
 				]
 			],
 			pos: {
@@ -345,10 +345,10 @@
 					"machine_gun_quad"
 				],
 				[
-					"mini_bomb"
+					"light_tank"
 				],
 				[
-					"mr_the_box"
+					"armed_carrier"
 				]
 			],
 			pos: {
@@ -373,10 +373,10 @@
 					"machine_gun_quad"
 				],
 				[
-					"mini_bomb"
+					"light_tank"
 				],
 				[
-					"mr_the_box"
+					"armed_carrier"
 				]
 			],
 			pos: {

@@ -475,12 +475,12 @@
 					"machine_gun_quad"
 				],
 				[
-					"mini_bomb",
-					"mini_bomb"
+					"light_tank",
+					"light_tank"
 				],
 				[
-					"apc",
-					"apc"
+					"mr_the_box",
+					"mr_the_box"
 				]
 			],
 			pos: {
@@ -498,24 +498,24 @@
 			class: 1,
 			squads: [
 				[
-					"machine_gun_emplacement",
-					"machine_gun_emplacement",
-					"machine_gun_emplacement",
-					"machine_gun_emplacement"
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
 				],
 				[
-					"machine_gun_emplacement",
-					"machine_gun_emplacement",
-					"machine_gun_emplacement",
-					"machine_gun_emplacement"
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
+				],
+				[
+					"armed_carrier",
+					"armed_carrier"
 				],
 				[
 					"mr_the_box",
 					"mr_the_box"
-				],
-				[
-					"apc",
-					"apc"
 				]
 			],
 			pos: {
@@ -535,9 +535,9 @@
 			class: 1,
 			squads: [
 				[
-					"mini_bomb",
-					"mini_bomb",
-					"mini_bomb"
+					"light_tank",
+					"light_tank",
+					"light_tank"
 				],
 				[
 					"machine_gun_quad",
@@ -546,8 +546,8 @@
 					"machine_gun_quad"
 				],
 				[
-					"apc",
-					"apc"
+					"mr_the_box",
+					"mr_the_box"
 				]
 			],
 			pos: {
@@ -566,7 +566,7 @@
 			class: 2,
 			squads: [
 				[
-					"light_tank"
+					"rocket_emplacement"
 				]
 			],
 			pos: {
@@ -582,7 +582,7 @@
 			class: 2,
 			squads: [
 				[
-					"armed_carrier"
+					"machine_gun_emplacement"
 				]
 			],
 			pos: {
@@ -599,7 +599,7 @@
 			class: 2,
 			squads: [
 				[
-					"armed_carrier"
+					"machine_gun_emplacement"
 				]
 			],
 			pos: {
