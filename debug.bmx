@@ -236,7 +236,7 @@ Function debug_overlay()
 	
 	'cause an explosion under cursor via mini-bomb self detonation
 	If KeyHit( KEY_SEMICOLON )
-		Local bomb:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[UNIT_INDEX_MOBILE_MINI_BOMB], ALIGNMENT_NONE ))
+		Local bomb:COMPLEX_AGENT = get_unit( "mini_bomb" )
 		bomb.move_to( game.mouse )
 		bomb.self_destruct()
 	End If

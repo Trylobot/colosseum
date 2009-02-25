@@ -10,7 +10,7 @@ Type SPAWNER
 	Global class_TURRET_ANCHOR% = 2
 	
 	Field class% '{gated_factory|turret_anchor} <-- this should be gone, doors should be separate entirely
-	Field squads%[][] 'grouped references to COMPLEX_AGENT prototypes; to be "baked" at spawn-time; turret anchors ignore all entries beyond the first.
+	Field squads$[][] 'grouped references to COMPLEX_AGENT prototypes; to be "baked" at spawn-time; turret anchors ignore all entries beyond the first.
 	Field size% 'cached result of count_all_squadmembers()
 	Field pos:POINT 'initial state to be conferred on each spawned agent; velocity and acceleration ignored for turret anchors
 	Field delay_time%[] 'time delay between squad queueing; ignored for turret anchors
@@ -23,7 +23,7 @@ Type SPAWNER
 	Method clone:SPAWNER()
 		Local sp:SPAWNER = New SPAWNER
 		sp.class = class
-		sp.squads = New Int[][squads.Length]
+		sp.squads = New String[][squads.Length]
 		For Local index% = 0 To squads.Length - 1
 			sp.squads[index] = squads[index][..]
 		Next
@@ -41,9 +41,9 @@ Type SPAWNER
 		Return (squads.Length - 1) 'return index of new squad
 	End Method
 	
-	Method remove_squad( squad%[] )
+	Method remove_squad( squad$[] )
 		For Local index% = 0 To squads.Length-1
-			Local sq%[] = squads[index]
+			Local sq$[] = squads[index]
 			If sq = squad
 				squads[index] = squads[squads.Length-1]
 				squads = squads[..squads.Length-1]
@@ -54,7 +54,7 @@ Type SPAWNER
 		Next
 	End Method
 	
-	Method add_new_squadmember( squad_index%, archetype% )
+	Method add_new_squadmember( squad_index%, archetype$ )
 		squads[squad_index] = squads[squad_index][..squads[squad_index].Length+1]
 		squads[squad_index][squads[squad_index].Length-1] = archetype
 		size = count_all_squadmembers()
@@ -99,7 +99,7 @@ Type SPAWNER
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "class", TJSONNumber.Create( class ))
-		this_json.SetByName( "squads", Create_TJSONArray_from_Int_array_array( squads ))
+		this_json.SetByName( "squads", Create_TJSONArray_from_String_array_array( squads ))
 		this_json.SetByName( "pos", pos.to_json() )
 		this_json.SetByName( "delay_time", Create_TJSONArray_from_Int_array( delay_time ))
 		this_json.SetByName( "alignment", TJSONNumber.Create( alignment ))
@@ -110,7 +110,25 @@ End Type
 Function Create_SPAWNER_from_json:SPAWNER( json:TJSON )
 	Local sp:SPAWNER = New SPAWNER
 	sp.class = json.GetNumber( "class" )
-	sp.squads = Create_Int_array_array_from_TJSONArray( json.GetArray( "squads" ))
+	'new system
+	'sp.squads = Create_String_array_array_from_TJSONArray( json.GetArray( "squads" ))
+	'old system -- begin
+	Local squads_DEPRECATED%[][] = Create_Int_array_array_from_TJSONArray( json.GetArray( "squads" ))
+	sp.squads = New String[][squads_DEPRECATED.Length]
+	For Local i% = 0 Until sp.squads.Length
+		sp.squads[i] = New String[squads_DEPRECATED[i].Length]
+		For Local m% = 0 Until sp.squads[i].Length
+			Local k% = 0
+			For Local key$ = EachIn unit_map.Keys()
+				If k = squads_DEPRECATED[i][k]
+					sp.squads[i][m] = key
+					Exit
+				End If
+				k :+ 1
+			Next
+		Next
+	Next
+	'old system -- end
 	sp.size = sp.count_all_squadmembers()
 	sp.pos = Create_POINT_from_json( TJSON.Create( json.GetObject( "pos" )))
 	sp.delay_time = json.GetArrayInt( "delay_time" )

@@ -313,8 +313,8 @@ Type ENVIRONMENT
 		Return spawned
 	End Method
 	
-	Method spawn_unit:CONTROL_BRAIN( archetype_index%, alignment%, spawn_point:POINT )
-		Local unit:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[archetype_index], alignment ))
+	Method spawn_unit:CONTROL_BRAIN( unit_key$, alignment%, spawn_point:POINT )
+		Local unit:COMPLEX_AGENT = get_unit( unit_key, alignment )
 		Select alignment
 			Case ALIGNMENT_HOSTILE
 				unit.manage( hostile_agent_list )

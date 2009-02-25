@@ -44,7 +44,9 @@ Function level_editor( lev:LEVEL )
 	Local divider_axis% = LINE_TYPE_VERTICAL
 	
 	Local cursor% = 0
-	Local cursor_archetype% = 0
+	Local cursor_archetype_index% = 0
+	Local unit_keys$[] = get_keys( unit_map )
+	Local cursor_archetype$ = unit_keys[cursor_archetype_index]
 	Local sp_delay_time$
 	
 	Local normal_font:TImageFont = get_font( "consolas_12" )
@@ -482,7 +484,7 @@ Function level_editor( lev:LEVEL )
 					If sp.count_squads() <> 0
 						For Local r% = 0 To sp.count_squads()-1
 							For Local c% = 0 To sp.count_squadmembers( r )-1
-								Local ag:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[sp.squads[r][c]] ))
+								Local ag:COMPLEX_AGENT = get_unit( sp.squads[r][c] )
 								ag.scale_all( 0.75 )
 								ag.pos_x = info_x + cell_size + c*cell_size - cell_size/2
 								ag.pos_y = info_y + cell_size + r*cell_size - cell_size/2
@@ -514,7 +516,7 @@ Function level_editor( lev:LEVEL )
 						DrawText( String.FromInt( sp.delay_time[cursor] ), window_w - 50, info_y + cursor*cell_size + line_h/3 )
 					End If
 					Local cursor_squadmembers% = sp.count_squadmembers( cursor )
-					Local ag:COMPLEX_AGENT = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[cursor_archetype] ))
+					Local ag:COMPLEX_AGENT = get_unit( cursor_archetype )
 					ag.scale_all( 0.75 )
 					ag.pos_x = info_x + cell_size + cursor_squadmembers*cell_size - cell_size/2
 					ag.pos_y = info_y + cell_size + cursor*cell_size - cell_size/2
@@ -540,12 +542,14 @@ Function level_editor( lev:LEVEL )
 						sp.class = SPAWNER.class_TURRET_ANCHOR
 					End If
 					If KeyHit( KEY_LEFT )
-						cursor_archetype :- 1
-						If cursor_archetype < 0 Then cursor_archetype = unit_archetype.Length-1
+						cursor_archetype_index :- 1
+						If cursor_archetype_index < 0 Then cursor_archetype_index = unit_keys.Length-1
+						cursor_archetype = unit_keys[cursor_archetype_index]
 					End If
 					If KeyHit( KEY_RIGHT )
-						cursor_archetype :+ 1
-						If cursor_archetype > unit_archetype.Length-1 Then cursor_archetype = 0
+						cursor_archetype_index :+ 1
+						If cursor_archetype_index > unit_keys.Length-1 Then cursor_archetype_index = 0
+						cursor_archetype = unit_keys[cursor_archetype_index]
 					End If
 					If KeyHit( KEY_UP )
 						cursor :- 1

@@ -134,9 +134,9 @@ Function get_player_chassis:COMPLEX_AGENT( key$, copy% = True ) 'returns a new i
 	Return comp_ag
 End Function
 '________________________________
-Function get_unit:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
+Function get_unit:COMPLEX_AGENT( key$, alignment% = ALIGNMENT_NONE, copy% = True ) 'returns a new instance, which is a copy of the global archetype
 	Local unit:COMPLEX_AGENT = COMPLEX_AGENT( unit_map.ValueForKey( key.toLower() ))
-	If copy And unit Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit ))
+	If copy And unit Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit, alignment ))
 	Return unit
 End Function
 '________________________________

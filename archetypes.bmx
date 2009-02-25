@@ -11,15 +11,6 @@ EndRem
 '	'set_unit_archetypes()
 'End Function
 '
-'Global array_index%
-'Function reset_index()
-'	array_index = 0
-'End Function
-'Function postfix_index%( amount% = 1 )
-'	array_index :+ amount
-'	Return (array_index - amount)
-'End Function
-
 ''______________________________________________________________________________
 ''[ TURRETS ]
 'Global turret_archetype:TURRET[12]; reset_index()

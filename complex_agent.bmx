@@ -702,3 +702,4 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	'when assigning an image, also assign the hitbox
 	Return cmp_ag
 End Function
+
