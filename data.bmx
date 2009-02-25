@@ -173,7 +173,7 @@ Function get_inventory_object_cost%( item_type$, item_key$ )
 End Function
 
 '_____________________________________________________________________________
-Function load_assets%()
+Function load_assets%( display_progress% = False )
 	Local file:TStream = ReadFile( data_path + default_assets_file_name )
 	If Not file Then Return False
 	Local json:TJSON = TJSON.Create( file )
@@ -189,7 +189,7 @@ Function load_assets%()
 				global_error_message = source_file + "~n"
 				asset_json = TJSON.Create( asset_file )
 				If Not asset_json.isNull() And TJSONArray(asset_json.Root) 'read successful
-					load_objects( asset_json, source_file )
+					load_objects( asset_json, source_file, display_progress )
 				End If
 			Else
 				global_error_message :+ "file could not be opened for read."
@@ -197,12 +197,14 @@ Function load_assets%()
 			End If
 		Next
 		DebugLog( "~n~n" )
+		If display_progress Then fade_out()
 		Return True
 	End If
 	Return False
 End Function
 '______________________________________________________________________________
-Function load_objects%( json:TJSON, source_file$ = Null )
+Function load_objects%( json:TJSON, source_file$ = Null, display_progress% = False )
+	If display_progress Then draw_loaded_asset( , True )
 	For Local i% = 0 To TJSONArray( json.Root ).Size() - 1
 		Local item:TJSON = TJSON.Create( json.GetObject( String.FromInt( i )))
 		Local key$ = item.GetString( "key" )
@@ -217,6 +219,7 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 		If key And key <> ""
 			key = key.toLower()
 			DebugLog( "    load_objects() --> " + key )
+			If display_progress Then draw_loaded_asset( key )
 			global_error_message = source_file + "/" + key + "~n"
 			Local object_json:TJSON = TJSON.Create( item.GetObject( "object" ))
 			Select item.GetString( "class" )
@@ -306,7 +309,7 @@ Function Create_TImageFont_from_json:TImageFont( json:TJSON )
 	Local path$, size%
 	path = json.GetString( "path" )
 	size = json.GetNumber( "size" )
-	Return LoadImageFont( path, size, SMOOTHFONT )
+	Return LoadImageFont( path, size )
 End Function
 '_____________________________________________________________________________
 Function Create_TSound_from_json:TSound( json:TJSON )

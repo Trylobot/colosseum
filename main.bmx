@@ -55,8 +55,6 @@ create_dirs()
 If Not load_settings()
 	save_settings()
 End If
-'assets
-menu_command( COMMAND_LOAD_ASSETS )
 'level editor cache 
 menu_command( COMMAND_NEW_LEVEL )
 'autosave/load user profile
@@ -79,6 +77,7 @@ Function init_graphics()
 		Graphics( window_w, window_h, bit_depth, refresh_rate, GRAPHICS_BACKBUFFER )
 	End If
 	SetClsColor( 0, 0, 0 )
+	Cls()
 	glBlendFunc( GL_SRC_ALPHA_SATURATE, GL_ONE )
 	glEnable( GL_BLEND )
 	glEnable( GL_LINE_SMOOTH )
@@ -87,7 +86,12 @@ Function init_graphics()
 	SetBlend( ALPHABLEND )
 End Function
 
+'graphical window
 init_graphics()
+'assets
+'menu_command( COMMAND_LOAD_ASSETS, INTEGER.Create( 1 ))
+menu_command( COMMAND_LOAD_ASSETS )
+'background automaton-powered menu game
 init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 
 ?Debug
