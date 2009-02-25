@@ -536,8 +536,8 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
-	Method add_turret_anchor:cVEC( other_a:cVEC )
-		Local a:cVEC = other_a.clone()
+	Method add_turret_anchor:cVEC( x# = 0, y# = 0 )
+		Local a:cVEC = Create_cVEC( x, y )
 		'add the anchor to the array
 		If turret_anchors = Null
 			turret_anchors = New cVEC[1]
@@ -694,12 +694,100 @@ End Type
 
 Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	Local cmp_ag:COMPLEX_AGENT
-	'required fields
-	
-	'initialization
-	cmp_ag = New COMPLEX_AGENT
+	'no required fields
+	cmp_ag = COMPLEX_AGENT( COMPLEX_AGENT.Archetype() )
 	'optional fields
-	'when assigning an image, also assign the hitbox
+	If json.TypeOf( "name" ) <> JSON_UNDEFINED                    Then cmp_ag.name = json.GetString( "name" )
+	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED
+		cmp_ag.img = get_image( json.GetString( "image_key" ))
+		cmp_ag.hitbox = cmp_ag.img
+	End If
+	If json.TypeOf( "hitbox_image_key" ) <> JSON_UNDEFINED        Then cmp_ag.hitbox = get_image( json.GetString( "hitbox_image_key" ))
+	If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED          Then cmp_ag.gibs = get_image( json.GetString( "gibs_image_key" ))
+	If json.TypeOf( "ai_name" ) <> JSON_UNDEFINED                 Then cmp_ag.ai_name = json.GetString( "ai_name" )
+	If json.TypeOf( "cash_value" ) <> JSON_UNDEFINED              Then cmp_ag.cash_value = json.GetNumber( "cash_value" )
+	If json.TypeOf( "max_health" ) <> JSON_UNDEFINED              Then cmp_ag.max_health = json.GetNumber( "max_health" )
+	If json.TypeOf( "mass" ) <> JSON_UNDEFINED                    Then cmp_ag.mass = json.GetNumber( "mass" )
+	If json.TypeOf( "frictional_coefficient" ) <> JSON_UNDEFINED  Then cmp_ag.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
+	If json.TypeOf( "driving_force_magnitude" ) <> JSON_UNDEFINED Then cmp_ag.driving_force.magnitude_max = json.GetNumber( "driving_force_magnitude" )
+	If json.TypeOf( "turning_force_magnitude" ) <> JSON_UNDEFINED Then cmp_ag.turning_force.magnitude_max = json.GetNumber( "turning_force_magnitude" )
+	If json.TypeOf( "physics_disabled" ) <> JSON_UNDEFINED        Then cmp_ag.physics_disabled = json.GetBoolean( "physics_disabled" )
+	'emitters
+	' ...
+	'death package
+	If json.TypeOf( "death_package" ) <> JSON_UNDEFINED
+		If json.GetBoolean( "death_package" )
+			cmp_ag.add_death_package()
+		End If
+	End If
+	'motivator package
+	If json.TypeOf( "motivator_package" ) <> JSON_UNDEFINED
+		Local obj:TJSONObject = json.GetObject( "motivator_package" )
+		If obj And Not obj.IsNull()
+			Local motivator_json:TJSON = TJSON.Create( obj )
+			cmp_ag.add_motivator_package( ..
+				motivator_json.GetString( "particle_key" ), ..
+				motivator_json.GetNumber( "offset_x" ), ..
+				motivator_json.GetNumber( "separation_y" ))
+		End If
+	End If
+	'trail package
+	If json.TypeOf( "trail_package" ) <> JSON_UNDEFINED
+		Local obj:TJSONObject = json.GetObject( "trail_package" )
+		If obj And Not obj.IsNull()
+			Local trail_json:TJSON = TJSON.Create( obj )
+			cmp_ag.add_trail_package( ..
+				trail_json.GetString( "particle_emitter_key" ), ..
+				trail_json.GetNumber( "offset_x" ), ..
+				trail_json.GetNumber( "separation_x" ), ..
+				trail_json.GetNumber( "separation_y" ))
+		End If
+	End If
+	'dust cloud package
+	If json.TypeOf( "dust_cloud_package" ) <> JSON_UNDEFINED
+		Local obj:TJSONObject = json.GetObject( "dust_cloud_package" )
+		If obj And Not obj.IsNull()
+			Local dust_cloud_json:TJSON = TJSON.Create( obj )
+			cmp_ag.add_dust_cloud_package( ..
+				dust_cloud_json.GetNumber( "offset_x" ), ..
+				dust_cloud_json.GetNumber( "separation_x" ), ..
+				dust_cloud_json.GetNumber( "separation_y" ), ..
+				dust_cloud_json.GetNumber( "dist_min" ), ..
+				dust_cloud_json.GetNumber( "dist_max" ), ..
+				dust_cloud_json.GetNumber( "dist_ang_min" ), ..
+				dust_cloud_json.GetNumber( "dist_ang_max" ), ..
+				dust_cloud_json.GetNumber( "vel_min" ), ..
+				dust_cloud_json.GetNumber( "vel_max" ))
+		End If
+	End If
+	'widgets
+	If json.TypeOf( "widgets" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "widgets" )
+		If array And Not array.IsNull()
+			For Local i% = 0 Until array.Size()
+				Local widget_json:TJSON = TJSON.Create( array.GetByIndex( i ))
+				Local w:WIDGET = Create_WIDGET_from_json_reference( widget_json )
+				If w Then cmp_ag.add_widget( w, widget_json.GetNumber( "type" ))
+			Next
+		End If
+	End If
+	'turret anchors
+	If json.TypeOf( "turret_anchors" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "turret_anchors" )
+		If array And Not array.IsNull()
+			For Local i% = 0 Until array.Size()
+				Local anchor_json:TJSON = TJSON.Create( array.GetByIndex( i ))
+				Local w:WIDGET = Create_WIDGET_from_json_reference( widget_json )
+				If w Then cmp_ag.add_widget( w, widget_json.GetNumber( "type" ))
+			Next
+		End If
+	End If
+	'turrets
+	
+	'factory units
+	
 	Return cmp_ag
 End Function
+
+
 

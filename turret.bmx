@@ -328,4 +328,8 @@ Function Create_TURRET_from_json:TURRET( json:TJSON )
 	Return t
 End Function
 
+Function Create_TURRET_from_json_reference:TURRET( json:TJSON )
+	
+End Function
+
 

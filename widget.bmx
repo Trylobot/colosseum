@@ -276,3 +276,9 @@ Function Create_WIDGET_from_json:WIDGET( json:TJSON )
 	End If
 	Return w
 End Function
+
+Function Create_WIDGET_from_json_reference:WIDGET( json:TJSON )
+	
+End Function
+
+
