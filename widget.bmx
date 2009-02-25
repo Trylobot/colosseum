@@ -278,7 +278,21 @@ Function Create_WIDGET_from_json:WIDGET( json:TJSON )
 End Function
 
 Function Create_WIDGET_from_json_reference:WIDGET( json:TJSON )
-	
+	Local w:WIDGET
+	If json.TypeOf( "widget_key" ) <> JSON_UNDEFINED Then w = get_widget( json.GetString( "widget_key" ))
+	If Not w Then Return Null
+	If json.TypeOf( "attach_at" ) <> JSON_UNDEFINED
+		Local obj:TJSONObject = json.GetObject( "attach_at" )
+		If obj And Not obj.IsNull()
+			Local attach_at:TJSON = TJSON.Create( obj )
+			w.attach_at( ..
+				attach_at.GetNumber( "offset_x" ), ..
+				attach_at.GetNumber( "offset_y" ), ..
+				attach_at.GetNumber( "ang_offset" ), ..
+				attach_at.GetBoolean( "mute_offset_ang" ))
+		End If
+	End If
+	Return w
 End Function
 
 

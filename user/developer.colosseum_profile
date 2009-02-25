@@ -1,7 +1,7 @@
 {
 	name: "developer",
-	cash: 54862,
-	kills: 1906,
+	cash: 56012,
+	kills: 1910,
 	inventory: [
 		{
 			item_type: "turret",
@@ -121,7 +121,7 @@
 			]
 		]
 	},
-	input_method: 1,
+	input_method: 2,
 	invert_reverse_steering: false,
 	progress: null,
 	campaign: "",

@@ -56,7 +56,7 @@ Type COMPLEX_AGENT Extends AGENT
 	Field spawn_begin_ts%
 	
 	Field is_deployed%
-	Field factory_queue%[] 'list of complex agents to spawn (only applies to carriers)
+	Field factory_queue$[] 'list of complex agents to spawn (only applies to carriers)
 	
 	'___________________________________________
 	Method New()
@@ -140,7 +140,7 @@ Type COMPLEX_AGENT Extends AGENT
 		c.cur_health = c.max_health
 		
 		For Local a:cVEC = EachIn other.turret_anchors
-			c.add_turret_anchor( a )
+			c.add_turret_anchor( a.x, a.y )
 		Next
 		For Local sys_index% = 0 To other.turret_systems.Length-1
 			For Local tur_index% = 0 To other.turret_systems[sys_index].Length-1
@@ -624,10 +624,10 @@ Type COMPLEX_AGENT Extends AGENT
 		Return p
 	End Method
 	'___________________________________________
-	Method add_factory_unit( archetype%, count% = 1 )
+	Method add_factory_unit( archetype$, count% = 1 )
 		If count <= 0 Then Return
 		If factory_queue = Null
-			factory_queue = New Int[count]
+			factory_queue = New String[count]
 			For Local i% = 0 To factory_queue.Length - 1
 				factory_queue[i] = archetype
 			Next
@@ -713,7 +713,16 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	If json.TypeOf( "turning_force_magnitude" ) <> JSON_UNDEFINED Then cmp_ag.turning_force.magnitude_max = json.GetNumber( "turning_force_magnitude" )
 	If json.TypeOf( "physics_disabled" ) <> JSON_UNDEFINED        Then cmp_ag.physics_disabled = json.GetBoolean( "physics_disabled" )
 	'emitters
-	' ...
+	If json.TypeOf( "emitters" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "emitters" )
+		If array And Not array.IsNull()
+			For Local i% = 0 Until array.Size()
+				Local emitter_json:TJSON = TJSON.Create( array.GetByIndex( i ))
+				Local em:EMITTER = Create_EMITTER_from_json_reference( emitter_json )
+				If em Then cmp_ag.add_emitter( em, emitter_json.GetNumber( "event" ))
+			Next
+		End If
+	End If
 	'death package
 	If json.TypeOf( "death_package" ) <> JSON_UNDEFINED
 		If json.GetBoolean( "death_package" )
@@ -776,16 +785,42 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 		Local array:TJSONArray = json.GetArray( "turret_anchors" )
 		If array And Not array.IsNull()
 			For Local i% = 0 Until array.Size()
-				Local anchor_json:TJSON = TJSON.Create( array.GetByIndex( i ))
-				Local w:WIDGET = Create_WIDGET_from_json_reference( widget_json )
-				If w Then cmp_ag.add_widget( w, widget_json.GetNumber( "type" ))
+				Local obj:TJSONObject = json.GetObject( "dust_cloud_package" )
+				If obj And Not obj.IsNull()
+					Local anchor_json:TJSON = TJSON.Create( obj )
+					cmp_ag.add_turret_anchor( ..
+						anchor_json.GetNumber( "offset_x" ), ..
+						anchor_json.GetNumber( "offset_y" ))
+				End If
 			Next
 		End If
 	End If
 	'turrets
-	
+	If json.TypeOf( "turrets" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "turrets" )
+		If array And Not array.IsNull()
+			For Local i% = 0 Until array.Size()
+				Local turret_json:TJSON = TJSON.Create( array.GetByIndex( i ))
+				Local t:TURRET = Create_TURRET_from_json_reference( turret_json )
+				If t Then cmp_ag.add_turret( t, turret_json.GetNumber( "anchor" ))
+			Next
+		End If
+	End If
 	'factory units
-	
+	If json.TypeOf( "factory_units" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "factory_units" )
+		If array And Not array.IsNull()
+			For Local i% = 0 Until array.Size()
+				Local obj:TJSONObject = json.GetObject( "dust_cloud_package" )
+				If obj And Not obj.IsNull()
+					Local factory_unit_json:TJSON = TJSON.Create( obj )
+					cmp_ag.add_factory_unit( ..
+						factory_unit_json.GetString( "unit_key" ), ..
+						factory_unit_json.GetNumber( "count" ))
+				End If
+			Next
+		End If
+	End If
 	Return cmp_ag
 End Function
 

@@ -329,7 +329,7 @@ Function Create_TURRET_from_json:TURRET( json:TJSON )
 End Function
 
 Function Create_TURRET_from_json_reference:TURRET( json:TJSON )
-	
+	Return get_turret( json.GetString( "turret_key" ))
 End Function
 
 
