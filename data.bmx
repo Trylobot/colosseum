@@ -276,8 +276,11 @@ End Function
 
 Global global_error_message$
 Function load_error()
+?Debug
 	DebugLog "      ERROR: " + global_error_message
+?Not Debug
 	If global_error_message Then Notify( "ERROR: " + global_error_message, True )
+?
 	End
 End Function
 

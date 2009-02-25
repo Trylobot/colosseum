@@ -20,7 +20,7 @@
 				separation_y: 6.5
 			},
 			trail_package: {
-				particle_emitter_key: tank_tread_trail_small",
+				particle_emitter_key: "tank_tread_trail_small",
 				offset_x: 0,
 				separation_x: 12,
 				separation_y: 6
@@ -41,8 +41,7 @@
 					offset_x: -5,
 					offset_y: 0
 				}
-			],
-			turrets: null
+			]
 		}
 	},
 	{
@@ -66,7 +65,7 @@
 				separation_y: 7.5
 			},
 			trail_package: {
-				particle_emitter_key: tank_tread_trail_medium",
+				particle_emitter_key: "tank_tread_trail_medium",
 				offset_x: 0,
 				separation_x: 15,
 				separation_y: 8
@@ -87,8 +86,7 @@
 					offset_x: -5,
 					offset_y: 0
 				}
-			],
-			turrets: null
+			]
 		}
 	}
 ]

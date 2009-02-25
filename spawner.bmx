@@ -118,14 +118,7 @@ Function Create_SPAWNER_from_json:SPAWNER( json:TJSON )
 	For Local i% = 0 Until sp.squads.Length
 		sp.squads[i] = New String[squads_DEPRECATED[i].Length]
 		For Local m% = 0 Until sp.squads[i].Length
-			Local k% = 0
-			For Local key$ = EachIn unit_map.Keys()
-				If k = squads_DEPRECATED[i][k]
-					sp.squads[i][m] = key
-					Exit
-				End If
-				k :+ 1
-			Next
+			sp.squads[i][m] = get_keys( unit_map )[squads_DEPRECATED[i][m]]
 		Next
 	Next
 	'old system -- end

@@ -80,34 +80,34 @@ Function debug_drawtext( message$, h% = 10 )
 	sy :+ h
 End Function
 '______________________________________________________________________________
-Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = null, b_msg$ = null, m_msg$ = null )
+Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = Null, b_msg$ = Null, m_msg$ = Null )
 	'decl.
 	Local a:cVEC = New cVEC, b:cVEC = New cVEC, m:cVEC = New cVEC
 	'init.
 	If cVEC(arg1)
 		a = cVEC(arg1)
-	Else if point(arg1)
+	Else If point(arg1)
 		Local p:POINT = POINT(arg1)
 		a.x = p.pos_x; a.y = p.pos_y
-	else
-		return
+	Else
+		Return
 	End If
 	If cVEC(arg2) 
 		b = cVEC(arg2)
-	Else if point(arg2)
+	Else If point(arg2)
 		Local p:POINT = POINT(arg2)
 		b.x = p.pos_x; b.y = p.pos_y
-	else
-		return
+	Else
+		Return
 	End If
 	m.x = (a.x+b.x)/2
 	m.y = (a.y+b.y)/2
 	'draw
-	setlinewidth( 3)
-	setalpha( 0.5 )
+	SetLineWidth( 3)
+	SetAlpha( 0.5 )
 	DrawLine( a.x,a.y, b.x,b.y )
-	setlinewidth( 1 )
-	setalpha( 1 )
+	SetLineWidth( 1 )
+	SetAlpha( 1 )
 	'DrawOval( a.x-2,a.y-2, 5,5 )
 	'DrawOval( b.x-2,b.y-2, 5,5 )
 	'DrawOval( m.x-2,m.y-2, 5,5 )
@@ -152,8 +152,7 @@ Function debug_agent_lists( to_console% = False )
 End Function
 '______________________________________________________________________________
 Global spawn_archetype_index% = 0
-Global unit_keys$[] = get_keys( unit_map )
-Global spawn_archetype$ = unit_keys[spawn_archetype_index]
+Global spawn_archetype$ = ""
 Global spawn_alignment% = ALIGNMENT_NONE
 Global spawn_agent:COMPLEX_AGENT
 Global cb:CONTROL_BRAIN = Null
@@ -265,6 +264,7 @@ Function debug_overlay()
 	End If
 	If spawn_alignment <> ALIGNMENT_NONE
 		If spawn_agent = Null
+			spawn_archetype = get_keys( unit_map )[spawn_archetype_index]
 			spawn_agent = get_unit( spawn_archetype, spawn_alignment )
 			spawn_agent.scale_all( 1.50 )
 			spawn_agent.ang = Rand( 360 )
@@ -279,13 +279,11 @@ Function debug_overlay()
 			spawn_agent = Null
 		Else If KeyHit( KEY_OPENBRACKET )
 			spawn_archetype_index :- 1
-			If spawn_archetype_index < 0 Then spawn_archetype_index = unit_keys.Length-1
-			spawn_archetype = unit_keys[spawn_archetype_index]
+			If spawn_archetype_index < 0 Then spawn_archetype_index = get_keys( unit_map ).Length-1
 			spawn_agent = Null
 		Else If KeyHit( KEY_CLOSEBRACKET )
 			spawn_archetype_index :+ 1
-			If spawn_archetype_index > unit_keys.Length-1 Then spawn_archetype_index = 0
-			spawn_archetype = unit_keys[spawn_archetype_index]
+			If spawn_archetype_index > get_keys( unit_map ).Length-1 Then spawn_archetype_index = 0
 			spawn_agent = Null
 		End If
 	End If

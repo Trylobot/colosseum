@@ -136,7 +136,7 @@
 			turning_force_magnitude: 55,
 			death_package: true,
 			trail_package: {
-				particle_emitter_key: tank_tread_trail_small",
+				particle_emitter_key: "tank_tread_trail_small",
 				offset_x: 0,
 				separation_x: 3,
 				separation_y: 4
@@ -188,7 +188,7 @@
 				separation_y: 6.5
 			},
 			trail_package: {
-				particle_emitter_key: tank_tread_trail_small",
+				particle_emitter_key: "tank_tread_trail_small",
 				offset_x: 0,
 				separation_x: 12,
 				separation_y: 6
@@ -244,7 +244,7 @@
 				separation_y: 8.5
 			},
 			trail_package: {
-				particle_emitter_key: tank_tread_trail_small",
+				particle_emitter_key: "tank_tread_trail_small",
 				offset_x: 0,
 				separation_x: 16,
 				separation_y: 8
@@ -342,7 +342,7 @@
 			turning_force_magnitude: 55,
 			death_package: true,
 			trail_package: {
-				particle_emitter_key: tank_tread_trail_small",
+				particle_emitter_key: "tank_tread_trail_small",
 				offset_x: 0,
 				separation_x: 11,
 				separation_y: 8
