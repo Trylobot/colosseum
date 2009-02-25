@@ -151,7 +151,9 @@ Function debug_agent_lists( to_console% = False )
 	Next
 End Function
 '______________________________________________________________________________
-Global spawn_archetype% = 0
+Global spawn_archetype_index% = 0
+Global unit_keys$[] = get_keys( unit_map )
+Global spawn_archetype$ = unit_keys[spawn_archetype_index]
 Global spawn_alignment% = ALIGNMENT_NONE
 Global spawn_agent:COMPLEX_AGENT
 Global cb:CONTROL_BRAIN = Null
@@ -263,7 +265,7 @@ Function debug_overlay()
 	End If
 	If spawn_alignment <> ALIGNMENT_NONE
 		If spawn_agent = Null
-			spawn_agent = COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit_archetype[spawn_archetype], spawn_alignment ))
+			spawn_agent = get_unit( spawn_archetype, spawn_alignment )
 			spawn_agent.scale_all( 1.50 )
 			spawn_agent.ang = Rand( 360 )
 			spawn_agent.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, -spawn_agent.mass/100.0 )))
@@ -276,12 +278,14 @@ Function debug_overlay()
 			game.spawn_unit( spawn_archetype, spawn_alignment, POINT( spawn_agent ))
 			spawn_agent = Null
 		Else If KeyHit( KEY_OPENBRACKET )
-			spawn_archetype :- 1
-			If spawn_archetype < 0 Then spawn_archetype = unit_archetype.Length - 1
+			spawn_archetype_index :- 1
+			If spawn_archetype_index < 0 Then spawn_archetype_index = unit_keys.Length-1
+			spawn_archetype = unit_keys[spawn_archetype_index]
 			spawn_agent = Null
 		Else If KeyHit( KEY_CLOSEBRACKET )
-			spawn_archetype :+ 1
-			If spawn_archetype > unit_archetype.Length - 1 Then spawn_archetype = 0
+			spawn_archetype_index :+ 1
+			If spawn_archetype_index > unit_keys.Length-1 Then spawn_archetype_index = 0
+			spawn_archetype = unit_keys[spawn_archetype_index]
 			spawn_agent = Null
 		End If
 	End If
