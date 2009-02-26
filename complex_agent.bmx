@@ -159,13 +159,13 @@ Type COMPLEX_AGENT Extends AGENT
 		c.turning_force = FORCE( FORCE.Copy( other.turning_force, c.force_list ))
 		
 		For Local other_w:WIDGET = EachIn other.constant_widgets
-			c.add_widget( other_w, WIDGET_CONSTANT ).attach_at( other_w.attach_x, other_w.attach_y, other_w.ang_offset )
+			c.add_widget( other_w, WIDGET_CONSTANT )
 		Next
 		For Local other_w:WIDGET = EachIn other.deploy_widgets
-			c.add_widget( other_w, WIDGET_DEPLOY ).attach_at( other_w.attach_x, other_w.attach_y, other_w.ang_offset )
+			c.add_widget( other_w, WIDGET_DEPLOY )
 		Next
 		For Local other_w:WIDGET = EachIn other.ai_lightbulb_widgets
-			c.add_widget( other_w, WIDGET_AI_LIGHTBULB ).attach_at( other_w.attach_x, other_w.attach_y, other_w.ang_offset )
+			c.add_widget( other_w, WIDGET_AI_LIGHTBULB )
 		Next
 		
 		If other.right_track <> Null And other.left_track <> Null

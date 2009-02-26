@@ -88,6 +88,10 @@ Type WIDGET Extends MANAGED_OBJECT
 		For Local st:TRANSFORM_STATE = EachIn states
 			w.add_state( st )
 		Next
+		w.attach_at( ..
+			attach_x, ..
+			attach_y, ..
+			ang_offset )
 		Return w
 	End Method
 

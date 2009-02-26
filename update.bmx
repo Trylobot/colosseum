@@ -8,7 +8,7 @@ EndRem
 Const time_per_frame_min% = 8 'milliseconds
 Global before%
 Global timescale#
-Const timescale_constant_factor# = 0.375 'simulation speed
+Const timescale_constant_factor# = 0.350 '0.375 'simulation speed
 
 Function frame_time_elapsed%() 'true or false: the amount of time required for a physics frame has indeed elapsed?
 	Return (now() - before) > time_per_frame_min

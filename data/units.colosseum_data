@@ -310,11 +310,11 @@
 			],
 			turrets: [
 				{
-					turret_key: "npc_light_machine_gun",
+					turret_key: "mounted_sub_machine_gun",
 					anchor: 0
 				},
 				{
-					turret_key: "npc_light_machine_gun",
+					turret_key: "mounted_sub_machine_gun",
 					anchor: 1
 				}
 			],

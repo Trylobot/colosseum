@@ -105,7 +105,7 @@ Function collide_all_objects()
 		Next
 
 		'collisions between player and pickups
-		If game.human_participation
+		If game.human_participation And game.player And Not game.player.dead()
 			For pkp = EachIn game.pickup_list
 				SetRotation( 0 )
 				CollideImage( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
@@ -117,7 +117,6 @@ Function collide_all_objects()
 				game.player.grant_pickup( pkp ) 'i can has lewts?!
 				pkp.play_categorical_sound()
 				pkp.unmanage()
-				Exit
 			Next
 		End If
 
