@@ -3,6 +3,14 @@
 		class: "sound",
 		key: "{path}",
 		object: {
+			path: "sound/bgm.ogg",
+			looping: true
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/victory.ogg",
 			looping: false
 		}

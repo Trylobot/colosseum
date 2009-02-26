@@ -43,6 +43,7 @@ Type TURRET_BARREL Extends POINT
 		For Local em:EMITTER = EachIn emitter_list
 			tb.add_emitter( em )
 		Next
+		tb.attach_at( attach_x, attach_y )
 		Return tb
 	End Method
 	

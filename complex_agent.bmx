@@ -811,7 +811,7 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 		Local array:TJSONArray = json.GetArray( "factory_units" )
 		If array And Not array.IsNull()
 			For Local i% = 0 Until array.Size()
-				Local obj:TJSONObject = json.GetObject( "dust_cloud_package" )
+				Local obj:TJSONObject = TJSONObject( array.GetByIndex( i ))
 				If obj And Not obj.IsNull()
 					Local factory_unit_json:TJSON = TJSON.Create( obj )
 					cmp_ag.add_factory_unit( ..

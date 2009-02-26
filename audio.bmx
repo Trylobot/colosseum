@@ -42,13 +42,13 @@ Global bg_music:TChannel
 
 Function play_bg_music()
 	If bg_music = Null
-		'bg_music = AllocChannel()
-		'CueSound( get_sound( "victory" ), bg_music )
+		bg_music = AllocChannel()
+		CueSound( get_sound( "bgm" ), bg_music )
 	End If
 	If FLAG_bg_music_on
-		'ResumeChannel( bg_music )
+		ResumeChannel( bg_music )
 	Else 'Not FLAG_bg_music_on
-		'PauseChannel( bg_music )
+		PauseChannel( bg_music )
 	End If
 End Function
 
