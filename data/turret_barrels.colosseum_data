@@ -151,6 +151,32 @@
 	},
 	{
 		class: "turret_barrel",
+		key: "light_energy_mgun_barrel",
+		object: {
+			image_key: null,
+			reload_time: 40,
+			launcher: {
+				projectile_launcher_key: "energy_pellet_launcher",
+				attach_at: {
+					offset_x: 6,
+					offset_y: 1,
+					vel_min: 4.50,
+					vel_max: 9.00
+				}
+			},
+			launch_emitters: [
+				{
+					particle_emitter_key: "laser_muzzle_flare",
+					attach_at: {
+						offset_x: 6,
+						offset_y: 1
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret_barrel",
 		key: "dual_light_cannon_left",
 		object: {
 			image_key: "player_tank_turret_med_barrel_left",

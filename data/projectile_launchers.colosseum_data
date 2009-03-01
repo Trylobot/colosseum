@@ -27,6 +27,19 @@
 	},
 	{
 		class: "projectile_launcher",
+		key: "energy_pellet_launcher",
+		object: {
+			emitter_type: 1,
+			emitter_object_key: "energy_pellet",
+			combine_vel_with_parent_vel: false,
+			combine_vel_ang_with_parent_ang: false,
+			inherit_ang_from_dist_ang: false,
+			inherit_vel_ang_from_ang: true,
+			inherit_acc_ang_from_vel_ang: true
+		}
+	},
+	{
+		class: "projectile_launcher",
 		key: "laser_red",
 		object: {
 			emitter_type: 1,

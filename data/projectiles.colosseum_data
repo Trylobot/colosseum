@@ -53,6 +53,27 @@
 	},
 	{
 		class: "projectile",
+		key: "energy_pellet",
+		object: {
+			image_key: "energy_pellet",
+			impact_sound_key: "laser_hit",
+			damage: 2.5,
+			mass: 0.005,
+			payload_emitters: [
+				{
+					particle_emitter_key: "machine_gun_ricochet_spark",
+					attach_at: {
+						dist_ang_min: 135,
+						dist_ang_max: 225,
+						vel_min: 0.5,
+						vel_max: 1
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "projectile",
 		key: "laser_red",
 		object: {
 			image_key: "laser_red",

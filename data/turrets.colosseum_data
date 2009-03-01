@@ -51,6 +51,36 @@
 	},
 	{
 		class: "turret",
+		key: "light_energy_mgun",
+		object: {
+			name: "light plasma sprayer",
+			class: 1,
+			priority: 2,
+			image_key: "pellet_turret_base",
+			cash_value: 750,
+			firing_sound_key: "laser_small",
+			turret_barrel_count: 1,
+			firing_sequence: [[0]],
+			max_ang_vel: 2.25,
+			heat_based: true,
+			heat_per_shot_min: 0.0200,
+			heat_per_shot_max: 0.0200,
+			cooling_rate: 0.0050,
+			overheat_delay: 1500,
+			effective_range: 200.0,
+			turret_barrels: [
+				{
+					turret_barrel_key: "light_energy_mgun_barrel",
+					attach_at: {
+						offset_x: 1,
+						offset_y: 3
+					}
+				}
+			]
+		}
+	},
+	{
+		class: "turret",
 		key: "light_laser",
 		object: {
 			name: "light laser",

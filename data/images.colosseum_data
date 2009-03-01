@@ -1067,5 +1067,25 @@
 			handle_y: 0,
 			frames: 1
 		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/energy_pellet.png",
+			handle_x: 2,
+			handle_y: 2,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/pellet_turret_base.png",
+			handle_x: 1,
+			handle_y: 1,
+			frames: 1
+		}
 	}
 ]
