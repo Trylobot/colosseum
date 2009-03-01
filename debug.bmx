@@ -45,6 +45,7 @@ Function debug_main()
 		Else If KeyDown( KEY_NUMSUBTRACT )
 			If profile.cash > 0 Then profile.cash :- 1
 		End If
+		get_current_menu().update()
 	End If
 	If KeyHit( KEY_F4 ) Then DebugStop
 End Function

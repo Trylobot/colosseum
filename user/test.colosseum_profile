@@ -1,0 +1,40 @@
+{
+	name: "test",
+	cash: 1002,
+	kills: 0,
+	inventory: [
+		{
+			item_type: "chassis",
+			key: "light_tank",
+			count: 1,
+			damaged: false
+		},
+		{
+			item_type: "turret",
+			key: "light_cannon",
+			count: 1,
+			damaged: false
+		},
+		{
+			item_type: "turret",
+			key: "light_machine_gun",
+			count: 1,
+			damaged: false
+		}
+	],
+	vehicle: {
+		chassis_key: "light_tank",
+		is_unit: false,
+		turret_keys: [
+			[
+				"light_cannon",
+				"light_machine_gun"
+			]
+		]
+	},
+	input_method: 2,
+	invert_reverse_steering: false,
+	progress: null,
+	campaign: "",
+	campaign_level: 0
+}
