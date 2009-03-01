@@ -39,18 +39,11 @@ Function debug_main()
 		debug_fps()
 		'debug_agent_lists()
 	End If
-	If Not FLAG_in_menu
-		If KeyDown( KEY_LEFT )
-			debug_origin.x :- 1
-		End If
-		If KeyDown( KEY_RIGHT )
-			debug_origin.x :+ 1
-		End If
-		If KeyDown( KEY_UP )
-			debug_origin.y :- 1
-		End If
-		If KeyDown( KEY_DOWN )
-			debug_origin.y :+ 1
+	If profile
+		If KeyDown( KEY_NUMADD )
+			profile.cash :+ 1
+		Else If KeyDown( KEY_NUMSUBTRACT )
+			If profile.cash > 0 Then profile.cash :- 1
 		End If
 	End If
 	If KeyHit( KEY_F4 ) Then DebugStop

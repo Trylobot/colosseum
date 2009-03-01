@@ -374,13 +374,13 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Method input_control()
 		Select input_type
 			
-			Case INPUT_KEYBOARD, INPUT_KEYBOARD_MOUSE_HYBRID
+			Case INPUT_KEYBOARD
 				'chassis control (only if engine is running)
 				If game.player_engine_running
 					'velocity
-					If KeyDown( KEY_W )' Or KeyDown( KEY_I ) Or KeyDown( KEY_UP )
+					If KeyDown( KEY_W )
 						avatar.drive( 1.0 )
-					ElseIf KeyDown( KEY_S )' Or KeyDown( KEY_K ) Or KeyDown( KEY_DOWN )
+					ElseIf KeyDown( KEY_S )
 						avatar.drive( -1.0 )
 					Else
 						avatar.drive( 0.0 )
@@ -402,50 +402,71 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					avatar.drive( 0.0 )
 					avatar.turn( 0.0 )
 				End If
-				'turret aim control
-				If input_type = INPUT_KEYBOARD
-					'turret(s) angular velocity
-					If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
-						avatar.turn_turret_system( 0, 1.0  )
-					ElseIf KeyDown( KEY_LEFT ) Or KeyDown( KEY_J )
-						avatar.turn_turret_system( 0, -1.0 )
-					Else
-						avatar.turn_turret_system( 0, 0.0 )
-					EndIf
-				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-					For Local index% = 0 Until avatar.turret_systems.Length
-						Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.get_turret_system_pos( index ).ang_to( game.mouse ))
-						Local diff_mag# = Abs( diff )
-						Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
-						Local threshold# = 3 * max_ang_vel
-						If diff_mag >= threshold
-							avatar.turn_turret_system( index, -Sgn(diff) )
-						Else 'diff_mag < max_ang_vel
-							avatar.turn_turret_system( index, -diff/threshold )
-						End If
-					Next
+				'turret(s) angular velocity
+				If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
+					avatar.turn_turret_system( 0, 1.0  )
+				ElseIf KeyDown( KEY_LEFT ) Or KeyDown( KEY_J )
+					avatar.turn_turret_system( 0, -1.0 )
+				Else
+					avatar.turn_turret_system( 0, 0.0 )
+				EndIf
+				'turret(s) fire
+				If KeyDown( KEY_SPACE )
+					avatar.fire_all( TURRET.PRIMARY )
 				End If
-				'turret fire control
-				If input_type = INPUT_KEYBOARD
-					'turret(s) fire
-					If KeyDown( KEY_SPACE )
-						avatar.fire_all( TURRET.PRIMARY )
+				If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
+					avatar.fire_all( TURRET.SECONDARY )
+				End If
+
+			Case INPUT_KEYBOARD_MOUSE_HYBRID
+				'chassis control (only if engine is running)
+				If game.player_engine_running
+					'velocity
+					If KeyDown( KEY_W ) Or KeyDown( KEY_UP )
+						avatar.drive( 1.0 )
+					ElseIf KeyDown( KEY_S ) Or KeyDown( KEY_DOWN )
+						avatar.drive( -1.0 )
+					Else
+						avatar.drive( 0.0 )
+					EndIf
+					'backwards driving turn inversion
+					Local sign% = 1
+					If avatar.driving_force.control_pct < 0 And profile.invert_reverse_steering
+						sign = -1
 					End If
-					If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
-						avatar.fire_all( TURRET.SECONDARY )
+					'angular velocity
+					If KeyDown( KEY_D ) Or KeyDown( KEY_RIGHT )
+						avatar.turn( sign * 1.0 )
+					ElseIf KeyDown( KEY_A ) Or KeyDown( KEY_LEFT )
+						avatar.turn( sign * -1.0 )
+					Else
+						avatar.turn( 0.0 )
+					EndIf
+				Else 'Not game.player_engine_running
+					avatar.drive( 0.0 )
+					avatar.turn( 0.0 )
+				End If
+				'turret aim control
+				For Local index% = 0 Until avatar.turret_systems.Length
+					Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.get_turret_system_pos( index ).ang_to( game.mouse ))
+					Local diff_mag# = Abs( diff )
+					Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
+					Local threshold# = 3 * max_ang_vel
+					If diff_mag >= threshold
+						avatar.turn_turret_system( index, -Sgn(diff) )
+					Else 'diff_mag < max_ang_vel
+						avatar.turn_turret_system( index, -diff/threshold )
 					End If
-				Else If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-					'turret(s) fire
-					If MouseDown( 1 ) And Not FLAG_ignore_mouse_1
-						avatar.fire_all( TURRET.PRIMARY )
-					End If
-					If MouseDown( 2 )
-						avatar.fire_all( TURRET.SECONDARY )
-					End If
+				Next
+				'turret(s) fire
+				If MouseDown( 1 ) And Not FLAG_ignore_mouse_1
+					avatar.fire_all( TURRET.PRIMARY )
+				End If
+				If MouseDown( 2 )
+					avatar.fire_all( TURRET.SECONDARY )
 				End If
 					
-			Case INPUT_XBOX_360_CONTROLLER
-				'..?
+			'Case INPUT_XBOX_360_CONTROLLER
 			
 		End Select
 	End Method

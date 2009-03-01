@@ -43,9 +43,9 @@ Function get_all_input()
 		And (current_menu > 0 And get_current_menu().menu_id <> MENU_ID_PAUSED)
 			menu_command( COMMAND_BACK_TO_PARENT_MENU )
 		End If
-		If KeyHit( KEY_DOWN ) Or MouseZ() < mouse_last_z
+		If KeyHit( KEY_DOWN )' Or MouseZ() < mouse_last_z
 			m.increment_focus()
-		Else If KeyHit( KEY_UP ) Or MouseZ() > mouse_last_z
+		Else If KeyHit( KEY_UP )' Or MouseZ() > mouse_last_z
 			m.decrement_focus()
 		End If
 		If KeyHit( KEY_ENTER )
@@ -88,7 +88,7 @@ Function get_all_input()
 				Next
 			End If
 			'change the scrollbar offset to the offset corresponding to the nearest y-value with respect to the mouse
-			m.focus = closest_y_val_i + m.static_option_count
+			m.set_focus_by_index( closest_y_val_i + m.static_option_count )
 			'if the focus is out of the window, increment or decrement it until it is once again in the window
 			While m.focus >= m.static_option_count And m.option_above_window( m.focus )
 				m.increment_focus()
