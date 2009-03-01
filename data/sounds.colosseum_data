@@ -51,6 +51,14 @@
 		class: "sound",
 		key: "{path}",
 		object: {
+			path: "sound/energy_mgun.ogg",
+			looping: false
+		}
+	},
+	{
+		class: "sound",
+		key: "{path}",
+		object: {
 			path: "sound/laser_small.ogg",
 			looping: false
 		}

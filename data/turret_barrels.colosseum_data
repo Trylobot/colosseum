@@ -160,13 +160,15 @@
 				attach_at: {
 					offset_x: 6,
 					offset_y: 1,
-					vel_min: 4.50,
-					vel_max: 9.00
+					vel_min: 2.50,
+					vel_max: 4.50,
+					ang_min: -8,
+					ang_max: 8
 				}
 			},
 			launch_emitters: [
 				{
-					particle_emitter_key: "laser_muzzle_flare",
+					particle_emitter_key: "energy_mgun_flare",
 					attach_at: {
 						offset_x: 6,
 						offset_y: 1
