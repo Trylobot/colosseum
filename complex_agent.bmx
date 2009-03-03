@@ -27,6 +27,8 @@ Const MAX_COMPLEX_AGENT_VELOCITY# = 4.0 'hard velocity limit
 '___________________________________________
 Type COMPLEX_AGENT Extends AGENT
 	
+	Field lightmap:TImage 'lighting effect image array
+	
 	Field political_alignment% '{friendly|hostile}
 	Field ai_name$ 'artificial intelligence variant identifier (only used for AI-controlled agents)
 	Field cash_value%
@@ -128,6 +130,7 @@ Type COMPLEX_AGENT Extends AGENT
 		c.img = other.img
 		c.hitbox = other.hitbox
 		c.gibs = other.gibs
+		c.lightmap = other.lightmap
 		c.ai_name = other.ai_name
 		c.cash_value = other.cash_value
 		c.max_health = other.max_health
@@ -302,6 +305,17 @@ Type COMPLEX_AGENT Extends AGENT
 			SetScale( scale_override, scale_override )
 			SetRotation( ang )
 			DrawImage( img, pos_x, pos_y )
+			'chassis lighting effect
+			If lightmap
+				Local separation# = 360.0 / lightmap.frames.Length
+				For Local i% = 0 Until lightmap.frames.Length
+					Local diff# = Abs( ang_wrap( ang - ((i - 1) * separation )))
+					If diff < 90.0
+						SetAlpha( alpha_override * 0.5 * (90.0 - diff)/90.0 )
+						DrawImage( lightmap, pos_x, pos_y, i )
+					End If
+				Next
+			End If
 		End If
 		'widgets in front of
 		For Local widget_list:TList = EachIn all_widget_lists
@@ -704,6 +718,7 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	End If
 	If json.TypeOf( "hitbox_image_key" ) <> JSON_UNDEFINED        Then cmp_ag.hitbox = get_image( json.GetString( "hitbox_image_key" ))
 	If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED          Then cmp_ag.gibs = get_image( json.GetString( "gibs_image_key" ))
+	If json.TypeOf( "lightmap_image_key" ) <> JSON_UNDEFINED      Then cmp_ag.lightmap = get_image( json.GetString( "lightmap_image_key" ))
 	If json.TypeOf( "ai_name" ) <> JSON_UNDEFINED                 Then cmp_ag.ai_name = json.GetString( "ai_name" )
 	If json.TypeOf( "cash_value" ) <> JSON_UNDEFINED              Then cmp_ag.cash_value = json.GetNumber( "cash_value" )
 	If json.TypeOf( "max_health" ) <> JSON_UNDEFINED              Then cmp_ag.max_health = json.GetNumber( "max_health" )

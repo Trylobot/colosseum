@@ -7,6 +7,7 @@
 			image_key: "player_tank_chassis",
 			hitbox_image_key: "light_tank_hitbox",
 			gibs_image_key: "quad_gibs",
+			lightmap_image_key: "player_tank_chassis_lightmap",
 			cash_value: 1250,
 			max_health: 500,
 			mass: 800,

@@ -13,6 +13,18 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/player_tank_chassis_lightmap.png",
+			handle_x: 11.5,
+			handle_y: 6.5,
+			frames: 4,
+			frame_width: 23,
+			frame_height: 13
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/apc_chassis.png",
 			handle_x: 13.5,
 			handle_y: 9.5,
