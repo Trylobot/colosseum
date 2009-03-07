@@ -56,7 +56,6 @@
 			name: "light plasma sprayer",
 			class: 1,
 			priority: 2,
-			image_key: "pellet_turret_base",
 			cash_value: 750,
 			firing_sound_key: "energy_mgun",
 			turret_barrel_count: 1,
@@ -72,8 +71,8 @@
 				{
 					turret_barrel_key: "light_energy_mgun_barrel",
 					attach_at: {
-						offset_x: 2,
-						offset_y: 5
+						offset_x: 1,
+						offset_y: 2
 					}
 				}
 			]

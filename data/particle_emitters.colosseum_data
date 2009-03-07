@@ -241,6 +241,16 @@
 	},
 	{
 		class: "particle_emitter",
+		key: "energy_mgun_flare",
+		object: {
+			emitter_type: 0,
+			emitter_object_key: "energy_mgun_flare",
+			life_time_min: 20,
+			life_time_max: 20
+		}
+	},
+	{
+		class: "particle_emitter",
 		key: "machine_gun_shell_casing",
 		object: {
 			emitter_type: 0,

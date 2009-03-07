@@ -153,7 +153,7 @@
 		class: "turret_barrel",
 		key: "light_energy_mgun_barrel",
 		object: {
-			image_key: null,
+			image_key: "pellet_turret_base",
 			reload_time: 40,
 			launcher: {
 				projectile_launcher_key: "energy_pellet_launcher",

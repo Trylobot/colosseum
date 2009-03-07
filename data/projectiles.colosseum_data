@@ -57,7 +57,7 @@
 		object: {
 			image_key: "energy_pellet",
 			impact_sound_key: "laser_hit",
-			damage: 2,
+			damage: 1,
 			mass: 0.0025,
 			payload_emitters: [
 				{

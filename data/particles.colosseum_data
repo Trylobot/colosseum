@@ -148,6 +148,15 @@
 	},
 	{
 		class: "particle",
+		key: "energy_mgun_flare",
+		object: {
+			particle_type: 0,
+			image_key: "energy_mgun_flare",
+			layer: 1
+		}
+	},
+	{
+		class: "particle",
 		key: "machine_gun_muzzle_flash",
 		object: {
 			particle_type: 0,

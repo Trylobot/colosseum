@@ -112,6 +112,9 @@ Type TURRET Extends POINT
 		For Local em:EMITTER = EachIn emitter_list
 			EMITTER( EMITTER.Copy( em, t.emitter_list, t ))
 		Next
+		t.attach_at( ..
+			off_x, ..
+			off_y )
 		Return t
 	End Method
 

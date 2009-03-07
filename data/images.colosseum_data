@@ -309,6 +309,16 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/energy_mgun_flare.png",
+			handle_x: 0.5,
+			handle_y: 7.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/mgun_muzzle_flash.png",
 			handle_x: 0.5,
 			handle_y: 7.5,
