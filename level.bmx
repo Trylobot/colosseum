@@ -189,6 +189,11 @@ Type LEVEL Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
+	Method resize_cell( c:CELL, w%, h% )
+		set_divider( LINE_TYPE_VERTICAL, c.col + 1, vertical_divs[c.col] + w, False )
+		set_divider( LINE_TYPE_HORIZONTAL, c.row + 1, horizontal_divs[c.row] + h, False )
+	End Method
+	
 	Method path_regions_insert_row( index% )
 		row_count :+ 1
 		Local new_path_regions%[,] = New Int[row_count,col_count]

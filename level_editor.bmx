@@ -22,6 +22,7 @@ Function level_editor( lev:LEVEL )
 	Local drag_mouse_start:cVEC = New cVEC
 	Local drag_pos_start:POINT = New POINT
 	Local new_spawner:SPAWNER = New SPAWNER
+	new_spawner.class = SPAWNER.class_GATED_FACTORY
 	Local closest_sp:SPAWNER = Null
 	Local new_prop:PROP_DATA = New PROP_DATA
 	Local prop_keys$[] = get_keys( prop_map )
@@ -33,7 +34,7 @@ Function level_editor( lev:LEVEL )
 	Local nearest_div_dist%
 	Local nearest_div_axis%
 	
-	Local current_grid_size% = 2
+	Local current_grid_size% = 0
 	Local grid_sizes%[] = [ 1, 2, 5, 8, 10, 12, 15, 20, 25 ]
 	Local gridsnap% = grid_sizes[current_grid_size]
 	Local mode% = EDIT_LEVEL_MODE_BASIC
@@ -52,7 +53,7 @@ Function level_editor( lev:LEVEL )
 	Local normal_font:TImageFont = get_font( "consolas_12" )
 	Local bigger_font:TImageFont = get_font( "consolas_bold_24" )
 	SetImageFont( normal_font )
-	Local line_h% = GetImageFont().Height() - 1
+	Local line_h% = 10
 	
 	Repeat
 		Cls()
@@ -66,6 +67,7 @@ Function level_editor( lev:LEVEL )
 		'save level
 		If control And KeyHit( KEY_S )
 			menu_command( COMMAND_SHOW_CHILD_MENU, INTEGER.Create( MENU_ID_SAVE_LEVEL ))
+			get_current_menu().update( True )
 			Return
 		End If
 		
@@ -192,7 +194,7 @@ Function level_editor( lev:LEVEL )
 		SetImageFont( normal_font )
 
 		'mode help
-		DrawText( ""+..
+		DrawText_with_shadow( ""+..
 			EDIT_LEVEL_MODE_BASIC+":pan "+..
 			EDIT_LEVEL_MODE_DIVIDERS+":split "+..
 			EDIT_LEVEL_MODE_PATH_REGIONS+":fill "+..
@@ -201,42 +203,46 @@ Function level_editor( lev:LEVEL )
 			info_x,info_y ); info_y :+ line_h
 		
 		'mode help (context-specific)
+		Local h% = 0
 		Select mode
 			Case EDIT_LEVEL_MODE_BASIC
-				DrawText( "mode "+EDIT_LEVEL_MODE_BASIC+" -> camera pan", info_x,info_y )
-				DrawText( "click and drag to pan", mouse.pos_x+10,mouse.pos_y )
-				DrawText( "enter to edit level name", mouse.pos_x+10,mouse.pos_y+10 )
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_BASIC+" -> camera pan", info_x,info_y )
+				DrawText_with_shadow( "click and drag to pan", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "enter to edit level name", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_DIVIDERS
-				DrawText( "mode "+EDIT_LEVEL_MODE_DIVIDERS+" -> dividers", info_x,info_y )
-				DrawText( "click to split", mouse.pos_x+10,mouse.pos_y )
-				DrawText( "right-click to toggle axis", mouse.pos_x+10,mouse.pos_y+10 )
-				DrawText( "ctrl+click to drag", mouse.pos_x+10,mouse.pos_y+20 )
-				DrawText( "alt+click to join", mouse.pos_x+10,mouse.pos_y+30 )
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_DIVIDERS+" -> dividers", info_x,info_y )
+				DrawText_with_shadow( "click to split", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "right-click to toggle axis", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "ctrl+click to drag", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "alt+click to join", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_PATH_REGIONS
-				DrawText( "mode "+EDIT_LEVEL_MODE_PATH_REGIONS+" -> path regions", info_x,info_y )
-				DrawText( "click block out area", mouse.pos_x+10,mouse.pos_y )
-				DrawText( "right-click to clear area", mouse.pos_x+10,mouse.pos_y+10 )
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PATH_REGIONS+" -> path regions", info_x,info_y )
+				DrawText_with_shadow( "click block out area", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "right-click to clear area", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_SPAWNER_SYSTEM
-				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_SYSTEM+" -> spawner system", info_x,info_y )
-				DrawText( "click to add new", mouse.pos_x+10,mouse.pos_y )
-				DrawText( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+10 )
-				DrawText( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+20 )
-				DrawText( "shift+click to set angle", mouse.pos_x+10,mouse.pos_y+30 )
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_SPAWNER_SYSTEM+" -> spawner system", info_x,info_y )
+				DrawText_with_shadow( "click to paste brush", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "right-click to clear brush", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "ctrl+right-click to copy to brush", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "ctrl+tab to setup cell for gated-spawner", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "shift+click to set angle", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_SPAWNER_DETAILS
-				DrawText( "mode "+EDIT_LEVEL_MODE_SPAWNER_DETAILS+" -> spawner details", info_x,info_y )
-				DrawText( "hover to edit nearest spawner", mouse.pos_x+10,mouse.pos_y )
-				DrawText( "up/down to select squad", mouse.pos_x+10,mouse.pos_y+10 )
-				DrawText( "left/right to change enemy type", mouse.pos_x+10,mouse.pos_y+20 )
-				DrawText( "insert/delete to add/remove squad member", mouse.pos_x+10,mouse.pos_y+30 )
-				DrawText( "home/end to change class", mouse.pos_x+10,mouse.pos_y+40 )
-				DrawText( "pgup/pgdn to change alignment", mouse.pos_x+10,mouse.pos_y+50 )
-				DrawText( "enter to edit wait time", mouse.pos_x+10,mouse.pos_y+60 )
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_SPAWNER_DETAILS+" -> spawner details", info_x,info_y )
+				DrawText_with_shadow( "hover to edit nearest spawner", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "up/down to select squad", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "left/right to change enemy type", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "insert/delete to add/remove squad member", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "home/end to change class", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "pgup/pgdn to change alignment", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "enter to edit wait time", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_PROPS
-				DrawText( "mode "+EDIT_LEVEL_MODE_PROPS+" -> props", info_x,info_y )
-				DrawText( "click to add new", mouse.pos_x+10,mouse.pos_y )
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PROPS+" -> props", info_x,info_y )
+				DrawText_with_shadow( "click to add new", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				'...
 		End Select; info_y :+ line_h
-		DrawText( "numpad +/- gridsnap zoom", info_x,info_y ); info_y :+ 2*line_h
+		DrawText_with_shadow( "numpad +/- gridsnap zoom", info_x,info_y ); info_y :+ 2*line_h
 		
 		'level name/title
 		SetImageFont( bigger_font )
@@ -246,9 +252,9 @@ Function level_editor( lev:LEVEL )
 		
 		'level info
 		SetImageFont( normal_font )
-		DrawText( "size: "+lev.width+" x "+lev.height, info_x,info_y ); info_y :+ 1.5*line_h
-		DrawText( "pathing regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
-		DrawText( "spawners: "+lev.spawners.Length, info_x,info_y ); info_y :+ line_h
+		DrawText_with_shadow( "size: "+lev.width+" x "+lev.height, info_x,info_y ); info_y :+ 1.5*line_h
+		DrawText_with_shadow( "pathing regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
+		DrawText_with_shadow( "spawners: "+lev.spawners.Length, info_x,info_y ); info_y :+ line_h
 		
 		'mode code (LOL! I rhymed) <-- WTF
 		Select mode
@@ -378,7 +384,12 @@ Function level_editor( lev:LEVEL )
 				End Select
 				If Not any_modifiers
 					If mouse_down_1 And Not MouseDown( 1 )
-						lev.add_spawner( new_spawner.clone() )
+						closest_sp = new_spawner.clone()
+						lev.add_spawner( closest_sp )
+					End If
+					If MouseDown( 2 )
+						new_spawner = New SPAWNER
+						new_spawner.class = SPAWNER.class_GATED_FACTORY
 					End If
 				Else
 					If Not MouseDown( 1 )
@@ -426,6 +437,45 @@ Function level_editor( lev:LEVEL )
 								closest_sp.pos.ang = round_to_nearest( ang_wrap( closest_sp.pos.ang_to( mouse )), 45 )
 							End If
 						End If
+						If control And KeyHit( KEY_TAB ) And closest_sp
+							'find a spawner in the current cell
+							Local sp_cell:CELL = lev.get_cell( closest_sp.pos.pos_x, closest_sp.pos.pos_y )
+							'decide what size the cell should be based on orientation of spawner
+							Local new_w%, new_h%, new_x%, new_y%, go% = True
+							If closest_sp.pos.ang = 0 Or Abs( closest_sp.pos.ang ) = 180 'east/west
+								new_w = 70
+								new_h = 62
+								If closest_sp.pos.ang = 0 'east
+									new_x = 28
+									new_y = 31
+								Else 'west
+									new_x = 52 - 10
+									new_y = 31
+								End If
+							Else If Abs( closest_sp.pos.ang ) = 90 'north/south
+								new_w = 62
+								new_h = 70
+								If closest_sp.pos.ang > 0 'south
+									new_x = 31
+									new_y = 28
+								Else 'north
+									new_x = 31
+									new_y = 52 - 10
+								End If
+							Else
+								go = False
+							End If
+							If go
+								'resize current cell to accomodate it
+								lev.resize_cell( sp_cell, new_w, new_h )
+								'move the spawner to the correct spot in the cell
+								closest_sp.pos.pos_x = lev.vertical_divs[sp_cell.col] + new_x
+								closest_sp.pos.pos_y = lev.horizontal_divs[sp_cell.row] + new_y
+							End If
+						End If
+						If MouseDown( 2 ) And Not mouse_down_2
+							new_spawner = closest_sp.clone()
+						End If
 					End If
 				End If
 				Local alpha_mod#
@@ -441,6 +491,11 @@ Function level_editor( lev:LEVEL )
 					SetLineWidth( 2 )
 					SetAlpha( 1.00*alpha_mod )
 					DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x+spawn_point_preview_radius*Cos(p.ang),y+p.pos_y+spawn_point_preview_radius*Sin(p.ang) )
+					If new_spawner.class = SPAWNER.class_GATED_FACTORY
+						SetAlpha( 0.5*alpha_mod )
+						SetRotation( new_spawner.pos.ang )
+						DrawImage( get_image( "door_fg" ), x+new_spawner.pos.pos_x, y+new_spawner.pos.pos_y )
+					End If
 				End If
 				If KeyHit( KEY_LEFT )
 					new_spawner.pos.ang = ang_wrap( new_spawner.pos.ang - 45 )
@@ -475,10 +530,10 @@ Function level_editor( lev:LEVEL )
 					SetAlpha( 1 )
 					SetColor( 255, 255, 255 )
 					info_y :+ line_h
-					DrawText( "current spawner", info_x,info_y ); info_y :+ line_h
-					DrawText( "  class "+class_to_string(sp.class), info_x,info_y ); info_y :+ line_h
-					DrawText( "  alignment "+alignment_to_string(sp.alignment), info_x,info_y ); info_y :+ line_h
-					DrawText( "  squads "+sp.count_squads(), info_x,info_y ); info_y :+ line_h
+					DrawText_with_shadow( "current spawner", info_x,info_y ); info_y :+ line_h
+					DrawText_with_shadow( "  class "+class_to_string(sp.class), info_x,info_y ); info_y :+ line_h
+					DrawText_with_shadow( "  alignment "+alignment_to_string(sp.alignment), info_x,info_y ); info_y :+ line_h
+					DrawText_with_shadow( "  squads "+sp.count_squads(), info_x,info_y ); info_y :+ line_h
 					info_y :+ line_h
 					Local cell_size% = 15
 					If sp.count_squads() <> 0
@@ -504,7 +559,7 @@ Function level_editor( lev:LEVEL )
 					'draw all delay times except the cursor
 					For Local r% = 0 To sp.count_squads()-1
 						If r <> cursor
-							DrawText( sp.delay_time[r], window_w - 50, info_y + r*cell_size + line_h/3 )
+							DrawText_with_shadow( sp.delay_time[r], window_w - 50, info_y + r*cell_size + line_h/3 )
 						End If
 					Next
 
@@ -513,7 +568,7 @@ Function level_editor( lev:LEVEL )
 						sp.delay_time[cursor] = CONSOLE.get_input( sp.delay_time[cursor],, window_w - 50, info_y + cursor*cell_size + line_h/3, normal_font ).ToInt()
 					End If
 					If cursor >= 0 And cursor < sp.count_squads()
-						DrawText( String.FromInt( sp.delay_time[cursor] ), window_w - 50, info_y + cursor*cell_size + line_h/3 )
+						DrawText_with_shadow( String.FromInt( sp.delay_time[cursor] ), window_w - 50, info_y + cursor*cell_size + line_h/3 )
 					End If
 					Local cursor_squadmembers% = sp.count_squadmembers( cursor )
 					Local ag:COMPLEX_AGENT = get_unit( cursor_archetype )

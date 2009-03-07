@@ -51,10 +51,12 @@ Function get_all_input()
 		If KeyHit( KEY_ENTER )
 			m.execute_current_option()
 		End If
-		'mouseover of menu items
-		Local target_valid% = m.select_by_coords( mouse.pos_x, mouse.pos_y )
+		'mouseover of menu items (only when mouse is moved)
+		If mouse_delta.x <> 0 Or mouse_delta.y <> 0
+			m.select_by_coords( mouse.pos_x, mouse.pos_y )
+		End If
 		If MouseHit( 1 )
-			If target_valid
+			If m.select_by_coords( mouse.pos_x, mouse.pos_y )
 				m.execute_current_option()
 			End If
 		End If
