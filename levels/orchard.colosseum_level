@@ -1,0 +1,842 @@
+{
+	name: "orchard",
+	width: 804,
+	height: 953,
+	row_count: 21,
+	col_count: 16,
+	hue: 0,
+	saturation: 0,
+	luminosity: 0.3,
+	horizontal_divs: [
+		0,
+		50,
+		120,
+		170,
+		232,
+		280,
+		290,
+		338,
+		379,
+		423,
+		469,
+		479,
+		528,
+		574,
+		618,
+		665,
+		674,
+		724,
+		786,
+		833,
+		903,
+		953
+	],
+	vertical_divs: [
+		0,
+		50,
+		120,
+		172,
+		234,
+		289,
+		298,
+		356,
+		405,
+		452,
+		506,
+		516,
+		573,
+		635,
+		684,
+		754,
+		804
+	],
+	path_regions: [
+		[
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			true,
+			false,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			false,
+			true,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			true,
+			false,
+			true,
+			false,
+			false,
+			true,
+			false,
+			true,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			true,
+			true,
+			true,
+			false,
+			true,
+			false,
+			false,
+			true,
+			false,
+			true,
+			true,
+			true,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			true,
+			false,
+			true,
+			false,
+			false,
+			true,
+			false,
+			true,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			true,
+			false,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			false,
+			true,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
+		]
+	],
+	spawners: [
+		{
+			class: 1,
+			squads: [
+				[
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
+				],
+				[
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
+				],
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"light_tank"
+				]
+			],
+			pos: {
+				pos_x: 78,
+				pos_y: 201
+			},
+			delay_time: [
+				1000,
+				4000,
+				0,
+				10000
+			],
+			alignment: 1
+		},
+		{
+			class: 1,
+			squads: [
+				[
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
+				],
+				[
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
+				],
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"light_tank"
+				]
+			],
+			pos: {
+				pos_x: 203,
+				pos_y: 78,
+				ang: 90
+			},
+			delay_time: [
+				1000,
+				4000,
+				0,
+				10000
+			],
+			alignment: 1
+		},
+		{
+			class: 1,
+			squads: [
+				[
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
+				],
+				[
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
+				],
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"light_tank"
+				]
+			],
+			pos: {
+				pos_x: 604,
+				pos_y: 78,
+				ang: 90
+			},
+			delay_time: [
+				1000,
+				4000,
+				0,
+				10000
+			],
+			alignment: 1
+		},
+		{
+			class: 1,
+			squads: [
+				[
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
+				],
+				[
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
+				],
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"light_tank"
+				]
+			],
+			pos: {
+				pos_x: 726,
+				pos_y: 201,
+				ang: 180
+			},
+			delay_time: [
+				1000,
+				4000,
+				0,
+				10000
+			],
+			alignment: 1
+		},
+		{
+			class: 1,
+			squads: [
+				[
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
+				],
+				[
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
+				],
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"light_tank"
+				]
+			],
+			pos: {
+				pos_x: 203,
+				pos_y: 875,
+				ang: -90
+			},
+			delay_time: [
+				1000,
+				4000,
+				0,
+				10000
+			],
+			alignment: 2
+		},
+		{
+			class: 1,
+			squads: [
+				[
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
+				],
+				[
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
+				],
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"light_tank"
+				]
+			],
+			pos: {
+				pos_x: 78,
+				pos_y: 755
+			},
+			delay_time: [
+				1000,
+				4000,
+				0,
+				10000
+			],
+			alignment: 2
+		},
+		{
+			class: 1,
+			squads: [
+				[
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
+				],
+				[
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
+				],
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"light_tank"
+				]
+			],
+			pos: {
+				pos_x: 726,
+				pos_y: 755,
+				ang: -180
+			},
+			delay_time: [
+				1000,
+				4000,
+				0,
+				10000
+			],
+			alignment: 2
+		},
+		{
+			class: 1,
+			squads: [
+				[
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad",
+					"machine_gun_quad"
+				],
+				[
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
+				],
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"light_tank"
+				]
+			],
+			pos: {
+				pos_x: 604,
+				pos_y: 875,
+				ang: -90
+			},
+			delay_time: [
+				1000,
+				4000,
+				0,
+				10000
+			],
+			alignment: 2
+		}
+	],
+	props: [
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 590,
+				pos_y: 453
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 619,
+				pos_y: 452
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 639,
+				pos_y: 435
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 665,
+				pos_y: 448
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 601,
+				pos_y: 491
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 628,
+				pos_y: 497
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 634,
+				pos_y: 525
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 659,
+				pos_y: 531
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 225,
+				pos_y: 459
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 197,
+				pos_y: 451
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 169,
+				pos_y: 450
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 141,
+				pos_y: 452
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 134,
+				pos_y: 425
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 169,
+				pos_y: 497
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 144,
+				pos_y: 491
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 137,
+				pos_y: 517
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 223,
+				pos_y: 529
+			}
+		}
+	]
+}

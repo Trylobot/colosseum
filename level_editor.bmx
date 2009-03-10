@@ -52,11 +52,11 @@ Function level_editor( lev:LEVEL )
 	
 	Local normal_font:TImageFont = get_font( "consolas_12" )
 	Local bigger_font:TImageFont = get_font( "consolas_bold_24" )
-	SetImageFont( normal_font )
 	Local line_h% = 10
 	
 	Repeat
 		Cls()
+		SetImageFont( normal_font )
 		
 		'modifier keys
 		control = KeyDown( KEY_LCONTROL ) | KeyDown( KEY_RCONTROL )
@@ -297,6 +297,8 @@ Function level_editor( lev:LEVEL )
 			
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_DIVIDERS
+				Local pos_str$ = ""
+				SetImageFont( get_font( "consolas_bold_14" ))
 				gridsnap_mouse.x = round_to_nearest( mouse.pos_x, gridsnap )
 				gridsnap_mouse.y = round_to_nearest( mouse.pos_y, gridsnap )
 				SetColor( 255, 255, 255 )
@@ -349,10 +351,14 @@ Function level_editor( lev:LEVEL )
 					If nearest_div_axis = LINE_TYPE_VERTICAL
 						DrawLine( lev.vertical_divs[nearest_div]+x,y, lev.vertical_divs[nearest_div]+x,y+lev.height )
 						DrawLine( gridsnap_mouse.x,gridsnap_mouse.y, lev.vertical_divs[nearest_div]+x,gridsnap_mouse.y )
+						pos_str = Int(lev.vertical_divs[nearest_div])
 					Else If nearest_div_axis = LINE_TYPE_HORIZONTAL
 						DrawLine( x,lev.horizontal_divs[nearest_div]+y, x+lev.width,lev.horizontal_divs[nearest_div]+y )
 						DrawLine( gridsnap_mouse.x,gridsnap_mouse.y, gridsnap_mouse.x,lev.horizontal_divs[nearest_div]+y )
+						pos_str = Int(lev.horizontal_divs[nearest_div])
 					End If
+					SetAlpha( 1 )
+					DrawText_with_shadow( pos_str, mouse.pos_x + 5, mouse.pos_y - 16 )
 				Else
 					'insert div
 					If mouse_down_1 And Not MouseDown( 1 )
@@ -370,9 +376,13 @@ Function level_editor( lev:LEVEL )
 					End If
 					If divider_axis = LINE_TYPE_VERTICAL
 						DrawLine( gridsnap_mouse.x,y, gridsnap_mouse.x,y+lev.height )
+						pos_str = Int(gridsnap_mouse.x-x)
 					Else If divider_axis = LINE_TYPE_HORIZONTAL
 						DrawLine( x,gridsnap_mouse.y, x+lev.width,gridsnap_mouse.y )
+						pos_str = Int(gridsnap_mouse.y-y)
 					End If
+					SetAlpha( 1 )
+					DrawText_with_shadow( pos_str, mouse.pos_x + 5, mouse.pos_y - 16 )
 				End If
 									
 			'____________________________________________________________________________________________________
