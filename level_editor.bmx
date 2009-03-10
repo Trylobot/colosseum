@@ -143,6 +143,23 @@ Function level_editor( lev:LEVEL )
 				SetRotation( sp.pos.ang )
 				DrawImage( get_image( "door_fg" ), x+sp.pos.pos_x, y+sp.pos.pos_y )
 			End If
+			SetAlpha( 0.666 )
+			SetRotation( 0 )
+			SetScale( 1, 1 )
+			Select sp.alignment
+				Case ALIGNMENT_NONE
+					SetColor( 255, 255, 255 )
+				Case ALIGNMENT_FRIENDLY
+					SetColor( 64, 64, 255 )
+				Case ALIGNMENT_HOSTILE
+					SetColor( 255, 64, 64 )
+			End Select
+			Local size% = 3, sep% = 1
+			For Local r% = 0 To sp.count_squads()-1
+				For Local c% = 0 To sp.count_squadmembers( r )-1
+					DrawRect( x + sp.pos.pos_x - 10 - c*(size+sep), y + sp.pos.pos_y + 10 + r*(size+sep), size, size )
+				Next
+			Next
 		Next
 		SetAlpha( 1 )
 		SetRotation( 0 )
@@ -496,6 +513,23 @@ Function level_editor( lev:LEVEL )
 						SetRotation( new_spawner.pos.ang )
 						DrawImage( get_image( "door_fg" ), x+new_spawner.pos.pos_x, y+new_spawner.pos.pos_y )
 					End If
+					SetAlpha( 0.666*alpha_mod )
+					SetRotation( 0 )
+					SetScale( 1, 1 )
+					Select new_spawner.alignment
+						Case ALIGNMENT_NONE
+							SetColor( 255, 255, 255 )
+						Case ALIGNMENT_FRIENDLY
+							SetColor( 64, 64, 255 )
+						Case ALIGNMENT_HOSTILE
+							SetColor( 255, 64, 64 )
+					End Select
+					Local size% = 3, sep% = 1
+					For Local r% = 0 To new_spawner.count_squads()-1
+						For Local c% = 0 To new_spawner.count_squadmembers( r )-1
+							DrawRect( x + p.pos_x - 10 - c*(size+sep), y + p.pos_y + 10 + r*(size+sep), size, size )
+						Next
+					Next
 				End If
 				If KeyHit( KEY_LEFT )
 					new_spawner.pos.ang = ang_wrap( new_spawner.pos.ang - 45 )
@@ -532,7 +566,16 @@ Function level_editor( lev:LEVEL )
 					info_y :+ line_h
 					DrawText_with_shadow( "current spawner", info_x,info_y ); info_y :+ line_h
 					DrawText_with_shadow( "  class "+class_to_string(sp.class), info_x,info_y ); info_y :+ line_h
+					Select sp.alignment
+						Case ALIGNMENT_NONE
+							SetColor( 255, 255, 255 )
+						Case ALIGNMENT_FRIENDLY
+							SetColor( 64, 64, 255 )
+						Case ALIGNMENT_HOSTILE
+							SetColor( 255, 64, 64 )
+					End Select
 					DrawText_with_shadow( "  alignment "+alignment_to_string(sp.alignment), info_x,info_y ); info_y :+ line_h
+					SetColor( 255, 255, 255 )
 					DrawText_with_shadow( "  squads "+sp.count_squads(), info_x,info_y ); info_y :+ line_h
 					info_y :+ line_h
 					Local cell_size% = 15
@@ -540,6 +583,7 @@ Function level_editor( lev:LEVEL )
 						For Local r% = 0 To sp.count_squads()-1
 							For Local c% = 0 To sp.count_squadmembers( r )-1
 								Local ag:COMPLEX_AGENT = get_unit( sp.squads[r][c] )
+								ag.political_alignment = sp.alignment
 								ag.scale_all( 0.75 )
 								ag.pos_x = info_x + cell_size + c*cell_size - cell_size/2
 								ag.pos_y = info_y + cell_size + r*cell_size - cell_size/2
