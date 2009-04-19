@@ -28,6 +28,7 @@ End Function
 Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Const CONTROL_TYPE_HUMAN% = 1
 	Const CONTROL_TYPE_AI% = 2
+	Const CONTROL_TYPE_REMOTE% = 3
 	Const INPUT_KEYBOARD% = 1
 	Const INPUT_KEYBOARD_MOUSE_HYBRID% = 2
 	Const INPUT_XBOX_360_CONTROLLER% = 3
@@ -58,11 +59,14 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method update() 'this function needs some TLC
 		prune()
-		If control_type = CONTROL_TYPE_HUMAN
-			input_control()
-		Else If control_type = CONTROL_TYPE_AI
-			AI_control()
-		End If
+		Select control_type
+			Case CONTROL_TYPE_HUMAN
+				input_control()
+			Case CONTROL_TYPE_AI
+				AI_control()
+			Case CONTROL_TYPE_REMOTE
+				remote_control()
+		End Select
 	End Method
 	
 	Method prune()
@@ -469,6 +473,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			'Case INPUT_XBOX_360_CONTROLLER
 			
 		End Select
+	End Method
+	
+	Method remote_control() 'used for networked multiplayer
+		
 	End Method
 	
 End Type

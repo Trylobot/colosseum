@@ -530,11 +530,26 @@ Function save_autosave( profile_path$ ) 'new bug!
 		file.Close()
 	End If
 End Function
-
+'______________________________________________________________________________
 Function unfilter_image:TImage( img:TImage )
 	If Not img Then Return Null
 	Local new_img:TImage = LoadImage( img.pixmaps[0], 0 )'img.flags&(~MIPMAPPEDIMAGE) )
 	SetImageHandle( new_img, img.handle_x, img.handle_y )
 	Return new_img
 End Function
+'______________________________________________________________________________
+Function process_command_line_arguments()
+	If AppArgs.Length >= 2
+		For Local arg$ = EachIn AppArgs[1..]
+			Select Lower( arg )
+				
+				Case "-host"
+					network_host = True
+					
+			End Select
+		Next
+	End If
+End Function
+
+
 

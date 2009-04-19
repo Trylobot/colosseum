@@ -26,8 +26,8 @@ Import BRL.FreeAudioAudio
 Import BRL.OGGLoader
 Import BRL.PNGLoader
 Import BRL.Random
-Import BRL.GNet
 Import BRL.Map
+Import PUB.BNet
 '#EndRegion &H0F
 
 

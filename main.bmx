@@ -17,9 +17,6 @@ Rem
 EndRem
 
 'Multiplayer
-Const NETWORK_MODE_SERVER% = 1
-Const NETWORK_MODE_CLIENT% = 2
-Const network_mode% = NETWORK_MODE_CLIENT
 Global ip_address$
 Global ip_port%
 'Graphics
@@ -48,6 +45,8 @@ Function apply_default_settings()
 End Function
 'defaults
 apply_default_settings()
+
+process_command_line_arguments()
 
 'data directory enforce
 create_dirs()
@@ -124,6 +123,8 @@ Repeat
 	End If
 	'input
 	get_all_input()
+	'network
+	update_network()
 	'timing & physics
 	If frame_time_elapsed()
 		'next timescale calculate and reset
