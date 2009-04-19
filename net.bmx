@@ -13,15 +13,16 @@ Global network_messages:TList = CreateList()
 
 Global network_stream:TUDPStream
 Global last_network_update_ts%
+Global last_network_ping_ts%
 Global send_id%, receive_id%, last_received%[32]
 
 Type NET_MSG
-	Const ACK = 10
-	Const PING = 20
-	Const PONG = 21
-	Const JOIN = 100
-	Const QUIT = 110
-	Const PHYSICAL_OBJECT_STATE = 1000
+	Const ACK:Short = 1
+	Const PING:Short = 5
+	Const PONG:Short = 6
+	Const JOIN:Short = 10
+	Const QUIT:Short = 11
+	Const PHYSICAL_OBJECT_STATE:Short = 20
 	
 	Field packet_id%
 	Field send_id%
@@ -35,13 +36,13 @@ Type NET_MSG
 			n.send_id = send_id
 			Select packet_id
 				Case JOIN
-					WriteInt( network_stream, n.send_id )
-					WriteByte( network_stream, JOIN )
+					network_stream.WriteInt( n.send_id )
+					network_stream.WriteByte( JOIN )
 				Case QUIT
-					WriteInt( network_stream, n.send_id )
-					WriteByte( network_stream, QUIT )
+					network_stream.WriteInt( n.send_id )
+					network_stream.WriteByte( QUIT )
 			End Select
-			SendUDP
+			send_udp()
 			n.ts = now()
 			Return n
 		End If
@@ -54,9 +55,9 @@ Type NET_MSG
 				
 				Case JOIN
 					If now() - ts > 100
-						WriteInt( network_stream, send_id )
-						WriteByte( network_stream, JOIN )
-						SendUDP
+						network_stream.WriteInt( send_id )
+						network_stream.WriteByte( JOIN )
+						send_udp()
 						ts = now()
 						If retry < 20
 							retry :+ 1
@@ -67,9 +68,9 @@ Type NET_MSG
 					
 				Case QUIT
 					If now() - ts > 100
-						WriteInt( network_stream, n.send_id )
-						WriteByte( network_stream, QUIT )
-						SendUDP
+						network_stream.WriteInt( n.send_id )
+						network_stream.WriteByte( QUIT )
+						send_udp()
 						ts = now()
 					End If
 					
@@ -85,8 +86,71 @@ Function clear_last_received()
 End Function
 
 Function update_network()
+	If network_connected
+		'ping
+		If now() - last_network_ping_ts > 1000
+			network_stream.WriteInt( send_id )
+			network_stream.WriteByte( NET_MSG.PING )
+			send_udp()
+			last_network_ping_ts = now()
+		End If
+		'inform network of local player's state
+		If now() - last_network_update_ts > 100
+			If game And game.player
+				network_stream.WriteInt( send_id )
+				network_stream.WriteByte( NET_MSG.PHYSICAL_OBJECT_STATE )
+				write_PHYSICAL_OBJECT_to_stream( network_stream, game.player )
+				send_udp()
+			End If
+			last_network_update_ts = now()
+		End If
+	End If
+	
+	If RecvUDPMsg( network_stream )
+		receive_id      = network_stream.ReadInt()
+		Local data:Byte = network_stream.ReadByte()
+		Local ip%       = UDPMsgIP( network_stream )
+		Local port%     = UDPMsgPort( network_stream )
+		If net_msg_is_new( receive_id, data )
+			Select data
+				
+				Case NET_MSG.JOIN
+					If Not network_connected And network_host
+						
+					End If
+				
+			End Select
+		End If
+	End If
+	
 	
 End Function
 
+Function write_PHYSICAL_OBJECT_to_stream( stream:TStream, obj:PHYSICAL_OBJECT )
+	If obj
+		stream.WriteInt( obj.pos_x )
+		stream.WriteInt( obj.pos_y )
+		stream.WriteInt( obj.ang )
+		stream.WriteInt( obj.vel_x )
+		stream.WriteInt( obj.vel_y )
+		stream.WriteInt( obj.ang_vel )
+		stream.WriteInt( obj.acc_x )
+		stream.WriteInt( obj.acc_y )
+		stream.WriteInt( obj.ang_acc )
+	End If
+End Function
 
+Function read_PHYSICAL_OBJECT_from_stream( stream:TStream, obj:PHYSICAL_OBJECT )
+	If obj
+		obj.pos_x = stream.ReadInt()
+		obj.pos_y = stream.ReadInt()
+		obj.ang = stream.ReadInt()
+		obj.vel_x = stream.ReadInt()
+		obj.vel_y = stream.ReadInt()
+		obj.ang_vel = stream.ReadInt()
+		obj.acc_x = stream.ReadInt()
+		obj.acc_y = stream.ReadInt()
+		obj.ang_acc = stream.ReadInt()
+	End If
+End Function
 

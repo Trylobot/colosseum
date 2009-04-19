@@ -79,6 +79,8 @@ Type ENVIRONMENT
 	Field player_spawn_point:POINT 'reference to the spawnpoint that will spawn or has spawned that player
 	Field player_brain:CONTROL_BRAIN 'reference to that player's brain object
 	Field player:COMPLEX_AGENT 'reference to that player object
+	Field network_player_brains:TList
+	Field network_players:TList
 	
 	Method New()
 		mouse = Create_cVEC( 0, 0 )
@@ -111,6 +113,8 @@ Type ENVIRONMENT
 			door_lists.addlast( friendly_door_list )
 			door_lists.addlast( hostile_door_list )
 		AI_spawners = CreateList()
+		network_player_brains = CreateList()
+		network_players = CreateList()
 	End Method
 	
 	Method clear()
@@ -399,6 +403,11 @@ Type ENVIRONMENT
 				Exit
 			End If
 		Next
+	End Method
+	
+	Method insert_network_player( new_player:COMPLEX_AGENT, new_player_brain:CONTROL_BRAIN )
+		new_player.manage( network_players )
+		new_player_brain.manage( network_player_brains )
 	End Method
 	
 	Method respawn_player()
