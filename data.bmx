@@ -541,7 +541,7 @@ End Function
 Function process_command_line_arguments()
 	If AppArgs.Length >= 2
 		For Local arg$ = EachIn AppArgs[1..]
-			Select Lower( arg )
+			Select arg.ToLower()
 				
 				Case "-host"
 					network_host = True
