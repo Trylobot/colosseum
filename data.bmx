@@ -498,8 +498,8 @@ Function save_pixmap_to_file( px:TPixmap )
 	Local high% = 1
 	For Local file$ = EachIn dir
 		If file.Find( file_prefix ) >= 0
-			Local current% = StripAll(file)[(file_prefix.length)..].ToInt()
-			If high <= current Then high = current + 1
+			Local Current% = StripAll(file)[(file_prefix.length)..].ToInt()
+			If high <= Current Then high = Current + 1
 		EndIf
 	Next
 	'procedurally build filename
@@ -542,10 +542,9 @@ Function process_command_line_arguments()
 	If AppArgs.Length >= 2
 		For Local arg$ = EachIn AppArgs[1..]
 			Select arg.ToLower()
-				
 				Case "-host"
 					network_host = True
-					
+					AppTitle :+ " [NETWORK HOST]"
 			End Select
 		Next
 	End If

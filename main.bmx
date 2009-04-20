@@ -46,8 +46,6 @@ End Function
 'defaults
 apply_default_settings()
 
-process_command_line_arguments()
-
 'data directory enforce
 create_dirs()
 'settings
@@ -68,6 +66,8 @@ menu_command( COMMAND_LOAD_GAME, autosave_profile_path )
 AppTitle = My.Application.AssemblyInfo
 If My.Application.DebugOn Then AppTitle :+ " " + My.Application.Platform + " (Debug)"
 SetGraphicsDriver GLMax2DDriver()
+
+process_command_line_arguments()
 
 Function init_graphics()
 	If Not fullscreen
