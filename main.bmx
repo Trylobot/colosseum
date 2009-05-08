@@ -77,12 +77,7 @@ Function init_graphics()
 	End If
 	SetClsColor( 0, 0, 0 )
 	Cls()
-	glBlendFunc( GL_SRC_ALPHA_SATURATE, GL_ONE )
-	glEnable( GL_BLEND )
-	glEnable( GL_LINE_SMOOTH )
-	glEnable( GL_POLYGON_SMOOTH )
-	glDisable( GL_DEPTH_TEST )
-	SetBlend( ALPHABLEND )
+  SetBlend( ALPHABLEND )
 End Function
 
 'graphical window
