@@ -7,6 +7,6 @@
 	show_ai_menu_game: false,
 	retain_particles: true,
 	active_particle_limit: 1000,
-	ip_address: "127.0.0.1",
-	port: 6112
+	network_ip_address: "57.4785.24.34",
+	network_port: 6112
 }

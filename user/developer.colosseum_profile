@@ -1,7 +1,7 @@
 {
 	name: "developer",
-	cash: 11837,
-	kills: 2233,
+	cash: 15362,
+	kills: 2261,
 	inventory: [
 		{
 			item_type: "turret",

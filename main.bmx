@@ -17,8 +17,8 @@ Rem
 EndRem
 
 'Multiplayer
-Global ip_address$
-Global ip_port%
+Global network_ip_address$
+Global network_port%
 'Graphics
 Global window_w% 'either keep these two, or keep window:BOX, but not both.
 Global window_h%
@@ -40,8 +40,8 @@ Function apply_default_settings()
 	show_ai_menu_game = True
 	retain_particles = True
 	active_particle_limit = 500
-	ip_address = "127.0.0.1"
-	ip_port = 6112
+	network_ip_address = "127.0.0.1"
+	network_port = 6112
 End Function
 'defaults
 apply_default_settings()

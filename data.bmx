@@ -412,8 +412,8 @@ Function load_settings%()
 		show_ai_menu_game = json.GetBoolean( "show_ai_menu_game" )
 		retain_particles = json.GetBoolean( "retain_particles" )
 		active_particle_limit = json.GetNumber( "active_particle_limit" )
-		ip_address = json.getString( "ip_address" )
-		ip_port = json.GetNumber( "port" )
+		network_ip_address = json.getString( "network_ip_address" )
+		network_port = json.GetNumber( "network_port" )
 		Return True
 	End If
 	'bad graphics mode
@@ -430,8 +430,8 @@ Function save_settings%()
 	this_json.SetByName( "show_ai_menu_game", TJSONBoolean.Create( show_ai_menu_game ))
 	this_json.SetByName( "retain_particles", TJSONBoolean.Create( retain_particles ))
 	this_json.SetByName( "active_particle_limit", TJSONNumber.Create( active_particle_limit ))
-	this_json.SetByName( "ip_address", TJSONString.Create( ip_address ))
-	this_json.SetByName( "port", TJSONNumber.Create( ip_port ))
+	this_json.SetByName( "network_ip_address", TJSONString.Create( network_ip_address ))
+	this_json.SetByName( "network_port", TJSONNumber.Create( network_port ))
 	'output json data
 	Local json:TJSON = TJSON.Create( this_json )
 	Local file:TStream = WriteFile( user_path + default_settings_file_name )
