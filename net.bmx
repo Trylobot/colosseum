@@ -8,7 +8,6 @@ EndRem
 Global network_UDP_stream:TUDPStream
 Global network_TCP_stream:TTCPStream
 
-Global network_host% = False 'can be set with command line argument
 Global network_client_ip_address%[] = New Int[32]
 Global network_client_port:Short[] = New Short[32]
 Global network_clients_connected% = 0
@@ -158,74 +157,5 @@ Function update_network()
 	EndRem
 End Function
 
-Function net_connect_to_host()
-	Rem
-	Local connect_attempt_ts% = now()
-	network_messages.AddLast( NET_MSG.Create( NET_MSG.JOIN ))
-	clear_last_received()
 
-	Local bitch_fucking_connected% = 0
-	Repeat
-		If RecvUDPMsg( network_stream )
-			receive_id      = network_stream.ReadInt()
-			Local data:Byte = network_stream.ReadByte()
-			Local ip%       = UDPMsgIP( network_stream )
-			Local port%     = UDPMsgPort( network_stream )
-			If data = NET_MSG.ACK
-				remove_net_msg( network_stream.ReadInt() )
-				bitch_fucking_connected = 1
-			End If
-		End If
-		
-		For Local n:NET_MSG = EachIn network_messages
-			n.handle()
-		Next
-		
-		If (now() - connect_attempt_ts) > 2000
-			bitch_fucking_connected = -1
-		End If
-	Until bitch_fucking_connected <> 0
-	
-	For Local n:NET_MSG = EachIn network_messages
-		network_messages.Remove( n )
-	Next
-	
-	If bitch_fucking_connected = 1
-		network_connected_to_host = True
-	Else
-		network_connected_to_host = False
-	End If
-	EndRem
-End Function
-
-Function net_disconnect()
-	Rem
-	network_messages.AddLast( NET_MSG.Create( NET_MSG.QUIT ))
-	
-	Local bitch_fucking_disconnected% = 0
-	Repeat
-		If RecvUDPMsg( network_stream )
-			receive_id      = network_stream.ReadInt()
-			Local data:Byte = network_stream.ReadByte()
-			Local ip%       = UDPMsgIP( network_stream )
-			Local port%     = UDPMsgPort( network_stream )
-			If data = NET_MSG.ACK
-				remove_net_msg( network_stream.ReadInt() )
-				bitch_fucking_disconnected = 1
-			End If
-		End If
-		
-		For Local n:NET_MSG = EachIn network_messages
-			n.handle()
-		Next
-	Until bitch_fucking_disconnected <> 0
-	
-	For Local n:NET_MSG = EachIn network_messages
-		network_messages.Remove( n )
-	Next
-	network_connected_to_host = False
-	network_stream.close()
-	network_stream = Null
-	EndRem
-End Function
 

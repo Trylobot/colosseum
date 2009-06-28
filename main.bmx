@@ -16,24 +16,26 @@ Rem
 
 EndRem
 
-'Multiplayer
-Global network_ip_address$
-Global network_port%
 'Graphics
-Global window_w% 'either keep these two, or keep window:BOX, but not both.
+Global window_w%
 Global window_h%
-	Global window:BOX
+Global window:BOX 'I don't like having this and the _w, _h constants
 Global fullscreen%
 Global bit_depth%
 Global refresh_rate%
 Global show_ai_menu_game%
 Global retain_particles%
 Global active_particle_limit%
+'Multiplayer
+Global playing_multiplayer% = False
+Global network_ip_address$
+Global network_port%
+Global network_host% = False 'indicates whether this process is the "host"
 
 Function apply_default_settings()
 	window_w = 640
 	window_h = 480
-		window = Create_BOX( 0, 0, window_w, window_h )
+	window = Create_BOX( 0, 0, window_w, window_h )
 	fullscreen = False
 	bit_depth = 32
 	refresh_rate = 60
