@@ -1052,6 +1052,7 @@ Function generate_level_mini_preview:TImage( lev:LEVEL )
 End Function
 
 '______________________________________________________________________________
+Rem
 Function draw_chats( chat:MESSAGING_SYSTEM )
 	Local y_start% = window_h - 50
 	Local line_h% = 10
@@ -1068,7 +1069,7 @@ Function draw_chats( chat:MESSAGING_SYSTEM )
 		Next
 	Next
 End Function
-
+EndRem
 
 
 

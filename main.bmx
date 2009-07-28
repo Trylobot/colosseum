@@ -80,6 +80,9 @@ Function init_graphics()
 	SetClsColor( 0, 0, 0 )
 	Cls()
   SetBlend( ALPHABLEND )
+	?Win32
+	set_window( WS_MINIMIZEBOX )
+	?
 End Function
 
 'graphical window

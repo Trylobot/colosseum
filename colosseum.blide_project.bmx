@@ -20,14 +20,17 @@ SuperStrict
 
 '------------------------------------------------------------------------------------------------------------------------------------------------------
 '#Region &H0F Framework
-Framework BRL.GLMax2D
-Import BRL.FreeTypeFont
-Import BRL.FreeAudioAudio
-Import BRL.OGGLoader
-Import BRL.PNGLoader
-Import BRL.Random
-Import BRL.Map
-Import PUB.BNet
+Framework brl.GLMax2D
+Import brl.FreeTypeFont
+Import brl.FreeAudioAudio
+Import brl.OGGLoader
+Import brl.PNGLoader 
+Import brl.Random 
+Import brl.Map 
+Import pub.BNet 
+?Win32
+Import "win32.bmx"
+?
 '#EndRegion &H0F
 
 
