@@ -5,11 +5,16 @@ Rem
 EndRem
 
 '______________________________________________________________________________
-'Input
+'input
 Global mouse:POINT = Create_POINT( MouseX(), MouseY() )
 Global mouse_delta:cVEC = New cVEC
 Global mouse_last_z% = 0
 Global dragging_scrollbar% = False
+
+'chat
+Global chat_mode% = False
+Global chat_input_listener:CONSOLE = New CONSOLE
+Global chat$
 
 Function get_all_input()
 	
@@ -34,9 +39,10 @@ Function get_all_input()
 		If m.menu_type = MENU.TEXT_INPUT_DIALOG
 			If KeyHit( KEY_ENTER )
 				m.execute_current_option()
+			Else
+				m.input_box = m.input_listener.update( m.input_box )
+				m.update()
 			End If
-			m.input_box = m.input_listener.update( m.input_box )
-			m.update()
 		End If
 		'menu navigation controls
 		If KeyHit( KEY_ESCAPE ) Or KeyHit( KEY_BACKSPACE ) ..
@@ -108,6 +114,21 @@ Function get_all_input()
 					menu_command( COMMAND_PAUSE )
 				End If
 				FlushKeys()
+			End If
+		End If
+		'multiplayer chat
+		If playing_multiplayer
+			If chat_mode
+				If KeyHit( KEY_ENTER )
+					chat_mode = False
+					udp_stream.WriteLine( profile.name )
+					udp_stream.WriteLine( chat )
+					chat = ""
+				Else
+					chat = chat_input_listener.update( chat )
+				End If
+			Else 'Not chat_mode
+				chat_mode = True
 			End If
 		End If
 		'help

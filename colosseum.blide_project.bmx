@@ -24,13 +24,13 @@ Framework brl.GLMax2D
 Import brl.FreeTypeFont
 Import brl.FreeAudioAudio
 Import brl.OGGLoader
-Import brl.PNGLoader 
-Import brl.Random 
-Import brl.Map 
-Import pub.BNet 
+Import brl.PNGLoader
+Import brl.Random
+Import brl.Map
 ?Win32
 Import "win32.bmx"
 ?
+Import vertex.bnetex
 '#EndRegion &H0F
 
 
@@ -141,7 +141,6 @@ Include "console.bmx"
 Include "input.bmx"
 Include "menu_option.bmx"
 Include "menu.bmx"
-Include "messaging.bmx"
 Include "net.bmx"
 Include "debug.bmx"
 Include "core.bmx"
