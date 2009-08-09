@@ -31,6 +31,7 @@ Global playing_multiplayer% = False
 Global network_ip_address$
 Global network_port%
 Global network_host% = False 'indicates whether this process is the "host"
+Global network_level$ = ""
 
 Function apply_default_settings()
 	window_w = 640

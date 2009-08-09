@@ -10,8 +10,7 @@ Function update_network()
 	If playing_multiplayer
 		
 		If udp_stream.RecvAvail()
-			While udp_stream.RecvMsg()
-			End While
+			udp_stream.RecvMsg()
 			If udp_stream.Size() > 0
 				Local cm:CHAT_MESSAGE = New CHAT_MESSAGE
 				If Not udp_stream.Eof()
