@@ -390,6 +390,15 @@ Type LEVEL Extends MANAGED_OBJECT
 		Return list
 	End Method
 	
+	Method get_walls:TList()
+		Local cells:TList = get_blocking_cells()
+		Local walls:TList = CreateList()
+		For Local c:CELL = EachIn cells
+			walls.AddLast( get_wall( c ))
+		Next
+		Return walls
+	End Method
+	
 	Method path%( c:CELL )
 		If in_bounds( c )
 			Return path_regions[ c.row, c.col ]

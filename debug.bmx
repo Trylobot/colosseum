@@ -19,6 +19,12 @@ Function debug_init()
 	'debug_get_keys()
 End Function
 '______________________________________________________________________________
+Function debug_generate_level_mini_preview()
+	Local lev:LEVEL = load_level( "levels/training1.colosseum_level" )
+	Local img:TImage = generate_level_mini_preview( lev )
+	save_pixmap_to_file( img.Lock( 0, True, False ), "training1_minipreview" )
+End Function
+'______________________________________________________________________________
 Global FLAG_debug_overlay% = False
 Global fps%, last_frame_ts%, time_count%, frame_count%
 Function debug_main()

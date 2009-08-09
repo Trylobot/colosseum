@@ -10,6 +10,7 @@ Global mouse:POINT = Create_POINT( MouseX(), MouseY() )
 Global mouse_delta:cVEC = New cVEC
 Global mouse_last_z% = 0
 Global dragging_scrollbar% = False
+Global mouse_down_1% = False
 
 'chat
 Global chat_mode% = False
@@ -17,7 +18,9 @@ Global chat_input_listener:CONSOLE = New CONSOLE
 Global chat$
 
 Function get_all_input()
-	
+		
+	get_chat_input()
+
 	'mouse update
 	mouse_delta.x = MouseX() - mouse.pos_x
 	mouse_delta.y = MouseY() - mouse.pos_y
@@ -46,8 +49,8 @@ Function get_all_input()
 		End If
 		'menu navigation controls
 		If KeyHit( KEY_ESCAPE ) Or KeyHit( KEY_BACKSPACE ) ..
-		And (current_menu > 0 And get_current_menu().menu_id <> MENU_ID_PAUSED)
-			menu_command( COMMAND_BACK_TO_PARENT_MENU )
+		And (current_menu > 0 And get_current_menu().id <> MENU_ID.PAUSED)
+			menu_command( COMMAND.BACK_TO_PARENT_MENU )
 		End If
 		If KeyHit( KEY_DOWN )' Or MouseZ() < mouse_last_z
 			m.increment_focus()
@@ -106,29 +109,14 @@ Function get_all_input()
 			End While
 			m.center_scrolling_window()
 		End If
-	Else 'Not FLAG_in_menu And Not FLAG_in_shop
-		'pause game
+	Else 'Not FLAG_in_menu
 		If game And game.human_participation
+			'pause game
 			If escape_key_release() 'KeyHit( KEY_ESCAPE )
 				If Not game.paused
-					menu_command( COMMAND_PAUSE )
+					menu_command( COMMAND.PAUSE )
 				End If
 				FlushKeys()
-			End If
-		End If
-		'multiplayer chat
-		If playing_multiplayer
-			If chat_mode
-				If KeyHit( KEY_ENTER )
-					chat_mode = False
-					udp_stream.WriteLine( profile.name )
-					udp_stream.WriteLine( chat )
-					chat = ""
-				Else
-					chat = chat_input_listener.update( chat )
-				End If
-			Else 'Not chat_mode
-				chat_mode = True
 			End If
 		End If
 		'help
@@ -147,7 +135,7 @@ Function get_all_input()
 			If Not game.game_over
 				kill_tally( "", screencap() )
 			End If
-			menu_command( COMMAND_QUIT_LEVEL )
+			menu_command( COMMAND.QUIT_LEVEL )
 		End If
 	End If
 	
@@ -171,8 +159,29 @@ Function reset_mouse( ang# )
 End Function
 
 '______________________________________________________________________________
-Global mouse_down_1% = False
+Function get_chat_input()
+	If Not FLAG_in_menu And game And game.human_participation And playing_multiplayer
+		If Not chat_mode
+			If KeyHit( KEY_ENTER )
+				chat_mode = True
+				chat = ""
+				chat_input_listener.flush_all()
+			End If
+		Else 'chat_mode
+			If Not KeyHit( KEY_ENTER )
+				chat = chat_input_listener.update( chat )
+			Else 'KeyHit( KEY_ENTER )
+				chat_mode = False
+				If chat.Length > 0
+					Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( profile.name, chat )
+					outgoing_messages.AddLast( cm )
+				End If
+			End If
+		End If
+	End If
+End Function
 
+'______________________________________________________________________________
 Function mouse_clicked_1%()
 	Return (Not mouse_down_1 And MouseDown( 1 ))
 End Function
@@ -203,7 +212,7 @@ End Function
 Function escape_key_update()
 	'instaquit
 	If esc_held And (now() - esc_press_ts) >= instaquit_time_required
-		menu_command( COMMAND_QUIT_GAME )
+		menu_command( COMMAND.QUIT_GAME )
 	End If
 	'escape key state
 	If KeyDown( KEY_ESCAPE )

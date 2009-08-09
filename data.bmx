@@ -491,8 +491,7 @@ Function find_files:TList( path$, ext$ = "" )
 	End If
 End Function
 '______________________________________________________________________________
-Function save_pixmap_to_file( px:TPixmap )
-	Local file_prefix$ = "screenshot_"
+Function save_pixmap_to_file( px:TPixmap, file_prefix$ = "screenshot_" )
 	Local dir$[] = LoadDir( user_path )
 	'find the highest unused screenshot number
 	Local high% = 1
@@ -520,7 +519,7 @@ Function load_autosave$()
 	End If
 End Function
 '______________________________________________________________________________
-Function save_autosave( profile_path$ ) 'new bug!
+Function save_autosave( profile_path$ )
 	Local file:TStream, json:TJSON
 	json = TJSON.Create( New TJSONObject )
 	json.SetValue( "autosave", TJSONString.Create( profile_path ))
@@ -536,18 +535,6 @@ Function unfilter_image:TImage( img:TImage )
 	Local new_img:TImage = LoadImage( img.pixmaps[0], 0 )'img.flags&(~MIPMAPPEDIMAGE) )
 	SetImageHandle( new_img, img.handle_x, img.handle_y )
 	Return new_img
-End Function
-'______________________________________________________________________________
-Function process_command_line_arguments()
-	If AppArgs.Length >= 2
-		For Local arg$ = EachIn AppArgs[1..]
-			Select arg.ToLower()
-				Case "-host"
-					network_host = True
-					AppTitle :+ " [NETWORK HOST]"
-			End Select
-		Next
-	End If
 End Function
 
 

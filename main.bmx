@@ -26,12 +26,11 @@ Global refresh_rate%
 Global show_ai_menu_game%
 Global retain_particles%
 Global active_particle_limit%
-'Multiplayer
-Global playing_multiplayer% = False
+'Networking
+Global network_host% = False
 Global network_ip_address$
 Global network_port%
-Global network_host% = False 'indicates whether this process is the "host"
-Global network_level$ = ""
+Global network_level$ = "levels/training1.colosseum_level"
 
 Function apply_default_settings()
 	window_w = 640
@@ -56,10 +55,10 @@ If Not load_settings()
 	save_settings()
 End If
 'level editor cache 
-menu_command( COMMAND_NEW_LEVEL )
+menu_command( COMMAND.NEW_LEVEL )
 'autosave/load user profile
 Global autosave_profile_path$ = load_autosave()
-menu_command( COMMAND_LOAD_GAME, autosave_profile_path )
+menu_command( COMMAND.LOAD_GAME, autosave_profile_path )
 
 ?Debug
 'debug_init()
@@ -90,11 +89,12 @@ End Function
 init_graphics()
 'assets
 'menu_command( COMMAND_LOAD_ASSETS, INTEGER.Create( 1 ))
-menu_command( COMMAND_LOAD_ASSETS )
+menu_command( COMMAND.LOAD_ASSETS )
 'background automaton-powered menu game
 init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 
 ?Debug
+'debug_generate_level_mini_preview()
 'debug_widget()
 'debug_spawner()
 'debug_dirtyrects()
@@ -123,7 +123,7 @@ Repeat
 		game = main_game 'normal play
 	End If
 	'input
-	get_all_input()
+	get_all_input() 'excludes player-agent input
 	'network
 	update_network()
 	'timing & physics
@@ -133,7 +133,7 @@ Repeat
 		reset_frame_timer()
 		'collision detection & resolution
 		collide_all_objects()
-		'physics engine update
+		'physics engine and control brain update (includes player-agent input)
 		update_all_objects()
 	End If
 	'clear graphics buffer
@@ -148,4 +148,19 @@ Repeat
 	'audio
 	play_all_audio()
 Until AppTerminate()
+
+'______________________________________________________________________________
+Function process_command_line_arguments()
+	Rem
+	If AppArgs.Length >= 2
+		For Local arg$ = EachIn AppArgs[1..]
+			Select arg.ToLower()
+				Case "-host"
+					network_host = True
+					AppTitle :+ " [NETWORK HOST]"
+			End Select
+		Next
+	End If
+	End Rem
+End Function
 

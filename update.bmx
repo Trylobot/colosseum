@@ -37,7 +37,7 @@ Function update_all_objects()
 		game.count_units()
 		'player and game-state flags
 		update_flags()
-		If Not game Then Return 'possibility exists that game will be deleted
+		If Not game Then Return 'possibility exists that game will be freed after updating the flags
 		
 		'spawner systems
 		If game.spawn_enemies

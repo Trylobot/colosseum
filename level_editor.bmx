@@ -66,7 +66,7 @@ Function level_editor( lev:LEVEL )
 		
 		'save level
 		If control And KeyHit( KEY_S )
-			menu_command( COMMAND_SHOW_CHILD_MENU, INTEGER.Create( MENU_ID_SAVE_LEVEL ))
+			menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create( MENU_ID.SAVE_LEVEL ))
 			get_current_menu().update( True )
 			Return
 		End If
