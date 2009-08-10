@@ -29,9 +29,9 @@ DebugLog( " udp_in.Size() > 0" )
 DebugLog( " "+NET.decode( message_type )+" from "+TNetwork.StringIP( ip_address )+":"+port )
 					Select message_type
 						Case NET.JOIN
-							connect_to( NETWORK_ENTITY.Create( ip_address, port ))
+							connect_to( NETWORK_ENTITY.Create( ip_address, network_port ))
 						Case NET.QUIT
-							disconnect_from( NETWORK_ENTITY.Create( ip_address, port ))
+							disconnect_from( NETWORK_ENTITY.Create( ip_address, network_port ))
 						Case NET.CHAT_MESSAGE
 							Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( udp_in.ReadLine(), udp_in.ReadLine() )
 							chat_message_list.AddFirst( cm )
@@ -82,21 +82,23 @@ Function network_listen()
 	udp_in = New TUDPStream
 	udp_in.Init()
 	udp_in.SetLocalPort( network_port )
+DebugLog( " Listening on port "+network_port )
 End Function
 
 Function connect_to( ent:NETWORK_ENTITY )
-	If Not udp_out
+	If Not udp_out And ent
 		udp_out = New TUDPStream
 		udp_out.Init()
-		udp_out.SetLocalPort()
 		udp_out.SetRemoteIP( ent.ip )
 		udp_out.SetRemotePort( ent.port )
+		udp_out.SetLocalPort()
 		udp_out.WriteByte( NET.JOIN )
+DebugLog( " Sending JOIN request to "+TNetwork.StringIP( ent.ip )+":"+ent.port )
 		udp_out.SendMsg()
 	End If
 End Function
 
-function disconnect_from( ent:NETWORK_ENTITY )
+Function disconnect_from( ent:NETWORK_ENTITY )
 	
 End Function
 
@@ -125,12 +127,14 @@ Type CHAT_MESSAGE
 	Field added_ts%
 	Field username$
 	Field message$
+	Field from_self%
 	
-	Function Create:CHAT_MESSAGE( username$, message$ )
+	Function Create:CHAT_MESSAGE( username$, message$, from_self% = False )
 		Local cm:CHAT_MESSAGE = New CHAT_MESSAGE
 		cm.added_ts = now()
 		cm.username = username
 		cm.message = message
+		cm.from_self = from_self
 		Return cm
 	End Function
 End Type
@@ -144,6 +148,7 @@ Type NET
 	Function decode$( code:Byte )
 		Select code
 			Case JOIN; Return "JOIN"
+			Case QUIT; Return "QUIT"
 			Case CHAT_MESSAGE; Return "CHAT_MESSAGE"
 			Default; Return String.FromInt( Int( code ))
 		End Select

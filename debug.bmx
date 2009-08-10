@@ -5,7 +5,7 @@ Rem
 EndRem
 
 ?Debug
-''______________________________________________________________________________
+'______________________________________________________________________________
 Global debug_origin:cVEC = Create_cVEC( 0, 0 )
 Global real_origin:cVEC = Create_cVEC( 0, 0 )
 Global global_start:CELL
