@@ -65,7 +65,11 @@ Function update_all_objects()
 
 		'control brains
 		For Local cb:CONTROL_BRAIN = EachIn game.control_brain_list
-			cb.update()
+			If chat_mode And cb.control_type = CONTROL_BRAIN.CONTROL_TYPE_HUMAN
+				cb.human_input_blocked_update()
+			Else
+				cb.update()
+			End If
 		Next
 		'complex agents
 		For Local list:TList = EachIn game.complex_agent_lists

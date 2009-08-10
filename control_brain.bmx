@@ -451,17 +451,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 					avatar.turn( 0.0 )
 				End If
 				'turret aim control
-				For Local index% = 0 Until avatar.turret_systems.Length
-					Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.get_turret_system_pos( index ).ang_to( game.mouse ))
-					Local diff_mag# = Abs( diff )
-					Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
-					Local threshold# = 3 * max_ang_vel
-					If diff_mag >= threshold
-						avatar.turn_turret_system( index, -Sgn(diff) )
-					Else 'diff_mag < max_ang_vel
-						avatar.turn_turret_system( index, -diff/threshold )
-					End If
-				Next
+				mouse_turret_input()
 				'turret(s) fire
 				If MouseDown( 1 ) And Not FLAG_ignore_mouse_1
 					avatar.fire_all( TURRET.PRIMARY )
@@ -473,6 +463,28 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			'Case INPUT_XBOX_360_CONTROLLER
 			
 		End Select
+	End Method
+	
+	Method mouse_turret_input()
+		For Local index% = 0 Until avatar.turret_systems.Length
+			Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.get_turret_system_pos( index ).ang_to( game.mouse ))
+			Local diff_mag# = Abs( diff )
+			Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
+			Local threshold# = 3 * max_ang_vel
+			If diff_mag >= threshold
+				avatar.turn_turret_system( index, -Sgn(diff) )
+			Else 'diff_mag < max_ang_vel
+				avatar.turn_turret_system( index, -diff/threshold )
+			End If
+		Next
+	End Method
+	
+	Method human_input_blocked_update()
+		avatar.drive( 0.0 )
+		avatar.turn( 0.0 )
+		If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
+			mouse_turret_input()
+		End If
 	End Method
 	
 	Method remote_control() 'used for networked multiplayer

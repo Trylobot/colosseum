@@ -19,14 +19,12 @@ Function update_network()
 		'receive any available UDP messages
 		If udp_in
 			If udp_in.RecvAvail()
-DebugLog( " udp_in.RecvAvail()" )
 				While udp_in.RecvMsg() ; End While
 				If udp_in.Size() > 0
-DebugLog( " udp_in.Size() > 0" )
 					Local ip_address% = udp_in.GetMsgIP()
 					Local port:Short = udp_in.GetMsgPort()
 					Local message_type:Byte = udp_in.ReadByte()
-DebugLog( " "+NET.decode( message_type )+" from "+TNetwork.StringIP( ip_address )+":"+port )
+					'DebugLog( " "+NET.decode( message_type )+" from "+TNetwork.StringIP( ip_address )+":"+port )
 					Select message_type
 						Case NET.JOIN
 							connect_to( NETWORK_ENTITY.Create( ip_address, network_port ))
@@ -35,7 +33,7 @@ DebugLog( " "+NET.decode( message_type )+" from "+TNetwork.StringIP( ip_address 
 						Case NET.CHAT_MESSAGE
 							Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( udp_in.ReadLine(), udp_in.ReadLine() )
 							chat_message_list.AddFirst( cm )
-DebugLog( "   "+cm.username+": "+cm.message )
+							'DebugLog( "   "+cm.username+": "+cm.message )
 					End Select
 				End If
 			End If
@@ -82,7 +80,7 @@ Function network_listen()
 	udp_in = New TUDPStream
 	udp_in.Init()
 	udp_in.SetLocalPort( network_port )
-DebugLog( " Listening on port "+network_port )
+	'DebugLog( " Listening on port "+network_port )
 End Function
 
 Function connect_to( ent:NETWORK_ENTITY )
@@ -93,7 +91,7 @@ Function connect_to( ent:NETWORK_ENTITY )
 		udp_out.SetRemotePort( ent.port )
 		udp_out.SetLocalPort()
 		udp_out.WriteByte( NET.JOIN )
-DebugLog( " Sending JOIN request to "+TNetwork.StringIP( ent.ip )+":"+ent.port )
+		'DebugLog( " Sending JOIN request to "+TNetwork.StringIP( ent.ip )+":"+ent.port )
 		udp_out.SendMsg()
 	End If
 End Function
@@ -103,10 +101,14 @@ Function disconnect_from( ent:NETWORK_ENTITY )
 End Function
 
 Function network_terminate()
-	udp_in.Close()
-	udp_in = Null
-	udp_out.Close()
-	udp_out = Null
+	If udp_in
+		udp_in.Close()
+		udp_in = Null
+	End If
+	If udp_out	
+		udp_out.Close()
+		udp_out = Null
+	End If
 End Function
 
 '______________________________________________________________________________
