@@ -59,7 +59,6 @@ menu_command( COMMAND.NEW_LEVEL )
 'autosave/load user profile
 Global autosave_profile_path$ = load_autosave()
 menu_command( COMMAND.LOAD_GAME, autosave_profile_path )
-
 ?Debug
 'debug_init()
 ?

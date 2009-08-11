@@ -76,9 +76,9 @@ Type ENVIRONMENT
 	Field auto_reset_spawners%
 	Field player_has_munitions_based_turrets%
 
-	Field player_spawn_point:POINT 'reference to the spawnpoint that will spawn or has spawned that player
-	Field player_brain:CONTROL_BRAIN 'reference to that player's brain object
-	Field player:COMPLEX_AGENT 'reference to that player object
+	Field player_spawn_point:POINT
+	Field player_brain:CONTROL_BRAIN
+	Field player:COMPLEX_AGENT
 	Field network_player_brains:TList
 	Field network_players:TList
 	

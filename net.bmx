@@ -6,9 +6,11 @@ EndRem
 
 '______________________________________________________________________________
 Global udp_in:TUDPStream
-Global udp_out:TUDPStream
+'if client, this list will contain only the host
+'if hosting, this list will contain all connected clients
+Global remote_player_list:TList = CreateList() 'TList<REMOTE_PLAYER>
 
-Global outgoing_messages:TList = CreateList()
+Global outgoing_messages:TList = CreateList() 'TList<CHAT_MESSAGE>
 Global chat_message_list:TList = CreateList() 'TList<CHAT_MESSAGE>
 Const chat_stay_time% = 8000
 Const chat_fade_time% = 2000
@@ -27,11 +29,19 @@ Function update_network()
 					'DebugLog( " "+NET.decode( message_type )+" from "+TNetwork.StringIP( ip_address )+":"+port )
 					Select message_type
 						Case NET.JOIN
-							connect_to( NETWORK_ENTITY.Create( ip_address, network_port ))
+							Local net_id:NETWORK_ID = NETWORK_ID.Create( ip_address, network_port )
+							Local username$ = udp_in.ReadLine()
+							Local vehicle_data_json$ = udp_in.ReadLine()
+							Local vehicle:TJSON = TJSON.Create( vehicle_data_json )
+							Local rp:REMOTE_PLAYER = REMOTE_PLAYER.Create( net_id, username, vehicle )
+							If add_remote_player( rp ) 'uniqueness by IP
+								rp.udp_out = connect_to( rp.net_id ) 'send join message
+							End If
 						Case NET.QUIT
-							disconnect_from( NETWORK_ENTITY.Create( ip_address, network_port ))
+							'disconnect_from( NETWORK_ID.Create( ip_address, network_port ))
 						Case NET.CHAT_MESSAGE
 							Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( udp_in.ReadLine(), udp_in.ReadLine() )
+							cm.remote_player_ip = ip_address
 							chat_message_list.AddFirst( cm )
 							'DebugLog( "   "+cm.username+": "+cm.message )
 					End Select
@@ -40,20 +50,22 @@ Function update_network()
 		End If
 		
 		'send any pending UDP messages
-		If udp_out
-			If Not outgoing_messages.IsEmpty()
-				For Local message:Object = EachIn outgoing_messages
-					If CHAT_MESSAGE(message)
-						Local cm:CHAT_MESSAGE = CHAT_MESSAGE(message)
-						udp_out.WriteByte( NET.CHAT_MESSAGE )
-						udp_out.WriteLine( cm.message )
-						udp_out.WriteLine( cm.username )
-						udp_out.SendMsg()
-						chat_message_list.AddFirst( cm )
-					End If
-				Next
-				outgoing_messages.Clear()
-			End If
+		If Not remote_player_list.IsEmpty() And Not outgoing_messages.IsEmpty()
+			For Local message:Object = EachIn outgoing_messages
+				If CHAT_MESSAGE(message)
+					Local cm:CHAT_MESSAGE = CHAT_MESSAGE(message)
+					For Local rp:REMOTE_PLAYER = EachIn remote_player_list
+						If cm.remote_player_ip <> rp.net_id.ip 'broadcast chat messages to other players
+							rp.udp_out.WriteByte( NET.CHAT_MESSAGE )
+							rp.udp_out.WriteLine( cm.message )
+							rp.udp_out.WriteLine( cm.username )
+							rp.udp_out.SendMsg()
+						End If
+					Next
+					chat_message_list.AddFirst( cm )
+				End If
+			Next
+			outgoing_messages.Clear()
 		End If
 		
 		'prune old chats
@@ -83,20 +95,23 @@ Function network_listen()
 	'DebugLog( " Listening on port "+network_port )
 End Function
 
-Function connect_to( ent:NETWORK_ENTITY )
-	If Not udp_out And ent
-		udp_out = New TUDPStream
+Function connect_to:TUDPStream( ent:NETWORK_ID )
+	If ent
+		Local udp_out:TUDPStream = New TUDPStream
 		udp_out.Init()
 		udp_out.SetRemoteIP( ent.ip )
 		udp_out.SetRemotePort( ent.port )
 		udp_out.SetLocalPort()
 		udp_out.WriteByte( NET.JOIN )
+		udp_out.WriteLine( profile.vehicle.to_json().ToString() )
+		udp_out.WriteLine( profile.name )
 		'DebugLog( " Sending JOIN request to "+TNetwork.StringIP( ent.ip )+":"+ent.port )
 		udp_out.SendMsg()
+		Return udp_out
 	End If
 End Function
 
-Function disconnect_from( ent:NETWORK_ENTITY )
+Function disconnect_from( ent:NETWORK_ID )
 	
 End Function
 
@@ -112,12 +127,12 @@ Function network_terminate()
 End Function
 
 '______________________________________________________________________________
-Type NETWORK_ENTITY
+Type NETWORK_ID
 	Field ip%
 	Field port:Short
 	
-	Function Create:NETWORK_ENTITY( ip%, port:Short )
-		Local ent:NETWORK_ENTITY = New NETWORK_ENTITY
+	Function Create:NETWORK_ID( ip%, port:Short )
+		Local ent:NETWORK_ID = New NETWORK_ID
 		ent.ip = ip
 		ent.port = port
 		Return ent
@@ -125,11 +140,40 @@ Type NETWORK_ENTITY
 End Type
 
 '______________________________________________________________________________
+Type REMOTE_PLAYER Extends MANAGED_OBJECT
+	Field net_id:NETWORK_ID
+	Field name$
+	Field brain:CONTROL_BRAIN
+	Field agent:COMPLEX_AGENT
+	Field udp_out:TUDPStream
+	
+	Function Create:REMOTE_PLAYER( net_id:NETWORK_ID, name$, vehicle_json:TJSON )
+		Local rp:REMOTE_PLAYER = New REMOTE_PLAYER
+		rp.net_id = net_id
+		rp.name = name
+		rp.agent = create_player( Create_VEHICLE_DATA_from_json( vehicle_json ), False, False )
+		rp.brain = Create_CONTROL_BRAIN( rp.agent, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
+		Return rp
+	End Function
+End Type
+
+Function add_remote_player%( rp:REMOTE_PLAYER )
+	For Local list_rp:REMOTE_PLAYER = EachIn remote_player_list
+		If list_rp.net_id.ip = rp.net_id.ip
+			Return False
+		End If
+	Next
+	rp.manage( remote_player_list )
+	Return True
+End Function
+
+'______________________________________________________________________________
 Type CHAT_MESSAGE
 	Field added_ts%
 	Field username$
 	Field message$
 	Field from_self%
+	Field remote_player_ip%
 	
 	Function Create:CHAT_MESSAGE( username$, message$, from_self% = False )
 		Local cm:CHAT_MESSAGE = New CHAT_MESSAGE
@@ -156,3 +200,4 @@ Type NET
 		End Select
 	End Function
 End Type
+

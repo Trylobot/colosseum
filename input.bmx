@@ -60,13 +60,17 @@ Function get_all_input()
 		If KeyHit( KEY_ENTER )
 			m.execute_current_option()
 		End If
-		'mouseover of menu items (only when mouse is moved)
+		'mouseover of menu items
 		If mouse_delta.x <> 0 Or mouse_delta.y <> 0
 			m.select_by_coords( mouse.pos_x, mouse.pos_y )
 		End If
+		'select option under mouse cursor, if there be one
 		If MouseHit( 1 )
 			If m.select_by_coords( mouse.pos_x, mouse.pos_y )
 				m.execute_current_option()
+				m = get_current_menu()
+				m.calculate_bounding_boxes()
+				m.select_by_coords( mouse.pos_x, mouse.pos_y )
 			End If
 		End If
 		'dragging of scrollbar

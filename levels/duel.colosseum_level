@@ -1,0 +1,185 @@
+{
+	name: "duel",
+	width: 440,
+	height: 369,
+	row_count: 7,
+	col_count: 9,
+	hue: 0,
+	saturation: 0,
+	luminosity: 0.3,
+	horizontal_divs: [
+		0,
+		44,
+		94,
+		154,
+		216,
+		276,
+		326,
+		369
+	],
+	vertical_divs: [
+		0,
+		10,
+		80,
+		130,
+		190,
+		250,
+		310,
+		360,
+		430,
+		440
+	],
+	path_regions: [
+		[
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			true,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
+		]
+	],
+	spawners: [
+		{
+			class: 1,
+			squads: null,
+			pos: {
+				pos_x: 38,
+				pos_y: 185
+			},
+			delay_time: null,
+			alignment: 1
+		},
+		{
+			class: 1,
+			squads: null,
+			pos: {
+				pos_x: 402,
+				pos_y: 185,
+				ang: 180
+			},
+			delay_time: null,
+			alignment: 2
+		}
+	],
+	props: [
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 270,
+				pos_y: 169
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 265,
+				pos_y: 194
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 280,
+				pos_y: 124
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 250,
+				pos_y: 134
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 175,
+				pos_y: 154
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 195,
+				pos_y: 144
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 240,
+				pos_y: 231
+			}
+		}
+	]
+}
