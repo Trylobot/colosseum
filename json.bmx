@@ -669,6 +669,7 @@ Type TJSONParser
 	EndMethod
 	
 	Method Error( msg:String)
+		DebugStop
 		global_error_message :+ "JSON_PARSER_ERROR; index: "+Index+"; " + msg
 		load_error()
 	EndMethod

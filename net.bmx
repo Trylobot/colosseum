@@ -30,8 +30,8 @@ Function update_network()
 					Select message_type
 						Case NET.JOIN
 							Local net_id:NETWORK_ID = NETWORK_ID.Create( ip_address, network_port )
-							Local username$ = udp_in.ReadLine()
 							Local vehicle_data_json$ = udp_in.ReadLine()
+							Local username$ = udp_in.ReadLine()
 							Local vehicle:TJSON = TJSON.Create( vehicle_data_json )
 							Local rp:REMOTE_PLAYER = REMOTE_PLAYER.Create( net_id, username, vehicle )
 							If add_remote_player( rp ) 'uniqueness by IP
@@ -120,10 +120,15 @@ Function network_terminate()
 		udp_in.Close()
 		udp_in = Null
 	End If
-	If udp_out	
-		udp_out.Close()
-		udp_out = Null
+	If Not remote_player_list.IsEmpty()
+		For Local rp:REMOTE_PLAYER = EachIn remote_player_list
+			If rp.udp_out
+				rp.udp_out.Close()
+				rp.udp_out = Null
+			End If
+		Next
 	End If
+	remote_player_list.Clear()
 End Function
 
 '______________________________________________________________________________
