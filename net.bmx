@@ -25,17 +25,20 @@ Function update_network()
 				If udp_in.Size() > 0
 					Local ip_address% = udp_in.GetMsgIP()
 					Local port:Short = udp_in.GetMsgPort()
+					Local net_id:NETWORK_ID = NETWORK_ID.Create( ip_address, network_port )
 					Local message_type:Byte = udp_in.ReadByte()
-					'DebugLog( " "+NET.decode( message_type )+" from "+TNetwork.StringIP( ip_address )+":"+port )
+					DebugLog( " " + NET.decode( message_type ) + " from " + net_id.to_string() )
 					Select message_type
 						Case NET.JOIN
-							Local net_id:NETWORK_ID = NETWORK_ID.Create( ip_address, network_port )
 							Local vehicle_data_json$ = udp_in.ReadLine()
 							Local username$ = udp_in.ReadLine()
 							Local vehicle:TJSON = TJSON.Create( vehicle_data_json )
 							Local rp:REMOTE_PLAYER = REMOTE_PLAYER.Create( net_id, username, vehicle )
 							If add_remote_player( rp ) 'uniqueness by IP
 								rp.udp_out = connect_to( rp.net_id ) 'send join message
+								DebugLog( " add_remote_player( " + net_id.to_string() + " ) success"  )
+							Else
+								DebugLog( " add_remote_player( " + net_id.to_string() + " ) fail"  )
 							End If
 						Case NET.QUIT
 							'disconnect_from( NETWORK_ID.Create( ip_address, network_port ))
@@ -43,7 +46,7 @@ Function update_network()
 							Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( udp_in.ReadLine(), udp_in.ReadLine() )
 							cm.remote_player_ip = ip_address
 							chat_message_list.AddFirst( cm )
-							'DebugLog( "   "+cm.username+": "+cm.message )
+							DebugLog( " received chat message, "+cm.username+": "+cm.message )
 					End Select
 				End If
 			End If
@@ -54,7 +57,9 @@ Function update_network()
 			For Local message:Object = EachIn outgoing_messages
 				If CHAT_MESSAGE(message)
 					Local cm:CHAT_MESSAGE = CHAT_MESSAGE(message)
+					DebugLog( " outgoing chat message, " + cm.username + ": " + cm.message )
 					For Local rp:REMOTE_PLAYER = EachIn remote_player_list
+						DebugLog( "  sending to " + rp.net_id.to_string() )
 						If cm.remote_player_ip <> rp.net_id.ip 'broadcast chat messages to other players
 							rp.udp_out.WriteByte( NET.CHAT_MESSAGE )
 							rp.udp_out.WriteLine( cm.message )
@@ -62,11 +67,10 @@ Function update_network()
 							rp.udp_out.SendMsg()
 						End If
 					Next
-					chat_message_list.AddFirst( cm )
 				End If
 			Next
-			outgoing_messages.Clear()
 		End If
+		outgoing_messages.Clear()
 		
 		'prune old chats
 		If Not chat_message_list.IsEmpty()
@@ -92,7 +96,7 @@ Function network_listen()
 	udp_in = New TUDPStream
 	udp_in.Init()
 	udp_in.SetLocalPort( network_port )
-	'DebugLog( " Listening on port "+network_port )
+	DebugLog( " listening on port "+network_port )
 End Function
 
 Function connect_to:TUDPStream( ent:NETWORK_ID )
@@ -105,7 +109,7 @@ Function connect_to:TUDPStream( ent:NETWORK_ID )
 		udp_out.WriteByte( NET.JOIN )
 		udp_out.WriteLine( profile.vehicle.to_json().ToString() )
 		udp_out.WriteLine( profile.name )
-		'DebugLog( " Sending JOIN request to "+TNetwork.StringIP( ent.ip )+":"+ent.port )
+		DebugLog( " sending JOIN request to "+TNetwork.StringIP( ent.ip )+":"+ent.port )
 		udp_out.SendMsg()
 		Return udp_out
 	End If
@@ -142,6 +146,10 @@ Type NETWORK_ID
 		ent.port = port
 		Return ent
 	End Function
+	
+	Method to_string$()
+		Return TNetwork.StringIP( ip ) + ":" + port
+	End Method
 End Type
 
 '______________________________________________________________________________
@@ -164,7 +172,7 @@ End Type
 
 Function add_remote_player%( rp:REMOTE_PLAYER )
 	For Local list_rp:REMOTE_PLAYER = EachIn remote_player_list
-		If list_rp.net_id.ip = rp.net_id.ip
+		If rp.net_id.ip = list_rp.net_id.ip
 			Return False
 		End If
 	Next

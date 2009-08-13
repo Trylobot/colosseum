@@ -178,6 +178,7 @@ Function get_chat_input()
 				chat_mode = False
 				If chat.Length > 0
 					Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( profile.name, chat, True )
+					chat_message_list.AddFirst( cm )
 					outgoing_messages.AddLast( cm )
 				End If
 			End If
