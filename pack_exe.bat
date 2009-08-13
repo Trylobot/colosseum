@@ -1,2 +1,2 @@
-upx -9 Colosseum.exe
-rem pause
+call upx.cmd -9 Colosseum.exe
+pause

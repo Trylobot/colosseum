@@ -5,6 +5,11 @@ Rem
 EndRem
 
 '______________________________________________________________________________
+Global network_host% = False
+Global network_ip_address$
+Global network_port%
+Global network_level$ = "levels/duel.colosseum_level"
+
 Global udp_in:TUDPStream
 'if client, this list will contain only the host
 'if hosting, this list will contain all connected clients
@@ -14,10 +19,11 @@ Global outgoing_messages:TList = CreateList() 'TList<CHAT_MESSAGE>
 Global chat_message_list:TList = CreateList() 'TList<CHAT_MESSAGE>
 Const chat_stay_time% = 8000
 Const chat_fade_time% = 2000
+Const min_random_port:Short = 59000
+Const max_random_port:Short = 60000
 
 Function update_network()
 	If playing_multiplayer
-		
 		'receive any available UDP messages
 		If udp_in
 			If udp_in.RecvAvail()
@@ -25,27 +31,41 @@ Function update_network()
 				If udp_in.Size() > 0
 					Local ip_address% = udp_in.GetMsgIP()
 					Local port:Short = udp_in.GetMsgPort()
-					Local net_id:NETWORK_ID = NETWORK_ID.Create( ip_address, network_port )
 					Local message_type:Byte = udp_in.ReadByte()
-					DebugLog( " " + NET.decode( message_type ) + " from " + net_id.to_string() )
+					DebugLog( " " + NET.decode( message_type ) + " from " + TNetwork.StringIP( ip_address ) + ":" + port )
 					Select message_type
-						Case NET.JOIN
-							Local vehicle_data_json$ = udp_in.ReadLine()
+						Case NET.CLIENT_REQUEST_CONNECT, NET.SERVER_CONFIRM_CONNECTED
+							Local vehicle_json_string$ = udp_in.ReadLine()
 							Local username$ = udp_in.ReadLine()
-							Local vehicle:TJSON = TJSON.Create( vehicle_data_json )
-							Local rp:REMOTE_PLAYER = REMOTE_PLAYER.Create( net_id, username, vehicle )
-							If add_remote_player( rp ) 'uniqueness by IP
-								rp.udp_out = connect_to( rp.net_id ) 'send join message
-								DebugLog( " add_remote_player( " + net_id.to_string() + " ) success"  )
-							Else
-								DebugLog( " add_remote_player( " + net_id.to_string() + " ) fail"  )
+							Local net_id:NETWORK_ID
+							If message_type = NET.CLIENT_REQUEST_CONNECT
+								net_id = NETWORK_ID.Create( ip_address, port )
+							Else	'message_type = NET.SERVER_CONFIRM_CONNECTED
+								net_id = NETWORK_ID.Create( ip_address, network_port )
 							End If
-						Case NET.QUIT
+							Local rp:REMOTE_PLAYER = REMOTE_PLAYER.Create( net_id, username, TJSON.Create( vehicle_json_string ))
+							If add_remote_player( rp ) 'uniqueness by IP
+								If message_type = NET.CLIENT_REQUEST_CONNECT
+									rp.udp_out = create_udp( rp.net_id )
+								Else	'message_type = NET.SERVER_CONFIRM_CONNECTED
+									rp.udp_out = udp_in 'already created, used to connect initially
+								End If
+								DebugLog( " added remote player " + net_id.to_string() )
+								If message_type = NET.CLIENT_REQUEST_CONNECT
+									connect( rp.udp_out ) 'respond to client with own information
+								End If
+							Else
+								DebugLog( " remote player " + net_id.to_string() + " could not be added; already exists"  )
+							End If
+          Case NET.DISCONNECT
 							'disconnect_from( NETWORK_ID.Create( ip_address, network_port ))
 						Case NET.CHAT_MESSAGE
 							Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( udp_in.ReadLine(), udp_in.ReadLine() )
-							cm.remote_player_ip = ip_address
 							chat_message_list.AddFirst( cm )
+							If network_host
+								cm.originator = NETWORK_ID.Create( ip_address, port )
+								outgoing_messages.AddLast( cm )
+							End If
 							DebugLog( " received chat message, "+cm.username+": "+cm.message )
 					End Select
 				End If
@@ -56,15 +76,18 @@ Function update_network()
 		If Not remote_player_list.IsEmpty() And Not outgoing_messages.IsEmpty()
 			For Local message:Object = EachIn outgoing_messages
 				If CHAT_MESSAGE(message)
+					'broadcast the outgoing chat message to all connected clients, except the originator
 					Local cm:CHAT_MESSAGE = CHAT_MESSAGE(message)
 					DebugLog( " outgoing chat message, " + cm.username + ": " + cm.message )
 					For Local rp:REMOTE_PLAYER = EachIn remote_player_list
-						DebugLog( "  sending to " + rp.net_id.to_string() )
-						If cm.remote_player_ip <> rp.net_id.ip 'broadcast chat messages to other players
+						If Not rp.net_id.equals( cm.originator )
 							rp.udp_out.WriteByte( NET.CHAT_MESSAGE )
 							rp.udp_out.WriteLine( cm.message )
 							rp.udp_out.WriteLine( cm.username )
+							DebugLog( "  sending to " + rp.net_id.to_string() )
 							rp.udp_out.SendMsg()
+						Else
+							DebugLog( "  skipping " + rp.net_id.to_string() )
 						End If
 					Next
 				End If
@@ -88,7 +111,7 @@ Function update_network()
 				End If
 			Until Not cm_link
 		End If
-		
+
 	End If
 End Function
 
@@ -96,27 +119,44 @@ Function network_listen()
 	udp_in = New TUDPStream
 	udp_in.Init()
 	udp_in.SetLocalPort( network_port )
-	DebugLog( " listening on port "+network_port )
+	DebugLog( " listening on port " + udp_in.GetLocalPort() )
 End Function
 
-Function connect_to:TUDPStream( ent:NETWORK_ID )
+Function connect_to_network_game()
+	Local server:NETWORK_ID = NETWORK_ID.Create( TNetwork.IntIP( network_ip_address ), Short( network_port ))
+	Local server_stream:TUDPStream = create_udp( server )
+	connect( server_stream )
+	udp_in = server_stream 'experimental
+End Function
+
+Function create_udp:TUDPStream( ent:NETWORK_ID )
 	If ent
 		Local udp_out:TUDPStream = New TUDPStream
 		udp_out.Init()
 		udp_out.SetRemoteIP( ent.ip )
 		udp_out.SetRemotePort( ent.port )
-		udp_out.SetLocalPort()
-		udp_out.WriteByte( NET.JOIN )
-		udp_out.WriteLine( profile.vehicle.to_json().ToString() )
-		udp_out.WriteLine( profile.name )
-		DebugLog( " sending JOIN request to "+TNetwork.StringIP( ent.ip )+":"+ent.port )
-		udp_out.SendMsg()
+		DebugLog( " created outgoing UDP stream for " + ent.to_string() )
+		If Not network_host
+			udp_out.SetLocalPort( Rand( min_random_port, max_random_port ))
+			DebugLog( " listening for server reply on " + udp_out.GetLocalPort() )
+		End If
 		Return udp_out
 	End If
 End Function
 
-Function disconnect_from( ent:NETWORK_ID )
-	
+Function connect( udp_out:TUDPStream )
+	If udp_out
+		If Not network_host 'client
+			udp_out.WriteByte( NET.CLIENT_REQUEST_CONNECT )
+			DebugLog( " sending CLIENT_REQUEST_CONNECT to server" )
+		Else
+			udp_out.WriteByte( NET.SERVER_CONFIRM_CONNECTED )
+			DebugLog( " sending SERVER_CONFIRM_CONNECTED to client" )
+		End If
+		udp_out.WriteLine( profile.vehicle.to_json().ToString() )
+		udp_out.WriteLine( profile.name )
+		udp_out.SendMsg()
+	End If
 End Function
 
 Function network_terminate()
@@ -150,6 +190,10 @@ Type NETWORK_ID
 	Method to_string$()
 		Return TNetwork.StringIP( ip ) + ":" + port
 	End Method
+	
+	Method equals%( other:NETWORK_ID )
+		Return (other And ip = other.ip And port = other.port)
+	End Method
 End Type
 
 '______________________________________________________________________________
@@ -172,7 +216,7 @@ End Type
 
 Function add_remote_player%( rp:REMOTE_PLAYER )
 	For Local list_rp:REMOTE_PLAYER = EachIn remote_player_list
-		If rp.net_id.ip = list_rp.net_id.ip
+		If rp.net_id.equals( list_rp.net_id )
 			Return False
 		End If
 	Next
@@ -186,7 +230,7 @@ Type CHAT_MESSAGE
 	Field username$
 	Field message$
 	Field from_self%
-	Field remote_player_ip%
+	Field originator:NETWORK_ID
 	
 	Function Create:CHAT_MESSAGE( username$, message$, from_self% = False )
 		Local cm:CHAT_MESSAGE = New CHAT_MESSAGE
@@ -200,14 +244,16 @@ End Type
 
 '______________________________________________________________________________
 Type NET
-	Const JOIN:Byte = 1
-	Const QUIT:Byte = 2
-	Const CHAT_MESSAGE:Byte = 10
+	Const CLIENT_REQUEST_CONNECT:Byte = 1
+	Const SERVER_CONFIRM_CONNECTED:Byte = 2
+	Const DISCONNECT:Byte = 5
+	Const CHAT_MESSAGE:Byte = 100
 	
 	Function decode$( code:Byte )
 		Select code
-			Case JOIN; Return "JOIN"
-			Case QUIT; Return "QUIT"
+			Case CLIENT_REQUEST_CONNECT; Return "CLIENT_REQUEST_CONNECT"
+			Case SERVER_CONFIRM_CONNECTED; Return "SERVER_CONFIRM_CONNECTED"
+			Case DISCONNECT; Return "DISCONNECT"
 			Case CHAT_MESSAGE; Return "CHAT_MESSAGE"
 			Default; Return String.FromInt( Int( code ))
 		End Select

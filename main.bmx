@@ -26,11 +26,6 @@ Global refresh_rate%
 Global show_ai_menu_game%
 Global retain_particles%
 Global active_particle_limit%
-'Networking
-Global network_host% = False
-Global network_ip_address$
-Global network_port%
-Global network_level$ = "levels/training1.colosseum_level"
 
 Function apply_default_settings()
 	window_w = 640
@@ -42,6 +37,7 @@ Function apply_default_settings()
 	show_ai_menu_game = True
 	retain_particles = True
 	active_particle_limit = 500
+	
 	network_ip_address = "127.0.0.1"
 	network_port = 6112
 End Function
@@ -109,7 +105,7 @@ init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 ?
 
 '______________________________________________________________________________
-'MAIN GAME LOOP
+'main game loop
 Repeat
 	'game object to use for this frame
 	If FLAG_in_menu
