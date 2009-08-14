@@ -177,9 +177,7 @@ Function get_chat_input()
 			Else 'KeyHit( KEY_ENTER )
 				chat_mode = False
 				If chat.Length > 0
-					Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( profile.name, chat, True )
-					chat_message_list.AddFirst( cm )
-					outgoing_messages.AddLast( cm )
+					send_chat( chat )
 				End If
 			End If
 		End If

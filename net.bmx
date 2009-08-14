@@ -51,14 +51,17 @@ Function update_network()
 									rp.udp_out = udp_in 'already created, used to connect initially
 								End If
 								DebugLog( " added remote player " + net_id.to_string() )
+								send_system_message( rp.name + " has joined the game" )
 								If message_type = NET.CLIENT_REQUEST_CONNECT
 									connect( rp.udp_out ) 'respond to client with own information
 								End If
 							Else
-								DebugLog( " remote player " + net_id.to_string() + " could not be added; already exists"  )
+								DebugLog( " remote player " + net_id.to_string() + " could not be added; already exists" )
 							End If
           Case NET.DISCONNECT
 							'disconnect_from( NETWORK_ID.Create( ip_address, network_port ))
+							'TODO: replace ip:port with username on file for that ip:port
+							send_system_message( TNetwork.StringIP( ip_address ) + ":" + port + " has left the game" )
 						Case NET.CHAT_MESSAGE
 							Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( udp_in.ReadLine(), udp_in.ReadLine() )
 							chat_message_list.AddFirst( cm )
@@ -231,16 +234,30 @@ Type CHAT_MESSAGE
 	Field message$
 	Field from_self%
 	Field originator:NETWORK_ID
+	Field is_system_message%
 	
-	Function Create:CHAT_MESSAGE( username$, message$, from_self% = False )
+	Function Create:CHAT_MESSAGE( username$, message$, from_self% = False, is_system_message% = False )
 		Local cm:CHAT_MESSAGE = New CHAT_MESSAGE
 		cm.added_ts = now()
 		cm.username = username
 		cm.message = message
 		cm.from_self = from_self
+		cm.is_system_message = is_system_message
 		Return cm
 	End Function
 End Type
+
+Function send_chat( message$ )
+	Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( profile.name, message, True, False )
+	chat_message_list.AddFirst( cm )
+	outgoing_messages.AddLast( cm )
+End Function
+
+Function send_system_message( message$ )
+	Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( "server", message, True, True )
+	chat_message_list.AddFirst( cm )
+	outgoing_messages.AddLast( cm )
+End Function
 
 '______________________________________________________________________________
 Type NET
