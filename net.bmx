@@ -59,6 +59,7 @@ Function update_network()
 						Select message_type
 							
 							Case NET.HANDSHAKE
+								rem
 								Local net_id:NETWORK_ID = NETWORK_ID.Create( ip_address, port )
 								Local rp:REMOTE_PLAYER = REMOTE_PLAYER.Create( net_id, username, TJSON.Create( vehicle_json_string ))
 								If add_remote_player( rp ) 'uniqueness by IP
@@ -75,6 +76,7 @@ Function update_network()
 								Else
 									DebugLog( " remote player " + net_id.to_string() + " could not be added; already exists" )
 								End If
+								endrem
 							Case NET.PROFILE_NAME
 								Local username$ = tcp_in.ReadLine()
 								
@@ -92,6 +94,7 @@ Function update_network()
 			
 		End If
 		
+		rem
 		'receive any available messages
 		If tcp_in
 			If tcp_in.RecvAvail()
@@ -142,6 +145,7 @@ Function update_network()
 				End If
 			End If
 		End If
+		endrem
 		
 		'send any pending messages
 		If Not remote_player_list.IsEmpty() And Not outgoing_messages.IsEmpty()
