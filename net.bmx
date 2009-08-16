@@ -13,7 +13,11 @@ Global network_level$ = "levels/duel.colosseum_level"
 Global tcp_server:TTCPStream
 Global tcp_clients:TList = CreateList() 'TList<TTCPStream>
 Global tcp_client:TTCPStream
-Global remote_player_list:TList = CreateList() 'TList<REMOTE_PLAYER>
+
+Global remote_players:TMap = CreateMap() 'TMap<NETWORK_ID,REMOTE_PLAYER>
+Function get_remote_player:REMOTE_PLAYER( net_id:NETWORK_ID )
+	Return REMOTE_PLAYER( remote_players.ValueForKey( net_id.to_string() ))
+End Function
 
 Global outgoing_messages:TList = CreateList() 'TList<CHAT_MESSAGE>
 Global chat_message_list:TList = CreateList() 'TList<CHAT_MESSAGE>
@@ -25,20 +29,40 @@ Const max_random_port:Short = 60000
 
 Function update_network()
 	If playing_multiplayer
-		If network_host
+		Local net_id:NETWORK_ID
+		Local rp:REMOTE_PLAYER
 		
+		If network_host
+			
 			'add new clients
 			tcp_client = Null
 			Repeat
-				tcp_client = tcp_in.Accept()
+				tcp_client = tcp_server.Accept()
 				If tcp_client
 					tcp_clients.AddLast( tcp_client )
-					Local rp:REMOTE_PLAYER = New REMOTE_PLAYER
-					rp.tcp_connection = tcp_client
-					remote_player_list.AddLast( rp )
+					net_id = NETWORK_ID.Create( tcp_client.getlocalip(), tcp_client.getlocalport() )
+					rp = REMOTE_PLAYER.Create( tcp_client, net_id )
+					remote_players.Insert( net_id.to_string(), rp )
 				End If
+				Rem
+				Local net_id:NETWORK_ID = NETWORK_ID.Create( ip_address, port )
+				Local rp:REMOTE_PLAYER = REMOTE_PLAYER.Create( net_id, username, TJSON.Create( vehicle_json_string ))
+				If add_remote_player( rp ) 'uniqueness by IP
+					If message_type = NET.CLIENT_REQUEST_CONNECT
+						rp.tcp_out = create_tcp( rp.net_id )
+					Else	'message_type = NET.SERVER_CONFIRM_CONNECTED
+						rp.tcp_out = tcp_in 'already created, used to connect initially
+					End If
+					DebugLog( " added remote player " + net_id.to_string() )
+					send_system_message( rp.name + " has joined the game" )
+					If message_type = NET.CLIENT_REQUEST_CONNECT
+						connect( rp.tcp_out ) 'respond to client with own information
+					End If
+				Else
+					DebugLog( " remote player " + net_id.to_string() + " could not be added; already exists" )
+				End If
+				End Rem
 			Until Not tcp_client
-			
 			'process each connected client
 			For tcp_client = EachIn tcp_clients
 				'remove disconnected clients
@@ -46,7 +70,7 @@ Function update_network()
 					tcp_client.Close()
 					tcp_clients.Remove( tcp_client )
 					Continue 'next
-					'TODO: automatic re-connect attempts
+					'TODO: automatic re-connect attempts after disconnect
 				End If
 				'check for and process messages from this connected client
 				If tcp_client.RecvAvail()
@@ -54,43 +78,40 @@ Function update_network()
 					If tcp_client.Size() > 0
 						Local ip_address% = tcp_client.GetLocalIP()
 						Local port:Short = tcp_client.GetLocalPort()
+						net_id = NETWORK_ID.Create( ip_address, port )
+						rp = get_remote_player( net_id )
 						Local message_type:Byte = tcp_client.ReadByte()
-						DebugLog( " " + NET.decode( message_type ) + " from " + TNetwork.StringIP( ip_address ) + ":" + port )
+						DebugLog( " " + NET.decode( message_type ) + " from " + net_id.to_string() )
 						Select message_type
 							
-							Case NET.HANDSHAKE
-								rem
-								Local net_id:NETWORK_ID = NETWORK_ID.Create( ip_address, port )
-								Local rp:REMOTE_PLAYER = REMOTE_PLAYER.Create( net_id, username, TJSON.Create( vehicle_json_string ))
-								If add_remote_player( rp ) 'uniqueness by IP
-									If message_type = NET.CLIENT_REQUEST_CONNECT
-										rp.tcp_out = create_tcp( rp.net_id )
-									Else	'message_type = NET.SERVER_CONFIRM_CONNECTED
-										rp.tcp_out = tcp_in 'already created, used to connect initially
-									End If
-									DebugLog( " added remote player " + net_id.to_string() )
-									send_system_message( rp.name + " has joined the game" )
-									If message_type = NET.CLIENT_REQUEST_CONNECT
-										connect( rp.tcp_out ) 'respond to client with own information
-									End If
-								Else
-									DebugLog( " remote player " + net_id.to_string() + " could not be added; already exists" )
-								End If
-								endrem
 							Case NET.PROFILE_NAME
-								Local username$ = tcp_in.ReadLine()
+								Local remote_player_name$ = tcp_client.ReadLine()
+								rp.name = remote_player_name
 								
 							Case NET.VEHICLE_DATA
-								Local vehicle_json_string$ = tcp_in.ReadLine()
+								Local vehicle_json_string$ = tcp_client.ReadLine()
+								Local vehicle_data_json:TJSON = TJSON.Create( vehicle_json_string )
+								Local vd:VEHICLE_DATA = Create_VEHICLE_DATA_from_json( vehicle_data_json )
+								rp.avatar = create_player( vd, False, False )
+								rp.brain = Create_CONTROL_BRAIN( rp.agent, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
+								
+							Case NET.VEHICLE_STATE_UPDATE
+								rp.avatar.read_from_stream( tcp_client )
 								
 						End Select
 					End If
 				End If
 			Next
-			
+
 		Else 'Not network_host
 			
-			
+			'lost connection to server
+			If tcp_server.GetState() <> 1
+				tcp_server.Close()
+			End If
+			If tcp_server.RecvAvail()
+				While tcp_server.RecvMsg() ; End While
+			End If
 			
 		End If
 		
@@ -183,51 +204,24 @@ Function update_network()
 End Function
 
 Function network_listen()
-	tcp_in = New TTCPStream
-	tcp_in.Init()
-	tcp_in.SetLocalPort( network_port )
-  tcp_in.Listen()
-	DebugLog( " listening on port " + tcp_in.GetLocalPort() )
+	tcp_server = New TTCPStream
+	tcp_server.Init()
+	tcp_server.SetLocalPort( network_port )
+  tcp_server.Listen()
+	DebugLog( " listening on port " + tcp_server.GetLocalPort() )
 End Function
 
 Function connect_to_network_game()
-	Local server:NETWORK_ID = NETWORK_ID.Create( TNetwork.IntIP( network_ip_address ), Short( network_port ))
-	Local server_stream:TTCPStream = create_tcp( server )
-	connect( server_stream )
-	tcp_in = server_stream 'experimental
-End Function
-
-Function create_tcp:TTCPStream( ent:NETWORK_ID )
-	If ent
-		Local tcp_out:TTCPStream = New TTCPStream
-		tcp_out.Init()
-		tcp_out.SetRemoteIP( ent.ip )
-		tcp_out.SetRemotePort( ent.port )
-		DebugLog( " created outgoing UDP stream for " + ent.to_string() )
-		If Not network_host
-			tcp_out.SetLocalPort( Rand( min_random_port, max_random_port ))
-			DebugLog( " listening for server reply on " + tcp_out.GetLocalPort() )
-		End If
-		Return tcp_out
-	End If
-End Function
-
-Function connect( tcp_out:TTCPStream )
-	If tcp_out
-		If Not network_host 'client
-			tcp_out.WriteByte( NET.CLIENT_REQUEST_CONNECT )
-			DebugLog( " sending CLIENT_REQUEST_CONNECT to server" )
-		Else
-			tcp_out.WriteByte( NET.SERVER_CONFIRM_CONNECTED )
-			DebugLog( " sending SERVER_CONFIRM_CONNECTED to client" )
-		End If
-		tcp_out.WriteLine( profile.vehicle.to_json().ToString() )
-		tcp_out.WriteLine( profile.name )
-		tcp_out.SendMsg()
-	End If
+	tcp_server = New TTCPStream
+	tcp_server.Init()
+	tcp_server.SetRemoteIP( TNetwork.IntIP( network_ip_address ))
+	tcp_server.SetRemotePort( Short( network_port ))
+	tcp_server.SetLocalPort( Short( Rand( min_random_port, max_random_port )))
+	tcp_server.Connect()
 End Function
 
 Function network_terminate()
+	Rem
 	If tcp_in
 		tcp_in.Close()
 		tcp_in = Null
@@ -241,6 +235,7 @@ Function network_terminate()
 		Next
 	End If
 	remote_player_list.Clear()
+	End Rem
 End Function
 
 '______________________________________________________________________________
@@ -266,10 +261,19 @@ End Type
 
 '______________________________________________________________________________
 Type REMOTE_PLAYER Extends MANAGED_OBJECT
-	Field tcp_connection:TTCPStream
+	Field tcp_stream:TTCPStream
+	Field net_id:NETWORK_ID
+	
 	Field name$
 	Field brain:CONTROL_BRAIN
-	Field agent:COMPLEX_AGENT
+	Field avatar:COMPLEX_AGENT
+	
+	Function Create:REMOTE_PLAYER( net_id:NETWORK_ID, tcp_stream:TTCPStream )
+		Local rp:REMOTE_PLAYER = New REMOTE_PLAYER
+		rp.tcp_stream = tcp_client
+		rp.net_id = net_id
+		Return rp
+	End Function
 End Type
 
 '______________________________________________________________________________
@@ -306,17 +310,20 @@ End Function
 
 '______________________________________________________________________________
 Type NET
-	Const HANDSHAKE:Byte = 1
 	Const PROFILE_NAME:Byte = 5
 	Const VEHICLE_DATA:Byte = 10
 	Const VEHICLE_STATE_UPDATE:Byte = 11
+	Const LEVEL_NAME:Byte = 15
+	Const ENVIRONMENT_STATE_UPDATE:Byte = 16
 	Const CHAT_MESSAGE:Byte = 100
 	
 	Function decode$( code:Byte )
 		Select code
-			Case CLIENT_REQUEST_CONNECT; Return "CLIENT_REQUEST_CONNECT"
-			Case SERVER_CONFIRM_CONNECTED; Return "SERVER_CONFIRM_CONNECTED"
-			Case DISCONNECT; Return "DISCONNECT"
+			Case PROFILE_NAME; Return "PROFILE_NAME"
+			Case VEHICLE_DATA; Return "VEHICLE_DATA"
+			Case VEHICLE_STATE_UPDATE; Return "VEHICLE_STATE_UPDATE"
+			Case LEVEL_NAME; Return "LEVEL_NAME"
+			Case ENVIRONMENT_STATE_UPDATE; Return "ENVIRONMENT_STATE_UPDATE"
 			Case CHAT_MESSAGE; Return "CHAT_MESSAGE"
 			Default; Return String.FromInt( Int( code ))
 		End Select
