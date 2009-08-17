@@ -11,7 +11,6 @@ Global network_port%
 Global network_level$ = "levels/duel.colosseum_level"
 
 Global tcp_server:TTCPStream
-Global tcp_clients:TList = CreateList() 'TList<TTCPStream>
 Global tcp_client:TTCPStream
 
 Global remote_players:TMap = CreateMap() 'TMap<NETWORK_ID,REMOTE_PLAYER>
@@ -39,32 +38,32 @@ Function update_network()
 			Repeat
 				tcp_client = tcp_server.Accept()
 				If tcp_client
-					tcp_clients.AddLast( tcp_client )
 					net_id = NETWORK_ID.Create( tcp_client.getlocalip(), tcp_client.getlocalport() )
 					rp = REMOTE_PLAYER.Create( tcp_client, net_id )
 					remote_players.Insert( net_id.to_string(), rp )
+					'send the client information about each other connected player, including self
+						tcp_server.WriteByte( NET.PROFILE_NAME )
+						tcp_server.WriteLine( profile.name )
+						tcp_server.SendMsg()
+						tcp_server.WriteByte( NET.VEHICLE_DATA )
+						tcp_server.WriteLine( profile.vehicle.to_json().ToString() )
+						tcp_server.SendMsg()
+						For rp = EachIn remote_players.Values()
+							tcp_server.WriteByte( NET.PROFILE_NAME )
+							tcp_server.WriteLine( rp.name )
+							tcp_server.SendMsg()
+							tcp_server.WriteByte( NET.VEHICLE_DATA )
+							tcp_server.WriteLine( rp.vehicle_json.ToString() )
+							tcp_server.SendMsg()
+						Next
+						tcp_server.WriteByte(NET.READY)
+						tcp_server.SendMsg()
 				End If
-				Rem
-				Local net_id:NETWORK_ID = NETWORK_ID.Create( ip_address, port )
-				Local rp:REMOTE_PLAYER = REMOTE_PLAYER.Create( net_id, username, TJSON.Create( vehicle_json_string ))
-				If add_remote_player( rp ) 'uniqueness by IP
-					If message_type = NET.CLIENT_REQUEST_CONNECT
-						rp.tcp_out = create_tcp( rp.net_id )
-					Else	'message_type = NET.SERVER_CONFIRM_CONNECTED
-						rp.tcp_out = tcp_in 'already created, used to connect initially
-					End If
-					DebugLog( " added remote player " + net_id.to_string() )
-					send_system_message( rp.name + " has joined the game" )
-					If message_type = NET.CLIENT_REQUEST_CONNECT
-						connect( rp.tcp_out ) 'respond to client with own information
-					End If
-				Else
-					DebugLog( " remote player " + net_id.to_string() + " could not be added; already exists" )
-				End If
-				End Rem
 			Until Not tcp_client
 			'process each connected client
-			For tcp_client = EachIn tcp_clients
+			For rp = EachIn remote_players.Values()
+				tcp_client = rp.tcp_stream
+				net_id = rp.net_id
 				'remove disconnected clients
 				If tcp_client.GetState() <> 1
 					tcp_client.Close()
@@ -76,10 +75,6 @@ Function update_network()
 				If tcp_client.RecvAvail()
 					While tcp_client.RecvMsg() ; End While
 					If tcp_client.Size() > 0
-						Local ip_address% = tcp_client.GetLocalIP()
-						Local port:Short = tcp_client.GetLocalPort()
-						net_id = NETWORK_ID.Create( ip_address, port )
-						rp = get_remote_player( net_id )
 						Local message_type:Byte = tcp_client.ReadByte()
 						DebugLog( " " + NET.decode( message_type ) + " from " + net_id.to_string() )
 						Select message_type
@@ -91,12 +86,22 @@ Function update_network()
 							Case NET.VEHICLE_DATA
 								Local vehicle_json_string$ = tcp_client.ReadLine()
 								Local vehicle_data_json:TJSON = TJSON.Create( vehicle_json_string )
+								rp.vehicle_json = vehicle_data_json
 								Local vd:VEHICLE_DATA = Create_VEHICLE_DATA_from_json( vehicle_data_json )
 								rp.avatar = create_player( vd, False, False )
 								rp.brain = Create_CONTROL_BRAIN( rp.agent, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
 								
+							Case NET.READY
+								'?
+								
 							Case NET.VEHICLE_STATE_UPDATE
 								rp.avatar.read_from_stream( tcp_client )
+								
+							Case NET.CHAT_MESSAGE
+								Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( tcp_client.ReadLine(), tcp_client.ReadLine() )
+								cm.originator = net_id
+								chat_message_list.AddFirst( cm )
+								outgoing_messages.AddLast( cm )
 								
 						End Select
 					End If
@@ -105,68 +110,48 @@ Function update_network()
 
 		Else 'Not network_host
 			
-			'lost connection to server
+			'check if disconnected from server
 			If tcp_server.GetState() <> 1
 				tcp_server.Close()
 			End If
 			If tcp_server.RecvAvail()
 				While tcp_server.RecvMsg() ; End While
 			End If
-			
-		End If
-		
-		rem
-		'receive any available messages
-		If tcp_in
-			If tcp_in.RecvAvail()
-				While tcp_in.RecvMsg() ; End While
-				If tcp_in.Size() > 0
-					Local ip_address% = tcp_in.GetMsgIP()
-					Local port:Short = tcp_in.GetMsgPort()
-					Local message_type:Byte = tcp_in.ReadByte()
-					DebugLog( " " + NET.decode( message_type ) + " from " + TNetwork.StringIP( ip_address ) + ":" + port )
+			'check for and process messages from the server
+			If tcp_server.RecvAvail()
+				While tcp_server.RecvMsg() ; End While
+				If tcp_server.Size() > 0
+					Local message_type:Byte = tcp_server.ReadByte()
+					DebugLog( " " + NET.decode( message_type ) + " from " + net_id.to_string() )
 					Select message_type
-						Case NET.CLIENT_REQUEST_CONNECT, NET.SERVER_CONFIRM_CONNECTED
-							Local vehicle_json_string$ = tcp_in.ReadLine()
-							Local username$ = tcp_in.ReadLine()
-							Local net_id:NETWORK_ID
-							If message_type = NET.CLIENT_REQUEST_CONNECT
-								net_id = NETWORK_ID.Create( ip_address, port )
-							Else	'message_type = NET.SERVER_CONFIRM_CONNECTED
-								net_id = NETWORK_ID.Create( ip_address, network_port )
-							End If
-							Local rp:REMOTE_PLAYER = REMOTE_PLAYER.Create( net_id, username, TJSON.Create( vehicle_json_string ))
-							If add_remote_player( rp ) 'uniqueness by IP
-								If message_type = NET.CLIENT_REQUEST_CONNECT
-									rp.tcp_out = create_tcp( rp.net_id )
-								Else	'message_type = NET.SERVER_CONFIRM_CONNECTED
-									rp.tcp_out = tcp_in 'already created, used to connect initially
-								End If
-								DebugLog( " added remote player " + net_id.to_string() )
-								send_system_message( rp.name + " has joined the game" )
-								If message_type = NET.CLIENT_REQUEST_CONNECT
-									connect( rp.tcp_out ) 'respond to client with own information
-								End If
-							Else
-								DebugLog( " remote player " + net_id.to_string() + " could not be added; already exists" )
-							End If
-          Case NET.DISCONNECT
-							'disconnect_from( NETWORK_ID.Create( ip_address, network_port ))
-							'TODO: replace ip:port with username on file for that ip:port
-							send_system_message( TNetwork.StringIP( ip_address ) + ":" + port + " has left the game" )
+						
+						Case NET.PROFILE_NAME
+							Local remote_player_name$ = tcp_server.ReadLine()
+							'rp.name = remote_player_name
+							
+						Case NET.VEHICLE_DATA
+							Local vehicle_json_string$ = tcp_server.ReadLine()
+							Local vehicle_data_json:TJSON = TJSON.Create( vehicle_json_string )
+							'rp.vehicle_json = vehicle_data_json
+							Local vd:VEHICLE_DATA = Create_VEHICLE_DATA_from_json( vehicle_data_json )
+							'rp.avatar = create_player( vd, False, False )
+							'rp.brain = Create_CONTROL_BRAIN( rp.agent, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
+							
+						Case NET.READY
+							'?
+							
+						Case NET.VEHICLE_STATE_UPDATE
+							'rp.avatar.read_from_stream( tcp_server )
+							
 						Case NET.CHAT_MESSAGE
-							Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( tcp_in.ReadLine(), tcp_in.ReadLine() )
+							Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( tcp_server.ReadLine(), tcp_server.ReadLine() )
 							chat_message_list.AddFirst( cm )
-							If network_host
-								cm.originator = NETWORK_ID.Create( ip_address, port )
-								outgoing_messages.AddLast( cm )
-							End If
-							DebugLog( " received chat message, "+cm.username+": "+cm.message )
+							
 					End Select
 				End If
 			End If
+				
 		End If
-		endrem
 		
 		'send any pending messages
 		If Not remote_player_list.IsEmpty() And Not outgoing_messages.IsEmpty()
@@ -211,13 +196,27 @@ Function network_listen()
 	DebugLog( " listening on port " + tcp_server.GetLocalPort() )
 End Function
 
-Function connect_to_network_game()
+Function connect_to_network_game%()
 	tcp_server = New TTCPStream
 	tcp_server.Init()
 	tcp_server.SetRemoteIP( TNetwork.IntIP( network_ip_address ))
 	tcp_server.SetRemotePort( Short( network_port ))
 	tcp_server.SetLocalPort( Short( Rand( min_random_port, max_random_port )))
-	tcp_server.Connect()
+	If tcp_server.Connect()
+		'send the server all the data it needs
+		tcp_server.WriteByte( NET.PROFILE_NAME )
+		tcp_server.WriteLine( profile.name )
+		tcp_server.SendMsg()
+		tcp_server.WriteByte( NET.VEHICLE_DATA )
+		tcp_server.WriteLine( profile.vehicle.to_json().ToString() )
+		tcp_server.SendMsg()
+		tcp_server.WriteByte( NET.READY )
+		tcp_server.SendMsg()
+		Return True
+	Else
+		'could not connect
+		Return False
+	End If
 End Function
 
 Function network_terminate()
@@ -265,8 +264,9 @@ Type REMOTE_PLAYER Extends MANAGED_OBJECT
 	Field net_id:NETWORK_ID
 	
 	Field name$
-	Field brain:CONTROL_BRAIN
+	Field vehicle_json:TJSON
 	Field avatar:COMPLEX_AGENT
+	Field brain:CONTROL_BRAIN
 	
 	Function Create:REMOTE_PLAYER( net_id:NETWORK_ID, tcp_stream:TTCPStream )
 		Local rp:REMOTE_PLAYER = New REMOTE_PLAYER
@@ -310,15 +310,17 @@ End Function
 
 '______________________________________________________________________________
 Type NET
+	Const READY:Byte = 1
 	Const PROFILE_NAME:Byte = 5
 	Const VEHICLE_DATA:Byte = 10
 	Const VEHICLE_STATE_UPDATE:Byte = 11
 	Const LEVEL_NAME:Byte = 15
 	Const ENVIRONMENT_STATE_UPDATE:Byte = 16
 	Const CHAT_MESSAGE:Byte = 100
-	
+
 	Function decode$( code:Byte )
 		Select code
+			Case READY; Return "READY"
 			Case PROFILE_NAME; Return "PROFILE_NAME"
 			Case VEHICLE_DATA; Return "VEHICLE_DATA"
 			Case VEHICLE_STATE_UPDATE; Return "VEHICLE_STATE_UPDATE"
@@ -329,4 +331,26 @@ Type NET
 		End Select
 	End Function
 End Type
+
+'______________________________________________________________________________
+Type NET_MSG
+	Field code:Byte
+	Function Create:NET_MSG( code:Byte )
+		Local nm:NET_MSG = New NET_MSG
+		nm.code = code
+		Return nm
+	End Function
+End Type
+
+
+
+
+
+
+
+
+
+
+
+
 
