@@ -8,174 +8,120 @@ EndRem
 Global network_host% = False
 Global network_ip_address$
 Global network_port%
-Global network_level$ = "levels/duel.colosseum_level"
+Global network_level$ = "levels/blitz.colosseum_level"
 
 Global tcp_server:TTCPStream
 Global tcp_client:TTCPStream
 
 Global remote_players:TMap = CreateMap() 'TMap<NETWORK_ID,REMOTE_PLAYER>
+Function add_remote_player( rp:REMOTE_PLAYER )
+	remote_players.Insert( rp.net_id.ToString(), rp )
+End Function
 Function get_remote_player:REMOTE_PLAYER( net_id:NETWORK_ID )
-	Return REMOTE_PLAYER( remote_players.ValueForKey( net_id.to_string() ))
+	Return REMOTE_PLAYER( remote_players.ValueForKey( net_id.ToString() ))
 End Function
 
 Global outgoing_messages:TList = CreateList() 'TList<CHAT_MESSAGE>
 Global chat_message_list:TList = CreateList() 'TList<CHAT_MESSAGE>
 
 Const chat_stay_time% = 8000
-Const chat_fade_time% = 2000
+Const chat_fade_time% = 4000
 Const min_random_port:Short = 59000
 Const max_random_port:Short = 60000
 
 Function update_network()
 	If playing_multiplayer
-		Local net_id:NETWORK_ID
 		Local rp:REMOTE_PLAYER
 		
 		If network_host
-			
-			'add new clients
-			tcp_client = Null
+			'process potential incoming connections
 			Repeat
 				tcp_client = tcp_server.Accept()
 				If tcp_client
-					net_id = NETWORK_ID.Create( tcp_client.getlocalip(), tcp_client.getlocalport() )
-					rp = REMOTE_PLAYER.Create( tcp_client, net_id )
-					remote_players.Insert( net_id.to_string(), rp )
+					rp = REMOTE_PLAYER.Create( NETWORK_ID.Create( tcp_client.GetLocalIP(), tcp_client.GetLocalPort() ), tcp_client )
+					DebugLog( " " + rp.net_id.ToString() + " connected" )
 					'send the client information about each other connected player, including self
-						tcp_server.WriteByte( NET.PROFILE_NAME )
-						tcp_server.WriteLine( profile.name )
-						tcp_server.SendMsg()
-						tcp_server.WriteByte( NET.VEHICLE_DATA )
-						tcp_server.WriteLine( profile.vehicle.to_json().ToString() )
-						tcp_server.SendMsg()
-						For rp = EachIn remote_players.Values()
-							tcp_server.WriteByte( NET.PROFILE_NAME )
-							tcp_server.WriteLine( rp.name )
-							tcp_server.SendMsg()
-							tcp_server.WriteByte( NET.VEHICLE_DATA )
-							tcp_server.WriteLine( rp.vehicle_json.ToString() )
-							tcp_server.SendMsg()
-						Next
-						tcp_server.WriteByte(NET.READY)
-						tcp_server.SendMsg()
+					tcp_client.WriteByte( NET.IDENTITY )
+					tcp_client.WriteLine( profile.name + "~t" + profile.vehicle.to_json().ToString() )
+					For Local old_rp:REMOTE_PLAYER = EachIn remote_players.Values()
+						tcp_client.WriteByte( NET.IDENTITY )
+						tcp_client.WriteLine( old_rp.name + "~t" + old_rp.vehicle_json.ToString() )
+					Next
+					tcp_client.WriteByte( NET.READY )
+					While tcp_client.SendMsg() ; End While
+					add_remote_player( rp )
 				End If
 			Until Not tcp_client
-			'process each connected client
-			For rp = EachIn remote_players.Values()
-				tcp_client = rp.tcp_stream
-				net_id = rp.net_id
-				'remove disconnected clients
-				If tcp_client.GetState() <> 1
-					tcp_client.Close()
-					tcp_clients.Remove( tcp_client )
-					Continue 'next
-					'TODO: automatic re-connect attempts after disconnect
-				End If
-				'check for and process messages from this connected client
-				If tcp_client.RecvAvail()
-					While tcp_client.RecvMsg() ; End While
-					If tcp_client.Size() > 0
-						Local message_type:Byte = tcp_client.ReadByte()
-						DebugLog( " " + NET.decode( message_type ) + " from " + net_id.to_string() )
-						Select message_type
-							
-							Case NET.PROFILE_NAME
-								Local remote_player_name$ = tcp_client.ReadLine()
-								rp.name = remote_player_name
-								
-							Case NET.VEHICLE_DATA
-								Local vehicle_json_string$ = tcp_client.ReadLine()
-								Local vehicle_data_json:TJSON = TJSON.Create( vehicle_json_string )
-								rp.vehicle_json = vehicle_data_json
-								Local vd:VEHICLE_DATA = Create_VEHICLE_DATA_from_json( vehicle_data_json )
-								rp.avatar = create_player( vd, False, False )
-								rp.brain = Create_CONTROL_BRAIN( rp.agent, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
-								
-							Case NET.READY
-								'?
-								
-							Case NET.VEHICLE_STATE_UPDATE
-								rp.avatar.read_from_stream( tcp_client )
-								
-							Case NET.CHAT_MESSAGE
-								Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( tcp_client.ReadLine(), tcp_client.ReadLine() )
-								cm.originator = net_id
-								chat_message_list.AddFirst( cm )
-								outgoing_messages.AddLast( cm )
-								
-						End Select
-					End If
-				End If
-			Next
-
-		Else 'Not network_host
-			
-			'check if disconnected from server
-			If tcp_server.GetState() <> 1
-				tcp_server.Close()
+		End If
+		
+		'process each connected client
+		For rp = EachIn remote_players.Values()
+			'remove disconnected clients
+			If rp.tcp_stream.GetState() <> 1
+				rp.tcp_stream.Close()
+				remote_players.Remove( rp.net_id.ToString() )
+				DebugLog( " " + rp.net_id.ToString() + " disconnected" )
+				Continue 'next
+				'TODO: automatic re-connect attempts after disconnect
 			End If
-			If tcp_server.RecvAvail()
-				While tcp_server.RecvMsg() ; End While
-			End If
-			'check for and process messages from the server
-			If tcp_server.RecvAvail()
-				While tcp_server.RecvMsg() ; End While
-				If tcp_server.Size() > 0
-					Local message_type:Byte = tcp_server.ReadByte()
-					DebugLog( " " + NET.decode( message_type ) + " from " + net_id.to_string() )
+			'check for and process messages from this connected client
+			If rp.tcp_stream.RecvAvail()
+				While rp.tcp_stream.RecvMsg() ; End While
+				While rp.tcp_stream.Size() > 0
+					Local message_type:Byte = rp.tcp_stream.ReadByte()
+					DebugLog( " " + NET.decode( message_type ) + " from " + rp.net_id.ToString() )
 					Select message_type
 						
-						Case NET.PROFILE_NAME
-							Local remote_player_name$ = tcp_server.ReadLine()
-							'rp.name = remote_player_name
-							
-						Case NET.VEHICLE_DATA
-							Local vehicle_json_string$ = tcp_server.ReadLine()
-							Local vehicle_data_json:TJSON = TJSON.Create( vehicle_json_string )
-							'rp.vehicle_json = vehicle_data_json
-							Local vd:VEHICLE_DATA = Create_VEHICLE_DATA_from_json( vehicle_data_json )
-							'rp.avatar = create_player( vd, False, False )
-							'rp.brain = Create_CONTROL_BRAIN( rp.agent, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
-							
+						Case NET.IDENTITY
+							Local data$[] = rp.tcp_stream.ReadLine().Split( "~t" )
+							rp.name = data[0]
+							rp.vehicle_json = TJSON.Create( data[1] )
+							Local vd:VEHICLE_DATA = Create_VEHICLE_DATA_from_json( rp.vehicle_json )
+							rp.avatar = create_player( vd, False, False )
+							rp.brain = Create_CONTROL_BRAIN( rp.avatar, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
+						
 						Case NET.READY
-							'?
-							
+							If network_host
+								'received ready signal from client
+								
+							Else
+								'received ready signal from server
+								
+							End If
+						
 						Case NET.VEHICLE_STATE_UPDATE
-							'rp.avatar.read_from_stream( tcp_server )
-							
+							rp.avatar.read_state_from_stream( rp.tcp_stream )
+						
 						Case NET.CHAT_MESSAGE
-							Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( tcp_server.ReadLine(), tcp_server.ReadLine() )
+							Local data$[] = rp.tcp_stream.ReadLine().Split( "~t" )
+							Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( data[0], data[1] )
+							cm.originator = rp.net_id
 							chat_message_list.AddFirst( cm )
+							If network_host
+								outgoing_messages.AddLast( cm )
+							End If
 							
 					End Select
-				End If
+				End While
 			End If
-				
-		End If
-		
-		'send any pending messages
-		If Not remote_player_list.IsEmpty() And Not outgoing_messages.IsEmpty()
-			For Local message:Object = EachIn outgoing_messages
-				If CHAT_MESSAGE(message)
-					'broadcast the outgoing chat message to all connected clients, except the originator
-					Local cm:CHAT_MESSAGE = CHAT_MESSAGE(message)
-					DebugLog( " outgoing chat message, " + cm.username + ": " + cm.message )
-					For Local rp:REMOTE_PLAYER = EachIn remote_player_list
-						If Not rp.net_id.equals( cm.originator )
-							rp.tcp_out.WriteByte( NET.CHAT_MESSAGE )
-							rp.tcp_out.WriteLine( cm.message )
-							rp.tcp_out.WriteLine( cm.username )
-							DebugLog( "  sending to " + rp.net_id.to_string() )
-							rp.tcp_out.SendMsg()
-						Else
-							DebugLog( "  skipping " + rp.net_id.to_string() )
-						End If
-					Next
+		Next
+
+		'rebroadcast chats, skip the sender
+		For Local cm:CHAT_MESSAGE = EachIn outgoing_messages
+			DebugLog( " outgoing chat message, " + cm.username + ": " + cm.message )
+			For Local rp:REMOTE_PLAYER = EachIn remote_players.Values()
+				If Not rp.net_id.equals( cm.originator )
+					rp.tcp_stream.WriteByte( NET.CHAT_MESSAGE )
+					rp.tcp_stream.WriteLine( cm.username + "~t" + cm.message )
+					DebugLog( "  sending to " + rp.net_id.ToString() )
+					While rp.tcp_stream.SendMsg() ; End While
+				Else
+					DebugLog( "  skipping " + rp.net_id.ToString() )
 				End If
 			Next
-		End If
+		Next
 		outgoing_messages.Clear()
-		
+
 		'prune old chats
 		If Not chat_message_list.IsEmpty()
 			For Local cm:CHAT_MESSAGE = EachIn chat_message_list
@@ -196,45 +142,23 @@ Function network_listen()
 	DebugLog( " listening on port " + tcp_server.GetLocalPort() )
 End Function
 
-Function connect_to_network_game%()
-	tcp_server = New TTCPStream
-	tcp_server.Init()
-	tcp_server.SetRemoteIP( TNetwork.IntIP( network_ip_address ))
-	tcp_server.SetRemotePort( Short( network_port ))
-	tcp_server.SetLocalPort( Short( Rand( min_random_port, max_random_port )))
-	If tcp_server.Connect()
-		'send the server all the data it needs
-		tcp_server.WriteByte( NET.PROFILE_NAME )
-		tcp_server.WriteLine( profile.name )
-		tcp_server.SendMsg()
-		tcp_server.WriteByte( NET.VEHICLE_DATA )
-		tcp_server.WriteLine( profile.vehicle.to_json().ToString() )
-		tcp_server.SendMsg()
-		tcp_server.WriteByte( NET.READY )
-		tcp_server.SendMsg()
-		Return True
-	Else
-		'could not connect
-		Return False
-	End If
+Function connect_to_network_game()
+	Local server_id:NETWORK_ID = NETWORK_ID.Create( TNetwork.IntIP( network_ip_address ), Short( network_port ))
+	Local server:REMOTE_PLAYER = REMOTE_PLAYER.Create( server_id, New TTCPStream )
+	server.tcp_stream.Init()
+	server.tcp_stream.SetRemoteIP( server_id.ip )
+	server.tcp_stream.SetRemotePort( server_id.port )
+	server.tcp_stream.SetLocalPort( Short( Rand( min_random_port, max_random_port )))
+	server.tcp_stream.Connect()
+	server.tcp_stream.WriteByte( NET.IDENTITY )
+	server.tcp_stream.WriteLine( profile.name + "~t" + profile.vehicle.to_json().ToString() )
+	server.tcp_stream.WriteByte( NET.READY )
+	While server.tcp_stream.SendMsg() ; End While
+	add_remote_player( server )
 End Function
 
 Function network_terminate()
-	Rem
-	If tcp_in
-		tcp_in.Close()
-		tcp_in = Null
-	End If
-	If Not remote_player_list.IsEmpty()
-		For Local rp:REMOTE_PLAYER = EachIn remote_player_list
-			If rp.tcp_out
-				rp.tcp_out.Close()
-				rp.tcp_out = Null
-			End If
-		Next
-	End If
-	remote_player_list.Clear()
-	End Rem
+	
 End Function
 
 '______________________________________________________________________________
@@ -249,7 +173,7 @@ Type NETWORK_ID
 		Return ent
 	End Function
 	
-	Method to_string$()
+	Method ToString$()
 		Return TNetwork.StringIP( ip ) + ":" + port
 	End Method
 	
@@ -259,9 +183,9 @@ Type NETWORK_ID
 End Type
 
 '______________________________________________________________________________
-Type REMOTE_PLAYER Extends MANAGED_OBJECT
-	Field tcp_stream:TTCPStream
+Type REMOTE_PLAYER
 	Field net_id:NETWORK_ID
+	Field tcp_stream:TTCPStream
 	
 	Field name$
 	Field vehicle_json:TJSON
@@ -270,8 +194,8 @@ Type REMOTE_PLAYER Extends MANAGED_OBJECT
 	
 	Function Create:REMOTE_PLAYER( net_id:NETWORK_ID, tcp_stream:TTCPStream )
 		Local rp:REMOTE_PLAYER = New REMOTE_PLAYER
-		rp.tcp_stream = tcp_client
 		rp.net_id = net_id
+		rp.tcp_stream = tcp_stream
 		Return rp
 	End Function
 End Type
@@ -303,7 +227,7 @@ Function send_chat( message$ )
 End Function
 
 Function send_system_message( message$ )
-	Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( "server", message, True, True )
+	Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( "", message, True, True )
 	chat_message_list.AddFirst( cm )
 	outgoing_messages.AddLast( cm )
 End Function
@@ -311,45 +235,24 @@ End Function
 '______________________________________________________________________________
 Type NET
 	Const READY:Byte = 1
-	Const PROFILE_NAME:Byte = 5
-	Const VEHICLE_DATA:Byte = 10
-	Const VEHICLE_STATE_UPDATE:Byte = 11
-	Const LEVEL_NAME:Byte = 15
-	Const ENVIRONMENT_STATE_UPDATE:Byte = 16
+	Const IDENTITY:Byte = 5
+	Const LEVEL_NAME:Byte = 10
+	Const ENVIRONMENT_STATE:Byte = 15
+	Const VEHICLE_STATE_UPDATE:Byte = 20
 	Const CHAT_MESSAGE:Byte = 100
 
 	Function decode$( code:Byte )
 		Select code
 			Case READY; Return "READY"
-			Case PROFILE_NAME; Return "PROFILE_NAME"
-			Case VEHICLE_DATA; Return "VEHICLE_DATA"
-			Case VEHICLE_STATE_UPDATE; Return "VEHICLE_STATE_UPDATE"
+			Case IDENTITY; Return "IDENTITY"
 			Case LEVEL_NAME; Return "LEVEL_NAME"
-			Case ENVIRONMENT_STATE_UPDATE; Return "ENVIRONMENT_STATE_UPDATE"
+			Case ENVIRONMENT_STATE; Return "ENVIRONMENT_STATE"
+			Case VEHICLE_STATE_UPDATE; Return "VEHICLE_STATE_UPDATE"
 			Case CHAT_MESSAGE; Return "CHAT_MESSAGE"
 			Default; Return String.FromInt( Int( code ))
 		End Select
 	End Function
 End Type
-
-'______________________________________________________________________________
-Type NET_MSG
-	Field code:Byte
-	Function Create:NET_MSG( code:Byte )
-		Local nm:NET_MSG = New NET_MSG
-		nm.code = code
-		Return nm
-	End Function
-End Type
-
-
-
-
-
-
-
-
-
 
 
 

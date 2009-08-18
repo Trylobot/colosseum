@@ -19,7 +19,7 @@ EndRem
 'Graphics
 Global window_w%
 Global window_h%
-Global window:BOX 'I don't like having this and the _w, _h constants
+Global window:BOX 'I don't like having both this and the (_w,_h) constants
 Global fullscreen%
 Global bit_depth%
 Global refresh_rate%

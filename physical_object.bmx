@@ -60,7 +60,7 @@ Type PHYSICAL_OBJECT Extends POINT
 		return f
 	End Method
 	
-	Method write_to_stream( stream:TStream )
+	Method write_state_to_stream( stream:TStream )
 		stream.WriteFloat( pos_x )
 		stream.WriteFloat( pos_y )
 		stream.WriteFloat( ang )
@@ -72,7 +72,7 @@ Type PHYSICAL_OBJECT Extends POINT
 		stream.WriteFloat( ang_acc )
 	End Method
 	
-	Method read_from_stream( stream:TStream )
+	Method read_state_from_stream( stream:TStream )
 		pos_x = stream.ReadFloat()
 		pos_y = stream.ReadFloat()
 		ang = stream.ReadFloat()
