@@ -401,11 +401,25 @@ Type ENVIRONMENT
 		Next
 	End Method
 	
+	Method insert_network_player( network_player:COMPLEX_AGENT, network_player_brain:CONTROL_BRAIN )
+		'if player already exists in this environment, it must be removed
+		network_player.manage( friendly_agent_list )
+		network_player_brain.manage( control_brain_list )
+	End Method
+	
 	Method respawn_player()
 		If player <> Null And player_brain <> Null And player.managed() And player_brain.managed()
 			player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
 			player.move_to( player_spawn_point )
 			player.snap_all_turrets()
+			active_friendly_units :+ 1
+		End If
+	End Method
+	
+	Method respawn_network_player( network_player:COMPLEX_AGENT )
+		If network_player <> Null And network_player.managed()
+			network_player.move_to( random_spawn_point( ALIGNMENT_FRIENDLY ))
+			network_player.snap_all_turrets()
 			active_friendly_units :+ 1
 		End If
 	End Method

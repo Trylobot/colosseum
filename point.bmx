@@ -120,6 +120,30 @@ Type POINT Extends MANAGED_OBJECT
 		Return Create_cVEC( pos_x, pos_y )
 	End Method
 	
+	Method write_state_to_stream( stream:TStream )
+		stream.WriteFloat( pos_x )
+		stream.WriteFloat( pos_y )
+		stream.WriteFloat( ang )
+		stream.WriteFloat( vel_x )
+		stream.WriteFloat( vel_y )
+		stream.WriteFloat( ang_vel )
+		stream.WriteFloat( acc_x )
+		stream.WriteFloat( acc_y )
+		stream.WriteFloat( ang_acc )
+	End Method
+	
+	Method read_state_from_stream( stream:TStream )
+		pos_x = stream.ReadFloat()
+		pos_y = stream.ReadFloat()
+		ang = stream.ReadFloat()
+		vel_x = stream.ReadFloat()
+		vel_y = stream.ReadFloat()
+		ang_vel = stream.ReadFloat()
+		acc_x = stream.ReadFloat()
+		acc_y = stream.ReadFloat()
+		ang_acc = stream.ReadFloat()
+	End Method	
+	
 End Type
 
 Function Create_POINT_from_json:POINT( json:TJSON )

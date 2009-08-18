@@ -703,6 +703,20 @@ Type COMPLEX_AGENT Extends AGENT
 			t.scale_all( scale )
 		Next
 	End Method
+	
+	Method write_state_to_stream( stream:TStream )
+		Super.write_state_to_stream( stream ) 'AGENT
+		For Local t:TURRET = EachIn turrets
+			t.write_state_to_stream( stream )
+		Next
+	End Method
+	
+	Method read_state_from_stream( stream:TStream )
+		Super.read_state_from_stream( stream )
+		For Local t:TURRET = EachIn turrets
+			t.read_state_from_stream( stream )
+		Next
+	End Method
 		
 End Type
 

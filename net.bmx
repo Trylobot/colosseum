@@ -11,6 +11,7 @@ Global network_port%
 Global network_level$ = "levels/blitz.colosseum_level"
 
 Global tcp_server:TTCPStream
+Global tcp_clients:TList 'TList<TTCPStream>
 Global tcp_client:TTCPStream
 
 Global remote_players:TMap = CreateMap() 'TMap<NETWORK_ID,REMOTE_PLAYER>
@@ -28,6 +29,9 @@ Const chat_stay_time% = 8000
 Const chat_fade_time% = 4000
 Const min_random_port:Short = 59000
 Const max_random_port:Short = 60000
+
+Global last_broadcast_ts%
+Const self_broadcast_delay% = 50
 
 Function update_network()
 	If playing_multiplayer
@@ -53,7 +57,6 @@ Function update_network()
 				End If
 			Until Not tcp_client
 		End If
-		
 		'process each connected client
 		For rp = EachIn remote_players.Values()
 			'remove disconnected clients
@@ -69,10 +72,10 @@ Function update_network()
 				While rp.tcp_stream.RecvMsg() ; End While
 				While rp.tcp_stream.Size() > 0
 					Local message_type:Byte = rp.tcp_stream.ReadByte()
-					DebugLog( " " + NET.decode( message_type ) + " from " + rp.net_id.ToString() )
 					Select message_type
 						
 						Case NET.IDENTITY
+							DebugLog( " " + NET.decode( message_type ) + " from " + rp.net_id.ToString() )
 							Local data$[] = rp.tcp_stream.ReadLine().Split( "~t" )
 							rp.name = data[0]
 							rp.vehicle_json = TJSON.Create( data[1] )
@@ -81,18 +84,22 @@ Function update_network()
 							rp.brain = Create_CONTROL_BRAIN( rp.avatar, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
 						
 						Case NET.READY
+							DebugLog( " " + NET.decode( message_type ) + " from " + rp.net_id.ToString() )
 							If network_host
 								'received ready signal from client
-								
+								game.insert_network_player( rp.avatar, rp.brain )
+								game.respawn_network_player( rp.avatar )
+								'TODO: need a way for connected players to:
+								'      - choose team (friendly, hostile, spectator)
+								'      - spawn in a spawn-point of the appropriate team with enough room near it
 							Else
 								'received ready signal from server
-								
+								'TODO: spawn every remote player
+								'      will require connections to be separated from remote players
 							End If
 						
-						Case NET.VEHICLE_STATE_UPDATE
-							rp.avatar.read_state_from_stream( rp.tcp_stream )
-						
 						Case NET.CHAT_MESSAGE
+							DebugLog( " " + NET.decode( message_type ) + " from " + rp.net_id.ToString() )
 							Local data$[] = rp.tcp_stream.ReadLine().Split( "~t" )
 							Local cm:CHAT_MESSAGE = CHAT_MESSAGE.Create( data[0], data[1] )
 							cm.originator = rp.net_id
@@ -101,12 +108,47 @@ Function update_network()
 								outgoing_messages.AddLast( cm )
 							End If
 							
+						Default
+							DebugLog( " WARNING: " + NET.decode( message_type ) + " from " + rp.net_id.ToString() + " sent via TCP" )
+							
+					End Select
+				End While
+			End If
+			If rp.udp_stream.RecvAvail()
+				While rp.udp_stream.RecvMsg() ; End While
+				While rp.udp_stream.Size() > 0
+					Local message_type:Byte = rp.tcp_stream.ReadByte()
+					Select message_type
+						
+						Case NET.AVATAR_STATE_UPDATE
+							rp.avatar.read_state_from_stream( rp.udp_stream )
+							If network_host
+								'TODO: relay update to other players (like chat messages)
+								'      this will require idents to be sent with the state updates
+								'      and for the client to recognize idents and distribute idents
+							End If
+						
+						Default
+							DebugLog( " WARNING: " + NET.decode( message_type ) + " from " + rp.net_id.ToString() + " sent via TCP" )
+							
 					End Select
 				End While
 			End If
 		Next
 
-		'rebroadcast chats, skip the sender
+		'periodical broadcast
+		If game And game.player
+			If (now() - last_broadcast_ts) > self_broadcast_delay
+				last_broadcast_ts = now()
+				For rp = EachIn remote_players.Values()
+					rp.tcp_stream.WriteByte( NET.AVATAR_STATE_UPDATE )
+					game.player.write_state_to_stream( rp.tcp_stream )
+					While rp.tcp_stream.SendMsg() ; End While
+				Next
+			End If
+		End If
+
+		'relay chats to all connected players except sender
 		For Local cm:CHAT_MESSAGE = EachIn outgoing_messages
 			DebugLog( " outgoing chat message, " + cm.username + ": " + cm.message )
 			For Local rp:REMOTE_PLAYER = EachIn remote_players.Values()
@@ -158,7 +200,17 @@ Function connect_to_network_game()
 End Function
 
 Function network_terminate()
-	
+	If tcp_server
+		tcp_server.Close()
+		tcp_server = Null
+	End If
+	For Local rp:REMOTE_PLAYER = EachIn remote_players.Values()
+		If rp And rp.tcp_stream
+			rp.tcp_stream.Close()
+			rp.tcp_stream = Null
+		End If
+	Next
+	remote_players.Clear()
 End Function
 
 '______________________________________________________________________________
@@ -185,7 +237,10 @@ End Type
 '______________________________________________________________________________
 Type REMOTE_PLAYER
 	Field net_id:NETWORK_ID
+	
+	'TODO: Remove these streams; The association between remote players and network streams is not 1:1
 	Field tcp_stream:TTCPStream
+	Field udp_stream:TUDPStream
 	
 	Field name$
 	Field vehicle_json:TJSON
@@ -196,6 +251,11 @@ Type REMOTE_PLAYER
 		Local rp:REMOTE_PLAYER = New REMOTE_PLAYER
 		rp.net_id = net_id
 		rp.tcp_stream = tcp_stream
+		rp.udp_stream = New TUDPStream
+		rp.udp_stream.Init()
+		rp.udp_stream.SetLocalPort( rp.tcp_stream.GetLocalPort() )
+		rp.udp_stream.SetRemoteIP( rp.tcp_stream.GetRemoteIP() )
+		rp.udp_stream.SetRemotePort( rp.tcp_stream.GetRemotePort() )
 		Return rp
 	End Function
 End Type
@@ -236,18 +296,20 @@ End Function
 Type NET
 	Const READY:Byte = 1
 	Const IDENTITY:Byte = 5
-	Const LEVEL_NAME:Byte = 10
-	Const ENVIRONMENT_STATE:Byte = 15
-	Const VEHICLE_STATE_UPDATE:Byte = 20
+	'Const LEVEL_NAME:Byte = 10
+	'Const ENVIRONMENT_STATE:Byte = 15
+	Const AVATAR_STATE_UPDATE:Byte = 20
+	Const SPAWN_AGENT:Byte = 30
+	Const AGENT_STATE_UPDATE:Byte = 31
 	Const CHAT_MESSAGE:Byte = 100
 
 	Function decode$( code:Byte )
 		Select code
 			Case READY; Return "READY"
 			Case IDENTITY; Return "IDENTITY"
-			Case LEVEL_NAME; Return "LEVEL_NAME"
-			Case ENVIRONMENT_STATE; Return "ENVIRONMENT_STATE"
-			Case VEHICLE_STATE_UPDATE; Return "VEHICLE_STATE_UPDATE"
+			'Case LEVEL_NAME; Return "LEVEL_NAME"
+			'Case ENVIRONMENT_STATE; Return "ENVIRONMENT_STATE"
+			Case AVATAR_STATE_UPDATE; Return "AVATAR_STATE_UPDATE"
 			Case CHAT_MESSAGE; Return "CHAT_MESSAGE"
 			Default; Return String.FromInt( Int( code ))
 		End Select

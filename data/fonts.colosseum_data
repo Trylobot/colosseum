@@ -73,6 +73,14 @@
 	},
 	{
 		class: "font",
+		key: "consolas_bold_10",
+		object: {
+			path: "fonts/consolas_bold.ttf",
+			size: 10
+		}
+	},
+	{
+		class: "font",
 		key: "consolas_bold_12",
 		object: {
 			path: "fonts/consolas_bold.ttf",

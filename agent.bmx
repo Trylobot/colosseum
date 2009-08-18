@@ -161,6 +161,16 @@ Type AGENT Extends PHYSICAL_OBJECT
 		Return em
 	End Method
 	
+	Method write_state_to_stream( stream:TStream )
+		Super.write_state_to_stream( stream ) 'PHYSICAL_OBJECT
+		stream.WriteFloat( cur_health )
+	End Method
+	
+	Method read_state_from_stream( stream:TStream )
+		Super.read_state_from_stream( stream )
+		cur_health = stream.ReadFloat()
+	End Method
+	
 End Type
 
 Function Create_AGENT_from_json:AGENT( json:TJSON )

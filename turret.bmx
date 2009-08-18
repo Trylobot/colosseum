@@ -291,6 +291,15 @@ Type TURRET Extends POINT
 			tb.attach_at( tb.attach_x * scale, tb.attach_y * scale )
 		Next
 	End Method
+	
+	Method write_state_to_stream( stream:TStream )
+		stream.WriteFloat( ang )
+	End Method
+	
+	Method read_state_from_stream( stream:TStream )
+		ang = stream.ReadFloat()
+	End Method
+	
 End Type
 
 Function Create_TURRET_from_json:TURRET( json:TJSON )
