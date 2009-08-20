@@ -1,1 +1,1 @@
-"C:\Program Files\BlitzMax\bin\bmk.exe" %*
+"C:\Program Files (x86)\BlitzMax\bin\bmk.exe" %*
