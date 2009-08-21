@@ -1,7 +1,7 @@
 {
 	name: "rookie",
-	cash: 7875,
-	kills: 63,
+	cash: 1000,
+	kills: 0,
 	inventory: [
 		{
 			item_type: "turret",
@@ -10,16 +10,16 @@
 			damaged: false
 		},
 		{
+			item_type: "turret",
+			key: "light_machine_gun",
+			count: 1,
+			damaged: false
+		}
+		{
 			item_type: "chassis",
 			key: "light_tank",
 			count: 1,
 			damaged: false
-		},
-		{
-			item_type: "turret",
-			key: "light_machine_gun",
-			count: 1,
-			damaged: true
 		}
 	],
 	vehicle: {
