@@ -33,6 +33,7 @@ Const delay_self_broadcast_inputs% = 10
 Function update_network()
 	If playing_multiplayer
 		Local client:CONNECTION
+		Local client_id:NETWORK_ID
 		Local rp_id:NETWORK_ID
 		Local rp:REMOTE_PLAYER
 		
@@ -41,12 +42,9 @@ Function update_network()
 			Repeat
 				client = CONNECTION.Create( server.tcp.Accept() )
 				If client
-					'add a remote player
-					rp_id = NETWORK_ID.Create( client.local_ip, client.local_port )
-					DebugLog( " " + rp_id.ToString() + " connected" )
-					rp = REMOTE_PLAYER.Create( rp_id )
-					add_remote_player( rp )
-					'send the new client all information about self and each other already connected player
+					client_id = NETWORK_ID.Create( client.local_ip, client.local_port )
+					DebugLog( " " + client_id.ToString() + " connected" )
+					'send the new client an identity for all players (self + other connected clients)
 					write_net_identity( client.tcp, server.local_ip, server.local_port, profile.name, TJSON.Create( profile.vehicle.to_json() ))
 					For Local other:CONNECTION = EachIn clients
 						rp = get_remote_player( other.local_ip, other.local_port )
@@ -60,13 +58,12 @@ Function update_network()
 		End If
 		'process each connected client
 		For client = EachIn clients
-			rp_id = NETWORK_ID.Create( client.local_ip, client.local_port )
-			rp = get_remote_player_by_id( rp_id )
+			client_id = NETWORK_ID.Create( client.local_ip, client.local_port )
 			'remove disconnected clients
 			'TODO: automatic pause-game & attempt reconnect for a bit
 			If client.tcp.GetState() <> 1
-				remote_players.Remove( rp_id.ToString() )
-				DebugLog( " " + rp_id.ToString() + " disconnected" )
+				remote_players.Remove( client_id.ToString() )
+				DebugLog( " " + client_id.ToString() + " disconnected" )
 				client.tcp.Close()
 				clients.Remove( client )
 				Continue 'next client
@@ -78,14 +75,13 @@ Function update_network()
 					Local message_type:Byte = client.tcp.ReadByte()
 					Select message_type
 						
-						Case NET.IDENTITY
+						Case NET.IDENTITY 'directive: create remote player from given identity
+							rp_id = NETWORK_ID.Create( client.tcp.ReadInt(), client.tcp.ReadShort() )
 							DebugLog( " " + NET.decode( message_type ) + " from " + rp_id.ToString() )
+							rp = REMOTE_PLAYER.Create( rp_id )
+							add_remote_player( rp )
 							Local data$[] = client.tcp.ReadLine().Split( "~t" )
-							rp.name = data[0]
-							rp.vehicle_json = TJSON.Create( data[1] )
-							Local vd:VEHICLE_DATA = Create_VEHICLE_DATA_from_json( rp.vehicle_json )
-							rp.avatar = create_player( vd, False, False )
-							rp.brain = Create_CONTROL_BRAIN( rp.avatar, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
+							rp.load_net_identity( data[0], data[1] )
 						
 						Case NET.READY
 							DebugLog( " " + NET.decode( message_type ) + " from " + rp_id.ToString() )
@@ -113,7 +109,7 @@ Function update_network()
 							End If
 							
 						Default 'unknown - indicates error has occurred
-							DebugLog( " WARNING: unknown message " + NET.decode( message_type ) + " received from TCP/" + rp_id.ToString() )
+							DebugLog( " WARNING: unknown message " + NET.decode( message_type ) + " received from TCP/" + client_id.ToString() )
 							
 					End Select
 				End While
@@ -125,18 +121,21 @@ Function update_network()
 					Select message_type
 						
 						Case NET.AVATAR_STATE_UPDATE
-							rp.avatar.read_state_from_stream( client.udp )
-							If network_host
-								'TODO: relay update to other players (like chat messages)
-								
+							rp = get_remote_player( client.udp.ReadInt(), client.udp.ReadShort() )
+							If rp
+								rp.avatar.read_state_from_stream( client.udp )
+								If network_host
+									'TODO: relay update to other players (like chat messages)
+									
+								End If
 							End If
 							
 						Case NET.AVATAR_INPUTS_UPDATE
 							
-							If network_host
+							'If network_host
 								'TODO: relay update to other players (like chat messages)
 								
-							End If
+							'End If
 						
 						Default 'unknown - indicates error has occurred
 							DebugLog( " WARNING: unknown message " + NET.decode( message_type ) + " received from UDP/" + rp_id.ToString() )
@@ -153,18 +152,18 @@ Function update_network()
 				last_self_broadcast_avatar_state_ts = now()
 				If network_host	'server
 					For client = EachIn clients
-						client.tcp.WriteByte( NET.AVATAR_STATE_UPDATE )
-						client.tcp.WriteInt( server.local_ip )
-						client.tcp.WriteShort( server.local_port )
-						game.player.write_state_to_stream( client.tcp )
-						While client.tcp.SendMsg() ; End While
+						client.udp.WriteByte( NET.AVATAR_STATE_UPDATE )
+						client.udp.WriteInt( server.local_ip )
+						client.udp.WriteShort( server.local_port )
+						game.player.write_state_to_stream( client.udp )
+						While client.udp.SendMsg() ; End While
 					Next
 				Else 'client
-					server.tcp.WriteByte( NET.AVATAR_STATE_UPDATE )
-					server.tcp.WriteInt( server.local_ip )
-					server.tcp.WriteShort( server.local_port )
-					game.player.write_state_to_stream( server.tcp )
-					While server.tcp.SendMsg() ; End While
+					server.udp.WriteByte( NET.AVATAR_STATE_UPDATE )
+					server.udp.WriteInt( server.local_ip )
+					server.udp.WriteShort( server.local_port )
+					game.player.write_state_to_stream( server.udp )
+					While server.udp.SendMsg() ; End While
 				End If
 			End If
 			'avatar inputs (from an input device on the local player's computer)
@@ -217,31 +216,37 @@ Function write_net_identity( out:TStream, ip%, port:Short, name$, vehicle:TJSON 
 	out.WriteLine( name + "~t" + vehicle.ToString() )
 End Function
 
-Function network_listen()
-	Local tcp_server:TTCPStream = New TTCPStream
-	tcp_server.Init()
-	tcp_server.SetLocalPort( Short( network_port ))
-  tcp_server.Listen()
-	DebugLog( " listening on port " + tcp_server.GetLocalPort() )
-	server = CONNECTION.Create( tcp_server )
+Function network_game_listen()
+	network_host = True
+	playing_multiplayer = True
+	Local tcp:TTCPStream = New TTCPStream
+	tcp.Init()
+	tcp.SetLocalPort( Short( network_port ))
+  tcp.Listen()
+	Local self_id:NETWORK_ID = NETWORK_ID.Create( tcp.GetLocalIP(), tcp.GetLocalPort() )
+	DebugLog( " LISTENING at " + self_id.ToString() )
+	server = CONNECTION.Create( tcp )
 End Function
 
-Function connect_to_network_game%()
+Function network_game_connect%()
+	network_host = False
+	playing_multiplayer = True
 	Local server_id:NETWORK_ID = NETWORK_ID.Create( TNetwork.IntIP( network_ip_address ), Short( network_port ))
-	Local server_player:REMOTE_PLAYER = REMOTE_PLAYER.Create( server_id )
-	Local server_tcp:TTCPStream = New TTCPStream
-	server_tcp.Init()
-	server_tcp.SetRemoteIP( server_id.ip )
-	server_tcp.SetRemotePort( server_id.port )
-	server_tcp.SetLocalPort( Short( Rand( min_random_port, max_random_port )))
-	If server_tcp.Connect()
-		add_remote_player( server_player )
-		server = CONNECTION.Create( server_tcp )
-		write_net_identity( server.tcp, server.remote_ip, server.remote_port, profile.name, TJSON.Create( profile.vehicle.to_json() ))
+	Local tcp:TTCPStream = New TTCPStream
+	tcp.Init()
+	tcp.SetRemoteIP( server_id.ip )
+	tcp.SetRemotePort( server_id.port )
+	tcp.SetLocalPort( Short( Rand( min_random_port, max_random_port )))
+	If tcp.Connect()
+		Local self_id:NETWORK_ID = NETWORK_ID.Create( tcp.GetLocalIP(), tcp.GetLocalPort() )
+		DebugLog( " CONNECTED to " + server_id.ToString() + "~n FROM " + self_id.ToString() )
+		server = CONNECTION.Create( tcp )
+		write_net_identity( server.tcp, server.local_ip, server.local_port, profile.name, TJSON.Create( profile.vehicle.to_json() ))
 		server.tcp.WriteByte( NET.READY )
 		While server.tcp.SendMsg() ; End While
 		Return True 'connection successfully initiated
 	Else
+		DebugLog( " CONNECTION FAILED to " + server_id.ToString() )
 		Return False 'connection to server failed
 	End If
 End Function
@@ -318,12 +323,22 @@ Type REMOTE_PLAYER
 	Field vehicle_json:TJSON
 	Field avatar:COMPLEX_AGENT
 	Field brain:CONTROL_BRAIN
+	Field loaded%
 	
 	Function Create:REMOTE_PLAYER( net_id:NETWORK_ID )
 		Local rp:REMOTE_PLAYER = New REMOTE_PLAYER
 		rp.net_id = net_id
+		rp.loaded = False
 		Return rp
 	End Function
+	
+	Method load_net_identity( name$, vehicle_json_string$ )
+		Self.name = name
+		vehicle_json = TJSON.Create( vehicle_json_string )
+		avatar = create_player( Create_VEHICLE_DATA_from_json( vehicle_json ), False, False )
+		brain = Create_CONTROL_BRAIN( avatar, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
+		loaded = True
+	End Method
 End Type
 
 Function add_remote_player( rp:REMOTE_PLAYER )

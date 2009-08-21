@@ -247,16 +247,11 @@ Type TURRET Extends POINT
 	End Method
 	
 	Method play_firing_sound()
-		If snd_fire <> Null
-			Local ch:TChannel = AllocChannel()
-			CueSound( snd_fire, ch )
-			If parent.id <> get_player_id()
-				SetChannelVolume( ch, 0.1500 )
-			End If
-			SetChannelRate( ch, Rnd( 0.90, 1.15 ))
-			ResumeChannel( ch )
-			audio_channels.AddLast( ch )
+		Local vol# = 1.00
+		If parent.id <> get_player_id()
+			vol = 0.15
 		End If
+		play_sound( snd_fire, vol, 0.12 )
 	End Method
 	
 	Method add_turret_barrel:TURRET_BARREL( other_tb:TURRET_BARREL, slot% )

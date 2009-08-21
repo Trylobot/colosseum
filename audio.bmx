@@ -7,8 +7,28 @@ EndRem
 '______________________________________________________________________________
 'Audio
 Global audio_channels:TList = CreateList()
+Global bg_music:TChannel
+Global engine_start:TChannel
+Global engine_idle:TChannel
+Global engine_start_ts%
 
+Rem
+Function play_all_audio()
+	If game
+		game.player_engine_running = True
+	End If
+End Function
+Function play_sound( sound:TSound, volume# = 1.0, pitch_variance# = 0.0 )
+End Function
+Function play_bg_music()
+End Function
+Function start_player_engine()
+End Function
+Function tweak_engine_idle()
+End Function
+End Rem
 
+'Rem
 Function play_all_audio()
 	play_bg_music()
 	
@@ -23,22 +43,24 @@ Function play_all_audio()
 		End If
 	End If
 	
-	Local ch:TChannel
-	Local ch_link:TLink = audio_channels.FirstLink(), next_ch_link:TLink
-	If ch_link <> Null
-		While ch_link <> Null
-			ch = TChannel( ch_link.Value() )
-			If Not ch.Playing()
-				ch.STOP()
-			End If
-			next_ch_link = ch_link.NextLink()
-			ch_link.Remove()
-			ch_link = next_ch_link
-		End While
+	For local channel:TChannel = eachin audio_channels
+		If Not channel.Playing()
+			channel.Stop()
+			audio_channels.Remove( channel )
+		End If
+	Next
+End Function
+
+Function play_sound( sound:TSound, volume# = 1.0, pitch_variance# = 0.0 )
+	If sound <> Null
+		Local channel:TChannel = AllocChannel()
+		sound.Cue( channel )
+		channel.SetVolume( volume )
+		channel.SetRate( Rnd( 1.0 - pitch_variance, 1.0 + pitch_variance ))
+		ResumeChannel( channel )
+		audio_channels.AddLast( channel )
 	End If
 End Function
-'______________________________________________________________________________
-Global bg_music:TChannel
 
 Function play_bg_music()
 	If bg_music = Null
@@ -52,10 +74,6 @@ Function play_bg_music()
 	End If
 End Function
 
-'______________________________________________________________________________
-Global engine_start:TChannel
-Global engine_idle:TChannel
-
 Function start_player_engine()
 	If engine_start <> Null
 		StopChannel( engine_start )
@@ -67,8 +85,6 @@ Function start_player_engine()
 	ResumeChannel( engine_start )
 	game.player_engine_ignition = False
 End Function
-
-Global engine_start_ts%
 
 Function tweak_engine_idle()
 	If Not game.player_engine_running	
@@ -111,16 +127,5 @@ Function tweak_engine_idle()
 		End If
 	End If
 End Function
-
-Function play_sound( sound:TSound, volume# = 1.0, pitch_variance# = 0.0 )
-	If sound <> Null
-		Local ch:TChannel = AllocChannel()
-		CueSound( sound, ch )
-		SetChannelVolume( ch, volume )
-		SetChannelRate( ch, Rnd( 1.0 - pitch_variance, 1.0 + pitch_variance ))
-		ResumeChannel( ch )
-		audio_channels.AddLast( ch )
-	End If
-End Function
-
+'End Rem
 

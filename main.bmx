@@ -63,6 +63,8 @@ debug_init()
 AppTitle = My.Application.AssemblyInfo
 If My.Application.DebugOn Then AppTitle :+ " " + My.Application.Platform + " (Debug)"
 SetGraphicsDriver GLMax2DDriver()
+'SetGraphicsDriver GLGraphicsDriver()
+'SetGraphicsDriver D3D7Max2DDriver() 
 
 process_command_line_arguments()
 
