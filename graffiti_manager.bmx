@@ -23,7 +23,7 @@ Type GRAFFITI_MANAGER
 				Cls
 				Local changed% = False
 				For Local p:PARTICLE = EachIn particle_list
-					If bounds[r,c].contains_partly( p.get_bounding_box )
+					If bounds[r,c].contains_partly( p.get_bounding_box() )
 						If Not changed
 							changed = True
 							SetColor( 255, 255, 255 )
