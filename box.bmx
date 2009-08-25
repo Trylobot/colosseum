@@ -23,6 +23,11 @@ Type BOX
 	Method contains%( other:BOX )
 		Return (other.x >= x And other.y >= y And other.x + other.w < x + w And other.y + other.h < y + h)
 	End Method
+	
+	Method contains_partly%( other:BOX )
+		Return ((other.x >= x And other.y >= y And other.x < x + w And other.y < y + h) Or ..
+		        (other.x + other.w >= x And other.y + other.h >= y And other.x + other.w < x + w And other.y + other.h < y + h))
+	End Method
 
 End Type
 
