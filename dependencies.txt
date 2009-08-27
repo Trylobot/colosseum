@@ -1,0 +1,15 @@
+DEPENDENCIES
+------------
+
+  agent.bmx
+    physical_object.bmx
+    GLOBAL game
+      game.near_to()
+      game.deal_damage()
+    audio.bmx
+    particle.bmx
+    force.bmx
+    emitter.bmx
+    json.bmx
+  
+  
