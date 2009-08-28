@@ -1,4 +1,6 @@
 DEPENDENCIES
+  file
+    depends-on
 ------------
 
   agent.bmx
@@ -11,5 +13,70 @@ DEPENDENCIES
     force.bmx
     emitter.bmx
     json.bmx
+    -end-
+  
+  ai_type.bmx
+    json.bmx
+    -end-
+    
+  audio.bmx
+    GLOBAL game
+      game.player_engine_ignition
+      game.player_engine_running
+    -end-
+    
+  box.bmx
+    -end-
+    
+  cell.bmx
+    -end-
+  
+  collide.bmx
+    GLOBAL game
+      game.paused
+      game.agent_lists
+      game.walls
+      game.door_lists
+      game.human_participation
+      game.player
+      game.deal_damage()
+    agent.bmx
+    projectile.bmx
+    pickup.bmx
+    door.bmx
+    widget.bmx
+    box.bmx
+    
+  color.bmx
+    -end-
+  
+  compatibility_data.bmx
+    json.bmx
+    -end-
+  
+  complex_agent.bmx
+    agent.bmx
+    turret.bmx
+    cVEC.bmx
+    force.bmx
+    particle.bmx
+    widget.bmx
+    point.bmx
+    emitter.bmx
+    pickup.bmx
+    json.bmx
+    
+  console.bmx
+    -end-
+    
+  
+    
+    
+    
   
   
+  
+  
+  
+  
+    
