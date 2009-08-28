@@ -1,82 +1,386 @@
 DEPENDENCIES
-  file
-    depends-on
+	file
+		depends-on
 ------------
 
-  agent.bmx
-    physical_object.bmx
-    GLOBAL game
-      game.near_to()
-      game.deal_damage()
-    audio.bmx
-    particle.bmx
-    force.bmx
-    emitter.bmx
-    json.bmx
-    -end-
-  
-  ai_type.bmx
-    json.bmx
-    -end-
-    
-  audio.bmx
-    GLOBAL game
-      game.player_engine_ignition
-      game.player_engine_running
-    -end-
-    
-  box.bmx
-    -end-
-    
-  cell.bmx
-    -end-
-  
-  collide.bmx
-    GLOBAL game
-      game.paused
-      game.agent_lists
-      game.walls
-      game.door_lists
-      game.human_participation
-      game.player
-      game.deal_damage()
-    agent.bmx
-    projectile.bmx
-    pickup.bmx
-    door.bmx
-    widget.bmx
-    box.bmx
-    
-  color.bmx
-    -end-
-  
-  compatibility_data.bmx
-    json.bmx
-    -end-
-  
-  complex_agent.bmx
-    agent.bmx
-    turret.bmx
-    cVEC.bmx
-    force.bmx
-    particle.bmx
-    widget.bmx
-    point.bmx
-    emitter.bmx
-    pickup.bmx
-    json.bmx
-    
-  console.bmx
-    -end-
-    
-  
-    
-    
-    
-  
-  
-  
-  
-  
-  
-    
+	main.bmx
+		debug.bmx
+		core.bmx
+		data.bmx
+		input.bmx
+		net.bmx
+		collide.bmx
+		update.bmx
+		draw.bmx
+		audio.bmx
+		box.bmx
+		---
+
+	core.bmx
+		player_profile.bmx
+		level.bmx
+		environment.bmx
+		complex_agent.bmx
+		control_brain.bmx
+		vehicle_data.bmx
+		inventory_data.bmx
+		turret.bmx
+		data.bmx
+			get_*() [hmmm?]
+		menu.bmx
+		menu_option.bmx
+		net.bmx
+		level_editor.bmx
+		GLOBAL window_w
+		GLOBAL window_h
+		GLOBAL window:BOX
+		box.bmx
+		---
+	
+	draw.bmx
+		GLOBAL game
+		GLOBAL FLAG_in_menu
+		?
+	
+	update.bmx
+		?
+	
+	level_editor.bmx
+		?
+	
+	vehicle_editor.bmx
+		?
+	
+	agent.bmx
+		physical_object.bmx
+		GLOBAL game
+			game.near_to()
+			game.deal_damage()
+		audio.bmx
+		particle.bmx
+		force.bmx
+		emitter.bmx
+		json.bmx
+		---
+	
+	ai_type.bmx
+		json.bmx
+		---
+		
+	audio.bmx
+		GLOBAL game
+			game.player_engine_ignition
+			game.player_engine_running
+		---
+		
+	box.bmx
+		---
+		
+	cell.bmx
+		---
+	
+	collide.bmx
+		GLOBAL game
+			game.paused
+			game.agent_lists
+			game.walls
+			game.door_lists
+			game.human_participation
+			game.player
+			game.deal_damage()
+		agent.bmx
+		projectile.bmx
+		pickup.bmx
+		door.bmx
+		widget.bmx
+		box.bmx
+		
+	color.bmx
+		---
+	
+	compatibility_data.bmx
+		json.bmx
+		---
+	
+	complex_agent.bmx
+		agent.bmx
+		turret.bmx
+		vec.bmx
+		force.bmx
+		particle.bmx
+		widget.bmx
+		point.bmx
+		emitter.bmx
+		pickup.bmx
+		json.bmx
+		---
+		
+	console.bmx
+		draw.bmx
+			screencap()
+		---
+		
+	control_brain.bmx
+		complex_agent.bmx
+		ai_type.bmx
+		vec.bmx
+		agent.bmx
+		point.bmx
+		GLOBAL game
+			game.spawn_unit()
+		cell.bmx
+		box.bmx
+		---
+		
+	data.bmx
+		agent.bmx
+		particle.bmx
+		emitter.bmx
+		projectile.bmx
+		pickup.bmx
+		turret_barrel.bmx
+		turret.bmx
+		widget.bmx
+		ai_type.bmx
+		complex_agent.bmx
+		compatibility_data.bmx
+		level.bmx
+		json.bmx
+		player_profile.bmx
+		---
+	
+	door.bmx
+		data.bmx	
+			get_*()
+		managed_object.bmx
+		point.bmx
+		widget.bmx
+		particle.bmx
+		---
+	
+	emitter.bmx
+		managed_object.bmx
+		point.bmx
+		range.bmx
+		particle.bmx
+		projectile.bmx
+		json.bmx
+		---
+		
+	environment.bmx
+		vec.bmx
+		level.bmx
+		pathing_structure.bmx
+		box.bmx
+		cell.bmx
+		complex_agent.bmx
+		agent.bmx
+		door.bmx
+		particle.bmx
+		emitter.bmx
+		widget.bmx
+		projectile.bmx
+		control_brain.bmx
+		point.bmx
+		prop_data.bmx
+		GLOBAL profile
+			profile.kills
+		spawner.bmx
+		physical_object.bmx
+		---
+	
+	force.bmx
+		managed_object.bmx
+		physical_object.bmx [CYCLIC]
+			Field parent 'reason unknown
+		---
+		
+	graffiti_manager.bmx
+		box.bmx
+		---
+	
+	input.bmx
+		point.bmx
+		vec.bmx
+		console.bmx
+		GLOBAL FLAG_in_menu
+		GLOBAL game
+			game.human_participation
+			game.player_brain
+			game.game_in_progress
+			game.player_engine_running
+			game.game_over
+		GLOBAL profile
+			profile.input_method
+		GLOBAL FLAG_ignore_mouse_1
+		menu.bmx
+		core.bmx
+			get_current_menu()
+			COMMAND
+		audio.bmx
+		draw.bmx
+			screenshot()
+		core.bmx
+			kill_tally() [CYCLIC]
+		---
+	
+	inventory_data.bmx
+		json.bmx
+		---
+	
+	json.bmx
+		---
+		
+	level.bmx
+		cell.bmx
+		spawner.bmx
+		prop_data.bmx
+		box.bmx
+		vec.bmx
+		json.bmx
+		---
+		
+	managed_object.bmx
+		---
+	
+	menu.bmx
+		menu_option.bmx
+		box.bmx
+		console.bmx
+		inventory_data.bmx
+		core.bmx [CYCLIC]
+			COMMAND
+		---
+	
+	menu_option.bmx
+		---
+	
+	misc.bmx
+		vec.bmx
+		point.bmx
+		---
+	
+	net.bmx
+		connection.bmx [doesn't exist yet]
+		remote_player.bmx [doesn't exist yet]
+		chat_message.bmx [doesn't exist yet]
+		network_id.bmx [doesn't exist yet]
+		GLOBAL game
+			game.player [UNNECESSARY?]
+		---
+	
+	particle.bmx
+		point.bmx
+		json.bmx
+		GLOBAL game
+			game.particle_list_* [CYCLIC] [UNNECESSARY?]
+		box.bmx
+		---
+	
+	path_queue.bmx
+		cell.bmx
+		pathing_structure.bmx [CYCLIC]
+			Field parent 'cost calculation
+		---
+	
+	pathing_structure.bmx
+		cell.bmx
+		path_queue.bmx
+		level.bmx [UNNECESSARY?]
+		---
+	
+	physical_object.bmx
+		point.bmx
+		force.bmx
+		---
+	
+	pickup.bmx
+		json.bmx
+		---
+	
+	player_profile.bmx
+		inventory_data.bmx
+		vehicle_data.bmx
+		progress_data.bmx
+		json.bmx
+		---
+	
+	point.bmx
+		managed_object.bmx
+		vec.bmx
+		json.bmx
+		---
+		
+	progress_data.bmx
+		json.bmx
+		---
+	
+	projectile.bmx
+		physical_object.bmx
+		emitter.bmx
+		GLOBAL game
+			auto_manage() [CYCLIC]
+		agent.bmx
+		audio.bmx
+		json.bmx
+		---
+	
+	prop_data.bmx
+		point.bmx
+		json.bmx
+		---
+	
+	range.bmx
+		---
+	
+	spawner.bmx
+		point.bmx
+		json.bmx
+		---
+	
+	transform_state.bmx
+		json.bmx
+		---
+	
+	turret.bmx
+		complex_agent.bmx [CYCLIC]
+			Field parent -- could use a POINT
+		turret_barrel.bmx
+		emitter.bmx
+		audio.bmx
+		json.bmx
+		---
+	
+	turret_barrel.bmx
+		turret.bmx [CYCLIC]
+			Field parent -- could use a POINT
+		emitter.bmx
+		json.bmx
+		---
+	
+	vec.bmx
+		---
+	
+	vehicle_data.bmx
+		turret.bmx [UNNECESSARY]
+		data.bmx [CYCLIC]
+			get_turret()
+		compatibility_data.bmx
+		inventory_data.bmx
+		json.bmx
+		---
+	
+	widget.bmx
+		managed_object.bmx
+		point.bmx
+		transform_state.bmx
+		json.bmx
+		---
+	
+	win32.bmx
+		---
+
+	debug.bmx
+		*fluid/unimportant/dynamic*
+		---
+	
