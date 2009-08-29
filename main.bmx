@@ -15,6 +15,75 @@ Rem
 	Because of the persistent elements, you may save and load your progress to/from files on disk; these files are not encoded or encrypted.
 
 EndRem
+SuperStrict
+Framework brl.GLMax2D
+'Framework brl.GLGraphics
+'Framework brl.D3D7Max2D
+?Win32
+Import "win32.bmx"
+?
+Import brl.FreeTypeFont
+Import brl.FreeAudioAudio
+Import brl.OGGLoader
+Import brl.PNGLoader
+Import brl.Random
+Import brl.Map
+Import vertex.bnetex
+
+Const version_major%    = 0
+Const version_minor%    = 4
+Const version_revision% = 0
+
+Include "misc.bmx"
+Include "json.bmx"
+Include "inventory_data.bmx"
+Include "vehicle_data.bmx"
+Include "progress_data.bmx"
+Include "compatibility_data.bmx"
+Include "player_profile.bmx"
+Include "data.bmx"
+Include "managed_object.bmx"
+Include "point.bmx"
+Include "box.bmx"
+Include "vec.bmx"
+Include "range.bmx"
+Include "cell.bmx"
+Include "color.bmx"
+Include "particle.bmx"
+Include "pickup.bmx"
+Include "transform_state.bmx"
+Include "widget.bmx"
+Include "force.bmx"
+Include "physical_object.bmx"
+Include "audio.bmx"
+Include "emitter.bmx"
+Include "agent.bmx"
+Include "projectile.bmx"
+Include "turret_barrel.bmx"
+Include "turret.bmx"
+Include "complex_agent.bmx"
+Include "vehicle_editor.bmx"
+Include "ai_type.bmx"
+Include "control_brain.bmx"
+Include "spawner.bmx"
+Include "prop_data.bmx"
+Include "level.bmx"
+Include "level_editor.bmx"
+Include "path_queue.bmx"
+Include "pathing_structure.bmx"
+Include "door.bmx"
+Include "environment.bmx"
+Include "update.bmx"
+Include "draw.bmx"
+Include "collide.bmx"
+Include "console.bmx"
+Include "input.bmx"
+Include "menu_option.bmx"
+Include "menu.bmx"
+Include "net.bmx"
+Include "graffiti_manager.bmx"
+Include "debug.bmx"
+Include "core.bmx"
 
 'Graphics
 Global window_w%
@@ -60,8 +129,10 @@ debug_init()
 ?
 
 'Window Initialization and Drawing device
-AppTitle = My.Application.AssemblyInfo
-If My.Application.DebugOn Then AppTitle :+ " " + My.Application.Platform + " (Debug)"
+AppTitle = "Colosseum " + version_major + "." + version_minor + "." + version_revision
+?Debug
+AppTitle :+ " DEBUG"
+?
 SetGraphicsDriver GLMax2DDriver()
 'SetGraphicsDriver GLGraphicsDriver()
 'SetGraphicsDriver D3D7Max2DDriver() 

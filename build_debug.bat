@@ -1,2 +1,2 @@
-call bmk.cmd makeapp -a -d -o Colosseum.DEBUG.exe colosseum.blide_project.bmx
+call bmk.cmd makeapp -a -d -o Colosseum.DEBUG.exe main.bmx
 pause
