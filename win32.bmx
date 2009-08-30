@@ -2,7 +2,6 @@ Rem
 	win32.bmx
 	This is a COLOSSEUM project BlitzMax source file.
 EndRem
-
 Strict
 
 ?Win32

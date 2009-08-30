@@ -3,6 +3,10 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "managed_object.bmx"
+Import "json.bmx"
+Import "vec.bmx"
 
 '______________________________________________________________________________
 Function Create_POINT:POINT( ..
@@ -161,5 +165,11 @@ Function Create_POINT_from_json:POINT( json:TJSON )
 	If json.TypeOf( "acc_y" ) <> JSON_UNDEFINED   Then p.acc_y = json.GetNumber( "acc_y" )
 	If json.TypeOf( "ang_acc" ) <> JSON_UNDEFINED Then p.ang_acc = json.GetNumber( "ang_acc" )
 	Return p
+End Function
+
+Function remove_origin:POINT( p:POINT )
+	Local ox#, oy#
+	GetOrigin( ox, oy )
+	Return POINT( Create_POINT( p.pos_x - ox, p.pos_y - oy ))
 End Function
 

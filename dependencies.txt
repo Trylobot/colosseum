@@ -1,7 +1,4 @@
 DEPENDENCIES
-	file
-		depends-on
-------------
 
 	input.bmx
 		point.bmx
@@ -144,18 +141,73 @@ DEPENDENCIES
 		---
 	
 	draw.bmx
-		GLOBAL game
+		environment.bmx
+		core.bmx
+			GLOBAL game
 		GLOBAL FLAG_in_menu
-		?
-	
+		GLOBAL window_w, window_h
+		GLOBAL esc_held
+		particle.bmx
+		door.bmx
+		agent.bmx
+		projectile.bmx
+		pickup.bmx
+		complex_agent.bmx
+		widget.bmx
+		net.bmx
+		control_brain.bmx
+		menu.bmx
+		inventory_data.bmx
+		point.bmx
+		turret.bmx
+		vec.bmx
+		box.bmx
+		level.bmx
+		---
+		
 	update.bmx
-		?
+		environment.bmx
+		core.bmx
+			GLOBAL game
+		pickup.bmx
+		projectile.bmx
+		particle.bmx
+		control_brain.bmx
+		complex_agent.bmx
+		agent.bmx
+		emitter.bmx
+		door.bmx
+		widget.bmx
+		---
 	
 	level_editor.bmx
-		?
+		level.bmx
+		vec.bmx
+		point.bmx
+		spawner.bmx
+		prop_data.bmx
+		data.bmx
+			get_*()
+		core.bmx
+			menu_command()
+			COMMAND{}
+			MENU_ID{}
+		GLOBAL mouse
+		console.bmx
+		cell.bmx
+		complex_agent.bmx
+		agent.bmx
+		---
 	
 	vehicle_editor.bmx
-		?
+		vehicle_data.bmx
+		complex_agent.bmx
+		inventory_data.bmx
+		point.bmx
+		turret.bmx
+		vec.bmx
+		box.bmx
+		---
 	
 	audio.bmx
 		GLOBAL game
@@ -316,11 +368,6 @@ DEPENDENCIES
 		json.bmx
 		---
 	
-	misc.bmx
-		vec.bmx
-		point.bmx
-		---
-	
 	console.bmx
 		draw.bmx
 			screencap()
@@ -364,6 +411,10 @@ DEPENDENCIES
 		---
 	
 	vec.bmx
+		misc.bmx
+		---
+	
+	misc.bmx
 		---
 	
 	range.bmx
