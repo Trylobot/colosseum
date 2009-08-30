@@ -3,9 +3,17 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-
+SuperStrict
 
 '______________________________________________________________________________
+Global turret_barrel_map:TMap = CreateMap()
+
+Function get_turret_barrel:TURRET_BARREL( key$, copy% = True )
+	Local tb:TURRET_BARREL = TURRET_BARREL( turret_barrel_map.ValueForKey( Key.toLower() ))
+	If copy And tb Then Return TURRET_BARREL( tb.clone())
+	Return tb
+End Function
+
 Function Create_TURRET_BARREL:TURRET_BARREL( ..
 img:TImage = Null, ..
 reload_time% = 1000, ..

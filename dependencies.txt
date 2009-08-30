@@ -241,7 +241,7 @@ DEPENDENCIES
 		point.bmx
 		range.bmx
 		particle.bmx
-		projectile.bmx
+		projectile.bmx [CYCLIC]
 		json.bmx
 		---
 		
@@ -289,7 +289,7 @@ DEPENDENCIES
 	
 	projectile.bmx
 		physical_object.bmx
-		emitter.bmx
+		emitter.bmx [CYCLIC]
 		GLOBAL game
 			auto_manage() [CYCLIC]
 		agent.bmx
@@ -326,6 +326,12 @@ DEPENDENCIES
 		managed_object.bmx
 		point.bmx
 		transform_state.bmx
+		json.bmx
+		---
+	
+	inventory_data.bmx
+		complex_agent.bmx
+		turret.bmx
 		json.bmx
 		---
 	
@@ -397,8 +403,8 @@ DEPENDENCIES
 		box.bmx
 		---
 	
-	inventory_data.bmx
-		json.bmx
+	vec.bmx
+		misc.bmx
 		---
 	
 	json.bmx
@@ -408,10 +414,6 @@ DEPENDENCIES
 		---
 	
 	managed_object.bmx
-		---
-	
-	vec.bmx
-		misc.bmx
 		---
 	
 	misc.bmx

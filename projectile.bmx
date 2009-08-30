@@ -3,8 +3,17 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
 
 '______________________________________________________________________________
+Global projectile_map:TMap = CreateMap()
+
+Function get_projectile:PROJECTILE( key$, source_id% = NULL_ID, copy% = True )
+	Local proj:PROJECTILE = PROJECTILE( projectile_map.ValueForKey( Key.toLower() ))
+	If copy And proj Then Return proj.clone( source_id )
+	Return proj
+End Function
+
 Const PROJECTILE_MEMBER_EMITTER_CONSTANT% = 0
 Const PROJECTILE_MEMBER_EMITTER_PAYLOAD% = 1
 

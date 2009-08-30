@@ -3,8 +3,17 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
 
 '______________________________________________________________________________
+Global level_map:TMap = CreateMap()
+
+Function get_level:LEVEL( key$, copy% = True ) 'returns read-only reference
+	Local lev:LEVEL = LEVEL( level_map.ValueForKey( Key.toLower() ))
+	'If copy Then Return ...
+	Return lev
+End Function
+
 Const LINE_TYPE_HORIZONTAL% = 1
 Const LINE_TYPE_VERTICAL% = 2
 

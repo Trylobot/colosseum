@@ -3,8 +3,17 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
 
 '______________________________________________________________________________
+Global pickup_map:TMap = CreateMap() 
+
+Function get_pickup:PICKUP( key$, copy% = True )
+	Local pkp:PICKUP = PICKUP( pickup_map.ValueForKey( Key.toLower() ))
+	If copy And pkp Then Return pkp.clone()
+	Return pkp
+End Function
+
 Type PICKUP Extends MANAGED_OBJECT
 	Const AMMO% = 1
 	Const HEALTH% = 2

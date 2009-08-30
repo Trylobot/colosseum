@@ -668,10 +668,14 @@ Type TJSONParser
 		EndIf
 	EndMethod
 	
-	Method Error( msg:String)
+	Method Error( err$ )
+		Local full_err$ = "      ERROR: " + "JSON_PARSER_ERROR; index: "+Index+"; " + err
+		?Debug
 		DebugStop
-		global_error_message :+ "JSON_PARSER_ERROR; index: "+Index+"; " + msg
-		load_error()
+		DebugLog( full_err )
+		?Not Debug
+		Notify( full_err, True )
+		?
 	EndMethod
 EndType
 

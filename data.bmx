@@ -3,6 +3,19 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "base_data.bmx"
+Import "agent.bmx"
+Import "particle.bmx"
+Import "projectile.bmx"
+Import "emitter.bmx"
+Import "widget.bmx"
+Import "pickup.bmx"
+Import "turret_barrel.bmx"
+Import "turret.bmx"
+Import "ai_type.bmx"
+Import "compatibility_data.bmx"
+Import "level.bmx"
 
 '______________________________________________________________________________
 Global settings_file_ext$ = "colosseum_settings"
@@ -39,106 +52,9 @@ Global asset_identifiers$[] = ..
 	"compatibility", ..
 	"levels" ]
 	
-Global font_map:TMap = CreateMap()
-Global sound_map:TMap = CreateMap()
-Global image_map:TMap = CreateMap()
-Global prop_map:TMap = CreateMap()
-Global particle_map:TMap = CreateMap()
-Global particle_emitter_map:TMap = CreateMap()
-Global projectile_map:TMap = CreateMap()
-Global projectile_launcher_map:TMap = CreateMap()
-Global widget_map:TMap = CreateMap()
-Global pickup_map:TMap = CreateMap() 
-Global turret_barrel_map:TMap = CreateMap()
-Global turret_map:TMap = CreateMap()
-Global ai_type_map:TMap = CreateMap()
-Global player_chassis_map:TMap = CreateMap()
-Global unit_map:TMap = CreateMap()
 Global compatibility_map:TMap = CreateMap()
 Global level_map:TMap = CreateMap()
 
-'______________________________________________________________________________
-Function get_font:TImageFont( key$ ) 'returns read-only reference
-	Return TImageFont( font_map.ValueForKey( key.toLower() ))
-End Function
-'________________________________
-Function get_sound:TSound( key$ ) 'returns read-only reference
-	Return TSound( sound_map.ValueForKey( key.toLower() ))
-End Function
-'________________________________
-Function get_image:TImage( key$ ) 'returns read-only reference
-	Return TImage( image_map.ValueForKey( key.toLower() ))
-End Function
-'________________________________
-Function get_prop:AGENT( key$, copy% = True )
-	Local ag:AGENT = AGENT( prop_map.ValueForKey( key.toLower() ))
-	If copy And ag Then Return Copy_AGENT( ag )
-	Return ag
-End Function
-'________________________________
-Function get_particle:PARTICLE( key$, new_frame% = 0, copy% = True )
-	Local part:PARTICLE = PARTICLE( particle_map.ValueForKey( key.toLower() ))
-	If copy And part Then Return part.clone( new_frame )
-	Return part
-End Function
-'________________________________
-Function get_particle_emitter:EMITTER( key$, copy% = True )
-	Local em:EMITTER = EMITTER( particle_emitter_map.ValueForKey( key.toLower() ))
-	If copy And em Then Return EMITTER( EMITTER.Copy( em ))
-	Return em
-End Function
-'________________________________
-Function get_projectile:PROJECTILE( key$, source_id% = NULL_ID, copy% = True )
-	Local proj:PROJECTILE = PROJECTILE( projectile_map.ValueForKey( key.toLower() ))
-	If copy And proj Then Return proj.clone( source_id )
-	Return proj
-End Function
-'________________________________
-Function get_projectile_launcher:EMITTER( key$, copy% = True )
-	Local lchr:EMITTER = EMITTER( projectile_launcher_map.ValueForKey( key.toLower() ))
-	If copy And lchr Then Return EMITTER( EMITTER.Copy( lchr ))
-	Return lchr
-End Function
-'________________________________
-Function get_pickup:PICKUP( key$, copy% = True )
-	Local pkp:PICKUP = PICKUP( pickup_map.ValueForKey( key.toLower() ))
-	If copy And pkp Then Return pkp.clone()
-	Return pkp
-End Function
-'________________________________
-Function get_turret_barrel:TURRET_BARREL( key$, copy% = True )
-	Local tb:TURRET_BARREL = TURRET_BARREL( turret_barrel_map.ValueForKey( key.toLower() ))
-	If copy And tb Then Return TURRET_BARREL( tb.clone())
-	Return tb
-End Function
-'________________________________
-Function get_turret:TURRET( key$, copy% = True )
-	Local tur:TURRET = TURRET( turret_map.ValueForKey( key.toLower() ))
-	If copy And tur Then Return tur.clone()
-	Return tur
-End Function
-'________________________________
-Function get_widget:WIDGET( key$, copy% = True )
-	Local w:WIDGET = WIDGET( widget_map.ValueForKey( key.toLower() ))
-	If copy And w Then Return w.clone()
-	Return w
-End Function
-'________________________________
-Function get_ai_type:AI_TYPE( key$ ) 'returns read-only reference
-	Return AI_TYPE( ai_type_map.ValueForKey( key.toLower() ))
-End Function
-'________________________________
-Function get_player_chassis:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
-	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_chassis_map.ValueForKey( key.toLower() ))
-	If copy And comp_ag Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( comp_ag ))
-	Return comp_ag
-End Function
-'________________________________
-Function get_unit:COMPLEX_AGENT( key$, alignment% = ALIGNMENT_NONE, copy% = True ) 'returns a new instance, which is a copy of the global archetype
-	Local unit:COMPLEX_AGENT = COMPLEX_AGENT( unit_map.ValueForKey( key.toLower() ))
-	If copy And unit Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit, alignment ))
-	Return unit
-End Function
 '________________________________
 Function get_compatibility:COMPATIBILITY_DATA( key$ ) 'returns read-only reference (recursive inheritance expansion)
 	Local cd:COMPATIBILITY_DATA = COMPATIBILITY_DATA( compatibility_map.ValueForKey( key.toLower() ))
@@ -153,23 +69,6 @@ Function get_level:LEVEL( key$, copy% = True ) 'returns read-only reference
 	Local lev:LEVEL = LEVEL( level_map.ValueForKey( key.toLower() ))
 	'If copy Then Return ...
 	Return lev
-End Function
-
-
-'________________________________
-Function get_inventory_object_cost%( item_type$, item_key$ )
-	Select item_type
-		Case "chassis"
-			Local cmp_ag:COMPLEX_AGENT = get_player_chassis( item_key )
-			If cmp_ag Then Return cmp_ag.cash_value ..
-			Else Return 0
-		Case "turret"
-			Local tur:TURRET = get_turret( item_key )
-			If tur Then Return tur.cash_value ..
-			Else Return 0
-		Default
-			Return 0
-	End Select
 End Function
 
 '_____________________________________________________________________________
@@ -277,22 +176,12 @@ Function load_objects%( json:TJSON, source_file$ = Null, display_progress% = Fal
 	Next
 End Function
 
-Global global_error_message$
-Function load_error()
-?Debug
-	DebugLog "      ERROR: " + global_error_message
-?Not Debug
-	If global_error_message Then Notify( "ERROR: " + global_error_message, True )
-?
-	End
-End Function
-
 '______________________________________________________________________________
 Function get_keys$[]( map:TMap )
 	Local list:TList = CreateList()
 	Local size% = 0
 	For Local key$ = EachIn MapKeys( map )
-		list.AddLast( key )
+		list.AddLast( Key )
 		size :+ 1
 	Next
 	Local array$[] = New String[ size ]

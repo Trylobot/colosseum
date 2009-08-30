@@ -3,8 +3,18 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "point.bmx"
 
 '______________________________________________________________________________
+Global turret_map:TMap = CreateMap()
+
+Function get_turret:TURRET( key$, copy% = True )
+	Local tur:TURRET = TURRET( turret_map.ValueForKey( Key.toLower() ))
+	If copy And tur Then Return tur.clone()
+	Return tur
+End Function
+
 Type TURRET Extends POINT
 	Const ENERGY% = 1
 	Const AMMUNITION% = 2

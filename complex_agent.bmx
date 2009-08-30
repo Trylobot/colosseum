@@ -3,8 +3,25 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
 
 '______________________________________________________________________________
+Global player_chassis_map:TMap = CreateMap()
+
+Function get_player_chassis:COMPLEX_AGENT( Key$, Copy% = True ) 'returns a new instance, which is a copy of the global archetype
+	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_chassis_map.ValueForKey( Key.toLower() ))
+	If copy And comp_ag Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( comp_ag ))
+	Return comp_ag
+End Function
+
+Global unit_map:TMap = CreateMap()
+
+Function get_unit:COMPLEX_AGENT( Key$, alignment% = ALIGNMENT_NONE, Copy% = True ) 'returns a new instance, which is a copy of the global archetype
+	Local unit:COMPLEX_AGENT = COMPLEX_AGENT( unit_map.ValueForKey( key.toLower() ))
+	If copy And unit Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit, alignment ))
+	Return unit
+End Function
+
 Const EVENT_ALL_STOP% = 0
 Const EVENT_TURN_RIGHT% = 1
 Const EVENT_TURN_LEFT% = 2

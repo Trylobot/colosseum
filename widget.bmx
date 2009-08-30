@@ -3,8 +3,17 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
 
 '______________________________________________________________________________
+Global widget_map:TMap = CreateMap()
+
+Function get_widget:WIDGET( Key$, Copy% = True )
+	Local w:WIDGET = WIDGET( widget_map.ValueForKey( Key.toLower() ))
+	If copy And w Then Return w.clone()
+	Return w
+End Function
+
 Const REPEAT_MODE_NONE% = 0
 Const REPEAT_MODE_CYCLIC_WRAP% = 1
 Const REPEAT_MODE_LOOP_BACK% = 2

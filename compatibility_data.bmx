@@ -3,8 +3,20 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
 
 '______________________________________________________________________________
+Global compatibility_map:TMap = CreateMap()
+
+Function get_compatibility:COMPATIBILITY_DATA( key$ ) 'returns read-only reference (recursive inheritance expansion)
+	Local cd:COMPATIBILITY_DATA = COMPATIBILITY_DATA( compatibility_map.ValueForKey( key.toLower() ))
+	If cd
+		cd = cd.clone()
+		If cd.inherits_from Then cd.inherit( get_compatibility( cd.inherits_from ))
+	End If
+	Return cd
+End Function
+
 Type COMPATIBILITY_DATA
 	Field chassis_key$
 	Field inherits_from$

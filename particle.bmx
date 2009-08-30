@@ -3,8 +3,17 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
 
 '______________________________________________________________________________
+Global particle_map:TMap = CreateMap()
+
+Function get_particle:PARTICLE( Key$, new_frame% = 0, Copy% = True )
+	Local part:PARTICLE = PARTICLE( particle_map.ValueForKey( key.toLower() ))
+	If copy And part Then Return part.clone( new_frame )
+	Return part
+End Function
+
 Const LAYER_UNSPECIFIED% = 0
 Const LAYER_FOREGROUND% = 1
 Const LAYER_BACKGROUND% = 2

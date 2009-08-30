@@ -3,8 +3,27 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "particle.bmx"
+Import "projectile.bmx"
 
 '______________________________________________________________________________
+Global particle_emitter_map:TMap = CreateMap()
+
+Function get_particle_emitter:EMITTER( Key$, Copy% = True )
+	Local em:EMITTER = EMITTER( particle_emitter_map.ValueForKey( key.toLower() ))
+	If copy And em Then Return EMITTER( EMITTER.Copy( em ))
+	Return em
+End Function
+
+Global projectile_launcher_map:TMap = CreateMap()
+
+Function get_projectile_launcher:EMITTER( Key$, Copy% = True )
+	Local lchr:EMITTER = EMITTER( projectile_launcher_map.ValueForKey( key.toLower() ))
+	If copy And lchr Then Return EMITTER( EMITTER.Copy( lchr ))
+	Return lchr
+End Function
+
 Const EMITTER_TYPE_PARTICLE% = 0
 Const EMITTER_TYPE_PROJECTILE% = 1
 

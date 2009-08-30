@@ -3,8 +3,15 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
 
 '______________________________________________________________________________
+Global ai_type_map:TMap = CreateMap()
+
+Function get_ai_type:AI_TYPE( Key$ ) 'returns read-only reference
+	Return AI_TYPE( ai_type_map.ValueForKey( key.toLower() ))
+End Function
+
 Function Create_AI_TYPE:AI_TYPE( ..
 has_turrets% = False, ..
 can_move% = False, ..

@@ -4,6 +4,8 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "misc.bmx"
+Import "drawtext_ex.bmx"
 
 '______________________________________________________________________________
 Type MENU_OPTION
