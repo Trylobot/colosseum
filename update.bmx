@@ -3,23 +3,9 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-
-'______________________________________________________________________________
-Const time_per_frame_min% = 8 'milliseconds
-Global before%
-Global timescale#
-Const timescale_constant_factor# = 0.350 '0.375 'simulation speed
-
-Function frame_time_elapsed%() 'true or false: the amount of time required for a physics frame has indeed elapsed?
-	Return (now() - before) > time_per_frame_min
-End Function
-Function reset_frame_timer()
-	before = now()
-End Function
-
-Function calculate_timescale()
-	timescale = timescale_constant_factor * Float(now() - before)/Float(time_per_frame_min)
-End Function
+SuperStrict
+Import "timescale.bmx"
+Import "flags.bmx"
 
 '______________________________________________________________________________
 'Physics and Timing Update
@@ -170,7 +156,7 @@ Function update_flags()
 		If game.player.dead() 'player just died? (omgwtf)
 			game.game_in_progress = False
 			game.game_over = True
-			game.player_engine_running = False
+			FLAG.engine_running = False
 			tweak_engine_idle()
 			damage_incurred = True
 		End If

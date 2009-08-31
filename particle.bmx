@@ -4,6 +4,11 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "point.bmx"
+Import "drawtext_ex.bmx"
+Import "box.bmx"
+Import "base_data.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Global particle_map:TMap = CreateMap()
@@ -196,6 +201,7 @@ Type PARTICLE Extends POINT
 		Return False
 	End Method
 	
+	Rem
 	'OOP broken
 	Method auto_manage()
 		If layer = LAYER_BACKGROUND
@@ -204,6 +210,7 @@ Type PARTICLE Extends POINT
 			manage( game.particle_list_foreground )
 		End If
 	End Method
+	EndRem
 	
 	Method attach_at( new_off_x#, new_off_y# )
 		off_x = new_off_x; off_y = new_off_y

@@ -4,6 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "json.bmx"
 
 '______________________________________________________________________________
 Global ai_type_map:TMap = CreateMap()

@@ -3,6 +3,9 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "point.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Type PROP_DATA

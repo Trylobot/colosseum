@@ -4,6 +4,8 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "emitter.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Global turret_barrel_map:TMap = CreateMap()
@@ -34,7 +36,8 @@ Type TURRET_BARREL Extends POINT
 	Field recoil_max# 'maximum recoil distance
 	Field attach_x#, attach_y# 'attachment anchor (at default orientation), set at create-time
 	
-	Field parent:TURRET 'parent turret
+	'Field parent:TURRET 'parent turret
+	Field parent:POINT 'parent point (usually a TURRET)
 	Field recoil_cur# 'current recoil distance
 	Field attach_r#, attach_a# 'attachment anchor as a polar, to be able to combine parent turret's current orientation at draw-time
 	Field launcher:EMITTER 'projectile emitter associated with this barrel

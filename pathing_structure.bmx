@@ -3,6 +3,10 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "cell.bmx"
+Import "path_queue.bmx"
+Import "level.bmx"
 
 '______________________________________________________________________________
 Type PATHING_STRUCTURE
@@ -34,7 +38,7 @@ Type PATHING_STRUCTURE
 		ps.pathing_g = New Float[ ps.row_count, ps.col_count ]
 		ps.pathing_h = New Float[ ps.row_count, ps.col_count ]
 		ps.pathing_f = New Float[ ps.row_count, ps.col_count ]
-		ps.potential_paths = PATH_QUEUE.Create( ps )
+		ps.potential_paths = PATH_QUEUE.Create( ps.row_count, ps.col_count, ps.pathing_f )
 		ps.lev = lev
 
 		Return ps

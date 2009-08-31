@@ -4,6 +4,9 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "managed_object.bmx"
+Import "audio.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Global pickup_map:TMap = CreateMap() 
@@ -101,9 +104,11 @@ Type PICKUP Extends MANAGED_OBJECT
 		End If
 	End Method
 	
+	Rem
 	Method auto_manage()
 		manage( game.pickup_list )
 	End Method
+	EndRem
 	
 End Type
 

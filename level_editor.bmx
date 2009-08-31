@@ -3,6 +3,10 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "level.bmx"
+Import "draw.bmx"
+Import "console.bmx"
 
 '______________________________________________________________________________
 Const spawn_point_preview_radius% = 10
@@ -292,7 +296,7 @@ Function level_editor( lev:LEVEL )
 				End If
 				If KeyHit( KEY_ENTER )
 					FlushKeys()
-					lev.name = CONSOLE.get_input( lev.name,, info_x, title_y, bigger_font )
+					lev.name = CONSOLE.get_input( lev.name,, info_x, title_y, bigger_font, screencap() )
 				End If
 			
 			'____________________________________________________________________________________________________
@@ -619,7 +623,7 @@ Function level_editor( lev:LEVEL )
 
 					If KeyHit( KEY_ENTER ) And cursor >= 0 And cursor < sp.count_squads()
 						FlushKeys()
-						sp.delay_time[cursor] = CONSOLE.get_input( sp.delay_time[cursor],, window_w - 50, info_y + cursor*cell_size + line_h/3, normal_font ).ToInt()
+						sp.delay_time[cursor] = CONSOLE.get_input( sp.delay_time[cursor],, window_w - 50, info_y + cursor*cell_size + line_h/3, normal_font, screencap() ).ToInt()
 					End If
 					If cursor >= 0 And cursor < sp.count_squads()
 						DrawText_with_shadow( String.FromInt( sp.delay_time[cursor] ), window_w - 50, info_y + cursor*cell_size + line_h/3 )
@@ -777,6 +781,63 @@ Function level_editor( lev:LEVEL )
 	FlushMouse()
 End Function
 
+'______________________________________________________________________________
+Function get_input$( initial_value$, initial_cursor_pos% = INFINITY, x%, y%, font:TImageFont, bg:TImage ) 'returns user input
+		Local con:CONSOLE = new CONSOLE
+		Local str$ = initial_value
+		SetImageFont( font )
+		Local cursor% = str.Length
+		Local selection% = 0
+		Local char_width% = TextWidth( "W" )
+		Repeat
+			Cls()
+			If bg
+				draw_fuzzy( bg )
+			End If
+			'instaquit
+			escape_key_update()
+			
+			'cursor/selection move
+			If KeyHit( KEY_LEFT )
+				cursor :- 1
+				If cursor < 0 Then cursor = 0
+			Else If KeyHit( KEY_RIGHT )
+				cursor :+ 1
+				If cursor > str.Length Then cursor = str.Length
+			Else If KeyHit( KEY_HOME )
+				cursor = 0
+			Else If KeyHit( KEY_END )
+				cursor = str.Length
+			End If
+			
+			'erase character immediately before the cursor, and decrement the cursor
+			If KeyHit( KEY_BACKSPACE )
+				str = str[..cursor-1] + str[cursor..]
+				cursor :- 1
+				If cursor < 0 Then cursor = 0
+			Else If KeyHit( KEY_DELETE )
+				str = str[..cursor] + str[cursor+1..]
+			End If
+
+			str = con.update( str )
+			
+			DrawText_with_outline( str, x, y )
+			SetAlpha( 0.5 + Sin(now() Mod 360) )
+			DrawText( "|", x + char_width*cursor - 4, y )
+			
+			'instaquit
+			If KeyDown( KEY_ESCAPE ) And esc_held And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
+				draw_instaquit_progress()
+			End If
+
+			Flip( 1 )
+			If AppTerminate() Then End
+		Until escape_key_release() Or KeyHit( KEY_ENTER )
+
+		Return str
+End Function
+	
+'______________________________________________________________________________
 Function class_to_string$( class% )
 	Select class
 		Case SPAWNER.class_GATED_FACTORY

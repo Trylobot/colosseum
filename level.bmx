@@ -4,6 +4,12 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "cell.bmx"
+Import "spawner.bmx"
+Import "prop_data.bmx"
+Import "box.bmx"
+Import "vec.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Global level_map:TMap = CreateMap()

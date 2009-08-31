@@ -3,6 +3,10 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "flags.bmx"
+Import "misc.bmx"
+Import "base_data.bmx"
 
 '______________________________________________________________________________
 'Audio
@@ -11,45 +15,7 @@ Global bg_music:TChannel
 Global engine_start:TChannel
 Global engine_idle:TChannel
 Global engine_start_ts%
-
-Rem
-Function play_all_audio()
-	If game
-		game.player_engine_running = True
-	End If
-End Function
-Function play_sound( sound:TSound, volume# = 1.0, pitch_variance# = 0.0 )
-End Function
-Function play_bg_music()
-End Function
-Function start_player_engine()
-End Function
-Function tweak_engine_idle()
-End Function
-End Rem
-
-'Rem
-Function play_all_audio()
-	play_bg_music()
-	
-	If game
-		If game.player_engine_ignition
-			start_player_engine()
-		End If
-		If Not FLAG_in_menu
-			tweak_engine_idle()
-		Else If engine_idle <> Null And engine_idle.Playing()
-			SetChannelVolume( engine_idle, 0 )
-		End If
-	End If
-	
-	For local channel:TChannel = eachin audio_channels
-		If Not channel.Playing()
-			channel.Stop()
-			audio_channels.Remove( channel )
-		End If
-	Next
-End Function
+Global last_known_player_speed#
 
 Function play_sound( sound:TSound, volume# = 1.0, pitch_variance# = 0.0 )
 	If sound <> Null
@@ -62,16 +28,33 @@ Function play_sound( sound:TSound, volume# = 1.0, pitch_variance# = 0.0 )
 	End If
 End Function
 
-Function play_bg_music()
+Function play_all_audio()
+	'background music
 	If bg_music = Null
 		bg_music = AllocChannel()
 		CueSound( get_sound( "bgm" ), bg_music )
 	End If
-	If FLAG_bg_music_on
+	If FLAG.bg_music
 		ResumeChannel( bg_music )
 	Else 'Not FLAG_bg_music_on
 		PauseChannel( bg_music )
 	End If
+	'player engine sounds
+	If Not FLAG.in_menu
+		If FLAG.engine_ignition
+			start_player_engine()
+		End If
+		tweak_engine_idle( last_known_player_speed )
+	Else
+		SetChannelVolume( engine_idle, 0 )
+	End If
+	'maintenance
+	For local channel:TChannel = eachin audio_channels
+		If Not channel.Playing()
+			channel.Stop()
+			audio_channels.Remove( channel )
+		End If
+	Next
 End Function
 
 Function start_player_engine()
@@ -83,14 +66,14 @@ Function start_player_engine()
 	CueSound( get_sound( "engine_start" ), engine_start )
 	SetChannelVolume( engine_start, 0.5 )
 	ResumeChannel( engine_start )
-	game.player_engine_ignition = False
+	FLAG.engine_ignition = False 'game.player_engine_ignition = False
 End Function
 
-Function tweak_engine_idle()
-	If Not game.player_engine_running	
+Function tweak_engine_idle( entity_speed# )
+	If Not FLAG.engine_running 'game.player_engine_running	
 		If engine_start <> Null
 			If Not ChannelPlaying( engine_start )
-				game.player_engine_running = True
+				FLAG.engine_running = True 'game.player_engine_running = True
 			End If
 		End If
 		If engine_idle <> Null
@@ -98,7 +81,7 @@ Function tweak_engine_idle()
 			engine_idle = Null
 		End If
 	End If
-	If game.player_engine_running
+	If FLAG.engine_running 'game.player_engine_running
 		If engine_start <> Null
 			If Not ChannelPlaying( engine_start )
 				'stop engine_start
@@ -120,12 +103,10 @@ Function tweak_engine_idle()
 				ResumeChannel( engine_idle )
 				engine_start_ts = now()
 			End If
-			Local p_speed# = Sqr( Pow(game.player.vel_x,2) + Pow(game.player.vel_y,2) )
 			Local factor# = 10000.0/(Float(now() - engine_start_ts) + 10000.0)
-			SetChannelVolume( engine_idle, factor * (0.5 + ( 0.5 * (p_speed / 2.0))) )
-			SetChannelRate( engine_idle, 1.0 + (p_speed / 2.0) )
+			SetChannelVolume( engine_idle, factor * (0.5 + ( 0.5 * (entity_speed / 2.0))) )
+			SetChannelRate( engine_idle, 1.0 + (entity_speed / 2.0) )
 		End If
 	End If
 End Function
-'End Rem
 

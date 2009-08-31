@@ -5,8 +5,9 @@ Rem
 EndRem
 SuperStrict
 Import "managed_object.bmx"
-Import "json.bmx"
+import "timescale.bmx"
 Import "vec.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Function Create_POINT:POINT( ..

@@ -6,6 +6,10 @@ EndRem
 SuperStrict
 
 '______________________________________________________________________________
+'constants
+Const INFINITY% = -1
+Const UNSPECIFIED% = -1
+
 'random
 SeedRnd MilliSecs()
 'clock

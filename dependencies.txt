@@ -182,6 +182,7 @@ DEPENDENCIES
 	
 	level_editor.bmx
 		level.bmx
+		draw.bmx
 		vec.bmx
 		point.bmx
 		spawner.bmx
@@ -209,12 +210,6 @@ DEPENDENCIES
 		box.bmx
 		---
 	
-	audio.bmx
-		GLOBAL game
-			game.player_engine_ignition
-			game.player_engine_running
-		---
-		
 	control_brain.bmx
 		complex_agent.bmx
 		ai_type.bmx
@@ -236,24 +231,6 @@ DEPENDENCIES
 		particle.bmx
 		---
 	
-	emitter.bmx
-		managed_object.bmx
-		point.bmx
-		range.bmx
-		particle.bmx
-		projectile.bmx [CYCLIC]
-		json.bmx
-		---
-		
-	level.bmx
-		cell.bmx
-		spawner.bmx
-		prop_data.bmx
-		box.bmx
-		vec.bmx
-		json.bmx
-		---
-		
 	menu.bmx
 		menu_option.bmx
 		box.bmx
@@ -272,18 +249,37 @@ DEPENDENCIES
 			game.player [UNNECESSARY?]
 		---
 	
-	particle.bmx
-		point.bmx
-		json.bmx
-		GLOBAL game
-			game.particle_list_* [CYCLIC] [UNNECESSARY?]
-		box.bmx
-		---
-	
 	player_profile.bmx
 		inventory_data.bmx
 		vehicle_data.bmx
 		progress_data.bmx
+		json.bmx
+		---
+	
+	turret.bmx
+		complex_agent.bmx [CYCLIC]
+			Field parent -- could use a POINT
+		turret_barrel.bmx
+		emitter.bmx
+		audio.bmx
+		json.bmx
+		---
+	
+	vehicle_data.bmx
+		turret.bmx
+		compatibility_data.bmx
+		inventory_data.bmx
+		json.bmx
+		---
+	
+	inventory_data.bmx
+		complex_agent.bmx
+		turret.bmx
+		json.bmx
+		---
+	
+	turret_barrel.bmx
+		emitter.bmx
 		json.bmx
 		---
 	
@@ -297,144 +293,151 @@ DEPENDENCIES
 		json.bmx
 		---
 	
-	turret.bmx
-		complex_agent.bmx [CYCLIC]
-			Field parent -- could use a POINT
-		turret_barrel.bmx
-		emitter.bmx
-		audio.bmx
+	emitter.bmx
+		managed_object.bmx
+		point.bmx
+		range.bmx
+		particle.bmx
+		projectile.bmx [CYCLIC]
 		json.bmx
 		---
-	
-	turret_barrel.bmx
-		turret.bmx [CYCLIC]
-			Field parent -- could use a POINT
-		emitter.bmx
-		json.bmx
-		---
-	
-	vehicle_data.bmx
-		turret.bmx [UNNECESSARY]
-		data.bmx [CYCLIC]
-			get_turret()
-		compatibility_data.bmx
-		inventory_data.bmx
-		json.bmx
-		---
-	
-	widget.bmx
+		
+	widget.bmx  done
 		managed_object.bmx
 		point.bmx
 		transform_state.bmx
 		json.bmx
 		---
 	
-	inventory_data.bmx
-		complex_agent.bmx
-		turret.bmx
-		json.bmx
-		---
-	
-	path_queue.bmx
-		cell.bmx
-		pathing_structure.bmx [CYCLIC]
-			Field parent 'cost calculation
-		---
-	
-	pathing_structure.bmx
+	pathing_structure.bmx  done
 		cell.bmx
 		path_queue.bmx
-		level.bmx [UNNECESSARY?]
+		level.bmx
 		---
 	
-	physical_object.bmx
-		point.bmx
-		force.bmx
-		---
-	
-	force.bmx
-		managed_object.bmx
-		physical_object.bmx [CYCLIC]
-			Field parent 'reason unknown
-		---
-		
-	point.bmx
-		managed_object.bmx
+	level.bmx  done
+		cell.bmx
+		spawner.bmx
+		prop_data.bmx
+		box.bmx
 		vec.bmx
 		json.bmx
 		---
 		
-	prop_data.bmx
-		point.bmx
-		json.bmx
+	path_queue.bmx  done
+		cell.bmx
 		---
 	
-	spawner.bmx
+	physical_object.bmx  done
 		point.bmx
-		json.bmx
+		force.bmx
 		---
 	
-	console.bmx
-		draw.bmx
-			screencap()
+	force.bmx  done
+		managed_object.bmx
+		misc.bmx
 		---
 		
-	compatibility_data.bmx
+	pickup.bmx  done
+		managed_object.bmx
+		audio.bmx
 		json.bmx
 		---
 	
-	ai_type.bmx
-		json.bmx
-		---
-		
-	transform_state.bmx
-		json.bmx
+	audio.bmx  done
+		flags.bmx
+		misc.bmx
+		base_data.bmx
 		---
 	
-	progress_data.bmx
-		json.bmx
+	graffiti_manager.bmx  done
+		box.bmx
+		particle.bmx
 		---
 	
-	pickup.bmx
+	particle.bmx  done
+		point.bmx
 		json.bmx
-		---
-	
-	graffiti_manager.bmx
 		box.bmx
 		---
 	
-	vec.bmx
+	prop_data.bmx  done
+		point.bmx
+		json.bmx
+		---
+	
+	spawner.bmx  done
+		point.bmx
+		json.bmx
+		---
+	
+	point.bmx  done
+		managed_object.bmx
+		timescale.bmx
+		vec.bmx
+		json.bmx
+		---
+		
+	compatibility_data.bmx  done
+		json.bmx
+		---
+	
+	ai_type.bmx  done
+		json.bmx
+		---
+		
+	transform_state.bmx  done
+		misc.bmx
+		json.bmx
+		---
+	
+	progress_data.bmx  done
+		json.bmx
+		---
+	
+	vec.bmx  done
 		misc.bmx
 		---
-	
-	json.bmx
+		
+	timescale.bmx  done
+		misc.bmx
 		---
 		
-	menu_option.bmx
+	drawtext_ex.bmx
 		---
 	
-	managed_object.bmx
+	console.bmx  done
+		---
+		
+	base_data.bmx  done
 		---
 	
-	misc.bmx
+	flags.bmx  done
+		---
+		
+	json.bmx  done
+		---
+		
+	menu_option.bmx  done
 		---
 	
-	range.bmx
+	managed_object.bmx  done
 		---
 	
-	win32.bmx
+	misc.bmx  done
+		---
+	
+	range.bmx  done
+		---
+	
+	win32.bmx  done
 		---
 
-	box.bmx
+	box.bmx  done
 		---
 		
-	cell.bmx
+	cell.bmx  done
 		---
 	
-	color.bmx
+	color.bmx  done
 		---
-	
-	debug.bmx
-		*fluid/unimportant/dynamic*
-		---
-	

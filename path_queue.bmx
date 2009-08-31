@@ -3,6 +3,8 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "cell.bmx"
 
 '______________________________________________________________________________
 Type PATH_QUEUE
@@ -10,18 +12,24 @@ Type PATH_QUEUE
 	Field item_count% 'number of items in the queue
 	Field registry%[,] 'in queue? {true|false}
 	Field open_list:TList 'TList:CELL - list of potential paths
-	Field parent:PATHING_STRUCTURE 'reference to owner for purposes of cost calculation
+
+	'TODO: [Tyler W.R. Cole - August 31, 2009 4:20 PM] This needs to be removed
+	Field pathing_f#[,] 'actual cost to get here from start + estimated cost to get to goal from here
 	
 	Method New()
 		open_list = CreateList()
 	End Method
 	
-	Function Create:PATH_QUEUE( ps:PATHING_STRUCTURE )
+	Function Create:PATH_QUEUE( row_count%, col_count%, pathing_f#[,] )
 		Local pq:PATH_QUEUE = New PATH_QUEUE
-		pq.row_count = ps.row_count; pq.col_count = ps.col_count
+		pq.row_count = row_count
+		pq.col_count = col_count
 		pq.item_count = 0
 		pq.registry = New Int[ pq.row_count, pq.col_count ]
-		pq.parent = ps
+		
+		'this needs to go away
+		pq.pathing_f = pathing_f
+		
 		Return pq
 	End Function
 	
@@ -57,8 +65,16 @@ Type PATH_QUEUE
 		End If
 	End Method
 	
-	Method cost#( inquiry:CELL )
-		Return parent.f( inquiry )
+	'TODO: [Tyler W.R. Cole - August 31, 2009 4:43 PM]
+	'copied from level.bmx
+	'needs to go away
+	Method in_bounds%( c:CELL )
+		Return (c.row >= 0 And c.row < Self.row_count And c.col >= 0 And c.col < Self.col_count)
+	End Method
+	
+	Method cost#( c:CELL )
+		If Not in_bounds( c ) Then Return CELL.MAXIMUM_COST
+		Return pathing_f[c.row,c.col]
 	End Method
 	
 	Method register( new_item:CELL )

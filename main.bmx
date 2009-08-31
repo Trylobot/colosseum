@@ -137,7 +137,7 @@ SetGraphicsDriver GLMax2DDriver()
 'SetGraphicsDriver GLGraphicsDriver()
 'SetGraphicsDriver D3D7Max2DDriver() 
 
-process_command_line_arguments()
+'process_command_line_arguments()
 
 Function init_graphics()
 	If Not fullscreen
@@ -181,13 +181,13 @@ init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 'main game loop
 Repeat
 	'game object to use for this frame
-	If FLAG_in_menu
+	If FLAG.in_menu
 		If main_game = Null
 			game = ai_menu_game 'initial condition; show autonomous game
 		Else 'main_game <> Null
 			game = main_game 'paused after beginning game
 		End If
-	Else
+	Else 'Not FLAG_in_menu
 		game = main_game 'normal play
 	End If
 	'input
@@ -214,12 +214,13 @@ Repeat
 	'show buffer
 	Flip( 1 )
 	'audio
+	last_known_player_speed = Sqr( Pow(game.player.vel_x,2) + Pow(game.player.vel_y,2) )
 	play_all_audio()
 Until AppTerminate()
 
 '______________________________________________________________________________
+Rem
 Function process_command_line_arguments()
-	Rem
 	If AppArgs.Length >= 2
 		For Local arg$ = EachIn AppArgs[1..]
 			Select arg.ToLower()
@@ -229,6 +230,6 @@ Function process_command_line_arguments()
 			End Select
 		Next
 	End If
-	End Rem
 End Function
+End Rem
 

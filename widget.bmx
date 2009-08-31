@@ -4,6 +4,11 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "managed_object.bmx"
+Import "point.bmx"
+Import "transform_state.bmx"
+Import "base_data.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Global widget_map:TMap = CreateMap()
@@ -258,9 +263,11 @@ Type WIDGET Extends MANAGED_OBJECT
 		End Select
 	End Method
 	
+	Rem
 	Method auto_manage()
 		manage( game.environmental_widget_list )
 	End Method
+	EndRem
 	
 End Type
 

@@ -3,6 +3,9 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "point.bmx"
+Import "force.bmx"
 
 '______________________________________________________________________________
 Type PHYSICAL_OBJECT Extends POINT
@@ -55,7 +58,7 @@ Type PHYSICAL_OBJECT Extends POINT
 	
 	Method add_force:FORCE( other_f:FORCE, combine_ang_with_parent_ang% = False )
 		Local f:FORCE = FORCE( FORCE.Copy( other_f, force_list ))
-		f.parent = Self
+		'f.parent = Self
 		f.combine_ang_with_parent_ang = combine_ang_with_parent_ang
 		return f
 	End Method

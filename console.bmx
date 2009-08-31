@@ -3,69 +3,12 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "misc.bmx"
 
 '______________________________________________________________________________
 Type CONSOLE
 	'Field cursor_index%
-	
-	Function get_input$( initial_value$, initial_cursor_pos% = INFINITY, x%, y%, font:TImageFont ) 'returns user input
-		Local bg:TImage = screencap()
-		Local str$ = initial_value
-		SetImageFont( font )
-		Local cursor% = str.Length
-		Local selection% = 0
-		Local char_width% = TextWidth( "W" )
-		Repeat
-			Cls()
-			draw_fuzzy( bg )
-			'instaquit
-			escape_key_update()
-			
-			'cursor/selection move
-			If KeyHit( KEY_LEFT )
-				cursor :- 1
-				If cursor < 0 Then cursor = 0
-			Else If KeyHit( KEY_RIGHT )
-				cursor :+ 1
-				If cursor > str.Length Then cursor = str.Length
-			Else If KeyHit( KEY_HOME )
-				cursor = 0
-			Else If KeyHit( KEY_END )
-				cursor = str.Length
-			End If
-			
-			'erase character immediately before the cursor, and decrement the cursor
-			If KeyHit( KEY_BACKSPACE )
-				str = str[..cursor-1] + str[cursor..]
-				cursor :- 1
-				If cursor < 0 Then cursor = 0
-			Else If KeyHit( KEY_DELETE )
-				str = str[..cursor] + str[cursor+1..]
-			End If
-
-			'normal input
-			Local char$ = get_char()
-			If char <> ""
-				str :+ char
-				cursor :+ 1
-				If cursor > str.Length Then cursor = str.Length
-			End If
-			
-			DrawText_with_outline( str, x, y )
-			SetAlpha( 0.5 + Sin(now() Mod 360) )
-			DrawText( "|", x + char_width*cursor - 4, y )
-			
-			'instaquit
-			If KeyDown( KEY_ESCAPE ) And esc_held And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
-				draw_instaquit_progress()
-			End If
-
-			Flip( 1 )
-			If AppTerminate() Then End
-		Until escape_key_release() Or KeyHit( KEY_ENTER )
-
-		Return str
-	End Function
 	
 	Method update$( str$, max_size% = INFINITY, reset_cursor% = False )
 		'cursor reset (why is this even necessary?!)

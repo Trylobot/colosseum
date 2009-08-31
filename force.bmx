@@ -3,6 +3,9 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "managed_object.bmx"
+Import "misc.bmx"
 
 '______________________________________________________________________________
 Const PHYSICS_FORCE% = 0
@@ -11,7 +14,7 @@ Const PHYSICS_TORQUE% = 1
 Type FORCE Extends MANAGED_OBJECT
 
 	Field physics_type% '(torque/force)?
-	Field parent:PHYSICAL_OBJECT 'for forces, parent object this force is attached to
+	'Field parent:PHYSICAL_OBJECT 'for forces, parent object this force is attached to
 	Field combine_ang_with_parent_ang% 'for forces, indicates whether the direction of the force is absolute
 	Field direction# 'direction force is pointing
 	Field magnitude_max# 'maximum strength of force
