@@ -115,19 +115,24 @@ DEPENDENCIES
 		box.bmx
 		---
 
-	complex_agent.bmx
-		agent.bmx
-		turret.bmx
-		vec.bmx
-		force.bmx
-		particle.bmx
-		widget.bmx
-		point.bmx
-		emitter.bmx
-		pickup.bmx
+	player_profile.bmx
+		inventory_data.bmx
+		vehicle_data.bmx
+		progress_data.bmx
 		json.bmx
 		---
-		
+	
+	net.bmx  
+		vehicle_data.bmx
+		complex_agent.bmx
+		control_brain.bmx
+		json.bmx
+		connection.bmx [embedded]
+		remote_player.bmx [embedded]
+		chat_message.bmx [embedded]
+		network_id.bmx [embedded]
+		---
+	
 	draw.bmx
 		environment.bmx
 		core.bmx
@@ -151,6 +156,8 @@ DEPENDENCIES
 		vec.bmx
 		box.bmx
 		level.bmx
+		image_manip.bmx
+		drawtext_ex.bmx
 		---
 		
 	update.bmx
@@ -198,7 +205,28 @@ DEPENDENCIES
 		box.bmx
 		---
 	
-	control_brain.bmx
+	vehicle_data.bmx
+		turret.bmx
+		compatibility_data.bmx
+		inventory_data.bmx
+		json.bmx
+		---
+	
+	menu.bmx
+		menu_option.bmx
+		box.bmx
+		console.bmx
+		inventory_data.bmx
+		constants.bmx
+		---
+	
+	inventory_data.bmx  
+		complex_agent.bmx
+		turret.bmx
+		json.bmx
+		---
+	
+	control_brain.bmx  
 		complex_agent.bmx
 		ai_type.bmx
 		vec.bmx
@@ -210,62 +238,37 @@ DEPENDENCIES
 		box.bmx
 		---
 		
-	door.bmx
-		data.bmx	
-			get_*()
+	complex_agent.bmx  done
+		agent.bmx
+		turret.bmx
+		vec.bmx
+		force.bmx
+		particle.bmx
+		widget.bmx
+		point.bmx
+		emitter.bmx
+		pickup.bmx
+		json.bmx
+		---
+		
+	door.bmx  done
 		managed_object.bmx
 		point.bmx
 		widget.bmx
 		particle.bmx
 		---
 	
-	menu.bmx
-		menu_option.bmx
-		box.bmx
-		console.bmx
-		inventory_data.bmx
-		core.bmx [CYCLIC]
-			COMMAND
-		---
-	
-	net.bmx
-		connection.bmx [doesn't exist yet]
-		remote_player.bmx [doesn't exist yet]
-		chat_message.bmx [doesn't exist yet]
-		network_id.bmx [doesn't exist yet]
-		GLOBAL game
-			game.player [UNNECESSARY?]
-		---
-	
-	player_profile.bmx
-		inventory_data.bmx
-		vehicle_data.bmx
-		progress_data.bmx
-		json.bmx
-		---
-	
-	turret.bmx
+	turret.bmx  done
 		point.bmx
 		turret_barrel.bmx
 		emitter.bmx
+		particle_emitter.bmx
 		audio.bmx
 		json.bmx
+		image_manip.bmx
 		---
 	
-	vehicle_data.bmx
-		turret.bmx
-		compatibility_data.bmx
-		inventory_data.bmx
-		json.bmx
-		---
-	
-	inventory_data.bmx
-		complex_agent.bmx
-		turret.bmx
-		json.bmx
-		---
-	
-	turret_barrel.bmx  
+	turret_barrel.bmx  done
 		point.bmx
 		emitter.bmx
 		particle_emitter.bmx

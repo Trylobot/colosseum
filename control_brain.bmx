@@ -233,7 +233,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				'firing checklist
 				If Not turret_overheated[turret_index] And Abs( diff ) <= threshold
 				'And dist_to_target <= t.effective_range ..
-					avatar.fire( turret_index )
+					avatar.fire( turret_index, false )
 				End If
 			Next
 		Next
@@ -416,10 +416,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				EndIf
 				'turret(s) fire
 				If KeyDown( KEY_SPACE )
-					avatar.fire_all( TURRET.PRIMARY )
+					avatar.fire_all( TURRET.PRIMARY, true )
 				End If
 				If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
-					avatar.fire_all( TURRET.SECONDARY )
+					avatar.fire_all( TURRET.SECONDARY, true )
 				End If
 
 			Case INPUT_KEYBOARD_MOUSE_HYBRID
@@ -454,10 +454,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				mouse_turret_input()
 				'turret(s) fire
 				If MouseDown( 1 ) And Not FLAG_ignore_mouse_1
-					avatar.fire_all( TURRET.PRIMARY )
+					avatar.fire_all( TURRET.PRIMARY, true )
 				End If
 				If MouseDown( 2 )
-					avatar.fire_all( TURRET.SECONDARY )
+					avatar.fire_all( TURRET.SECONDARY, true )
 				End If
 					
 			'Case INPUT_XBOX_360_CONTROLLER

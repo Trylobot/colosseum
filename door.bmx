@@ -3,6 +3,11 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "widget.bmx"
+Import "managed_object.bmx"
+Import "point.bmx"
+Import "particle.bmx"
 
 '______________________________________________________________________________
 Function Create_DOOR:DOOR( parent:POINT )

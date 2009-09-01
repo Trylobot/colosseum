@@ -4,8 +4,19 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
-Import "agent.bmx"
 Import "constants.bmx"
+Import "agent.bmx"
+Import "turret.bmx"
+Import "vec.bmx"
+Import "emitter.bmx"
+Import "particle_emitter.bmx"
+Import "projectile_launcher.bmx"
+Import "widget.bmx"
+Import "particle.bmx"
+Import "force.bmx"
+Import "pickup.bmx"
+Import "image_manip.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Global player_chassis_map:TMap = CreateMap()
@@ -131,6 +142,7 @@ Type COMPLEX_AGENT Extends AGENT
 	End Function
 	
 	'___________________________________________
+	'TODO: Make this function external, and make it return a COMPLEX_AGENT
 	Function Copy:Object( other:COMPLEX_AGENT, political_alignment% = ALIGNMENT_NONE )
 		If other = Null Then Return Null
 		Local c:COMPLEX_AGENT = New COMPLEX_AGENT
@@ -166,7 +178,7 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 
 		For Local list:TList = EachIn other.all_emitter_lists
-			For Local other_em:EMITTER = EachIn list
+			For Local other_em:PARTICLE_EMITTER = EachIn list
 				c.add_emitter( other_em, other_em.trigger_event )
 			Next
 		Next
@@ -234,7 +246,6 @@ Type COMPLEX_AGENT Extends AGENT
 		For Local list:TList = EachIn all_emitter_lists
 			For Local em:EMITTER = EachIn list
 				em.update()
-				em.emit()
 			Next
 		Next
 		
@@ -273,6 +284,17 @@ Type COMPLEX_AGENT Extends AGENT
 		'spawn mode
 		If now() - spawn_begin_ts >= spawn_time Then spawning = False
 		
+	End Method
+	
+	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null )
+		For Local t:TURRET = EachIn turrets
+			t.emit( projectile_manager, background_particle_manager, foreground_particle_manager )
+		Next
+		For Local list:TList = EachIn all_emitter_lists
+			For Local em:PARTICLE_EMITTER = EachIn list
+				em.emit( background_particle_manager, foreground_particle_manager )
+			Next
+		Next
 	End Method
 	
 	'___________________________________________
@@ -394,18 +416,18 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 	End Method
 	'___________________________________________
-	Method fire( index% )
+	Method fire( index%, is_player% = false )
 		If Not spawning
 			If index < turrets.Length
-				turrets[index].fire()
+				turrets[index].fire( is_player )
 			End If
 		End If
 	End Method
 	'___________________________________________
-	Method fire_all( priority% )
+	Method fire_all( priority%, is_player% = false )
 		If Not spawning
 			For Local t:TURRET = EachIn turrets
-				If t.priority = priority Then t.fire()
+				If t.priority = priority Then t.fire( is_player )
 			Next
 		End If
 	End Method
@@ -468,7 +490,7 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method enable_only_forward_emitters()
 		For Local em:EMITTER = EachIn drive_forward_emitters
-			em.enable( MODE_ENABLED_FOREVER )
+			em.enable( EMITTER.MODE_ENABLED_FOREVER )
 		Next
 		For Local em:EMITTER = EachIn drive_backward_emitters
 			em.disable()
@@ -480,7 +502,7 @@ Type COMPLEX_AGENT Extends AGENT
 			em.disable()
 		Next
 		For Local em:EMITTER = EachIn drive_backward_emitters
-			em.enable( MODE_ENABLED_FOREVER )
+			em.enable( EMITTER.MODE_ENABLED_FOREVER )
 		Next
 	End Method
 	'___________________________________________
@@ -616,16 +638,16 @@ Type COMPLEX_AGENT Extends AGENT
 		turret_systems = New Int[][turret_anchors.Length]
 	End Method
 	'___________________________________________
-	Method add_emitter:EMITTER(	other_em:EMITTER, event% )
-		Local em:EMITTER = Copy_EMITTER( other_em )
+	Method add_emitter:PARTICLE_EMITTER( other_em:PARTICLE_EMITTER, evt% )
+		Local em:PARTICLE_EMITTER = Copy_PARTICLE_EMITTER( other_em )
 		em.parent = Self
-		em.trigger_event = event
-		Select event
-			Case EVENT_DRIVE_FORWARD
+		em.trigger_event = evt
+		Select evt
+			Case EVENT.DRIVE_FORWARD
 				em.manage( drive_forward_emitters )
-			Case EVENT_DRIVE_BACKWARD
+			Case EVENT.DRIVE_BACKWARD
 				em.manage( drive_backward_emitters )
-			Case EVENT_DEATH
+			Case EVENT.DEATH
 				em.manage( death_emitters )
 		End Select
 		Return em
@@ -678,22 +700,22 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	'___________________________________________
 	Method add_dust_cloud_package( offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0, dist_min# = 0.0, dist_max# = 0.0, dist_ang_min# = 0.0, dist_ang_max# = 0.0, vel_min# = 0.0, vel_max# = 0.0 )
-		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
-		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
-		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
-		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
+		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
+		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
+		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
+		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
 	End Method
 	'___________________________________________
 	Method add_trail_package( archetype$, offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0 )
-		add_emitter( get_particle_emitter( archetype, False ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y )
-		add_emitter( get_particle_emitter( archetype, False ), EVENT_DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y )
-		add_emitter( get_particle_emitter( archetype, False ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y )
-		add_emitter( get_particle_emitter( archetype, False ), EVENT_DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y )
+		add_emitter( get_particle_emitter( archetype, False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y )
+		add_emitter( get_particle_emitter( archetype, False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y )
+		add_emitter( get_particle_emitter( archetype, False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y )
+		add_emitter( get_particle_emitter( archetype, False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y )
 	End Method
 	'___________________________________________
 	Method add_death_package()
-		add_emitter( get_particle_emitter( "EXPLOSION", False ), EVENT_DEATH ).attach_at( 0, 0 )
-		add_emitter( get_particle_emitter( "SHOCKWAVE", False ), EVENT_DEATH ).attach_at( 0, 0 )
+		add_emitter( get_particle_emitter( "EXPLOSION", False ), EVENT.DEATH ).attach_at( 0, 0 )
+		add_emitter( get_particle_emitter( "SHOCKWAVE", False ), EVENT.DEATH ).attach_at( 0, 0 )
 	End Method
 	
 	Method set_images_unfiltered()
@@ -761,7 +783,7 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 		If array And Not array.IsNull()
 			For Local i% = 0 Until array.Size()
 				Local emitter_json:TJSON = TJSON.Create( array.GetByIndex( i ))
-				Local em:EMITTER = Create_EMITTER_from_json_reference( emitter_json )
+				Local em:PARTICLE_EMITTER = Create_PARTICLE_EMITTER_from_json_reference( emitter_json )
 				If em Then cmp_ag.add_emitter( em, emitter_json.GetNumber( "event" ))
 			Next
 		End If

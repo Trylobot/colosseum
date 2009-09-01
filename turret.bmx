@@ -5,6 +5,12 @@ Rem
 EndRem
 SuperStrict
 Import "point.bmx"
+Import "turret_barrel.bmx"
+Import "emitter.bmx"
+Import "particle_emitter.bmx"
+Import "audio.bmx"
+Import "misc.bmx"
+Import "image_manip.bmx"
 
 '______________________________________________________________________________
 Global turret_map:TMap = CreateMap()
@@ -21,7 +27,7 @@ Type TURRET Extends POINT
 	Const PRIMARY% = 1
 	Const SECONDARY% = 2
 	
-	Field parent:COMPLEX_AGENT 'parental complex agent this turret is attached to
+	Field parent:POINT 'parental anchor (complex agent) this turret is attached to
 	Field class% '{ammunition|energy}
 	Field priority% '{primary|secondary}
 	Field img:TImage 'image to be drawn for the "base" of the turret
@@ -119,8 +125,8 @@ Type TURRET Extends POINT
 			t.add_turret_barrel( tb, tb_index ).attach_at( tb.attach_x, tb.attach_y )
 		Next
 		'copy all emitters
-		For Local em:EMITTER = EachIn emitter_list
-			EMITTER( EMITTER.Copy( em, t.emitter_list, t ))
+		For Local em:PARTICLE_EMITTER = EachIn emitter_list
+			Copy_PARTICLE_EMITTER( em, t.emitter_list, t )
 		Next
 		t.attach_at( ..
 			off_x, ..
@@ -128,7 +134,7 @@ Type TURRET Extends POINT
 		Return t
 	End Method
 
-	Method set_parent( new_parent:COMPLEX_AGENT )
+	Method set_parent( new_parent:POINT )
 		parent = new_parent
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
 			tb.launcher.source_id = parent.id
@@ -169,11 +175,19 @@ Type TURRET Extends POINT
 		'emitters
 		For Local em:EMITTER = EachIn emitter_list
 			em.update()
-			em.emit()
 		Next
 		'heat/cooling
 		If Not overheated() Then cur_heat :- timescale * cooling_rate
 		If cur_heat < 0 Then cur_heat = 0
+	End Method
+	
+	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null )
+		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
+			tb.emit( projectile_manager, background_particle_manager, foreground_particle_manager )
+		Next
+		For Local em:PARTICLE_EMITTER = EachIn emitter_list
+			em.emit( background_particle_manager, foreground_particle_manager )
+		Next
 	End Method
 	
 	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
@@ -189,18 +203,18 @@ Type TURRET Extends POINT
 		End If
 	End Method
 	
-	Method fire()
+	Method fire( parent_is_player% )
 		If Not FLAG_increment
 			FLAG_increment = True
 			If cur_ammo > 0 Then cur_ammo :- 1
 			For Local tb_index% = EachIn firing_sequence[firing_state]
 				turret_barrel_array[tb_index].fire()
 			Next
-			raise_temp()
-			play_firing_sound()
-			For Local em:EMITTER = EachIn emitter_list
-				em.enable( MODE_ENABLED_WITH_COUNTER )
+			For Local em:PARTICLE_EMITTER = EachIn emitter_list
+				em.enable( EMITTER.MODE_ENABLED_WITH_COUNTER )
 			Next
+			play_firing_sound( parent_is_player )
+			raise_temp()
 		End If
 	End Method
 	
@@ -212,7 +226,7 @@ Type TURRET Extends POINT
 	
 	Method ready_to_fire%()
 		For Local tb% = EachIn firing_sequence[firing_state]
-			If Not turret_barrel_array[tb].ready_to_fire()
+			If Not turret_barrel_array[tb].ready_to_fire( out_of_ammo(), max_heat, cur_heat )
 				Return False
 			End If
 		Next
@@ -256,10 +270,10 @@ Type TURRET Extends POINT
 		Return pct
 	End Method
 	
-	Method play_firing_sound()
-		Local vol# = 1.00
-		If parent.id <> get_player_id()
-			vol = 0.15
+	Method play_firing_sound( parent_is_player% )
+		Local vol# = 0.15
+		If parent_is_player
+			vol = 1.00
 		End If
 		play_sound( snd_fire, vol, 0.12 )
 	End Method
@@ -271,8 +285,8 @@ Type TURRET Extends POINT
 		Return tb
 	End Method
 	
-	Method add_emitter:EMITTER( other_em:EMITTER )
-		Return EMITTER( EMITTER.Copy( other_em, emitter_list, Self ))
+	Method add_emitter:PARTICLE_EMITTER( other_em:PARTICLE_EMITTER )
+		Return Copy_PARTICLE_EMITTER( other_em, emitter_list, Self )
 	End Method
 	
 	Method move_to( argument:Object, snap_turrets% = False, perform_update% = False )

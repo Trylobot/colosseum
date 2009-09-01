@@ -138,3 +138,12 @@ Type TColor
 	
 End Type
 
+Function encode_ARGB%( alpha#, red%, green%, blue% )
+	Local argb% = 0
+	argb :+ blue Shl 0
+	argb :+ green Shl 8
+	argb :+ red Shl 16
+	argb :+ Int(alpha*255) Shl 24
+	Return argb
+End Function
+

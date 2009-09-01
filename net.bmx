@@ -3,6 +3,11 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "complex_agent.bmx"
+Import "control_brain.bmx"
+Import "vehicle_data.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Global network_host% = False
@@ -146,6 +151,7 @@ Function update_network()
 		Next
 
 		'periodical broadcasts
+		Rem
 		If game And game.player
 			'avatar state (physical object position, velocity, acceleration)
 			If (now() - last_self_broadcast_avatar_state_ts) > delay_self_broadcast_avatar_state
@@ -178,6 +184,7 @@ Function update_network()
 				End If
 			End If
 		End If
+		EndRem
 
 		'relay chats to all connected players except sender
 		For Local cm:CHAT_MESSAGE = EachIn outgoing_messages

@@ -15,7 +15,7 @@ Global turret_barrel_map:TMap = CreateMap()
 
 Function get_turret_barrel:TURRET_BARREL( key$, copy% = True )
 	Local tb:TURRET_BARREL = TURRET_BARREL( turret_barrel_map.ValueForKey( Key.toLower() ))
-	If copy And tb Then Return TURRET_BARREL( tb.clone())
+	If copy And tb Then Return TURRET_BARREL( tb.clone() )
 	Return tb
 End Function
 
@@ -43,8 +43,8 @@ Type TURRET_BARREL Extends POINT
 	Field parent:POINT 'parent point (usually a TURRET)
 	Field recoil_cur# 'current recoil distance
 	Field attach_r#, attach_a# 'attachment anchor as a polar, to be able to combine parent turret's current orientation at draw-time
-	Field launcher:EMITTER 'projectile emitter associated with this barrel
-	Field emitter_list:TList 'list of particle emitters to be enabled (by count) when barrel fires
+	Field launcher:PROJECTILE_LAUNCHER 'the business end; lets loose actual projectiles into the world
+	Field emitter_list:TList 'TList<PARTICLE_EMITTER> list of particle emitters to be expended (by count) when barrel fires
 	Field last_reloaded_ts% 'timestamp of last reload
 
 	Method New()
@@ -54,7 +54,7 @@ Type TURRET_BARREL Extends POINT
 	Method clone:Object()
 		Local tb:TURRET_BARREL = Create_TURRET_BARREL( img, reload_time, recoil_max )
 		If launcher Then tb.set_launcher( launcher )
-		For Local em:EMITTER = EachIn emitter_list
+		For Local em:PARTICLE_EMITTER = EachIn emitter_list
 			tb.add_emitter( em )
 		Next
 		tb.attach_at( attach_x, attach_y )
@@ -75,11 +75,18 @@ Type TURRET_BARREL Extends POINT
 		'emitters
 		If launcher
 			launcher.update()
-			launcher.emit()
 		End If
-		For Local em:EMITTER = EachIn emitter_list
+		For Local em:PARTICLE_EMITTER = EachIn emitter_list
 			em.update()
-			em.emit()
+		Next
+	End Method
+	
+	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null )
+		If launcher
+			launcher.emit( projectile_manager )
+		End If
+		For Local em:PARTICLE_EMITTER = EachIn emitter_list
+			em.emit( background_particle_manager, foreground_particle_manager )
 		Next
 	End Method
 	
@@ -96,11 +103,11 @@ Type TURRET_BARREL Extends POINT
 	End Method
 	
 	Method fire()
-		If launcher <> Null
-			launcher.enable( MODE_ENABLED_WITH_COUNTER )
+		If launcher
+			launcher.enable( EMITTER.MODE_ENABLED_WITH_COUNTER )
 		End If
-		For Local em:EMITTER = EachIn emitter_list
-			em.enable( MODE_ENABLED_WITH_COUNTER )
+		For Local em:PARTICLE_EMITTER = EachIn emitter_list
+			em.enable( EMITTER.MODE_ENABLED_WITH_COUNTER )
 		Next
 		last_reloaded_ts = now()
 	End Method
@@ -109,12 +116,12 @@ Type TURRET_BARREL Extends POINT
 		last_reloaded_ts = now()
 	End Method
 	
-	Method ready_to_fire%()
+	Method ready_to_fire%( turret_out_of_ammo%, turret_max_heat#, turret_cur_heat# )
 		Return ..
 			(parent <> Null) And ..
-			(Not parent.out_of_ammo()) And ..
+			(Not turret_out_of_ammo ) And ..
 			((now() - last_reloaded_ts) >= reload_time) And ..
-			(parent.max_heat = INFINITY Or parent.cur_heat < parent.max_heat )
+			(turret_max_heat = INFINITY Or turret_cur_heat < turret_max_heat )
 	End Method
 	
 	Method reloaded_pct#()
@@ -125,14 +132,14 @@ Type TURRET_BARREL Extends POINT
 		End If
 	End Method
 	
-	Method set_launcher:EMITTER( new_launcher:EMITTER )
-		launcher = Copy_EMITTER( new_launcher )
+	Method set_launcher:PROJECTILE_LAUNCHER( new_launcher:PROJECTILE_LAUNCHER )
+		launcher = Copy_PROJECTILE_LAUNCHER( new_launcher )
 		launcher.parent = Self
 		Return launcher
 	End Method
 	
-	Method add_emitter:EMITTER( other_em:EMITTER )
-		Return EMITTER( EMITTER.Copy( other_em, emitter_list, Self ))
+	Method add_emitter:PARTICLE_EMITTER( other_em:PARTICLE_EMITTER )
+		Return Copy_PARTICLE_EMITTER( other_em, emitter_list, Self )
 	End Method
 End Type
 
@@ -143,12 +150,12 @@ Function Create_TURRET_BARREL_from_json:TURRET_BARREL( json:TJSON )
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED   Then t.img = get_image( json.GetString( "image_key" ))
 	If json.TypeOf( "reload_time" ) <> JSON_UNDEFINED Then t.reload_time = json.GetNumber( "reload_time" )
 	If json.TypeOf( "recoil_max" ) <> JSON_UNDEFINED  Then t.recoil_max = json.GetNumber( "recoil_max" )
-	If json.TypeOf( "launcher" ) <> JSON_UNDEFINED    Then t.set_launcher( Create_EMITTER_from_json_reference( TJSON.Create( json.GetObject( "launcher" ))))
+	If json.TypeOf( "launcher" ) <> JSON_UNDEFINED    Then t.set_launcher( Create_PROJECTILE_LAUNCHER_from_json_reference( TJSON.Create( json.GetObject( "launcher" ))))
 	If json.TypeOf( "launch_emitters" ) <> JSON_UNDEFINED
 		Local array:TJSONArray = json.GetArray( "launch_emitters" )
 		If array And Not array.IsNull()
 			For Local i% = 0 Until array.Size()
-				Local e:EMITTER = Create_EMITTER_from_json_reference( TJSON.Create( array.GetByIndex( i )))
+				Local e:PARTICLE_EMITTER = Create_PARTICLE_EMITTER_from_json_reference( TJSON.Create( array.GetByIndex( i )))
 				If e Then t.add_emitter( e )
 			Next
 		End If

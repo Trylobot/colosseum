@@ -16,6 +16,7 @@ Import "turret.bmx"
 Import "ai_type.bmx"
 Import "compatibility_data.bmx"
 Import "level.bmx"
+Import "image_manip.bmx"
 
 '______________________________________________________________________________
 Global settings_file_ext$ = "colosseum_settings"
@@ -399,13 +400,5 @@ Function save_autosave( profile_path$ )
 		file.Close()
 	End If
 End Function
-'______________________________________________________________________________
-Function unfilter_image:TImage( img:TImage )
-	If Not img Then Return Null
-	Local new_img:TImage = LoadImage( img.pixmaps[0], 0 )'img.flags&(~MIPMAPPEDIMAGE) )
-	SetImageHandle( new_img, img.handle_x, img.handle_y )
-	Return new_img
-End Function
-
 
 
