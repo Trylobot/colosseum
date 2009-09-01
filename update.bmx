@@ -6,6 +6,7 @@ EndRem
 SuperStrict
 Import "timescale.bmx"
 Import "flags.bmx"
+Import "misc.bmx"
 
 '______________________________________________________________________________
 'Physics and Timing Update
@@ -56,6 +57,12 @@ Function update_all_objects()
 				cb.human_input_blocked_update()
 			Else
 				cb.update()
+			End If
+			'spawn unit request processing
+			If cb.ai.is_carrier And Not cb.spawn_request_list.IsEmpty()
+				For Local req:SPAWN_REQUEST = EachIn cb.spawn_request_list
+					game.spawn_unit_from_request( req )
+				Next
 			End If
 		Next
 		'complex agents
@@ -168,6 +175,30 @@ Function update_flags()
 			damage_incurred = True
 		End If
 	End If
+End Function
+
+'______________________________________________________________________________
+Function update_meta_variable_cache()
+	If Not meta_variable_cache
+		meta_variable_cache = CreateMap()
+	End If
+	meta_variable_cache.Insert( "profile.name", profile.name )
+	meta_variable_cache.Insert( "profile.cash", format_number( profile.cash ))
+	meta_variable_cache.Insert( "profile.kills", format_number( profile.kills ))
+	meta_variable_cache.Insert( "profile.invert_reverse_steering", boolean_to_string( profile.invert_reverse_steering ))
+	meta_variable_cache.Insert( "level_editor_cache.name", level_editor_cache.name )
+	meta_variable_cache.Insert( "fullscreen", boolean_to_string( fullscreen ))
+	meta_variable_cache.Insert( "window_w", String.FromInt( window_w ))
+	meta_variable_cache.Insert( "window_h", String.FromInt( window_h ))
+	meta_variable_cache.Insert( "refresh_rate", String.FromInt( refresh_rate ))
+	meta_variable_cache.Insert( "bit_depth", String.FromInt( bit_depth ))
+	meta_variable_cache.Insert( "show_ai_menu_game", boolean_to_string( show_ai_menu_game ))
+	meta_variable_cache.Insert( "retain_particles", boolean_to_string( retain_particles ))
+	meta_variable_cache.Insert( "active_particle_limit", String.FromInt( active_particle_limit ))
+	meta_variable_cache.Insert( "network_ip_address", network_ip_address )
+	meta_variable_cache.Insert( "network_port", String.FromInt( network_port ))
+	meta_variable_cache.Insert( "network_level", StripAll( network_level ))
+	meta_variable_cache.Insert( "profile.count_inventory(this)", "(x ?)" ) 'tricky
 End Function
 
 '______________________________________________________________________________

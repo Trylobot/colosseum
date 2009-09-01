@@ -4,6 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "constants.bmx"
 Import "base_data.bmx"
 Import "agent.bmx"
 Import "particle.bmx"
@@ -18,22 +19,7 @@ Import "compatibility_data.bmx"
 Import "level.bmx"
 Import "image_manip.bmx"
 
-'______________________________________________________________________________
-Global settings_file_ext$ = "colosseum_settings"
-Global data_file_ext$ = "colosseum_data"
-Global level_file_ext$ = "colosseum_level"
-Global saved_game_file_ext$ = "colosseum_profile"
-Global autosave_path$ = "user/autosave.colosseum_data"
-
-Global art_path$ = "art/"
-Global data_path$ = "data/"
-Global font_path$ = "fonts/"
-Global level_path$ = "levels/"
-Global sound_path$ = "sound/"
-Global user_path$ = "user/"
-Global default_settings_file_name$ = "settings."+settings_file_ext
-Global default_assets_file_name$ = "assets."+data_file_ext
-
+'_____________________________________________________________________________
 Global asset_identifiers$[] = ..
 [	"fonts", ..
 	"sounds", ..
@@ -256,10 +242,6 @@ Function create_dirs()
 	CreateDir( sound_path )
 	CreateDir( user_path )
 End Function
-'______________________________________________________________________________
-Function enforce_suffix$( str$, suffix$ )
-	Return str + suffix
-End Function
 
 '______________________________________________________________________________
 Function load_settings%()
@@ -336,29 +318,6 @@ Function save_game%( path$, prof:PLAYER_PROFILE )
 		Return True
 	Else
 		Return False
-	End If
-End Function
-'______________________________________________________________________________
-Function find_files:TList( path$, ext$ = "" )
-	Local list:TList = CreateList()
-	Local dir% = ReadDir( path ) 'if directory exists, assign integer handle
-	If dir = 0 '(directory does not exist)
-		Return list 'empty at this point
-	Else 'dir <> 0 (directory exists)
-		Local file$
-		Repeat
-			file = NextFile( dir )
-			If file <> ""
-				If ext = "" '(no filter)
-					list.AddLast( path + file )
-				Else 'suffix <> "" (filter)
-					If ExtractExt( file ) = ext
-						list.AddLast( path + file )
-					End If
-				End If
-			End If
-		Until file = ""
-		Return list
 	End If
 End Function
 '______________________________________________________________________________

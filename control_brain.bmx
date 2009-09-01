@@ -3,11 +3,28 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "managed_object.bmx"
+Import "pathing_structure.bmx"
+Import "player_profile.bmx"
+Import "ai_type.bmx"
+Import "complex_agent.bmx"
+Import "agent.bmx"
+Import "spawn_request.bmx"
+Import "mouse.bmx"
+Import "point.bmx"
+Import "vec.bmx"
+Import "box.bmx"
+Import "flags.bmx"
+Import "cell.bmx"
 
-'___________________________________________
+'______________________________________________________________________________
 Function Create_CONTROL_BRAIN:CONTROL_BRAIN( ..
 avatar:COMPLEX_AGENT, ..
 control_type%, ..
+pathing:PATHING_STRUCTURE = Null, ..
+allied_agent_list:TList = Null, rival_agent_list:TList = Null, ..
+environment_walls:TList = Null, ..
 input_type% = UNSPECIFIED, ..
 think_delay% = 0, ..
 look_target_delay% = 0, ..
@@ -15,6 +32,10 @@ find_path_delay% = 0 )
 	Local cb:CONTROL_BRAIN = New CONTROL_BRAIN
 	cb.avatar = avatar
 	cb.control_type = control_type
+	cb.pathing = pathing
+	cb.allied_agent_list = allied_agent_list
+	cb.rival_agent_list = rival_agent_list
+	cb.environment_walls = environment_walls
 	cb.input_type = input_type
 	If control_type = CONTROL_BRAIN.CONTROL_TYPE_AI
 		cb.ai = get_ai_type( avatar.ai_name )
@@ -24,7 +45,7 @@ find_path_delay% = 0 )
 	cb.turret_overheated = New Int[avatar.turrets.Length]
 	Return cb
 End Function
-'_________________________________________
+
 Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Const CONTROL_TYPE_HUMAN% = 1
 	Const CONTROL_TYPE_AI% = 2
@@ -35,9 +56,16 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Const waypoint_radius# = 25.0
 	Const targeting_radius# = 15.0
 	Const spawn_delay% = 1000
+	Const friendly_blocking_scalar_projection_distance# = 15.0
 	
-	Field avatar:COMPLEX_AGENT 'this brain's "body"
+	Field avatar:COMPLEX_AGENT 'the physical entity controlled by this brain
 	Field control_type% 'control type indicator (human/AI)
+
+	Field pathing:PATHING_STRUCTURE 'for waypoint calculation (AI-only)
+	Field allied_agent_list:TList 'TList<COMPLEX_AGENT> (AI-only)
+	Field rival_agent_list:TList 'TList<COMPLEX_AGENT> (AI-only)
+	Field environment_walls:TList 'TList<BOX> obstacles (AI-only)
+	
 	Field input_type% 'for human-controlled brains, the input device
 	Field ai:AI_TYPE 'for AI-controlled brains, the specific AI "style"
 	
@@ -46,6 +74,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field target:AGENT 'current target
 	Field turret_overheated%[] 'flags for AI turret control
 	
+	Field spawn_request_list:TList 'TList<SPAWN_REQUEST> to be processed by ENVIRONMENT
 	Field spawn_index% 'tracker for factory
 	Field last_spawned_ts% 'timestamp of last spawn
 	Field spawn_point:POINT 'actual spawn location
@@ -56,6 +85,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Field ang_to_waypoint# 'measurement
 	Field dist_to_target# 'measurement
 	Field dist_to_waypoint# 'measurement
+	
+	Method New()
+		spawn_request_list = CreateList()
+	End Method
 	
 	Method update() 'this function needs some TLC
 		prune()
@@ -171,7 +204,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method drive_to( dest:Object )
-		'drive to nowhere.. that's easy!
+		'drive to nowhere.. uh, that's easy!
 		If dest = Null
 			avatar.drive( 0 )
 			avatar.turn( 0 )
@@ -249,7 +282,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method AI_spawning_system_update()
 		If spawn_index < avatar.factory_queue.Length And now() - last_spawned_ts > spawn_delay
-			game.spawn_unit( avatar.factory_queue[spawn_index], avatar.political_alignment, spawn_point )
+			spawn_request_list.AddLast( SPAWN_REQUEST.Create( avatar.factory_queue[spawn_index], avatar.political_alignment, spawn_point ))
 			last_spawned_ts = now()
 			spawn_index :+ 1
 		Else
@@ -257,8 +290,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method waypoint_reached%()
-		Local current_cell:CELL = game.pathing.containing_cell( avatar.pos_x, avatar.pos_y )
-		Local waypoint_cell:CELL = game.pathing.containing_cell( waypoint.x, waypoint.y )
+		Local current_cell:CELL = pathing.containing_cell( avatar.pos_x, avatar.pos_y )
+		Local waypoint_cell:CELL = pathing.containing_cell( waypoint.x, waypoint.y )
 		'If waypoint <> Null And avatar.dist_to( waypoint ) <= waypoint_radius
 		If current_cell.eq( waypoint_cell )
 			Return True
@@ -286,18 +319,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 	Method acquire_target:AGENT()
-		Local ag:AGENT = Null, dist#
-		Local rival_agent_list:TList
-		Local closest_rival_agent:AGENT = Null, dist_to_ag# = -1
-		Select avatar.political_alignment
-			Case ALIGNMENT_NONE
-				Return Null
-			Case ALIGNMENT_FRIENDLY
-				rival_agent_list =  game.hostile_agent_list
-			Case ALIGNMENT_HOSTILE
-				rival_agent_list = game.friendly_agent_list
-		End Select
-		For ag = EachIn rival_agent_list
+		Local closest_rival_agent:AGENT = Null
+		Local dist#, dist_to_ag# = -1
+		For Local ag:AGENT = EachIn rival_agent_list
 			dist = avatar.dist_to( ag )
 			If dist_to_ag < 0 Or dist < dist_to_ag
 				dist_to_ag = dist
@@ -313,7 +337,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			Local av:cVEC = Create_cVEC( avatar.pos_x, avatar.pos_y )
 			Local targ:cVEC = Create_cVEC( target.pos_x, target.pos_y )
 			'for each wall in the level
-			For Local wall:BOX = EachIn game.walls
+			For Local wall:BOX = EachIn environment_walls
 				'if the line connecting this brain's avatar with its target intersects the wall
 				If line_intersects_rect( av,targ, Create_cVEC(wall.x, wall.y), Create_cVEC(wall.w, wall.h) )
 					'then the avatar cannot see its target
@@ -327,16 +351,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 	End Method
 	
-	Const friendly_blocking_scalar_projection_distance# = 15.0
 	Method any_friendly_blocking%()
 		If target <> Null
-			Local allied_agent_list:TList = CreateList()
-			Select avatar.political_alignment
-				Case ALIGNMENT_FRIENDLY
-					allied_agent_list = game.friendly_agent_list
-				Case ALIGNMENT_HOSTILE
-					allied_agent_list = game.hostile_agent_list
-			End Select
 			Local avatar_turret_ang#, ally_offset#, ally_offset_ang#
 			Local scalar_projection#
 			Local projected_point:cVEC
@@ -367,7 +383,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Method get_path_to_target:TList()
 		If target <> Null And now() - last_path_calculation_ts > path_calculation_delay
 			last_path_calculation_ts = now()
-			Return game.find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y, True )
+			Return find_path( avatar.pos_x,avatar.pos_y, target.pos_x,target.pos_y, True )
 		Else
 			Return Null
 		End If
@@ -375,12 +391,34 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Const path_calculation_delay% = 100
 	Global last_path_calculation_ts%
 	
+	Method find_path:TList( start_x#, start_y#, goal_x#, goal_y#, per_waypoint_chaotic_nudging% = False )
+		Local start_cell:CELL = pathing.containing_cell( start_x, start_y )
+		Local goal_cell:CELL = pathing.containing_cell( goal_x, goal_y )
+		If pathing.grid( start_cell ) = PATH_BLOCKED Or pathing.grid( goal_cell ) = PATH_BLOCKED
+			Return Null
+		End If
+		pathing.reset()
+		Local cell_list:TList = ..
+			pathing.find_CELL_path( start_cell, goal_cell )
+		Local list:TList = CreateList()
+		If cell_list <> Null And Not cell_list.IsEmpty()
+			For Local cursor:CELL = EachIn cell_list
+				If per_waypoint_chaotic_nudging
+					list.AddLast( pathing.lev.get_random_contained_point( cursor ))
+				Else
+					list.AddLast( pathing.lev.get_midpoint( cursor ))
+				End If
+			Next
+		End If
+		Return list
+	End Method
+
 	Method input_control()
 		Select input_type
 			
 			Case INPUT_KEYBOARD
 				'chassis control (only if engine is running)
-				If game.player_engine_running
+				If FLAG.engine_running
 					'velocity
 					If KeyDown( KEY_W )
 						avatar.drive( 1.0 )
@@ -424,7 +462,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 
 			Case INPUT_KEYBOARD_MOUSE_HYBRID
 				'chassis control (only if engine is running)
-				If game.player_engine_running
+				If FLAG.engine_running
 					'velocity
 					If KeyDown( KEY_W ) Or KeyDown( KEY_UP )
 						avatar.drive( 1.0 )
@@ -453,7 +491,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				'turret aim control
 				mouse_turret_input()
 				'turret(s) fire
-				If MouseDown( 1 ) And Not FLAG_ignore_mouse_1
+				If MouseDown( 1 ) And Not FLAG.ignore_mouse_1
 					avatar.fire_all( TURRET.PRIMARY, true )
 				End If
 				If MouseDown( 2 )
@@ -467,7 +505,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method mouse_turret_input()
 		For Local index% = 0 Until avatar.turret_systems.Length
-			Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.get_turret_system_pos( index ).ang_to( game.mouse ))
+			Local diff# = ang_wrap( avatar.get_turret_system_ang( index ) - avatar.get_turret_system_pos( index ).ang_to( game_mouse ))
 			Local diff_mag# = Abs( diff )
 			Local max_ang_vel# = avatar.get_turret_system_max_ang_vel( index )
 			Local threshold# = 3 * max_ang_vel
@@ -492,3 +530,5 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	End Method
 	
 End Type
+
+

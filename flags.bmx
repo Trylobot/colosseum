@@ -13,5 +13,7 @@ Type FLAG
 	Global bg_music%
 	Global engine_ignition%
 	Global engine_running%
+	'input bleed prevention
+	Global ignore_mouse_1%
 End Type
 

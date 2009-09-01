@@ -3,8 +3,18 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "inventory_data.bmx"
+Import "vehicle_data.bmx"
+Import "progress_data.bmx"
+Import "constants.bmx"
+Import "json.bmx"
+Import "complex_agent.bmx"
+Import "turret.bmx"
 
 '______________________________________________________________________________
+Global profile:PLAYER_PROFILE
+
 Type PLAYER_PROFILE
 	Field name$
 	Field cash%
@@ -27,7 +37,7 @@ Type PLAYER_PROFILE
 	Method buy_part( query_item:INVENTORY_DATA )
 		If can_buy( query_item )
 			Local cost% = get_cost( query_item )
-			profile.cash :- cost
+			cash :- cost
 			add_part( query_item )
 		End If
 	End Method
@@ -36,7 +46,7 @@ Type PLAYER_PROFILE
 		If can_sell( query_item )
 			Local cost% = get_cost( query_item )
 			Local item_index% = search_inventory( query_item )
-			profile.cash :+ cost
+			cash :+ cost
 			remove_part( item_index )
 		End If
 	End Method
@@ -51,7 +61,7 @@ Type PLAYER_PROFILE
 			Default
 				Return False
 		End Select
-		If profile.cash >= cost
+		If cash >= cost
 			Return True
 		End If
 		Return False
@@ -236,4 +246,55 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 	Return prof
 End Function
 
+'______________________________________________________________________________
+Function create_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, validate_against_inventory% = True, count_turrets% = True, err$ Var )
+	If Not v_dat Then Return Null 'no chassis data
+	If v_dat.is_unit
+		Return get_unit( v_dat.chassis_key )
+	Else 'Not is_unit
+		Local at_least_one_turret% = False 'indicates whether this player-constructed chassis specifies at least one turret
+		Local required_items:TList = CreateList() 'a laundry list of all the items required to build this chassis
+		required_items.AddLast( Create_INVENTORY_DATA( "chassis", v_dat.chassis_key ))
+		Local player:COMPLEX_AGENT
+		player = get_player_chassis( v_dat.chassis_key )
+		If player
+			player.political_alignment = ALIGNMENT_FRIENDLY
+			For Local anchor% = 0 Until v_dat.turret_keys.Length
+				For Local t% = 0 Until v_dat.turret_keys[anchor].Length
+					'search the required items list for instances of this turret
+					Local exists% = False
+					For Local item:INVENTORY_DATA = EachIn required_items
+						If item.key = v_dat.turret_keys[anchor][t]
+							item.count :+ 1
+							exists = True
+							Exit
+						End If
+					Next
+					If Not exists
+						required_items.AddLast( Create_INVENTORY_DATA( "turret", v_dat.turret_keys[anchor][t] ))
+					End If
+					Local player_turret:TURRET = get_turret( v_dat.turret_keys[anchor][t] )
+					If player_turret
+						player.add_turret( player_turret, anchor )
+						at_least_one_turret = True
+					End If
+				Next
+			Next
+			If count_turrets And Not at_least_one_turret
+				err = "Your vehicle schematic must specify at least one turret."
+				Return Null 'must have at least one turret
+			End If
+			If validate_against_inventory
+				If Not profile.checklist( required_items )
+					err = "Your vehicle schematic specifies items that were damaged or sold."
+					Return Null 'not enough items to build player
+				End If
+			End If
+			Return player 'all good!
+		Else
+			err = "Your vehicle schematic is invalid."
+			Return Null 'bad chassis data
+		End If
+	End If
+End Function
 

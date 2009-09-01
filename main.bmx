@@ -34,6 +34,7 @@ Const version_major%    = 0
 Const version_minor%    = 4
 Const version_revision% = 0
 
+Rem
 Include "misc.bmx"
 Include "json.bmx"
 Include "inventory_data.bmx"
@@ -84,32 +85,10 @@ Include "net.bmx"
 Include "graffiti_manager.bmx"
 Include "debug.bmx"
 Include "core.bmx"
+EndRem
 
-'Graphics
-Global window_w%
-Global window_h%
-Global window:BOX 'I don't like having both this and the (_w,_h) constants
-Global fullscreen%
-Global bit_depth%
-Global refresh_rate%
-Global show_ai_menu_game%
-Global retain_particles%
-Global active_particle_limit%
+Import "settings.bmx"
 
-Function apply_default_settings()
-	window_w = 640
-	window_h = 480
-	window = Create_BOX( 0, 0, window_w, window_h )
-	fullscreen = False
-	bit_depth = 32
-	refresh_rate = 60
-	show_ai_menu_game = True
-	retain_particles = True
-	active_particle_limit = 500
-	
-	network_ip_address = "127.0.0.1"
-	network_port = 6112
-End Function
 'defaults
 apply_default_settings()
 

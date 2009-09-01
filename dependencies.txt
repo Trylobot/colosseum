@@ -1,5 +1,18 @@
 DEPENDENCIES
 
+	main.bmx
+		debug.bmx
+		core.bmx
+		data.bmx
+		input.bmx
+		net.bmx
+		collide.bmx
+		update.bmx
+		draw.bmx
+		audio.bmx
+		box.bmx
+		---
+
 	input.bmx
 		point.bmx
 		vec.bmx
@@ -69,6 +82,7 @@ DEPENDENCIES
 		---
 	
 	data.bmx
+		constants.bmx
 		agent.bmx
 		particle.bmx
 		emitter.bmx
@@ -102,26 +116,6 @@ DEPENDENCIES
 		box.bmx
 		---
 		
-	main.bmx
-		debug.bmx
-		core.bmx
-		data.bmx
-		input.bmx
-		net.bmx
-		collide.bmx
-		update.bmx
-		draw.bmx
-		audio.bmx
-		box.bmx
-		---
-
-	player_profile.bmx
-		inventory_data.bmx
-		vehicle_data.bmx
-		progress_data.bmx
-		json.bmx
-		---
-	
 	net.bmx  
 		vehicle_data.bmx
 		complex_agent.bmx
@@ -195,7 +189,7 @@ DEPENDENCIES
 		agent.bmx
 		---
 	
-	vehicle_editor.bmx
+	vehicle_editor.bmx  done
 		vehicle_data.bmx
 		complex_agent.bmx
 		inventory_data.bmx
@@ -205,39 +199,53 @@ DEPENDENCIES
 		box.bmx
 		---
 	
-	vehicle_data.bmx
-		turret.bmx
-		compatibility_data.bmx
-		inventory_data.bmx
-		json.bmx
-		---
-	
-	menu.bmx
+	menu.bmx  done
 		menu_option.bmx
+		player_profile.bmx
 		box.bmx
 		console.bmx
 		inventory_data.bmx
 		constants.bmx
 		---
 	
-	inventory_data.bmx  
+	control_brain.bmx  done
+		managed_object.bmx
+		pathing_structure.bmx
+		player_profile.bmx
+		ai_type.bmx
+		complex_agent.bmx
+		agent.bmx
+		spawn_request.bmx
+		point.bmx
+		vec.bmx
+		box.bmx
+		flags.bmx
+		cell.bmx
+		---
+		
+	player_profile.bmx  done
+		inventory_data.bmx
+		vehicle_data.bmx
+		progress_data.bmx
+		constants.bmx
+		json.bmx
+		complex_agent.bmx
+		turret.bmx
+		---
+	
+	vehicle_data.bmx  done
+		turret.bmx
+		compatibility_data.bmx
+		inventory_data.bmx
+		json.bmx
+		---
+	
+	inventory_data.bmx  done
 		complex_agent.bmx
 		turret.bmx
 		json.bmx
 		---
 	
-	control_brain.bmx  
-		complex_agent.bmx
-		ai_type.bmx
-		vec.bmx
-		agent.bmx
-		point.bmx
-		GLOBAL game
-			game.spawn_unit()
-		cell.bmx
-		box.bmx
-		---
-		
 	complex_agent.bmx  done
 		agent.bmx
 		turret.bmx
@@ -382,6 +390,11 @@ DEPENDENCIES
 		json.bmx
 		---
 	
+	mouse.bmx  done
+		point.bmx
+		vec.bmx
+		---
+	
 	point.bmx  done
 		managed_object.bmx
 		timescale.bmx
@@ -412,6 +425,18 @@ DEPENDENCIES
 		
 	timescale.bmx  done
 		misc.bmx
+		---
+	
+	instaquit.bmx  done
+		settings.bmx
+		base_data.bmx
+		misc.bmx
+		draw_misc.bmx
+		drawtext_ex.bmx
+		---
+		
+	settings.bmx  done
+		box.bmx
 		---
 		
 	drawtext_ex.bmx
@@ -446,6 +471,9 @@ DEPENDENCIES
 	
 	color.bmx  done
 		---
+	
+	draw_misc.bmx  done
+	 ---
 
 	misc.bmx  done
 		---

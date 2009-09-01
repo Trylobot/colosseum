@@ -248,7 +248,11 @@ Function round_to_nearest#( x#, interval# )
 		Return (Int(1 + x / interval) * interval)
 	End If
 End Function
-
+'______________________________________________________________________________
+Function enforce_suffix$( str$, suffix$ )
+	Return str + suffix
+End Function
+'______________________________________________________________________________
 Type INTEGER
 	Field value%
 	Function Create:INTEGER( value% )

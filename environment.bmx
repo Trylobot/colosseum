@@ -3,6 +3,9 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "mouse.bmx"
+Import "spawn_request.bmx"
 
 '______________________________________________________________________________
 Const SPAWN_POINT_POLITE_DISTANCE% = 35.0 'delete me (please?)
@@ -14,7 +17,10 @@ Function Create_ENVIRONMENT:ENVIRONMENT( human_participation% = False )
 End Function
 
 Type ENVIRONMENT
-	Field mouse:cVEC 'mouse position relative to local origin
+	
+	'this is now the global "game_mouse:cVEC" but otherwise unchanged
+	'Field mouse:cVEC 'mouse position relative to local origin
+	
 	Field drawing_origin:cVEC 'drawing origin (either midpoint of local origin and relative mouse, or some constant)
 	Field origin_min_x% 'camera constraint
 	Field origin_min_y% 'camera constraint
@@ -313,6 +319,11 @@ Type ENVIRONMENT
 		Return spawned
 	End Method
 	
+	Method spawn_unit_from_request:CONTROL_BRAIN( req:SPAWN_REQUEST )
+		If Not req Then Return Null
+		Return spawn_unit( req.unit_key, req.alignment, req.spawn_point )
+	End Method
+
 	Method spawn_unit:CONTROL_BRAIN( unit_key$, alignment%, spawn_point:POINT )
 		Local unit:COMPLEX_AGENT = get_unit( unit_key, alignment )
 		Select alignment
@@ -526,28 +537,6 @@ Type ENVIRONMENT
 		For Local d:DOOR = EachIn political_door_list( alignment )
 			d.close()
 		Next
-	End Method
-
-	Method find_path:TList( start_x#, start_y#, goal_x#, goal_y#, per_waypoint_chaotic_nudging% = False )
-		Local start_cell:CELL = pathing.containing_cell( start_x, start_y )
-		Local goal_cell:CELL = pathing.containing_cell( goal_x, goal_y )
-		If pathing.grid( start_cell ) = PATH_BLOCKED Or pathing.grid( goal_cell ) = PATH_BLOCKED
-			Return Null
-		End If
-		pathing.reset()
-		Local cell_list:TList = ..
-			pathing.find_CELL_path( start_cell, goal_cell )
-		Local list:TList = CreateList()
-		If cell_list <> Null And Not cell_list.IsEmpty()
-			For Local cursor:CELL = EachIn cell_list
-				If per_waypoint_chaotic_nudging
-					list.AddLast( lev.get_random_contained_point( cursor ))
-				Else
-					list.AddLast( lev.get_midpoint( cursor ))
-				End If
-			Next
-		End If
-		Return list
 	End Method
 
 	Method kill( brain:CONTROL_BRAIN )

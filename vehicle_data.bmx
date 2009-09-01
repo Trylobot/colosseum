@@ -3,6 +3,11 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "turret.bmx"
+Import "compatibility_data.bmx"
+Import "inventory_data.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Function Create_VEHICLE_DATA:VEHICLE_DATA( ..

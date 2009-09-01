@@ -3,16 +3,12 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "mouse.bmx"
+Import "flags.bmx"
+Import "instaquit.bmx"
 
 '______________________________________________________________________________
-'input
-Global mouse:POINT = Create_POINT( MouseX(), MouseY() )
-Global mouse_delta:cVEC = New cVEC
-Global mouse_last_z% = 0
-Global dragging_scrollbar% = False
-Global mouse_down_1% = False
-
-'chat
 Global chat_mode% = False
 Global chat_input_listener:CONSOLE = New CONSOLE
 Global chat$
@@ -32,16 +28,17 @@ Function get_all_input()
 		ShowMouse()
 	End If
 	If Not MouseDown( 1 )
-		FLAG_ignore_mouse_1 = False
+		FLAG.ignore_mouse_1 = False
 	End If
 	
 	'navigate menu and select option
-	If FLAG_in_menu
+	If FLAG.in_menu
 		Local m:MENU = get_current_menu()
 		'text input controls comes before anything else
 		If m.menu_type = MENU.TEXT_INPUT_DIALOG
 			If KeyHit( KEY_ENTER )
-				m.execute_current_option()
+				'm.execute_current_option()
+				execute_option( m.get_focus() )
 			Else
 				m.input_box = m.input_listener.update( m.input_box )
 				m.update()
@@ -58,7 +55,8 @@ Function get_all_input()
 			m.decrement_focus()
 		End If
 		If KeyHit( KEY_ENTER )
-			m.execute_current_option()
+			'm.execute_current_option()
+			execute_option( m.get_focus() )
 		End If
 		'mouseover of menu items
 		If mouse_delta.x <> 0 Or mouse_delta.y <> 0
@@ -67,7 +65,8 @@ Function get_all_input()
 		'select option under mouse cursor, if there be one
 		If MouseHit( 1 )
 			If m.select_by_coords( mouse.pos_x, mouse.pos_y )
-				m.execute_current_option()
+				'm.execute_current_option()
+				execute_option( m.get_focus() )
 				m = get_current_menu()
 				m.calculate_bounding_boxes()
 				m.select_by_coords( mouse.pos_x, mouse.pos_y )
@@ -158,6 +157,10 @@ Function get_all_input()
 	
 End Function
 
+Function execute_option( opt:MENU_OPTION )
+	menu_command( opt.command_code, opt.argument )
+End Function
+
 Function reset_mouse( ang# )
 	MoveMouse( window_w/2 + 30 * Cos( ang ), window_h/2 + 30 * Sin( ang ))
 End Function
@@ -198,33 +201,6 @@ Function mouse_state_update()
 		mouse_down_1 = True
 	Else
 		mouse_down_1 = False
-	End If
-End Function
-
-'______________________________________________________________________________
-'Instaquit: quit instantly from anywhere, just hold ESC for a few seconds
-Global esc_held% = False
-Global esc_press_ts% = now()
-Global esc_held_progress_bar_show_time_required% = 200
-Global instaquit_time_required% = 1000
-
-Function escape_key_release%()
-	Return (Not KeyDown( KEY_ESCAPE ) And esc_held)
-End Function
-
-Function escape_key_update()
-	'instaquit
-	If esc_held And (now() - esc_press_ts) >= instaquit_time_required
-		menu_command( COMMAND.QUIT_GAME )
-	End If
-	'escape key state
-	If KeyDown( KEY_ESCAPE )
-		If Not esc_held
-			esc_press_ts = now()
-		End If
-		esc_held = True
-	Else
-		esc_held = False
 	End If
 End Function
 
