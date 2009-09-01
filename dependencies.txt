@@ -128,18 +128,6 @@ DEPENDENCIES
 		json.bmx
 		---
 		
-	agent.bmx
-		physical_object.bmx
-		GLOBAL game
-			game.near_to()
-			game.deal_damage()
-		audio.bmx
-		particle.bmx
-		force.bmx
-		emitter.bmx
-		json.bmx
-		---
-	
 	draw.bmx
 		environment.bmx
 		core.bmx
@@ -257,8 +245,7 @@ DEPENDENCIES
 		---
 	
 	turret.bmx
-		complex_agent.bmx [CYCLIC]
-			Field parent -- could use a POINT
+		point.bmx
 		turret_barrel.bmx
 		emitter.bmx
 		audio.bmx
@@ -278,27 +265,48 @@ DEPENDENCIES
 		json.bmx
 		---
 	
-	turret_barrel.bmx
+	turret_barrel.bmx  
+		point.bmx
 		emitter.bmx
+		particle_emitter.bmx
+		projectile_launcher.bmx
 		json.bmx
 		---
 	
-	projectile.bmx
+	projectile_launcher.bmx  done
+		emitter.bmx
+		projectile.bmx
+		---
+	
+	projectile.bmx  done
 		physical_object.bmx
-		emitter.bmx [CYCLIC]
-		GLOBAL game
-			auto_manage() [CYCLIC]
+		emitter.bmx
+		particle_emitter.bmx
 		agent.bmx
 		audio.bmx
 		json.bmx
 		---
 	
-	emitter.bmx
+	agent.bmx  done
+		physical_object.bmx
+		audio.bmx
+		particle.bmx
+		force.bmx
+		emitter.bmx
+		particle_emitter.bmx
+		json.bmx
+		constants.bmx
+		---
+	
+	particle_emitter.bmx	done
+		emitter.bmx
+		particle.bmx
+		---
+	
+	emitter.bmx  done
 		managed_object.bmx
 		point.bmx
 		range.bmx
-		particle.bmx
-		projectile.bmx [CYCLIC]
 		json.bmx
 		---
 		
@@ -424,15 +432,9 @@ DEPENDENCIES
 	managed_object.bmx  done
 		---
 	
-	misc.bmx  done
-		---
-	
 	range.bmx  done
 		---
 	
-	win32.bmx  done
-		---
-
 	box.bmx  done
 		---
 		
@@ -441,3 +443,14 @@ DEPENDENCIES
 	
 	color.bmx  done
 		---
+
+	misc.bmx  done
+		---
+		
+	constants.bmx  done
+		---
+	
+	win32.bmx  done
+		---
+
+

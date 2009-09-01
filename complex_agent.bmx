@@ -4,6 +4,8 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "agent.bmx"
+Import "constants.bmx"
 
 '______________________________________________________________________________
 Global player_chassis_map:TMap = CreateMap()
@@ -21,13 +23,6 @@ Function get_unit:COMPLEX_AGENT( Key$, alignment% = ALIGNMENT_NONE, Copy% = True
 	If copy And unit Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit, alignment ))
 	Return unit
 End Function
-
-Const EVENT_ALL_STOP% = 0
-Const EVENT_TURN_RIGHT% = 1
-Const EVENT_TURN_LEFT% = 2
-Const EVENT_DRIVE_FORWARD% = 3
-Const EVENT_DRIVE_BACKWARD% = 4
-Const EVENT_DEATH% = 5
 
 Const WIDGET_CONSTANT% = 1
 Const WIDGET_DEPLOY% = 2
@@ -69,6 +64,8 @@ Type COMPLEX_AGENT Extends AGENT
 	Field stickies:TList 'TList<PARTICLE> damage particles
 	Field left_track:PARTICLE 'a special particle that represents the "left track" of a tank
 	Field right_track:PARTICLE 'a special particle that represents the "right track" of a tank
+	
+	Field desire_self_destruction%
 
 	Field spawning%
 	Field spawn_time%

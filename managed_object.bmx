@@ -23,8 +23,10 @@ Type MANAGED_OBJECT
 	End Method
 	
 	Method manage( list:TList )
-		If managed() Then unmanage()
-		link = ( list.AddLast( Self ))
+		If list
+			If managed() Then unmanage()
+			link = ( list.AddLast( Self ))
+		End If
 	End Method
 	
 	Method unmanage()

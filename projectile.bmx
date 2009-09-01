@@ -4,6 +4,12 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "physical_object.bmx"
+Import "emitter.bmx"
+Import "particle_emitter.bmx"
+Import "agent.bmx"
+Import "audio.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Global projectile_map:TMap = CreateMap()
@@ -76,10 +82,10 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		Local p:PROJECTILE = PROJECTILE( PROJECTILE.Create( ..
 			img, snd_impact, damage, explosive_force_magnitude, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
 		'emitter lists
-		For Local em:EMITTER = EachIn emitter_list_constant
+		For Local em:PARTICLE_EMITTER = EachIn emitter_list_constant
 			p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_CONSTANT )
 		Next
-		For Local em:EMITTER = EachIn emitter_list_payload
+		For Local em:PARTICLE_EMITTER = EachIn emitter_list_payload
 			p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_PAYLOAD )
 		Next
 		Return p
@@ -89,9 +95,8 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		'physical object variables
 		Super.update()
 		'constant-on emitters
-		For Local em:EMITTER = EachIn emitter_list_constant
+		For Local em:PARTICLE_EMITTER = EachIn emitter_list_constant
 			em.update()
-			em.emit()
 		Next
 		'maximum velocity
 		If max_vel <> INFINITY
@@ -103,49 +108,44 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		End If
 	End Method
 	
+	Method emit( background_particle_manager:TList = Null, foreground_particle_manager:TList = Null )
+		For Local em:PARTICLE_EMITTER = EachIn emitter_list_constant
+			em.emit( background_particle_manager, foreground_particle_manager )
+		Next
+	End Method
+	
 	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
 		SetRotation( ang )
 		DrawImage( img, pos_x, pos_y )
 	End Method
 	
-	Method auto_manage()
-		manage( game.projectile_list )
-	End Method
-	
 	'Method impact( material%, hit_player% = False )
-	Method impact( other:AGENT = Null )
+	Method impact( ..
+	other:AGENT = Null, other_agent_is_player% = False, ..
+	impact_sound:TSound, ..
+	background_particle_manager:TList = Null, foreground_particle_manager:TList = Null )
 		'payload emitters
-		For Local em:EMITTER = EachIn emitter_list_payload
-			em.enable( MODE_ENABLED_WITH_COUNTER )
+		For Local em:PARTICLE_EMITTER = EachIn emitter_list_payload
+			em.enable( EMITTER.MODE_ENABLED_WITH_COUNTER )
 			While em.is_enabled() And em.ready()
 				em.update()
-				em.emit()
+				em.emit( background_particle_manager, foreground_particle_manager )
 			End While
 		Next
 		Local volume# = 0.3333
-		If other <> Null And other.id = get_player_id() Then volume = 1.00
-		'this should be dependent on a property of the other agent, not the class of the object. like, "materials" and stuff.
-		'even walls could potentially have materials.
-		If other = Null Or COMPLEX_AGENT( other )
-			play_impact_sound( volume )
-		Else
-			play_sound( get_sound( "wood_hit" ), volume, 0.25 )
-		End If
+		If other <> Null And other_agent_is_player Then volume = 1.00
+		play_sound( impact_sound, volume, 0.25 )
 	End Method
 	
-	Method play_impact_sound( volume# )
-		play_sound( snd_impact, volume, 0.25 )
-	End Method
-	
-	Method add_emitter:EMITTER( other_em:EMITTER, category% )
-		Local em:EMITTER
+	Method add_emitter:PARTICLE_EMITTER( other_em:PARTICLE_EMITTER, category% )
+		Local em:PARTICLE_EMITTER
 		Select category
 			Case PROJECTILE_MEMBER_EMITTER_CONSTANT
-				em = EMITTER( EMITTER.Copy( other_em, emitter_list_constant, Self, source_id ))
+				em = Copy_PARTICLE_EMITTER( other_em, emitter_list_constant, Self )
 				em.enable()
 				Return em
 			Case PROJECTILE_MEMBER_EMITTER_PAYLOAD
-				em = EMITTER( EMITTER.Copy( other_em, emitter_list_payload, Self, source_id ))
+				em = Copy_PARTICLE_EMITTER( other_em, emitter_list_payload, Self )
 				em.disable()
 				Return em
 			Default
@@ -172,7 +172,7 @@ Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
 		Local array:TJSONArray = json.GetArray( "constant_emitters" )
 		If array And Not array.IsNull()
 			For Local i% = 0 Until array.Size()
-				Local em:EMITTER = Create_EMITTER_from_json_reference( TJSON.Create( array.GetByIndex( i )))
+				Local em:PARTICLE_EMITTER = Create_PARTICLE_EMITTER_from_json_reference( TJSON.Create( array.GetByIndex( i )))
 				If em Then p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_CONSTANT )
 			Next
 		End If
@@ -181,7 +181,7 @@ Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
 		Local array:TJSONArray = json.GetArray( "payload_emitters" )
 		If array And Not array.IsNull()
 			For Local i% = 0 Until array.Size()
-				Local em:EMITTER = Create_EMITTER_from_json_reference( TJSON.Create( array.GetByIndex( i )))
+				Local em:PARTICLE_EMITTER = Create_PARTICLE_EMITTER_from_json_reference( TJSON.Create( array.GetByIndex( i )))
 				If em Then p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_PAYLOAD )
 			Next
 		End If

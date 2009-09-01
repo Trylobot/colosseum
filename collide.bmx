@@ -176,7 +176,16 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 		End If
 	End If
 	'activate projectile impact emitter
-	proj.impact( ag )
+	Local impact_sound:TSound
+	If Not COMPLEX_AGENT( ag ) 'prop; assume wooden crate? (VERY BAD FORM)
+		impact_sound = get_sound( "wood_hit" ) 
+	Else
+		impact_sound = proj.snd_impact
+	End If
+	proj.impact( ..
+		ag, (ag.id = get_player_id()), ..
+		impact_sound, .. 
+		game.particle_list_background, game.particle_list_foreground )
 	'remove projectile
 	proj.unmanage()
 End Function
@@ -263,12 +272,12 @@ Function collision_agent_door( ag:AGENT, door:WIDGET )
 End Function
 
 Function collision_projectile_door( proj:PROJECTILE, door:WIDGET )
-	proj.impact()
+	proj.impact( , game.particle_list_background, game.particle_list_foreground )
 	proj.unmanage()
 End Function
 
 Function collision_projectile_wall( proj:PROJECTILE, wall:BOX )
-	proj.impact()
+	proj.impact( , game.particle_list_background, game.particle_list_foreground )
 	proj.unmanage()
 End Function
 

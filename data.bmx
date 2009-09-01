@@ -52,25 +52,6 @@ Global asset_identifiers$[] = ..
 	"compatibility", ..
 	"levels" ]
 	
-Global compatibility_map:TMap = CreateMap()
-Global level_map:TMap = CreateMap()
-
-'________________________________
-Function get_compatibility:COMPATIBILITY_DATA( key$ ) 'returns read-only reference (recursive inheritance expansion)
-	Local cd:COMPATIBILITY_DATA = COMPATIBILITY_DATA( compatibility_map.ValueForKey( key.toLower() ))
-	If cd
-		cd = cd.clone()
-		If cd.inherits_from Then cd.inherit( get_compatibility( cd.inherits_from ))
-	End If
-	Return cd
-End Function
-'________________________________
-Function get_level:LEVEL( key$, copy% = True ) 'returns read-only reference
-	Local lev:LEVEL = LEVEL( level_map.ValueForKey( key.toLower() ))
-	'If copy Then Return ...
-	Return lev
-End Function
-
 '_____________________________________________________________________________
 Function load_assets%( display_progress% = False )
 	Local file:TStream = ReadFile( data_path + default_assets_file_name )

@@ -4,6 +4,14 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "physical_object.bmx"
+Import "constants.bmx"
+Import "particle.bmx"
+Import "force.bmx"
+Import "emitter.bmx"
+Import "particle_emitter.bmx"
+Import "audio.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Global prop_map:TMap = CreateMap()
@@ -52,7 +60,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 	Field gibs:TImage 'gib image(s)
 
 	Field max_health# 'maximum health
-	Field death_emitters:TList 'emitters to be activated on death
+	Field death_emitters:TList 'particle emitters to be activated on death
 	Field destruct_on_contact% 'whether this agent should die on contact with any complex agents
 
 	Field cur_health# 'current health
@@ -87,35 +95,14 @@ Type AGENT Extends PHYSICAL_OBJECT
 		If cur_health < 0 Then cur_health = 0 'no overkill
 	End Method
 
-	Method self_destruct()
-		Local nearby_objects:TList = game.near_to( Self, 200.0 ) 'the "radius" argument should come from data
-		Local damage#, total_force#
-		For Local phys_obj:PHYSICAL_OBJECT = EachIn nearby_objects
-			Local dist# = dist_to( phys_obj ) 
-			'damage
-			damage = 150 'this should come from data
-			If AGENT( phys_obj )
-				game.deal_damage( AGENT( phys_obj ), damage / Pow(( 0.05 * dist + 2 ), 2 ))
-			End If
-			'explosive knock-back force & torque
-			total_force = (phys_obj.mass * 750) / Pow( 0.5 * dist + 24, 2 ) - 5 'the maximum comes from data, and is modulated with the actual distance
-			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang_to( phys_obj ), total_force, 100 )))
-			phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, Rnd( -2.0, 2.0 )*total_force, 100 )))
-		Next
-		'self-destruct explosion sound
-		play_sound( get_sound( "cannon_hit" ),, 0.25 )
-		'death effects
-		die()
-	End Method
-	
 	'these boolean switches need to go.
-	Method die( show_halo% = True, show_gibs% = True, audible% = True )
+	Method die( background_particle_manager:TList, show_halo% = True, show_gibs% = True, audible% = True )
 		'bright halo
 		If show_halo
 			'this particle's creation should be part of the agent's death emitters, not hard coded.
 			Local halo:PARTICLE = get_particle( "halo" )
 			halo.move_to( Self )
-			halo.auto_manage()
+			halo.manage( background_particle_manager )
 		End If
 		'gibby bits
 		If show_gibs
@@ -137,7 +124,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 					gib.ang_vel = Rnd( -3.0, 3.0 )
 					gib.update()
 					gib.created_ts = now()
-					gib.auto_manage()
+					gib.manage( background_particle_manager )
 				Next
 			End If
 		End If
@@ -146,11 +133,11 @@ Type AGENT Extends PHYSICAL_OBJECT
 			'...
 		End If
 		'death emitters
-		For Local em:EMITTER = EachIn death_emitters
-			em.enable( MODE_ENABLED_WITH_COUNTER )
+		For Local em:PARTICLE_EMITTER = EachIn death_emitters
+			em.enable( EMITTER.MODE_ENABLED_WITH_COUNTER )
 			While em.ready() And em.is_enabled()
 				em.update()
-				em.emit()
+				em.emit( background_particle_manager )
 			End While
 		Next
 		'delete self
@@ -159,12 +146,11 @@ Type AGENT Extends PHYSICAL_OBJECT
 	End Method
 	
 	'___________________________________________
-	Method add_emitter:EMITTER(	other_em:EMITTER, event% )
-		Local em:EMITTER = Copy_EMITTER( other_em )
-		em.parent = Self
-		em.trigger_event = event
-		Select event
-			Case EVENT_DEATH
+	Method add_emitter:PARTICLE_EMITTER( other_em:PARTICLE_EMITTER, evt% )
+		Local em:PARTICLE_EMITTER = Copy_PARTICLE_EMITTER( other_em,, Self )
+		em.trigger_event = evt
+		Select evt
+			Case EVENT.DEATH
 				em.manage( death_emitters )
 		End Select
 		Return em

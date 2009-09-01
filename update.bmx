@@ -37,6 +37,7 @@ Function update_all_objects()
 		'projectiles
 		For Local proj:PROJECTILE = EachIn game.projectile_list
 			proj.update()
+			proj.emit( game.particle_list_background, game.particle_list_foreground )
 		Next
 		'particles
 		For Local list:TList = EachIn game.particle_lists
@@ -61,6 +62,10 @@ Function update_all_objects()
 		For Local list:TList = EachIn game.complex_agent_lists
 			For Local ag_cmp:COMPLEX_AGENT = EachIn list
 				ag_cmp.update()
+				'self destruction flag (triggered by mini-bomb control brain)
+				If ag_cmp.desire_self_destruction
+					agent_self_destruct( ag_cmp )
+				End If
 			Next
 		Next
 		
@@ -69,9 +74,9 @@ Function update_all_objects()
 			prop.update()
 		Next
 		'environmental emitters
-		For Local em:EMITTER = EachIn game.environmental_emitter_list
+		For Local em:PARTICLE_EMITTER = EachIn game.environmental_emitter_list
 			em.update()
-			em.emit()
+			em.emit( game.particle_list_background, game.particle_list_foreground )
 			em.prune()
 		Next
 		'environmental widgets
@@ -113,6 +118,7 @@ Function update_drawing_origin()
 		Else If game.drawing_origin.y > game.origin_max_y Then game.drawing_origin.y = game.origin_max_y
 	End If
 End Function
+
 '______________________________________________________________________________
 Function update_flags()
 	'global state flag updates
@@ -163,4 +169,26 @@ Function update_flags()
 	End If
 End Function
 
+'______________________________________________________________________________
+Function agent_self_destruct( ag:AGENT )
+	Local nearby_objects:TList = game.near_to( ag, 200.0 ) 'the "radius" argument should come from data
+	Local damage#, total_force#
+	For Local phys_obj:PHYSICAL_OBJECT = EachIn nearby_objects
+		Local dist# = ag.dist_to( phys_obj ) 
+		'damage
+		damage = 150 'this should come from data
+		If AGENT( phys_obj )
+			game.deal_damage( AGENT( phys_obj ), damage / Pow(( 0.05 * dist + 2 ), 2 ))
+		End If
+		'explosive knock-back force & torque
+		total_force = (phys_obj.mass * 750) / Pow( 0.5 * dist + 24, 2 ) - 5 'the maximum comes from data, and is modulated with the actual distance
+		phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang_to( phys_obj ), total_force, 100 )))
+		phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, Rnd( -2.0, 2.0 )*total_force, 100 )))
+	Next
+	'self-destruct explosion sound
+	play_sound( get_sound( "cannon_hit" ),, 0.25 )
+	
+	'agent death effects
+	ag.die( game.particle_list_background )
+End Function
 

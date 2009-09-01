@@ -362,7 +362,7 @@ Type ENVIRONMENT
 		'resulting death
 		If ag.dead() 'some agent was killed
 			'agent death animations and sounds, and memory cleanup
-			ag.die()
+			ag.die( particle_list_background )
 			'shalt we spawneth teh phat lewts?! perhaps! perhaps.
 			If human_participation
 				spawn_pickup( ag.pos_x, ag.pos_y,, (Not player_has_munitions_based_turrets) )

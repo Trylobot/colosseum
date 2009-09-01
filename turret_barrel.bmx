@@ -4,7 +4,10 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "point.bmx"
 Import "emitter.bmx"
+Import "particle_emitter.bmx"
+Import "projectile_launcher.bmx"
 Import "json.bmx"
 
 '______________________________________________________________________________
