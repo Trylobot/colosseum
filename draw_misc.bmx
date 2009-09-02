@@ -4,8 +4,14 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "settings.bmx"
 
 '______________________________________________________________________________
+Function screencap:TImage()
+	SetOrigin( 0, 0 )
+	Return LoadImage( GrabPixmap( 0, 0, window_w, window_h ))
+End Function
+
 Function DrawRectLines( x%, y%, w%, h% )
 	DrawLine( x,     y,     x+w-1, y,     False )
 	DrawLine( x+w-1, y,     x+w-1, y+h-1, False )
@@ -31,6 +37,28 @@ Function draw_percentage_bar( x%, y%, w%, h%, pct#, a# = 1.0, r% = 255, g% = 255
 		SetAlpha( a )
 		SetColor( r, g, b )
 		DrawRect( x, y, pct*w, h )
+	End If
+End Function
+
+Function draw_fuzzy( img:TImage )
+	If img
+		SetColor( 255, 255, 255 )
+		SetAlpha( 1 )
+		SetRotation( 0 )
+		SetScale( 1, 1 )
+		DrawImage( img, 0, 0 )
+		SetAlpha( 0.333333 )
+		SetBlend( LIGHTBLEND )
+		DrawImage( img, 2, 0 )
+		DrawImage( img, 0, 2 )
+		DrawImage( img, 0, -2 )
+		DrawImage( img, -2, 0 )
+		SetAlpha( 0.666666 )
+		SetBlend( ALPHABLEND )
+		SetColor( 0, 0, 0 )
+		DrawRect( 0, 0, window_w, window_h )
+		SetAlpha( 1 )
+		SetColor( 255, 255, 255 )
 	End If
 End Function
 

@@ -4,15 +4,22 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import vertex.bnetex
 Import "complex_agent.bmx"
 Import "control_brain.bmx"
 Import "vehicle_data.bmx"
 Import "json.bmx"
+Import "settings.bmx"
+Import "flags.bmx"
+'Import "connection.bmx"
+'Import "remote_player.bmx"
+'Import "chat_message.bmx"
+'Import "network_id.bmx"
 
 '______________________________________________________________________________
 Global network_host% = False
-Global network_ip_address$
-Global network_port%
+'Global network_ip_address$
+'Global network_port%
 Global network_level$ = "levels/blitz.colosseum_level"
 
 Global server:CONNECTION
@@ -36,7 +43,7 @@ Const delay_self_broadcast_inputs% = 10
 
 '______________________________________________________________________________
 Function update_network()
-	If playing_multiplayer
+	If FLAG.playing_multiplayer
 		Local client:CONNECTION
 		Local client_id:NETWORK_ID
 		Local rp_id:NETWORK_ID
@@ -88,6 +95,7 @@ Function update_network()
 							Local data$[] = client.tcp.ReadLine().Split( "~t" )
 							rp.load_net_identity( data[0], data[1] )
 						
+						Rem
 						Case NET.READY
 							DebugLog( " " + NET.decode( message_type ) + " from " + rp_id.ToString() )
 							If network_host
@@ -102,6 +110,7 @@ Function update_network()
 								'TODO: spawn every remote player
 								'      will require connections to be separated from remote players
 							End If
+						EndRem
 						
 						Case NET.CHAT_MESSAGE
 							DebugLog( " " + NET.decode( message_type ) + " from " + rp_id.ToString() )
@@ -225,7 +234,7 @@ End Function
 
 Function network_game_listen()
 	network_host = True
-	playing_multiplayer = True
+	FLAG.playing_multiplayer = True
 	Local tcp:TTCPStream = New TTCPStream
 	tcp.Init()
 	tcp.SetLocalPort( Short( network_port ))
@@ -237,7 +246,7 @@ End Function
 
 Function network_game_connect%()
 	network_host = False
-	playing_multiplayer = True
+	FLAG.playing_multiplayer = True
 	Local server_id:NETWORK_ID = NETWORK_ID.Create( TNetwork.IntIP( network_ip_address ), Short( network_port ))
 	Local tcp:TTCPStream = New TTCPStream
 	tcp.Init()
@@ -259,6 +268,7 @@ Function network_game_connect%()
 End Function
 
 Function network_terminate()
+	FLAG.playing_multiplayer = False
 	If server
 		server.tcp.Close()
 		server = Null
@@ -342,7 +352,8 @@ Type REMOTE_PLAYER
 	Method load_net_identity( name$, vehicle_json_string$ )
 		Self.name = name
 		vehicle_json = TJSON.Create( vehicle_json_string )
-		avatar = create_player( Create_VEHICLE_DATA_from_json( vehicle_json ), False, False )
+		Local dummy$ = ""
+		avatar = create_player( Create_VEHICLE_DATA_from_json( vehicle_json ), False, False, dummy )
 		brain = Create_CONTROL_BRAIN( avatar, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
 		loaded = True
 	End Method

@@ -18,6 +18,7 @@ Const font_path$ = "fonts/"
 Const level_path$ = "levels/"
 Const sound_path$ = "sound/"
 Const user_path$ = "user/"
+
 Const default_settings_file_name$ = "settings."+settings_file_ext
 Const default_assets_file_name$ = "assets."+data_file_ext
 

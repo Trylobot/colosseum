@@ -5,7 +5,6 @@ Rem
 	derivative author: Tyler W Cole
 	downloaded from http://www.blitzbasic.com/codearcs/codearcs_bmx/2066.bmx at 12:57 PM on Sunday, August 24th, 2008
 EndRem
-
 SuperStrict
 
 Import brl.LinkedList
@@ -669,9 +668,8 @@ Type TJSONParser
 	EndMethod
 	
 	Method Error( err$ )
-		Local full_err$ = "      ERROR: " + "JSON_PARSER_ERROR; index: "+Index+"; " + err
+		Local full_err$ = " JSON Error; index "+Index+"; " + err
 		?Debug
-		DebugStop
 		DebugLog( full_err )
 		?Not Debug
 		Notify( full_err, True )

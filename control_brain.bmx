@@ -19,6 +19,10 @@ Import "flags.bmx"
 Import "cell.bmx"
 
 '______________________________________________________________________________
+Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
+	Return Create_CONTROL_BRAIN( avatar, CONTROL_BRAIN.CONTROL_TYPE_HUMAN,,,,, profile.input_method )
+End Function
+
 Function Create_CONTROL_BRAIN:CONTROL_BRAIN( ..
 avatar:COMPLEX_AGENT, ..
 control_type%, ..

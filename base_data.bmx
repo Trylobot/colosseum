@@ -4,6 +4,11 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import brl.Map
+Import brl.FreeTypeFont
+Import brl.FreeAudioAudio
+Import brl.OGGLoader
+Import brl.PNGLoader
 
 '______________________________________________________________________________
 Global font_map:TMap = CreateMap()

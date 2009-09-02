@@ -4,8 +4,25 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "settings.bmx"
+Import "vec.bmx"
+Import "level.bmx"
+Import "pathing_structure.bmx"
+Import "box.bmx"
+Import "cell.bmx"
+Import "complex_agent.bmx"
+Import "door.bmx"
+Import "particle.bmx"
+Import "emitter.bmx"
+Import "particle_emitter.bmx"
+Import "widget.bmx"
+Import "projectile.bmx"
+Import "agent.bmx"
+Import "pickup.bmx"
+Import "control_brain.bmx"
 Import "mouse.bmx"
 Import "spawn_request.bmx"
+Import "prop_data.bmx"
 
 '______________________________________________________________________________
 Const SPAWN_POINT_POLITE_DISTANCE% = 35.0 'delete me (please?)
@@ -17,10 +34,7 @@ Function Create_ENVIRONMENT:ENVIRONMENT( human_participation% = False )
 End Function
 
 Type ENVIRONMENT
-	
-	'this is now the global "game_mouse:cVEC" but otherwise unchanged
-	'Field mouse:cVEC 'mouse position relative to local origin
-	
+	'Field game_mouse:cVEC 'moved to mouse.bmx
 	Field drawing_origin:cVEC 'drawing origin (either midpoint of local origin and relative mouse, or some constant)
 	Field origin_min_x% 'camera constraint
 	Field origin_min_y% 'camera constraint
@@ -45,7 +59,7 @@ Type ENVIRONMENT
 	Field particle_lists:TList 'TList<TList<PARTICLE>>
 	Field retained_particle_list:TList 'TList<PARTICLE>
 	Field retained_particle_count% 'number of particles currently retained, cached for speed
-	Field environmental_emitter_list:TList 'TList<EMITTER>
+	Field environmental_emitter_list:TList 'TList<PARTICLE_EMITTER>
 	Field environmental_widget_list:TList 'TList<WIDGET>
 	Field projectile_list:TList 'TList<PROJECTILE>
 	Field friendly_agent_list:TList 'TList<COMPLEX_AGENT>
@@ -87,7 +101,7 @@ Type ENVIRONMENT
 	Field player:COMPLEX_AGENT
 	
 	Method New()
-		mouse = Create_cVEC( 0, 0 )
+		game_mouse = Create_cVEC( 0, 0 )
 		drawing_origin = Create_cVEC( 0, 0 )
 		walls = CreateList()
 		particle_list_background = CreateList()
@@ -145,13 +159,7 @@ Type ENVIRONMENT
 		player = Null
 	End Method
 	
-	Method bake_level%( argument:Object, generate_images% = True )
-		'level
-		If String( argument )
-			lev = load_level( String( argument ))
-		Else If LEVEL( argument )
-			lev = LEVEL( argument )
-		End If
+	Method bake_level%( lev:LEVEL, background:TImage, foreground:TImage )
 		If Not lev Then Return False 'failure
 		'camera bounding
 		calculate_camera_constraints()
@@ -161,14 +169,12 @@ Type ENVIRONMENT
 		For Local cursor:CELL = EachIn lev.get_blocking_cells()
 			walls.AddLast( lev.get_wall( cursor ))
 		Next
-		If generate_images
-			'images (Drawing)
-			background_clean = generate_sand_image( lev.width, lev.height )
-			foreground = generate_level_walls_image( lev )
-			'copy clean background into dynamic background
-			background_dynamic = LoadImage( LockImage( background_clean,, True, False ), DYNAMICIMAGE )
-			UnlockImage( background_clean )
-		End If
+		'background
+		background_clean = background
+		background_dynamic = LoadImage( LockImage( background_clean,, True, False ), DYNAMICIMAGE )
+		UnlockImage( background_clean )
+		'foreground
+		Self.foreground = foreground
 		'props
 		For Local pd:PROP_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )
@@ -326,30 +332,38 @@ Type ENVIRONMENT
 
 	Method spawn_unit:CONTROL_BRAIN( unit_key$, alignment%, spawn_point:POINT )
 		Local unit:COMPLEX_AGENT = get_unit( unit_key, alignment )
+		Local allied_agent_list:TList, rival_agent_list:TList
 		Select alignment
 			Case ALIGNMENT_HOSTILE
-				unit.manage( hostile_agent_list )
+				allied_agent_list = hostile_agent_list
+				rival_agent_list = friendly_agent_list
 			Case ALIGNMENT_FRIENDLY
-				unit.manage( friendly_agent_list )
+				allied_agent_list = friendly_agent_list
+				rival_agent_list = hostile_agent_list
 		End Select
+		unit.manage( allied_agent_list )
 		unit.spawn_at( spawn_point, 800 )
 		unit.snap_all_turrets()
-		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( unit, CONTROL_BRAIN.CONTROL_TYPE_AI,, 10, 1000, 1000 )
+		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( ..
+			unit, CONTROL_BRAIN.CONTROL_TYPE_AI, ..
+			pathing, allied_agent_list, rival_agent_list, ..
+			walls,, 10, 1000, 1000 )
 		brain.manage( control_brain_list )
 		
-		'_____________________________________________________________________
+		'///////////////////////////////////////////////////////////////////////////
 		'the following should come from an emitter event attached to the agent
 		Local pt:POINT = Create_POINT( unit.pos_x, unit.pos_y )
-		Local em:EMITTER = get_particle_emitter( "spawner" )
+		Local em:PARTICLE_EMITTER = get_particle_emitter( "spawner" )
 		em.manage( environmental_emitter_list )
 		em.parent = pt
 		em.attach_at( ,, 30,60, -180,180,,,,, -0.04,-0.08 )
-		em.enable( MODE_ENABLED_WITH_TIMER )
+		em.enable( EMITTER.MODE_ENABLED_WITH_TIMER )
 		em.time_to_live = 1000
 		em.prune_on_disable = True
 		Local part:PARTICLE = get_particle( "soft_glow" )
 		part.manage( particle_list_foreground )
 		part.parent = pt
+		'///////////////////
 		
 		Return brain
 	End Method
@@ -357,20 +371,7 @@ Type ENVIRONMENT
 	Method deal_damage( ag:AGENT, damage# )
 		'actual damage assignment
 		ag.receive_damage( damage )
-		'player-specific code
-		If human_participation And ag.id = get_player_id()
-			'health bar chunk fall-off
-			Local health_pct# = player.cur_health/player.max_health
-			Local damage_pct# = damage/player.max_health
-			
-			Local bit:WIDGET = WIDGET( WIDGET.Create( create_rect_img( damage_pct * health_bar_w, health_bar_h - 3 ),,, REPEAT_MODE_LOOP_BACK, True ))
-			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0.0,  0.0,   0, 255, 255, 255, 1.0,,, 500 )))
-			bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 6.0,-16.0,-3.0, 255,   0,   0, 0.0,,, 500 )))
-			bit.parent = Create_POINT( get_image( "health_mini" ).width + 3, window_h - 2*(get_font( "consolas_bold_12" ).Height() + 3) + 2 )
-			bit.attach_at( health_pct * health_bar_w, 2, 0, True )
-			bit.manage( health_bits )
-		End If
-		'resulting death
+		'potential resulting death
 		If ag.dead() 'some agent was killed
 			'agent death animations and sounds, and memory cleanup
 			ag.die( particle_list_background )
@@ -487,7 +488,7 @@ Type ENVIRONMENT
 				pkp = pkp.clone()
 				pkp.pos_x = x
 				pkp.pos_y = y
-				pkp.auto_manage()
+				pkp.manage( pickup_list )
 			End If
 		End If
 	End Method
@@ -541,7 +542,7 @@ Type ENVIRONMENT
 
 	Method kill( brain:CONTROL_BRAIN )
 		If brain <> Null And Not brain.avatar.dead()
-			brain.avatar.die()
+			brain.avatar.die( particle_list_background )
 			'this should be part of the complex agent's death emitters
 			play_sound( get_sound( "cannon_hit" ), 0.5, 0.25 )
 			Select brain.avatar.political_alignment

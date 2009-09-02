@@ -3,6 +3,15 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "core.bmx"
+Import "agent.bmx"
+Import "complex_agent.bmx"
+Import "projectile.bmx"
+Import "pickup.bmx"
+Import "door.bmx"
+Import "widget.bmx"
+Import "box.bmx"
 
 '______________________________________________________________________________
 'Collision Detection and Resolution
@@ -154,26 +163,22 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 	And profile ..
 	And game.human_participation ..
 	And proj.source_id = get_player_id() ..
-	And COMPLEX_AGENT( ag )
+	And COMPLEX_AGENT( ag ) 'ding! cash popup near splodey
+		Local p:PARTICLE = get_particle( "cash_from_kill" )
 		If COMPLEX_AGENT( ag ).political_alignment <> game.player.political_alignment
 			'killed enemy
 			record_player_kill( COMPLEX_AGENT( ag ).cash_value )
-			Local p:PARTICLE = get_particle( "cash_from_kill" )
 			p.str = "$" + COMPLEX_AGENT( ag ).cash_value
-			p.pos_x = ag.pos_x
-			p.pos_y = ag.pos_y - 20.0
-			p.auto_manage()
 		Else 'COMPLEX_AGENT( ag ).political_alignment == game.player.political_alignment
 			'killed ally
 			record_player_friendly_fire_kill( FRIENDLY_FIRE_PUNISHMENT_AMOUNT )
-			Local p:PARTICLE = get_particle( "cash_from_kill" )
 			p.str = "$-" + FRIENDLY_FIRE_PUNISHMENT_AMOUNT
 			p.font = get_font( "consolas_italic_14" )
 			p.red = 1.0; p.green = 0.3333; p.blue = 0.3333
-			p.pos_x = ag.pos_x
-			p.pos_y = ag.pos_y - 20.0
-			p.auto_manage()
 		End If
+		p.pos_x = ag.pos_x
+		p.pos_y = ag.pos_y - 20.0
+		p.manage( game.particle_list_foreground ) 'cash_from_kill is a foreground particle
 	End If
 	'activate projectile impact emitter
 	Local impact_sound:TSound
@@ -195,7 +200,7 @@ Function collision_agent_agent( ag:AGENT, other:AGENT )
 	ag.last_collided_agent_id = other.id
 	If ag.destruct_on_contact And COMPLEX_AGENT( other )
 		'this extra parameter to the following call is appropriate only for wooden crates and other non-volatile objects.
-		ag.die( False, True, False )
+		ag.die( game.particle_list_background, False, True, False )
 		'this sound also applies only to crates
 		play_sound( get_sound( "wood_hit" ), 0.5, 0.25 )
 	Else If Not ag.physics_disabled And COMPLEX_AGENT( other ) 'this second condition is also only applicable to crates and such, really. it gives the impression that the crate had such little mass, that the total force of the collision went into deforming the object (shattering), and so the complex_agent does not even get affected by the collision.
@@ -272,12 +277,12 @@ Function collision_agent_door( ag:AGENT, door:WIDGET )
 End Function
 
 Function collision_projectile_door( proj:PROJECTILE, door:WIDGET )
-	proj.impact( , game.particle_list_background, game.particle_list_foreground )
+	proj.impact( ,, proj.snd_impact, game.particle_list_background, game.particle_list_foreground )
 	proj.unmanage()
 End Function
 
 Function collision_projectile_wall( proj:PROJECTILE, wall:BOX )
-	proj.impact( , game.particle_list_background, game.particle_list_foreground )
+	proj.impact( ,, proj.snd_impact, game.particle_list_background, game.particle_list_foreground )
 	proj.unmanage()
 End Function
 

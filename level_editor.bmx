@@ -4,9 +4,19 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "mouse.bmx"
 Import "level.bmx"
-Import "draw.bmx"
+Import "vec.bmx"
+Import "point.bmx"
+Import "spawner.bmx"
+Import "complex_agent.bmx"
+Import "prop_data.bmx"
+Import "base_data.bmx"
 Import "console.bmx"
+Import "drawtext_ex.bmx"
+Import "draw_misc.bmx"
+Import "misc.bmx"
+Import "instaquit.bmx"
 
 '______________________________________________________________________________
 Const spawn_point_preview_radius% = 10
@@ -20,7 +30,10 @@ Const EDIT_LEVEL_MODE_SPAWNER_SYSTEM% = 4
 Const EDIT_LEVEL_MODE_SPAWNER_DETAILS% = 5
 Const EDIT_LEVEL_MODE_PROPS% = 6
 
-Function level_editor( lev:LEVEL )
+Const LEVEL_EDITOR_EXIT% = 0
+Const LEVEL_EDITOR_REQUESTS_SAVE% = 1
+
+Function level_editor%( lev:LEVEL )
 	
 	Local gridsnap_mouse:cVEC = New cVEC
 	Local drag_mouse_start:cVEC = New cVEC
@@ -70,9 +83,7 @@ Function level_editor( lev:LEVEL )
 		
 		'save level
 		If control And KeyHit( KEY_S )
-			menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create( MENU_ID.SAVE_LEVEL ))
-			get_current_menu().update( True )
-			Return
+			Return LEVEL_EDITOR_REQUESTS_SAVE
 		End If
 		
 		mouse.pos_x = MouseX()
@@ -296,7 +307,7 @@ Function level_editor( lev:LEVEL )
 				End If
 				If KeyHit( KEY_ENTER )
 					FlushKeys()
-					lev.name = CONSOLE.get_input( lev.name,, info_x, title_y, bigger_font, screencap() )
+					lev.name = get_input( lev.name,, info_x, title_y, bigger_font, screencap() )
 				End If
 			
 			'____________________________________________________________________________________________________
@@ -623,7 +634,7 @@ Function level_editor( lev:LEVEL )
 
 					If KeyHit( KEY_ENTER ) And cursor >= 0 And cursor < sp.count_squads()
 						FlushKeys()
-						sp.delay_time[cursor] = CONSOLE.get_input( sp.delay_time[cursor],, window_w - 50, info_y + cursor*cell_size + line_h/3, normal_font, screencap() ).ToInt()
+						sp.delay_time[cursor] = get_input( sp.delay_time[cursor],, window_w - 50, info_y + cursor*cell_size + line_h/3, normal_font, screencap() ).ToInt()
 					End If
 					If cursor >= 0 And cursor < sp.count_squads()
 						DrawText_with_shadow( String.FromInt( sp.delay_time[cursor] ), window_w - 50, info_y + cursor*cell_size + line_h/3 )
@@ -779,6 +790,8 @@ Function level_editor( lev:LEVEL )
 		
 	FlushKeys()
 	FlushMouse()
+	
+	Return LEVEL_EDITOR_EXIT 'normal termination
 End Function
 
 '______________________________________________________________________________

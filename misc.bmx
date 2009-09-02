@@ -4,15 +4,16 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import brl.Random
+Import brl.Map
 
 '______________________________________________________________________________
-'constants
+SeedRnd MilliSecs()
+
+'rudimentary constants
 Const INFINITY% = -1
 Const UNSPECIFIED% = -1
 
-'random
-SeedRnd MilliSecs()
-'clock
 Function now%()
 	Return MilliSecs()
 End Function
@@ -22,6 +23,22 @@ Function Pow#( x#, p% )
 		x :* x
 	Next
 	Return x
+End Function
+
+Function get_keys$[]( map:TMap )
+	Local list:TList = CreateList()
+	Local size% = 0
+	For Local key$ = EachIn MapKeys( map )
+		list.AddLast( Key )
+		size :+ 1
+	Next
+	Local array$[] = New String[ size ]
+	Local i% = 0
+	For Local key$ = EachIn list
+		array[i] = key
+		i :+ 1
+	Next
+	Return array
 End Function
 
 Function ints_to_floats:Float[]( arr%[] )

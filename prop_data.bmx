@@ -4,10 +4,19 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "agent.bmx"
 Import "point.bmx"
 Import "json.bmx"
 
 '______________________________________________________________________________
+Global prop_map:TMap = CreateMap()
+
+Function get_prop:AGENT( Key$, Copy% = True )
+	Local ag:AGENT = AGENT( prop_map.ValueForKey( Key.toLower() ))
+	If Copy And ag Then Return Copy_AGENT( ag )
+	Return ag
+End Function
+
 Type PROP_DATA
 	Field archetype$
 	Field pos:POINT

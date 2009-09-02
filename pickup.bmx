@@ -9,6 +9,8 @@ Import "audio.bmx"
 Import "json.bmx"
 
 '______________________________________________________________________________
+Const PICKUP_PROBABILITY# = 0.25 'chance of an enemy dropping a pickup (randomly selected from all pickups)
+
 Global pickup_map:TMap = CreateMap() 
 
 Function get_pickup:PICKUP( key$, copy% = True )

@@ -3,6 +3,69 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
+SuperStrict
+Import "constants.bmx"
+Import "misc.bmx"
+Import "color.bmx"
+Import "cell.bmx"
+Import "box.bmx"
+Import "range.bmx"
+Import "managed_object.bmx"
+Import "menu_option.bmx"
+Import "json.bmx"
+Import "flags.bmx"
+Import "base_data.bmx"
+Import "console.bmx"
+Import "drawtext_ex.bmx"
+Import "settings.bmx"
+Import "draw_misc.bmx"
+Import "instaquit.bmx"
+Import "timescale.bmx"
+Import "vec.bmx"
+Import "progress_data.bmx"
+Import "transform_state.bmx"
+Import "ai_type.bmx"
+Import "compatibility_data.bmx"
+Import "point.bmx"
+Import "mouse.bmx"
+Import "spawner.bmx"
+Import "particle.bmx"
+Import "graffiti_manager.bmx"
+Import "audio.bmx"
+Import "kill_tally.bmx"
+Import "pickup.bmx"
+Import "force.bmx"
+Import "physical_object.bmx"
+Import "path_queue.bmx"
+Import "level.bmx"
+Import "pathing_structure.bmx"
+Import "widget.bmx"
+Import "hud.bmx"
+Import "emitter.bmx"
+Import "particle_emitter.bmx"
+Import "agent.bmx"
+Import "prop_data.bmx"
+Import "projectile.bmx"
+Import "projectile_launcher.bmx"
+Import "turret_barrel.bmx"
+Import "turret.bmx"
+Import "door.bmx"
+Import "complex_agent.bmx"
+Import "inventory_data.bmx"
+Import "vehicle_data.bmx"
+Import "player_profile.bmx"
+Import "control_brain.bmx"
+Import "menu.bmx"
+Import "vehicle_editor.bmx"
+Import "level_editor.bmx"
+Import "environment.bmx"
+Import "net.bmx"
+Import "data.bmx"
+Import "core.bmx"
+Import "collide.bmx"
+Import "update.bmx"
+Import "input.bmx"
+Import "draw.bmx"
 
 ?Debug
 '______________________________________________________________________________
@@ -27,6 +90,7 @@ End Function
 '______________________________________________________________________________
 Global FLAG_debug_overlay% = False
 Global fps%, last_frame_ts%, time_count%, frame_count%
+
 Function debug_main()
 	frame_count :+ 1
 	time_count :+ (now() - last_frame_ts)
@@ -177,7 +241,7 @@ Function debug_overlay()
 	If game <> Null
 		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
 	End If
-	sx = game.mouse.x + 16; sy = game.mouse.y
+	sx = game_mouse.x + 16; sy = game_mouse.y
 	
 	SetColor( 255, 255, 255 )
 	'show pathing grid divisions
@@ -206,7 +270,7 @@ Function debug_overlay()
 	Local dist%, closest_dist% = 15
 	For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
 		'closest avatar search
-		dist = brain.avatar.dist_to( game.mouse )
+		dist = brain.avatar.dist_to( game_mouse )
 		If dist < closest_dist
 			closest_dist = dist
 			closest_cb = brain
@@ -238,8 +302,8 @@ Function debug_overlay()
 	'cause an explosion under cursor via mini-bomb self detonation
 	If KeyHit( KEY_SEMICOLON )
 		Local bomb:COMPLEX_AGENT = get_unit( "mini_bomb" )
-		bomb.move_to( game.mouse )
-		bomb.self_destruct()
+		bomb.move_to( game_mouse )
+		agent_self_destruct( bomb )
 	End If
 	
 	If KeyHit( KEY_C )
@@ -249,12 +313,12 @@ Function debug_overlay()
 			p.str_update()
 			p.pos_x = closest_cb.avatar.pos_x
 			p.pos_y = closest_cb.avatar.pos_y - 20
-			p.auto_manage()
+			p.manage( game.particle_list_foreground )
 		End If
 	End If
 
 	If KeyHit( KEY_QUOTES )
-		game.spawn_pickup( game.mouse.x, game.mouse.y, 1.0 )
+		game.spawn_pickup( game_mouse.x, game_mouse.y, 1.0 )
 	End If
 	
 	If KeyHit( KEY_P )
@@ -270,7 +334,7 @@ Function debug_overlay()
 			spawn_agent.ang = Rand( 360 )
 			spawn_agent.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, -spawn_agent.mass/100.0 )))
 		End If
-		spawn_agent.move_to( game.mouse, True )
+		spawn_agent.move_to( game_mouse, True )
 		spawn_agent.update()
 		spawn_agent.draw( 0.50, 1.50 )
 		
@@ -387,13 +451,19 @@ Function debug_overlay()
 End Function
 
 Function debug_kill_tally()
-	kill_tally( "total kills",, 1 )
-	kill_tally( "total kills",, 2 )
-	kill_tally( "total kills",, 3 )
-	kill_tally( "total kills",, 4 )
-	kill_tally( "total kills",, 5 )
-	kill_tally( "total kills",, 6 )
-	kill_tally( "total kills",, 7 )
+	Local str$ = "total kills"
+	Local bg:TImage = screencap()
+	
+	kill_tally( str, bg, 0 )
+	kill_tally( str, bg, 1 )
+	kill_tally( str, bg, 2 )
+	kill_tally( str, bg, 3 )
+	kill_tally( str, bg, 5 )
+	kill_tally( str, bg, 10 )
+	kill_tally( str, bg, 11 )
+	kill_tally( str, bg, 50 )
+	kill_tally( str, bg, 99 )
+	kill_tally( str, bg, 100 )
 End Function
 
 Function debug_print_profile_inventory()
@@ -727,7 +797,7 @@ End Function
 '	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
 '	SetColor( 127, 255, 255 )
 '	SetAlpha( 0.5 )
-'	debug_drawline( game.player, game.mouse, "P", "M", "CENTER ME!" )
+'	debug_drawline( game.player, game_mouse, "P", "M", "CENTER ME!" )
 '
 'End Function
 

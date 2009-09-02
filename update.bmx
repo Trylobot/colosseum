@@ -4,14 +4,30 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "core.bmx"
 Import "timescale.bmx"
 Import "flags.bmx"
 Import "misc.bmx"
+Import "hud.bmx"
+Import "mouse.bmx"
+Import "pickup.bmx"
+Import "projectile.bmx"
+Import "particle.bmx"
+Import "control_brain.bmx"
+Import "spawn_request.bmx"
+Import "complex_agent.bmx"
+Import "widget.bmx"
+Import "transform_state.bmx"
+Import "agent.bmx"
+Import "particle_emitter.bmx"
+Import "door.bmx"
+Import "physical_object.bmx"
+Import "force.bmx"
 
 '______________________________________________________________________________
-'Physics and Timing Update
-Global damage_incurred% = False
+Global player_health_last# 'for producing choppy bits of health on the HUD
 
+'Physics and Timing Update
 Function update_all_objects()
 	
 	'update body
@@ -53,7 +69,7 @@ Function update_all_objects()
 
 		'control brains
 		For Local cb:CONTROL_BRAIN = EachIn game.control_brain_list
-			If chat_mode And cb.control_type = CONTROL_BRAIN.CONTROL_TYPE_HUMAN
+			If FLAG.chat_mode And cb.control_type = CONTROL_BRAIN.CONTROL_TYPE_HUMAN
 				cb.human_input_blocked_update()
 			Else
 				cb.update()
@@ -76,6 +92,24 @@ Function update_all_objects()
 				End If
 			Next
 		Next
+		'player speed (for audio engine sound tweaking)
+		last_known_player_speed = Sqr( Pow(game.player.vel_x,2) + Pow(game.player.vel_y,2) )
+		'player life/health bar interaction
+		If game.human_participation And game.player.cur_health <> player_health_last
+			If game.player.cur_health < player_health_last
+				'health bar chunk fall-off
+				Local damage# = player_health_last - game.player.cur_health
+				Local health_pct# = game.player.cur_health / game.player.max_health
+				Local damage_pct# = damage / game.player.max_health
+				Local bit:WIDGET = WIDGET( WIDGET.Create( create_rect_img( damage_pct * health_bar_w, health_bar_h - 3 ),,, REPEAT_MODE_LOOP_BACK, True ))
+				bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0.0,  0.0,   0, 255, 255, 255, 1.0,,, 500 )))
+				bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 6.0,-16.0,-3.0, 255,   0,   0, 0.0,,, 500 )))
+				bit.parent = Create_POINT( get_image( "health_mini" ).width + 3, window_h - 2*(get_font( "consolas_bold_12" ).Height() + 3) + 2 )
+				bit.attach_at( health_pct * health_bar_w, 2, 0, True )
+				bit.manage( health_bits )
+			End If
+			player_health_last = game.player.cur_health
+		End If
 		
 		'props
 		For Local prop:AGENT = EachIn game.prop_list
@@ -109,12 +143,12 @@ End Function
 '______________________________________________________________________________
 Function update_drawing_origin()
 	If game.human_participation And game.player <> Null
-		game.mouse.x = game.player.pos_x + (2.0 * (mouse.pos_x - window_w/2.0))
-		game.mouse.y = game.player.pos_y + (2.0 * (mouse.pos_y - window_h/2.0))
+		game_mouse.x = game.player.pos_x + (2.0 * (mouse.pos_x - window_w/2.0))
+		game_mouse.y = game.player.pos_y + (2.0 * (mouse.pos_y - window_h/2.0))
 		Select game.player_brain.input_type
 			Case CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-				game.drawing_origin.x = window_w/2.0 - (game.player.pos_x + game.mouse.x)/2.0
-				game.drawing_origin.y = window_h/2.0 - (game.player.pos_y + game.mouse.y)/2.0
+				game.drawing_origin.x = window_w/2.0 - (game.player.pos_x + game_mouse.x)/2.0
+				game.drawing_origin.y = window_h/2.0 - (game.player.pos_y + game_mouse.y)/2.0
 			Case CONTROL_BRAIN.INPUT_KEYBOARD
 				game.drawing_origin.x = window_w/2 - game.player.pos_x
 				game.drawing_origin.y = window_h/2 - game.player.pos_y
@@ -171,8 +205,7 @@ Function update_flags()
 			game.game_in_progress = False
 			game.game_over = True
 			FLAG.engine_running = False
-			tweak_engine_idle()
-			damage_incurred = True
+			FLAG.damage_incurred = True
 		End If
 	End If
 End Function
@@ -214,7 +247,7 @@ Function agent_self_destruct( ag:AGENT )
 		End If
 		'explosive knock-back force & torque
 		total_force = (phys_obj.mass * 750) / Pow( 0.5 * dist + 24, 2 ) - 5 'the maximum comes from data, and is modulated with the actual distance
-		phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ang_to( phys_obj ), total_force, 100 )))
+		phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, ag.ang_to( phys_obj ), total_force, 100 )))
 		phys_obj.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE,, Rnd( -2.0, 2.0 )*total_force, 100 )))
 	Next
 	'self-destruct explosion sound

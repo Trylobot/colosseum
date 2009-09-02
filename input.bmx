@@ -4,12 +4,21 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "point.bmx"
+Import "vec.bmx"
+Import "console.bmx"
 Import "mouse.bmx"
 Import "flags.bmx"
 Import "instaquit.bmx"
+Import "core.bmx"
+Import "player_profile.bmx"
+Import "kill_tally.bmx"
+Import "constants.bmx"
+Import "audio.bmx"
+Import "draw_misc.bmx"
+Import "data.bmx"
 
 '______________________________________________________________________________
-Global chat_mode% = False
 Global chat_input_listener:CONSOLE = New CONSOLE
 Global chat$
 
@@ -22,7 +31,7 @@ Function get_all_input()
 	mouse_delta.y = MouseY() - mouse.pos_y
 	mouse.pos_x = MouseX()
 	mouse.pos_y = MouseY()
-	If Not FLAG_in_menu And game <> Null And game.human_participation And game.player_brain <> Null And profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
+	If Not FLAG.in_menu And game <> Null And game.human_participation And game.player_brain <> Null And profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
 		HideMouse()
 	Else
 		ShowMouse()
@@ -134,9 +143,8 @@ Function get_all_input()
 	If game And game.human_participation
 		If Not game.game_in_progress And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_R ) Or KeyHit( KEY_SPACE ))
 			game.player_engine_running = False
-			tweak_engine_idle()
 			If Not game.game_over
-				kill_tally( "", screencap() )
+				kill_tally( "", screencap(), (profile.kills - game.player_kills_at_start) )
 			End If
 			menu_command( COMMAND.QUIT_LEVEL )
 		End If
@@ -145,7 +153,9 @@ Function get_all_input()
 	mouse_last_z = MouseZ()
 	
 	'music enable/disable
-	If KeyHit( KEY_M ) Then FLAG_bg_music_on = Not FLAG_bg_music_on
+	If KeyHit( KEY_M )
+		FLAG.bg_music = Not FLAG.bg_music
+	End If
 	
 	'insta-quit
 	escape_key_update()
@@ -161,24 +171,20 @@ Function execute_option( opt:MENU_OPTION )
 	menu_command( opt.command_code, opt.argument )
 End Function
 
-Function reset_mouse( ang# )
-	MoveMouse( window_w/2 + 30 * Cos( ang ), window_h/2 + 30 * Sin( ang ))
-End Function
-
 '______________________________________________________________________________
 Function get_chat_input()
-	If Not FLAG_in_menu And game And game.human_participation And playing_multiplayer
-		If Not chat_mode
+	If Not FLAG.in_menu And game And game.human_participation And FLAG.playing_multiplayer
+		If Not FLAG.chat_mode
 			If KeyHit( KEY_ENTER )
-				chat_mode = True
+				FLAG.chat_mode = True
 				chat = ""
 				chat_input_listener.flush_all()
 			End If
-		Else 'chat_mode
+		Else 'FLAG.chat_mode
 			If Not KeyHit( KEY_ENTER )
 				chat = chat_input_listener.update( chat )
 			Else 'KeyHit( KEY_ENTER )
-				chat_mode = False
+				FLAG.chat_mode = False
 				If chat.Length > 0
 					send_chat( chat )
 				End If
@@ -202,5 +208,11 @@ Function mouse_state_update()
 	Else
 		mouse_down_1 = False
 	End If
+End Function
+
+'______________________________________________________________________________
+Function screenshot()
+	SetOrigin( 0, 0 )
+	save_pixmap_to_file( GrabPixmap( 0, 0, window_w, window_h ))
 End Function
 
