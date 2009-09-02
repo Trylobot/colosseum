@@ -45,11 +45,11 @@ Function play_all_audio()
 			start_player_engine()
 		End If
 		tweak_engine_idle( last_known_player_speed )
-	Else
+	Else If engine_idle 'FLAG.in_menu
 		SetChannelVolume( engine_idle, 0 )
 	End If
 	'maintenance
-	For local channel:TChannel = eachin audio_channels
+	For Local channel:TChannel = EachIn audio_channels
 		If Not channel.Playing()
 			channel.Stop()
 			audio_channels.Remove( channel )
