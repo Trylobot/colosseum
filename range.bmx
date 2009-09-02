@@ -4,6 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import brl.Random
 
 '______________________________________________________________________________
 Type RANGE

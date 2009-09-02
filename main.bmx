@@ -8,9 +8,11 @@ Rem
 	description: retro overhead tank warfare
 EndRem
 SuperStrict
+?Not Debug 'release mode only
 Framework brl.GLMax2D
 'Framework brl.GLGraphics
 'Framework brl.D3D7Max2D
+?
 Import "settings.bmx"
 Import "data.bmx"
 Import "core.bmx"

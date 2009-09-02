@@ -1,1 +1,1 @@
-"C:\Program Files\upx\upx.exe" %*
+"C:\Program Files (x86)\upx\upx.exe" %*
