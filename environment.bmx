@@ -160,12 +160,14 @@ Type ENVIRONMENT
 	End Method
 	
 	Method bake_level%( lev:LEVEL, background:TImage, foreground:TImage )
-		If Not lev
-			Return False 'failure
+		If lev
+			Self.lev = lev
+		Else
+			Return False 'failure by default
 		End If
-		'camera bounding
+		'camera bounding pre-calc
 		calculate_camera_constraints()
-		'pathing (AI bots)
+		'pathing (AI)
 		pathing = PATHING_STRUCTURE.Create( lev )
 		'walls (Collisions)
 		For Local cursor:CELL = EachIn lev.get_blocking_cells()
