@@ -8,11 +8,9 @@ Rem
 	description: retro overhead tank warfare
 EndRem
 SuperStrict
-?Not Debug 'release mode only
 Framework brl.GLMax2D
 'Framework brl.GLGraphics
 'Framework brl.D3D7Max2D
-?
 Import "settings.bmx"
 Import "data.bmx"
 Import "core.bmx"
@@ -26,7 +24,9 @@ Import "collide.bmx"
 Import "update.bmx"
 Import "draw.bmx"
 Import "audio.bmx"
-Import "debug.bmx"
+?Debug
+Include "debug.bmx"
+?
 '////////////////////////////
 'application versioning
 Const version_major%    = 0
@@ -52,7 +52,7 @@ menu_command( COMMAND.NEW_LEVEL )
 Global autosave_profile_path$ = load_autosave()
 menu_command( COMMAND.LOAD_GAME, autosave_profile_path )
 ?Debug
-debug_init()
+'debug_init()
 ?
 
 'Window Initialization and Drawing device
@@ -96,7 +96,7 @@ Repeat
 	'draw to buffer
 	draw_all_graphics()
 	?Debug
-	debug_main()
+	'debug_main()
 	?
 	'show buffer
 	Flip( 1 )

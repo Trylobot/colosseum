@@ -3,71 +3,8 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "constants.bmx"
-Import "misc.bmx"
-Import "color.bmx"
-Import "cell.bmx"
-Import "box.bmx"
-Import "range.bmx"
-Import "managed_object.bmx"
-Import "menu_option.bmx"
-Import "json.bmx"
-Import "flags.bmx"
-Import "base_data.bmx"
-Import "console.bmx"
-Import "drawtext_ex.bmx"
-Import "settings.bmx"
-Import "draw_misc.bmx"
-Import "instaquit.bmx"
-Import "timescale.bmx"
-Import "vec.bmx"
-Import "progress_data.bmx"
-Import "transform_state.bmx"
-Import "ai_type.bmx"
-Import "compatibility_data.bmx"
-Import "point.bmx"
-Import "mouse.bmx"
-Import "spawner.bmx"
-Import "particle.bmx"
-Import "graffiti_manager.bmx"
-Import "audio.bmx"
-Import "kill_tally.bmx"
-Import "pickup.bmx"
-Import "force.bmx"
-Import "physical_object.bmx"
-Import "path_queue.bmx"
-Import "level.bmx"
-Import "pathing_structure.bmx"
-Import "widget.bmx"
-Import "hud.bmx"
-Import "emitter.bmx"
-Import "particle_emitter.bmx"
-Import "agent.bmx"
-Import "prop_data.bmx"
-Import "projectile.bmx"
-Import "projectile_launcher.bmx"
-Import "turret_barrel.bmx"
-Import "turret.bmx"
-Import "door.bmx"
-Import "complex_agent.bmx"
-Import "inventory_data.bmx"
-Import "vehicle_data.bmx"
-Import "player_profile.bmx"
-Import "control_brain.bmx"
-Import "menu.bmx"
-Import "vehicle_editor.bmx"
-Import "level_editor.bmx"
-Import "environment.bmx"
-Import "net.bmx"
-Import "data.bmx"
-Import "core.bmx"
-Import "collide.bmx"
-Import "update.bmx"
-Import "input.bmx"
-Import "draw.bmx"
+'IMPORTANT: must be Include'd by main.bmx; do not use Import!
 
-?Debug
 '______________________________________________________________________________
 Global debug_origin:cVEC = Create_cVEC( 0, 0 )
 Global real_origin:cVEC = Create_cVEC( 0, 0 )
@@ -1255,5 +1192,5 @@ End Function
 ''	Print "-720 Mod 360 = " + (-720) Mod 360 + "; should be 0"
 '
 'End Function
-?
+
 
