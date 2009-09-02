@@ -93,7 +93,9 @@ Function update_all_objects()
 			Next
 		Next
 		'player speed (for audio engine sound tweaking)
-		last_known_player_speed = Sqr( Pow(game.player.vel_x,2) + Pow(game.player.vel_y,2) )
+		If game.human_participation And game.player
+			last_known_player_speed = Sqr( Pow(game.player.vel_x,2) + Pow(game.player.vel_y,2) )
+		End If
 		'player life/health bar interaction
 		If game.human_participation And game.player.cur_health <> player_health_last
 			If game.player.cur_health < player_health_last
