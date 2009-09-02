@@ -160,7 +160,9 @@ Type ENVIRONMENT
 	End Method
 	
 	Method bake_level%( lev:LEVEL, background:TImage, foreground:TImage )
-		If Not lev Then Return False 'failure
+		If Not lev
+			Return False 'failure
+		End If
 		'camera bounding
 		calculate_camera_constraints()
 		'pathing (AI bots)

@@ -200,6 +200,36 @@ Function Create_TImage_from_json:TImage( json:TJSON )
 End Function
 
 '______________________________________________________________________________
+Function load_level:LEVEL( path$ )
+	Local file:TStream, json:TJSON
+	file = ReadFile( path )
+	If file
+		json = TJSON.Create( file )
+		file.Close()
+		Return Create_LEVEL_from_json( json )
+	Else
+		Return Null
+	End If
+End Function
+
+Function save_level%( path$, lev:LEVEL )
+	If lev <> Null
+		Local file:TStream, json:TJSON
+		json = TJSON.Create( lev.to_json() )
+		file = WriteFile( path )
+		If file
+			json.Write( file )
+			file.Close()
+			Return True
+		Else
+			Return False
+		End If
+	Else
+		Return False
+	End If
+End Function
+
+'______________________________________________________________________________
 Function load_game:PLAYER_PROFILE( path$ )
 	Local file:TStream, json:TJSON, prof:PLAYER_PROFILE
 	file = ReadFile( path )
