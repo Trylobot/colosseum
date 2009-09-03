@@ -70,13 +70,13 @@ Function update_all_objects()
 
 		'control brains
 		For Local cb:CONTROL_BRAIN = EachIn game.control_brain_list
-			If FLAG.chat_mode And cb.control_type = CONTROL_BRAIN.CONTROL_TYPE_HUMAN
+			If cb.control_type = CONTROL_BRAIN.CONTROL_TYPE_HUMAN And FLAG.chat_mode
 				cb.human_input_blocked_update()
 			Else
 				cb.update()
 			End If
 			'spawn unit request processing
-			If cb.ai.is_carrier And Not cb.spawn_request_list.IsEmpty()
+			If cb.control_type = CONTROL_BRAIN.CONTROL_TYPE_AI And cb.ai.is_carrier And Not cb.spawn_request_list.IsEmpty()
 				For Local req:SPAWN_REQUEST = EachIn cb.spawn_request_list
 					game.spawn_unit_from_request( req )
 				Next
