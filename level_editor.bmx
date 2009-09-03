@@ -796,7 +796,7 @@ End Function
 
 '______________________________________________________________________________
 Function get_input$( initial_value$, initial_cursor_pos% = INFINITY, x%, y%, font:TImageFont, bg:TImage ) 'returns user input
-		Local con:CONSOLE = new CONSOLE
+		Local con:CONSOLE = New CONSOLE
 		Local str$ = initial_value
 		SetImageFont( font )
 		Local cursor% = str.Length
@@ -831,8 +831,14 @@ Function get_input$( initial_value$, initial_cursor_pos% = INFINITY, x%, y%, fon
 			Else If KeyHit( KEY_DELETE )
 				str = str[..cursor] + str[cursor+1..]
 			End If
-
+			
+			Local strlen% = str.length
+			'///////////////////////
 			str = con.update( str )
+			'///////////////////////
+			If str.length > strlen
+				cursor :+ str.length - strlen
+			End If
 			
 			DrawText_with_outline( str, x, y )
 			SetAlpha( 0.5 + Sin(now() Mod 360) )

@@ -9,8 +9,6 @@ Rem
 EndRem
 SuperStrict
 Framework brl.GLMax2D
-'Framework brl.GLGraphics
-'Framework brl.D3D7Max2D
 Import "settings.bmx"
 Import "data.bmx"
 Import "core.bmx"
@@ -34,8 +32,7 @@ Const version_minor%    = 4
 Const version_revision% = 0
 '////////////////////////////
 SetGraphicsDriver GLMax2DDriver()
-'SetGraphicsDriver GLGraphicsDriver()
-'SetGraphicsDriver D3D7Max2DDriver() 
+SetAudioDriver( "FreeAudio DirectSound" )
 
 'defaults
 apply_default_settings()
@@ -71,6 +68,9 @@ init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 
 ?Debug
 'DebugStop
+'For Local drv$ = EachIn AudioDrivers()
+'	DebugLog " " + drv
+'Next
 'End
 ?
 
