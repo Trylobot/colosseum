@@ -1,4 +1,11 @@
 
+fun stuff__________________________________
+	intro animatic
+	- have a little dude or a couple of em travel into the screen, and then
+	  destroy some stuff, or each other, or something. something with explosions.
+		and then have the logo be there underneath it all or something.
+		but keep it short (and skip-able).
+
 flesh out__________________________________
   graffiti_manager.bmx
   net.bmx
@@ -10,3 +17,7 @@ create_____________________________________
   prop.bmx
   material.bmx
   sound_trigger.bmx
+
+___________________________________________
+	
+	
