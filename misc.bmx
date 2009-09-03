@@ -25,22 +25,6 @@ Function Pow#( x#, p% )
 	Return x
 End Function
 
-Function get_keys$[]( map:TMap )
-	Local list:TList = CreateList()
-	Local size% = 0
-	For Local key$ = EachIn MapKeys( map )
-		list.AddLast( Key )
-		size :+ 1
-	Next
-	Local array$[] = New String[ size ]
-	Local i% = 0
-	For Local key$ = EachIn list
-		array[i] = key
-		i :+ 1
-	Next
-	Return array
-End Function
-
 Function ints_to_floats:Float[]( arr%[] )
 	Local f#[] = New Float[arr.Length]
 	For Local i% = 0 To arr.Length
@@ -171,6 +155,32 @@ Function address%( obj:Object )
 	Else
 		Return 0
 	End If
+End Function
+
+'______________________________________________________________________________
+Function get_map_keys$[]( map:TMap )
+	Local list:TList = CreateList()
+	For Local str$ = EachIn MapKeys( map )
+		list.AddLast( str )
+	Next
+	Return list_to_string_array( list )
+End Function
+
+Function get_map_values$[]( map:TMap )
+	Local list:TList = CreateList()
+	For Local str$ = EachIn MapValues( map )
+		list.AddLast( str )
+	Next
+	Return list_to_string_array( list )
+End Function
+
+Function list_to_string_array:String[]( L:TList )
+	Local arr:Object[] = ListToArray( L )
+	Local str:String[] = New String[ arr.length ]
+	For Local i% = 0 Until str.length
+		str[i] = String( arr[i] )
+	Next
+	Return str
 End Function
 
 '______________________________________________________________________________

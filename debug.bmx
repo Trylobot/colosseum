@@ -56,14 +56,14 @@ Function debug_main()
 	End If
 	If KeyHit( KEY_F4 ) Then DebugStop
 End Function
-'______________________________________________________________________________
-Function debug_get_map_keys()
-	DebugLog " fonts: [ ~n  " + ",~n  ".Join( get_keys( font_map )) + " ]"
-	DebugLog " sounds: [ ~n  " + ",~n  ".Join( get_keys( sound_map )) + " ]"
-	DebugLog " images: [ ~n  " + ",~n  ".Join( get_keys( image_map )) + " ]"
-	DebugLog " props: [ ~n  " + ",~n  ".Join( get_keys( prop_map )) + " ]"
-	DebugLog " ai_types: [ ~n  " + ",~n  ".Join( get_keys( ai_type_map )) + " ]"
-End Function
+''______________________________________________________________________________
+'Function debug_get_map_keys()
+'	DebugLog " fonts: [ ~n  " + ",~n  ".Join( get_keys( font_map )) + " ]"
+'	DebugLog " sounds: [ ~n  " + ",~n  ".Join( get_keys( sound_map )) + " ]"
+'	DebugLog " images: [ ~n  " + ",~n  ".Join( get_keys( image_map )) + " ]"
+'	DebugLog " props: [ ~n  " + ",~n  ".Join( get_keys( prop_map )) + " ]"
+'	DebugLog " ai_types: [ ~n  " + ",~n  ".Join( get_keys( ai_type_map )) + " ]"
+'End Function
 '______________________________________________________________________________
 Global sx%, sy%
 Function debug_drawtext( message$, h% = 10 )
@@ -265,7 +265,7 @@ Function debug_overlay()
 	End If
 	If spawn_alignment <> ALIGNMENT_NONE
 		If spawn_agent = Null
-			spawn_archetype = get_keys( unit_map )[spawn_archetype_index]
+			spawn_archetype = get_map_keys( unit_map )[spawn_archetype_index]
 			spawn_agent = get_unit( spawn_archetype, spawn_alignment )
 			spawn_agent.scale_all( 1.50 )
 			spawn_agent.ang = Rand( 360 )
@@ -280,11 +280,11 @@ Function debug_overlay()
 			spawn_agent = Null
 		Else If KeyHit( KEY_OPENBRACKET )
 			spawn_archetype_index :- 1
-			If spawn_archetype_index < 0 Then spawn_archetype_index = get_keys( unit_map ).Length-1
+			If spawn_archetype_index < 0 Then spawn_archetype_index = get_map_keys( unit_map ).Length-1
 			spawn_agent = Null
 		Else If KeyHit( KEY_CLOSEBRACKET )
 			spawn_archetype_index :+ 1
-			If spawn_archetype_index > get_keys( unit_map ).Length-1 Then spawn_archetype_index = 0
+			If spawn_archetype_index > get_map_keys( unit_map ).Length-1 Then spawn_archetype_index = 0
 			spawn_agent = Null
 		End If
 	End If

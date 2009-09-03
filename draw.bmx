@@ -321,7 +321,6 @@ Function draw_menus()
 				End If
 			End If
 			'/////////////////////////
-			DebugStop
 			m.draw( mouse, dragging_scrollbar,,, blink )
 			'/////////////////////////
 			'shop decorations

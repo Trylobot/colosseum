@@ -23,6 +23,7 @@ Import "particle_emitter.bmx"
 Import "door.bmx"
 Import "physical_object.bmx"
 Import "force.bmx"
+Import "menu.bmx"
 
 '______________________________________________________________________________
 Global player_health_last# 'for producing choppy bits of health on the HUD
@@ -138,6 +139,9 @@ Function update_all_objects()
 			w.update()
 			If w.state_index_cur = 1 Then w.unmanage()
 		Next
+		
+		'used in menu.bmx
+		update_meta_variable_cache
 		
 	End If
 	

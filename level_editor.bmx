@@ -42,7 +42,7 @@ Function level_editor%( lev:LEVEL )
 	new_spawner.class = SPAWNER.class_GATED_FACTORY
 	Local closest_sp:SPAWNER = Null
 	Local new_prop:PROP_DATA = New PROP_DATA
-	Local prop_keys$[] = get_keys( prop_map )
+	Local prop_keys$[] = get_map_keys( prop_map )
 	Local new_prop_archetype% = 0
 	new_prop.archetype = prop_keys[new_prop_archetype]
 	Local closest_pd:PROP_DATA = Null
@@ -63,7 +63,7 @@ Function level_editor%( lev:LEVEL )
 	
 	Local cursor% = 0
 	Local cursor_archetype_index% = 0
-	Local unit_keys$[] = get_keys( unit_map )
+	Local unit_keys$[] = get_map_keys( unit_map )
 	Local cursor_archetype$ = unit_keys[cursor_archetype_index]
 	Local sp_delay_time$
 	
