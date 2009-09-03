@@ -1,0 +1,12 @@
+
+flesh out__________________________________
+  graffiti_manager.bmx
+  net.bmx
+  hud.bmx
+  vehicle_editor.bmx
+	- extend to be able to edit or create any unit at all and also edit sounds
+
+create_____________________________________
+  prop.bmx
+  material.bmx
+  sound_trigger.bmx

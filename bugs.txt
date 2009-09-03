@@ -1,0 +1,16 @@
+
+* meta_variable_cache no longer works for inventory items.
+  will need a new way to put the inventory item counts into the menu items.
+	maybe a secondary draw call for each one, since draw.bmx has access to the player profile and the menu.
+	and, it's already drawing some extra stuff, like the item art.
+	
+* AI carriers appear to spawn endlessly for some reason.
+  also the spawn-in particles never seem to disappear.
+	not sure if these are related, really one bug, or two separate bugs.
+	in any case it causes a major slow-down
+
+* in the inventory menu, ...
+  scrollbar cannot be dragged if selected item is at the bottom of the dynamic list.
+	works fine for items near the end.
+	--- use the debugger to draw the "hit" area and see if it is the expected size?
+
