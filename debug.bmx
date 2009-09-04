@@ -6,25 +6,31 @@ EndRem
 'IMPORTANT: must be Include'd by main.bmx; do not use Import!
 
 '______________________________________________________________________________
+Function show_me_the_shit()
+	
+	DebugStop
+End Function
+
+'______________________________________________________________________________
 Global debug_origin:cVEC = Create_cVEC( 0, 0 )
 Global real_origin:cVEC = Create_cVEC( 0, 0 )
 Global global_start:CELL
 Global global_goal:CELL
-'______________________________________________________________________________
+
 Function debug_ts( message$ )
 	DebugLog "" + now() + " :: " + message
 End Function
-'______________________________________________________________________________
+
 Function debug_init()
 	'debug_get_keys()
 End Function
-'______________________________________________________________________________
+
 Function debug_generate_level_mini_preview()
 	Local lev:LEVEL = load_level( "levels/training1.colosseum_level" )
 	Local img:TImage = generate_level_mini_preview( lev )
 	save_pixmap_to_file( img.Lock( 0, True, False ), "training1_minipreview" )
 End Function
-'______________________________________________________________________________
+
 Global FLAG_debug_overlay% = False
 Global fps%, last_frame_ts%, time_count%, frame_count%
 
@@ -56,7 +62,7 @@ Function debug_main()
 	End If
 	If KeyHit( KEY_F4 ) Then DebugStop
 End Function
-''______________________________________________________________________________
+
 'Function debug_get_map_keys()
 '	DebugLog " fonts: [ ~n  " + ",~n  ".Join( get_keys( font_map )) + " ]"
 '	DebugLog " sounds: [ ~n  " + ",~n  ".Join( get_keys( sound_map )) + " ]"
@@ -64,7 +70,7 @@ End Function
 '	DebugLog " props: [ ~n  " + ",~n  ".Join( get_keys( prop_map )) + " ]"
 '	DebugLog " ai_types: [ ~n  " + ",~n  ".Join( get_keys( ai_type_map )) + " ]"
 'End Function
-'______________________________________________________________________________
+
 Global sx%, sy%
 Function debug_drawtext( message$, h% = 10 )
 	Local r%, g%, b%
@@ -80,7 +86,7 @@ Function debug_drawtext( message$, h% = 10 )
 	DrawText_with_outline( message, sx, sy )
 	sy :+ h
 End Function
-'______________________________________________________________________________
+
 Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = Null, b_msg$ = Null, m_msg$ = Null )
 	'decl.
 	Local a:cVEC = New cVEC, b:cVEC = New cVEC, m:cVEC = New cVEC
@@ -118,7 +124,7 @@ Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = Null, b_msg$ = Null,
 	'DrawText( b_msg, Int(b.x+2),Int(b.y+2) )
 	'DrawText( m_msg, Int(m.x+2),Int(m.y+2) )
 End Function
-'______________________________________________________________________________
+
 Function debug_fps()
 	SetOrigin( 0, 0 )
 	SetScale( 1, 1 )
@@ -131,7 +137,7 @@ Function debug_fps()
 	sy = window_h - GetImageFont().Height() - 1
 	DrawText_with_outline( fps_str, sx, sy )
 End Function
-'______________________________________________________________________________
+
 Function debug_agent_lists( to_console% = False )
 	SetOrigin( 0, 0 )
 	sx = 2; sy = 2
@@ -151,7 +157,7 @@ Function debug_agent_lists( to_console% = False )
 		End If
 	Next
 End Function
-'______________________________________________________________________________
+
 Global spawn_archetype_index% = 0
 Global spawn_archetype$ = ""
 Global spawn_alignment% = ALIGNMENT_NONE
@@ -412,7 +418,7 @@ Function debug_print_profile_inventory()
 	
 End Function
 
-''______________________________________________________________________________
+
 'Function debug_doors()
 '	Local spawn:POINT = Create_POINT( window_w/2, window_h/2 )
 '	Local env:ENVIRONMENT = Create_ENVIRONMENT()

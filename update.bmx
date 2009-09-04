@@ -7,6 +7,7 @@ SuperStrict
 Import "core.bmx"
 Import "timescale.bmx"
 Import "flags.bmx"
+Import "constants.bmx"
 Import "misc.bmx"
 Import "hud.bmx"
 Import "mouse.bmx"
@@ -30,24 +31,23 @@ Global player_health_last# 'for producing choppy bits of health on the HUD
 
 'Physics and Timing Update
 Function update_all_objects()
-	
+	'instaquit flag support
+	If FLAG.instaquit_plz
+		menu_command( COMMAND.QUIT_GAME )
+	End If
 	'update body
 	If game And Not game.paused
-		
 		'set drawing origin
 		update_drawing_origin()
-		
 		'count units in-game
 		game.count_units()
 		'player and game-state flags
 		update_flags()
 		If Not game Then Return 'possibility exists that game will be freed after updating the flags
-		
 		'spawner systems
 		If game.spawn_enemies
 			game.spawning_system_update()
 		End If
-		
 		'pickups
 		For Local pkp:PICKUP = EachIn game.pickup_list
 			pkp.update()
@@ -67,7 +67,6 @@ Function update_all_objects()
 				End If
 			Next
 		Next
-
 		'control brains
 		For Local cb:CONTROL_BRAIN = EachIn game.control_brain_list
 			If cb.control_type = CONTROL_BRAIN.CONTROL_TYPE_HUMAN And FLAG.chat_mode
@@ -80,6 +79,7 @@ Function update_all_objects()
 				For Local req:SPAWN_REQUEST = EachIn cb.spawn_request_list
 					game.spawn_unit_from_request( req )
 				Next
+				cb.spawn_request_list.Clear()
 			End If
 		Next
 		'complex agents
@@ -113,7 +113,6 @@ Function update_all_objects()
 			End If
 			player_health_last = game.player.cur_health
 		End If
-		
 		'props
 		For Local prop:AGENT = EachIn game.prop_list
 			prop.update()
@@ -139,12 +138,9 @@ Function update_all_objects()
 			w.update()
 			If w.state_index_cur = 1 Then w.unmanage()
 		Next
-		
 		'used in menu.bmx
-		update_meta_variable_cache
-		
+		update_meta_variable_cache()
 	End If
-	
 End Function
 '______________________________________________________________________________
 Function update_drawing_origin()
@@ -241,6 +237,7 @@ Function update_meta_variable_cache()
 End Function
 
 '______________________________________________________________________________
+'this really needs to go somewhere's else.
 Function agent_self_destruct( ag:AGENT )
 	Local nearby_objects:TList = game.near_to( ag, 200.0 ) 'the "radius" argument should come from data
 	Local damage#, total_force#
@@ -258,7 +255,6 @@ Function agent_self_destruct( ag:AGENT )
 	Next
 	'self-destruct explosion sound
 	play_sound( get_sound( "cannon_hit" ),, 0.25 )
-	
 	'agent death effects
 	ag.die( game.particle_list_background )
 End Function

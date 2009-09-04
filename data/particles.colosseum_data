@@ -6,7 +6,7 @@
 			particle_type: 0,
 			image_key: "debris",
 			layer: 2,
-			retain: true,
+			retain: false,
 			frictional_coefficient: 0.05
 		}
 	},

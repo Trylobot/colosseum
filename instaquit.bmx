@@ -6,6 +6,7 @@ EndRem
 SuperStrict
 Import "base_data.bmx"
 Import "misc.bmx"
+Import "flags.bmx"
 Import "settings.bmx"
 Import "drawtext_ex.bmx"
 Import "draw_misc.bmx"
@@ -22,14 +23,10 @@ Function escape_key_release%()
 End Function
 
 Function escape_key_update()
+	If FLAG.instaquit_plz Then Return 'no questions asked
 	'instaquit
 	If esc_held And (now() - esc_press_ts) >= instaquit_time_required
-		'Not sure how to support this.
-		'menu_command( COMMAND.QUIT_GAME )
-		
-		'terminate program immediately
-		End
-		
+		FLAG.instaquit_plz = True
 	End If
 	'escape key state
 	If KeyDown( KEY_ESCAPE )

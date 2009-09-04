@@ -28,6 +28,9 @@ Type PARTICLE_EMITTER Extends EMITTER
 	Field emitter_object:PARTICLE 'template for objects to be emitted
 	
 	Method emit:PARTICLE( background_list:TList = Null, foreground_list:TList = Null )
+'//////////////////////////////////////////
+If KeyDown( KEY_BACKSLASH ) Then DebugStop
+'//////////////////////////////////////////
 		If is_enabled() And ready()
 			'create a new object (particle/projectile) and set it up
 			Local p:PARTICLE = emitter_object.clone( PARTICLE_FRAME_RANDOM )

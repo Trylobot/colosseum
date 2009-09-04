@@ -263,12 +263,14 @@ Function load_settings%()
 	If Not file Return False
 	Local json:TJSON = TJSON.Create( file )
 	file.Close()
+	If Not json Return False
 	'check for existence of specified graphics mode
 	If GraphicsModeExists( ..
 	json.GetNumber( "window_w" ), ..
 	json.GetNumber( "window_h" ), ..
 	json.GetNumber( "bit_depth" ), ..
-	json.GetNumber( "refresh_rate" ) )
+	json.GetNumber( "refresh_rate" )) ..
+	Or Not json.GetBoolean( "fullscreen" )
 		'success
 		window_w = json.GetNumber( "window_w" )
 		window_h = json.GetNumber( "window_h" )
@@ -288,6 +290,7 @@ Function load_settings%()
 End Function
 
 Function save_settings%()
+DebugStop
 	Local this_json:TJSONObject = New TJSONObject
 	this_json.SetByName( "window_w", TJSONNumber.Create( window_w ))
 	this_json.SetByName( "window_h", TJSONNumber.Create( window_h ))
