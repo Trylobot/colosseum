@@ -72,6 +72,7 @@ init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 '	DebugLog " " + drv
 'Next
 'End
+'show_me_the_shit()
 ?
 
 '______________________________________________________________________________

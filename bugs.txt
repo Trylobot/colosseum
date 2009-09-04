@@ -1,11 +1,11 @@
 
-*** immediately upon entering a custom level game, I get a null reference exception
-  the level seems to initialize and draw 1 frame first, though.
+*** GAME FREEZES WHEN AN ENEMY EXPLODES
+    NOT SURE WHY!
 
-*** ai carriers appear to spawn endlessly for some reason.
-  also the spawn-in particles never seem to disappear.
-	not sure if these are related, really one bug, or two separate bugs.
-	in any case it causes a major slow-down
+* when dragging the window, my physics timescale gets completely fucked.
+  this causes all units to "drift"
+	into walls, each other, etc. Big problems when dragging the window.
+	It must be possible to detect when the window doesn't have control, and somehow prevent this
 
 * meta_variable_cache no longer works for inventory items.
   will need a new way to put the inventory item counts into the menu items.

@@ -290,7 +290,6 @@ Function load_settings%()
 End Function
 
 Function save_settings%()
-DebugStop
 	Local this_json:TJSONObject = New TJSONObject
 	this_json.SetByName( "window_w", TJSONNumber.Create( window_w ))
 	this_json.SetByName( "window_h", TJSONNumber.Create( window_h ))

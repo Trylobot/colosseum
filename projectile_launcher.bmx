@@ -93,6 +93,8 @@ Function Create_PROJECTILE_LAUNCHER_from_json:PROJECTILE_LAUNCHER( json:TJSON )
 	If Not emitter_object Then Return Null
 	'create object with only required fields
 	e = Create_PROJECTILE_LAUNCHER( emitter_object )
+	'and don't forget the default initialization from the base class
+	initialize_generic_EMITTER( e )
 	'initialize generic emitter fields
 	initialize_generic_EMITTER_from_json( e, json )
 	Return e

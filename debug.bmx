@@ -7,9 +7,38 @@ EndRem
 
 '______________________________________________________________________________
 Function show_me_the_shit()
-	
+	Local particle_emitters:PAIR[]= map_to_array( particle_emitter_map )
+	Local projectile_launchers:PAIR[]= map_to_array( projectile_launcher_map )
 	DebugStop
 End Function
+
+Function map_to_array:PAIR[]( map:TMap )
+	Local list:TList = CreateList()
+	Local size% = 0
+	For Local key$ = EachIn map.Keys()
+		list.AddLast( PAIR.Create( key, map.ValueForKey( key )))
+		size :+ 1
+	Next
+	Local array:PAIR[] = New PAIR[ size ]
+	Local i% = 0
+	For Local p:PAIR = EachIn list
+		array[i] = p
+		i :+ 1
+	Next
+	Return array
+End Function
+
+Type PAIR
+	Field key$
+	Field value:Object
+
+	Function Create:PAIR( key$, value:Object )
+		Local p:PAIR= New pair
+		p.key = key
+		p.value = value
+		Return p
+	End Function
+End Type
 
 '______________________________________________________________________________
 Global debug_origin:cVEC = Create_cVEC( 0, 0 )
