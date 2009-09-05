@@ -142,7 +142,7 @@ Function get_all_input()
 	'win/kill_tally
 	If game And game.human_participation
 		If Not game.game_in_progress And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_R ) Or KeyHit( KEY_SPACE ))
-			game.player_engine_running = False
+			FLAG.engine_running = False
 			If Not game.game_over
 				kill_tally( "", screencap(), (profile.kills - game.player_kills_at_start) )
 			End If
@@ -168,7 +168,7 @@ Function get_all_input()
 End Function
 
 Function execute_option( opt:MENU_OPTION )
-	menu_command( opt.command_code, opt.argument )
+	If opt Then menu_command( opt.command_code, opt.argument )
 End Function
 
 '______________________________________________________________________________

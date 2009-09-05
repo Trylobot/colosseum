@@ -28,12 +28,15 @@ Type PARTICLE_EMITTER Extends EMITTER
 	Field emitter_object:PARTICLE 'template for objects to be emitted
 	
 	Method emit:PARTICLE( background_list:TList = Null, foreground_list:TList = Null )
-'//////////////////////////////////////////
-If KeyDown( KEY_BACKSLASH ) Then DebugStop
-'//////////////////////////////////////////
 		If is_enabled() And ready()
 			'create a new object (particle/projectile) and set it up
 			Local p:PARTICLE = emitter_object.clone( PARTICLE_FRAME_RANDOM )
+			'emitter state maintenance
+			'interval
+			last_emit_ts = now()
+			interval_cur = interval.get()
+			'counter
+			count_cur :- 1
 			'manager
 			If p.layer = LAYER_BACKGROUND And background_list
 				p.manage( background_list )
@@ -89,12 +92,6 @@ If KeyDown( KEY_BACKSLASH ) Then DebugStop
 			'life time
 			p.created_ts = now()
 			p.life_time = life_time.get()
-			'emitter state maintenance
-			'interval
-			last_emit_ts = now()
-			interval_cur = interval.get()
-			'counter
-			count_cur :- 1
 			'return emitted particle to caller for chaining
 			Return p
 		End If

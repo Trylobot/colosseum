@@ -35,6 +35,8 @@ Function update_all_objects()
 	If FLAG.instaquit_plz
 		menu_command( COMMAND.QUIT_GAME )
 	End If
+	'meta-variables used for dynamic menu information
+	update_meta_variable_cache()
 	'update body
 	If game And Not game.paused
 		'set drawing origin
@@ -138,8 +140,6 @@ Function update_all_objects()
 			w.update()
 			If w.state_index_cur = 1 Then w.unmanage()
 		Next
-		'used in menu.bmx
-		update_meta_variable_cache()
 	End If
 End Function
 '______________________________________________________________________________
@@ -180,7 +180,7 @@ Function update_flags()
 		If game.waiting_for_player_to_enter_arena
 			'player not entered arena
 			If game.player.dist_to( game.player_spawn_point ) < SPAWN_POINT_POLITE_DISTANCE
-				If game.player_engine_running
+				If FLAG.engine_running
 					game.open_doors( ALIGNMENT_FRIENDLY )
 				End If
 			Else 'player entered arena
@@ -206,8 +206,8 @@ Function update_flags()
 		If game.player.dead() 'player just died? (omgwtf)
 			game.game_in_progress = False
 			game.game_over = True
-			FLAG.engine_running = False
 			FLAG.damage_incurred = True
+			FLAG.engine_running = False
 		End If
 	End If
 End Function
@@ -233,7 +233,7 @@ Function update_meta_variable_cache()
 	meta_variable_cache.Insert( "network_ip_address", network_ip_address )
 	meta_variable_cache.Insert( "network_port", String.FromInt( network_port ))
 	meta_variable_cache.Insert( "network_level", StripAll( network_level ))
-	meta_variable_cache.Insert( "profile.count_inventory(this)", "(x ?)" ) 'tricky
+	'meta_variable_cache.Insert( "profile.count_inventory(this)", "(x ?)" ) 'tricky
 End Function
 
 '______________________________________________________________________________
@@ -256,6 +256,6 @@ Function agent_self_destruct( ag:AGENT )
 	'self-destruct explosion sound
 	play_sound( get_sound( "cannon_hit" ),, 0.25 )
 	'agent death effects
-	ag.die( game.particle_list_background )
+	ag.die( game.particle_list_background, game.particle_list_foreground )
 End Function
 

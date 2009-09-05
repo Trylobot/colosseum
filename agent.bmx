@@ -88,7 +88,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 	End Method
 
 	'these boolean switches need to go.
-	Method die( background_particle_manager:TList, show_halo% = True, show_gibs% = True, audible% = True )
+	Method die( background_particle_manager:TList, foreground_particle_manager:TList, show_halo% = True, show_gibs% = True, audible% = True )
 		'bright halo
 		If show_halo
 			'this particle's creation should be part of the agent's death emitters, not hard coded.
@@ -127,10 +127,10 @@ Type AGENT Extends PHYSICAL_OBJECT
 		'death emitters
 		For Local em:PARTICLE_EMITTER = EachIn death_emitters
 			em.enable( EMITTER.MODE_ENABLED_WITH_COUNTER )
-			While em.ready() And em.is_enabled()
+			Repeat
 				em.update()
-				em.emit( background_particle_manager )
-			End While
+				em.emit( background_particle_manager, foreground_particle_manager )
+			Until Not em.is_enabled()
 		Next
 		'delete self
 		cur_health = 0

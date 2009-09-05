@@ -85,8 +85,6 @@ Type ENVIRONMENT
 	Field game_in_progress% 'flag indicating the game has begun
 	Field game_over% 'flag indicating game over state
 	Field level_passed_ts%
-	Field player_engine_ignition%
-	Field player_engine_running%
 	Field player_in_locker%
 	Field waiting_for_player_to_enter_arena%
 	Field battle_in_progress%
@@ -153,7 +151,8 @@ Type ENVIRONMENT
 		
 		battle_in_progress = False
 		game_in_progress = False
-		player_engine_running = False
+		FLAG.engine_ignition = False
+		FLAG.engine_running = False
 		player_spawn_point = Null
 		player_brain = Null
 		player = Null
@@ -378,7 +377,7 @@ Type ENVIRONMENT
 		'potential resulting death
 		If ag.dead() 'some agent was killed
 			'agent death animations and sounds, and memory cleanup
-			ag.die( particle_list_background )
+			ag.die( particle_list_background, particle_list_foreground )
 			'shalt we spawneth teh phat lewts?! perhaps! perhaps.
 			If human_participation
 				spawn_pickup( ag.pos_x, ag.pos_y,, (Not player_has_munitions_based_turrets) )
@@ -405,8 +404,8 @@ Type ENVIRONMENT
 		player.manage( friendly_agent_list )
 		player_brain = new_player_brain
 		player_brain.manage( control_brain_list )
-		player_engine_ignition = False
-		player_engine_running = False
+		FLAG.engine_ignition = False
+		FLAG.engine_running = False
 		'pickup spawning switch
 		player_has_munitions_based_turrets = False
 		For Local t:TURRET = EachIn player.turrets
@@ -546,7 +545,7 @@ Type ENVIRONMENT
 
 	Method kill( brain:CONTROL_BRAIN )
 		If brain <> Null And Not brain.avatar.dead()
-			brain.avatar.die( particle_list_background )
+			brain.avatar.die( particle_list_background, particle_list_foreground )
 			'this should be part of the complex agent's death emitters
 			play_sound( get_sound( "cannon_hit" ), 0.5, 0.25 )
 			Select brain.avatar.political_alignment

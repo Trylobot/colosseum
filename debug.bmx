@@ -6,62 +6,24 @@ EndRem
 'IMPORTANT: must be Include'd by main.bmx; do not use Import!
 
 '______________________________________________________________________________
-Function show_me_the_shit()
-	Local particle_emitters:PAIR[]= map_to_array( particle_emitter_map )
-	Local projectile_launchers:PAIR[]= map_to_array( projectile_launcher_map )
-	DebugStop
-End Function
-
-Function map_to_array:PAIR[]( map:TMap )
-	Local list:TList = CreateList()
-	Local size% = 0
-	For Local key$ = EachIn map.Keys()
-		list.AddLast( PAIR.Create( key, map.ValueForKey( key )))
-		size :+ 1
-	Next
-	Local array:PAIR[] = New PAIR[ size ]
-	Local i% = 0
-	For Local p:PAIR = EachIn list
-		array[i] = p
-		i :+ 1
-	Next
-	Return array
-End Function
-
-Type PAIR
-	Field key$
-	Field value:Object
-
-	Function Create:PAIR( key$, value:Object )
-		Local p:PAIR= New pair
-		p.key = key
-		p.value = value
-		Return p
-	End Function
-End Type
-
-'______________________________________________________________________________
 Global debug_origin:cVEC = Create_cVEC( 0, 0 )
 Global real_origin:cVEC = Create_cVEC( 0, 0 )
 Global global_start:CELL
 Global global_goal:CELL
 
-Function debug_ts( message$ )
-	DebugLog "" + now() + " :: " + message
-End Function
+Global FLAG_debug_overlay% = False
+Global fps%, last_frame_ts%, time_count%, frame_count%
+Global f12_down%
+
+Global spawn_archetype_index% = 0
+Global spawn_archetype$ = ""
+Global spawn_alignment% = ALIGNMENT_NONE
+Global spawn_agent:COMPLEX_AGENT
+Global cb:CONTROL_BRAIN = Null
 
 Function debug_init()
 	'debug_get_keys()
 End Function
-
-Function debug_generate_level_mini_preview()
-	Local lev:LEVEL = load_level( "levels/training1.colosseum_level" )
-	Local img:TImage = generate_level_mini_preview( lev )
-	save_pixmap_to_file( img.Lock( 0, True, False ), "training1_minipreview" )
-End Function
-
-Global FLAG_debug_overlay% = False
-Global fps%, last_frame_ts%, time_count%, frame_count%
 
 Function debug_main()
 	frame_count :+ 1
@@ -77,8 +39,8 @@ Function debug_main()
 		FlushKeys()
 	End If
 	If game <> Null And FLAG_debug_overlay
-		debug_overlay()
-		debug_fps()
+		'debug_overlay()
+		'debug_fps()
 		'debug_agent_lists()
 	End If
 	If profile
@@ -89,109 +51,9 @@ Function debug_main()
 		End If
 		get_current_menu().update()
 	End If
-	If KeyHit( KEY_F4 ) Then DebugStop
+	If KeyDown( KEY_F4 ) Then DebugStop
 End Function
 
-'Function debug_get_map_keys()
-'	DebugLog " fonts: [ ~n  " + ",~n  ".Join( get_keys( font_map )) + " ]"
-'	DebugLog " sounds: [ ~n  " + ",~n  ".Join( get_keys( sound_map )) + " ]"
-'	DebugLog " images: [ ~n  " + ",~n  ".Join( get_keys( image_map )) + " ]"
-'	DebugLog " props: [ ~n  " + ",~n  ".Join( get_keys( prop_map )) + " ]"
-'	DebugLog " ai_types: [ ~n  " + ",~n  ".Join( get_keys( ai_type_map )) + " ]"
-'End Function
-
-Global sx%, sy%
-Function debug_drawtext( message$, h% = 10 )
-	Local r%, g%, b%
-	SetRotation( 0 )
-	SetScale( 1, 1 )
-	GetColor( r%, g%, b% )
-	SetColor( 0, 0, 0 )
-	SetAlpha( 0.65 )
-	SetImageFont( get_font( "consolas_10" ))
-	DrawRect( sx, sy, TextWidth( message + " " ), TextHeight( message ))
-	SetAlpha( 1 )
-	SetColor( r, g, b )
-	DrawText_with_outline( message, sx, sy )
-	sy :+ h
-End Function
-
-Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = Null, b_msg$ = Null, m_msg$ = Null )
-	'decl.
-	Local a:cVEC = New cVEC, b:cVEC = New cVEC, m:cVEC = New cVEC
-	'init.
-	If cVEC(arg1)
-		a = cVEC(arg1)
-	Else If point(arg1)
-		Local p:POINT = POINT(arg1)
-		a.x = p.pos_x; a.y = p.pos_y
-	Else
-		Return
-	End If
-	If cVEC(arg2) 
-		b = cVEC(arg2)
-	Else If point(arg2)
-		Local p:POINT = POINT(arg2)
-		b.x = p.pos_x; b.y = p.pos_y
-	Else
-		Return
-	End If
-	m.x = (a.x+b.x)/2
-	m.y = (a.y+b.y)/2
-	'draw
-	SetLineWidth( 3)
-	SetAlpha( 0.5 )
-	DrawLine( a.x,a.y, b.x,b.y )
-	SetLineWidth( 1 )
-	SetAlpha( 1 )
-	'DrawOval( a.x-2,a.y-2, 5,5 )
-	'DrawOval( b.x-2,b.y-2, 5,5 )
-	'DrawOval( m.x-2,m.y-2, 5,5 )
-	''messages
-	'SetImageFont( get_font( "consolas_10" ))
-	'DrawText( a_msg, Int(a.x+2),Int(a.y+2) )
-	'DrawText( b_msg, Int(b.x+2),Int(b.y+2) )
-	'DrawText( m_msg, Int(m.x+2),Int(m.y+2) )
-End Function
-
-Function debug_fps()
-	SetOrigin( 0, 0 )
-	SetScale( 1, 1 )
-	SetRotation( 0 )
-	SetAlpha( 1 )
-	SetColor( 255, 255, 127 )
-	SetImageFont( get_font( "consolas_bold_12" ))
-	Local fps_str$ = "fps "+fps
-	sx = window_w - TextWidth( fps_str ) - 1
-	sy = window_h - GetImageFont().Height() - 1
-	DrawText_with_outline( fps_str, sx, sy )
-End Function
-
-Function debug_agent_lists( to_console% = False )
-	SetOrigin( 0, 0 )
-	sx = 2; sy = 2
-	For Local list:TList = EachIn main_game.agent_lists
-		For Local ag:COMPLEX_AGENT = EachIn list
-			If Not to_console
-				debug_drawtext( ag.name + ":" + ag.id )
-			Else
-				DebugLog( ag.name + ":" + ag.id )
-			End If
-		Next
-		If list <> main_game.agent_lists.Last()
-			sy :+ 5
-			SetColor( 127, 127, 127 )
-			DrawLine( sx, sy, sx + 80, sy )
-			sy :+ 5
-		End If
-	Next
-End Function
-
-Global spawn_archetype_index% = 0
-Global spawn_archetype$ = ""
-Global spawn_alignment% = ALIGNMENT_NONE
-Global spawn_agent:COMPLEX_AGENT
-Global cb:CONTROL_BRAIN = Null
 Function debug_overlay()
 	SetRotation( 0 )
 	SetScale( 1, 1 )
@@ -420,6 +282,146 @@ Function debug_overlay()
 			
 	End If
 	
+End Function
+
+'______________________________________________________________________________
+Function show_me_the_shit()
+	Local particle_emitters:PAIR[]= map_to_array( particle_emitter_map )
+	Local projectile_launchers:PAIR[]= map_to_array( projectile_launcher_map )
+	DebugStop
+End Function
+
+Function map_to_array:PAIR[]( map:TMap )
+	Local list:TList = CreateList()
+	Local size% = 0
+	For Local key$ = EachIn map.Keys()
+		list.AddLast( PAIR.Create( key, map.ValueForKey( key )))
+		size :+ 1
+	Next
+	Local array:PAIR[] = New PAIR[ size ]
+	Local i% = 0
+	For Local p:PAIR = EachIn list
+		array[i] = p
+		i :+ 1
+	Next
+	Return array
+End Function
+
+Type PAIR
+	Field key$
+	Field value:Object
+
+	Function Create:PAIR( key$, value:Object )
+		Local p:PAIR= New pair
+		p.key = key
+		p.value = value
+		Return p
+	End Function
+End Type
+
+Function debug_ts( message$ )
+	DebugLog "" + now() + " :: " + message
+End Function
+
+Function debug_generate_level_mini_preview()
+	Local lev:LEVEL = load_level( "levels/training1.colosseum_level" )
+	Local img:TImage = generate_level_mini_preview( lev )
+	save_pixmap_to_file( img.Lock( 0, True, False ), "training1_minipreview" )
+End Function
+
+'Function debug_get_map_keys()
+'	DebugLog " fonts: [ ~n  " + ",~n  ".Join( get_keys( font_map )) + " ]"
+'	DebugLog " sounds: [ ~n  " + ",~n  ".Join( get_keys( sound_map )) + " ]"
+'	DebugLog " images: [ ~n  " + ",~n  ".Join( get_keys( image_map )) + " ]"
+'	DebugLog " props: [ ~n  " + ",~n  ".Join( get_keys( prop_map )) + " ]"
+'	DebugLog " ai_types: [ ~n  " + ",~n  ".Join( get_keys( ai_type_map )) + " ]"
+'End Function
+
+Global sx%, sy%
+Function debug_drawtext( message$, h% = 10 )
+	Local r%, g%, b%
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	GetColor( r%, g%, b% )
+	SetColor( 0, 0, 0 )
+	SetAlpha( 0.65 )
+	SetImageFont( get_font( "consolas_10" ))
+	DrawRect( sx, sy, TextWidth( message + " " ), TextHeight( message ))
+	SetAlpha( 1 )
+	SetColor( r, g, b )
+	DrawText_with_outline( message, sx, sy )
+	sy :+ h
+End Function
+
+Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = Null, b_msg$ = Null, m_msg$ = Null )
+	'decl.
+	Local a:cVEC = New cVEC, b:cVEC = New cVEC, m:cVEC = New cVEC
+	'init.
+	If cVEC(arg1)
+		a = cVEC(arg1)
+	Else If point(arg1)
+		Local p:POINT = POINT(arg1)
+		a.x = p.pos_x; a.y = p.pos_y
+	Else
+		Return
+	End If
+	If cVEC(arg2) 
+		b = cVEC(arg2)
+	Else If point(arg2)
+		Local p:POINT = POINT(arg2)
+		b.x = p.pos_x; b.y = p.pos_y
+	Else
+		Return
+	End If
+	m.x = (a.x+b.x)/2
+	m.y = (a.y+b.y)/2
+	'draw
+	SetLineWidth( 3)
+	SetAlpha( 0.5 )
+	DrawLine( a.x,a.y, b.x,b.y )
+	SetLineWidth( 1 )
+	SetAlpha( 1 )
+	'DrawOval( a.x-2,a.y-2, 5,5 )
+	'DrawOval( b.x-2,b.y-2, 5,5 )
+	'DrawOval( m.x-2,m.y-2, 5,5 )
+	''messages
+	'SetImageFont( get_font( "consolas_10" ))
+	'DrawText( a_msg, Int(a.x+2),Int(a.y+2) )
+	'DrawText( b_msg, Int(b.x+2),Int(b.y+2) )
+	'DrawText( m_msg, Int(m.x+2),Int(m.y+2) )
+End Function
+
+Function debug_fps()
+	SetOrigin( 0, 0 )
+	SetScale( 1, 1 )
+	SetRotation( 0 )
+	SetAlpha( 1 )
+	SetColor( 255, 255, 127 )
+	SetImageFont( get_font( "consolas_bold_12" ))
+	Local fps_str$ = "fps "+fps
+	sx = window_w - TextWidth( fps_str ) - 1
+	sy = window_h - GetImageFont().Height() - 1
+	DrawText_with_outline( fps_str, sx, sy )
+End Function
+
+Function debug_agent_lists( to_console% = False )
+	SetOrigin( 0, 0 )
+	sx = 2; sy = 2
+	For Local list:TList = EachIn main_game.agent_lists
+		For Local ag:COMPLEX_AGENT = EachIn list
+			If Not to_console
+				debug_drawtext( ag.name + ":" + ag.id )
+			Else
+				DebugLog( ag.name + ":" + ag.id )
+			End If
+		Next
+		If list <> main_game.agent_lists.Last()
+			sy :+ 5
+			SetColor( 127, 127, 127 )
+			DrawLine( sx, sy, sx + 80, sy )
+			sy :+ 5
+		End If
+	Next
 End Function
 
 Function debug_kill_tally()

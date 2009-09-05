@@ -48,6 +48,7 @@ menu_command( COMMAND.NEW_LEVEL )
 'autosave/load user profile
 Global autosave_profile_path$ = load_autosave()
 menu_command( COMMAND.LOAD_GAME, autosave_profile_path )
+
 ?Debug
 debug_init()
 ?
@@ -66,42 +67,30 @@ menu_command( COMMAND.LOAD_ASSETS )
 'background automaton-powered menu game
 init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 
-?Debug
-'DebugStop
-'For Local drv$ = EachIn AudioDrivers()
-'	DebugLog " " + drv
-'Next
-'End
-'show_me_the_shit()
-?
-
 '______________________________________________________________________________
 Repeat
+	Cls()
 	select_game()
-	'input
 	get_all_input() 'excludes player-agent input
-	'network
 	update_network()
-	'timing & physics
 	If frame_time_elapsed()
-		'next timescale calculate and reset
 		calculate_timescale()
 		reset_frame_timer()
-		'collision detection & resolution
+
 		collide_all_objects()
-		'physics engine and control brain update (includes player-agent input)
 		update_all_objects()
 	End If
-	'clear graphics buffer
-	Cls()
-	'draw to buffer
-	draw_all_graphics()
-	?Debug
-	debug_main()
-	?
-	'show buffer
-	Flip( 1 )
-	'audio
 	play_all_audio()
+	draw_all_graphics()
+?Debug
+	debug_main()
+?
+	Flip( 1 )
 Until AppTerminate()
+
+
+
+
+
+
 

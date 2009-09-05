@@ -1,18 +1,6 @@
 
-*** GAME FREEZES WHEN AN ENEMY EXPLODES
-    NOT SURE WHY!
-
-* when dragging the window, my physics timescale gets completely fucked.
+* [OLD BUG]
+	when dragging the window, my physics timescale gets completely fucked.
   this causes all units to "drift"
 	into walls, each other, etc. Big problems when dragging the window.
 	It must be possible to detect when the window doesn't have control, and somehow prevent this
-
-* meta_variable_cache no longer works for inventory items.
-  will need a new way to put the inventory item counts into the menu items.
-	maybe a secondary draw call for each one, since draw.bmx has access to the player profile and the menu.
-	and, it's already drawing some extra stuff, like the item art.
-	
-* in the inventory menu, ...
-  scrollbar cannot be dragged if selected item is at the bottom of the dynamic list.
-	works fine for items near the end.
-	--- use the debugger to draw the "hit" area and see if it is the expected size?
