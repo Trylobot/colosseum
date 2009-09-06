@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="16598f74-ab04-443c-b10b-9f47f3e25b41" kpf_version="4" name="colosseum.komodo.kpf">
+<preference-set idref="16598f74-ab04-443c-b10b-9f47f3e25b41">
+  <string id="import_exclude_matches">libs;.bmx;docs;distros;test;*.*~;*.bak;*.tmp;CVS;.#*;*.pyo;*.pyc;.svn;_svn;*%*;tmp*.html;.DS_Store</string>
+  <string id="import_include_matches">*.bmx;*.png;*.ttf;*.colosseum_data;*.colosseum_settings;*.colosseum_level;*.ico;*.ogg;*.colosseum_profile</string>
+  <boolean id="import_live">1</boolean>
+  <boolean id="import_recursive">1</boolean>
+  <string id="import_type">useFolders</string>
+  <string id="javascriptExtraPaths"></string>
+  <string id="mappedPaths"></string>
+  <string id="perlExtraPaths"></string>
+  <string id="phpExtraPaths"></string>
+  <string id="pythonExtraPaths"></string>
+  <string id="rubyExtraPaths"></string>
+</preference-set>
+</project>
