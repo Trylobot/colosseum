@@ -1,2 +1,2 @@
-bmk makeapp -a -d -o COLOSSEUM.DEBUG.EXE main.bmx
+bmk makeapp -a -d -o main.debug.exe main.bmx
 
