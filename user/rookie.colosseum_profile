@@ -14,7 +14,7 @@
 			key: "light_machine_gun",
 			count: 1,
 			damaged: false
-		}
+		},
 		{
 			item_type: "chassis",
 			key: "light_tank",

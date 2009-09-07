@@ -7,6 +7,8 @@ fun stuff__________________________________
 		but keep it short (and skip-able).
 
 enhance____________________________________
+	treads
+	- have tread marks that stretch and shit so it doesn't matter how fast they're goin
 	spawning system
 	- want to have wave-based spawning without timers
 	  that way, enemy group 2 will start to spawn after the last enemy group 1 guy dies.

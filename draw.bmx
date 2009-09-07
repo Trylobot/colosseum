@@ -80,7 +80,7 @@ Function draw_game()
 	SetOrigin( 0, 0 )
 	
 	'update graffiti manager (for particles that wish to be retained)
-	game.graffiti.add_graffiti( game.retained_particle_list )
+	'game.graffiti.add_graffiti( game.retained_particle_list )
 	game.retained_particle_list.Clear()
 
 	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
