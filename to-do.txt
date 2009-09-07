@@ -14,7 +14,6 @@ enhance____________________________________
 	- STOP USING COLORS ON SCALE [0,1] and instead use [0,255] as a float.
 		
 flesh out__________________________________
-  graffiti_manager.bmx
   net.bmx
   hud.bmx
   vehicle_editor.bmx
