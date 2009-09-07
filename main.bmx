@@ -36,6 +36,8 @@ SetAudioDriver( "FreeAudio DirectSound" )
 
 'defaults
 apply_default_settings()
+FLAG.in_menu = True
+FLAG.bg_music = True
 
 'data directory enforce
 create_dirs()
@@ -49,14 +51,11 @@ menu_command( COMMAND.NEW_LEVEL )
 Global autosave_profile_path$ = load_autosave()
 menu_command( COMMAND.LOAD_GAME, autosave_profile_path )
 
-?Debug
-debug_init()
-?
-
-'Window Initialization and Drawing device
+'window title
 AppTitle = "Colosseum " + version_major + "." + version_minor + "." + version_revision
 ?Debug
 AppTitle :+ " DEBUG"
+debug_init()
 ?
 
 'graphical window
@@ -66,6 +65,10 @@ init_graphics()
 menu_command( COMMAND.LOAD_ASSETS )
 'background automaton-powered menu game
 init_ai_menu_game() 'does nothing if applicable performance setting is disabled
+
+?Debug
+'debug_graffiti_manager()
+?
 
 '______________________________________________________________________________
 Repeat

@@ -33,6 +33,7 @@ Function play_all_audio()
 	If bg_music = Null
 		bg_music = AllocChannel()
 		CueSound( get_sound( "bgm" ), bg_music )
+		bg_music.SetVolume( 0.5 )
 	End If
 	If FLAG.bg_music
 		ResumeChannel( bg_music )

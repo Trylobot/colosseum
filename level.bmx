@@ -373,10 +373,10 @@ Type LEVEL Extends MANAGED_OBJECT
 		'If in_bounds( c )
 			Local x_min% = vertical_divs[c.col]
 			Local x_max% = vertical_divs[c.col+1]
-			Local x_diff_qtr% = 0.25 * (x_max - x_min)
+			Local x_diff_qtr% = 0.40 * (x_max - x_min) 'old: 0.25
 			Local y_min% = horizontal_divs[c.row]
 			Local y_max% = horizontal_divs[c.row+1]
-			Local y_diff_qtr% = 0.25 * (y_max - y_min)
+			Local y_diff_qtr% = 0.40 * (y_max - y_min) 'old: 0.25
 			Return Create_cVEC( ..
 				Rand( x_min + x_diff_qtr, x_max - x_diff_qtr ), ..
 				Rand( y_min + y_diff_qtr, y_max - y_diff_qtr ))

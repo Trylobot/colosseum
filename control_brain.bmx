@@ -124,21 +124,23 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 		can_see_target = see_target()
 		ally_blocking = any_friendly_blocking()
-		If can_see_target
-			path = Null
-		Else 'Not can_see_target
-			If path = Null Or path.IsEmpty()
-				'acquire new path if needed
-				path = get_path_to_target()
+		If ai.can_move
+			If can_see_target
+				path = Null
+			Else 'Not can_see_target
+				If path = Null Or path.IsEmpty()
+					'acquire new path if needed
+					path = get_path_to_target()
+				End If
 			End If
-		End If
-		If waypoint = Null Or waypoint_reached()
-			'acquire new waypoint
-			waypoint = get_next_path_waypoint()
-		End If
-		If waypoint <> Null
-			ang_to_waypoint = avatar.ang_to( waypoint )
-			dist_to_waypoint = avatar.dist_to( waypoint )
+			If waypoint = Null Or waypoint_reached()
+				'acquire new waypoint
+				waypoint = get_next_path_waypoint()
+			End If
+			If waypoint
+				ang_to_waypoint = avatar.ang_to( waypoint )
+				dist_to_waypoint = avatar.dist_to( waypoint )
+			End If
 		End If
 		'chassis movement
 		If ai.can_move And Not (ai.is_carrier And avatar.is_deployed)
@@ -270,7 +272,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				'firing checklist
 				If Not turret_overheated[turret_index] And Abs( diff ) <= threshold
 				'And dist_to_target <= t.effective_range ..
-					avatar.fire( turret_index, false )
+					avatar.fire( turret_index, False )
 				End If
 			Next
 		Next
@@ -297,7 +299,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		Local current_cell:CELL = pathing.containing_cell( avatar.pos_x, avatar.pos_y )
 		Local waypoint_cell:CELL = pathing.containing_cell( waypoint.x, waypoint.y )
 		'If waypoint <> Null And avatar.dist_to( waypoint ) <= waypoint_radius
-		If current_cell.eq( waypoint_cell )
+		'If current_cell.eq( waypoint_cell )
+		If waypoint And (avatar.dist_to( waypoint ) < ((avatar.hitbox.width+avatar.hitbox.height)/2))
 			Return True
 		Else
 			Return False 'sir, where are we going? LOL :D
@@ -403,7 +406,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 		pathing.reset()
 		Local cell_list:TList = ..
-			pathing.find_CELL_path( start_cell, goal_cell )
+			pathing.find_CELL_path( start_cell, goal_cell, False )
 		Local list:TList = CreateList()
 		If cell_list <> Null And Not cell_list.IsEmpty()
 			For Local cursor:CELL = EachIn cell_list
@@ -458,10 +461,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				EndIf
 				'turret(s) fire
 				If KeyDown( KEY_SPACE )
-					avatar.fire_all( TURRET.PRIMARY, true )
+					avatar.fire_all( TURRET.PRIMARY, True )
 				End If
 				If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
-					avatar.fire_all( TURRET.SECONDARY, true )
+					avatar.fire_all( TURRET.SECONDARY, True )
 				End If
 
 			Case INPUT_KEYBOARD_MOUSE_HYBRID
@@ -496,10 +499,10 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				mouse_turret_input()
 				'turret(s) fire
 				If MouseDown( 1 ) And Not FLAG.ignore_mouse_1
-					avatar.fire_all( TURRET.PRIMARY, true )
+					avatar.fire_all( TURRET.PRIMARY, True )
 				End If
 				If MouseDown( 2 )
-					avatar.fire_all( TURRET.SECONDARY, true )
+					avatar.fire_all( TURRET.SECONDARY, True )
 				End If
 					
 			'Case INPUT_XBOX_360_CONTROLLER

@@ -6,6 +6,13 @@ fun stuff__________________________________
 		and then have the logo be there underneath it all or something.
 		but keep it short (and skip-able).
 
+enhance____________________________________
+	spawning system
+	- want to have wave-based spawning without timers
+	  that way, enemy group 2 will start to spawn after the last enemy group 1 guy dies.
+	particle.bmx
+	- STOP USING COLORS ON SCALE [0,1] and instead use [0,255] as a float.
+		
 flesh out__________________________________
   graffiti_manager.bmx
   net.bmx

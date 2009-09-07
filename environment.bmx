@@ -6,6 +6,7 @@ EndRem
 SuperStrict
 Import "settings.bmx"
 Import "vec.bmx"
+Import "graffiti_manager.bmx"
 Import "level.bmx"
 Import "pathing_structure.bmx"
 Import "box.bmx"
@@ -41,8 +42,8 @@ Type ENVIRONMENT
 	Field origin_max_x% 'camera constraint
 	Field origin_max_y% 'camera constraint
 	
-	Field background_clean:TImage
-	Field background_dynamic:TImage
+	Field background:TImage
+	Field graffiti:GRAFFITI_MANAGER
 	Field foreground:TImage
 
 	Field lev:LEVEL 'level object from which to build the environment, read-only
@@ -132,8 +133,7 @@ Type ENVIRONMENT
 	End Method
 	
 	Method clear()
-		background_clean = Null
-		background_dynamic = Null
+		background = Null
 		foreground = Null
 		particle_list_background.Clear()
 		particle_list_foreground.Clear()
@@ -173,11 +173,11 @@ Type ENVIRONMENT
 			walls.AddLast( lev.get_wall( cursor ))
 		Next
 		'background
-		background_clean = background
-		background_dynamic = LoadImage( LockImage( background_clean,, True, False ), DYNAMICIMAGE )
-		UnlockImage( background_clean )
+		Self.background = background
 		'foreground
 		Self.foreground = foreground
+		'graffiti
+		graffiti = GRAFFITI_MANAGER.Create( background, window_w, window_h )
 		'props
 		For Local pd:PROP_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )

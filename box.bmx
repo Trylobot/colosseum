@@ -4,6 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "draw_misc.bmx"
 
 '______________________________________________________________________________
 Function Create_BOX:BOX( x#, y#, w#, h# )
@@ -21,13 +22,20 @@ Type BOX
 		Return Create_BOX( x, y, w, h )
 	End Method
 	
-	Method contains%( other:BOX )
-		Return (other.x >= x And other.y >= y And other.x + other.w < x + w And other.y + other.h < y + h)
+	Method contains%( b:BOX )
+		Return (b.x >= x And b.y >= y And b.x + b.w < x + w And b.y + b.h < y + h)
 	End Method
 	
-	Method contains_partly%( other:BOX )
-		Return ((other.x >= x And other.y >= y And other.x < x + w And other.y < y + h) Or ..
-		        (other.x + other.w >= x And other.y + other.h >= y And other.x + other.w < x + w And other.y + other.h < y + h))
+	Method intersects%( b:BOX )
+		Return Not( x > (b.x+b.w) Or b.x > (x+w) Or y > (b.y+b.h) Or b.y > (y+h) )
+	End Method
+	
+	Method draw( solid% = False )
+		If solid
+			DrawRect( x, y, w, h )
+		Else
+			DrawRectLines( x, y, w, h )
+		End If
 	End Method
 
 End Type

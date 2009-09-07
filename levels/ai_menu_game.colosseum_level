@@ -311,9 +311,6 @@
 			class: 1,
 			squads: [
 				[
-					"mini_bomb",
-					"mini_bomb",
-					"mini_bomb",
 					"machine_gun_quad",
 					"machine_gun_quad"
 				],
@@ -355,9 +352,6 @@
 			class: 1,
 			squads: [
 				[
-					"mini_bomb",
-					"mini_bomb",
-					"mini_bomb",
 					"machine_gun_quad",
 					"machine_gun_quad"
 				],

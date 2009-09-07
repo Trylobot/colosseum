@@ -160,6 +160,9 @@ Function update_drawing_origin()
 		Else If game.drawing_origin.x > game.origin_max_x Then game.drawing_origin.x = game.origin_max_x
 		If      game.drawing_origin.y < game.origin_min_y Then game.drawing_origin.y = game.origin_min_y ..
 		Else If game.drawing_origin.y > game.origin_max_y Then game.drawing_origin.y = game.origin_max_y
+	Else 'for debug? I guess?
+		game_mouse.x = mouse.pos_x
+		game_mouse.y = mouse.pos_y
 	End If
 End Function
 
@@ -228,8 +231,6 @@ Function update_meta_variable_cache()
 	meta_variable_cache.Insert( "refresh_rate", String.FromInt( refresh_rate ))
 	meta_variable_cache.Insert( "bit_depth", String.FromInt( bit_depth ))
 	meta_variable_cache.Insert( "show_ai_menu_game", boolean_to_string( show_ai_menu_game ))
-	meta_variable_cache.Insert( "retain_particles", boolean_to_string( retain_particles ))
-	meta_variable_cache.Insert( "active_particle_limit", String.FromInt( active_particle_limit ))
 	meta_variable_cache.Insert( "network_ip_address", network_ip_address )
 	meta_variable_cache.Insert( "network_port", String.FromInt( network_port ))
 	meta_variable_cache.Insert( "network_level", StripAll( network_level ))

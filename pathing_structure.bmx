@@ -129,17 +129,19 @@ Type PATHING_STRUCTURE
 		Return list
 	End Method
 	
-	Method backtrace_path:TList( c:CELL, start:CELL )
+	Method backtrace_path:TList( c:CELL, start:CELL, omit_starting_cell% )
 		Local list:TList = CreateList()
 		list.AddFirst( c.clone() )
 		While Not CELL(list.First()).eq( start )
 			list.AddFirst( came_from( CELL(list.First()) ))
 		End While
-		'list.AddFirst( start.clone() ) 'omit the starting cell, as distance should be trival.
+		If Not omit_starting_cell
+			list.AddFirst( start.clone() )
+		End If
 		Return list
 	End Method
 	
-	Method find_CELL_path:TList( start:CELL, goal:CELL )
+	Method find_CELL_path:TList( start:CELL, goal:CELL, omit_starting_cell% )
 		set_g( start, 0 )
 		set_h( start, distance( start, goal ))
 		set_f_implicit( start )
@@ -148,7 +150,7 @@ Type PATHING_STRUCTURE
 		While Not potential_paths.is_empty()
 			Local cursor:CELL = potential_paths.pop_root()
 			If cursor.eq( goal )
-				Return backtrace_path( goal, start )
+				Return backtrace_path( goal, start, omit_starting_cell )
 			End If
 			visit( cursor )
 			

@@ -76,21 +76,21 @@ End Function
 '______________________________________________________________________________
 'In-game stuff
 Function draw_game()
-	
-	'force drawing origin to integer coordinates if about to perform "dirty-rects" operation
-	If game.retained_particle_count > active_particle_limit
-		SetOrigin( Int( game.drawing_origin.x ), Int( game.drawing_origin.y ))
-	Else
-		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
-	End If
 	SetBlend( ALPHABLEND )
+	SetOrigin( 0, 0 )
 	
-	'arena (& retained particles)
+	'update graffiti manager (for particles that wish to be retained)
+	game.graffiti.add_graffiti( game.retained_particle_list )
+	game.retained_particle_list.Clear()
+
+	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+	
+	'arena background + retained particles
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
-	draw_arena_bg()
+	game.graffiti.draw()
 
 	'background particles
 	For Local part:PARTICLE = EachIn game.particle_list_background
@@ -397,66 +397,6 @@ Function draw_menus()
 			get_menu( menu_stack[i] ).draw( x + i*20, y + i*20,, menu_overlay_alpha[i])
 		Next
 	End Rem
-End Function
-'______________________________________________________________________________
-Function draw_arena_bg()
-	'dynamic background image
-	SetColor( 255, 255, 255 )
-	SetAlpha( 1 )
-	SetScale( 1, 1 )
-	SetRotation( 0 )
-	DrawImage( game.background_dynamic, 0, 0 )
-	'draw active particles that wish to be retained
-	For Local part:PARTICLE = EachIn game.retained_particle_list
-		part.draw()
-	Next
-	If retain_particles
-		'if there are too many active particles
-		If game.retained_particle_count > active_particle_limit
-			'TODO: OPTIMIZE! THIS IS CAUSING MAJOR SLOWDOWNS AND FRAME-SKIPPING
-			Local background_pixmap:TPixmap = LockImage( game.background_dynamic )
-			'Rem
-			Local background_rect:BOX = Create_BOX( 0, 0, background_pixmap.width, background_pixmap.height )
-			'for all particles to be potentially retained
-			For Local part:PARTICLE = EachIn game.retained_particle_list
-				Local dirty_rect:BOX = part.get_bounding_box()
-				Local dirty_rect_relative_to_window:BOX = Create_BOX( ..
-					dirty_rect.x + game.drawing_origin.x, ..
-					dirty_rect.y + game.drawing_origin.y, ..
-					dirty_rect.w, ..
-					dirty_rect.h )
-				'delete the particle
-				game.retained_particle_count :- 1
-				part.unmanage() 'ideally this particle would stay in the queue if it is not on-screen, but it causes performance issue
-				'if the particle is visible given the current window-frame position & size
-				If window.contains( dirty_rect_relative_to_window )
-					'paste it into the dynamic background image
-					If background_rect.contains( dirty_rect )
-						Local dirty_pixmap:TPixmap = GrabPixmap( ..
-							dirty_rect_relative_to_window.x, ..
-							dirty_rect_relative_to_window.y, ..
-							dirty_rect_relative_to_window.w, ..
-							dirty_rect_relative_to_window.h )
-						background_pixmap.Paste( ..
-							dirty_pixmap, ..
-							dirty_rect.x, ..
-							dirty_rect.y )
-					End If
-				End If
-			Next
-			'End Rem
-			'For Local part:PARTICLE = EachIn game.retained_particle_list
-			'	game.retained_particle_count :- 1
-			'	part.unmanage()
-			'Next
-			UnlockImage( game.background_dynamic )
-		End If
-	Else 'Not retain_particles
-		While game.retained_particle_count > active_particle_limit
-			game.retained_particle_list.RemoveFirst()
-			game.retained_particle_count :- 1
-		End While
-	End If
 End Function
 '______________________________________________________________________________
 Function draw_arena_fg()

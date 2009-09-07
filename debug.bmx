@@ -6,6 +6,40 @@ EndRem
 'IMPORTANT: must be Include'd by main.bmx; do not use Import!
 
 '______________________________________________________________________________
+Function debug_graffiti_manager()
+	Local e:ENVIRONMENT = ai_menu_game
+	Local g:GRAFFITI_MANAGER = e.graffiti
+	Local scale# = 1
+	Local margin% = 0
+	Local x% = 0
+	Local y% = 0
+	Local L:TList = CreateList()
+	SetScale( scale, scale )
+	Repeat
+		Cls()
+		If MouseDown( 1 )
+			Local p:PARTICLE = get_particle( "tank_tread_trail_medium" )
+			p.pos_x = MouseX()
+			p.pos_y = MouseY()
+			p.ang = Rand( 0, 365 )
+			L.AddLast( p )
+		End If
+		If MouseHit( 2 )
+			g.add_graffiti( L )
+			L.Clear()
+		End If
+		
+		g.draw()
+		
+		For Local p:PARTICLE = EachIn L
+			p.draw()
+		Next
+		Flip( 1 )
+	Until AppTerminate()
+	End
+End Function
+
+'______________________________________________________________________________
 Global debug_origin:cVEC = Create_cVEC( 0, 0 )
 Global real_origin:cVEC = Create_cVEC( 0, 0 )
 Global global_start:CELL
@@ -39,9 +73,8 @@ Function debug_main()
 		FlushKeys()
 	End If
 	If game <> Null And FLAG_debug_overlay
-		'debug_overlay()
-		'debug_fps()
-		'debug_agent_lists()
+		debug_overlay()
+		debug_fps()
 	End If
 	If profile
 		If KeyDown( KEY_NUMADD )
@@ -62,24 +95,24 @@ Function debug_overlay()
 	sx = 2; sy = 2
 	
 	'basic info 
-	SetColor( 255, 255, 255 )
-	debug_drawtext( "       active_particle_limit "+active_particle_limit )
-	debug_drawtext( "game.retained_particle_count "+game.retained_particle_count )
-	SetColor( 127, 127, 255 )
-	debug_drawtext( "   friendly units "+game.active_friendly_units )
-	debug_drawtext( "friendly spawners "+game.active_friendly_spawners )
-	SetColor( 255, 127, 127 )
-	debug_drawtext( "    hostile units "+game.active_hostile_units )
-	debug_drawtext( " hostile spawners "+game.active_hostile_spawners )
+	'SetColor( 255, 255, 255 )
+	'debug_drawtext( "       active_particle_limit "+active_particle_limit )
+	'debug_drawtext( "game.retained_particle_count "+game.retained_particle_count )
+	'SetColor( 127, 127, 255 )
+	'debug_drawtext( "   friendly units "+game.active_friendly_units )
+	'debug_drawtext( "friendly spawners "+game.active_friendly_spawners )
+	'SetColor( 255, 127, 127 )
+	'debug_drawtext( "    hostile units "+game.active_hostile_units )
+	'debug_drawtext( " hostile spawners "+game.active_hostile_spawners )
 	
 	If game <> Null
 		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
 	End If
 	sx = game_mouse.x + 16; sy = game_mouse.y
 	
-	SetColor( 255, 255, 255 )
 	'show pathing grid divisions
-	SetAlpha( 0.20 )
+	SetColor( 255, 255, 255 )
+	SetAlpha( 0.04 )
 	SetLineWidth( 1 )
 	For Local i% = 0 To game.lev.horizontal_divs.length - 1
 		DrawLine( 0,0+game.lev.horizontal_divs[i], 0+game.lev.width,0+game.lev.horizontal_divs[i] )
@@ -87,10 +120,23 @@ Function debug_overlay()
 	For Local i% = 0 To game.lev.vertical_divs.length - 1
 		DrawLine( 0+game.lev.vertical_divs[i],0, 0+game.lev.vertical_divs[i],0+game.lev.height )
 	Next
+	
+	'graffiti manager
+	If game And game.graffiti
+		Local g:GRAFFITI_MANAGER = game.graffiti
+		SetLineWidth( 2 )
+		SetAlpha( 0.5 )
+		SetColor( 255, 32, 32 )
+		For Local r% = 0 Until g.rows
+			For Local c% = 0 Until g.cols
+				DrawRectLines( c * g.col_width, r * g.row_height, g.col_width, g.row_height )
+			Next
+		Next
+	End If
 
 	'show particle bounding boxes
 	If game <> Null
-		SetAlpha( 0.08 )
+		SetAlpha( 0.06 )
 		Local dirty_rect:BOX
 		For Local p:PARTICLE = EachIn game.retained_particle_list
 			dirty_rect = p.get_bounding_box()
@@ -282,6 +328,21 @@ Function debug_overlay()
 			
 	End If
 	
+End Function
+
+'______________________________________________________________________________
+Function debug_BOX_contains_partly()
+	Local a:BOX = Create_BOX( 200, 200, 75, 75 )
+	Local b:BOX = Create_BOX( MouseX(), MouseY(), 60, 60 )
+	SetColor( 127, 127, 127 )
+	Repeat
+		Cls()
+		b.x = MouseX()
+		b.y = MouseY() 
+		a.draw( a.intersects( b ))
+		b.draw()
+		Flip( 1 )
+	Until KeyHit( KEY_ESCAPE )
 End Function
 
 '______________________________________________________________________________
