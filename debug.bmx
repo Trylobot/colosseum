@@ -6,40 +6,6 @@ EndRem
 'IMPORTANT: must be Include'd by main.bmx; do not use Import!
 
 '______________________________________________________________________________
-Function debug_graffiti_manager()
-	Local e:ENVIRONMENT = ai_menu_game
-	Local g:GRAFFITI_MANAGER = e.graffiti
-	Local scale# = 1
-	Local margin% = 0
-	Local x% = 0
-	Local y% = 0
-	Local L:TList = CreateList()
-	SetScale( scale, scale )
-	Repeat
-		Cls()
-		If MouseDown( 1 )
-			Local p:PARTICLE = get_particle( "tank_tread_trail_medium" )
-			p.pos_x = MouseX()
-			p.pos_y = MouseY()
-			p.ang = Rand( 0, 365 )
-			L.AddLast( p )
-		End If
-		If MouseHit( 2 )
-			g.add_graffiti( L )
-			L.Clear()
-		End If
-		
-		g.draw()
-		
-		For Local p:PARTICLE = EachIn L
-			p.draw()
-		Next
-		Flip( 1 )
-	Until AppTerminate()
-	End
-End Function
-
-'______________________________________________________________________________
 Global debug_origin:cVEC = Create_cVEC( 0, 0 )
 Global real_origin:cVEC = Create_cVEC( 0, 0 )
 Global global_start:CELL
@@ -125,19 +91,20 @@ Function debug_overlay()
 	Next
 	
 	'graffiti manager
-	If game And game.graffiti
-		Local g:GRAFFITI_MANAGER = game.graffiti
-		SetLineWidth( 2 )
-		SetAlpha( 0.5 )
-		SetColor( 255, 32, 32 )
-		For Local r% = 0 Until g.rows
-			For Local c% = 0 Until g.cols
-				DrawRectLines( c * g.col_width, r * g.row_height, g.col_width, g.row_height )
-			Next
-		Next
-	End If
+	'If game And game.graffiti
+	'	Local g:GRAFFITI_MANAGER = game.graffiti
+	'	SetLineWidth( 2 )
+	'	SetAlpha( 0.5 )
+	'	SetColor( 255, 32, 32 )
+	'	For Local r% = 0 Until g.rows
+	'		For Local c% = 0 Until g.cols
+	'			DrawRectLines( c * g.col_width, r * g.row_height, g.col_width, g.row_height )
+	'		Next
+	'	Next
+	'End If
 
 	'show particle bounding boxes
+	SetColor( 255, 255, 255 )
 	If game <> Null
 		SetAlpha( 0.06 )
 		Local dirty_rect:BOX
@@ -333,6 +300,53 @@ Function debug_overlay()
 	
 End Function
 
+Function debug_fps()
+	SetOrigin( 0, 0 )
+	SetScale( 1, 1 )
+	SetRotation( 0 )
+	SetAlpha( 1 )
+	SetColor( 255, 255, 127 )
+	SetImageFont( get_font( "consolas_bold_12" ))
+	Local fps_str$ = "fps "+fps
+	sx = window_w - TextWidth( fps_str ) - 1
+	sy = window_h - GetImageFont().Height() - 1
+	DrawText_with_outline( fps_str, sx, sy )
+End Function
+
+'______________________________________________________________________________
+Function debug_graffiti_manager()
+	Local e:ENVIRONMENT = ai_menu_game
+	Local g:GRAFFITI_MANAGER = e.graffiti
+	Local scale# = 1
+	Local margin% = 0
+	Local x% = 0
+	Local y% = 0
+	Local L:TList = CreateList()
+	SetScale( scale, scale )
+	Repeat
+		Cls()
+		If MouseDown( 1 )
+			Local p:PARTICLE = get_particle( "tank_tread_trail_medium" )
+			p.pos_x = MouseX()
+			p.pos_y = MouseY()
+			p.ang = Rand( 0, 365 )
+			L.AddLast( p )
+		End If
+		If MouseHit( 2 )
+			g.add_graffiti( L )
+			L.Clear()
+		End If
+		
+		g.draw()
+		
+		For Local p:PARTICLE = EachIn L
+			p.draw()
+		Next
+		Flip( 1 )
+	Until AppTerminate()
+	End
+End Function
+
 '______________________________________________________________________________
 Function debug_BOX_contains_partly()
 	Local a:BOX = Create_BOX( 200, 200, 75, 75 )
@@ -453,19 +467,6 @@ Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = Null, b_msg$ = Null,
 	'DrawText( a_msg, Int(a.x+2),Int(a.y+2) )
 	'DrawText( b_msg, Int(b.x+2),Int(b.y+2) )
 	'DrawText( m_msg, Int(m.x+2),Int(m.y+2) )
-End Function
-
-Function debug_fps()
-	SetOrigin( 0, 0 )
-	SetScale( 1, 1 )
-	SetRotation( 0 )
-	SetAlpha( 1 )
-	SetColor( 255, 255, 127 )
-	SetImageFont( get_font( "consolas_bold_12" ))
-	Local fps_str$ = "fps "+fps
-	sx = window_w - TextWidth( fps_str ) - 1
-	sy = window_h - GetImageFont().Height() - 1
-	DrawText_with_outline( fps_str, sx, sy )
 End Function
 
 Function debug_agent_lists( to_console% = False )

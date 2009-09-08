@@ -1,7 +1,5 @@
-** performance
-   the graffiti system is only marginally faster than a lock for large levels
-	 so, only do it as often as possible instead of every frame
-	 say once every 750 particles?
+* the AI menu game sand texture is not initializing properly for some reason
+  I see it as a big white/grey texture for some reason
 
 * [OLD BUG]
 	when dragging the window, my physics timescale gets completely fucked.

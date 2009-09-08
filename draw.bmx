@@ -80,8 +80,11 @@ Function draw_game()
 	SetOrigin( 0, 0 )
 	
 	'update graffiti manager (for particles that wish to be retained)
-	'game.graffiti.add_graffiti( game.retained_particle_list )
-	game.retained_particle_list.Clear()
+	If game.retained_particle_count >= active_particle_limit
+		game.graffiti.add_graffiti( game.retained_particle_list )
+		game.retained_particle_list.Clear()
+		game.retained_particle_count = 0
+	End If
 
 	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
 	
@@ -93,6 +96,9 @@ Function draw_game()
 	game.graffiti.draw()
 
 	'background particles
+	For Local part:PARTICLE = Eachin game.retained_particle_list
+		part.draw()
+	Next
 	For Local part:PARTICLE = EachIn game.particle_list_background
 		part.draw()
 	Next

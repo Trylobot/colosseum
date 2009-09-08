@@ -11,13 +11,13 @@
 		},
 		{
 			item_type: "turret",
-			key: "light_cannon",
+			key: "medium_machine_gun",
 			count: 2,
 			damaged: true
 		},
 		{
 			item_type: "turret",
-			key: "medium_machine_gun",
+			key: "light_cannon",
 			count: 2,
 			damaged: true
 		},
@@ -47,26 +47,26 @@
 		},
 		{
 			item_type: "turret",
-			key: "light_machine_gun",
-			count: 1,
-			damaged: false
-		},
-		{
-			item_type: "turret",
 			key: "light_energy_mgun",
 			count: 4,
 			damaged: false
 		},
 		{
 			item_type: "turret",
-			key: "light_cannon",
-			count: 5,
+			key: "light_machine_gun",
+			count: 1,
 			damaged: false
 		},
 		{
 			item_type: "turret",
 			key: "medium_machine_gun",
 			count: 1,
+			damaged: false
+		},
+		{
+			item_type: "turret",
+			key: "light_cannon",
+			count: 5,
 			damaged: false
 		},
 		{
@@ -119,9 +119,14 @@
 		}
 	],
 	vehicle: {
-		chassis_key: "apc",
-		is_unit: true,
-		turret_keys: null
+		chassis_key: "medium_tank",
+		is_unit: false,
+		turret_keys: [
+			[
+				"ripper_machine_gun",
+				"medium_machine_gun"
+			]
+		]
 	},
 	input_method: 2,
 	invert_reverse_steering: false,
