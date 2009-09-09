@@ -406,7 +406,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 		pathing.reset()
 		Local cell_list:TList = ..
-			pathing.find_CELL_path( start_cell, goal_cell, False )
+			pathing.find_CELL_path( start_cell, goal_cell )
 		Local list:TList = CreateList()
 		If cell_list <> Null And Not cell_list.IsEmpty()
 			For Local cursor:CELL = EachIn cell_list

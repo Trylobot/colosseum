@@ -116,14 +116,19 @@ Type PATHING_STRUCTURE
 	
 	Method get_passable_unvisited_neighbors:TList( c:CELL )
 		Local list:TList = CreateList()
-		For Local i% = 0 To CELL.ALL_DIRECTIONS.Length - 1
+		For Local i% = 0 Until CELL.ALL_DIRECTIONS.Length
 			Local c_dir:CELL = c.move( CELL.ALL_DIRECTIONS[i] )
-		'For Local i% = 0 To CELL.ALL_CARDINAL_DIRECTIONS.Length - 1
-		'	Local c_dir:CELL = c.move( CELL.ALL_CARDINAL_DIRECTIONS[i] )
 			If in_bounds( c_dir ) ..
 			And grid( c_dir ) = PATH_PASSABLE ..
 			And Not visited( c_dir )
-				list.AddLast( c_dir )
+				If Not one_of( CELL.ALL_DIRECTIONS[i], CELL.ALL_NON_CARDINAL_DIRECTIONS )
+					list.AddLast( c_dir )
+				Else 'direction is diagonal
+					If grid( CELL.Create( c.row, c_dir.col )) = PATH_PASSABLE ..
+					And grid( CELL.Create( c_dir.row, c.col )) = PATH_PASSABLE
+						list.AddLast( c_dir )
+					End If
+				End If
 			End If
 		Next
 		Return list
@@ -141,7 +146,7 @@ Type PATHING_STRUCTURE
 		Return list
 	End Method
 	
-	Method find_CELL_path:TList( start:CELL, goal:CELL, omit_starting_cell% )
+	Method find_CELL_path:TList( start:CELL, goal:CELL )
 		set_g( start, 0 )
 		set_h( start, distance( start, goal ))
 		set_f_implicit( start )
@@ -150,7 +155,7 @@ Type PATHING_STRUCTURE
 		While Not potential_paths.is_empty()
 			Local cursor:CELL = potential_paths.pop_root()
 			If cursor.eq( goal )
-				Return backtrace_path( goal, start, omit_starting_cell )
+				Return backtrace_path( goal, start, True )
 			End If
 			visit( cursor )
 			
