@@ -328,6 +328,7 @@
 				ang: -90
 			},
 			delay_time: null,
+			wave_index: null,
 			alignment: 1
 		},
 		{
@@ -368,6 +369,13 @@
 				2000,
 				5000
 			],
+			wave_index: [
+				0,
+				0,
+				0,
+				0,
+				0
+			],
 			alignment: 2
 		},
 		{
@@ -383,6 +391,9 @@
 				ang: -45
 			},
 			delay_time: [
+				0
+			],
+			wave_index: [
 				0
 			],
 			alignment: 2
@@ -402,6 +413,9 @@
 			delay_time: [
 				0
 			],
+			wave_index: [
+				0
+			],
 			alignment: 2
 		},
 		{
@@ -417,6 +431,9 @@
 				ang: -45
 			},
 			delay_time: [
+				0
+			],
+			wave_index: [
 				0
 			],
 			alignment: 2
@@ -436,6 +453,9 @@
 			delay_time: [
 				0
 			],
+			wave_index: [
+				0
+			],
 			alignment: 2
 		},
 		{
@@ -453,6 +473,9 @@
 			delay_time: [
 				0
 			],
+			wave_index: [
+				0
+			],
 			alignment: 2
 		},
 		{
@@ -467,6 +490,9 @@
 				pos_y: 485
 			},
 			delay_time: [
+				0
+			],
+			wave_index: [
 				0
 			],
 			alignment: 2
@@ -486,6 +512,9 @@
 			delay_time: [
 				0
 			],
+			wave_index: [
+				0
+			],
 			alignment: 2
 		},
 		{
@@ -503,6 +532,9 @@
 			delay_time: [
 				0
 			],
+			wave_index: [
+				0
+			],
 			alignment: 2
 		},
 		{
@@ -517,6 +549,9 @@
 				pos_y: 455
 			},
 			delay_time: [
+				0
+			],
+			wave_index: [
 				0
 			],
 			alignment: 2

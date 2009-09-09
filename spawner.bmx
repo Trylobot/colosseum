@@ -16,7 +16,8 @@ Type SPAWNER
 	Field squads$[][] 'grouped references to COMPLEX_AGENT prototypes; to be "baked" at spawn-time; turret anchors ignore all entries beyond the first.
 	Field size% 'cached result of count_all_squadmembers()
 	Field pos:POINT 'initial state to be conferred on each spawned agent; velocity and acceleration ignored for turret anchors
-	Field delay_time%[] 'time delay between squad queueing; ignored for turret anchors
+	Field delay_time%[] '(optional) time delay before spawning a squad; one for each squad; GATED_FACTORY only
+	Field wave_index%[] 'waves are like cross-spawner squad groups that spawn sequentially; this is where to specify what wave a squad belongs to
 	Field alignment% '{friendly|hostile}
 	
 	Method New()
@@ -32,6 +33,7 @@ Type SPAWNER
 		Next
 		sp.pos = Copy_POINT( pos )
 		sp.delay_time = delay_time[..]
+		sp.wave_index = wave_index[..]
 		sp.alignment = alignment
 		Return sp
 	End Method
@@ -41,6 +43,10 @@ Type SPAWNER
 		squads[squads.Length-1] = Null
 		delay_time = delay_time[..delay_time.Length+1]
 		delay_time[delay_time.Length-1] = 0
+		wave_index = wave_index[..wave_index.Length+1]
+		If wave_index.Length >= 2
+			wave_index[wave_index.Length-1] = wave_index[wave_index.Length-2]
+		End If
 		Return (squads.Length - 1) 'return index of new squad
 	End Method
 	
@@ -52,6 +58,7 @@ Type SPAWNER
 				squads = squads[..squads.Length-1]
 				delay_time[index] = delay_time[delay_time.Length-1]
 				delay_time = delay_time[..delay_time.Length-1]
+				wave_index = wave_index[..wave_index.Length-1]
 				Exit
 			End If
 		Next
@@ -72,15 +79,20 @@ Type SPAWNER
 		End If
 	End Method
 	
-	Method set_delay_time( index%, time% )
-		If index >= 0 And index < delay_time.Length
-			delay_time[index] = time
+	Method set_delay_time( squad_index%, time% )
+		If squad_index >= 0 And squad_index < delay_time.Length
+			delay_time[squad_index] = time
+		End If
+	End Method
+	
+	Method set_wave_index( squad_index%, wave% )
+		If squad_index >= 0 And squad_index < wave_index.Length
+			wave_index[squad_index] = wave
 		End If
 	End Method
 	
 	Method count_squads%()
-		If squads = Null ..
-		Then Return 0 ..
+		If squads = Null Then Return 0 ..
 		Else Return squads.Length
 	End Method
 	
@@ -105,6 +117,7 @@ Type SPAWNER
 		this_json.SetByName( "squads", Create_TJSONArray_from_String_array_array( squads ))
 		this_json.SetByName( "pos", pos.to_json() )
 		this_json.SetByName( "delay_time", Create_TJSONArray_from_Int_array( delay_time ))
+		this_json.SetByName( "wave_index", Create_TJSONArray_from_Int_array( wave_index ))
 		this_json.SetByName( "alignment", TJSONNumber.Create( alignment ))
 		Return this_json
 	End Method
@@ -117,6 +130,7 @@ Function Create_SPAWNER_from_json:SPAWNER( json:TJSON )
 	sp.size = sp.count_all_squadmembers()
 	sp.pos = Create_POINT_from_json( TJSON.Create( json.GetObject( "pos" )))
 	sp.delay_time = json.GetArrayInt( "delay_time" )
+	sp.wave_index = json.GetArrayInt( "wave_index" )
 	sp.alignment = json.GetNumber( "alignment" )
 	Return sp
 End Function

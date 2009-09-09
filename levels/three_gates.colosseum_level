@@ -190,6 +190,7 @@
 				ang: -90
 			},
 			delay_time: null,
+			wave_index: null,
 			alignment: 1
 		},
 		{
@@ -205,6 +206,9 @@
 				ang: 45
 			},
 			delay_time: [
+				0
+			],
+			wave_index: [
 				0
 			],
 			alignment: 2
@@ -238,6 +242,12 @@
 				4000,
 				10000,
 				2000
+			],
+			wave_index: [
+				0,
+				0,
+				0,
+				0
 			],
 			alignment: 2
 		},
@@ -282,6 +292,14 @@
 				10000,
 				1000
 			],
+			wave_index: [
+				0,
+				0,
+				0,
+				0,
+				0,
+				0
+			],
 			alignment: 2
 		},
 		{
@@ -317,6 +335,13 @@
 				12000,
 				1000
 			],
+			wave_index: [
+				0,
+				0,
+				0,
+				0,
+				0
+			],
 			alignment: 2
 		},
 		{
@@ -332,6 +357,9 @@
 				ang: 135
 			},
 			delay_time: [
+				0
+			],
+			wave_index: [
 				0
 			],
 			alignment: 2
@@ -351,6 +379,9 @@
 			delay_time: [
 				0
 			],
+			wave_index: [
+				0
+			],
 			alignment: 2
 		},
 		{
@@ -366,6 +397,9 @@
 				ang: -45
 			},
 			delay_time: [
+				0
+			],
+			wave_index: [
 				0
 			],
 			alignment: 2

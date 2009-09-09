@@ -6,6 +6,7 @@ EndRem
 SuperStrict
 Import "cell.bmx"
 Import "spawner.bmx"
+Import "spawner_wave.bmx"
 Import "prop_data.bmx"
 Import "box.bmx"
 Import "vec.bmx"
@@ -420,6 +421,18 @@ Type LEVEL Extends MANAGED_OBJECT
 		Else
 			Return PATH_BLOCKED
 		End If
+	End Method
+	
+	Method enumerate_waves:SPAWNER_WAVE[]()
+		Local waves%[] = New Int[]
+		Local owner%[] = New Int[]
+		For Local sp% = 0 Until spawners.Length
+			
+			For Local sq% = 0 Until spawners[sp].wave_index.Length
+				
+			Next
+			
+		Next
 	End Method
 
 	Method to_json:TJSONObject()
