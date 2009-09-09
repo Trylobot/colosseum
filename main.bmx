@@ -70,11 +70,12 @@ init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 'debug_graffiti_manager()
 ?
 
-'______________________________________________________________________________
+'////////////////////////////////////////////////////////////////////////////////
+'MAIN
 Repeat
 	Cls()
 	select_game()
-	get_all_input() 'excludes player-agent input
+	get_all_input()
 	update_network()
 	If frame_time_elapsed()
 		calculate_timescale()
@@ -85,15 +86,10 @@ Repeat
 	End If
 	play_all_audio()
 	draw_all_graphics()
-?Debug
+	?Debug
 	debug_main()
-?
+	?
 	Flip( 1 )
 Until AppTerminate()
-
-
-
-
-
-
+'////////////////////////////////////////////////////////////////////////////////
 

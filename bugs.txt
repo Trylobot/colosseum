@@ -1,8 +1,3 @@
 * the AI menu game sand texture is not initializing properly for some reason
   I see it as a big white/grey texture for some reason
-
-* [OLD BUG]
-	when dragging the window, my physics timescale gets completely fucked.
-  this causes all units to "drift"
-	into walls, each other, etc. Big problems when dragging the window.
-	It must be possible to detect when the window doesn't have control, and somehow prevent this
+	only reproducible at work for some reason

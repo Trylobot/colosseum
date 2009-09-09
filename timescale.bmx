@@ -8,7 +8,8 @@ Import "misc.bmx"
 
 '______________________________________________________________________________
 Const time_per_frame_min% = 8 'milliseconds
-Const timescale_constant_factor# = 0.350 '0.375 'simulation speed
+Const timescale_constant_factor# = 0.350 'represents simulation speed
+Const timescale_max# = 5.000
 
 Global before%
 Global timescale#
@@ -23,5 +24,6 @@ End Function
 
 Function calculate_timescale()
 	timescale = timescale_constant_factor * Float(now() - before)/Float(time_per_frame_min)
+	If timescale > timescale_max Then timescale = timescale_max
 End Function
 

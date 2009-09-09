@@ -6,7 +6,7 @@ EndRem
 SuperStrict
 Import "settings.bmx"
 ?Win32
-Import "win32.bmx"
+Import "os-windows.bmx"
 ?
 
 '______________________________________________________________________________

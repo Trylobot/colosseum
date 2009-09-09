@@ -231,10 +231,10 @@ Function update_meta_variable_cache()
 	meta_variable_cache.Insert( "refresh_rate", String.FromInt( refresh_rate ))
 	meta_variable_cache.Insert( "bit_depth", String.FromInt( bit_depth ))
 	meta_variable_cache.Insert( "show_ai_menu_game", boolean_to_string( show_ai_menu_game ))
+	meta_variable_cache.Insert( "active_particle_limit", String.FromInt( active_particle_limit ))
 	meta_variable_cache.Insert( "network_ip_address", network_ip_address )
 	meta_variable_cache.Insert( "network_port", String.FromInt( network_port ))
 	meta_variable_cache.Insert( "network_level", StripAll( network_level ))
-	'meta_variable_cache.Insert( "profile.count_inventory(this)", "(x ?)" ) 'tricky
 End Function
 
 '______________________________________________________________________________
