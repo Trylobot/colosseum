@@ -51,7 +51,7 @@ Function debug_main()
 		get_current_menu().update()
 	End If
 	If game And game.player
-		game.player.cur_health = 10000000
+		game.player.cur_health = game.player.max_health
 	End If
 	If KeyDown( KEY_F4 ) Then DebugStop
 End Function
