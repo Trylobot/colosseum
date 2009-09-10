@@ -51,7 +51,7 @@ Type SPAWN_CONTROLLER
 			spawn_ts[i] = now()
 			last_spawned[i] = Null
 			spawn_counter[i] = 0
-			active_spawners[i] = False
+			active_spawners[i] = True
 			squad_count :+ spawners[i].count_squads()
 		Next
 		'waves
@@ -79,7 +79,7 @@ Type SPAWN_CONTROLLER
 					spawn_ts[i] = now()
 					last_spawned[i] = Null
 					spawn_counter[i] = 0
-					active_spawners[i] = False
+					active_spawners[i] = True
 				End If
 			Next
 		End If
@@ -102,7 +102,6 @@ Type SPAWN_CONTROLLER
 			If counter < sp.size
 				'if it is time to spawn this spawner's current squad
 				If now() - ts >= sp.delay_time[cur.row]
-					active_spawners[i] = True
 					'if this squad has just been started, or the last spawned enemy is away, dead or null
 					If cur.col = 0 Or last = Null Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE 'Or last.dead() 'SHOULD be unnecessary (I hope)
 						'Local brain:CONTROL_BRAIN = spawn_unit( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
