@@ -38,7 +38,7 @@ Function debug_no_graphics()
 	'debug_set_range()
 	'debug_remove_from_array()
 	'debug_insert_into_array()
-	End
+	'End
 End Function
 
 Function debug_with_graphics()
