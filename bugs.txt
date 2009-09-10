@@ -1,3 +1,7 @@
+* the update() function prematurely ends the game in victory
+  most likely because of the spawn_controller refactoring
+	as well as the changes to update_flags()
+
 * the AI menu game sand texture is not initializing properly for some reason
   I see it as a big white/grey texture for some reason
 	only reproducible at work for some reason
