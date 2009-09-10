@@ -34,9 +34,8 @@ Function Create_DOOR:DOOR( parent:POINT )
 	Return d
 End Function
 
-
 Type DOOR Extends MANAGED_OBJECT
-	Const DOOR_CLOSED% = 0
+	Const DOOR_CLOSED% = 0 'remove the prefix DOOR, it's superfluous
 	Const DOOR_OPEN% = 1
 	
 	Field parent:POINT

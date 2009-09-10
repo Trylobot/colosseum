@@ -25,14 +25,6 @@ Function Pow#( x#, p% )
 	Return x
 End Function
 
-Function ints_to_floats:Float[]( arr%[] )
-	Local f#[] = New Float[arr.Length]
-	For Local i% = 0 To arr.Length
-		f[i] = Float( arr[i] )
-	Next
-	Return f
-End Function
-
 Function average#( n#[] ) 'returns the average value of a given list of numbers
 	If n <> Null And n.Length > 0
 		Local sum# = 0
@@ -147,6 +139,54 @@ Function str_repeat$( str$, count% )
 		result :+ str
 	Next
 	Return result
+End Function
+
+Function insert_into_array%[]( value%, src%[], insert_after% ) 'inserts immediately after index
+	Local arr%[] = New Int[src.Length+1]
+	'left of index (including index)
+	If insert_after > -1
+		copy_into( src[..insert_after+1], arr, 0 )
+	End If
+	'just after index
+	arr[insert_after+1] = value
+	'right of index
+	If insert_after < src.Length - 1
+		copy_into( src[insert_after+1..], arr, insert_after+2 )
+	End If
+	Return arr
+End Function
+
+Function remove_from_array%[]( src%[], index% )
+	Local arr%[] = New Int[src.Length-1]
+	'left of index
+	If index > 0
+		copy_into( src[..index], arr, 0 )
+	End If
+	'right of index
+	If index < src.Length-1
+		copy_into( src[index+1..], arr, index )
+	End If
+	Return arr
+End Function
+
+Function set_range( value%, start_index%, count%, arr%[] )
+	For Local i% = start_index Until (start_index + count)
+		arr[i] = value
+	Next
+End Function
+
+Function copy_into( src%[], dest%[], start_at% )
+	For Local i% = 0 Until src.Length
+		dest[start_at+i] = src[i]
+	Next
+End Function
+
+Function ints_to_floats:Float[]( arr%[] )
+	Local f#[] = New Float[arr.Length]
+	For Local i% = 0 To arr.Length
+		f[i] = Float( arr[i] )
+	Next
+	Return f
 End Function
 
 Function address%( obj:Object )

@@ -4,86 +4,96 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "constants.bmx"
 Import "spawner.bmx"
 Import "spawn_request.bmx"
 Import "cell.bmx"
-Import "complex_agent.bmx"
-Import "door.bmx"
 
 '______________________________________________________________________________
-Type SPAWN_CONTROLLER
+Function Create_SPAWN_CONTROLLER:SPAWN_CONTROLLER( spawners:SPAWNER[] )
+	Local sc:SPAWN_CONTROLLER = New SPAWN_CONTROLLER
+	sc.size = spawners.Length
+	sc.spawners = spawners
+	sc.init()
+	Return sc
+End Function
 	
-	Field current_wave%
-	'Field waves:SPAWNER_WAVE[] 'spawn waves
+Type SPAWN_CONTROLLER
+	Const SPAWN_POINT_POLITE_DISTANCE% = 35.0 'delete me (please?)
+	
+	Field size% 'number of spawners; a shortcut
+	Field spawners:SPAWNER[]
+	Field active_spawners%[] 'mostly for ENVIRONMENT to count; has side effect of opening/closing doors
 	Field spawn_cursor:CELL[] 'for each spawner, a (row,col) pointer indicating the current agent to be spawned
 	Field spawn_ts%[] 'for each spawner, the timestamp of the spawn process start
-	Field last_spawned:COMPLEX_AGENT[] 'for each spawner, a reference to the last spawned enemy (so they don't overlap)
 	Field spawn_counter%[] 'for each spawner, a count of how many enemies have been spawned so far
-	Field spawner_door:DOOR[] 'for each spawner, a door (potentially)
+	Field last_spawned:POINT[] 'for each spawner, a reference to the location of the last spawned enemy (so they don't overlap)
+
+	Field current_wave%
+	Field squad_wave%[]
+	Field squad_owner%[]
+
+	Field spawn_request_list:TList 'TList<SPAWN_REQUEST> to be processed by ENVIRONMENT
 	
+	Method New()
+		spawn_request_list = CreateList()
+	End Method
 	
-	
-	Method reset_spawners( alignment% = ALIGNMENT_NONE, omit_turrets% = False )
-		If alignment = ALIGNMENT_NONE 'ALL
-			'flags and counters
-			active_friendly_units = 0
-			active_friendly_spawners = 0
-			active_hostile_units = 0
-			active_hostile_spawners = 0
-			'spawn queues and tracking info
-			spawn_cursor = New CELL[lev.spawners.Length] 'automagically initialized to (0, 0); exactly where it needs to be :)
-			spawn_ts = New Int[lev.spawners.Length]
-			last_spawned = New COMPLEX_AGENT[lev.spawners.Length]
-			spawn_counter = New Int[lev.spawners.Length]
-			spawner_door = New DOOR[lev.spawners.Length]
-			For Local i% = 0 To lev.spawners.Length-1
-				If omit_turrets And lev.spawners[i].class = SPAWNER.class_TURRET_ANCHOR Then Continue
-				spawn_cursor[i] = New CELL
-				spawn_ts[i] = now()
-				last_spawned[i] = Null
-				spawn_counter[i] = 0
-				If lev.spawners[i].class = SPAWNER.class_GATED_FACTORY
-					spawner_door[i] = add_door( lev.spawners[i].pos, lev.spawners[i].alignment )
-				End If
-				If lev.spawners[i].alignment = ALIGNMENT_FRIENDLY
-					active_friendly_spawners :+ 1
-				Else If lev.spawners[i].alignment = ALIGNMENT_HOSTILE
-					active_hostile_spawners :+ 1
-				End If
+	Method init()
+		spawn_cursor = New CELL[size]
+		spawn_ts = New Int[size]
+		last_spawned = New POINT[size]
+		spawn_counter = New Int[size]
+		active_spawners = New Int[size]
+		Local squad_count% = 0
+		For Local i% = 0 Until size
+			spawn_cursor[i] = New CELL
+			spawn_ts[i] = now()
+			last_spawned[i] = Null
+			spawn_counter[i] = 0
+			active_spawners[i] = False
+			squad_count :+ spawners[i].count_squads()
+		Next
+		'waves
+		squad_owner = New Int[squad_count]
+		squad_wave = New Int[squad_count]
+		Local sq% = 0
+		For Local i% = 0 Until size
+			For Local j% = 0 Until spawners[i].count_squads()
+				squad_owner[sq] = i
+				squad_wave[sq] = spawners[i].wave_index[j]
+				sq :+ 1
 			Next
-		Else 'alignment <> ALIGNMENT_NONE
-			'flags and counters
-			Select alignment
-				Case ALIGNMENT_FRIENDLY
-					active_friendly_units = 0
-				Case ALIGNMENT_HOSTILE
-					active_hostile_units = 0
-			End Select
+		Next
+	End Method
+
+	Method reset( alignment%, omit_turrets% = False )
+		If alignment <> POLITICAL_ALIGNMENT.NONE
 			'spawn queues and tracking info
-			For Local i% = 0 To lev.spawners.Length-1
-				If omit_turrets And lev.spawners[i].class = SPAWNER.class_TURRET_ANCHOR Then Continue
-				If lev.spawners[i].alignment = alignment
+			For Local i% = 0 Until spawners.Length
+				If omit_turrets And spawners[i].class = SPAWNER.class_TURRET_ANCHOR
+					Continue
+				End If
+				If spawners[i].alignment = alignment
 					spawn_cursor[i] = New CELL
 					spawn_ts[i] = now()
 					last_spawned[i] = Null
 					spawn_counter[i] = 0
-					If lev.spawners[i].alignment = ALIGNMENT_FRIENDLY
-						active_friendly_spawners :+ 1
-					Else If lev.spawners[i].alignment = ALIGNMENT_HOSTILE
-						active_hostile_spawners :+ 1
-					End If
+					active_spawners[i] = False
 				End If
 			Next
 		End If
 	End Method
 	
-		'returns a list of agents spawned
-	Method spawning_system_update:TList()
-		Local spawned:TList = CreateList()
+	Method update()
 		'for each spawner
-		Local sp:SPAWNER, cur:CELL, ts%, last:COMPLEX_AGENT, counter%
-		For Local i% = 0 Until lev.spawners.Length
-			sp = lev.spawners[i]
+		Local sp:SPAWNER
+		Local cur:CELL
+		Local ts%
+		Local last:POINT
+		Local counter%
+		For Local i% = 0 Until spawners.Length
+			sp = spawners[i]
 			cur = spawn_cursor[i]
 			ts = spawn_ts[i]
 			last = last_spawned[i]
@@ -92,12 +102,12 @@ Type SPAWN_CONTROLLER
 			If counter < sp.size
 				'if it is time to spawn this spawner's current squad
 				If now() - ts >= sp.delay_time[cur.row]
-					If spawner_door[i] Then spawner_door[i].open()
+					active_spawners[i] = True
 					'if this squad has just been started, or the last spawned enemy is away, dead or null
-					If cur.col = 0 Or last = Null Or last.dead() Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE
-						Local brain:CONTROL_BRAIN = spawn_unit( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
-						last_spawned[i] = brain.avatar
-						spawned.addLast( last_spawned[i] )
+					If cur.col = 0 Or last = Null Or last.dist_to( sp.pos ) >= SPAWN_POINT_POLITE_DISTANCE 'Or last.dead() 'SHOULD be unnecessary (I hope)
+						'Local brain:CONTROL_BRAIN = spawn_unit( sp.squads[cur.row][cur.col], sp.alignment, sp.pos )
+						'last_spawned[i] = brain.avatar
+						spawn_request_list.AddLast( Create_SPAWN_REQUEST( sp.squads[cur.row][cur.col], sp.alignment, sp.pos, i ))
 						'various counters
 						spawn_counter[i] :+ 1
 						cur.col :+ 1
@@ -108,17 +118,10 @@ Type SPAWN_CONTROLLER
 							cur.row :+ 1
 							'restart delay timer
 							spawn_ts[i] = now()
-							'close door
-							'If spawner_door[i] Then spawner_door[i].close()
 							'if that last squad was the last squad of the current spawner
 							If cur.row > sp.squads.Length-1
-								'active spawner counter update
-								Select sp.alignment
-									Case ALIGNMENT_FRIENDLY
-										active_friendly_spawners :- 1
-									Case ALIGNMENT_HOSTILE
-										active_hostile_spawners :- 1
-								End Select
+								'signal it
+								active_spawners[i] = False
 							End If
 						End If
 					End If
@@ -126,10 +129,7 @@ Type SPAWN_CONTROLLER
 				End If
 			End If
 		Next
-		Return spawned
 	End Method
-	
-		
 	
 End Type
 

@@ -258,7 +258,7 @@ Function create_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, validate_against_inven
 		Local player:COMPLEX_AGENT
 		player = get_player_chassis( v_dat.chassis_key )
 		If player
-			player.political_alignment = ALIGNMENT_FRIENDLY
+			player.alignment = POLITICAL_ALIGNMENT.FRIENDLY
 			For Local anchor% = 0 Until v_dat.turret_keys.Length
 				For Local t% = 0 Until v_dat.turret_keys[anchor].Length
 					'search the required items list for instances of this turret

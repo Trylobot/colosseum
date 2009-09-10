@@ -5,6 +5,7 @@ Rem
 EndRem
 SuperStrict
 Import "settings.bmx"
+Import "constants.bmx"
 Import "vec.bmx"
 Import "graffiti_manager.bmx"
 Import "level.bmx"
@@ -12,6 +13,7 @@ Import "pathing_structure.bmx"
 Import "box.bmx"
 Import "cell.bmx"
 Import "complex_agent.bmx"
+Import "spawn_controller.bmx"
 Import "door.bmx"
 Import "particle.bmx"
 Import "emitter.bmx"
@@ -26,8 +28,6 @@ Import "spawn_request.bmx"
 Import "prop_data.bmx"
 
 '______________________________________________________________________________
-Const SPAWN_POINT_POLITE_DISTANCE% = 35.0 'delete me (please?)
-
 Function Create_ENVIRONMENT:ENVIRONMENT( human_participation% = False )
 	Local env:ENVIRONMENT = New ENVIRONMENT
 	env.human_participation = human_participation
@@ -51,6 +51,7 @@ Type ENVIRONMENT
 	Field walls:TList 'TList<BOX> contains all of the wall rectangles of the level
 	
 	Field spawn:SPAWN_CONTROLLER
+	Field spawner_door:DOOR[] 'for each spawner, a door (potentially)
 	
 	Field particle_list_background:TList 'TList<PARTICLE>
 	Field particle_list_foreground:TList 'TList<PARTICLE>
@@ -73,11 +74,6 @@ Type ENVIRONMENT
 	Field door_lists:TList 'TList<TList<DOOR>>
 	
 	Field player_kills_at_start% 'kill count at level initialization
-	Field active_friendly_spawners%
-	Field active_friendly_units%
-	Field active_hostile_spawners%
-	Field active_hostile_units%
-	
 	Field paused% 'pause flag
 	Field human_participation% 'flag indicating whether any humans will ever participate in this game
 	Field game_in_progress% 'flag indicating the game has begun
@@ -182,6 +178,7 @@ Type ENVIRONMENT
 			prop.move_to( pd.pos )
 		Next
 		'spawning system
+		spawn = Create_SPAWN_CONTROLLER( lev.spawners )
 		reset_spawners()
 		'kill tracker
 		If human_participation And profile
@@ -214,10 +211,63 @@ Type ENVIRONMENT
 		Return d
 	End Method
 
-	'refreshes the unit counting cache
-	Method count_units()
-		active_friendly_units = friendly_agent_list.Count()
-		active_hostile_units = hostile_agent_list.Count()
+	'this method needs to be split into two logical chunks
+	'  first-time initialization
+	'  political-alignment spawner reset
+	Method reset_spawners( alignment% = POLITICAL_ALIGNMENT.NONE, omit_turrets% = False )
+		If alignment = POLITICAL_ALIGNMENT.NONE
+			'gated factory doors
+			spawner_door = New DOOR[spawn.size]
+			For Local i% = 0 Until spawn.size
+				If spawn.spawners[i].class = SPAWNER.class_GATED_FACTORY
+					spawner_door[i] = add_door( spawn.spawners[i].pos, spawn.spawners[i].alignment )
+				End If
+			Next
+		Else 'alignment <> POLITICAL_ALIGNMENT.NONE
+			'controller
+			spawn.reset( alignment, omit_turrets )
+		End If
+	End Method
+	
+	Method update_spawning_system()
+		'spawn controller update
+		spawn.update()
+		'spawn request processing
+		Local cb:CONTROL_BRAIN
+		For Local req:SPAWN_REQUEST = EachIn spawn.spawn_request_list
+			cb = spawn_unit_from_request( req )
+			'spawn request last-spawned callback update (hack that prevents spawning flash-mobs of baddies)
+			'does not apply to enemies spawned from a carrier
+			If cb And cb.avatar And req.source_spawner_index >= 0
+				spawn.last_spawned[req.source_spawner_index] = cb.avatar
+			End If
+		Next
+		spawn.spawn_request_list.Clear()
+		'door activation
+		For Local d% = 0 Until spawn.active_spawners.Length
+			If spawner_door[d]
+				If spawn.active_spawners[d] ..
+				And spawner_door[d].status = DOOR.DOOR_CLOSED
+					'door should be open
+					spawner_door[d].open()
+				Else If Not spawn.active_spawners[d] ..
+				And spawner_door[d].status = DOOR.DOOR_OPEN
+					'door should be closed
+					'might want to delay this a bit
+					spawner_door[d].close()
+				End If
+			End If
+		Next
+	End Method
+	
+	Method active_spawners%( alignment% )
+		Local count% = 0
+		For Local i% = 0 Until spawn.size
+			If spawn.active_spawners[i] And spawn.spawners[i].alignment = alignment
+				count :+ 1
+			End If
+		Next
+		Return count
 	End Method
 	
 	Method spawn_unit_from_request:CONTROL_BRAIN( req:SPAWN_REQUEST )
@@ -229,10 +279,10 @@ Type ENVIRONMENT
 		Local unit:COMPLEX_AGENT = get_unit( unit_key, alignment )
 		Local allied_agent_list:TList, rival_agent_list:TList
 		Select alignment
-			Case ALIGNMENT_HOSTILE
+			Case POLITICAL_ALIGNMENT.HOSTILE
 				allied_agent_list = hostile_agent_list
 				rival_agent_list = friendly_agent_list
-			Case ALIGNMENT_FRIENDLY
+			Case POLITICAL_ALIGNMENT.FRIENDLY
 				allied_agent_list = friendly_agent_list
 				rival_agent_list = hostile_agent_list
 		End Select
@@ -316,18 +366,16 @@ Type ENVIRONMENT
 	
 	Method respawn_player()
 		If player <> Null And player_brain <> Null And player.managed() And player_brain.managed()
-			player_spawn_point = random_spawn_point( ALIGNMENT_FRIENDLY )
+			player_spawn_point = random_spawn_point( POLITICAL_ALIGNMENT.FRIENDLY )
 			player.move_to( player_spawn_point )
 			player.snap_all_turrets()
-			active_friendly_units :+ 1
 		End If
 	End Method
 	
 	Method respawn_network_player( network_player:COMPLEX_AGENT )
 		If network_player <> Null And network_player.managed()
-			network_player.move_to( random_spawn_point( ALIGNMENT_FRIENDLY ))
+			network_player.move_to( random_spawn_point( POLITICAL_ALIGNMENT.FRIENDLY ))
 			network_player.snap_all_turrets()
-			active_friendly_units :+ 1
 		End If
 	End Method
 	
@@ -411,9 +459,9 @@ Type ENVIRONMENT
 	
 	Method political_door_list:TList( alignment% )
 		Select alignment
-			Case ALIGNMENT_FRIENDLY
+			Case POLITICAL_ALIGNMENT.FRIENDLY
 				Return friendly_door_list
-			Case ALIGNMENT_HOSTILE
+			Case POLITICAL_ALIGNMENT.HOSTILE
 				Return hostile_door_list
 		End Select
 		Return Null
@@ -440,12 +488,6 @@ Type ENVIRONMENT
 			brain.avatar.die( particle_list_background, particle_list_foreground )
 			'this should be part of the complex agent's death emitters
 			play_sound( get_sound( "cannon_hit" ), 0.5, 0.25 )
-			Select brain.avatar.political_alignment
-				Case ALIGNMENT_FRIENDLY
-					active_friendly_units :- 1
-				Case ALIGNMENT_HOSTILE
-					active_hostile_units :- 1
-			End Select
 		End If
 	End Method
 	

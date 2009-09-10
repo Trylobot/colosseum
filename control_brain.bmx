@@ -9,6 +9,7 @@ Import "pathing_structure.bmx"
 Import "player_profile.bmx"
 Import "ai_type.bmx"
 Import "complex_agent.bmx"
+Import "constants.bmx"
 Import "agent.bmx"
 Import "spawn_request.bmx"
 Import "mouse.bmx"
@@ -288,7 +289,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	
 	Method AI_spawning_system_update()
 		If spawn_index < avatar.factory_queue.Length And now() - last_spawned_ts > spawn_delay
-			spawn_request_list.AddLast( SPAWN_REQUEST.Create( avatar.factory_queue[spawn_index], avatar.political_alignment, spawn_point ))
+			spawn_request_list.AddLast( Create_SPAWN_REQUEST( avatar.factory_queue[spawn_index], avatar.alignment, spawn_point ))
 			last_spawned_ts = now()
 			spawn_index :+ 1
 		Else

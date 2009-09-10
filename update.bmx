@@ -41,14 +41,12 @@ Function update_all_objects()
 	If game And Not game.paused
 		'set drawing origin
 		update_drawing_origin()
-		'count units in-game
-		game.count_units()
 		'player and game-state flags
 		update_flags()
 		If Not game Then Return 'possibility exists that game will be freed after updating the flags
 		'spawner systems
 		If game.spawn_enemies
-			game.spawning_system_update()
+			game.update_spawning_system()
 		End If
 		'pickups
 		For Local pkp:PICKUP = EachIn game.pickup_list
@@ -170,11 +168,11 @@ End Function
 Function update_flags()
 	'global state flag updates
 	If game And game.auto_reset_spawners
-		If game.active_friendly_spawners <= 0 And game.active_friendly_units <= 0
-			game.reset_spawners( ALIGNMENT_FRIENDLY )
+		If game.active_spawners( POLITICAL_ALIGNMENT.FRIENDLY ) <= 0 And game.friendly_agent_list.Count() <= 0
+			game.reset_spawners( POLITICAL_ALIGNMENT.FRIENDLY )
 		End If
-		If game.active_hostile_spawners <= 0 And game.active_hostile_units <= 0
-			game.reset_spawners( ALIGNMENT_HOSTILE )
+		If game.active_spawners( POLITICAL_ALIGNMENT.HOSTILE ) <= 0 And game.hostile_agent_list.Count() <= 0
+			game.reset_spawners( POLITICAL_ALIGNMENT.HOSTILE )
 		End If
 	End If
 	'flag updates for games with human participation
@@ -182,14 +180,14 @@ Function update_flags()
 		'waiting on player to start
 		If game.waiting_for_player_to_enter_arena
 			'player not entered arena
-			If game.player.dist_to( game.player_spawn_point ) < SPAWN_POINT_POLITE_DISTANCE
+			If game.player.dist_to( game.player_spawn_point ) < SPAWN_CONTROLLER.SPAWN_POINT_POLITE_DISTANCE
 				If FLAG.engine_running
-					game.open_doors( ALIGNMENT_FRIENDLY )
+					game.open_doors( POLITICAL_ALIGNMENT.FRIENDLY )
 				End If
 			Else 'player entered arena
 				game.player_in_locker = False
 				game.waiting_for_player_to_enter_arena = False
-				game.open_doors( ALIGNMENT_HOSTILE )
+				game.open_doors( POLITICAL_ALIGNMENT.HOSTILE )
 				game.battle_in_progress = True
 				game.battle_state_toggle_ts = now()
 				game.waiting_for_player_to_exit_arena = True
@@ -197,11 +195,11 @@ Function update_flags()
 			End If
 		End If
 		'enemies all dead
-		If game.battle_in_progress And game.active_hostile_spawners = 0 And game.hostile_agent_list.Count() = 0
+		If game.battle_in_progress And game.active_spawners( POLITICAL_ALIGNMENT.HOSTILE ) = 0 And game.hostile_agent_list.Count() = 0
 			game.game_in_progress = False
 			game.battle_in_progress = False
 			game.battle_state_toggle_ts = now()
-			game.close_doors( ALIGNMENT_HOSTILE )
+			game.close_doors( POLITICAL_ALIGNMENT.HOSTILE )
 			game.spawn_enemies = False
 			play_sound( get_sound( "victory" ))
 		End If

@@ -139,11 +139,11 @@ Function level_editor%( lev:LEVEL )
 		'draw the spawn points
 		For Local sp:SPAWNER = EachIn lev.spawners
 			Select sp.alignment
-				Case ALIGNMENT_NONE
+				Case POLITICAL_ALIGNMENT.NONE
 					SetColor( 255, 255, 255 )
-				Case ALIGNMENT_FRIENDLY
+				Case POLITICAL_ALIGNMENT.FRIENDLY
 					SetColor( 64, 64, 255 )
-				Case ALIGNMENT_HOSTILE
+				Case POLITICAL_ALIGNMENT.HOSTILE
 					SetColor( 255, 64, 64 )
 			End Select
 			SetRotation( 0 )
@@ -162,11 +162,11 @@ Function level_editor%( lev:LEVEL )
 			SetRotation( 0 )
 			SetScale( 1, 1 )
 			Select sp.alignment
-				Case ALIGNMENT_NONE
+				Case POLITICAL_ALIGNMENT.NONE
 					SetColor( 255, 255, 255 )
-				Case ALIGNMENT_FRIENDLY
+				Case POLITICAL_ALIGNMENT.FRIENDLY
 					SetColor( 64, 64, 255 )
-				Case ALIGNMENT_HOSTILE
+				Case POLITICAL_ALIGNMENT.HOSTILE
 					SetColor( 255, 64, 64 )
 			End Select
 			Local size% = 3, sep% = 1
@@ -417,11 +417,11 @@ Function level_editor%( lev:LEVEL )
 				new_spawner.pos.pos_x = gridsnap_mouse.x
 				new_spawner.pos.pos_y = gridsnap_mouse.y
 				Select new_spawner.alignment
-					Case ALIGNMENT_NONE
+					Case POLITICAL_ALIGNMENT.NONE
 						SetColor( 255, 255, 255 )
-					Case ALIGNMENT_FRIENDLY
+					Case POLITICAL_ALIGNMENT.FRIENDLY
 						SetColor( 64, 64, 255 )
-					Case ALIGNMENT_HOSTILE
+					Case POLITICAL_ALIGNMENT.HOSTILE
 						SetColor( 255, 64, 64 )
 				End Select
 				If Not any_modifiers
@@ -453,11 +453,11 @@ Function level_editor%( lev:LEVEL )
 						End If
 						SetLineWidth( 2 )
 						Select closest_sp.alignment
-							Case ALIGNMENT_NONE
+							Case POLITICAL_ALIGNMENT.NONE
 								SetColor( 255, 255, 255 )
-							Case ALIGNMENT_FRIENDLY
+							Case POLITICAL_ALIGNMENT.FRIENDLY
 								SetColor( 64, 64, 255 )
-							Case ALIGNMENT_HOSTILE
+							Case POLITICAL_ALIGNMENT.HOSTILE
 								SetColor( 255, 64, 64 )
 						End Select
 						DrawLine( MouseX(),MouseY(), closest_sp.pos.pos_x+x,closest_sp.pos.pos_y+y )
@@ -542,11 +542,11 @@ Function level_editor%( lev:LEVEL )
 					SetRotation( 0 )
 					SetScale( 1, 1 )
 					Select new_spawner.alignment
-						Case ALIGNMENT_NONE
+						Case POLITICAL_ALIGNMENT.NONE
 							SetColor( 255, 255, 255 )
-						Case ALIGNMENT_FRIENDLY
+						Case POLITICAL_ALIGNMENT.FRIENDLY
 							SetColor( 64, 64, 255 )
-						Case ALIGNMENT_HOSTILE
+						Case POLITICAL_ALIGNMENT.HOSTILE
 							SetColor( 255, 64, 64 )
 					End Select
 					Local size% = 3, sep% = 1
@@ -577,11 +577,11 @@ Function level_editor%( lev:LEVEL )
 					SetLineWidth( 2 )
 					SetAlpha( 0.6 )
 					Select sp.alignment
-						Case ALIGNMENT_NONE
+						Case POLITICAL_ALIGNMENT.NONE
 							SetColor( 255, 255, 255 )
-						Case ALIGNMENT_FRIENDLY
+						Case POLITICAL_ALIGNMENT.FRIENDLY
 							SetColor( 64, 64, 255 )
-						Case ALIGNMENT_HOSTILE
+						Case POLITICAL_ALIGNMENT.HOSTILE
 							SetColor( 255, 64, 64 )
 					End Select
 					DrawLine( MouseX(),MouseY(), sp.pos.pos_x+x,sp.pos.pos_y+y )
@@ -592,11 +592,11 @@ Function level_editor%( lev:LEVEL )
 					DrawText_with_shadow( "current spawner", info_x,info_y ); info_y :+ line_h
 					DrawText_with_shadow( "  class "+class_to_string(sp.class), info_x,info_y ); info_y :+ line_h
 					Select sp.alignment
-						Case ALIGNMENT_NONE
+						Case POLITICAL_ALIGNMENT.NONE
 							SetColor( 255, 255, 255 )
-						Case ALIGNMENT_FRIENDLY
+						Case POLITICAL_ALIGNMENT.FRIENDLY
 							SetColor( 64, 64, 255 )
-						Case ALIGNMENT_HOSTILE
+						Case POLITICAL_ALIGNMENT.HOSTILE
 							SetColor( 255, 64, 64 )
 					End Select
 					DrawText_with_shadow( "  alignment "+alignment_to_string(sp.alignment), info_x,info_y ); info_y :+ line_h
@@ -608,7 +608,7 @@ Function level_editor%( lev:LEVEL )
 						For Local r% = 0 To sp.count_squads()-1
 							For Local c% = 0 To sp.count_squadmembers( r )-1
 								Local ag:COMPLEX_AGENT = get_unit( sp.squads[r][c] )
-								ag.political_alignment = sp.alignment
+								ag.alignment = sp.alignment
 								ag.scale_all( 0.75 )
 								ag.pos_x = info_x + cell_size + c*cell_size - cell_size/2
 								ag.pos_y = info_y + cell_size + r*cell_size - cell_size/2
@@ -868,11 +868,11 @@ End Function
 
 Function alignment_to_string$( alignment% )
 	Select alignment
-		Case ALIGNMENT_NONE
+		Case POLITICAL_ALIGNMENT.NONE
 			Return "{none}"
-		Case ALIGNMENT_FRIENDLY
+		Case POLITICAL_ALIGNMENT.FRIENDLY
 			Return "{friendly}"
-		Case ALIGNMENT_HOSTILE
+		Case POLITICAL_ALIGNMENT.HOSTILE
 			Return "{hostile}"
 	End Select
 End Function

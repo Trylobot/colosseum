@@ -29,7 +29,7 @@ End Function
 
 Global unit_map:TMap = CreateMap()
 
-Function get_unit:COMPLEX_AGENT( Key$, alignment% = ALIGNMENT_NONE, Copy% = True ) 'returns a new instance, which is a copy of the global archetype
+Function get_unit:COMPLEX_AGENT( Key$, alignment% = POLITICAL_ALIGNMENT.NONE, Copy% = True ) 'returns a new instance, which is a copy of the global archetype
 	Local unit:COMPLEX_AGENT = COMPLEX_AGENT( unit_map.ValueForKey( key.toLower() ))
 	If copy And unit Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit, alignment ))
 	Return unit
@@ -41,10 +41,6 @@ Const WIDGET_AI_LIGHTBULB% = 3
 
 Const TURRETS_ALL% = -1
 
-Const ALIGNMENT_NONE% = 0
-Const ALIGNMENT_FRIENDLY% = 1
-Const ALIGNMENT_HOSTILE% = 2
-
 Const MAX_COMPLEX_AGENT_VELOCITY# = 4.0 'hard velocity limit
 
 '___________________________________________
@@ -52,7 +48,7 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	Field lightmap:TImage 'lighting effect image array
 	
-	Field political_alignment% '{friendly|hostile}
+	Field alignment% '{friendly|hostile}
 	Field ai_name$ 'artificial intelligence variant identifier (only used for AI-controlled agents)
 	Field cash_value%
 
@@ -143,15 +139,15 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	'___________________________________________
 	'TODO: Make this function external, and make it return a COMPLEX_AGENT
-	Function Copy:Object( other:COMPLEX_AGENT, political_alignment% = ALIGNMENT_NONE )
+	Function Copy:Object( other:COMPLEX_AGENT, alignment% = POLITICAL_ALIGNMENT.NONE )
 		If other = Null Then Return Null
 		Local c:COMPLEX_AGENT = New COMPLEX_AGENT
 		
 		c.name = other.name
-		If political_alignment <> ALIGNMENT_NONE
-			c.political_alignment = political_alignment
-		Else 'political_alignment == ALIGNMENT_NONE
-			c.political_alignment = other.political_alignment
+		If alignment <> POLITICAL_ALIGNMENT.NONE
+			c.alignment = alignment
+		Else 'alignment == POLITICAL_ALIGNMENT.NONE
+			c.alignment = other.alignment
 		End If
 		c.img = other.img
 		c.hitbox = other.hitbox
@@ -304,10 +300,10 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		'colored glow/shadow to display political alignment
 		If img
-			Select political_alignment
-				Case ALIGNMENT_FRIENDLY
+			Select alignment
+				Case POLITICAL_ALIGNMENT.FRIENDLY
 					SetColor( 96, 96, 255 )
-				Case ALIGNMENT_HOSTILE
+				Case POLITICAL_ALIGNMENT.HOSTILE
 					SetColor( 255, 96, 96 )
 				Default
 					SetColor( 255, 255, 255 )

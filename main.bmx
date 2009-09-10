@@ -54,8 +54,7 @@ menu_command( COMMAND.LOAD_GAME, autosave_profile_path )
 'window title
 AppTitle = "Colosseum " + version_major + "." + version_minor + "." + version_revision
 ?Debug
-AppTitle :+ " DEBUG"
-debug_init()
+AppTitle :+ " DEBUG"; debug_init(); debug_no_graphics()
 ?
 
 'graphical window
@@ -66,8 +65,8 @@ menu_command( COMMAND.LOAD_ASSETS )
 'background automaton-powered menu game
 init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 
-?Debug
-'debug_graffiti_manager()
+?Debug 'debug routines requiring graphics
+debug_with_graphics()
 ?
 
 '////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +79,7 @@ Repeat
 	If frame_time_elapsed()
 		calculate_timescale()
 		reset_frame_timer()
-
+		
 		collide_all_objects()
 		update_all_objects()
 	End If

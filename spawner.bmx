@@ -8,9 +8,19 @@ Import "point.bmx"
 Import "json.bmx"
 
 '______________________________________________________________________________
+'SPAWNER should be renamed to UNIT_FACTORY, which is more appropriate
 Type SPAWNER
+	
+	'////////////////////////////////////////////////////////////////////////////
+	'TODO: [Tyler W.R. Cole - September 10, 2009 2:55 PM]
+	'these need to go away
+	'there should only be one class of SPAWNER
+	'  the gated factory
+	'turret anchors are no more than a reference to a single agent, with a location to spawn at
+	'the data and code should reflect this
 	Global class_GATED_FACTORY% = 1
 	Global class_TURRET_ANCHOR% = 2
+	'////////////////////////////////////////////////////////////////////////////
 	
 	Field class% '{gated_factory|turret_anchor} <-- this should be gone, doors should be separate entirely
 	Field squads$[][] 'grouped references to COMPLEX_AGENT prototypes; to be "baked" at spawn-time; turret anchors ignore all entries beyond the first.

@@ -165,11 +165,11 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 	And proj.source_id = get_player_id() ..
 	And COMPLEX_AGENT( ag ) 'ding! cash popup near splodey
 		Local p:PARTICLE = get_particle( "cash_from_kill" )
-		If COMPLEX_AGENT( ag ).political_alignment <> game.player.political_alignment
+		If COMPLEX_AGENT( ag ).alignment <> game.player.alignment
 			'killed enemy
 			record_player_kill( COMPLEX_AGENT( ag ).cash_value )
 			p.str = "$" + COMPLEX_AGENT( ag ).cash_value
-		Else 'COMPLEX_AGENT( ag ).political_alignment == game.player.political_alignment
+		Else 'COMPLEX_AGENT( ag ).political_alignment == game.player.alignment
 			'killed ally
 			record_player_friendly_fire_kill( FRIENDLY_FIRE_PUNISHMENT_AMOUNT )
 			p.str = "$-" + FRIENDLY_FIRE_PUNISHMENT_AMOUNT
