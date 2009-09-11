@@ -387,23 +387,6 @@ Function draw_menus()
 			cx :+ width
 		End If
 	Next
-	
-	'older "menu stack" menu drawing method
-	Rem
-		'calculate menu overlay alphas
-		Local menu_overlay_alpha#[] = New Float[current_menu+1]
-		Local alpha# = 0.0
-		For Local i% = current_menu To 0 Step -1
-			menu_overlay_alpha[i] = alpha
-			alpha :+ 0.5 * (1 - alpha)
-		Next
-		'draw menus
-		For Local i% = 0 To current_menu
-			SetAlpha( 1 )
-			SetColor( 255, 255, 255 )
-			get_menu( menu_stack[i] ).draw( x + i*20, y + i*20,, menu_overlay_alpha[i])
-		Next
-	End Rem
 End Function
 '______________________________________________________________________________
 Function draw_arena_fg()

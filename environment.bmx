@@ -310,7 +310,7 @@ Type ENVIRONMENT
 		Local part:PARTICLE = get_particle( "soft_glow" )
 		part.manage( particle_list_foreground )
 		part.parent = pt
-		'///////////////////
+		'///////////////////////////////////////////////////////////////////////////
 		
 		Return brain
 	End Method

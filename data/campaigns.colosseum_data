@@ -1,12 +1,12 @@
 [
 	{
 		class: "campaign",
-		key: "basic",
+		key: "training",
 		object: {
 			levels: [
-				"basic_0",
-				"basic_1",
-				"basic_2"
+				"levels/training1.colosseum_level",
+				"levels/training2.colosseum_level",
+				"levels/training3.colosseum_level"
 			]
 		}
 	}

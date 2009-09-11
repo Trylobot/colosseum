@@ -235,16 +235,34 @@
 	},
 	{
 		class: "particle",
-		key: "cash_from_kill",
+		key: "cash_positive",
 		object: {
 			particle_type: 2,
 			str: "$",
 			font: "consolas_bold_14",
 			layer: 1,
 			frictional_coefficient: 0.05,
-			red: 0.3333,
-			green: 1.0,
-			blue: 0.3333,
+			red: 84.9915,
+			green: 255.0000,
+			blue: 84.9915,
+			life_time: 1250,
+			vel_y: -0.5,
+			alpha: 1.0,
+			alpha_delta: -0.020
+		}
+	},
+	{
+		class: "particle",
+		key: "cash_negative",
+		object: {
+			particle_type: 2,
+			str: "$",
+			font: "consolas_italic_14",
+			layer: 1,
+			frictional_coefficient: 0.05,
+			red: 255.0000,
+			green: 84.9915,
+			blue: 84.9915,
 			life_time: 1250,
 			vel_y: -0.5,
 			alpha: 1.0,

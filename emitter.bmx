@@ -51,6 +51,9 @@ Type EMITTER Extends MANAGED_OBJECT
 	Field ang:RANGE 'orientation of emitted particle 
 	Field ang_vel:RANGE 'angular velocity of emitted particle 
 	Field ang_acc:RANGE 'angular acceleration of emitted particle 
+	
+	'/////////////////////////////////////////////////////////////////////////////
+	'These should be moved to PARTICLE_EMITTER since they only apply to PARTICLEs
 	Field life_time:RANGE_Int 'life time of emitted particle 
 	Field alpha:RANGE 'initial alpha value of emitted particle 
 	Field alpha_delta:RANGE 'alpha rate of change of emitted particle 
@@ -58,6 +61,7 @@ Type EMITTER Extends MANAGED_OBJECT
 	Field scale_delta:RANGE 'scale rate of change of emitted particle 
 	Field red:RANGE, green:RANGE, blue:RANGE 'color of emitted particle
 	Field red_delta:RANGE, green_delta:RANGE, blue_delta:RANGE 'emitted particle's change in color over time
+	'/////////////////////////////////////////////////////////////////////////////
 	
 	Method New()
 		interval = New RANGE_Int
@@ -152,9 +156,9 @@ alpha_min# = 1.0, alpha_max# = 1.0, ..
 alpha_delta_min# = 0.0, alpha_delta_max# = 0.0, ..
 scale_min# = 1.0, scale_max# = 1.0, ..
 scale_delta_min# = 0.0, scale_delta_max# = 0.0, ..
-red_min# = 1.0, red_max# = 1.0, ..
-green_min# = 1.0, green_max# = 1.0, ..
-blue_min# = 1.0, blue_max# = 1.0, ..
+red_min# = 255.0, red_max# = 255.0, ..
+green_min# = 255.0, green_max# = 255.0, ..
+blue_min# = 255.0, blue_max# = 255.0, ..
 red_delta_min# = 0.0, red_delta_max# = 0.0, ..
 green_delta_min# = 0.0, green_delta_max# = 0.0, ..
 blue_delta_min# = 0.0, blue_delta_max# = 0.0, ..

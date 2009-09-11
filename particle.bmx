@@ -69,7 +69,7 @@ Type PARTICLE Extends POINT
 	layer% = LAYER_UNSPECIFIED, ..
 	retain% = False, ..
 	frictional_coefficient# = 0.0, ..
-	red# = 1.0, green# = 1.0, blue# = 1.0, ..
+	red# = 255.0, green# = 255.0, blue# = 255.0, ..
 	red_delta# = 0.0, green_delta# = 0.0, blue_delta# = 0.0, ..
 	life_time% = INFINITY, ..
 	pos_x# = 0.0, pos_y# = 0.0, ..
@@ -137,8 +137,8 @@ Type PARTICLE Extends POINT
 		End If
 	End Method
 	
-	Method draw( alpha_override# = 1.0, scale_override# = 1.0 ) 'scale_override is not used for this object
-		SetColor( red*255, green*255, blue*255 )
+	Method draw( alpha_override# = 1.0, unused# = -1 )
+		SetColor( red, green, blue )
 		SetAlpha( alpha*alpha_override )
 		SetScale( scale, scale )
 		
@@ -200,17 +200,6 @@ Type PARTICLE Extends POINT
 		End If
 		Return False
 	End Method
-	
-	Rem
-	'OOP broken
-	Method auto_manage()
-		If layer = LAYER_BACKGROUND
-			manage( game.particle_list_background )
-		Else If layer = LAYER_FOREGROUND
-			manage( game.particle_list_foreground )
-		End If
-	End Method
-	EndRem
 	
 	Method attach_at( new_off_x#, new_off_y# )
 		off_x = new_off_x; off_y = new_off_y

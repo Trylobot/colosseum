@@ -80,18 +80,18 @@
 			scale_max: 1.0,
 			scale_delta_min: -0.050,
 			scale_delta_max: -0.050,
-			red_min: 1.0,
-			red_max: 1.0,
-			green_min: 1.0,
-			green_max: 1.0,
-			blue_min: 0.8,
-			blue_max: 0.8,
-			red_delta_min: -0.002,
-			red_delta_max: -0.002,
-			green_delta_min: -0.035,
-			green_delta_max: -0.035,
-			blue_delta_min: -0.030,
-			blue_delta_max: -0.03
+			red_min: 255,
+			red_max: 255,
+			green_min: 255,
+			green_max: 255,
+			blue_min: 204,
+			blue_max: 204,
+			red_delta_min: -0.51,
+			red_delta_max: -0.51,
+			green_delta_min: -8.925,
+			green_delta_max: -8.925,
+			blue_delta_min: -7.65,
+			blue_delta_max: -7.65
 		}
 	},
 	{
@@ -167,18 +167,18 @@
 			scale_max: 0.400,
 			scale_delta_min: -0.0075,
 			scale_delta_max: -0.0075,
-			red_min: 1.0,
-			red_max: 1.0,
-			green_min: 1.0,
-			green_max: 1.0,
-			blue_min: 0.8,
-			blue_max: 0.8,
-			red_delta_min: -0.002,
-			red_delta_max: -0.002,
-			green_delta_min: -0.035,
-			green_delta_max: -0.035,
-			blue_delta_min: -0.030,
-			blue_delta_max: -0.030
+			red_min: 255,
+			red_max: 255,
+			green_min: 255,
+			green_max: 255,
+			blue_min: 204,
+			blue_max: 204,
+			red_delta_min: -0.51,
+			red_delta_max: -0.51,
+			green_delta_min: -8.925,
+			green_delta_max: -8.925,
+			blue_delta_min: -7.65,
+			blue_delta_max: -7.65
 		}
 	},
 	{
@@ -310,12 +310,12 @@
 			scale_max: 0.300,
 			scale_delta_min: -0.0065,
 			scale_delta_max: -0.0065,
-			red_min: 1.0,
-			red_max: 1.0,
-			green_min: 0.65,
-			green_max: 0.65,
-			blue_min: 0.65,
-			blue_max: 0.65
+			red_min: 255,
+			red_max: 255,
+			green_min: 165.75,
+			green_max: 165.75,
+			blue_min: 165.75,
+			blue_max: 165.75
 		}
 	},
 	{
@@ -337,12 +337,12 @@
 			scale_max: 0.120,
 			scale_delta_min: -0.0050,
 			scale_delta_max: -0.0050,
-			red_min: 1.0,
-			red_max: 1.0,
-			green_min: 0.65,
-			green_max: 0.65,
-			blue_min: 0.65,
-			blue_max: 0.65
+			red_min: 255,
+			red_max: 255,
+			green_min: 165.75,
+			green_max: 165.75,
+			blue_min: 165.75,
+			blue_max: 165.75
 		}
 	},
 	{
@@ -383,12 +383,12 @@
 			scale_max: 0.300,
 			scale_delta_min: -0.0065,
 			scale_delta_max: -0.0065,
-			red_min: 0.95,
-			red_max: 1.00,
-			green_min: 0.95,
-			green_max: 1.00,
-			blue_min: 0.95,
-			blue_max: 1.00
+			red_min: 242.25,
+			red_max: 255,
+			green_min: 242.25,
+			green_max: 255,
+			blue_min: 242.25,
+			blue_max: 255
 		}
 	},
 	{
@@ -410,12 +410,12 @@
 			scale_max: 0.120,
 			scale_delta_min: -0.0050,
 			scale_delta_max: -0.0050,
-			red_min: 0.95,
-			red_max: 1.00,
-			green_min: 0.95,
-			green_max: 1.00,
-			blue_min: 0.95,
-			blue_max: 1.00
+			red_min: 242.25,
+			red_max: 255,
+			green_min: 242.25,
+			green_max: 255,
+			blue_min: 242.25,
+			blue_max: 255
 		}
 	},
 	{
@@ -447,12 +447,12 @@
 			scale_max: 0.20,
 			scale_delta_min: -0.0080,
 			scale_delta_max: -0.0080,
-			red_min: 1.0,
-			red_max: 1.0,
-			green_min: 0.75,
-			green_max: 0.75,
-			blue_min: 0.75,
-			blue_max: 0.75
+			red_min: 255,
+			red_max: 255,
+			green_min: 191.25,
+			green_max: 191.25,
+			blue_min: 191.25,
+			blue_max: 191.25
 		}
 	},
 	{

@@ -1,20 +1,4 @@
 
-fun stuff__________________________________
-	intro animatic
-	- have a little dude or a couple of em travel into the screen, and then
-	  destroy some stuff, or each other, or something. something with explosions.
-		and then have the logo be there underneath it all or something.
-		but keep it short (and skip-able).
-
-enhance____________________________________
-	treads
-	- have tread marks that stretch and shit so it doesn't matter how fast they're goin
-	spawning system
-	- want to have wave-based spawning without timers
-	  that way, enemy group 2 will start to spawn after the last enemy group 1 guy dies.
-	particle.bmx
-	- STOP USING COLORS ON SCALE [0,1] and instead use [0,255] as a float.
-		
 flesh out__________________________________
 	net.bmx
 	hud.bmx
@@ -26,10 +10,22 @@ flesh out__________________________________
 	spawn_controller.bmx
 	- waves
 
+enhance____________________________________
+	treads
+	- have tread marks that stretch and shit so it doesn't matter how fast they're goin
+	spawning system
+	- want to have wave-based spawning without timers
+	  that way, enemy group 2 will start to spawn after the last enemy group 1 guy dies.
+		
 create_____________________________________
 	prop.bmx
 	material.bmx
 	sound_trigger.bmx
 
-	
-	
+fun stuff__________________________________
+	intro animatic
+	- have a little dude or a couple of em travel into the screen, and then
+	  destroy some stuff, or each other, or something. something with explosions.
+		and then have the logo be there underneath it all or something.
+		but keep it short (and skip-able).
+
