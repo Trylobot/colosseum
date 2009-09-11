@@ -1,1 +1,1 @@
-bmk makemods bnetex
+bmk makemods vertex.bnetex
