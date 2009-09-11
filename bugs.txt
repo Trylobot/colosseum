@@ -1,3 +1,9 @@
 * the AI menu game sand texture is not initializing properly for some reason
   I see it as a big white/grey texture for some reason
-	only reproducible at work for some reason
+  only reproducible at work for some reason
+
+* the retained background particles are acquiring a very dark black outline
+  over time; each call to add_graffiti causes them to get darker. not sure why
+  only reproducible on nick's netbook for some reason
+
+
