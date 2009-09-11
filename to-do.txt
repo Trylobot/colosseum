@@ -16,16 +16,20 @@ enhance____________________________________
 	- STOP USING COLORS ON SCALE [0,1] and instead use [0,255] as a float.
 		
 flesh out__________________________________
-  net.bmx
-  hud.bmx
-  vehicle_editor.bmx
+	net.bmx
+	hud.bmx
+	vehicle_editor.bmx
 	- extend to be able to edit or create any unit at all and also edit sounds
+	lighting and shadows (dynamic)
+	- draw lightmaps on top of agents, using custom assets for each one
+	- draw shadows underneath agents, manipulate the chassis graphic somehow.
+	spawn_controller.bmx
+	- waves
 
 create_____________________________________
-  prop.bmx
-  material.bmx
-  sound_trigger.bmx
+	prop.bmx
+	material.bmx
+	sound_trigger.bmx
 
-___________________________________________
 	
 	
