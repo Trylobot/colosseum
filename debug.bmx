@@ -20,6 +20,7 @@ Global global_start:CELL
 Global global_goal:CELL
 
 Global FLAG_debug_overlay% = False
+Global FLAG_god_mode% = False
 Global fps%, last_frame_ts%, time_count%, frame_count%
 Global f12_down%
 
@@ -59,6 +60,12 @@ Function debug_main()
 		FLAG_debug_overlay = Not FLAG_debug_overlay
 		FlushKeys()
 	End If
+	If KeyHit( KEY_G )
+		FLAG_god_mode = Not FLAG_god_mode
+	End If
+	If KeyHit( KEY_F4 ) And main_game
+		main_game.retained_particle_count = active_particle_limit
+	End If
 	If game <> Null And FLAG_debug_overlay
 		debug_overlay()
 		debug_fps()
@@ -71,10 +78,10 @@ Function debug_main()
 		End If
 		get_current_menu().update()
 	End If
-	If game And game.player
+	If game And game.player And FLAG_god_mode
 		game.player.cur_health = game.player.max_health
 	End If
-	If KeyDown( KEY_F4 ) Then DebugStop
+	'If KeyDown( KEY_F4 ) Then DebugStop
 End Function
 
 Function debug_overlay()

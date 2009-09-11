@@ -48,6 +48,7 @@ Type GRAFFITI_MANAGER
 	End Method
 	
 	Method add_graffiti( particle_list:TList )
+		If particle_list.IsEmpty() Then Return
 		For Local r% = 0 Until rows
 			For Local c% = 0 Until cols
 				'only update cache if necessary
@@ -76,7 +77,6 @@ Type GRAFFITI_MANAGER
 				End If
 			Next
 		Next
-		Cls()
 	End Method
 	
 	Method draw()

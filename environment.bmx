@@ -244,6 +244,7 @@ Type ENVIRONMENT
 		Next
 		spawn.spawn_request_list.Clear()
 		'door activation
+		Rem 'currently handled by update_flags() in update.bmx 'ugh!
 		For Local d% = 0 Until spawn.active_spawners.Length
 			If spawner_door[d]
 				If spawn.active_spawners[d] ..
@@ -258,6 +259,7 @@ Type ENVIRONMENT
 				End If
 			End If
 		Next
+		End Rem
 	End Method
 	
 	Method active_spawners%( alignment% )

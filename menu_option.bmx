@@ -4,8 +4,6 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
-Import "misc.bmx"
-Import "drawtext_ex.bmx"
 
 '______________________________________________________________________________
 Type MENU_OPTION
@@ -16,16 +14,14 @@ Type MENU_OPTION
 	Field enabled% 'this option can be selected? {true|false}
 	Field red%, green%, blue% 'color
 	Field always_bright% 'drawing cue
-	Field tooltip:Object 'flexible tooltip object displayed when option has focus
+	Field img:TImage '(optional) only used in menus of type GROUPED_LEVEL_PREVIEW_LIST
 	
 	Function Create:MENU_OPTION( ..
-	name$, ..
-	command_code% = 0, ..
-	argument:Object = Null, ..
-	visible% = True, ..
-	enabled% = True, ..
+	name$, command_code% = 0, argument:Object = Null, ..
+	visible% = True, enabled% = True, ..
 	red% = 255, green% = 255, blue% = 255, ..
-	always_bright% = False )
+	always_bright% = False, ..
+	img:TImage = Null )
 		Local opt:MENU_OPTION = New MENU_OPTION
 		opt.name = name
 		opt.command_code = command_code
@@ -34,44 +30,17 @@ Type MENU_OPTION
 		opt.enabled = enabled
 		opt.red = red; opt.green = green; opt.blue = blue
 		opt.always_bright = always_bright
+		opt.img = img
 		Return opt
 	End Function
 	
 	Method clone:MENU_OPTION()
-		Return Create( name, command_code, argument, visible, enabled )
-	End Method
-	
-	Method draw( resolved_name$, x%, y%, focused% = False, blink% = True )
-		Local mult# = 1.0, glow% = False
-		SetAlpha( 1 )
-		If Not always_bright
-			If focused
-				glow = True
-				If blink Then SetAlpha( 0.75 + 0.25 * Sin( now() Mod 1000 ))
-			Else If enabled And visible 'Not focused
-				mult = 0.5
-			Else If visible 'Not enabled And Not focused
-				mult = 0.25
-			End If
-		End If
-		'draw the option
-		SetColor( red*mult, green*mult, blue*mult )
-		If glow
-			DrawText_with_glow( resolved_name, x, y )
-		Else
-			DrawText_with_outline( resolved_name, x, y )
-		End If
-	End Method
-	
-	Method draw_tooltip( x%, y% )
-		
-	End Method
-	
-	Method width%()
-		
-	End Method
-	Method height%()
-		
+		Return Create( ..
+			name, command_code, argument, ..
+			visible, enabled, ..
+			red, green, blue, ..
+			always_bright, ..
+			img )
 	End Method
 	
 End Type
