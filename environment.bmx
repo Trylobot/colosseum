@@ -25,7 +25,7 @@ Import "pickup.bmx"
 Import "control_brain.bmx"
 Import "mouse.bmx"
 Import "spawn_request.bmx"
-Import "prop_data.bmx"
+Import "entity_data.bmx"
 
 '______________________________________________________________________________
 Function Create_ENVIRONMENT:ENVIRONMENT( human_participation% = False )
@@ -172,13 +172,13 @@ Type ENVIRONMENT
 		'graffiti
 		graffiti = GRAFFITI_MANAGER.Create( background, window_w, window_h )
 		'props
-		For Local pd:PROP_DATA = EachIn lev.props
+		For Local pd:ENTITY_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )
 			prop.manage( prop_list )
 			prop.move_to( pd.pos )
 		Next
 		'spawning system
-		spawn = Create_SPAWN_CONTROLLER( lev.spawners )
+		spawn = Create_SPAWN_CONTROLLER( lev.unit_factories, lev.immediate_units )
 		reset_spawners()
 		'kill tracker
 		If human_participation And profile
@@ -217,11 +217,9 @@ Type ENVIRONMENT
 	Method reset_spawners( alignment% = POLITICAL_ALIGNMENT.NONE, omit_turrets% = False )
 		If alignment = POLITICAL_ALIGNMENT.NONE
 			'gated factory doors
-			spawner_door = New DOOR[spawn.size]
-			For Local i% = 0 Until spawn.size
-				If spawn.spawners[i].class = SPAWNER.class_GATED_FACTORY
-					spawner_door[i] = add_door( spawn.spawners[i].pos, spawn.spawners[i].alignment )
-				End If
+			spawner_door = New DOOR[spawn.unit_factories.Length]
+			For Local i% = 0 Until spawn.unit_factories.Length
+				spawner_door[i] = add_door( spawn.unit_factories[i].pos, spawn.unit_factories[i].alignment )
 			Next
 		Else 'alignment <> POLITICAL_ALIGNMENT.NONE
 			'controller
@@ -264,8 +262,15 @@ Type ENVIRONMENT
 	
 	Method active_spawners%( alignment% )
 		Local count% = 0
-		For Local i% = 0 Until spawn.size
-			If spawn.active_spawners[i] And spawn.spawners[i].alignment = alignment
+		'active unit factories
+		For Local i% = 0 Until spawn.active_unit_factories.Length
+			If spawn.active_unit_factories[i] And spawn.unit_factories[i].alignment = alignment
+				count :+ 1
+			End If
+		Next
+		'unspawned immediate units
+		For Local i% = 0 Until spawn.immediate_units.Length
+			If spawn.unspawned_immediate_units[i] And spawn.immediate_units[i].alignment = alignment
 				count :+ 1
 			End If
 		Next
@@ -439,12 +444,12 @@ Type ENVIRONMENT
 	End Method
 	
 	Method random_spawn_point:POINT( alignment% = UNSPECIFIED )
-		If alignment <> UNSPECIFIED And lev.spawners.Length > 0
+		If alignment <> UNSPECIFIED And lev.unit_factories.Length > 0
 			Local list:TList = CreateList()
-			For Local i% = 0 To lev.spawners.Length-1
-				Local sp:SPAWNER = lev.spawners[i]
-				If sp.alignment = alignment
-					list.AddLast( sp.pos )
+			For Local i% = 0 To lev.unit_factories.Length-1
+				Local uf:UNIT_FACTORY_DATA = lev.unit_factories[i]
+				If uf.alignment = alignment
+					list.AddLast( uf.pos )
 				End If
 			Next
 			If Not list.IsEmpty()
@@ -452,9 +457,9 @@ Type ENVIRONMENT
 			Else
 				Return Null
 			End If
-		Else If lev.spawners.Length > 0 'alignment = UNSPECIFIED
-			Return lev.spawners[ Rand( 0, lev.spawners.Length-1 )].pos
-		Else 'lev.spawners.Length = 0
+		Else If lev.unit_factories.Length > 0 'alignment = UNSPECIFIED
+			Return lev.unit_factories[ Rand( 0, lev.unit_factories.Length-1 )].pos
+		Else 'lev.unit_factories.Length = 0
 			Return Null
 		End If
 	End Method

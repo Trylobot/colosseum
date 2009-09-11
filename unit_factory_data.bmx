@@ -1,5 +1,5 @@
 Rem
-	spawner.bmx
+	unit_factory_data.bmx
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
@@ -8,35 +8,21 @@ Import "point.bmx"
 Import "json.bmx"
 
 '______________________________________________________________________________
-'SPAWNER should be renamed to UNIT_FACTORY, which is more appropriate
-Type SPAWNER
-	
-	'////////////////////////////////////////////////////////////////////////////
-	'TODO: [Tyler W.R. Cole - September 10, 2009 2:55 PM]
-	'these need to go away
-	'there should only be one class of SPAWNER
-	'  the gated factory
-	'turret anchors are no more than a reference to a single agent, with a location to spawn at
-	'the data and code should reflect this
-	Global class_GATED_FACTORY% = 1
-	Global class_TURRET_ANCHOR% = 2
-	'////////////////////////////////////////////////////////////////////////////
-	
-	Field class% '{gated_factory|turret_anchor} <-- this should be gone, doors should be separate entirely
+Type UNIT_FACTORY_DATA
+	Field alignment% '{friendly|hostile}
 	Field squads$[][] 'grouped references to COMPLEX_AGENT prototypes; to be "baked" at spawn-time; turret anchors ignore all entries beyond the first.
 	Field size% 'cached result of count_all_squadmembers()
 	Field pos:POINT 'initial state to be conferred on each spawned agent; velocity and acceleration ignored for turret anchors
 	Field delay_time%[] '(optional) time delay before spawning a squad; one for each squad; GATED_FACTORY only
-	Field wave_index%[] 'waves are like cross-spawner squad groups that spawn sequentially; this is where to specify what wave a squad belongs to
-	Field alignment% '{friendly|hostile}
+	Field wave_index%[] 'waves are like cross-factory squad groups that spawn sequentially; this is where to specify what wave a squad belongs to
 	
 	Method New()
 		pos = New POINT
 	End Method
 	
-	Method clone:SPAWNER()
-		Local sp:SPAWNER = New SPAWNER
-		sp.class = class
+	Method clone:UNIT_FACTORY_DATA()
+		Local sp:UNIT_FACTORY_DATA = New UNIT_FACTORY_DATA
+		sp.alignment = alignment
 		sp.squads = New String[][squads.Length]
 		For Local index% = 0 To squads.Length - 1
 			sp.squads[index] = squads[index][..]
@@ -44,7 +30,6 @@ Type SPAWNER
 		sp.pos = Copy_POINT( pos )
 		sp.delay_time = delay_time[..]
 		sp.wave_index = wave_index[..]
-		sp.alignment = alignment
 		Return sp
 	End Method
 	
@@ -123,25 +108,23 @@ Type SPAWNER
 	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
-		this_json.SetByName( "class", TJSONNumber.Create( class ))
+		this_json.SetByName( "alignment", TJSONNumber.Create( alignment ))
 		this_json.SetByName( "squads", Create_TJSONArray_from_String_array_array( squads ))
 		this_json.SetByName( "pos", pos.to_json() )
 		this_json.SetByName( "delay_time", Create_TJSONArray_from_Int_array( delay_time ))
 		this_json.SetByName( "wave_index", Create_TJSONArray_from_Int_array( wave_index ))
-		this_json.SetByName( "alignment", TJSONNumber.Create( alignment ))
 		Return this_json
 	End Method
 End Type
 
-Function Create_SPAWNER_from_json:SPAWNER( json:TJSON )
-	Local sp:SPAWNER = New SPAWNER
-	sp.class = json.GetNumber( "class" )
+Function Create_UNIT_FACTORY_DATA_from_json:UNIT_FACTORY_DATA( json:TJSON )
+	Local sp:UNIT_FACTORY_DATA = New UNIT_FACTORY_DATA
+	sp.alignment = json.GetNumber( "alignment" )
 	sp.squads = Create_String_array_array_from_TJSONArray( json.GetArray( "squads" ))
 	sp.size = sp.count_all_squadmembers()
 	sp.pos = Create_POINT_from_json( TJSON.Create( json.GetObject( "pos" )))
 	sp.delay_time = json.GetArrayInt( "delay_time" )
 	sp.wave_index = json.GetArrayInt( "wave_index" )
-	sp.alignment = json.GetNumber( "alignment" )
 	Return sp
 End Function
 

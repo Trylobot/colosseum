@@ -5,8 +5,8 @@ Rem
 EndRem
 SuperStrict
 Import "cell.bmx"
-Import "spawner.bmx"
-Import "prop_data.bmx"
+Import "unit_factory_data.bmx"
+Import "entity_data.bmx"
 Import "box.bmx"
 Import "vec.bmx"
 Import "json.bmx"
@@ -35,11 +35,12 @@ Function Create_LEVEL:LEVEL( width%, height% )
 	lev.name = "new level"
 	lev.width = width; lev.height = height
 	lev.row_count = 1; lev.col_count = 1
-	lev.hue = 0; lev.saturation = 0; lev.luminosity = 0.30
+	lev.hue = 0.0; lev.saturation = 0.0; lev.luminosity = 0.3
 	lev.horizontal_divs = [ 0, lev.height ]
 	lev.vertical_divs = [ 0, lev.width ]
 	lev.path_regions = New Int[ lev.row_count, lev.col_count ]
-	lev.spawners = Null
+	lev.unit_factories = Null
+	lev.immediate_units = Null
 	lev.props = Null
 	Return lev
 End Function
@@ -50,8 +51,9 @@ Type LEVEL Extends MANAGED_OBJECT
 	Field hue#, saturation#, luminosity# 'base color for the walls
 	Field horizontal_divs%[], vertical_divs%[] 'dividers
 	Field path_regions%[,] '{PASSABLE|BLOCKED}[w,h]
-	Field spawners:SPAWNER[]
-	Field props:PROP_DATA[]
+	Field unit_factories:UNIT_FACTORY_DATA[] 'gated unit factories
+	Field immediate_units:ENTITY_DATA[] 'units to spawn immediately (like turrets & bosses)
+	Field props:ENTITY_DATA[] 'props, like wooden crates and stuff
 	
 	Method resize( new_width%, new_height% )
 		width = new_width
@@ -163,14 +165,20 @@ Type LEVEL Extends MANAGED_OBJECT
 				Local delta% = value
 				If Not value_is_delta Then delta :- horizontal_divs[index]
 				height :+ delta
-				'spawners
-				For Local sp:SPAWNER = EachIn spawners
-					If sp.pos.pos_y >= horizontal_divs[index]
-						sp.pos.pos_y :+ delta
+				'unit factories
+				For Local uf:UNIT_FACTORY_DATA = EachIn unit_factories
+					If uf.pos.pos_y >= horizontal_divs[index]
+						uf.pos.pos_y :+ delta
+					End If
+				Next
+				'immediate units
+				For Local u:ENTITY_DATA = EachIn immediate_units
+					If u.pos.pos_y >= horizontal_divs[index]
+						u.pos.pos_y :+ delta
 					End If
 				Next
 				'props
-				For Local pd:PROP_DATA = EachIn props
+				For Local pd:ENTITY_DATA = EachIn props
 					If pd.pos.pos_y >= horizontal_divs[index]
 						pd.pos.pos_y :+ delta
 					End If
@@ -184,14 +192,20 @@ Type LEVEL Extends MANAGED_OBJECT
 				Local delta% = value
 				If Not value_is_delta Then delta :- vertical_divs[index]
 				width :+ delta
-				'spawners
-				For Local sp:SPAWNER = EachIn spawners
-					If sp.pos.pos_x >= vertical_divs[index]
-						sp.pos.pos_x :+ delta
+				'unit factories
+				For Local uf:UNIT_FACTORY_DATA = EachIn unit_factories
+					If uf.pos.pos_x >= vertical_divs[index]
+						uf.pos.pos_x :+ delta
+					End If
+				Next
+				'immediate units
+				For Local u:ENTITY_DATA = EachIn immediate_units
+					If u.pos.pos_x >= vertical_divs[index]
+						u.pos.pos_x :+ delta
 					End If
 				Next
 				'props
-				For Local pd:PROP_DATA = EachIn props
+				For Local pd:ENTITY_DATA = EachIn props
 					If pd.pos.pos_x >= vertical_divs[index]
 						pd.pos.pos_x :+ delta
 					End If
@@ -271,37 +285,58 @@ Type LEVEL Extends MANAGED_OBJECT
 		set_path_region( get_cell( x, y ), value )
 	End Method
 	
-	Method add_spawner( sp:SPAWNER )
-		If spawners = Null
-			spawners = New SPAWNER[1]
+	Method add_unit_factory( uf:UNIT_FACTORY_DATA )
+		If unit_factories = Null
+			unit_factories = New UNIT_FACTORY_DATA[1]
 		Else
-			spawners = spawners[..spawners.Length+1]
+			unit_factories = unit_factories[..unit_factories.Length+1]
 		End If
-		spawners[spawners.Length-1] = sp
+		unit_factories[unit_factories.Length-1] = uf
 	End Method
 	
-	Method remove_spawner( sp:SPAWNER )
-		For Local index% = 0 To spawners.Length
-			If spawners[index] = sp
-				spawners[index] = spawners[spawners.Length-1]
-				spawners = spawners[..spawners.Length-1]
+	Method remove_unit_factory( uf:UNIT_FACTORY_DATA )
+		For Local index% = 0 To unit_factories.Length
+			If unit_factories[index] = uf
+				unit_factories[index] = unit_factories[unit_factories.Length-1]
+				unit_factories = unit_factories[..unit_factories.Length-1]
 				Exit
 			End If
 		Next
 	End Method
 	
-	Method add_prop( pd:PROP_DATA )
+	Method add_immediate_unit( d:ENTITY_DATA )
+		If immediate_units = Null
+			immediate_units = New ENTITY_DATA[1]
+		Else
+			immediate_units = immediate_units[..immediate_units.Length+1]
+		End If
+		d.entity_type = ENTITY_DATA.UNIT
+		immediate_units[immediate_units.Length-1] = d
+	End Method
+	
+	Method remove_immediate_unit( d:ENTITY_DATA )
+		For Local index% = 0 To immediate_units.Length
+			If immediate_units[index] = d
+				immediate_units[index] = immediate_units[immediate_units.Length-1]
+				immediate_units = immediate_units[..immediate_units.Length-1]
+				Exit
+			End If
+		Next
+	End Method
+	
+	Method add_prop( d:ENTITY_DATA )
 		If props = Null
-			props = New PROP_DATA[1]
+			props = New ENTITY_DATA[1]
 		Else
 			props = props[..props.Length+1]
 		End If
-		props[props.Length-1] = pd
+		d.entity_type = ENTITY_DATA.PROP
+		props[props.Length-1] = d
 	End Method
 	
-	Method remove_prop( pd:PROP_DATA )
+	Method remove_prop( d:ENTITY_DATA )
 		For Local index% = 0 To props.Length
-			If props[index] = pd
+			If props[index] = d
 				props[index] = props[props.Length-1]
 				props = props[..props.Length-1]
 				Exit
@@ -387,9 +422,12 @@ Type LEVEL Extends MANAGED_OBJECT
 	
 	Method enemy_count%()
 		Local count% = 0
-		For Local index% = 0 To spawners.Length-1
-			count :+ spawners[index].count_all_squadmembers()
+		For Local index% = 0 To unit_factories.Length-1
+			count :+ unit_factories[index].count_all_squadmembers()
 		Next
+		If immediate_units
+			count :+ immediate_units.Length
+		End If
 		Return count
 	End Method
 	
@@ -435,14 +473,23 @@ Type LEVEL Extends MANAGED_OBJECT
 		this_json.SetByName( "horizontal_divs", Create_TJSONArray_from_Int_array( horizontal_divs ))
 		this_json.SetByName( "vertical_divs", Create_TJSONArray_from_Int_array( vertical_divs ))
 		this_json.SetByName( "path_regions", Create_TJSONArray_from_2D_Int_array( path_regions, True ))
-		If spawners <> Null And spawners.Length > 0
-			Local spawners_json:TJSONArray = TJSONArray.Create( spawners.Length )
-			For Local index% = 0 To spawners.Length - 1
-				spawners_json.SetByIndex( index, spawners[index].to_json() )
+		If unit_factories <> Null And unit_factories.Length > 0
+			Local unit_factories_json:TJSONArray = TJSONArray.Create( unit_factories.Length )
+			For Local index% = 0 To unit_factories.Length - 1
+				unit_factories_json.SetByIndex( index, unit_factories[index].to_json() )
 			Next
-			this_json.SetByName( "spawners", spawners_json )
+			this_json.SetByName( "unit_factories", unit_factories_json )
 		Else
-			this_json.SetByName( "spawners", TJSON.NIL )
+			this_json.SetByName( "unit_factories", TJSON.NIL )
+		End If
+		If immediate_units <> Null And immediate_units.Length > 0
+			Local immediate_units_json:TJSONArray = TJSONArray.Create( immediate_units.Length )
+			For Local index% = 0 To immediate_units.Length - 1
+				immediate_units_json.SetByIndex( index, immediate_units[index].to_json() )
+			Next
+			this_json.SetByName( "immediate_units", immediate_units_json )
+		Else
+			this_json.SetByName( "immediate_units", TJSON.NIL )
 		End If
 		If props <> Null And props.Length > 0
 			Local props_json:TJSONArray = TJSONArray.Create( props.Length )
@@ -471,18 +518,25 @@ Function Create_LEVEL_from_json:LEVEL( json:TJSON )
 	lev.horizontal_divs = json.GetArrayInt( "horizontal_divs" )
 	lev.vertical_divs = json.GetArrayInt( "vertical_divs" )
 	lev.path_regions = Create_2D_Int_array_from_TJSONArray( json.GetArray( "path_regions" ), True )
-	Local spawners_json:TJSONArray = json.GetArray( "spawners" )
-	If spawners_json <> Null And spawners_json.Size() > 0
-		lev.spawners = New SPAWNER[spawners_json.Size()]
-		For Local index% = 0 To spawners_json.Size() - 1
-			lev.spawners[index] = Create_SPAWNER_from_json( TJSON.Create( spawners_json.GetByIndex( index )))
+	Local unit_factories_json:TJSONArray = json.GetArray( "unit_factories" )
+	If unit_factories_json <> Null And unit_factories_json.Size() > 0
+		lev.unit_factories = New UNIT_FACTORY_DATA[unit_factories_json.Size()]
+		For Local index% = 0 To unit_factories_json.Size() - 1
+			lev.unit_factories[index] = Create_UNIT_FACTORY_DATA_from_json( TJSON.Create( unit_factories_json.GetByIndex( index )))
+		Next
+	End If
+	Local immediate_units_json:TJSONArray = json.GetArray( "immediate_units" )
+	If immediate_units_json <> Null And immediate_units_json.Size() > 0
+		lev.immediate_units = New ENTITY_DATA[immediate_units_json.Size()]
+		For Local index% = 0 To immediate_units_json.Size() - 1
+			lev.immediate_units[index] = Create_ENTITY_DATA_from_json( TJSON.Create( immediate_units_json.GetByIndex( index )))
 		Next
 	End If
 	Local props_json:TJSONArray = json.GetArray( "props" )
 	If props_json <> Null And props_json.Size() > 0
-		lev.props = New PROP_DATA[props_json.Size()]
+		lev.props = New ENTITY_DATA[props_json.Size()]
 		For Local index% = 0 To props_json.Size() - 1
-			lev.props[index] = Create_PROP_DATA_from_json( TJSON.Create( props_json.GetByIndex( index )))
+			lev.props[index] = Create_ENTITY_DATA_from_json( TJSON.Create( props_json.GetByIndex( index )))
 		Next
 	End If
 	Return lev

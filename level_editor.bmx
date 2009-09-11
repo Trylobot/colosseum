@@ -8,9 +8,9 @@ Import "mouse.bmx"
 Import "level.bmx"
 Import "vec.bmx"
 Import "point.bmx"
-Import "spawner.bmx"
 Import "complex_agent.bmx"
-Import "prop_data.bmx"
+Import "unit_factory_data.bmx"
+Import "entity_data.bmx"
 Import "base_data.bmx"
 Import "console.bmx"
 Import "drawtext_ex.bmx"
@@ -38,14 +38,13 @@ Function level_editor%( lev:LEVEL )
 	Local gridsnap_mouse:cVEC = New cVEC
 	Local drag_mouse_start:cVEC = New cVEC
 	Local drag_pos_start:POINT = New POINT
-	Local new_spawner:SPAWNER = New SPAWNER
-	new_spawner.class = SPAWNER.class_GATED_FACTORY
-	Local closest_sp:SPAWNER = Null
-	Local new_prop:PROP_DATA = New PROP_DATA
+	Local new_unit_factory:UNIT_FACTORY_DATA = New UNIT_FACTORY_DATA
+	Local closest_uf:UNIT_FACTORY_DATA = Null
+	Local new_prop:ENTITY_DATA = New ENTITY_DATA
 	Local prop_keys$[] = get_map_keys( prop_map )
 	Local new_prop_archetype% = 0
 	new_prop.archetype = prop_keys[new_prop_archetype]
-	Local closest_pd:PROP_DATA = Null
+	Local closest_pd:ENTITY_DATA = Null
 
 	Local nearest_div%
 	Local nearest_div_dist%
@@ -137,8 +136,8 @@ Function level_editor%( lev:LEVEL )
 		Next
 		
 		'draw the spawn points
-		For Local sp:SPAWNER = EachIn lev.spawners
-			Select sp.alignment
+		For Local uf:UNIT_FACTORY_DATA = EachIn lev.unit_factories
+			Select uf.alignment
 				Case POLITICAL_ALIGNMENT.NONE
 					SetColor( 255, 255, 255 )
 				Case POLITICAL_ALIGNMENT.FRIENDLY
@@ -147,21 +146,19 @@ Function level_editor%( lev:LEVEL )
 					SetColor( 255, 64, 64 )
 			End Select
 			SetRotation( 0 )
-			Local p:POINT = sp.pos
+			Local p:POINT = uf.pos
 			SetAlpha( 0.5 )
 			DrawOval( x+p.pos_x-spawn_point_preview_radius,y+p.pos_y-spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
 			SetLineWidth( 2 )
 			SetAlpha( 1 )
 			DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x + spawn_point_preview_radius*Cos(p.ang),y+p.pos_y + spawn_point_preview_radius*Sin(p.ang) )
-			If sp.class = SPAWNER.class_GATED_FACTORY
-				SetAlpha( 0.5 )
-				SetRotation( sp.pos.ang )
-				DrawImage( get_image( "door_fg" ), x+sp.pos.pos_x, y+sp.pos.pos_y )
-			End If
+			SetAlpha( 0.5 )
+			SetRotation( uf.pos.ang )
+			DrawImage( get_image( "door_fg" ), x+uf.pos.pos_x, y+uf.pos.pos_y )
 			SetAlpha( 0.666 )
 			SetRotation( 0 )
 			SetScale( 1, 1 )
-			Select sp.alignment
+			Select uf.alignment
 				Case POLITICAL_ALIGNMENT.NONE
 					SetColor( 255, 255, 255 )
 				Case POLITICAL_ALIGNMENT.FRIENDLY
@@ -170,9 +167,9 @@ Function level_editor%( lev:LEVEL )
 					SetColor( 255, 64, 64 )
 			End Select
 			Local size% = 3, sep% = 1
-			For Local r% = 0 To sp.count_squads()-1
-				For Local c% = 0 To sp.count_squadmembers( r )-1
-					DrawRect( x + sp.pos.pos_x - 10 - c*(size+sep), y + sp.pos.pos_y + 10 + r*(size+sep), size, size )
+			For Local r% = 0 To uf.count_squads()-1
+				For Local c% = 0 To uf.count_squadmembers( r )-1
+					DrawRect( x + uf.pos.pos_x - 10 - c*(size+sep), y + uf.pos.pos_y + 10 + r*(size+sep), size, size )
 				Next
 			Next
 		Next
@@ -180,7 +177,7 @@ Function level_editor%( lev:LEVEL )
 		SetRotation( 0 )
 		
 		'draw the props
-		For Local pd:PROP_DATA = EachIn lev.props
+		For Local pd:ENTITY_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )
 			prop.pos_x = pd.pos.pos_x+x
 			prop.pos_y = pd.pos.pos_y+y
@@ -189,6 +186,9 @@ Function level_editor%( lev:LEVEL )
 			SetAlpha( 0.5 )
 			prop.draw()
 		Next
+		
+		'draw the "immediate units"
+		
 		
 		'change modes detection
 		If      KeyHit( KEY_1 ) Then mode = EDIT_LEVEL_MODE_BASIC ..
@@ -286,7 +286,7 @@ Function level_editor%( lev:LEVEL )
 		SetImageFont( normal_font )
 		DrawText_with_shadow( "size: "+lev.width+" x "+lev.height, info_x,info_y ); info_y :+ 1.5*line_h
 		DrawText_with_shadow( "pathing regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
-		DrawText_with_shadow( "spawners: "+lev.spawners.Length, info_x,info_y ); info_y :+ line_h
+		DrawText_with_shadow( "spawners: "+lev.unit_factories.Length, info_x,info_y ); info_y :+ line_h
 		
 		'mode code (LOL! I rhymed) <-- WTF
 		Select mode
@@ -414,9 +414,9 @@ Function level_editor%( lev:LEVEL )
 			Case EDIT_LEVEL_MODE_SPAWNER_SYSTEM
 				gridsnap_mouse.x = round_to_nearest( mouse.pos_x-x, gridsnap )
 				gridsnap_mouse.y = round_to_nearest( mouse.pos_y-y, gridsnap )
-				new_spawner.pos.pos_x = gridsnap_mouse.x
-				new_spawner.pos.pos_y = gridsnap_mouse.y
-				Select new_spawner.alignment
+				new_unit_factory.pos.pos_x = gridsnap_mouse.x
+				new_unit_factory.pos.pos_y = gridsnap_mouse.y
+				Select new_unit_factory.alignment
 					Case POLITICAL_ALIGNMENT.NONE
 						SetColor( 255, 255, 255 )
 					Case POLITICAL_ALIGNMENT.FRIENDLY
@@ -426,33 +426,32 @@ Function level_editor%( lev:LEVEL )
 				End Select
 				If Not any_modifiers
 					If mouse_down_1 And Not MouseDown( 1 )
-						closest_sp = new_spawner.clone()
-						lev.add_spawner( closest_sp )
+						closest_uf = new_unit_factory.clone()
+						lev.add_unit_factory( closest_uf )
 					End If
 					If MouseDown( 2 )
-						new_spawner = New SPAWNER
-						new_spawner.class = SPAWNER.class_GATED_FACTORY
+						new_unit_factory = New UNIT_FACTORY_DATA
 					End If
 				Else
 					If Not MouseDown( 1 )
-						closest_sp = Null
+						closest_uf = Null
 					End If
-					If closest_sp = Null
-						For Local sp:SPAWNER = EachIn lev.spawners
-							If closest_sp = Null Or ..
-							closest_sp.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y )) > sp.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y ))
-								closest_sp = sp
+					If closest_uf = Null
+						For Local uf:UNIT_FACTORY_DATA = EachIn lev.unit_factories
+							If closest_uf = Null Or ..
+							closest_uf.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y )) > uf.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y ))
+								closest_uf = uf
 							End If
 						Next
 					End If
-					If closest_sp <> Null
+					If closest_uf <> Null
 						If MouseDown( 1 )
 							SetAlpha( 0.70 )
 						Else
 							SetAlpha( 0.35 )
 						End If
 						SetLineWidth( 2 )
-						Select closest_sp.alignment
+						Select closest_uf.alignment
 							Case POLITICAL_ALIGNMENT.NONE
 								SetColor( 255, 255, 255 )
 							Case POLITICAL_ALIGNMENT.FRIENDLY
@@ -460,44 +459,44 @@ Function level_editor%( lev:LEVEL )
 							Case POLITICAL_ALIGNMENT.HOSTILE
 								SetColor( 255, 64, 64 )
 						End Select
-						DrawLine( MouseX(),MouseY(), closest_sp.pos.pos_x+x,closest_sp.pos.pos_y+y )
+						DrawLine( MouseX(),MouseY(), closest_uf.pos.pos_x+x,closest_uf.pos.pos_y+y )
 						If control
 							If Not mouse_down_1 And MouseDown( 1 )
 								drag_mouse_start = Copy_POINT( mouse ).to_cvec()
-								drag_pos_start = Copy_POINT( closest_sp.pos )
+								drag_pos_start = Copy_POINT( closest_uf.pos )
 							End If
 							If MouseDown( 1 )
-								closest_sp.pos.pos_x = round_to_nearest( drag_pos_start.pos_x + (mouse.pos_x - drag_mouse_start.x), gridsnap )
-								closest_sp.pos.pos_y = round_to_nearest( drag_pos_start.pos_y + (mouse.pos_y - drag_mouse_start.y), gridsnap )
+								closest_uf.pos.pos_x = round_to_nearest( drag_pos_start.pos_x + (mouse.pos_x - drag_mouse_start.x), gridsnap )
+								closest_uf.pos.pos_y = round_to_nearest( drag_pos_start.pos_y + (mouse.pos_y - drag_mouse_start.y), gridsnap )
 							End If
 						Else If alt
 							If mouse_down_1 And Not MouseDown( 1 )
-								lev.remove_spawner( closest_sp )
+								lev.remove_unit_factory( closest_uf )
 							End If
 						Else If shift
 							If MouseDown( 1 )
-								closest_sp.pos.ang = round_to_nearest( ang_wrap( closest_sp.pos.ang_to( mouse )), 45 )
+								closest_uf.pos.ang = round_to_nearest( ang_wrap( closest_uf.pos.ang_to( mouse )), 45 )
 							End If
 						End If
-						If control And KeyHit( KEY_TAB ) And closest_sp
+						If control And KeyHit( KEY_TAB ) And closest_uf
 							'find a spawner in the current cell
-							Local sp_cell:CELL = lev.get_cell( closest_sp.pos.pos_x, closest_sp.pos.pos_y )
+							Local uf_cell:CELL = lev.get_cell( closest_uf.pos.pos_x, closest_uf.pos.pos_y )
 							'decide what size the cell should be based on orientation of spawner
 							Local new_w%, new_h%, new_x%, new_y%, go% = True
-							If closest_sp.pos.ang = 0 Or Abs( closest_sp.pos.ang ) = 180 'east/west
+							If closest_uf.pos.ang = 0 Or Abs( closest_uf.pos.ang ) = 180 'east/west
 								new_w = 70
 								new_h = 62
-								If closest_sp.pos.ang = 0 'east
+								If closest_uf.pos.ang = 0 'east
 									new_x = 28
 									new_y = 31
 								Else 'west
 									new_x = 52 - 10
 									new_y = 31
 								End If
-							Else If Abs( closest_sp.pos.ang ) = 90 'north/south
+							Else If Abs( closest_uf.pos.ang ) = 90 'north/south
 								new_w = 62
 								new_h = 70
-								If closest_sp.pos.ang > 0 'south
+								If closest_uf.pos.ang > 0 'south
 									new_x = 31
 									new_y = 28
 								Else 'north
@@ -509,14 +508,14 @@ Function level_editor%( lev:LEVEL )
 							End If
 							If go
 								'resize current cell to accomodate it
-								lev.resize_cell( sp_cell, new_w, new_h )
+								lev.resize_cell( uf_cell, new_w, new_h )
 								'move the spawner to the correct spot in the cell
-								closest_sp.pos.pos_x = lev.vertical_divs[sp_cell.col] + new_x
-								closest_sp.pos.pos_y = lev.horizontal_divs[sp_cell.row] + new_y
+								closest_uf.pos.pos_x = lev.vertical_divs[uf_cell.col] + new_x
+								closest_uf.pos.pos_y = lev.horizontal_divs[uf_cell.row] + new_y
 							End If
 						End If
 						If MouseDown( 2 ) And Not mouse_down_2
-							new_spawner = closest_sp.clone()
+							new_unit_factory = closest_uf.clone()
 						End If
 					End If
 				End If
@@ -527,21 +526,19 @@ Function level_editor%( lev:LEVEL )
 					alpha_mod = 0.5
 				End If
 				If Not any_modifiers
-					Local p:POINT = new_spawner.pos
+					Local p:POINT = new_unit_factory.pos
 					SetAlpha( 0.50*alpha_mod )
 					DrawOval( x+p.pos_x-spawn_point_preview_radius,y+p.pos_y-spawn_point_preview_radius, 2*spawn_point_preview_radius,2*spawn_point_preview_radius )
 					SetLineWidth( 2 )
 					SetAlpha( 1.00*alpha_mod )
 					DrawLine( x+p.pos_x,y+p.pos_y, x+p.pos_x+spawn_point_preview_radius*Cos(p.ang),y+p.pos_y+spawn_point_preview_radius*Sin(p.ang) )
-					If new_spawner.class = SPAWNER.class_GATED_FACTORY
-						SetAlpha( 0.5*alpha_mod )
-						SetRotation( new_spawner.pos.ang )
-						DrawImage( get_image( "door_fg" ), x+new_spawner.pos.pos_x, y+new_spawner.pos.pos_y )
-					End If
+					SetAlpha( 0.5*alpha_mod )
+					SetRotation( new_unit_factory.pos.ang )
+					DrawImage( get_image( "door_fg" ), x+new_unit_factory.pos.pos_x, y+new_unit_factory.pos.pos_y )
 					SetAlpha( 0.666*alpha_mod )
 					SetRotation( 0 )
 					SetScale( 1, 1 )
-					Select new_spawner.alignment
+					Select new_unit_factory.alignment
 						Case POLITICAL_ALIGNMENT.NONE
 							SetColor( 255, 255, 255 )
 						Case POLITICAL_ALIGNMENT.FRIENDLY
@@ -550,33 +547,33 @@ Function level_editor%( lev:LEVEL )
 							SetColor( 255, 64, 64 )
 					End Select
 					Local size% = 3, sep% = 1
-					For Local r% = 0 To new_spawner.count_squads()-1
-						For Local c% = 0 To new_spawner.count_squadmembers( r )-1
+					For Local r% = 0 To new_unit_factory.count_squads()-1
+						For Local c% = 0 To new_unit_factory.count_squadmembers( r )-1
 							DrawRect( x + p.pos_x - 10 - c*(size+sep), y + p.pos_y + 10 + r*(size+sep), size, size )
 						Next
 					Next
 				End If
 				If KeyHit( KEY_LEFT )
-					new_spawner.pos.ang = ang_wrap( new_spawner.pos.ang - 45 )
+					new_unit_factory.pos.ang = ang_wrap( new_unit_factory.pos.ang - 45 )
 				End If
 				If KeyHit( KEY_RIGHT )
-					new_spawner.pos.ang = ang_wrap( new_spawner.pos.ang + 45 )
+					new_unit_factory.pos.ang = ang_wrap( new_unit_factory.pos.ang + 45 )
 				End If
 				
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_SPAWNER_DETAILS
-				Local closest_sp:SPAWNER = Null
-				For Local sp:SPAWNER = EachIn lev.spawners
-					If closest_sp = Null Or ..
-					closest_sp.pos.add_pos( x, y ).dist_to( Create_POINT( mouse.pos_x, mouse.pos_y )) > sp.pos.dist_to( Create_POINT( mouse.pos_x, mouse.pos_y ))
-						closest_sp = sp
+				Local closest_uf:UNIT_FACTORY_DATA = Null
+				For Local uf:UNIT_FACTORY_DATA = EachIn lev.unit_factories
+					If closest_uf = Null Or ..
+					closest_uf.pos.add_pos( x, y ).dist_to( Create_POINT( mouse.pos_x, mouse.pos_y )) > uf.pos.dist_to( Create_POINT( mouse.pos_x, mouse.pos_y ))
+						closest_uf = uf
 					End If
 				Next
-				Local sp:SPAWNER = closest_sp
-				If sp <> Null
+				Local uf:UNIT_FACTORY_DATA = closest_uf
+				If uf <> Null
 					SetLineWidth( 2 )
 					SetAlpha( 0.6 )
-					Select sp.alignment
+					Select uf.alignment
 						Case POLITICAL_ALIGNMENT.NONE
 							SetColor( 255, 255, 255 )
 						Case POLITICAL_ALIGNMENT.FRIENDLY
@@ -584,14 +581,13 @@ Function level_editor%( lev:LEVEL )
 						Case POLITICAL_ALIGNMENT.HOSTILE
 							SetColor( 255, 64, 64 )
 					End Select
-					DrawLine( MouseX(),MouseY(), sp.pos.pos_x+x,sp.pos.pos_y+y )
+					DrawLine( MouseX(),MouseY(), uf.pos.pos_x+x,uf.pos.pos_y+y )
 					
 					SetAlpha( 1 )
 					SetColor( 255, 255, 255 )
 					info_y :+ line_h
 					DrawText_with_shadow( "current spawner", info_x,info_y ); info_y :+ line_h
-					DrawText_with_shadow( "  class "+class_to_string(sp.class), info_x,info_y ); info_y :+ line_h
-					Select sp.alignment
+					Select uf.alignment
 						Case POLITICAL_ALIGNMENT.NONE
 							SetColor( 255, 255, 255 )
 						Case POLITICAL_ALIGNMENT.FRIENDLY
@@ -599,16 +595,16 @@ Function level_editor%( lev:LEVEL )
 						Case POLITICAL_ALIGNMENT.HOSTILE
 							SetColor( 255, 64, 64 )
 					End Select
-					DrawText_with_shadow( "  alignment "+alignment_to_string(sp.alignment), info_x,info_y ); info_y :+ line_h
+					DrawText_with_shadow( "  alignment "+alignment_to_string(uf.alignment), info_x,info_y ); info_y :+ line_h
 					SetColor( 255, 255, 255 )
-					DrawText_with_shadow( "  squads "+sp.count_squads(), info_x,info_y ); info_y :+ line_h
+					DrawText_with_shadow( "  squads "+uf.count_squads(), info_x,info_y ); info_y :+ line_h
 					info_y :+ line_h
 					Local cell_size% = 15
-					If sp.count_squads() <> 0
-						For Local r% = 0 To sp.count_squads()-1
-							For Local c% = 0 To sp.count_squadmembers( r )-1
-								Local ag:COMPLEX_AGENT = get_unit( sp.squads[r][c] )
-								ag.alignment = sp.alignment
+					If uf.count_squads() <> 0
+						For Local r% = 0 To uf.count_squads()-1
+							For Local c% = 0 To uf.count_squadmembers( r )-1
+								Local ag:COMPLEX_AGENT = get_unit( uf.squads[r][c] )
+								ag.alignment = uf.alignment
 								ag.scale_all( 0.75 )
 								ag.pos_x = info_x + cell_size + c*cell_size - cell_size/2
 								ag.pos_y = info_y + cell_size + r*cell_size - cell_size/2
@@ -621,25 +617,25 @@ Function level_editor%( lev:LEVEL )
 						SetRotation( 0 )
 						SetScale( 1, 1 )
 						SetColor( 255, 255, 255 )
-						If cursor > sp.count_squads() Then cursor = sp.count_squads()
+						If cursor > uf.count_squads() Then cursor = uf.count_squads()
 					Else
 						cursor = 0
 					End If
 					'draw all delay times except the cursor
-					For Local r% = 0 To sp.count_squads()-1
+					For Local r% = 0 To uf.count_squads()-1
 						If r <> cursor
-							DrawText_with_shadow( sp.delay_time[r], window_w - 50, info_y + r*cell_size + line_h/3 )
+							DrawText_with_shadow( uf.delay_time[r], window_w - 50, info_y + r*cell_size + line_h/3 )
 						End If
 					Next
 
-					If KeyHit( KEY_ENTER ) And cursor >= 0 And cursor < sp.count_squads()
+					If KeyHit( KEY_ENTER ) And cursor >= 0 And cursor < uf.count_squads()
 						FlushKeys()
-						sp.delay_time[cursor] = get_input( sp.delay_time[cursor],, window_w - 50, info_y + cursor*cell_size + line_h/3, normal_font, screencap() ).ToInt()
+						uf.delay_time[cursor] = get_input( uf.delay_time[cursor],, window_w - 50, info_y + cursor*cell_size + line_h/3, normal_font, screencap() ).ToInt()
 					End If
-					If cursor >= 0 And cursor < sp.count_squads()
-						DrawText_with_shadow( String.FromInt( sp.delay_time[cursor] ), window_w - 50, info_y + cursor*cell_size + line_h/3 )
+					If cursor >= 0 And cursor < uf.count_squads()
+						DrawText_with_shadow( String.FromInt( uf.delay_time[cursor] ), window_w - 50, info_y + cursor*cell_size + line_h/3 )
 					End If
-					Local cursor_squadmembers% = sp.count_squadmembers( cursor )
+					Local cursor_squadmembers% = uf.count_squadmembers( cursor )
 					Local ag:COMPLEX_AGENT = get_unit( cursor_archetype )
 					ag.scale_all( 0.75 )
 					ag.pos_x = info_x + cell_size + cursor_squadmembers*cell_size - cell_size/2
@@ -652,18 +648,12 @@ Function level_editor%( lev:LEVEL )
 					SetScale( 1, 1 )
 					
 					If KeyHit( KEY_PAGEUP )
-						sp.alignment :- 1
-						If sp.alignment < 0 Then sp.alignment = 2
+						uf.alignment :- 1
+						If uf.alignment < 0 Then uf.alignment = 2
 					End If
 					If KeyHit( KEY_PAGEDOWN )
-						sp.alignment :+ 1
-						If sp.alignment > 2 Then sp.alignment = 0
-					End If
-					If KeyHit( KEY_HOME )
-						sp.class = SPAWNER.class_GATED_FACTORY
-					End If
-					If KeyHit( KEY_END )
-						sp.class = SPAWNER.class_TURRET_ANCHOR
+						uf.alignment :+ 1
+						If uf.alignment > 2 Then uf.alignment = 0
 					End If
 					If KeyHit( KEY_LEFT )
 						cursor_archetype_index :- 1
@@ -677,21 +667,21 @@ Function level_editor%( lev:LEVEL )
 					End If
 					If KeyHit( KEY_UP )
 						cursor :- 1
-						If cursor < 0 Then cursor = sp.count_squads()
+						If cursor < 0 Then cursor = uf.count_squads()
 					End If
 					If KeyHit( KEY_DOWN )
 						cursor :+ 1
-						If cursor > sp.count_squads() Then cursor = 0
+						If cursor > uf.count_squads() Then cursor = 0
 					End If
 					If KeyHit( KEY_INSERT )
-						If cursor >= sp.squads.Length
-							sp.add_new_squad()
+						If cursor >= uf.squads.Length
+							uf.add_new_squad()
 						End If
-						sp.add_new_squadmember( cursor, cursor_archetype )
+						uf.add_new_squadmember( cursor, cursor_archetype )
 					End If
 					If KeyHit( KEY_DELETE )
-						If cursor < sp.squads.Length
-							sp.remove_last_squadmember( cursor )
+						If cursor < uf.squads.Length
+							uf.remove_last_squadmember( cursor )
 						End If
 					End If
 				End If
@@ -705,7 +695,7 @@ Function level_editor%( lev:LEVEL )
 				If Not any_modifiers
 					If mouse_down_1 And Not MouseDown( 1 )
 						lev.add_prop( new_prop )
-						new_prop = New PROP_DATA
+						new_prop = New ENTITY_DATA
 					End If
 					If KeyHit( KEY_LEFT )
 						new_prop_archetype :- 1
@@ -730,7 +720,7 @@ Function level_editor%( lev:LEVEL )
 						closest_pd = Null
 					End If
 					If closest_pd = Null
-						For Local pd:PROP_DATA = EachIn lev.props
+						For Local pd:ENTITY_DATA = EachIn lev.props
 							If closest_pd = Null Or ..
 							closest_pd.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y )) > pd.pos.dist_to( Create_POINT( gridsnap_mouse.x, gridsnap_mouse.y ))
 								closest_pd = pd
@@ -857,15 +847,6 @@ Function get_input$( initial_value$, initial_cursor_pos% = INFINITY, x%, y%, fon
 End Function
 	
 '______________________________________________________________________________
-Function class_to_string$( class% )
-	Select class
-		Case SPAWNER.class_GATED_FACTORY
-			Return "{gated_factory}"
-		Case SPAWNER.class_TURRET_ANCHOR
-			Return "{turret_anchor}"
-	End Select
-End Function
-
 Function alignment_to_string$( alignment% )
 	Select alignment
 		Case POLITICAL_ALIGNMENT.NONE
