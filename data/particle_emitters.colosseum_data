@@ -35,12 +35,12 @@
 			scale_max: 0.12,
 			scale_delta_min: 0.0010,
 			scale_delta_max: 0.0015,
-			red_min: 125,
-			red_max: 255,
-			green_min: 125,
-			green_max: 255,
-			blue_min: 125,
-			blue_max: 255
+			red_min: 234,
+			red_max: 234,
+			green_min: 229,
+			green_max: 229,
+			blue_min: 204,
+			blue_max: 204
 		}
 	},
 	{

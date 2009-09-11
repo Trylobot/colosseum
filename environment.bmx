@@ -242,14 +242,15 @@ Type ENVIRONMENT
 		Next
 		spawn.spawn_request_list.Clear()
 		'door activation
-		Rem 'currently handled by update_flags() in update.bmx 'ugh!
-		For Local d% = 0 Until spawn.active_spawners.Length
+		Rem
+		'currently handled by update_flags() in update.bmx 'ugh!
+		For Local d% = 0 Until spawn.active_unit_factories.Length
 			If spawner_door[d]
-				If spawn.active_spawners[d] ..
+				If spawn.active_unit_factories[d] ..
 				And spawner_door[d].status = DOOR.DOOR_CLOSED
 					'door should be open
 					spawner_door[d].open()
-				Else If Not spawn.active_spawners[d] ..
+				Else If Not spawn.active_unit_factories[d] ..
 				And spawner_door[d].status = DOOR.DOOR_OPEN
 					'door should be closed
 					'might want to delay this a bit

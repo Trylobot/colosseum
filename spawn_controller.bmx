@@ -5,10 +5,11 @@ Rem
 EndRem
 SuperStrict
 Import "constants.bmx"
+Import "cell.bmx"
 Import "unit_factory_data.bmx"
 Import "entity_data.bmx"
 Import "spawn_request.bmx"
-Import "cell.bmx"
+Import "agent.bmx"
 
 '______________________________________________________________________________
 Function Create_SPAWN_CONTROLLER:SPAWN_CONTROLLER( unit_factories:UNIT_FACTORY_DATA[], immediate_units:ENTITY_DATA[] )
@@ -29,7 +30,7 @@ Type SPAWN_CONTROLLER
 	Field unit_factory_cursor:CELL[] 'for each unit_factory, a (row,col) pointer indicating the current agent to be spawned
 	Field spawn_ts%[] 'for each unit_factory, the timestamp of the spawn process start
 	Field spawn_counter%[] 'for each unit_factory, a count of how many enemies have been spawned so far
-	Field last_spawned:POINT[] 'for each unit_factory, a reference to the location of the last spawned enemy (so they don't overlap)
+	Field last_spawned:AGENT[] 'for each unit_factory, a reference to the location of the last spawned enemy (so they don't overlap)
 
 	Field immediate_units:ENTITY_DATA[]
 	Field unspawned_immediate_units%[] 'for ENVIRONMENT's information
@@ -48,7 +49,7 @@ Type SPAWN_CONTROLLER
 		'factories
 		unit_factory_cursor = New CELL[size]
 		spawn_ts = New Int[size]
-		last_spawned = New POINT[size]
+		last_spawned = New AGENT[size]
 		spawn_counter = New Int[size]
 		active_unit_factories = New Int[size]
 		Local squad_count% = 0
@@ -106,7 +107,7 @@ Type SPAWN_CONTROLLER
 		Local uf:UNIT_FACTORY_DATA
 		Local cur:CELL
 		Local ts%
-		Local last:POINT
+		Local last:AGENT
 		Local counter%
 		For Local i% = 0 Until unit_factories.Length
 			uf = unit_factories[i]
@@ -119,7 +120,7 @@ Type SPAWN_CONTROLLER
 				'if it is time to spawn this unit_factory's current squad
 				If now() - ts >= uf.delay_time[cur.row]
 					'if this squad has just been started, or the last spawned enemy is away, dead or null
-					If cur.col = 0 Or last = Null Or last.dist_to( uf.pos ) >= SPAWN_POINT_POLITE_DISTANCE 'Or last.dead() 'SHOULD be unnecessary (I hope)
+					If cur.col = 0 Or last = Null Or last.dist_to( uf.pos ) >= SPAWN_POINT_POLITE_DISTANCE Or last.dead()
 						'Local brain:CONTROL_BRAIN = spawn_unit( uf.squads[cur.row][cur.col], uf.alignment, uf.pos )
 						'last_spawned[i] = brain.avatar
 						spawn_request_list.AddLast( Create_SPAWN_REQUEST( uf.squads[cur.row][cur.col], uf.alignment, uf.pos, i ))
