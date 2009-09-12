@@ -30,6 +30,10 @@ Type ENTITY_DATA
 		Const PROP% = 1
 		Const UNIT% = 2
 	
+	Method New()
+		pos = New POINT
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "archetype", TJSONString.Create( archetype ))

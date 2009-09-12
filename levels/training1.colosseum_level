@@ -1,33 +1,34 @@
 {
 	name: "training1",
-	width: 440,
-	height: 369,
+	width: 518,
+	height: 396,
 	row_count: 7,
-	col_count: 9,
+	col_count: 10,
 	hue: 0,
 	saturation: 0,
 	luminosity: 0.3,
 	horizontal_divs: [
 		0,
 		44,
-		94,
-		154,
-		216,
-		276,
-		326,
-		369
+		106,
+		166,
+		228,
+		288,
+		353,
+		396
 	],
 	vertical_divs: [
 		0,
-		10,
-		80,
-		130,
-		190,
-		250,
-		310,
-		360,
-		430,
-		440
+		28,
+		98,
+		148,
+		208,
+		241,
+		311,
+		371,
+		421,
+		491,
+		518
 	],
 	path_regions: [
 		[
@@ -39,16 +40,6 @@
 			true,
 			true,
 			true,
-			true
-		],
-		[
-			true,
-			true,
-			false,
-			false,
-			false,
-			false,
-			false,
 			true,
 			true
 		],
@@ -56,27 +47,6 @@
 			true,
 			true,
 			false,
-			false,
-			false,
-			false,
-			false,
-			true,
-			true
-		],
-		[
-			true,
-			false,
-			false,
-			false,
-			true,
-			false,
-			false,
-			false,
-			true
-		],
-		[
-			true,
-			true,
 			false,
 			false,
 			false,
@@ -90,6 +60,43 @@
 			true,
 			false,
 			false,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			true,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			true,
+			true,
+			false,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			false,
+			false,
 			false,
 			false,
 			false,
@@ -97,6 +104,7 @@
 			true
 		],
 		[
+			true,
 			true,
 			true,
 			true,
@@ -113,8 +121,8 @@
 			alignment: 1,
 			squads: null,
 			pos: {
-				pos_x: 38,
-				pos_y: 185
+				pos_x: 56,
+				pos_y: 197
 			},
 			delay_time: null,
 			wave_index: null
@@ -124,26 +132,59 @@
 			squads: [
 				[
 					"mr_the_box",
-					"mr_the_box",
-					"mr_the_box",
-					"mr_the_box",
-					"mr_the_box",
-					"mr_the_box",
-					"mr_the_box",
-					"mr_the_box",
+					"mr_the_box"
+				],
+				[
 					"mr_the_box",
 					"mr_the_box"
+				],
+				[
+					"machine_gun_quad"
 				]
 			],
 			pos: {
-				pos_x: 402,
-				pos_y: 185,
+				pos_x: 463,
+				pos_y: 197,
 				ang: 180
 			},
 			delay_time: [
+				0,
+				0,
 				0
 			],
 			wave_index: [
+				0,
+				0,
+				0
+			]
+		},
+		{
+			alignment: 2,
+			squads: [
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"machine_gun_quad"
+				]
+			],
+			pos: {
+				pos_x: 269,
+				pos_y: 197
+			},
+			delay_time: [
+				0,
+				0,
+				0
+			],
+			wave_index: [
+				0,
+				0,
 				0
 			]
 		}
@@ -153,50 +194,85 @@
 		{
 			archetype: "crate",
 			pos: {
-				pos_x: 270,
-				pos_y: 169
+				pos_x: 327,
+				pos_y: 264
 			}
 		},
 		{
 			archetype: "crate_small",
 			pos: {
-				pos_x: 265,
-				pos_y: 194
+				pos_x: 345,
+				pos_y: 238
 			}
 		},
 		{
 			archetype: "crate_small",
 			pos: {
-				pos_x: 280,
-				pos_y: 124
+				pos_x: 352,
+				pos_y: 135
 			}
 		},
 		{
 			archetype: "crate",
 			pos: {
-				pos_x: 250,
-				pos_y: 134
+				pos_x: 328,
+				pos_y: 132
 			}
 		},
 		{
 			archetype: "crate_small",
 			pos: {
-				pos_x: 175,
-				pos_y: 154
+				pos_x: 206,
+				pos_y: 295
 			}
 		},
 		{
 			archetype: "crate_small",
 			pos: {
-				pos_x: 195,
-				pos_y: 144
+				pos_x: 201,
+				pos_y: 101
 			}
 		},
 		{
 			archetype: "crate_small",
 			pos: {
-				pos_x: 240,
-				pos_y: 231
+				pos_x: 227,
+				pos_y: 300
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 358,
+				pos_y: 264
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 370,
+				pos_y: 141
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 349,
+				pos_y: 110
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 375,
+				pos_y: 287
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 411,
+				pos_y: 158
 			}
 		}
 	]
