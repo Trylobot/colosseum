@@ -475,7 +475,7 @@ Type LEVEL Extends MANAGED_OBJECT
 		this_json.SetByName( "path_regions", Create_TJSONArray_from_2D_Int_array( path_regions, True ))
 		If unit_factories <> Null And unit_factories.Length > 0
 			Local unit_factories_json:TJSONArray = TJSONArray.Create( unit_factories.Length )
-			For Local index% = 0 To unit_factories.Length - 1
+			For Local index% = 0 Until unit_factories.Length
 				unit_factories_json.SetByIndex( index, unit_factories[index].to_json() )
 			Next
 			this_json.SetByName( "unit_factories", unit_factories_json )
@@ -484,7 +484,7 @@ Type LEVEL Extends MANAGED_OBJECT
 		End If
 		If immediate_units <> Null And immediate_units.Length > 0
 			Local immediate_units_json:TJSONArray = TJSONArray.Create( immediate_units.Length )
-			For Local index% = 0 To immediate_units.Length - 1
+			For Local index% = 0 Until immediate_units.Length
 				immediate_units_json.SetByIndex( index, immediate_units[index].to_json() )
 			Next
 			this_json.SetByName( "immediate_units", immediate_units_json )
@@ -493,7 +493,7 @@ Type LEVEL Extends MANAGED_OBJECT
 		End If
 		If props <> Null And props.Length > 0
 			Local props_json:TJSONArray = TJSONArray.Create( props.Length )
-			For Local index% = 0 To props.Length - 1
+			For Local index% = 0 Until props.Length
 				props_json.SetByIndex( index, props[index].to_json() )
 			Next
 			this_json.SetByName( "props", props_json )
@@ -518,24 +518,62 @@ Function Create_LEVEL_from_json:LEVEL( json:TJSON )
 	lev.horizontal_divs = json.GetArrayInt( "horizontal_divs" )
 	lev.vertical_divs = json.GetArrayInt( "vertical_divs" )
 	lev.path_regions = Create_2D_Int_array_from_TJSONArray( json.GetArray( "path_regions" ), True )
+	'intermediate code start
+	Local spawners_json:TJSONArray = json.GetArray( "spawners" )
+	If spawners_json <> Null And spawners_json.Size() > 0
+		Local unit_factories:TList = CreateList()
+		Local immediate_units:TList = CreateList()
+		For Local index% = 0 Until spawners_json.Size()
+			Local spawner:TJSON = TJSON.Create( spawners_json.GetByIndex( index ))
+			Local class% = spawner.GetNumber( "class" )
+			If class = 1 'legacy "gated factory"
+				unit_factories.AddLast( Create_UNIT_FACTORY_DATA_from_json( spawner ))
+			Else 'legacy "turret anchor"
+				immediate_units.AddLast( ..
+					Create_ENTITY_DATA( spawner.GetString( "squads.0.0" ), ..
+					Create_POINT_from_json( TJSON.Create( spawner.GetObject( "pos" ))), ..
+					spawner.GetNumber( "alignment" ), ENTITY_DATA.UNIT ))
+			End If
+		Next
+		If Not unit_factories.IsEmpty()
+			lev.unit_factories = New UNIT_FACTORY_DATA[unit_factories.Count()]
+			Local i% = 0
+			For Local uf:UNIT_FACTORY_DATA = EachIn unit_factories
+				lev.unit_factories[i] = uf
+				i :+ 1
+			Next
+		End If
+		If Not immediate_units.IsEmpty()
+			lev.immediate_units = New ENTITY_DATA[immediate_units.Count()]
+			Local i% = 0
+			For Local d:ENTITY_DATA = EachIn immediate_units
+				lev.immediate_units[i] = d
+				i :+ 1
+			Next
+		End If
+	End If
+	'intermediate code end
+	Rem
 	Local unit_factories_json:TJSONArray = json.GetArray( "unit_factories" )
 	If unit_factories_json <> Null And unit_factories_json.Size() > 0
 		lev.unit_factories = New UNIT_FACTORY_DATA[unit_factories_json.Size()]
-		For Local index% = 0 To unit_factories_json.Size() - 1
+		For Local index% = 0 Until unit_factories_json.Size()
 			lev.unit_factories[index] = Create_UNIT_FACTORY_DATA_from_json( TJSON.Create( unit_factories_json.GetByIndex( index )))
 		Next
 	End If
 	Local immediate_units_json:TJSONArray = json.GetArray( "immediate_units" )
 	If immediate_units_json <> Null And immediate_units_json.Size() > 0
 		lev.immediate_units = New ENTITY_DATA[immediate_units_json.Size()]
-		For Local index% = 0 To immediate_units_json.Size() - 1
+		For Local index% = 0 Until immediate_units_json.Size()
 			lev.immediate_units[index] = Create_ENTITY_DATA_from_json( TJSON.Create( immediate_units_json.GetByIndex( index )))
 		Next
 	End If
+	EndRem
+	
 	Local props_json:TJSONArray = json.GetArray( "props" )
 	If props_json <> Null And props_json.Size() > 0
 		lev.props = New ENTITY_DATA[props_json.Size()]
-		For Local index% = 0 To props_json.Size() - 1
+		For Local index% = 0 Until props_json.Size()
 			lev.props[index] = Create_ENTITY_DATA_from_json( TJSON.Create( props_json.GetByIndex( index )))
 		Next
 	End If
