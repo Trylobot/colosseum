@@ -108,20 +108,19 @@
 			true
 		]
 	],
-	spawners: [
+	unit_factories: [
 		{
-			class: 1,
+			alignment: 1,
 			squads: null,
 			pos: {
 				pos_x: 38,
 				pos_y: 185
 			},
 			delay_time: null,
-			wave_index: null,
-			alignment: 1
+			wave_index: null
 		},
 		{
-			class: 1,
+			alignment: 2,
 			squads: null,
 			pos: {
 				pos_x: 402,
@@ -129,10 +128,10 @@
 				ang: 180
 			},
 			delay_time: null,
-			wave_index: null,
-			alignment: 2
+			wave_index: null
 		}
 	],
+	immediate_units: null,
 	props: [
 		{
 			archetype: "crate",
