@@ -1,3 +1,5 @@
+* when playing a custom level I spawn in at (0,0)
+
 * the AI menu game sand texture is not initializing properly for some reason
   I see it as a big white/grey texture for some reason
   only reproducible at work for some reason
