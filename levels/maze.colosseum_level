@@ -452,9 +452,9 @@
 			true
 		]
 	],
-	spawners: [
+	unit_factories: [
 		{
-			class: 1,
+			alignment: 1,
 			squads: null,
 			pos: {
 				pos_x: 488,
@@ -462,11 +462,10 @@
 				ang: -90
 			},
 			delay_time: null,
-			wave_index: null,
-			alignment: 1
+			wave_index: null
 		},
 		{
-			class: 1,
+			alignment: 2,
 			squads: [
 				[
 					"machine_gun_quad",
@@ -497,11 +496,10 @@
 				0,
 				0,
 				0
-			],
-			alignment: 2
+			]
 		},
 		{
-			class: 1,
+			alignment: 2,
 			squads: [
 				[
 					"mini_bomb",
@@ -540,11 +538,10 @@
 				0,
 				0,
 				0
-			],
-			alignment: 2
+			]
 		},
 		{
-			class: 1,
+			alignment: 2,
 			squads: [
 				[
 					"light_tank",
@@ -576,86 +573,43 @@
 				0,
 				0,
 				0
-			],
-			alignment: 2
-		},
+			]
+		}
+	],
+	immediate_units: [
 		{
-			class: 2,
-			squads: [
-				[
-					"rocket_emplacement"
-				]
-			],
+			archetype: "rocket_emplacement",
 			pos: {
 				pos_x: 350,
 				pos_y: 372
 			},
-			delay_time: [
-				0
-			],
-			wave_index: [
-				0
-			],
 			alignment: 2
 		},
 		{
-			class: 2,
-			squads: [
-				[
-					"machine_gun_emplacement"
-				]
-			],
+			archetype: "machine_gun_emplacement",
 			pos: {
 				pos_x: 225,
 				pos_y: 273,
 				ang: 45
 			},
-			delay_time: [
-				0
-			],
-			wave_index: [
-				0
-			],
 			alignment: 2
 		},
 		{
-			class: 2,
-			squads: [
-				[
-					"machine_gun_emplacement"
-				]
-			],
+			archetype: "machine_gun_emplacement",
 			pos: {
 				pos_x: 250,
 				pos_y: 477,
 				ang: -90
 			},
-			delay_time: [
-				0
-			],
-			wave_index: [
-				0
-			],
 			alignment: 2
 		},
 		{
-			class: 2,
-			squads: [
-				[
-					"cannon_emplacement"
-				]
-			],
+			archetype: "cannon_emplacement",
 			pos: {
 				pos_x: 345,
 				pos_y: 75,
 				ang: 90
 			},
-			delay_time: [
-				0
-			],
-			wave_index: [
-				0
-			],
 			alignment: 2
 		}
 	],
