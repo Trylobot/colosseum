@@ -430,9 +430,9 @@
 			true
 		]
 	],
-	spawners: [
+	unit_factories: [
 		{
-			class: 1,
+			alignment: 1,
 			squads: [
 				[
 					"machine_gun_quad",
@@ -469,11 +469,10 @@
 				0,
 				0,
 				0
-			],
-			alignment: 1
+			]
 		},
 		{
-			class: 1,
+			alignment: 1,
 			squads: [
 				[
 					"machine_gun_quad",
@@ -511,11 +510,10 @@
 				0,
 				0,
 				0
-			],
-			alignment: 1
+			]
 		},
 		{
-			class: 1,
+			alignment: 1,
 			squads: [
 				[
 					"machine_gun_quad",
@@ -553,11 +551,10 @@
 				0,
 				0,
 				0
-			],
-			alignment: 1
+			]
 		},
 		{
-			class: 1,
+			alignment: 1,
 			squads: [
 				[
 					"machine_gun_quad",
@@ -595,11 +592,10 @@
 				0,
 				0,
 				0
-			],
-			alignment: 1
+			]
 		},
 		{
-			class: 1,
+			alignment: 2,
 			squads: [
 				[
 					"machine_gun_quad",
@@ -637,11 +633,10 @@
 				0,
 				0,
 				0
-			],
-			alignment: 2
+			]
 		},
 		{
-			class: 1,
+			alignment: 2,
 			squads: [
 				[
 					"machine_gun_quad",
@@ -678,11 +673,10 @@
 				0,
 				0,
 				0
-			],
-			alignment: 2
+			]
 		},
 		{
-			class: 1,
+			alignment: 2,
 			squads: [
 				[
 					"machine_gun_quad",
@@ -720,11 +714,10 @@
 				0,
 				0,
 				0
-			],
-			alignment: 2
+			]
 		},
 		{
-			class: 1,
+			alignment: 2,
 			squads: [
 				[
 					"machine_gun_quad",
@@ -762,10 +755,10 @@
 				0,
 				0,
 				0
-			],
-			alignment: 2
+			]
 		}
 	],
+	immediate_units: null,
 	props: [
 		{
 			archetype: "crate",
