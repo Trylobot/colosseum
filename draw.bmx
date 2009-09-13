@@ -89,11 +89,12 @@ Function draw_game()
 
 	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
 	
-	'arena background + retained particles
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
+
+	'arena background + retained particles
 	game.graffiti.draw()
 
 	'background particles
@@ -133,8 +134,14 @@ Function draw_game()
 	Next
 	SetAlpha( 1 )
 
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
+	SetRotation( 0 )
+
 	'arena foreground
-	draw_arena_fg()
+	DrawImage( game.foreground, 0, 0 )
+
 	SetColor( 255, 255, 255 )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
@@ -170,6 +177,7 @@ Function draw_game()
 	If game.human_participation
 		draw_lighting_and_effects()
 	End If
+	
 	SetColor( 255, 255, 255 )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
@@ -185,26 +193,14 @@ Function draw_game()
 	draw_reticle()
 	SetRotation( 0 )
 	
-	If game.human_participation
-		'player tips
-		Local player_msg$ = Null
-		SetImageFont( get_font( "consolas_10" ))
-		If Not game.game_in_progress
-			player_msg = "press enter"
-		End If
-		If player_msg <> Null
-			DrawText_with_outline( player_msg, game.player.pos_x - TextWidth( player_msg )/2, game.player.pos_y + game.player.img.height + 3 )
-		End If
+	If game.human_participation And playing_multiplayer
 		'multiplayer name tags
-		If playing_multiplayer
-			'for the local player and each remote player, draw a name tag
-			draw_nametag( profile.name, game.player.to_cvec() )
-			For Local rp:REMOTE_PLAYER = EachIn remote_players.Values()
-				If rp And rp.loaded
-					draw_nametag( rp.name, rp.avatar.to_cvec() )
-				End If
-			Next
-		End If
+		draw_nametag( profile.name, game.player.to_cvec() )
+		For Local rp:REMOTE_PLAYER = EachIn remote_players.Values()
+			If rp And rp.loaded
+				draw_nametag( rp.name, rp.avatar.to_cvec() )
+			End If
+		Next
 	End If
 
 	SetOrigin( 0, 0 )
@@ -216,15 +212,33 @@ Function draw_game()
 		For Local health_bit:WIDGET = EachIn health_bits
 			health_bit.draw()
 		Next
-		'win message
-		If Not game.game_in_progress And Not game.player.dead()
+		If game.win 'win
 			SetColor( 255, 255, 255 )
 			SetScale( 1, 1 )
 			SetRotation( 0 )
+			SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 1200 ))
 			SetImageFont( get_font( "consolas_bold_50" ))
-			SetAlpha( time_alpha_pct( game.battle_state_toggle_ts, 1200 ))
-			Local win_msg$ = "LEVEL COMPLETE!"
-			DrawText_with_glow( win_msg, window_w/2 - TextWidth(win_msg)/2, 10 )
+			Local m1$ = "LEVEL COMPLETE!"
+			DrawText_with_glow( m1, window_w/2 - TextWidth(m1)/2, 10 )
+			SetImageFont( get_font( "consolas_10" ))
+			Local m2$ = "press any key to continue"
+			DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 100 )
+		Else If game.game_over 'game over
+			'paint it black
+			SetColor( 0, 0, 0 )
+			SetScale( 1, 1 )
+			SetRotation( 0 )
+			SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 3000 ))
+			DrawRect( 0, 0, window_w, window_h )
+			'message
+			SetColor( 255, 0, 0 )
+			SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 800 ))
+			SetImageFont( get_font( "consolas_bold_100" ))
+			Local m1$ = "GAME OVER!"
+			DrawText_with_outline( m1, window_w/2 - TextWidth(m1)/2, 10 )
+			SetImageFont( get_font( "consolas_10" ))
+			Local m2$ = "press any key to continue"
+			DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 150 )
 		End If
 		'help screen
 		If FLAG_draw_help
@@ -243,19 +257,6 @@ Function draw_game()
 		End If
 	End If
 
-	'game over indicator (if game over)
-	If game.game_over
-		SetColor( 0, 0, 0 )
-		SetAlpha( 0.65 )
-		SetScale( 1, 1 )
-		SetRotation( 0 )
-		DrawRect( 0, 0, window_w, window_h )
-		SetImageFont( get_font( "consolas_bold_100" ))
-		Local w% = TextWidth( "GAME OVER" )
-		Local h% = GetImageFont().Height()
-		SetColor( 255, 0, 0 )
-		DrawText_with_outline( "GAME OVER", window_w/2 - w/2, window_h/2 - h/2 )
-	End If
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
@@ -388,33 +389,21 @@ Function draw_menus()
 		End If
 	Next
 End Function
-'______________________________________________________________________________
-Function draw_arena_fg()
-	SetColor( 255, 255, 255 )
-	SetAlpha( 1 )
-	SetScale( 1, 1 )
-	SetRotation( 0 )
-	
-	DrawImage( game.foreground, 0, 0 )
-End Function
 
+'______________________________________________________________________________
 Function draw_lighting_and_effects()
-	'darkness
 	SetScale( 1, 1 )
 	SetRotation( 0 )
 	SetColor( 0, 0, 0 )
-	SetAlpha( 0.6*time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
-	DrawRect( 0,0, game.lev.width,game.lev.height )
-	'spotlight
-	SetBlend( LIGHTBLEND )
-	SetColor( 255, 255, 255 )
-	SetAlpha( 0.35*time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
-	If game.player <> Null
-		SetScale( 1, 1 )
-		DrawImage( get_image( "halo" ), game.player.pos_x, game.player.pos_y )
-	End If
+	SetAlpha( 0.95 * time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
 	
-	SetBlend( ALPHABLEND )
+	Local size% = Max( window_w, window_h)
+	DrawRect( game.player.pos_x - 100 - size, game.player.pos_y - 100 - size, size, 2*size )
+	DrawRect( game.player.pos_x + 100,        game.player.pos_y - 100 - size, size, 2*size )
+	DrawRect( game.player.pos_x - 100,        game.player.pos_y - 100 - size,  200,   size )
+	DrawRect( game.player.pos_x - 100,        game.player.pos_y + 100,         200,   size )
+
+	DrawImage( get_image( "spotlight" ), game.player.pos_x, game.player.pos_y )
 End Function
 
 '______________________________________________________________________________
@@ -579,7 +568,7 @@ Function draw_HUD()
 	DrawText_with_outline( music_str, x, y )
 	y = y2
 	Local img_spkr:TImage
-	If FLAG.bg_music
+	If bg_music_enabled
 		SetAlpha( 1 )
 		img_spkr = img_icon_speaker_on
 	Else
@@ -630,15 +619,6 @@ Function fade_out()
 		Flip()
 	End While
 	Return
-End Function
-'______________________________________________________________________________
-Function generate_level_mini_preview:TImage( lev:LEVEL )
-	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
-	pixmap.ClearPixels( encode_ARGB( 1.0, 64,64,64 ))
-	For Local w:BOX = EachIn lev.get_walls()
-		pixmap.window( w.x, w.y, w.w, w.h ).ClearPixels( encode_ARGB( 1.0, 127,127,127 ))
-	Next
-	Return LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
 End Function
 
 '______________________________________________________________________________

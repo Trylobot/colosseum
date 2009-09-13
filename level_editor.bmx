@@ -26,8 +26,8 @@ Const EDIT_LEVEL_MODE_NONE% = 0
 Const EDIT_LEVEL_MODE_BASIC% = 1
 Const EDIT_LEVEL_MODE_DIVIDERS% = 2
 Const EDIT_LEVEL_MODE_PATH_REGIONS% = 3
-Const EDIT_LEVEL_MODE_SPAWNER_SYSTEM% = 4
-Const EDIT_LEVEL_MODE_SPAWNER_DETAILS% = 5
+Const EDIT_LEVEL_MODE_UNIT_FACTORY_SYSTEM% = 4
+Const EDIT_LEVEL_MODE_UNIT_FACTORY_DETAILS% = 5
 Const EDIT_LEVEL_MODE_IMMEDIATES% = 6
 Const EDIT_LEVEL_MODE_PROPS% = 7
 
@@ -212,8 +212,8 @@ Function level_editor%( lev:LEVEL )
 		If      KeyHit( KEY_1 ) Then mode = EDIT_LEVEL_MODE_BASIC ..
 		Else If KeyHit( KEY_2 ) Then mode = EDIT_LEVEL_MODE_DIVIDERS ..
 		Else If KeyHit( KEY_3 ) Then mode = EDIT_LEVEL_MODE_PATH_REGIONS ..
-		Else If KeyHit( KEY_4 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_SYSTEM ..
-		Else If KeyHit( KEY_5 ) Then mode = EDIT_LEVEL_MODE_SPAWNER_DETAILS ..
+		Else If KeyHit( KEY_4 ) Then mode = EDIT_LEVEL_MODE_UNIT_FACTORY_SYSTEM ..
+		Else If KeyHit( KEY_5 ) Then mode = EDIT_LEVEL_MODE_UNIT_FACTORY_DETAILS ..
 		Else If KeyHit( KEY_6 ) Then mode = EDIT_LEVEL_MODE_IMMEDIATES ..
 		Else If KeyHit( KEY_7 ) Then mode = EDIT_LEVEL_MODE_PROPS
 		
@@ -249,12 +249,13 @@ Function level_editor%( lev:LEVEL )
 			EDIT_LEVEL_MODE_BASIC+":pan "+..
 			EDIT_LEVEL_MODE_DIVIDERS+":split "+..
 			EDIT_LEVEL_MODE_PATH_REGIONS+":fill "+..
-			EDIT_LEVEL_MODE_SPAWNER_SYSTEM+","+EDIT_LEVEL_MODE_SPAWNER_DETAILS+":unit factories",..
+			EDIT_LEVEL_MODE_UNIT_FACTORY_SYSTEM+","+EDIT_LEVEL_MODE_UNIT_FACTORY_DETAILS+":unit factories",..
 			info_x,info_y ); info_y :+ line_h
 		DrawText_with_shadow( ""+..
 			EDIT_LEVEL_MODE_IMMEDIATES+":single units "+..
 			EDIT_LEVEL_MODE_PROPS+":props",..
 			info_x,info_y ); info_y :+ line_h 
+		DrawText_with_shadow( "numpad +/- gridsnap zoom", info_x,info_y ); info_y :+ 2*line_h
 		
 		'mode help (context-specific)
 		Local h% = 0
@@ -273,8 +274,8 @@ Function level_editor%( lev:LEVEL )
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PATH_REGIONS+" -> path regions", info_x,info_y )
 				DrawText_with_shadow( "click block out area", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "right-click to clear area", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-			Case EDIT_LEVEL_MODE_SPAWNER_SYSTEM
-				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_SPAWNER_SYSTEM+" -> unit factory placement", info_x,info_y )
+			Case EDIT_LEVEL_MODE_UNIT_FACTORY_SYSTEM
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_UNIT_FACTORY_SYSTEM+" -> unit factory placement", info_x,info_y )
 				DrawText_with_shadow( "click to paste brush", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "right-click to clear brush", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
@@ -282,13 +283,13 @@ Function level_editor%( lev:LEVEL )
 				DrawText_with_shadow( "ctrl+tab to setup cell for gated-spawner", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "shift+click to set angle", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-			Case EDIT_LEVEL_MODE_SPAWNER_DETAILS
-				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_SPAWNER_DETAILS+" -> unit factory load-out", info_x,info_y )
-				DrawText_with_shadow( "hover to edit nearest spawner", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "up/down to select squad", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "left/right to change enemy type", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "insert/delete to add/remove squad member", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "home/end to change class", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+			Case EDIT_LEVEL_MODE_UNIT_FACTORY_DETAILS
+				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_UNIT_FACTORY_DETAILS+" -> unit factory load-out", info_x,info_y )
+				DrawText_with_shadow( "hover to edit nearest", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "up/down to pick squad", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "left/right to select next unit", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "insert to add a new squad member", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "delete to remove a squad member", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "pgup/pgdn to change alignment", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "+/- to change wave (cascades)", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "enter to edit squad wait time", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
@@ -303,8 +304,7 @@ Function level_editor%( lev:LEVEL )
 				DrawText_with_shadow( "click to add new", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_witH_shadow( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-		End Select; info_y :+ line_h
-		DrawText_with_shadow( "numpad +/- gridsnap zoom", info_x,info_y ); info_y :+ 2*line_h
+		End Select; info_y :+ 1.5*line_h
 		
 		'level name/title
 		SetImageFont( bigger_font )
@@ -442,7 +442,7 @@ Function level_editor%( lev:LEVEL )
 				End If
 				
 			'____________________________________________________________________________________________________
-			Case EDIT_LEVEL_MODE_SPAWNER_SYSTEM
+			Case EDIT_LEVEL_MODE_UNIT_FACTORY_SYSTEM
 				gridsnap_mouse.x = round_to_nearest( mouse.pos_x-x, gridsnap )
 				gridsnap_mouse.y = round_to_nearest( mouse.pos_y-y, gridsnap )
 				new_unit_factory.pos.pos_x = gridsnap_mouse.x
@@ -592,7 +592,7 @@ Function level_editor%( lev:LEVEL )
 				End If
 				
 			'____________________________________________________________________________________________________
-			Case EDIT_LEVEL_MODE_SPAWNER_DETAILS
+			Case EDIT_LEVEL_MODE_UNIT_FACTORY_DETAILS
 				Local closest_uf:UNIT_FACTORY_DATA = Null
 				For Local uf:UNIT_FACTORY_DATA = EachIn lev.unit_factories
 					If closest_uf = Null Or ..
@@ -721,7 +721,8 @@ Function level_editor%( lev:LEVEL )
 						End If
 					End If
 					If KeyHit( KEY_EQUALS )
-						For Local c% = cursor Until uf.wave_index.Length
+						uf.wave_index[cursor] :+ 1
+						For Local c% = cursor + 1 Until uf.wave_index.Length
 							If uf.wave_index[c] < uf.wave_index[cursor]
 								uf.wave_index[c] :+ 1
 							Else
@@ -730,7 +731,8 @@ Function level_editor%( lev:LEVEL )
 						Next
 					End If
 					If KeyHit( KEY_MINUS ) And uf.wave_index[cursor] > 0
-						For Local c% = cursor Until 0 Step -1
+						uf.wave_index[cursor] :- 1
+						For Local c% = cursor - 1 To 0 Step -1
 							If uf.wave_index[c] > uf.wave_index[cursor]
 								uf.wave_index[c] :- 1
 							Else

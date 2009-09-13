@@ -77,6 +77,7 @@ Type ENVIRONMENT
 	Field paused% 'pause flag
 	Field human_participation% 'flag indicating whether any humans will ever participate in this game
 	Field game_in_progress% 'flag indicating the game has begun
+	Field win% 'flag indicating win state (overrides game_over state)
 	Field game_over% 'flag indicating game over state
 	Field level_passed_ts%
 	Field player_in_locker%

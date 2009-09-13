@@ -196,6 +196,7 @@ Function update_flags()
 		End If
 		'enemies all dead
 		If game.battle_in_progress And game.active_spawners( POLITICAL_ALIGNMENT.HOSTILE ) = 0 And game.hostile_agent_list.Count() = 0
+			game.win = True
 			game.game_in_progress = False
 			game.battle_in_progress = False
 			game.battle_state_toggle_ts = now()
@@ -204,9 +205,11 @@ Function update_flags()
 			play_sound( get_sound( "victory" ))
 		End If
 		'player death
-		If game.player.dead() 'player just died? (omgwtf)
-			game.game_in_progress = False
+		If Not game.win And game.player.dead() 'player just died? (omgwtf)
 			game.game_over = True
+			game.game_in_progress = False
+			game.battle_in_progress = False
+			game.battle_state_toggle_ts = now()
 			FLAG.damage_incurred = True
 			FLAG.engine_running = False
 		End If

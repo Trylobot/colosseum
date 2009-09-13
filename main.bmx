@@ -36,8 +36,6 @@ SetAudioDriver( "FreeAudio DirectSound" )
 
 'defaults
 apply_default_settings()
-FLAG.in_menu = True
-FLAG.bg_music = True
 
 'data directory enforce
 create_dirs()
@@ -69,6 +67,7 @@ init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 debug_with_graphics()
 ?
 
+FLAG.in_menu = True
 '////////////////////////////////////////////////////////////////////////////////
 'MAIN
 Repeat

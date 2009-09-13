@@ -11,6 +11,7 @@ Global window_h%
 Global fullscreen%
 Global bit_depth%
 Global refresh_rate%
+Global bg_music_enabled%
 Global show_ai_menu_game%
 Global active_particle_limit%
 
@@ -23,6 +24,7 @@ Function apply_default_settings()
 	fullscreen = False
 	bit_depth = 32
 	refresh_rate = 60
+	bg_music_enabled = True
 	show_ai_menu_game = True
 	active_particle_limit = 1000
 	

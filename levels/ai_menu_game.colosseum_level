@@ -6,7 +6,7 @@
 	col_count: 18,
 	hue: 210,
 	saturation: 0.15,
-	luminosity: 0.35,
+	luminosity: 0.175,
 	horizontal_divs: [
 		0,
 		10,

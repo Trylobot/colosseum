@@ -119,8 +119,8 @@ Type SPAWN_CONTROLLER
 			If counter < uf.size
 				'if it is time to spawn this unit_factory's current squad
 				If now() - ts >= uf.delay_time[cur.row]
-					'if this squad has just been started, or the last spawned enemy is away, dead or null
-					If cur.col = 0 Or last = Null Or last.dist_to( uf.pos ) >= SPAWN_POINT_POLITE_DISTANCE Or last.dead()
+					'if the last spawned enemy (if any) is far away or dead
+					If last = Null Or last.dist_to( uf.pos ) >= SPAWN_POINT_POLITE_DISTANCE Or last.dead()
 						'Local brain:CONTROL_BRAIN = spawn_unit( uf.squads[cur.row][cur.col], uf.alignment, uf.pos )
 						'last_spawned[i] = brain.avatar
 						spawn_request_list.AddLast( Create_SPAWN_REQUEST( uf.squads[cur.row][cur.col], uf.alignment, uf.pos, i ))

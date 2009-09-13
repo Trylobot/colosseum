@@ -13,7 +13,6 @@ Type FLAG
 	Global chat_mode%
 	Global instaquit_plz%
 	'audio
-	Global bg_music%
 	Global engine_ignition%
 	Global engine_running%
 	'input bleed prevention

@@ -17,6 +17,7 @@ Function init_graphics()
 		Graphics( window_w, window_h, bit_depth, refresh_rate, GRAPHICS_BACKBUFFER )
 	End If
 	SetClsColor( 0, 0, 0 )
+	'SetClsColor( 127, 127, 127 )
 	Cls()
   SetBlend( ALPHABLEND )
 	?Win32

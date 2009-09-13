@@ -5,6 +5,7 @@ Rem
 EndRem
 SuperStrict
 Import "flags.bmx"
+Import "settings.bmx"
 Import "misc.bmx"
 Import "base_data.bmx"
 
@@ -35,7 +36,7 @@ Function play_all_audio()
 		CueSound( get_sound( "bgm" ), bg_music )
 		bg_music.SetVolume( 0.5 )
 	End If
-	If FLAG.bg_music
+	If bg_music_enabled
 		ResumeChannel( bg_music )
 	Else 'Not FLAG_bg_music_on
 		PauseChannel( bg_music )

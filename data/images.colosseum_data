@@ -399,6 +399,16 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/spotlight.png",
+			handle_x: 100.0,
+			handle_y: 100.0,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/spark.png",
 			handle_x: 0.5,
 			handle_y: 2.5,
