@@ -339,6 +339,7 @@ Type COMPLEX_AGENT Extends AGENT
 			DrawImage( img, pos_x, pos_y )
 			'chassis lighting effect
 			If lightmap
+				SetBlend( LIGHTBLEND )
 				Local separation# = 360.0 / lightmap.frames.Length
 				For Local i% = 0 Until lightmap.frames.Length
 					Local diff# = Abs( ang_wrap( ang - ((i - 1) * separation )))
@@ -347,6 +348,7 @@ Type COMPLEX_AGENT Extends AGENT
 						DrawImage( lightmap, pos_x, pos_y, i )
 					End If
 				Next
+				SetBlend( ALPHABLEND )
 			End If
 		End If
 		'widgets in front of
