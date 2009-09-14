@@ -141,6 +141,14 @@ Function str_repeat$( str$, count% )
 	Return result
 End Function
 
+Function array_append%[]( src%[], value% )
+	If src
+		Return insert_into_array( value, src, (src.Length - 1) )
+	Else
+		Return [ value ]
+	End If
+End Function
+
 Function insert_into_array%[]( value%, src%[], insert_after% ) 'inserts immediately after index
 	Local arr%[] = New Int[src.Length+1]
 	'left of index (including index)

@@ -50,8 +50,10 @@ Type ENVIRONMENT
 	Field pathing:PATHING_STRUCTURE 'pathfinding object for this level
 	Field walls:TList 'TList<BOX> contains all of the wall rectangles of the level
 	
-	Field spawn:SPAWN_CONTROLLER
-	Field spawner_door:DOOR[] 'for each spawner, a door (potentially)
+	Field friendly_spawner:SPAWN_CONTROLLER
+	Field friendly_doors:DOOR[]
+	Field hostile_spawner:SPAWN_CONTROLLER
+	Field hostile_doors:DOOR[]
 	
 	Field particle_list_background:TList 'TList<PARTICLE>
 	Field particle_list_foreground:TList 'TList<PARTICLE>
@@ -69,9 +71,7 @@ Type ENVIRONMENT
 	Field pickup_list:TList 'TList<PICKUP>
 	Field control_brain_list:TList 'TList<CONTROL_BRAIN>
 	Field AI_spawners:TList 'TList<CONTROL_BRAIN>
-	Field friendly_door_list:TList 'TList<DOOR>
-	Field hostile_door_list:TList 'TList<DOOR>
-	Field door_lists:TList 'TList<TList<DOOR>>
+	Field doors:TList 'TList<DOOR>
 	
 	Field player_kills_at_start% 'kill count at level initialization
 	Field paused% 'pause flag
@@ -118,12 +118,8 @@ Type ENVIRONMENT
 			agent_lists.AddLast( prop_list )
 		pickup_list = CreateList()
 		control_brain_list = CreateList()
-		friendly_door_list = CreateList()
-		hostile_door_list = CreateList()
-		door_lists = CreateList()
-			door_lists.addlast( friendly_door_list )
-			door_lists.addlast( hostile_door_list )
 		AI_spawners = CreateList()
+		doors = CreateList()
 	End Method
 	
 	Method clear()
@@ -140,8 +136,7 @@ Type ENVIRONMENT
 		prop_list.Clear()
 		pickup_list.Clear()
 		control_brain_list.Clear()
-		friendly_door_list.Clear()
-		hostile_door_list.Clear()
+		doors.Clear()
 		
 		battle_in_progress = False
 		game_in_progress = False
@@ -179,7 +174,7 @@ Type ENVIRONMENT
 			prop.move_to( pd.pos )
 		Next
 		'spawning system
-		spawn = Create_SPAWN_CONTROLLER( lev.unit_factories, lev.immediate_units )
+		initialize_spawning_system()
 		reset_spawners()
 		'kill tracker
 		If human_participation And profile
@@ -206,73 +201,82 @@ Type ENVIRONMENT
 		End If
 	End Method
 	
-	Method add_door:DOOR( p:POINT, alignment% )
-		Local d:DOOR = Create_DOOR( p )
-		d.manage( political_door_list( alignment ))
-		Return d
+	Method initialize_spawning_system()
+		'spawners
+		friendly_spawner = Create_SPAWN_CONTROLLER( lev.unit_factories_aligned( POLITICAL_ALIGNMENT.FRIENDLY ), lev.immediate_units_aligned( POLITICAL_ALIGNMENT.FRIENDLY ))
+		hostile_spawner = Create_SPAWN_CONTROLLER( hostile_factories, hostile_immediates )
+		'doors
+		friendly_doors = New DOOR[friendly_spawner.unit_factories.Length]
+		hostile_doors = New DOOR[hostile_spawner.unit_factories.Length]
+		For Local i% = 0 Until friendly_factories.Length
+			friendly_doors[i] = Create_DOOR( friendly_spawner.unit_factories[i].pos )
+			friendly_doors[i].manage( doors )
+		Next
+		For Local i% = 0 Until hostile_factories.Length
+			hostile_doors[i] = Create_DOOR( hostile_spawner.unit_factories[i].pos )
+			hostile_doors[i].manage( doors )
+		Next
 	End Method
-
+	
 	'this method needs to be split into two logical chunks
 	'  first-time initialization
 	'  political-alignment spawner reset
 	Method reset_spawners( alignment% = POLITICAL_ALIGNMENT.NONE, omit_turrets% = False )
-		If alignment = POLITICAL_ALIGNMENT.NONE
-			'gated factory doors
-			spawner_door = New DOOR[spawn.unit_factories.Length]
-			For Local i% = 0 Until spawn.unit_factories.Length
-				spawner_door[i] = add_door( spawn.unit_factories[i].pos, spawn.unit_factories[i].alignment )
-			Next
-		Else 'alignment <> POLITICAL_ALIGNMENT.NONE
-			'controller
-			spawn.reset( alignment, omit_turrets )
-		End If
+		Select alignment
+			Case POLITICAL_ALIGNMENT.FRIENDLY
+				friendly_spawner.reset( omit_turrets )
+			Case POLITICAL_ALIGNMENT.HOSTILE
+				hostile_spawner.reset( omit_turrets )
+		End Select
 	End Method
 	
 	Method update_spawning_system()
-		'spawn controller update
-		spawn.update()
+		'spawn controllers update
+		friendly_spawner.update()
+		hostile_spawner.update()
 		'spawn request processing
 		Local cb:CONTROL_BRAIN
-		For Local req:SPAWN_REQUEST = EachIn spawn.spawn_request_list
+		'friendly
+		For Local req:SPAWN_REQUEST = EachIn friendly_spawner.spawn_request_list
 			cb = spawn_unit_from_request( req )
 			'spawn request last-spawned callback update (hack that prevents spawning flash-mobs of baddies)
 			'does not apply to enemies spawned from a carrier
 			If cb And cb.avatar And req.source_spawner_index >= 0
-				spawn.last_spawned[req.source_spawner_index] = cb.avatar
+				friendly_spawner.last_spawned[req.source_spawner_index] = cb.avatar
 			End If
 		Next
-		spawn.spawn_request_list.Clear()
-		'door activation
-		Rem
-		'currently handled by update_flags() in update.bmx 'ugh!
-		For Local d% = 0 Until spawn.active_unit_factories.Length
-			If spawner_door[d]
-				If spawn.active_unit_factories[d] ..
-				And spawner_door[d].status = DOOR.DOOR_CLOSED
-					'door should be open
-					spawner_door[d].open()
-				Else If Not spawn.active_unit_factories[d] ..
-				And spawner_door[d].status = DOOR.DOOR_OPEN
-					'door should be closed
-					'might want to delay this a bit
-					spawner_door[d].close()
-				End If
+		friendly_spawner.spawn_request_list.Clear()
+		'hostile
+		For Local req:SPAWN_REQUEST = EachIn hostile_spawner.spawn_request_list
+			cb = spawn_unit_from_request( req )
+			'spawn request last-spawned callback update (hack that prevents spawning flash-mobs of baddies)
+			'does not apply to enemies spawned from a carrier
+			If cb And cb.avatar And req.source_spawner_index >= 0
+				hostile_spawner.last_spawned[req.source_spawner_index] = cb.avatar
 			End If
 		Next
-		End Rem
+		hostile_spawner.spawn_request_list.Clear()
 	End Method
 	
 	Method active_spawners%( alignment% )
+		Local spawn:SPAWN_CONTROLLER
+		Select alignment
+			Case POLITICAL_ALIGNMENT.FRIENDLY
+				spawn = friendly_spawner
+			Case POLITICAL_ALIGNMENT.HOSTILE
+				spawn = hostile_spawner
+		End Select
+		
 		Local count% = 0
 		'active unit factories
 		For Local i% = 0 Until spawn.active_unit_factories.Length
-			If spawn.active_unit_factories[i] And spawn.unit_factories[i].alignment = alignment
+			If spawn.active_unit_factories[i]
 				count :+ 1
 			End If
 		Next
 		'unspawned immediate units
 		For Local i% = 0 Until spawn.immediate_units.Length
-			If spawn.unspawned_immediate_units[i] And spawn.immediate_units[i].alignment = alignment
+			If spawn.unspawned_immediate_units[i]
 				count :+ 1
 			End If
 		Next
@@ -303,7 +307,6 @@ Type ENVIRONMENT
 			pathing, allied_agent_list, rival_agent_list, ..
 			walls,, 10, 1000, 1000 )
 		brain.manage( control_brain_list )
-		
 		'///////////////////////////////////////////////////////////////////////////
 		'the following should come from an emitter event attached to the agent
 		Local pt:POINT = Create_POINT( unit.pos_x, unit.pos_y )
@@ -318,7 +321,6 @@ Type ENVIRONMENT
 		part.manage( particle_list_foreground )
 		part.parent = pt
 		'///////////////////////////////////////////////////////////////////////////
-		
 		Return brain
 	End Method
 	
@@ -466,12 +468,12 @@ Type ENVIRONMENT
 		End If
 	End Method
 	
-	Method political_door_list:TList( alignment% )
+	Method political_door_list:DOOR[]( alignment% )
 		Select alignment
 			Case POLITICAL_ALIGNMENT.FRIENDLY
-				Return friendly_door_list
+				Return friendly_doors
 			Case POLITICAL_ALIGNMENT.HOSTILE
-				Return hostile_door_list
+				Return hostile_doors
 		End Select
 		Return Null
 	End Method

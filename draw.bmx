@@ -56,10 +56,10 @@ Function draw_all_graphics()
 	
 	'menus and such
 	If FLAG.in_menu
-		'dimmer
-		SetColor( 0, 0, 0 )
-		SetAlpha( 0.5 )
-		DrawRect( 0, 0, window_w, window_h )
+		''dimmer
+		'SetColor( 0, 0, 0 )
+		'SetAlpha( 0.5 )
+		'DrawRect( 0, 0, window_w, window_h )
 		
 		If FLAG.in_menu
 			draw_main_screen()
@@ -106,10 +106,8 @@ Function draw_game()
 	Next
 	
 	'door backgrounds
-	For Local list:TList = EachIn game.door_lists
-		For Local d:DOOR = EachIn list
-			d.draw_bg()
-		Next
+	For Local d:DOOR = EachIn game.doors
+		d.draw_bg()
 	Next
 	SetAlpha( 1 )
 	SetScale( 1, 1 )
@@ -168,10 +166,8 @@ Function draw_game()
 	Next
 
 	'door foregrounds
-	For Local list:TList = EachIn game.door_lists
-		For Local d:DOOR = EachIn list
-			d.draw_fg()
-		Next
+	For Local d:DOOR = EachIn game.doors
+		d.draw_fg()
 	Next
 
 	If game.human_participation
@@ -328,9 +324,9 @@ Function draw_menus()
 					blink = False
 				End If
 			End If
-			'/////////////////////////
+			'////////////////////////////////////////////
 			m.draw( mouse, dragging_scrollbar,,, blink )
-			'/////////////////////////
+			'////////////////////////////////////////////
 			'shop decorations
 			If m.menu_type = MENU.VERTICAL_LIST_WITH_INVENTORY
 				'draw the object to which the focused menu option refers, off to the side a bit.

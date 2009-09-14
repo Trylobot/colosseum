@@ -35,9 +35,10 @@ Type SPAWN_CONTROLLER
 	Field immediate_units:ENTITY_DATA[]
 	Field unspawned_immediate_units%[] 'for ENVIRONMENT's information
 
-	Field current_wave%
+	Field current_wave% 'to be controlled by environment; incremented
 	Field squad_wave%[]
 	Field squad_owner%[]
+	Field waves%[][]
 
 	Field spawn_request_list:TList 'TList<SPAWN_REQUEST> to be processed by ENVIRONMENT
 	
@@ -69,36 +70,40 @@ Type SPAWN_CONTROLLER
 		'waves
 		squad_owner = New Int[squad_count]
 		squad_wave = New Int[squad_count]
+		Local wave_max% = 0
 		Local sq% = 0
 		For Local i% = 0 Until size
 			For Local j% = 0 Until unit_factories[i].count_squads()
+				Local w% = unit_factories[i].wave_index[j]
 				squad_owner[sq] = i
-				squad_wave[sq] = unit_factories[i].wave_index[j]
+				squad_wave[sq] = w
+				If w > wave_max Then wave_max = w
 				sq :+ 1
 			Next
 		Next
+		waves = New Int[][wave_max + 1]
+		Local uf%, w%
+		For Local sq% = 0 Until squad_count
+			w = squad_wave[sq]
+			uf = squad_owner[sq]
+			waves[w] = array_append( waves[w], uf )
+		Next
 	End Method
 
-	Method reset( alignment%, omit_immediates% = False )
-		If alignment <> POLITICAL_ALIGNMENT.NONE
-			'spawn queues and tracking info
-			For Local i% = 0 Until unit_factories.Length
-				If unit_factories[i].alignment = alignment
-					unit_factory_cursor[i] = New CELL
-					spawn_ts[i] = now()
-					last_spawned[i] = Null
-					spawn_counter[i] = 0
-					active_unit_factories[i] = True
-				End If
+	Method reset( omit_immediates% = False )
+		'spawn queues and tracking info
+		For Local i% = 0 Until unit_factories.Length
+			unit_factory_cursor[i] = New CELL
+			spawn_ts[i] = now()
+			last_spawned[i] = Null
+			spawn_counter[i] = 0
+			active_unit_factories[i] = True
+		Next
+		'immediates
+		If Not omit_immediates
+			For Local i% = 0 Until unspawned_immediate_units.Length
+				unspawned_immediate_units[i] = True
 			Next
-			'immediates
-			If Not omit_immediates
-				For Local i% = 0 Until unspawned_immediate_units.Length
-					If immediate_units[i].alignment = alignment
-						unspawned_immediate_units[i] = True
-					End If
-				Next
-			End If
 		End If
 	End Method
 	
@@ -154,6 +159,10 @@ Type SPAWN_CONTROLLER
 				spawn_request_list.AddLast( Create_SPAWN_REQUEST( u.archetype, u.alignment, u.pos ))
 			End If
 		Next
+	End Method
+	
+	Method increment_wave()
+		
 	End Method
 	
 End Type

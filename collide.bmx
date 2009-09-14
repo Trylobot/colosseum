@@ -95,20 +95,18 @@ Function collide_all_objects()
 		Next
 		
 		'collisions between {doors} and {agents|projectiles}
-		For Local cur_door_list:TList = EachIn game.door_lists
-			For Local d:DOOR = EachIn cur_door_list
-				For Local slider:WIDGET = EachIn d.all_sliders
-					SetRotation( slider.get_ang() )
-					result = CollideImage( slider.img, slider.get_x(), slider.get_y(), 0, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
-					For ag = EachIn result
-						'COLLISION! between {ag} and {door}
-						collision_agent_door( ag, slider )
-					Next
-					result = CollideImage( slider.img, slider.get_x(), slider.get_y(), 0, PROJECTILE_COLLISION_LAYER, 0, slider )
-					For proj = EachIn result
-						'COLLISION! between {proj} and {door}
-						collision_projectile_door( proj, slider )
-					Next
+		For Local d:DOOR = EachIn game.doors
+			For Local slider:WIDGET = EachIn d.all_sliders
+				SetRotation( slider.get_ang() )
+				result = CollideImage( slider.img, slider.get_x(), slider.get_y(), 0, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
+				For ag = EachIn result
+					'COLLISION! between {ag} and {door}
+					collision_agent_door( ag, slider )
+				Next
+				result = CollideImage( slider.img, slider.get_x(), slider.get_y(), 0, PROJECTILE_COLLISION_LAYER, 0, slider )
+				For proj = EachIn result
+					'COLLISION! between {proj} and {door}
+					collision_projectile_door( proj, slider )
 				Next
 			Next
 		Next

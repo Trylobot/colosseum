@@ -5,14 +5,12 @@ Rem
 EndRem
 'main.bmx --> Include "debug.bmx"
 
-'______________________________________________________________________________
+'//////////////////////////////////////////////////////////////////////////////
 'new stuff to be tested or fixed
+
+
 '//////////////////////////////////////////////////////////////////////////////
 
-
-
-'//////////////////////////////////////////////////////////////////////////////
-'______________________________________________________________________________
 'debug system infrastructure & hooks
 Global debug_origin:cVEC = Create_cVEC( 0, 0 )
 Global real_origin:cVEC = Create_cVEC( 0, 0 )
@@ -39,6 +37,7 @@ Function debug_no_graphics()
 	'debug_set_range()
 	'debug_remove_from_array()
 	'debug_insert_into_array()
+	'debug_array_append
 	'End
 End Function
 

@@ -304,6 +304,36 @@ Type LEVEL Extends MANAGED_OBJECT
 		Next
 	End Method
 	
+	Method unit_factories_aligned:UNIT_FACTORY_DATA[]( align% )
+		'factories
+		Local friendly_factories_list:TList = CreateList()
+		Local hostile_factories_list:TList = CreateList()
+		For Local uf% = 0 Until lev.unit_factories.Length
+			Select lev.unit_factories[uf].alignment
+				Case POLITICAL_ALIGNMENT.FRIENDLY
+					friendly_factories_list.AddLast( lev.unit_factories[uf] )
+				Case POLITICAL_ALIGNMENT.HOSTILE
+					hostile_factories_list.AddLast( lev.unit_factories[uf] )
+			End Select
+		Next
+		Local friendly_factories:UNIT_FACTORY_DATA[] = New UNIT_FACTORY_DATA[friendly_factories_list.Count()]
+		Local hostile_factories:UNIT_FACTORY_DATA[] = New UNIT_FACTORY_DATA[hostile_factories_list.Count()]
+		For Local 
+		'immediates
+		Local friendly_immediates_list:TList = CreateList()
+		Local hostile_immediates_list:TList = CreateList()
+		For Local i% = 0 Until lev.immediate_units.Length
+			Select lev.immediate_units[i].alignment
+				Case POLITICAL_ALIGNMENT.FRIENDLY
+					friendly_immediates_list.AddLast( lev.immediate_units[i] )
+				Case POLITICAL_ALIGNMENT.HOSTILE
+					hostile_immediates_list.AddLast( lev.immediate_units[i] )
+			End Select
+		Next
+		Local friendly_immediates:ENTITY_DATA[] = New ENTITY_DATA[friendly_immediates_list.Count()]
+		Local hostile_immediates:ENTITY_DATA[] = New ENTITY_DATA[hostile_immediates_list.Count()]
+	End Method
+	
 	Method add_immediate_unit( d:ENTITY_DATA )
 		If immediate_units = Null
 			immediate_units = New ENTITY_DATA[1]
@@ -322,6 +352,10 @@ Type LEVEL Extends MANAGED_OBJECT
 				Exit
 			End If
 		Next
+	End Method
+	
+	Method immediate_units_aligned:ENTITY_DATA[]( align% )
+		
 	End Method
 	
 	Method add_prop( d:ENTITY_DATA )

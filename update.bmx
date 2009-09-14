@@ -128,10 +128,8 @@ Function update_all_objects()
 			w.update()
 		Next
 		'doors (really just special environmental widgets)
-		For Local list:TList = EachIn game.door_lists
-			For Local d:DOOR = EachIn list
-				d.update()
-			Next
+		For Local d:DOOR = EachIn game.doors
+			d.update()
 		Next
 		'health bits
 		For Local w:WIDGET = EachIn health_bits
