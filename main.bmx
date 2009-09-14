@@ -32,7 +32,6 @@ Const version_minor%    = 4
 Const version_revision% = 0
 '////////////////////////////
 SetGraphicsDriver GLMax2DDriver()
-SetAudioDriver( "FreeAudio DirectSound" )
 
 'defaults
 apply_default_settings()
@@ -52,7 +51,9 @@ menu_command( COMMAND.LOAD_GAME, autosave_profile_path )
 'window title
 AppTitle = "Colosseum " + version_major + "." + version_minor + "." + version_revision
 ?Debug
-AppTitle :+ " DEBUG"; debug_init(); debug_no_graphics()
+AppTitle :+ " DEBUG"
+debug_init()
+debug_no_graphics()
 ?
 
 'graphical window

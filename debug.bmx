@@ -8,6 +8,12 @@ EndRem
 '//////////////////////////////////////////////////////////////////////////////
 'new stuff to be tested or fixed
 
+Function debug_audio_drivers()
+	DebugLog " AudioDrivers() -->"
+	For Local drv$ = EachIn AudioDrivers()
+		DebugLog "    " + drv
+	Next
+End Function
 
 '//////////////////////////////////////////////////////////////////////////////
 
@@ -29,6 +35,7 @@ Global spawn_agent:COMPLEX_AGENT
 Global cb:CONTROL_BRAIN = Null
 
 Function debug_init()
+	'debug_audio_drivers()
 	'debug_get_keys()
 	DebugLog( "_____________________________________________________" )
 End Function

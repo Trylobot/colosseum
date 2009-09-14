@@ -277,6 +277,10 @@ Function load_settings%()
 		fullscreen = json.GetBoolean( "fullscreen" )
 		bit_depth = json.GetNumber( "bit_depth" )
 		refresh_rate = json.GetNumber( "refresh_rate" )
+		If AudioDriverExists( json.GetString( "audio_driver" ))
+			audio_driver = json.GetString( "audio_driver" )
+			SetAudioDriver( audio_driver )
+		End If
 		bg_music_enabled = json.GetBoolean( "bg_music_enabled" )
 		show_ai_menu_game = json.GetBoolean( "show_ai_menu_game" )
 		active_particle_limit = json.GetNumber( "active_particle_limit" )
@@ -295,6 +299,11 @@ Function save_settings%()
 	this_json.SetByName( "fullscreen", TJSONBoolean.Create( fullscreen ))
 	this_json.SetByName( "bit_depth", TJSONNumber.Create( bit_depth ))
 	this_json.SetByName( "refresh_rate", TJSONNumber.Create( refresh_rate ))
+	If audio_driver
+		this_json.SetByName( "audio_driver", TJSONString.Create( audio_driver ))
+	Else
+		this_json.SetByName( "audio_driver", TJSON.NIL )
+	End If
 	this_json.SetByName( "bg_music_enabled", TJSONBoolean.Create( bg_music_enabled ))
 	this_json.SetByName( "show_ai_menu_game", TJSONBoolean.Create( show_ai_menu_game ))
 	this_json.SetByName( "active_particle_limit", TJSONNumber.Create( active_particle_limit ))

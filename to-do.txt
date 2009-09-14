@@ -1,4 +1,9 @@
 bugs________________________________________
+	* audio driver
+		- setting the audio driver mid-game has a few ill effects.
+		  it would seem channels that have been previously allocated will need
+			to be re-allocated, so wrap that in a function, or something. maybe in audio.bmx
+	
 	* collisions are buggy
 		- Agent/Agent collisions don't seem to take mass into account (enough)
 		- Agent/Door collisions produce a "grabbing" effect that is very distracting
