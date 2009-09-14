@@ -203,16 +203,20 @@ Type ENVIRONMENT
 	
 	Method initialize_spawning_system()
 		'spawners
-		friendly_spawner = Create_SPAWN_CONTROLLER( lev.unit_factories_aligned( POLITICAL_ALIGNMENT.FRIENDLY ), lev.immediate_units_aligned( POLITICAL_ALIGNMENT.FRIENDLY ))
-		hostile_spawner = Create_SPAWN_CONTROLLER( hostile_factories, hostile_immediates )
+		friendly_spawner = Create_SPAWN_CONTROLLER( ..
+			lev.unit_factories_aligned( POLITICAL_ALIGNMENT.FRIENDLY ), ..
+			lev.immediate_units_aligned( POLITICAL_ALIGNMENT.FRIENDLY ))
+		hostile_spawner = Create_SPAWN_CONTROLLER( ..
+			lev.unit_factories_aligned( POLITICAL_ALIGNMENT.HOSTILE ), ..
+			lev.immediate_units_aligned( POLITICAL_ALIGNMENT.HOSTILE ))
 		'doors
 		friendly_doors = New DOOR[friendly_spawner.unit_factories.Length]
 		hostile_doors = New DOOR[hostile_spawner.unit_factories.Length]
-		For Local i% = 0 Until friendly_factories.Length
+		For Local i% = 0 Until friendly_spawner.unit_factories.Length
 			friendly_doors[i] = Create_DOOR( friendly_spawner.unit_factories[i].pos )
 			friendly_doors[i].manage( doors )
 		Next
-		For Local i% = 0 Until hostile_factories.Length
+		For Local i% = 0 Until hostile_spawner.unit_factories.Length
 			hostile_doors[i] = Create_DOOR( hostile_spawner.unit_factories[i].pos )
 			hostile_doors[i].manage( doors )
 		Next
