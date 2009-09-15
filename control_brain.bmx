@@ -20,6 +20,8 @@ Import "flags.bmx"
 Import "cell.bmx"
 
 '______________________________________________________________________________
+Const low_speed_waypoint_radius# = 100.0
+
 Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
 	Return Create_CONTROL_BRAIN( avatar, CONTROL_BRAIN.CONTROL_TYPE_HUMAN,,,,, profile.input_method )
 End Function
@@ -221,14 +223,18 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		Local diff_mag# = Abs( diff )
 		Local max_ang_vel# = avatar.turning_force.magnitude_max / avatar.mass
 		If diff_mag > 20.0 * max_ang_vel
-			avatar.drive( 0.3333 )
+			If dist_to_waypoint < low_speed_waypoint_radius
+				avatar.drive( 0.40 )
+			Else
+				avatar.drive( 0.80 )
+			End If
 			If diff < 0
 				avatar.turn( -1.0 )
 			Else 'diff > 0
 				avatar.turn( 1.0 )
 			End If
 		Else 'diff_mag <= 5.0 * max_ang_vel
-			avatar.drive( 1.0 )
+			avatar.drive( 1.00 )
 			If diff < 0
 				avatar.turn( -diff_mag /( 20.0 * max_ang_vel ))
 			Else 'diff > 0

@@ -6,6 +6,14 @@
 '###############################################################################
 '###############################################################################
 
+Function debug_audio_drivers()
+	DebugLog " AudioDrivers() -->"
+	For Local drv$ = EachIn AudioDrivers()
+		DebugLog "    " + drv
+	Next
+End Function
+
+
 Function debug_array_append()
 	Local a%[] = [ 0, 1, 2, 3 ]
 	print_array( "a ", a )

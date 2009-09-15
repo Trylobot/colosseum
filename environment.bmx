@@ -246,7 +246,7 @@ Type ENVIRONMENT
 			'spawn request last-spawned callback update (hack that prevents spawning flash-mobs of baddies)
 			'does not apply to enemies spawned from a carrier
 			If cb And cb.avatar And req.source_spawner_index >= 0
-				friendly_spawner.last_spawned[req.source_spawner_index] = cb.avatar
+				friendly_spawner.active_children[req.source_spawner_index].AddLast( cb.avatar )
 			End If
 		Next
 		friendly_spawner.spawn_request_list.Clear()
@@ -256,7 +256,7 @@ Type ENVIRONMENT
 			'spawn request last-spawned callback update (hack that prevents spawning flash-mobs of baddies)
 			'does not apply to enemies spawned from a carrier
 			If cb And cb.avatar And req.source_spawner_index >= 0
-				hostile_spawner.last_spawned[req.source_spawner_index] = cb.avatar
+				hostile_spawner.active_children[req.source_spawner_index].AddLast( cb.avatar )
 			End If
 		Next
 		hostile_spawner.spawn_request_list.Clear()

@@ -8,12 +8,7 @@ EndRem
 '//////////////////////////////////////////////////////////////////////////////
 'new stuff to be tested or fixed
 
-Function debug_audio_drivers()
-	DebugLog " AudioDrivers() -->"
-	For Local drv$ = EachIn AudioDrivers()
-		DebugLog "    " + drv
-	Next
-End Function
+
 
 '//////////////////////////////////////////////////////////////////////////////
 
@@ -98,7 +93,8 @@ Function debug_overlay()
 	sx = 2; sy = 2
 	
 	'basic info 
-	'SetColor( 255, 255, 255 )
+	SetColor( 255, 255, 255 )
+	debug_drawtext( "current wave " + game.hostile_spawner.current_wave )
 	'debug_drawtext( "       active_particle_limit "+active_particle_limit )
 	'debug_drawtext( "game.retained_particle_count "+game.retained_particle_count )
 	'SetColor( 127, 127, 255 )
@@ -239,10 +235,15 @@ Function debug_overlay()
 	If cb <> Null And cb.managed()
 		
 		'manipulate by keyboard
-		If KeyHit( KEY_T )
-			game.player.unmanage()
+		If KeyHit( KEY_T ) And game.human_participation
+			If game.player_brain
+				game.player_brain.unmanage()
+			End If
+			If game.player
+				game.player.unmanage()
+			End If
+			game.player_brain = create_player_brain( cb.avatar )
 			game.player = cb.avatar
-			game.player_brain.avatar = game.player
 			cb.unmanage()
 		End If
 		If KeyHit( KEY_X )
@@ -277,7 +278,7 @@ Function debug_overlay()
 		
 		'pathing
 		If cb.path <> Null And Not cb.path.IsEmpty()
-			debug_drawtext( "path to target displayed" )
+			debug_drawtext( "waypoint -> " + cb.dist_to_waypoint )
 			'start and goal
 			Local cell_size% = 8
 			Local START:cVEC = cVEC( cb.path.First() )
@@ -293,8 +294,6 @@ Function debug_overlay()
 				If v0 <> Null Then DrawLine( v0.x,v0.y, v1.x,v1.y ) Else v0 = New cVEC
 				v0.x = v1.x; v0.y = v1.y
 			Next
-		Else
-			debug_drawtext( "no path" )
 		End If
 		
 		'friendly fire
