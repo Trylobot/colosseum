@@ -100,28 +100,35 @@ Type SPAWN_CONTROLLER
 		Local last:AGENT
 		Local counter%
 		For Local i% = 0 Until unit_factories.Length
+			'be sure this factory is a "real" factory
+			uf = unit_factories[i]
+			If Not uf.squads Then Continue
 			'prune dead children
 			children = active_children[i]
 			For Local child:AGENT = EachIn children
 				If child.dead() Then children.Remove( child )
 			Next
-			uf = unit_factories[i]
-			If Not uf.squads Then Continue
 			cur = unit_factory_cursor[i]
 			ts = spawn_ts[i]
-			If Not children.IsEmpty() Then last = AGENT( children.Last() ) Else last = Null
+			If Not children.IsEmpty()
+				last = AGENT( children.Last() )
+			Else
+				last = Null
+			End If
 			counter = spawn_counter[i]
-			'if this unit_factory has more enemies to spawn
-			If counter < uf.size
+			'if this factory has more enemies to spawn
+			If counter < uf.wave_unit_count( current_wave )
 				'if it is time to spawn this unit_factory's current squad
 				If uf.wave_index[cur.row] = current_wave ..
 				And now() - ts >= uf.delay_time[cur.row]
 					'if the last spawned enemy (if any) is far away or dead
-					If last = Null Or last.dist_to( uf.pos ) >= SPAWN_POINT_POLITE_DISTANCE Or last.dead()
+					If Not last Or last.dead() Or last.dist_to( uf.pos ) >= SPAWN_POINT_POLITE_DISTANCE
 						'Local brain:CONTROL_BRAIN = spawn_unit( uf.squads[cur.row][cur.col], uf.alignment, uf.pos )
 						'last_spawned[i] = brain.avatar
+						'////////////////////////////////////////////////////////////////////////////////////////////////////////
 						spawn_request_list.AddLast( Create_SPAWN_REQUEST( uf.squads[cur.row][cur.col], uf.alignment, uf.pos, i ))
-						'various counters
+						'////////////////////////////////////////////////////////////////////////////////////////////////////////
+						'counter/cursor maintenance
 						spawn_counter[i] :+ 1
 						cur.col :+ 1
 						'if that last guy was the last squadmember of the current squad
@@ -167,6 +174,10 @@ Type SPAWN_CONTROLLER
 			Next
 			If wave_concluded 'all factories are finished with this wave
 				current_wave :+ 1
+				'reset counters
+				For Local i% = 0 Until unit_factories.Length
+					spawn_counter[i] = 0
+				Next
 			End If
 		End If
 	End Method

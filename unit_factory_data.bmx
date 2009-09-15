@@ -106,6 +106,10 @@ Type UNIT_FACTORY_DATA
 		Return count
 	End Method
 	
+	Method wave_unit_count%()
+		Return 0
+	End Method
+	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "alignment", TJSONNumber.Create( alignment ))
