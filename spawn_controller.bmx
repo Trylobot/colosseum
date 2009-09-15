@@ -166,8 +166,8 @@ Type SPAWN_CONTROLLER
 				If Not uf.wave_index Then Continue
 				cur = unit_factory_cursor[i]
 				children = active_children[i]
-				If uf.wave_index[cur.row] <= current_wave ..
-				And Not children.IsEmpty() 'still at least one active unit spawned by this factory
+				If current_wave > uf.wave_index[cur.row] ..
+				Or Not children.IsEmpty() 'still at least one active unit spawned by this factory
 					wave_concluded = False 'wave is still considered in progress; early abort
 					Exit
 				End If

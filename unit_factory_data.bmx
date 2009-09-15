@@ -106,8 +106,14 @@ Type UNIT_FACTORY_DATA
 		Return count
 	End Method
 	
-	Method wave_unit_count%()
-		Return 0
+	Method wave_unit_count%( wave% )
+		Local count% = 0
+		For Local sq% = 0 Until count_squads()
+			If wave_index[sq] = wave
+				count :+ count_squadmembers( sq )
+			End If
+		Next
+		Return count
 	End Method
 	
 	Method to_json:TJSONObject()
