@@ -330,6 +330,10 @@ Function draw_menus()
 					blink = False
 				End If
 			End If
+			'clickable back arrow for "normal menus" other than main
+			If i > 0 And Not popup
+				
+			End If
 			'////////////////////////////////////////////
 			m.draw( mouse, dragging_scrollbar,,, blink )
 			'////////////////////////////////////////////
