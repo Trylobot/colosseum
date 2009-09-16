@@ -74,11 +74,14 @@ Function get_all_input()
 		'select option under mouse cursor, if there be one
 		If MouseHit( 1 )
 			If m.select_by_coords( mouse.pos_x, mouse.pos_y )
-				'm.execute_current_option()
 				execute_option( m.get_focus() )
 				m = get_current_menu()
 				m.calculate_bounding_boxes()
 				m.select_by_coords( mouse.pos_x, mouse.pos_y )
+			Else If (current_menu > 0 And get_current_menu().id <> MENU_ID.PAUSED) ..
+			And mouse.pos_x >= 0 And mouse.pos_x <= get_image( "menu_back_arrow" ).Width ..
+			And mouse.pos_y >= main_screen_menu_y And mouse.pos_y <= main_screen_menu_y + get_image( "menu_back_arrow" ).Height
+				menu_command( COMMAND.BACK_TO_PARENT_MENU )
 			End If
 		End If
 		'dragging of scrollbar

@@ -330,9 +330,11 @@ Function draw_menus()
 					blink = False
 				End If
 			End If
-			'clickable back arrow for "normal menus" other than main
-			If i > 0 And Not popup
-				
+			'back-arrow draw
+			If (current_menu > 0 And get_current_menu().id <> MENU_ID.PAUSED)
+				SetColor( 255, 255, 255 )
+				SetAlpha( 0.25 )
+				DrawImage( get_image( "menu_back_arrow" ), 0, main_screen_menu_y )
 			End If
 			'////////////////////////////////////////////
 			m.draw( mouse, dragging_scrollbar,,, blink )

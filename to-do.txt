@@ -32,7 +32,17 @@ flesh out__________________________________
 
 enhance____________________________________
 	treads
-	- have tread marks that stretch and shit so it doesn't matter how fast they're goin
+	- rather than forward- and backward-emitters, have one emitter for each "contact surface"
+	- add a new POINT object to each complex agent
+			Field last_trail_emit:POINT
+	- add two new values to each complex agent
+			Field trail_emit_min_position_delta#
+			Field trail_emit_min_angle_delta#
+	- during the update() step, if the current position exceeds either of the
+	  trail_emit_min_* thresholds (in either aspect), then cue the trail emitters all at once
+		and also update the last_trail_emit point to be the current position
+	- this system will make trails look better, and also reduce total trail particles emitted.
+	- also, delete the old stuff
 	spawning system
 	- want to have wave-based spawning without timers
 	  that way, enemy group 2 will start to spawn after the last enemy group 1 guy dies.
