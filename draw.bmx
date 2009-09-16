@@ -25,7 +25,7 @@ Import "vec.bmx"
 Import "box.bmx"
 Import "level.bmx"
 Import "image_manip.bmx"
-Import "drawtext_ex.bmx"
+Import "draw_misc.bmx"
 Import "flags.bmx"
 Import "hud.bmx"
 Import "mouse.bmx"
@@ -56,19 +56,9 @@ Function draw_all_graphics()
 	
 	'menus and such
 	If FLAG.in_menu
-		''dimmer
-		'SetColor( 0, 0, 0 )
-		'SetAlpha( 0.5 )
-		'DrawRect( 0, 0, window_w, window_h )
-		
 		If FLAG.in_menu
 			draw_main_screen()
 		End If
-	End If
-	
-	'instaquit
-	If KeyDown( KEY_ESCAPE ) And esc_held And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
-		draw_instaquit_progress()
 	End If
 	
 End Function
@@ -98,7 +88,7 @@ Function draw_game()
 	game.graffiti.draw()
 
 	'background particles
-	For Local part:PARTICLE = Eachin game.retained_particle_list
+	For Local part:PARTICLE = EachIn game.retained_particle_list
 		part.draw()
 	Next
 	For Local part:PARTICLE = EachIn game.particle_list_background
@@ -179,11 +169,26 @@ Function draw_game()
 	SetAlpha( 1 )
 
 	'enemy life bars
-'	For Local list:TList = EachIn game.complex_agent_lists
-'		For Local cmp_ag:COMPLEX_AGENT = EachIn list
-'			draw_percentage_bar( cmp_ag.pos_x - 10, cmp_ag.pos_y + 15, 20, 5, (cmp_ag.cur_health/cmp_ag.max_health), 0.35 )
-'		Next
-'	Next
+	'For Local list:TList = EachIn game.complex_agent_lists
+	'	For Local cmp_ag:COMPLEX_AGENT = EachIn list
+	'		draw_percentage_bar( cmp_ag.pos_x - 10, cmp_ag.pos_y + 15, 20, 5, (cmp_ag.cur_health/cmp_ag.max_health), 0.35 )
+	'	Next
+	'Next
+	
+	'player secondary life bar
+	If game.player
+		'black out a rectangular bar
+		SetColor( 0, 0, 0 )
+		DrawRect( game.player.pos_x - 10, game.player.pos_y + 15, 20, 2 )
+		'fill in the bar partially according to the player's current health
+		'make it blink red if it's less than a third full
+		Local c% = 255
+		Local pct# = game.player.cur_health/game.player.max_health
+		If pct <= 0.33333 Then c = 255 * Sin( now() Mod 180 )
+		draw_percentage_bar( game.player.pos_x - 10, game.player.pos_y + 15, 20, 2, pct, 1.0, 255, c, c, False )
+	End If
+
+	SetColor( 255, 255, 255 )
 
 	'aimer
 	draw_reticle()
@@ -214,12 +219,13 @@ Function draw_game()
 			SetRotation( 0 )
 			SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 1200 ))
 			SetImageFont( get_font( "consolas_bold_50" ))
-			Local m1$ = "LEVEL COMPLETE!"
-			DrawText_with_glow( m1, window_w/2 - TextWidth(m1)/2, 10 )
-			SetImageFont( get_font( "consolas_10" ))
-			Local m2$ = "press any key to continue"
+			Local m1$ = "LEVEL COMPLETED!"
+			DrawText_with_outline( m1, window_w/2 - TextWidth(m1)/2, 10 )
+			SetImageFont( get_font( "consolas_12" ))
+			Local m2$ = "press enter to continue"
 			DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 100 )
-		Else If game.game_over 'game over
+		End If
+		If game.game_over 'game over
 			'paint it black
 			SetColor( 0, 0, 0 )
 			SetScale( 1, 1 )
@@ -230,10 +236,10 @@ Function draw_game()
 			SetColor( 255, 0, 0 )
 			SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 800 ))
 			SetImageFont( get_font( "consolas_bold_100" ))
-			Local m1$ = "GAME OVER!"
+			Local m1$ = "GAME OVER."
 			DrawText_with_outline( m1, window_w/2 - TextWidth(m1)/2, 10 )
-			SetImageFont( get_font( "consolas_10" ))
-			Local m2$ = "press any key to continue"
+			SetImageFont( get_font( "consolas_12" ))
+			Local m2$ = "press enter to continue"
 			DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 150 )
 		End If
 		'help screen
@@ -265,18 +271,18 @@ Function draw_main_screen()
 	x = main_screen_x
 	
 	'title
-	y = main_screen_y
-	SetColor( 255, 255, 127 )
-	SetAlpha( 1 )
-	SetImageFont( get_font( "consolas_bold_50" ))
-	DrawText_with_outline( AppTitle, x, y )
+	'y = main_screen_y
+	'SetColor( 255, 255, 127 )
+	'SetAlpha( 1 )
+	'SetImageFont( get_font( "consolas_bold_50" ))
+	'DrawText_with_outline( AppTitle, x, y )
 	
 	'info
 	SetImageFont( get_font( "consolas_italic_12" ))
 	'SetColor( 100, 149, 237 ) 'Cornflower Blue
 	SetColor( 255, 255, 127 ) 'Title Yellow
 	SetAlpha( time_alpha_pct( info_change_ts + info_stay_time, info_fade_time, False ))
-	y = 57
+	y = main_screen_y
 	DrawText_with_outline( info, x, y)
 	
 	'menu options

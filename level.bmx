@@ -305,18 +305,18 @@ Type LEVEL Extends MANAGED_OBJECT
 	End Method
 	
 	Method unit_factories_aligned:UNIT_FACTORY_DATA[]( align% )
-		Local f:UNIT_FACTORY_DATA[]
+		Local uf:UNIT_FACTORY_DATA[]
 		For Local i% = 0 Until unit_factories.Length
 			If unit_factories[i].alignment = align
-				If f
-					f = [ unit_factories[i] ]
-				Else
-					f = f[..(f.Length+1)]
-					f[f.Length-1] = unit_factories[i]
+				If uf = Null
+					uf = [ unit_factories[i] ]
+				Else 'uf <> Null
+					uf = uf[..(uf.Length+1)]
+					uf[uf.Length-1] = unit_factories[i]
 				End If
 			End If
 		Next
-		Return f
+		Return uf
 	End Method
 	
 	Method add_immediate_unit( d:ENTITY_DATA )
@@ -343,9 +343,9 @@ Type LEVEL Extends MANAGED_OBJECT
 		Local u:ENTITY_DATA[]
 		For Local i% = 0 Until immediate_units.Length
 			If immediate_units[i].alignment = align
-				If u
+				If u = Null
 					u = [ immediate_units[i] ]
-				Else
+				Else 'u <> Null
 					u = u[..(u.Length+1)]
 					u[u.Length-1] = immediate_units[i]
 				End If
@@ -438,10 +438,10 @@ Type LEVEL Extends MANAGED_OBJECT
 		'If in_bounds( c )
 			Local x_min% = vertical_divs[c.col]
 			Local x_max% = vertical_divs[c.col+1]
-			Local x_diff_qtr% = 0.20 * (x_max - x_min) 'old: 0.40, older: 0.25
+			Local x_diff_qtr% = 0.30 * (x_max - x_min) 'most recent: 0.20, old: 0.40, older: 0.25
 			Local y_min% = horizontal_divs[c.row]
 			Local y_max% = horizontal_divs[c.row+1]
-			Local y_diff_qtr% = 0.20 * (y_max - y_min) 'same as above
+			Local y_diff_qtr% = 0.30 * (y_max - y_min) 'same as above
 			Return Create_cVEC( ..
 				Rand( x_min + x_diff_qtr, x_max - x_diff_qtr ), ..
 				Rand( y_min + y_diff_qtr, y_max - y_diff_qtr ))

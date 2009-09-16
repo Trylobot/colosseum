@@ -32,7 +32,7 @@ Global cb:CONTROL_BRAIN = Null
 Function debug_init()
 	'debug_audio_drivers()
 	'debug_get_keys()
-	DebugLog( "_____________________________________________________" )
+	DebugLog ""
 End Function
 
 Function debug_no_graphics()
@@ -44,8 +44,21 @@ Function debug_no_graphics()
 End Function
 
 Function debug_with_graphics()
+	'play_debug_level()
 	'debug_graffiti_manager
 	'End
+End Function
+
+Function play_debug_level()
+	Local err$
+	Local player:COMPLEX_AGENT = create_player( profile.vehicle, False, False, err )
+	Local lev:LEVEL = load_level( "levels/debug.colosseum_level" )
+	play_level( lev, player )
+	game = main_game
+	game.sandbox = True
+	player.move_to( Create_POINT( lev.width/2, lev.height/2, -90 ))
+	player.snap_all_turrets()
+	player_has_entered_arena()
 End Function
 
 Function debug_main()
@@ -86,6 +99,8 @@ Function debug_main()
 End Function
 
 Function debug_overlay()
+	ShowMouse()
+	
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
@@ -95,19 +110,10 @@ Function debug_overlay()
 	'basic info 
 	SetColor( 255, 255, 255 )
 	debug_drawtext( "current wave " + game.hostile_spawner.current_wave )
-	'debug_drawtext( "       active_particle_limit "+active_particle_limit )
-	'debug_drawtext( "game.retained_particle_count "+game.retained_particle_count )
-	'SetColor( 127, 127, 255 )
-	'debug_drawtext( "   friendly units "+game.active_friendly_units )
-	'debug_drawtext( "friendly spawners "+game.active_friendly_spawners )
-	'SetColor( 255, 127, 127 )
-	'debug_drawtext( "    hostile units "+game.active_hostile_units )
-	'debug_drawtext( " hostile spawners "+game.active_hostile_spawners )
 	
 	If game <> Null
 		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
 	End If
-	sx = game_mouse.x + 16; sy = game_mouse.y
 	
 	'show pathing grid divisions
 	SetColor( 255, 255, 255 )
@@ -120,32 +126,47 @@ Function debug_overlay()
 		DrawLine( 0+game.lev.vertical_divs[i],0, 0+game.lev.vertical_divs[i],0+game.lev.height )
 	Next
 	
-	'graffiti manager
-	'If game And game.graffiti
-	'	Local g:GRAFFITI_MANAGER = game.graffiti
-	'	SetLineWidth( 2 )
-	'	SetAlpha( 0.5 )
-	'	SetColor( 255, 32, 32 )
-	'	For Local r% = 0 Until g.rows
-	'		For Local c% = 0 Until g.cols
-	'			DrawRectLines( c * g.col_width, r * g.row_height, g.col_width, g.row_height )
-	'		Next
-	'	Next
-	'End If
-
-	'show particle bounding boxes
-	SetColor( 255, 255, 255 )
-	If game <> Null
-		SetAlpha( 0.06 )
-		Local dirty_rect:BOX
-		For Local p:PARTICLE = EachIn game.retained_particle_list
-			dirty_rect = p.get_bounding_box()
-			DrawRectLines( dirty_rect.x, dirty_rect.y, dirty_rect.w, dirty_rect.h )
+	'show unit factory status
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	Local all_spawners:SPAWN_CONTROLLER[] = [ game.hostile_spawner, game.friendly_spawner ]
+	Local uf:UNIT_FACTORY_DATA
+	Local cur:CELL
+	Local size% = 3, sep% = 1
+	Local i%, r%, c%
+	For Local spawner:SPAWN_CONTROLLER = EachIn all_spawners
+		For i = 0 Until spawner.unit_factories.Length
+			uf = spawner.unit_factories[i]
+			cur = spawner.unit_factory_cursor[i]
+			Select uf.alignment
+				Case POLITICAL_ALIGNMENT.NONE
+					SetColor( 255, 255, 255 )
+				Case POLITICAL_ALIGNMENT.FRIENDLY
+					SetColor( 64, 64, 255 )
+				Case POLITICAL_ALIGNMENT.HOSTILE
+					SetColor( 255, 64, 64 )
+			End Select
+			For r = 0 Until uf.count_squads()
+				For c = 0 Until uf.count_squadmembers( r )
+					'highlight the current squad (row)
+					If r = cur.row
+						SetAlpha( 1.0 )
+					Else
+						SetAlpha( 0.5 )
+					End If
+					'one square for each squadmember
+					DrawRect( ..
+						uf.pos.pos_x - 10 - c*(size+sep), ..
+						uf.pos.pos_y + 10 + r*(size+sep), ..
+						size, size )
+				Next
+			Next
 		Next
-	End If
-
-	SetColor( 255, 255, 255 )
+	Next
 	
+	SetAlpha( 1 )
+	SetColor( 255, 255, 255 )
+	'for each unit
 	Local closest_cb:CONTROL_BRAIN = Null
 	Local dist%, closest_dist% = 15
 	For Local brain:CONTROL_BRAIN = EachIn game.control_brain_list
@@ -174,13 +195,8 @@ Function debug_overlay()
 		DrawOval( closest_cb.avatar.pos_x-15,closest_cb.avatar.pos_y-15, 30,30 )
 	End If
 	
-	'instantly kill avatar under cursor
-	If KeyDown( KEY_K )
-		game.kill( closest_cb )
-	End If
-	
 	'cause an explosion under cursor via mini-bomb self detonation
-	If KeyHit( KEY_SEMICOLON )
+	If KeyHit( KEY_K )
 		Local bomb:COMPLEX_AGENT = get_unit( "mini_bomb" )
 		bomb.move_to( game_mouse )
 		agent_self_destruct( bomb )
@@ -201,12 +217,17 @@ Function debug_overlay()
 		game.spawn_pickup( game_mouse.x, game_mouse.y, 1.0 )
 	End If
 	
-	If KeyHit( KEY_P )
-		spawn_alignment :+ 1
-		If spawn_alignment > 2 Then spawn_alignment = 0
+	If KeyHit( KEY_SEMICOLON )
+		If      spawn_alignment <> 0 Then spawn_alignment = 0 ..
+		Else If spawn_alignment = 0  Then spawn_alignment = 1
 		spawn_agent = Null
 	End If
-	If spawn_alignment <> POLITICAL_ALIGNMENT.NONE
+	If KeyHit( KEY_P )
+		If      spawn_alignment = 1 Then spawn_alignment = 2 ..
+		Else If spawn_alignment = 2 Then spawn_alignment = 1
+		spawn_agent = Null
+	End If
+	If spawn_alignment <> 0
 		If spawn_agent = Null
 			spawn_archetype = get_map_keys( unit_map )[spawn_archetype_index]
 			spawn_agent = get_unit( spawn_archetype, spawn_alignment )
@@ -233,18 +254,16 @@ Function debug_overlay()
 	End If
 	
 	If cb <> Null And cb.managed()
+		sx = cb.avatar.pos_x; sy = cb.avatar.pos_y + 25
 		
 		'manipulate by keyboard
 		If KeyHit( KEY_T ) And game.human_participation
-			If game.player_brain
-				game.player_brain.unmanage()
-			End If
-			If game.player
-				game.player.unmanage()
-			End If
-			game.player_brain = create_player_brain( cb.avatar )
+			If game.player_brain Then game.player_brain.unmanage()
+			If game.player Then game.player.unmanage()
+			cb.control_type = CONTROL_BRAIN.CONTROL_TYPE_HUMAN
+			cb.input_type = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
+			game.player_brain = cb
 			game.player = cb.avatar
-			cb.unmanage()
 		End If
 		If KeyHit( KEY_X )
 			If Not cb.avatar.is_deployed

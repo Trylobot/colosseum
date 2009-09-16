@@ -8,7 +8,6 @@ Import "base_data.bmx"
 Import "misc.bmx"
 Import "flags.bmx"
 Import "settings.bmx"
-Import "drawtext_ex.bmx"
 Import "draw_misc.bmx"
 
 '______________________________________________________________________________

@@ -143,9 +143,8 @@
 				]
 			],
 			pos: {
-				pos_x: 463,
-				pos_y: 197,
-				ang: 180
+				pos_x: 269,
+				pos_y: 197
 			},
 			delay_time: [
 				0,
@@ -174,8 +173,9 @@
 				]
 			],
 			pos: {
-				pos_x: 269,
-				pos_y: 197
+				pos_x: 463,
+				pos_y: 197,
+				ang: 180
 			},
 			delay_time: [
 				0,

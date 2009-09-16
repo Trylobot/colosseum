@@ -134,15 +134,13 @@ Type PATHING_STRUCTURE
 		Return list
 	End Method
 	
-	Method backtrace_path:TList( c:CELL, start:CELL, omit_starting_cell% )
+	Method backtrace_path:TList( c:CELL, start:CELL )
 		Local list:TList = CreateList()
 		list.AddFirst( c.clone() )
 		While Not CELL(list.First()).eq( start )
 			list.AddFirst( came_from( CELL(list.First()) ))
 		End While
-		If Not omit_starting_cell
-			list.AddFirst( start.clone() )
-		End If
+		'list.AddFirst( start.clone() ) 'omit starting cell
 		Return list
 	End Method
 	
@@ -155,7 +153,7 @@ Type PATHING_STRUCTURE
 		While Not potential_paths.is_empty()
 			Local cursor:CELL = potential_paths.pop_root()
 			If cursor.eq( goal )
-				Return backtrace_path( goal, start, True )
+				Return backtrace_path( goal, start )
 			End If
 			visit( cursor )
 			

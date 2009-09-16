@@ -1,0 +1,81 @@
+{
+	name: "debug",
+	width: 640,
+	height: 480,
+	row_count: 6,
+	col_count: 6,
+	hue: 0,
+	saturation: 0,
+	luminosity: 0.3,
+	horizontal_divs: [
+		0,
+		40,
+		140,
+		240,
+		345,
+		440,
+		480
+	],
+	vertical_divs: [
+		0,
+		40,
+		180,
+		320,
+		465,
+		600,
+		640
+	],
+	path_regions: [
+		[
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
+		]
+	],
+	unit_factories: null,
+	immediate_units: null,
+	props: null
+}

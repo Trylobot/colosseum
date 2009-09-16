@@ -22,6 +22,7 @@ Import "collide.bmx"
 Import "update.bmx"
 Import "draw.bmx"
 Import "audio.bmx"
+Import "instaquit.bmx"
 ?Debug
 Include "debug.bmx"
 ?
@@ -35,6 +36,7 @@ SetGraphicsDriver GLMax2DDriver()
 
 'defaults
 apply_default_settings()
+FLAG.in_menu = True
 
 'data directory enforce
 create_dirs()
@@ -68,26 +70,40 @@ init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 debug_with_graphics()
 ?
 
-FLAG.in_menu = True
 '////////////////////////////////////////////////////////////////////////////////
 'MAIN
 Repeat
 	Cls()
 	select_game()
+	
+	'menu input and misc
 	get_all_input()
+	'multiplayer
 	update_network()
+	'physics timescale and update throttling
 	If frame_time_elapsed()
 		calculate_timescale()
 		reset_frame_timer()
-		
+		'collision detection and resolution
 		collide_all_objects()
+		'resolve forces and emit particles, and capture player vehicle input
 		update_all_objects()
 	End If
+	'music and sound
 	play_all_audio()
+	'draw everything
 	draw_all_graphics()
+	
 	?Debug
 	debug_main()
 	?
+	
+	'insta-quit
+	If esc_held And KeyDown( KEY_ESCAPE ) ..
+	And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
+		draw_instaquit_progress()
+	End If
+	
 	Flip( 1 )
 Until AppTerminate()
 '////////////////////////////////////////////////////////////////////////////////

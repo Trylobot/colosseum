@@ -36,6 +36,7 @@ Type SPAWN_CONTROLLER
 	Field current_wave%
 	Field max_wave_index%
 
+	Field open_spawn_request%[] 'set to true while a spawn request exists; set to false after request is processed
 	Field spawn_request_list:TList 'TList<SPAWN_REQUEST> to be processed by ENVIRONMENT
 	
 	Method New()
@@ -52,6 +53,7 @@ Type SPAWN_CONTROLLER
 			spawn_ts = New Int[size]
 			spawn_counter = New Int[size]
 			active_children = New TList[size]
+			open_spawn_request = New Int[size]
 			For Local i% = 0 Until size
 				active_unit_factories[i] = True
 				unit_factory_cursor[i] = New CELL
@@ -100,7 +102,7 @@ Type SPAWN_CONTROLLER
 		Local last:AGENT
 		Local counter%
 		For Local i% = 0 Until unit_factories.Length
-			'be sure this factory is a "real" factory
+			'skip this factory if it doesn't have any squads
 			uf = unit_factories[i]
 			If Not uf.squads Then Continue
 			'prune dead children
@@ -127,9 +129,10 @@ Type SPAWN_CONTROLLER
 						'last_spawned[i] = brain.avatar
 						'////////////////////////////////////////////////////////////////////////////////////////////////////////
 						spawn_request_list.AddLast( Create_SPAWN_REQUEST( uf.squads[cur.row][cur.col], uf.alignment, uf.pos, i ))
+						open_spawn_request[i] = True
 						'////////////////////////////////////////////////////////////////////////////////////////////////////////
 						'counter/cursor maintenance
-						spawn_counter[i] :+ 1
+						spawn_counter[i] :+ 1 '; counter :+ 1
 						cur.col :+ 1
 						'if that last guy was the last squadmember of the current squad
 						If cur.col > uf.squads[cur.row].Length-1
@@ -166,8 +169,7 @@ Type SPAWN_CONTROLLER
 				If Not uf.wave_index Then Continue
 				cur = unit_factory_cursor[i]
 				children = active_children[i]
-				If current_wave > uf.wave_index[cur.row] ..
-				Or Not children.IsEmpty() 'still at least one active unit spawned by this factory
+				If open_spawn_request[i] Or Not children.IsEmpty()
 					wave_concluded = False 'wave is still considered in progress; early abort
 					Exit
 				End If

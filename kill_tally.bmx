@@ -6,7 +6,6 @@ EndRem
 SuperStrict
 Import "audio.bmx"
 Import "draw_misc.bmx"
-Import "drawtext_ex.bmx"
 
 '______________________________________________________________________________
 Function kill_tally( title$, bg:TImage, kills_this_level% )

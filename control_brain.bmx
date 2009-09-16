@@ -20,7 +20,8 @@ Import "flags.bmx"
 Import "cell.bmx"
 
 '______________________________________________________________________________
-Const low_speed_waypoint_radius# = 100.0
+Const low_speed_waypoint_radius_level_1# = 100.0
+Const low_speed_waypoint_radius_level_2# = 50.0
 
 Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
 	Return Create_CONTROL_BRAIN( avatar, CONTROL_BRAIN.CONTROL_TYPE_HUMAN,,,,, profile.input_method )
@@ -223,7 +224,9 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		Local diff_mag# = Abs( diff )
 		Local max_ang_vel# = avatar.turning_force.magnitude_max / avatar.mass
 		If diff_mag > 20.0 * max_ang_vel
-			If dist_to_waypoint < low_speed_waypoint_radius
+			If dist_to_waypoint < low_speed_waypoint_radius_level_2
+				avatar.drive( 0.20 )
+			Else If dist_to_waypoint < low_speed_waypoint_radius_level_1
 				avatar.drive( 0.40 )
 			Else
 				avatar.drive( 0.80 )
@@ -373,6 +376,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 			For Local ally:COMPLEX_AGENT = EachIn allied_agent_list
 				'is this me? LOL
 				If avatar.id = ally.id Then Continue
+				'is this ally closer than my target?
+				If dist_to_target < avatar.dist_to( ally ) Then Continue
 				'find the scalar projection of the relative position of the ally onto the primary turret's line-of-sight
 				avatar_turret_ang = avatar.get_turret_system_ang( 0 )
 				ally_offset = avatar.dist_to( ally )

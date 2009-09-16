@@ -11,8 +11,8 @@
 			max_health: 35,
 			mass: 50,
 			frictional_coefficient: 8,
-			driving_force_magnitude: 6,
-			turning_force_magnitude: 12,
+			driving_force_magnitude: 2,
+			turning_force_magnitude: 7,
 			death_package: true
 		}
 	},

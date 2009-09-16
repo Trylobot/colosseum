@@ -54,6 +54,7 @@ Type ENVIRONMENT
 	Field friendly_doors:DOOR[]
 	Field hostile_spawner:SPAWN_CONTROLLER
 	Field hostile_doors:DOOR[]
+	Field all_spawners:TList 'TList<SPAWN_CONTROLLER>
 	
 	Field particle_list_background:TList 'TList<PARTICLE>
 	Field particle_list_foreground:TList 'TList<PARTICLE>
@@ -73,12 +74,11 @@ Type ENVIRONMENT
 	Field AI_spawners:TList 'TList<CONTROL_BRAIN>
 	Field doors:TList 'TList<DOOR>
 	
-	Field player_kills_at_start% 'kill count at level initialization
-	Field paused% 'pause flag
 	Field human_participation% 'flag indicating whether any humans will ever participate in this game
-	Field game_in_progress% 'flag indicating the game has begun
 	Field win% 'flag indicating win state (overrides game_over state)
 	Field game_over% 'flag indicating game over state
+	Field paused% 'pause flag
+	Field game_in_progress% 'flag indicating the game has begun
 	Field level_passed_ts%
 	Field player_in_locker%
 	Field waiting_for_player_to_enter_arena%
@@ -88,6 +88,8 @@ Type ENVIRONMENT
 	Field spawn_enemies%
 	Field auto_reset_spawners%
 	Field player_has_munitions_based_turrets%
+	Field player_kills_at_start% 'kill count at level initialization
+	Field sandbox%
 
 	Field player_spawn_point:POINT
 	Field player_brain:CONTROL_BRAIN
@@ -97,6 +99,7 @@ Type ENVIRONMENT
 		game_mouse = Create_cVEC( 0, 0 )
 		drawing_origin = Create_cVEC( 0, 0 )
 		walls = CreateList()
+		all_spawners = CreateList()
 		particle_list_background = CreateList()
 		particle_list_foreground = CreateList()
 		particle_lists = CreateList()
@@ -125,6 +128,7 @@ Type ENVIRONMENT
 	Method clear()
 		background = Null
 		foreground = Null
+		all_spawners.Clear()
 		particle_list_background.Clear()
 		particle_list_foreground.Clear()
 		retained_particle_list.Clear()
@@ -138,6 +142,8 @@ Type ENVIRONMENT
 		control_brain_list.Clear()
 		doors.Clear()
 		
+		win = False
+		game_over = False
 		battle_in_progress = False
 		game_in_progress = False
 		FLAG.engine_ignition = False
@@ -209,6 +215,8 @@ Type ENVIRONMENT
 		hostile_spawner = Create_SPAWN_CONTROLLER( ..
 			lev.unit_factories_aligned( POLITICAL_ALIGNMENT.HOSTILE ), ..
 			lev.immediate_units_aligned( POLITICAL_ALIGNMENT.HOSTILE ))
+		all_spawners.AddLast( friendly_spawner )
+		all_spawners.AddLast( hostile_spawner )
 		'doors
 		friendly_doors = New DOOR[friendly_spawner.unit_factories.Length]
 		hostile_doors = New DOOR[hostile_spawner.unit_factories.Length]
@@ -235,31 +243,23 @@ Type ENVIRONMENT
 	End Method
 	
 	Method update_spawning_system()
-		'spawn controllers update
-		friendly_spawner.update()
-		hostile_spawner.update()
 		'spawn request processing
 		Local cb:CONTROL_BRAIN
-		'friendly
-		For Local req:SPAWN_REQUEST = EachIn friendly_spawner.spawn_request_list
-			cb = spawn_unit_from_request( req )
-			'spawn request last-spawned callback update (hack that prevents spawning flash-mobs of baddies)
-			'does not apply to enemies spawned from a carrier
-			If cb And cb.avatar And req.source_spawner_index >= 0
-				friendly_spawner.active_children[req.source_spawner_index].AddLast( cb.avatar )
-			End If
+		For Local spawner:SPAWN_CONTROLLER = EachIn all_spawners
+			'spawn controllers update
+			spawner.update()
+			For Local req:SPAWN_REQUEST = EachIn spawner.spawn_request_list
+				cb = spawn_unit_from_request( req )
+				If cb And cb.avatar And req.source_spawner_index >= 0
+					'spawn request last-spawned callback update (hack that prevents spawning flash-mobs of baddies)
+					'does not apply to enemies spawned from a carrier
+					spawner.active_children[req.source_spawner_index].AddLast( cb.avatar )
+					'open_spawn_request is True while the request has not been processed; now it has.
+					spawner.open_spawn_request[req.source_spawner_index] = False
+				End If
+			Next
+			spawner.spawn_request_list.Clear()
 		Next
-		friendly_spawner.spawn_request_list.Clear()
-		'hostile
-		For Local req:SPAWN_REQUEST = EachIn hostile_spawner.spawn_request_list
-			cb = spawn_unit_from_request( req )
-			'spawn request last-spawned callback update (hack that prevents spawning flash-mobs of baddies)
-			'does not apply to enemies spawned from a carrier
-			If cb And cb.avatar And req.source_spawner_index >= 0
-				hostile_spawner.active_children[req.source_spawner_index].AddLast( cb.avatar )
-			End If
-		Next
-		hostile_spawner.spawn_request_list.Clear()
 	End Method
 	
 	Method active_spawners%( alignment% )

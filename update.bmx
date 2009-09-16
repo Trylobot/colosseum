@@ -183,35 +183,50 @@ Function update_flags()
 					game.open_doors( POLITICAL_ALIGNMENT.FRIENDLY )
 				End If
 			Else 'player entered arena
-				game.player_in_locker = False
-				game.waiting_for_player_to_enter_arena = False
-				game.open_doors( POLITICAL_ALIGNMENT.HOSTILE )
-				game.battle_in_progress = True
-				game.battle_state_toggle_ts = now()
-				game.waiting_for_player_to_exit_arena = True
-				game.spawn_enemies = True
+				player_has_entered_arena()
 			End If
 		End If
-		'enemies all dead
-		If game.battle_in_progress And game.active_spawners( POLITICAL_ALIGNMENT.HOSTILE ) = 0 And game.hostile_agent_list.Count() = 0
-			game.win = True
-			game.game_in_progress = False
-			game.battle_in_progress = False
-			game.battle_state_toggle_ts = now()
-			game.close_doors( POLITICAL_ALIGNMENT.HOSTILE )
-			game.spawn_enemies = False
-			play_sound( get_sound( "victory" ))
-		End If
-		'player death
-		If Not game.win And game.player.dead() 'player just died? (omgwtf)
-			game.game_over = True
-			game.game_in_progress = False
-			game.battle_in_progress = False
-			game.battle_state_toggle_ts = now()
-			FLAG.damage_incurred = True
-			FLAG.engine_running = False
+		If Not game.sandbox ..
+		And Not game.win And Not game.game_over
+			'win
+			If game.battle_in_progress And game.active_spawners( POLITICAL_ALIGNMENT.HOSTILE ) = 0 And game.hostile_agent_list.Count() = 0
+				player_wins_game()
+			End If
+			'game over
+			If Not game.win And game.player.dead() 'player just died? (omgwtf)
+				player_loses_game()
+			End If
 		End If
 	End If
+End Function
+
+Function player_has_entered_arena()
+	game.player_in_locker = False
+	game.waiting_for_player_to_enter_arena = False
+	game.open_doors( POLITICAL_ALIGNMENT.HOSTILE )
+	game.battle_in_progress = True
+	game.battle_state_toggle_ts = now()
+	game.waiting_for_player_to_exit_arena = True
+	game.spawn_enemies = True
+End Function
+
+Function player_wins_game()
+	game.win = True
+	game.game_in_progress = False
+	game.battle_in_progress = False
+	game.battle_state_toggle_ts = now()
+	game.close_doors( POLITICAL_ALIGNMENT.HOSTILE )
+	game.spawn_enemies = False
+	play_sound( get_sound( "victory" ))
+End Function
+
+Function player_loses_game()
+	game.game_over = True
+	game.game_in_progress = False
+	game.battle_in_progress = False
+	game.battle_state_toggle_ts = now()
+	FLAG.damage_incurred = True
+	FLAG.engine_running = False
 End Function
 
 '______________________________________________________________________________
@@ -219,22 +234,32 @@ Function update_meta_variable_cache()
 	If Not meta_variable_cache
 		meta_variable_cache = CreateMap()
 	End If
-	meta_variable_cache.Insert( "profile.name", profile.name )
-	meta_variable_cache.Insert( "profile.cash", format_number( profile.cash ))
-	meta_variable_cache.Insert( "profile.kills", format_number( profile.kills ))
-	meta_variable_cache.Insert( "profile.invert_reverse_steering", boolean_to_string( profile.invert_reverse_steering ))
-	meta_variable_cache.Insert( "level_editor_cache.name", level_editor_cache.name )
-	meta_variable_cache.Insert( "fullscreen", boolean_to_string( fullscreen ))
-	meta_variable_cache.Insert( "window_w", String.FromInt( window_w ))
-	meta_variable_cache.Insert( "window_h", String.FromInt( window_h ))
-	meta_variable_cache.Insert( "refresh_rate", String.FromInt( refresh_rate ))
-	meta_variable_cache.Insert( "bit_depth", String.FromInt( bit_depth ))
-	meta_variable_cache.Insert( "audio_driver", audio_driver )
-	meta_variable_cache.Insert( "show_ai_menu_game", boolean_to_string( show_ai_menu_game ))
-	meta_variable_cache.Insert( "active_particle_limit", String.FromInt( active_particle_limit ))
-	meta_variable_cache.Insert( "network_ip_address", network_ip_address )
-	meta_variable_cache.Insert( "network_port", String.FromInt( network_port ))
-	meta_variable_cache.Insert( "network_level", StripAll( network_level ))
+	Local changed% = 0 ..
+		| update_map( meta_variable_cache, "profile.name", profile.name ) ..
+		| update_map( meta_variable_cache, "profile.cash", format_number( profile.cash )) ..
+		| update_map( meta_variable_cache, "profile.kills", format_number( profile.kills )) ..
+		| update_map( meta_variable_cache, "profile.invert_reverse_steering", boolean_to_string( profile.invert_reverse_steering )) ..
+		| update_map( meta_variable_cache, "level_editor_cache.name", level_editor_cache.name ) ..
+		| update_map( meta_variable_cache, "fullscreen", boolean_to_string( fullscreen )) ..
+		| update_map( meta_variable_cache, "window_w", String.FromInt( window_w )) ..
+		| update_map( meta_variable_cache, "window_h", String.FromInt( window_h )) ..
+		| update_map( meta_variable_cache, "refresh_rate", String.FromInt( refresh_rate )) ..
+		| update_map( meta_variable_cache, "bit_depth", String.FromInt( bit_depth )) ..
+		| update_map( meta_variable_cache, "audio_driver", audio_driver ) ..
+		| update_map( meta_variable_cache, "show_ai_menu_game", boolean_to_string( show_ai_menu_game )) ..
+		| update_map( meta_variable_cache, "active_particle_limit", String.FromInt( active_particle_limit )) ..
+		| update_map( meta_variable_cache, "network_ip_address", network_ip_address ) ..
+		| update_map( meta_variable_cache, "network_port", String.FromInt( network_port )) ..
+		| update_map( meta_variable_cache, "network_level", StripAll( network_level ))
+	If changed
+		get_current_menu().recalculate_dimensions()
+	End If
+End Function
+
+Function update_map%( map:TMap, key:Object, value:Object )
+	Local changed% = (value <> map.ValueForKey( key ))
+	map.Insert( key, value )
+	Return changed
 End Function
 
 '______________________________________________________________________________

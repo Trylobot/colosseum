@@ -5,7 +5,7 @@ Rem
 EndRem
 SuperStrict
 Import "point.bmx"
-Import "drawtext_ex.bmx"
+Import "draw_misc.bmx"
 Import "box.bmx"
 Import "base_data.bmx"
 Import "json.bmx"
