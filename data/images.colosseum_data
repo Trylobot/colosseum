@@ -1124,7 +1124,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/back_arrow.png",
+			path: "art/menu_back_arrow.png",
 			handle_x: 0, 
 			handle_y: 0,
 			frames: 1
