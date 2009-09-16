@@ -338,6 +338,7 @@ Function draw_menus()
 			m.draw( mouse, dragging_scrollbar,,, blink )
 			'////////////////////////////////////////////
 			'shop decorations
+			Local MOUSE_SHADOW_SCALE# = 3.0 'Temporary, while vehicle editor is offline
 			If m.menu_type = MENU.VERTICAL_LIST_WITH_INVENTORY
 				'draw the object to which the focused menu option refers, off to the side a bit.
 				Local item:INVENTORY_DATA = INVENTORY_DATA( m.get_focus().argument )

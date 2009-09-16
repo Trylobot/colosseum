@@ -4,9 +4,8 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "complex_agent.bmx"
 Import "turret.bmx"
-Import "compatibility_data.bmx"
-Import "inventory_data.bmx"
 Import "json.bmx"
 
 '______________________________________________________________________________
@@ -40,12 +39,13 @@ Type VEHICLE_DATA
 	Method set_chassis( new_chassis_key$, new_is_unit% = False )
 		chassis_key = new_chassis_key
 		is_unit = new_is_unit
+		Local cmp_ag:COMPLEX_AGENT
 		If Not is_unit
-			Local cmp_ag:COMPLEX_AGENT = get_player_chassis( chassis_key )
-			If cmp_ag Then turret_keys = New String[][cmp_ag.turret_anchors.Length]
+			cmp_ag = get_player_vehicle( chassis_key )
 		Else
-			turret_keys = Null
+			cmp_ag = get_unit( chassis_key )
 		End If
+		If cmp_ag Then turret_keys = New String[][cmp_ag.turret_anchors.Length]
 	End Method
 	
 	Method add_turret$( key$, anchor% ) 'returns error message if unsuccessful
@@ -140,10 +140,6 @@ Type VEHICLE_DATA
 	End Method
 	
 	Method chassis_compatible_with_turret%( key$ ) 'checks the compatibility array for the existence of the given turret key
-		Local cd:COMPATIBILITY_DATA = get_compatibility( chassis_key )
-		If cd
-			Return cd.is_compatible_with( key )
-		End If
 		Return True
 	End Method
 	
@@ -157,29 +153,6 @@ Type VEHICLE_DATA
 			Return count
 		End If
 		Return -1
-	End Method
-	
-	Method select_random_part:INVENTORY_DATA()
-		If is_unit Then Return Null
-		Local count% = 0
-		Local parts:TList = CreateList()
-		If chassis_key And chassis_key.Length > 0
-			parts.AddLast( Create_INVENTORY_DATA( "chassis", chassis_key ))
-			count :+ 1
-		End If
-		If turret_keys
-			For Local anchor% = 0 Until turret_keys.Length
-				If turret_keys[anchor]
-					For Local t% = 0 Until turret_keys[anchor].Length
-						If turret_keys[anchor][t] And turret_keys[anchor][t].Length > 0
-							parts.AddLast( Create_INVENTORY_DATA( "turret", turret_keys[anchor][t] ))
-							count :+ 1
-						End If
-					Next
-				End If
-			Next
-		End If
-		Return INVENTORY_DATA( parts.ValueAtIndex( Rand( 0, count - 1 )))
 	End Method
 	
 	Method to_json:TJSONObject()

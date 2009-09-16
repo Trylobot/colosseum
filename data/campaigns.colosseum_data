@@ -3,6 +3,7 @@
 		class: "campaign",
 		key: "training",
 		object: {
+			name: "training"
 			levels: [
 				"levels/training1.colosseum_level",
 				"levels/training2.colosseum_level",

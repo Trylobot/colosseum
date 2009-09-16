@@ -5,12 +5,9 @@ Rem
 EndRem
 SuperStrict
 Import "inventory_data.bmx"
-Import "vehicle_data.bmx"
 Import "progress_data.bmx"
 Import "constants.bmx"
 Import "json.bmx"
-Import "complex_agent.bmx"
-Import "turret.bmx"
 
 '______________________________________________________________________________
 Global profile:PLAYER_PROFILE
@@ -20,12 +17,11 @@ Type PLAYER_PROFILE
 	Field cash%
 	Field kills%
 	Field inventory:INVENTORY_DATA[]
-	Field vehicle:VEHICLE_DATA
+	Field vehicle_key$
 	Field input_method%
 	Field invert_reverse_steering%
 	Field progress:PROGRESS_DATA[]
 	Field campaign$
-	Field campaign_level%
 	
 	Field src_path$ 'private field, used for load/save
 		
@@ -34,37 +30,32 @@ Type PLAYER_PROFILE
 		src_path = generate_src_path()
 	End Method
 	
-	Method buy_part( query_item:INVENTORY_DATA )
+	Method buy_item( query_item:INVENTORY_DATA )
 		If can_buy( query_item )
-			Local cost% = get_cost( query_item )
-			cash :- cost
-			add_part( query_item )
+			cash :- get_cost( query_item )
+			add_item( query_item )
 		End If
 	End Method
 	
-	Method sell_part( query_item:INVENTORY_DATA )
+	Method sell_item( query_item:INVENTORY_DATA )
 		If can_sell( query_item )
-			Local cost% = get_cost( query_item )
 			Local item_index% = search_inventory( query_item )
-			cash :+ cost
-			remove_part( item_index )
+			cash :+ get_cost( query_item )
+			remove_item( item_index )
 		End If
 	End Method
 	
 	Method can_buy%( query_item:INVENTORY_DATA )
 		Local cost% = 0
 		Select query_item.item_type
-			Case "chassis"
-				cost = get_player_chassis( query_item.key ).cash_value
-			Case "turret"
-				cost = get_turret( query_item.key ).cash_value
 			Default
 				Return False
 		End Select
-		If cash >= cost
-			Return True
+		If cash < cost
+			Return False
 		End If
-		Return False
+		'yay! :D
+		Return True
 	End Method
 	
 	Method can_sell%( query_item:INVENTORY_DATA )
@@ -72,11 +63,6 @@ Type PLAYER_PROFILE
 	End Method
 	
 	Method get_cost%( query_item:INVENTORY_DATA )
-		If query_item
-			Local factor# = 1.0
-			If query_item.damaged Then factor = 0.5
-			Return factor * get_inventory_object_cost( query_item.item_type, query_item.key )
-		End If
 		Return 0
 	End Method
 	
@@ -91,12 +77,8 @@ Type PLAYER_PROFILE
 	
 	Method count_inventory%( query_item:INVENTORY_DATA )
 		Local q% = search_inventory( query_item )
-		Local item:INVENTORY_DATA
 		If q >= 0
-			item = inventory[q]
-		End If
-		If item
-			Return item.count
+			Return inventory[q].count
 		Else
 			Return 0
 		End If
@@ -111,25 +93,22 @@ Type PLAYER_PROFILE
 		Return -1
 	End Method
 	
-	Method add_part( new_item:INVENTORY_DATA )
+	Method add_item( new_item:INVENTORY_DATA )
 		Local q% = search_inventory( new_item )
 		Local item:INVENTORY_DATA
 		If q >= 0
-			item = inventory[q]
-		End If
-		If item
-			item.count :+ 1
+			inventory[q].count :+ 1 'should this be 1 or new_item.count?
 		Else
-			If inventory
+			If inventory <> Null
 				inventory = inventory[..(inventory.Length + 1)]
 				inventory[inventory.Length - 1] = new_item.clone()
-			Else 'Not inventory
+			Else 'inventory == Null
 				inventory = [ new_item.clone() ]
 			End If
 		End If
 	End Method
 	
-	Method remove_part:INVENTORY_DATA( item_index%, count% = 1 )
+	Method remove_item:INVENTORY_DATA( item_index%, count% = 1 )
 		If item_index >= 0 And item_index < inventory.Length
 			Local item:INVENTORY_DATA = inventory[item_index]
 			If item.count >= count 'have enough
@@ -160,15 +139,6 @@ Type PLAYER_PROFILE
 		Return Null
 	End Method
 	
-	Method damage_part( query_item:INVENTORY_DATA )
-		Local index% = search_inventory( query_item )
-		If index >= 0
-			Local item:INVENTORY_DATA = remove_part( index )
-			item.damaged = True
-			add_part( item )
-		End If
-	End Method
-	
 	Method sort_inventory()
 		inventory.Sort()
 	End Method
@@ -191,11 +161,7 @@ Type PLAYER_PROFILE
 		Else
 			this_json.SetByName( "inventory", Null )
 		End If
-		If vehicle
-			this_json.SetByName( "vehicle", vehicle.to_json() )
-		Else
-			this_json.SetByName( "vehicle", Null )
-		End If
+		this_json.SetByName( "vehicle_key", TJSONString.Create( vehicle_key ))
 		this_json.SetByName( "input_method", TJSONNumber.Create( input_method ))
 		this_json.SetByName( "invert_reverse_steering", TJSONBoolean.Create( invert_reverse_steering ))
 		If progress
@@ -208,7 +174,6 @@ Type PLAYER_PROFILE
 			this_json.SetByName( "progress", Null )
 		End If
 		this_json.SetByName( "campaign", TJSONString.Create( campaign ))
-		this_json.SetByName( "campaign_level", TJSONNumber.Create( campaign_level ))
 		Return this_json
 	End Method
 End Type
@@ -224,14 +189,14 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 		For Local i% = 0 To prof.inventory.Length - 1
 			prof.inventory[i] = Create_INVENTORY_DATA_from_json( TJSON.Create( inv.GetByIndex( i )))
 		Next
-		'check inventory; remove those with low count or invalid identifiers
+		'count must be greater than 0
 		For Local i% = prof.inventory.Length - 1 To 0 Step -1
 			If prof.inventory[i].count < 1
-				prof.remove_part( i )
+				prof.remove_item( i )
 			End If
 		Next
 	End If
-	prof.vehicle = Create_VEHICLE_DATA_from_json( TJSON.Create( json.GetObject( "vehicle" )))
+	prof.vehicle_key = json.GetString( "vehicle" )
 	prof.input_method = json.GetNumber( "input_method" )
 	prof.invert_reverse_steering = json.GetBoolean( "invert_reverse_steering" )
 	Local prog:TJSONArray = json.GetArray( "progress" )
@@ -242,59 +207,6 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 		Next
 	End If
 	prof.campaign = json.GetString( "campaign" )
-	prof.campaign_level = json.GetNumber( "campaign_level" )
 	Return prof
-End Function
-
-'______________________________________________________________________________
-Function create_player:COMPLEX_AGENT( v_dat:VEHICLE_DATA, validate_against_inventory% = True, count_turrets% = True, err$ Var )
-	If Not v_dat Then Return Null 'no chassis data
-	If v_dat.is_unit
-		Return get_unit( v_dat.chassis_key )
-	Else 'Not is_unit
-		Local at_least_one_turret% = False 'indicates whether this player-constructed chassis specifies at least one turret
-		Local required_items:TList = CreateList() 'a laundry list of all the items required to build this chassis
-		required_items.AddLast( Create_INVENTORY_DATA( "chassis", v_dat.chassis_key ))
-		Local player:COMPLEX_AGENT
-		player = get_player_chassis( v_dat.chassis_key )
-		If player
-			player.alignment = POLITICAL_ALIGNMENT.FRIENDLY
-			For Local anchor% = 0 Until v_dat.turret_keys.Length
-				For Local t% = 0 Until v_dat.turret_keys[anchor].Length
-					'search the required items list for instances of this turret
-					Local exists% = False
-					For Local item:INVENTORY_DATA = EachIn required_items
-						If item.key = v_dat.turret_keys[anchor][t]
-							item.count :+ 1
-							exists = True
-							Exit
-						End If
-					Next
-					If Not exists
-						required_items.AddLast( Create_INVENTORY_DATA( "turret", v_dat.turret_keys[anchor][t] ))
-					End If
-					Local player_turret:TURRET = get_turret( v_dat.turret_keys[anchor][t] )
-					If player_turret
-						player.add_turret( player_turret, anchor )
-						at_least_one_turret = True
-					End If
-				Next
-			Next
-			If count_turrets And Not at_least_one_turret
-				err = "Your vehicle schematic must specify at least one turret."
-				Return Null 'must have at least one turret
-			End If
-			If validate_against_inventory
-				If Not profile.checklist( required_items )
-					err = "Your vehicle schematic specifies items that were damaged or sold."
-					Return Null 'not enough items to build player
-				End If
-			End If
-			Return player 'all good!
-		Else
-			err = "Your vehicle schematic is invalid."
-			Return Null 'bad chassis data
-		End If
-	End If
 End Function
 

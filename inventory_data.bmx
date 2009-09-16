@@ -46,23 +46,8 @@ Type INVENTORY_DATA
 	
 	Method compare%( with_object:Object ) ' return true if Self is "greater than" other
 		Local other:INVENTORY_DATA = INVENTORY_DATA(with_object)
-		Local my_const% = 0
-		If item_type = "chassis"
-			my_const = 1000000
-		Else If damaged
-			my_const = -1000000
-		End If
-		If other
-			Local other_const% = 0
-			If other.item_type = "chassis"
-				other_const = 1000000
-			Else If other.damaged
-				other_const = -1000000
-			End If
-			Return (my_const + get_inventory_object_cost( item_type, key )) - (other_const + get_inventory_object_cost( other.item_type, other.key ))
-		End If
-		Return False
-	EndMethod
+		Return 0
+	End Method
 
 	Method to_string$()
 		Return item_type+"."+key
@@ -86,21 +71,5 @@ Function Create_INVENTORY_DATA_from_json:INVENTORY_DATA( json:TJSON )
 	item.count = json.GetNumber( "count" )
 	item.damaged = json.GetBoolean( "damaged" )
 	Return item
-End Function
-
-'________________________________
-Function get_inventory_object_cost%( item_type$, item_key$ )
-	Select item_type
-		Case "chassis"
-			Local cmp_ag:COMPLEX_AGENT = get_player_chassis( item_key )
-			If cmp_ag Then Return cmp_ag.cash_value ..
-			Else Return 0
-		Case "turret"
-			Local tur:TURRET = get_turret( item_key )
-			If tur Then Return tur.cash_value ..
-			Else Return 0
-		Default
-			Return 0
-	End Select
 End Function
 

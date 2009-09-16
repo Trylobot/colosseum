@@ -225,7 +225,6 @@ Function player_loses_game()
 	game.game_in_progress = False
 	game.battle_in_progress = False
 	game.battle_state_toggle_ts = now()
-	FLAG.damage_incurred = True
 	FLAG.engine_running = False
 End Function
 

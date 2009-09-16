@@ -50,8 +50,7 @@ Function debug_with_graphics()
 End Function
 
 Function play_debug_level()
-	Local err$
-	Local player:COMPLEX_AGENT = create_player( profile.vehicle, False, False, err )
+	Local player:COMPLEX_AGENT = get_player_vehicle( profile.vehicle_key )
 	Local lev:LEVEL = load_level( "levels/debug.colosseum_level" )
 	play_level( lev, player )
 	game = main_game

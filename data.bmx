@@ -17,70 +17,46 @@ Import "turret.bmx"
 Import "ai_type.bmx"
 Import "complex_agent.bmx"
 Import "player_profile.bmx"
-Import "compatibility_data.bmx"
 Import "level.bmx"
 Import "image_manip.bmx"
 Import "settings.bmx"
 
 '_____________________________________________________________________________
-Function create_dirs()
-	CreateDir( art_path )
-	CreateDir( data_path )
-	CreateDir( font_path )
-	CreateDir( level_path )
-	CreateDir( sound_path )
-	CreateDir( user_path )
-End Function
+Global loading_progress# = 0.0
 
-Global asset_identifiers$[] = ..
-[	"fonts", ..
-	"sounds", ..
-	"images", ..
-	"props", ..
-	"particles", ..
-	"particle_emitters", ..
-	"projectiles", ..
-	"projectile_launchers", ..
-	"widgets", ..
-	"pickups", ..
-	"turret_barrels", ..
-	"turrets", ..
-	"ai_types", ..
-	"player_chassis", ..
-	"units", ..
-	"compatibility", ..
-	"levels" ]
-	
-'_____________________________________________________________________________
-Function load_assets%( display_progress% = False )
+Function load_assets%()
 	Local file:TStream = ReadFile( data_path + default_assets_file_name )
 	If Not file Then Return False
 	Local json:TJSON = TJSON.Create( file )
 	file.Close()
 	If Not json.isNull() 'read successful
-		Local asset_path$, asset_file:TStream, asset_json:TJSON
-		For Local asset_id$ = EachIn asset_identifiers
-			asset_path = json.GetString( asset_id )
-			Local source_file$ = StripAll( asset_path )
-			DebugLog( "  load_assets() --> "+asset_path )
-			asset_file = ReadFile( asset_path )
-			If file
-				asset_json = TJSON.Create( asset_file )
-				If Not asset_json.isNull() And TJSONArray(asset_json.Root) 'read successful
-					load_objects( asset_json, source_file, display_progress )
+		Local asset_path$
+		Local asset_file:TStream
+		Local asset_json:TJSON
+		Local asset_id$
+		Local asset_identifiers:TJSONArray = json.GetArray("")
+		If asset_identifiers 'the root object is an array
+			For Local a% = 0 Until asset_identifiers.Size()
+				asset_path = asset_identifiers.GetByIndex( a ).ToString()
+				Local source_file$ = StripAll( asset_path )
+				DebugLog( "  load_assets() --> "+asset_path )
+				asset_file = ReadFile( asset_path )
+				If file
+					asset_json = TJSON.Create( asset_file )
+					If Not asset_json.isNull() And TJSONArray( asset_json.Root ) 'read successful
+						load_objects( asset_json, source_file )
+					End If
 				End If
-			Else
-			End If
-		Next
+				loading_progress :+ 100.0 * Float(a+1) / asset_identifiers.Size()
+			Next
+		End If
 		DebugLog( "~n~n" )
-		'If display_progress Then fade_out()
 		Return True
 	End If
 	Return False
 End Function
 '______________________________________________________________________________
-Function load_objects%( json:TJSON, source_file$ = Null, display_progress% = False )
-	'If display_progress Then draw_loaded_asset( , True )
+Function load_objects%( json:TJSON, source_file$ = Null )
 	For Local i% = 0 To TJSONArray( json.Root ).Size() - 1
 		Local item:TJSON = TJSON.Create( json.GetObject( String.FromInt( i )))
 		Local key$ = item.GetString( "key" )
@@ -95,7 +71,6 @@ Function load_objects%( json:TJSON, source_file$ = Null, display_progress% = Fal
 		If key And key <> ""
 			key = key.toLower()
 			DebugLog( "    load_objects() --> " + key )
-			'If display_progress Then draw_loaded_asset( key )
 			Local object_json:TJSON = TJSON.Create( item.GetObject( "object" ))
 			Select item.GetString( "class" )
 				Case "font"
@@ -137,23 +112,18 @@ Function load_objects%( json:TJSON, source_file$ = Null, display_progress% = Fal
 				Case "ai_type"
 					Local ai:AI_TYPE = Create_AI_TYPE_from_json( object_json )
 					If ai Then ai_type_map.Insert( key, ai ) Else load_error( object_json )
-				Case "player_chassis"
-					Local p_cha:COMPLEX_AGENT = Create_COMPLEX_AGENT_from_json( object_json )
-					If p_cha Then player_chassis_map.Insert( key, p_cha ) Else load_error( object_json )
+				Case "player_vehicle"
+					Local p_veh:COMPLEX_AGENT = Create_COMPLEX_AGENT_from_json( object_json )
+					If p_veh Then player_vehicle_map.Insert( key, p_veh ) Else load_error( object_json )
 				Case "unit"
 					Local u:COMPLEX_AGENT = Create_COMPLEX_AGENT_from_json( object_json )
 					If u Then unit_map.Insert( key, u ) Else load_error( object_json )
-				Case "compatibility"
-					Local cd:COMPATIBILITY_DATA = Create_COMPATIBILITY_DATA_from_json( object_json )
-					If cd Then compatibility_map.Insert( key, cd ) Else load_error( object_json )
-				'Case "level"
+				'Case "campaign"
+				'	Local c:CAMPAIGN_DATA = Create_CAMPAIGN_DATA_from_json( object_json )
+				'	If c Then campaign_map.Insert( key, c ) Else load_error( object_json )
 			End Select
 		End If
 	Next
-End Function
-
-Function load_error( obj:Object )
-	End
 End Function
 
 '_____________________________________________________________________________
@@ -356,5 +326,19 @@ Function save_pixmap_to_file( px:TPixmap, file_prefix$ = "screenshot_" )
 	Local path$ = user_path + file_prefix + pad( high, 3, "0" ) + ".png"
 	'save png
 	SavePixmapPNG( px, path )
+End Function
+
+'_____________________________________________________________________________
+Function create_dirs()
+	CreateDir( art_path )
+	CreateDir( data_path )
+	CreateDir( font_path )
+	CreateDir( level_path )
+	CreateDir( sound_path )
+	CreateDir( user_path )
+End Function
+
+Function load_error( obj:Object )
+	End
 End Function
 

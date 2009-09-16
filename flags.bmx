@@ -17,7 +17,5 @@ Type FLAG
 	Global engine_running%
 	'input bleed prevention
 	Global ignore_mouse_1%
-	'consequence of failure
-	Global damage_incurred%
 End Type
 

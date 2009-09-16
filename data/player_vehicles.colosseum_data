@@ -1,13 +1,12 @@
 [
 	{
-		class: "player_chassis",
+		class: "player_vehicle",
 		key: "light_tank",
 		object: {
-			name: "war horse chassis",
+			name: "war horse",
 			image_key: "player_tank_chassis",
 			hitbox_image_key: "light_tank_hitbox",
 			gibs_image_key: "quad_gibs",
-			cash_value: 1250,
 			max_health: 500,
 			mass: 800,
 			frictional_coefficient: 75,
@@ -41,18 +40,27 @@
 					offset_x: -5,
 					offset_y: 0
 				}
+			],
+			turrets: [
+				{
+					turret_key: "light_cannon",
+					anchor: 0
+				},
+				{
+					turret_key: "light_machine_gun",
+					anchor: 0
+				}
 			]
 		}
 	},
 	{
-		class: "player_chassis",
+		class: "player_vehicle",
 		key: "medium_tank",
 		object: {
-			name: "predator chassis",
+			name: "predator",
 			image_key: "player_tank_chassis_med",
 			hitbox_image_key: "medium_tank_hitbox",
 			gibs_image_key: "quad_gibs",
-			cash_value: 5000,
 			max_health: 750,
 			mass: 1200,
 			frictional_coefficient: 125,
@@ -85,6 +93,62 @@
 				{
 					offset_x: -5,
 					offset_y: 0
+				}
+			],
+			turrets: [
+				{
+					turret_key: "dual_light_cannon",
+					anchor: 0
+				},
+				{
+					turret_key: "medium_machine_gun",
+					anchor: 0
+				}
+			]
+		}
+	},
+	{
+		class: "unit",
+		key: "apc",
+		object: {
+			name: "armed personnel carrier",
+			image_key: "apc_chassis",
+			gibs_image_key: "quad_gibs",
+			ai_name: "vehicle",
+			cash_value: 250,
+			max_health: 375,
+			mass: 400,
+			frictional_coefficient: 25,
+			driving_force_magnitude: 35,
+			turning_force_magnitude: 55,
+			death_package: true,
+			trail_package: {
+				particle_emitter_key: "tank_tread_trail_small",
+				offset_x: 0,
+				separation_x: 11,
+				separation_y: 8
+			},
+			dust_cloud_package: {
+				offset_x: 0,
+				separation_x: 11,
+				separation_y: 8,
+				dist_min: 0,
+				dist_max: 2,
+				dist_ang_min: -45,
+				dist_ang_max: 45,
+				vel_min: 0.2,
+				vel_max: 0.8
+			},
+			turret_anchors: [
+				{
+					offset_x: 0,
+					offset_y: 0
+				}
+			],
+			turrets: [
+				{
+					turret_key: "apc_machine_gun",
+					anchor: 0
 				}
 			]
 		}

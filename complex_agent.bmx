@@ -19,10 +19,10 @@ Import "image_manip.bmx"
 Import "json.bmx"
 
 '______________________________________________________________________________
-Global player_chassis_map:TMap = CreateMap()
+Global player_vehicle_map:TMap = CreateMap()
 
-Function get_player_chassis:COMPLEX_AGENT( Key$, Copy% = True ) 'returns a new instance, which is a copy of the global archetype
-	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_chassis_map.ValueForKey( Key.toLower() ))
+Function get_player_vehicle:COMPLEX_AGENT( Key$, Copy% = True ) 'returns a new instance, which is a copy of the global archetype
+	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_vehicle_map.ValueForKey( Key.toLower() ))
 	If copy And comp_ag Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( comp_ag ))
 	Return comp_ag
 End Function

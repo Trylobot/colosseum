@@ -1,19 +1,19 @@
-{
-	fonts: "data/fonts.colosseum_data",
-	sounds: "data/sounds.colosseum_data",
-	images: "data/images.colosseum_data",
-	props: "data/props.colosseum_data",
-	particles: "data/particles.colosseum_data",
-	particle_emitters: "data/particle_emitters.colosseum_data",
-	projectiles: "data/projectiles.colosseum_data",
-	projectile_launchers: "data/projectile_launchers.colosseum_data",
-	widgets: "data/widgets.colosseum_data",
-	pickups: "data/pickups.colosseum_data",
-	turret_barrels: "data/turret_barrels.colosseum_data",
-	turrets: "data/turrets.colosseum_data",
-	ai_types: "data/ai_types.colosseum_data",
-	player_chassis: "data/player_chassis.colosseum_data",
-	units: "data/units.colosseum_data",
-	compatibility: "data/compatibility.colosseum_data",
-	levels: "data/levels.colosseum_data"
-}
+[
+	"data/fonts.colosseum_data",
+	"data/sounds.colosseum_data",
+	"data/images.colosseum_data",
+	"data/props.colosseum_data",
+	"data/particles.colosseum_data",
+	"data/particle_emitters.colosseum_data",
+	"data/projectiles.colosseum_data",
+	"data/projectile_launchers.colosseum_data",
+	"data/widgets.colosseum_data",
+	"data/pickups.colosseum_data",
+	"data/turret_barrels.colosseum_data",
+	"data/turrets.colosseum_data",
+	"data/ai_types.colosseum_data",
+	"data/player_vehicles.colosseum_data",
+	"data/units.colosseum_data",
+	"data/levels.colosseum_data",
+	"data/campaigns.colosseum_data"
+]

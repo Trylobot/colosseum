@@ -57,10 +57,10 @@ Function update_network()
 					client_id = NETWORK_ID.Create( client.local_ip, client.local_port )
 					DebugLog( " " + client_id.ToString() + " connected" )
 					'send the new client an identity for all players (self + other connected clients)
-					write_net_identity( client.tcp, server.local_ip, server.local_port, profile.name, TJSON.Create( profile.vehicle.to_json() ))
+					write_net_identity( client.tcp, server.local_ip, server.local_port, profile.name, profile.vehicle_key )
 					For Local other:CONNECTION = EachIn clients
 						rp = get_remote_player( other.local_ip, other.local_port )
-						write_net_identity( client.tcp, other.local_ip, other.local_port, rp.name, rp.vehicle_json )
+						write_net_identity( client.tcp, other.local_ip, other.local_port, rp.name, rp.vehicle_key )
 					Next
 					clients.AddLast( client )
 					client.tcp.WriteByte( NET.READY )
@@ -225,11 +225,11 @@ Function update_network()
 End Function
 
 '______________________________________________________________________________
-Function write_net_identity( out:TStream, ip%, port:Short, name$, vehicle:TJSON )
+Function write_net_identity( out:TStream, ip%, port:Short, name$, vehicle_key$ )
 	out.WriteByte( NET.IDENTITY )
 	out.WriteInt( ip )
 	out.WriteShort( port )
-	out.WriteLine( name + "~t" + vehicle.ToString() )
+	out.WriteLine( name + "~t" + vehicle_key )
 End Function
 
 Function network_game_listen()
@@ -257,7 +257,7 @@ Function network_game_connect%()
 		Local self_id:NETWORK_ID = NETWORK_ID.Create( tcp.GetLocalIP(), tcp.GetLocalPort() )
 		DebugLog( " CONNECTED to " + server_id.ToString() + "~n FROM " + self_id.ToString() )
 		server = CONNECTION.Create( tcp )
-		write_net_identity( server.tcp, server.local_ip, server.local_port, profile.name, TJSON.Create( profile.vehicle.to_json() ))
+		write_net_identity( server.tcp, server.local_ip, server.local_port, profile.name, profile.vehicle_key )
 		server.tcp.WriteByte( NET.READY )
 		While server.tcp.SendMsg() ; End While
 		Return True 'connection successfully initiated
@@ -337,7 +337,7 @@ End Type
 Type REMOTE_PLAYER
 	Field net_id:NETWORK_ID
 	Field name$
-	Field vehicle_json:TJSON
+	Field vehicle_key$
 	Field avatar:COMPLEX_AGENT
 	Field brain:CONTROL_BRAIN
 	Field loaded%
@@ -349,11 +349,10 @@ Type REMOTE_PLAYER
 		Return rp
 	End Function
 	
-	Method load_net_identity( name$, vehicle_json_string$ )
+	Method load_net_identity( name$, vehicle_key$ )
 		Self.name = name
-		vehicle_json = TJSON.Create( vehicle_json_string )
-		Local dummy$ = ""
-		avatar = create_player( Create_VEHICLE_DATA_from_json( vehicle_json ), False, False, dummy )
+		Self.vehicle_key = vehicle_key
+		avatar = get_player_vehicle( vehicle_key )
 		brain = Create_CONTROL_BRAIN( avatar, CONTROL_BRAIN.CONTROL_TYPE_REMOTE )
 		loaded = True
 	End Method
