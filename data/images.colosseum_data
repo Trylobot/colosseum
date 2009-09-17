@@ -1124,10 +1124,30 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/menu_back_arrow.png",
+			path: "art/menu_back_arrow_solid.png",
 			handle_x: 0, 
 			handle_y: 0,
 			frames: 1
 		}
-	}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/menu_back_arrow_outline.png",
+			handle_x: 0, 
+			handle_y: 0,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/menu_back_arrow_extra_lines.png",
+			handle_x: 0, 
+			handle_y: 0,
+			frames: 1
+		}
+	},
 ]

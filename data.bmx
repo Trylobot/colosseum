@@ -39,7 +39,7 @@ Function load_assets%()
 			For Local a% = 0 Until asset_identifiers.Size()
 				asset_path = asset_identifiers.GetByIndex( a ).ToString()
 				Local source_file$ = StripAll( asset_path )
-				DebugLog( "  load_assets() --> "+asset_path )
+				DebugLog( "  "+asset_path )
 				asset_file = ReadFile( asset_path )
 				If file
 					asset_json = TJSON.Create( asset_file )
@@ -70,7 +70,7 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 		End Select
 		If key And key <> ""
 			key = key.toLower()
-			DebugLog( "    load_objects() --> " + key )
+			DebugLog( "    " + key )
 			Local object_json:TJSON = TJSON.Create( item.GetObject( "object" ))
 			Select item.GetString( "class" )
 				Case "font"

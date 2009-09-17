@@ -108,10 +108,10 @@
 		}
 	},
 	{
-		class: "unit",
+		class: "player_vehicle",
 		key: "apc",
 		object: {
-			name: "armed personnel carrier",
+			name: "light_apc",
 			image_key: "apc_chassis",
 			gibs_image_key: "quad_gibs",
 			ai_name: "vehicle",

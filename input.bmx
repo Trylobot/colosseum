@@ -79,8 +79,7 @@ Function get_all_input()
 				m.calculate_bounding_boxes()
 				m.select_by_coords( mouse.pos_x, mouse.pos_y )
 			Else If (current_menu > 0 And get_current_menu().id <> MENU_ID.PAUSED) ..
-			And mouse.pos_x >= 0 And mouse.pos_x <= get_image( "menu_back_arrow" ).Width ..
-			And mouse.pos_y >= main_screen_menu_y And mouse.pos_y <= main_screen_menu_y + get_image( "menu_back_arrow" ).Height
+			And mouse_hovering_on_back_button()
 				menu_command( COMMAND.BACK_TO_PARENT_MENU )
 			End If
 		End If
@@ -218,5 +217,11 @@ End Function
 Function screenshot()
 	SetOrigin( 0, 0 )
 	save_pixmap_to_file( GrabPixmap( 0, 0, window_w, window_h ))
+End Function
+
+'______________________________________________________________________________
+Function mouse_hovering_on_back_button%()
+	Return (mouse.pos_x >= 0 And mouse.pos_x <= main_screen_x ..
+	    And mouse.pos_y >= main_screen_menu_y + breadcrumb_h And mouse.pos_y <= main_screen_menu_y + breadcrumb_h + get_current_menu().height)
 End Function
 

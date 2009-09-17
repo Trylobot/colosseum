@@ -21,15 +21,15 @@ Import "json.bmx"
 '______________________________________________________________________________
 Global player_vehicle_map:TMap = CreateMap()
 
-Function get_player_vehicle:COMPLEX_AGENT( Key$, Copy% = True ) 'returns a new instance, which is a copy of the global archetype
-	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_vehicle_map.ValueForKey( Key.toLower() ))
-	If copy And comp_ag Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( comp_ag ))
+Function get_player_vehicle:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
+	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_vehicle_map.ValueForKey( key.toLower() ))
+	If copy And comp_ag Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( comp_ag, POLITICAL_ALIGNMENT.FRIENDLY ))
 	Return comp_ag
 End Function
 
 Global unit_map:TMap = CreateMap()
 
-Function get_unit:COMPLEX_AGENT( Key$, alignment% = POLITICAL_ALIGNMENT.NONE, Copy% = True ) 'returns a new instance, which is a copy of the global archetype
+Function get_unit:COMPLEX_AGENT( key$, alignment% = POLITICAL_ALIGNMENT.NONE, copy% = True ) 'returns a new instance, which is a copy of the global archetype
 	Local unit:COMPLEX_AGENT = COMPLEX_AGENT( unit_map.ValueForKey( key.toLower() ))
 	If copy And unit Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit, alignment ))
 	Return unit
@@ -41,7 +41,7 @@ Const WIDGET_AI_LIGHTBULB% = 3
 
 Const TURRETS_ALL% = -1
 
-Const MAX_COMPLEX_AGENT_VELOCITY# = 4.0 'hard velocity limit
+Const MAX_COMPLEX_AGENT_VELOCITY# = 4.0 'hard velocity limit; this shouldn't be here
 
 '___________________________________________
 Type COMPLEX_AGENT Extends AGENT
@@ -414,7 +414,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 	End Method
 	'___________________________________________
-	Method fire( index%, is_player% = false )
+	Method fire( index%, is_player% = False )
 		If Not spawning
 			If index < turrets.Length
 				turrets[index].fire( is_player )
@@ -422,7 +422,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 	End Method
 	'___________________________________________
-	Method fire_all( priority%, is_player% = false )
+	Method fire_all( priority%, is_player% = False )
 		If Not spawning
 			For Local t:TURRET = EachIn turrets
 				If t.priority = priority Then t.fire( is_player )

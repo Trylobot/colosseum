@@ -214,48 +214,14 @@ Function draw_game()
 			health_bit.draw()
 		Next
 		If game.win 'win
-			SetColor( 255, 255, 255 )
-			SetScale( 1, 1 )
-			SetRotation( 0 )
-			SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 1200 ))
-			SetImageFont( get_font( "consolas_bold_50" ))
-			Local m1$ = "LEVEL COMPLETED!"
-			DrawText_with_outline( m1, window_w/2 - TextWidth(m1)/2, 10 )
-			SetImageFont( get_font( "consolas_12" ))
-			Local m2$ = "press enter to continue"
-			DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 100 )
+			draw_win()
 		End If
 		If game.game_over 'game over
-			'paint it black
-			SetColor( 0, 0, 0 )
-			SetScale( 1, 1 )
-			SetRotation( 0 )
-			SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 3000 ))
-			DrawRect( 0, 0, window_w, window_h )
-			'message
-			SetColor( 255, 0, 0 )
-			SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 800 ))
-			SetImageFont( get_font( "consolas_bold_100" ))
-			Local m1$ = "GAME OVER."
-			DrawText_with_outline( m1, window_w/2 - TextWidth(m1)/2, 10 )
-			SetImageFont( get_font( "consolas_12" ))
-			Local m2$ = "press enter to continue"
-			DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 150 )
+			draw_game_over()
 		End If
 		'help screen
 		If FLAG_draw_help
-			Local img_help_kb:TImage = get_image( "help_kb" )
-			Local img_help_kb_mouse:TImage = get_image( "help_kb_and_mouse" )
-			SetColor( 0, 0, 0 )
-			SetAlpha( 0.550 )
-			DrawRect( 0, 0, window_w, window_h )
-			SetColor( 255, 255, 255 )
-			SetAlpha( 1 )
-			If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD
-				DrawImage( img_help_kb, window_w/2 - img_help_kb.width/2, window_h/2 - img_help_kb.height/2 )
-			Else If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-				DrawImage( img_help_kb_mouse, window_w/2 - img_help_kb_mouse.width/2, window_h/2 - img_help_kb_mouse.height/2 )
-			End If
+			draw_help_stuff()
 		End If
 	End If
 
@@ -264,18 +230,12 @@ Function draw_game()
 	SetScale( 1, 1 )
 	
 End Function
+
 '______________________________________________________________________________
 'Menu and GUI
 Function draw_main_screen()
 	Local x%, y%, h%
 	x = main_screen_x
-	
-	'title
-	'y = main_screen_y
-	'SetColor( 255, 255, 127 )
-	'SetAlpha( 1 )
-	'SetImageFont( get_font( "consolas_bold_50" ))
-	'DrawText_with_outline( AppTitle, x, y )
 	
 	'info
 	SetImageFont( get_font( "consolas_italic_12" ))
@@ -312,6 +272,7 @@ Function draw_menus()
 	Local cy% = main_screen_menu_y
 	Local alpha#
 	Local blink%
+	Local hide_selection%
 	Local popup% = MENU.is_popup( get_menu( menu_stack[current_menu] ).menu_type )
 	For Local i% = 0 To current_menu
 		Local m:MENU = get_menu( menu_stack[i] )
@@ -319,6 +280,7 @@ Function draw_menus()
 			cx = main_screen_x
 			cy = main_screen_menu_y + breadcrumb_h - 1
 			blink = True
+			hide_selection = False
 			If popup
 				If i = current_menu
 					SetColor( 0, 0, 0 )
@@ -333,12 +295,22 @@ Function draw_menus()
 			'back-arrow draw
 			If (current_menu > 0 And get_current_menu().id <> MENU_ID.PAUSED)
 				SetColor( 255, 255, 255 )
-				SetAlpha( 0.25 )
-				DrawImage( get_image( "menu_back_arrow" ), 0, main_screen_menu_y )
+				If mouse_hovering_on_back_button()
+					SetAlpha( 0.15 )
+					DrawRect( 0, main_screen_menu_y + breadcrumb_h - 1, main_screen_x, get_current_menu().height )
+					SetAlpha( 0.75 + 0.25 * Sin( now() Mod 1000 ))
+					'DrawImage( get_image( "menu_back_arrow_extra_lines" ), 3, main_screen_menu_y + breadcrumb_h + get_current_menu().height/2.0 - get_image( "menu_back_arrow_extra_lines" ).height/2.0 )
+					DrawImage( get_image( "menu_back_arrow_solid" ), 3, main_screen_menu_y + breadcrumb_h + get_current_menu().height/2.0 - get_image( "menu_back_arrow_solid" ).height/2.0 )
+					hide_selection = True
+				Else
+					SetAlpha( 0.25 )
+					'DrawImage( get_image( "menu_back_arrow_extra_lines" ), 3, main_screen_menu_y + breadcrumb_h + get_current_menu().height/2.0 - get_image( "menu_back_arrow_extra_lines" ).height/2.0 )
+					DrawImage( get_image( "menu_back_arrow_outline" ), 3, main_screen_menu_y + breadcrumb_h + get_current_menu().height/2.0 - get_image( "menu_back_arrow_outline" ).height/2.0 )
+				End If
 			End If
-			'////////////////////////////////////////////
-			m.draw( mouse, dragging_scrollbar,,, blink )
-			'////////////////////////////////////////////
+			'////////////////////////////////////////////////////////////
+			m.draw( mouse, dragging_scrollbar,,, blink, hide_selection )
+			'////////////////////////////////////////////////////////////
 			'shop decorations
 			Local MOUSE_SHADOW_SCALE# = 3.0 'Temporary, while vehicle editor is offline
 			If m.menu_type = MENU.VERTICAL_LIST_WITH_INVENTORY
@@ -597,6 +569,52 @@ Function draw_HUD()
 		draw_chats()
 	End If
 	
+End Function
+
+Function draw_win()
+	SetColor( 255, 255, 255 )
+	SetScale( 1, 1 )
+	SetRotation( 0 )
+	SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 1200 ))
+	SetImageFont( get_font( "consolas_bold_50" ))
+	Local m1$ = "LEVEL COMPLETED!"
+	DrawText_with_outline( m1, window_w/2 - TextWidth(m1)/2, 10 )
+	SetImageFont( get_font( "consolas_12" ))
+	Local m2$ = "press enter to continue"
+	DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 100 )
+End Function
+
+Function draw_game_over()
+	'paint it black
+	SetColor( 0, 0, 0 )
+	SetScale( 1, 1 )
+	SetRotation( 0 )
+	SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 3000 ))
+	DrawRect( 0, 0, window_w, window_h )
+	'message
+	SetColor( 255, 0, 0 )
+	SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 800 ))
+	SetImageFont( get_font( "consolas_bold_100" ))
+	Local m1$ = "GAME OVER."
+	DrawText_with_outline( m1, window_w/2 - TextWidth(m1)/2, 10 )
+	SetImageFont( get_font( "consolas_12" ))
+	Local m2$ = "press enter to continue"
+	DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 150 )
+End Function
+
+Function draw_help_stuff()
+	Local img_help_kb:TImage = get_image( "help_kb" )
+	Local img_help_kb_mouse:TImage = get_image( "help_kb_and_mouse" )
+	SetColor( 0, 0, 0 )
+	SetAlpha( 0.550 )
+	DrawRect( 0, 0, window_w, window_h )
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD
+		DrawImage( img_help_kb, window_w/2 - img_help_kb.width/2, window_h/2 - img_help_kb.height/2 )
+	Else If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
+		DrawImage( img_help_kb_mouse, window_w/2 - img_help_kb_mouse.width/2, window_h/2 - img_help_kb_mouse.height/2 )
+	End If
 End Function
 
 '______________________________________________________________________________

@@ -23,10 +23,6 @@ Const default_settings_file_name$ = "settings."+settings_file_ext
 Const default_assets_file_name$ = "assets."+data_file_ext
 
 '______________________________________________________________________________
-'these need to go away, kind of a hack
-Const main_screen_x% = 15
-Const main_screen_y% = 15
-
 Type POLITICAL_ALIGNMENT
 	Const NONE% = 0
 	Const FRIENDLY% = 1

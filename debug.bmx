@@ -44,20 +44,29 @@ Function debug_no_graphics()
 End Function
 
 Function debug_with_graphics()
+	'show_me()
 	'play_debug_level()
 	'debug_graffiti_manager
 	'End
 End Function
 
 Function play_debug_level()
-	Local player:COMPLEX_AGENT = get_player_vehicle( profile.vehicle_key )
 	Local lev:LEVEL = load_level( "levels/debug.colosseum_level" )
+	Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
 	play_level( lev, player )
 	game = main_game
 	game.sandbox = True
 	player.move_to( Create_POINT( lev.width/2, lev.height/2, -90 ))
 	player.snap_all_turrets()
 	player_has_entered_arena()
+End Function
+
+Function show_me()
+	DebugStop
+	Local veh:PAIR[] = map_to_array( player_vehicle_map )
+	For Local p:PAIR = EachIn veh
+		Local obj:Object = player_vehicle_map.ValueForKey( p.key )
+	Next
 End Function
 
 Function debug_main()
@@ -428,3 +437,30 @@ Function print_array( name$, arr%[] )
 	DebugLog " " + name + " = " + str
 End Function
 
+Function map_to_array:PAIR[]( map:TMap )
+	Local list:TList = CreateList()
+	Local size% = 0
+	For Local key$ = EachIn map.Keys()
+		list.AddLast( PAIR.Create( key, map.ValueForKey( key )))
+		size :+ 1
+	Next
+	Local array:PAIR[] = New PAIR[ size ]
+	Local i% = 0
+	For Local p:PAIR = EachIn list
+		array[i] = p
+		i :+ 1
+	Next
+	Return array
+End Function
+
+Type PAIR
+	Field key$
+	Field value:Object
+
+	Function Create:PAIR( key$, value:Object )
+		Local p:PAIR= New pair
+		p.key = key
+		p.value = value
+		Return p
+	End Function
+End Type
