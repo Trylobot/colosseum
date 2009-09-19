@@ -8,7 +8,15 @@ EndRem
 '//////////////////////////////////////////////////////////////////////////////
 'new stuff to be tested or fixed
 
-
+Function test_draw_kill_tally()
+	Local ts% = now()
+	Local kills% = 25
+	Repeat
+		Cls()
+		draw_kill_tally( ts, kills )
+		Flip( 1 )
+	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+End Function
 
 '//////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +40,7 @@ Global cb:CONTROL_BRAIN = Null
 Function debug_init()
 	'debug_audio_drivers()
 	'debug_get_keys()
-	DebugLog ""
+	
 End Function
 
 Function debug_no_graphics()
@@ -40,14 +48,15 @@ Function debug_no_graphics()
 	'debug_remove_from_array()
 	'debug_insert_into_array()
 	'debug_array_append
-	'End
+	
 End Function
 
 Function debug_with_graphics()
 	'show_me()
 	'play_debug_level()
 	'debug_graffiti_manager
-	'End
+	'test_draw_kill_tally()
+	
 End Function
 
 Function play_debug_level()
@@ -62,7 +71,6 @@ Function play_debug_level()
 End Function
 
 Function show_me()
-	DebugStop
 	Local veh:PAIR[] = map_to_array( player_vehicle_map )
 	For Local p:PAIR = EachIn veh
 		Local obj:Object = player_vehicle_map.ValueForKey( p.key )
@@ -464,3 +472,5 @@ Type PAIR
 		Return p
 	End Function
 End Type
+
+

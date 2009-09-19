@@ -90,7 +90,7 @@ Repeat
 		update_all_objects()
 	End If
 	'music and sound
-	play_all_audio()
+	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress )
 	'draw everything
 	draw_all_graphics()
 	

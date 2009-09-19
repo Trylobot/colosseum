@@ -185,7 +185,7 @@ Function draw_game()
 		Local c% = 255
 		Local pct# = game.player.cur_health/game.player.max_health
 		If pct <= 0.33333 Then c = 255 * Sin( now() Mod 180 )
-		draw_percentage_bar( game.player.pos_x - 10, game.player.pos_y + 15, 20, 2, pct, 1.0, 255, c, c, False )
+		draw_percentage_bar( game.player.pos_x - 10, game.player.pos_y + 15, 20, 2, pct, 1.0, 255, c, c, False, False )
 	End If
 
 	SetColor( 255, 255, 255 )
@@ -581,7 +581,9 @@ Function draw_win()
 	DrawText_with_outline( m1, window_w/2 - TextWidth(m1)/2, 10 )
 	SetImageFont( get_font( "consolas_12" ))
 	Local m2$ = "press enter to continue"
-	DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 100 )
+	DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 50 )
+	
+	draw_kill_tally( game.battle_state_toggle_ts, game.player_kills )
 End Function
 
 Function draw_game_over()
@@ -704,6 +706,41 @@ Function draw_nametag( name$, anchor:cVEC, y_offset% = 27 )
 	SetColor( 255, 255, 255 )
 	SetAlpha( 0.60 )
 	DrawText_with_outline( name, anchor.x - tw/2, anchor.y - h/2, 0.15 )
+End Function
+
+'______________________________________________________________________________
+Function draw_kill_tally( start_ts%, count% )
+	Const tally_y% = 100
+	Const fade_in_time% = 250
+	
+	Local skull_1x:TImage = get_image( "skull_1x" )
+	Local skulls_per_row% = 10
+	Local area_width% = skulls_per_row * skull_1x.Width
+	Local tally_x% = (window_w - area_width)/2
+	Local elapsed% = now() - start_ts
+	Local s% = elapsed / fade_in_time 'current skull fading in
+	Local cursor:CELL = New CELL
+	Local ts%
+	
+	reset_draw_state()
+	For Local i% = 0 Until count
+		If i < s
+			SetAlpha( 1 )
+		Else If i = s
+			ts = start_ts + (s * fade_in_time) 'the point in time that this specific skull should start fading in
+			SetAlpha( time_alpha_pct( ts, fade_in_time, True ))
+		Else 'i > s
+			Continue 'skip this iteration entirely, nothing to draw
+		End If
+
+		DrawImage( skull_1x, tally_x + skull_1x.Width * cursor.col, tally_y + skull_1x.Height * cursor.row )
+
+		cursor.col :+ 1
+		If cursor.col >= skulls_per_row
+			cursor.col = 0
+			cursor.row :+ 1
+		End If
+	Next
 End Function
 
 

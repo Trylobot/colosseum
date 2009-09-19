@@ -196,7 +196,7 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 			End If
 		Next
 	End If
-	prof.vehicle_key = json.GetString( "vehicle" )
+	prof.vehicle_key = json.GetString( "vehicle_key" )
 	prof.input_method = json.GetNumber( "input_method" )
 	prof.invert_reverse_steering = json.GetBoolean( "invert_reverse_steering" )
 	Local prog:TJSONArray = json.GetArray( "progress" )

@@ -88,7 +88,7 @@ Type ENVIRONMENT
 	Field spawn_enemies%
 	Field auto_reset_spawners%
 	Field player_has_munitions_based_turrets%
-	Field player_kills_at_start% 'kill count at level initialization
+	Field player_kills% 'kill count at level initialization
 	Field sandbox%
 
 	Field player_spawn_point:POINT
@@ -151,6 +151,8 @@ Type ENVIRONMENT
 		player_spawn_point = Null
 		player_brain = Null
 		player = Null
+		
+		player_kills = 0
 	End Method
 	
 	Method bake_level%( lev:LEVEL, background:TImage, foreground:TImage )
@@ -182,10 +184,6 @@ Type ENVIRONMENT
 		'spawning system
 		initialize_spawning_system()
 		reset_spawners()
-		'kill tracker
-		If human_participation And profile
-			player_kills_at_start = profile.kills
-		End If
 		'success
 		Return True
 	End Method

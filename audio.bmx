@@ -29,14 +29,16 @@ Function play_sound( sound:TSound, volume# = 1.0, pitch_variance# = 0.0 )
 	End If
 End Function
 
-Function play_all_audio()
+'this should be in a separate file that includes core.bmx so that it can access ENVIRONMENT objects
+'other random, global audio functions can exist in an audio_misc.bmx or something
+Function play_all_audio( human_is_rocking_out% = False )
 	'background music
 	If bg_music = Null
 		bg_music = AllocChannel()
 		CueSound( get_sound( "bgm" ), bg_music )
 		bg_music.SetVolume( 0.5 )
 	End If
-	If bg_music_enabled
+	If bg_music_enabled And human_is_rocking_out
 		ResumeChannel( bg_music )
 	Else 'Not FLAG_bg_music_on
 		PauseChannel( bg_music )

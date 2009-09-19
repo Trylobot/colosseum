@@ -974,37 +974,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/skull.png",
-			handle_x: 0,
-			handle_y: 0,
-			frames: 1
-		}
-	},
-	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/skull5.png",
-			handle_x: 0,
-			handle_y: 0,
-			frames: 1
-		}
-	},
-	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/skull25.png",
-			handle_x: 0,
-			handle_y: 0,
-			frames: 1
-		}
-	},
-	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/skull250.png",
+			path: "art/skull_1x.png",
 			handle_x: 0,
 			handle_y: 0,
 			frames: 1

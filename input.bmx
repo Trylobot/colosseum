@@ -12,7 +12,6 @@ Import "flags.bmx"
 Import "instaquit.bmx"
 Import "core.bmx"
 Import "player_profile.bmx"
-Import "kill_tally.bmx"
 Import "constants.bmx"
 Import "audio.bmx"
 Import "draw_misc.bmx"
@@ -141,14 +140,13 @@ Function get_all_input()
 	
 	mouse_state_update()
 	
-	'win/kill_tally
+	'win
 	If game And game.human_participation
-		If Not game.game_in_progress And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_R ) Or KeyHit( KEY_SPACE ))
+		If game.win ..
+		And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE ))
 			FLAG.engine_running = False
-			If Not game.game_over
-				kill_tally( "", screencap(), (profile.kills - game.player_kills_at_start) )
-			End If
 			menu_command( COMMAND.QUIT_LEVEL )
+			'automatically continue to next campaign level in sequence, if there be one
 		End If
 	End If
 	

@@ -7,6 +7,13 @@ SuperStrict
 Import "settings.bmx"
 
 '______________________________________________________________________________
+Function reset_draw_state()
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	SetScale( 1, 1 )
+	SetRotation( 0 )
+End Function
+
 Function screencap:TImage()
 	SetOrigin( 0, 0 )
 	Return LoadImage( GrabPixmap( 0, 0, window_w, window_h ))
@@ -19,9 +26,24 @@ Function DrawRectLines( x%, y%, w%, h% )
 	DrawLine( x,     y+h-1, x,     y,     False )
 End Function
 
-Function draw_percentage_bar( x%, y%, w%, h%, pct#, a# = 1.0, r% = 255, g% = 255, b% = 255, borders% = True )
-	If      pct > 1.0 Then pct = 1.0 ..
-	Else If pct < 0.0 Then pct = 0.0
+Function draw_percentage_bar( ..
+x#, y#, w#, h#, ..
+pct#, ..
+a# = 1.0, r% = 255, g% = 255, b% = 255, ..
+borders% = True, snap_to_pixels% = True )
+	'truncate
+	If snap_to_pixels
+		x = Floor( x )
+		y = Floor( y )
+		w = Floor( w )
+		h = Floor( h )
+	End If
+	'normalize
+	If pct > 1.0
+		pct = 1.0
+	Else If pct < 0.0
+		pct = 0.0
+	End If
 	SetAlpha( a / 3.0 )
 	SetColor( 0, 0, 0 )
 	SetScale( 1, 1 )
@@ -33,7 +55,7 @@ Function draw_percentage_bar( x%, y%, w%, h%, pct#, a# = 1.0, r% = 255, g% = 255
 		SetLineWidth( 1 )
 		DrawRectLines( x, y, w, h )
 		DrawRect( x + 2.0, y + 2.0, pct*(w - 4.0), h - 4.0 )
-	Else 'Not borders
+	Else 'no borders
 		SetAlpha( a )
 		SetColor( r, g, b )
 		DrawRect( x, y, pct*w, h )
