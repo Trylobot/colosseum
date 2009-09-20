@@ -23,6 +23,10 @@ Const default_settings_file_name$ = "settings."+settings_file_ext
 Const default_assets_file_name$ = "assets."+data_file_ext
 
 '______________________________________________________________________________
+'TODO: this should just be an int.
+' change references to team_id
+' team-specific objects should be abstracted to any number of teams
+' team colors will be defined as constants
 Type POLITICAL_ALIGNMENT
 	Const NONE% = 0
 	Const FRIENDLY% = 1
@@ -45,7 +49,7 @@ Type COMMAND
 	Const BACK_TO_PARENT_MENU% = 51
 	Const BACK_TO_MAIN_MENU% = 53
 	Const PLAY_LEVEL% = 100
-	Const FULL_KILL_TALLY% = 110
+	Const CONTINUE_LAST_CAMPAIGN% = 101
 	Const BUY_PART% = 3000
 	Const SELL_PART% = 3010
 	Const PAUSE% = 2000
@@ -86,9 +90,9 @@ Type COMMAND
 			Case BACK_TO_PARENT_MENU; Return "BACK_TO_PARENT_MENU"
 			Case BACK_TO_MAIN_MENU; Return "BACK_TO_MAIN_MENU"
 			Case PLAY_LEVEL; Return "PLAY_LEVEL"
+			Case CONTINUE_LAST_CAMPAIGN; Return "CONTINUE_LAST_CAMPAIGN"
 			Case CONNECT_TO_NETWORK_GAME; Return "CONNECT_TO_NETWORK_GAME"
 			Case HOST_NETWORK_GAME; Return "HOST_NETWORK_GAME"
-			Case FULL_KILL_TALLY; Return "FULL_KILL_TALLY"
 			Case BUY_PART; Return "BUY_PART"
 			Case SELL_PART; Return "SELL_PART"
 			Case PAUSE; Return "PAUSE"
@@ -129,6 +133,7 @@ Type MENU_ID
 	Const PROFILE_MENU% = 155
 	Const LOADING_BAY% = 200
 	Const INPUT_PROFILE_NAME% = 205
+	Const SELECT_CAMPAIGN% = 260
 	Const SELECT_LEVEL% = 270
 	Const CONFIRM_NEW_GAME% = 299
 	Const LOAD_GAME% = 300
@@ -169,6 +174,7 @@ Type MENU_ID
 			Case MAIN_MENU; Return "MAIN_MENU"
 			Case LOADING_BAY; Return "LOADING_BAY"
 			Case INPUT_PROFILE_NAME; Return "INPUT_PROFILE_NAME"
+			Case SELECT_CAMPAIGN; Return "SELECT_CAMPAIGN"
 			Case SELECT_LEVEL; Return "SELECT_LEVEL"
 			Case CASH_TOTAL; Return "CASH_TOTAL"
 			Case PARTS_CATALOG; Return "PARTS_CATALOG"

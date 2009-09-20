@@ -71,6 +71,10 @@ Type COMPLEX_AGENT Extends AGENT
 	Field stickies:TList 'TList<PARTICLE> damage particles
 	Field left_track:PARTICLE 'a special particle that represents the "left track" of a tank
 	Field right_track:PARTICLE 'a special particle that represents the "right track" of a tank
+	Field trail:PARTICLE
+	Field last_emit_position:POINT
+	Field trail_emit_distance_threshold#
+	Field trail_emit_angular_threshold#
 	
 	Field desire_self_destruction%
 
@@ -97,6 +101,7 @@ Type COMPLEX_AGENT Extends AGENT
 			all_widget_lists.AddLast( deploy_widgets )
 			all_widget_lists.AddLast( ai_lightbulb_widgets )
 		stickies = CreateList()
+		last_emit_position = New POINT
 	End Method
 	
 	'___________________________________________
@@ -204,6 +209,11 @@ Type COMPLEX_AGENT Extends AGENT
 			c.left_track.parent = c
 			c.left_track.animation_direction = other.left_track.animation_direction
 		End If
+		If other.trail
+			c.trail = other.trail.clone()
+		End If
+		c.trail_emit_distance_threshold = other.trail_emit_distance_threshold
+		c.trail_emit_angular_threshold = other.trail_emit_angular_threshold
 		
 		c.factory_queue = other.factory_queue[..]
 		
@@ -281,7 +291,7 @@ Type COMPLEX_AGENT Extends AGENT
 		If now() - spawn_begin_ts >= spawn_time Then spawning = False
 		
 	End Method
-	
+	'___________________________________________
 	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null )
 		For Local t:TURRET = EachIn turrets
 			t.emit( projectile_manager, background_particle_manager, foreground_particle_manager )
@@ -291,6 +301,27 @@ Type COMPLEX_AGENT Extends AGENT
 				em.emit( background_particle_manager, foreground_particle_manager )
 			Next
 		Next
+		'trails
+		If right_track <> Null And left_track <> Null And trail <> Null
+			If dist_to( last_emit_position ) >= trail_emit_distance_threshold ..
+			Or Abs( ang - last_emit_position.ang ) >= trail_emit_angular_threshold
+				'DrawImage( img, ..
+				'  parent.pos_x + scale*offset*Cos( offset_ang + parent.ang ), ..
+				'  parent.pos_y + scale*offset*Sin( offset_ang + parent.ang ), frame )
+				Local left_trail:PARTICLE = trail.clone( PARTICLE_FRAME_RANDOM )
+				left_trail.manage( background_particle_manager )
+				left_trail.ang = ang
+				left_trail.pos_x = pos_x + left_track.offset*Cos( left_track.offset_ang + ang )
+				left_trail.pos_y = pos_y + left_track.offset*Sin( left_track.offset_ang + ang )
+				Local right_trail:PARTICLE = trail.clone( PARTICLE_FRAME_RANDOM )
+				right_trail.manage( background_particle_manager )
+				right_trail.ang = ang
+				right_trail.pos_x = pos_x + right_track.offset*Cos( right_track.offset_ang + ang )
+				right_trail.pos_y = pos_y + right_track.offset*Sin( right_track.offset_ang + ang )
+				'emit (sorta)
+				last_emit_position = Copy_POINT( Self )
+			End If
+		End If
 	End Method
 	
 	'___________________________________________
@@ -688,13 +719,20 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 	End Method
 	'___________________________________________
-	Method add_motivator_package( particle_key$, offset_x# = 0.0, separation_y# = 0.0 )
+	Method add_motivator_package( ..
+	particle_key$, trail_particle_key$, ..
+	offset_x#, separation_y#, ..
+	trail_emit_distance_threshold#, trail_emit_angular_threshold#  )
 		left_track = get_particle( particle_key )
 		left_track.parent = Self
 		left_track.attach_at( offset_x, -separation_y )
 		right_track = get_particle( particle_key )
 		right_track.parent = Self
 		right_track.attach_at( offset_x, separation_y )
+		'trail emitters
+		trail = get_particle( trail_particle_key )
+		Self.trail_emit_distance_threshold = trail_emit_distance_threshold
+		Self.trail_emit_angular_threshold = trail_emit_angular_threshold
 	End Method
 	'___________________________________________
 	Method add_dust_cloud_package( offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0, dist_min# = 0.0, dist_max# = 0.0, dist_ang_min# = 0.0, dist_ang_max# = 0.0, vel_min# = 0.0, vel_max# = 0.0 )
@@ -702,13 +740,6 @@ Type COMPLEX_AGENT Extends AGENT
 		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
 		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
 		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
-	End Method
-	'___________________________________________
-	Method add_trail_package( archetype$, offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0 )
-		add_emitter( get_particle_emitter( archetype, False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y )
-		add_emitter( get_particle_emitter( archetype, False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y )
-		add_emitter( get_particle_emitter( archetype, False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y )
-		add_emitter( get_particle_emitter( archetype, False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y )
 	End Method
 	'___________________________________________
 	Method add_death_package()
@@ -799,20 +830,11 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 			Local motivator_json:TJSON = TJSON.Create( obj )
 			cmp_ag.add_motivator_package( ..
 				motivator_json.GetString( "particle_key" ), ..
+				motivator_json.GetString( "trail_particle_key" ), ..
 				motivator_json.GetNumber( "offset_x" ), ..
-				motivator_json.GetNumber( "separation_y" ))
-		End If
-	End If
-	'trail package
-	If json.TypeOf( "trail_package" ) <> JSON_UNDEFINED
-		Local obj:TJSONObject = json.GetObject( "trail_package" )
-		If obj And Not obj.IsNull()
-			Local trail_json:TJSON = TJSON.Create( obj )
-			cmp_ag.add_trail_package( ..
-				trail_json.GetString( "particle_emitter_key" ), ..
-				trail_json.GetNumber( "offset_x" ), ..
-				trail_json.GetNumber( "separation_x" ), ..
-				trail_json.GetNumber( "separation_y" ))
+				motivator_json.GetNumber( "separation_y" ), ..
+				motivator_json.GetNumber( "trail_emit_distance_threshold" ), ..
+				motivator_json.GetNumber( "trail_emit_angular_threshold" ))
 		End If
 	End If
 	'dust cloud package

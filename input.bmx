@@ -73,6 +73,7 @@ Function get_all_input()
 		End If
 		'select option under mouse cursor, if there be one
 		If MouseHit( 1 )
+			m.calculate_bounding_boxes()
 			If m.select_by_coords( mouse.pos_x, mouse.pos_y )
 				execute_option( m.get_focus() )
 				m = get_current_menu()
@@ -161,11 +162,6 @@ Function get_all_input()
 	
 	'insta-quit
 	escape_key_update()
-	
-	'screenshot
-	If KeyHit( KEY_F12 )
-		screenshot()
-	End If
 	
 End Function
 

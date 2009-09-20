@@ -67,6 +67,16 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/light_tank_track_trail.png",
+			handle_x: 12.5,
+			handle_y: 3.0,
+			frames: 1,
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/player_tank_turret_base.png",
 			handle_x: 6.5,
 			handle_y: 6.5,

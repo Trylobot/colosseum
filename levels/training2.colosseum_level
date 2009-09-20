@@ -1,0 +1,26 @@
+{
+	name: "training2",
+	width: 300,
+	height: 300,
+	row_count: 1,
+	col_count: 1,
+	hue: 0,
+	saturation: 0,
+	luminosity: 0.3,
+	horizontal_divs: [
+		0,
+		300
+	],
+	vertical_divs: [
+		0,
+		300
+	],
+	path_regions: [
+		[
+			false
+		]
+	],
+	unit_factories: null,
+	immediate_units: null,
+	props: null
+}

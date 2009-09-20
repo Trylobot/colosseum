@@ -104,6 +104,11 @@ Repeat
 		draw_instaquit_progress()
 	End If
 	
+	'screenshot
+	If KeyHit( KEY_F12 )
+		screenshot()
+	End If
+	
 	Flip( 1 )
 Until AppTerminate()
 '////////////////////////////////////////////////////////////////////////////////
