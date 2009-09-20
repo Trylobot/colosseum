@@ -68,6 +68,7 @@ Function get_all_input()
 		End If
 		'mouseover of menu items
 		If mouse_delta.x <> 0 Or mouse_delta.y <> 0
+			m.calculate_bounding_boxes()
 			m.select_by_coords( mouse.pos_x, mouse.pos_y )
 		End If
 		'select option under mouse cursor, if there be one

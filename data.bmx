@@ -18,6 +18,7 @@ Import "ai_type.bmx"
 Import "complex_agent.bmx"
 Import "player_profile.bmx"
 Import "level.bmx"
+Import "campaign_data.bmx"
 Import "image_manip.bmx"
 Import "settings.bmx"
 
@@ -118,9 +119,9 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				Case "unit"
 					Local u:COMPLEX_AGENT = Create_COMPLEX_AGENT_from_json( object_json )
 					If u Then unit_map.Insert( key, u ) Else load_error( object_json )
-				'Case "campaign"
-				'	Local c:CAMPAIGN_DATA = Create_CAMPAIGN_DATA_from_json( object_json )
-				'	If c Then campaign_map.Insert( key, c ) Else load_error( object_json )
+				Case "campaign"
+					Local c:CAMPAIGN_DATA = Create_CAMPAIGN_DATA_from_json( object_json )
+					If c Then campaign_data_map.Insert( key, c ) Else load_error( object_json )
 			End Select
 		End If
 	Next
