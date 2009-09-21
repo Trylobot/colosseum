@@ -66,14 +66,11 @@
 			death_package: true,
 			motivator_package: {
 				particle_key: "med_tank_track",
+				trail_particle_key: "med_tank_track_trail",
 				offset_x: 0,
-				separation_y: 7.5
-			},
-			trail_package: {
-				particle_emitter_key: "tank_tread_trail_medium",
-				offset_x: 0,
-				separation_x: 15,
-				separation_y: 8
+				separation_y: 7.5,
+				trail_emit_distance_threshold: 30,
+				trail_emit_angular_threshold: 5
 			},
 			dust_cloud_package: {
 				offset_x: 0,

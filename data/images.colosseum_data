@@ -129,6 +129,16 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/med_tank_track_trail.png",
+			handle_x: 16.5,
+			handle_y: 4.0,
+			frames: 1,
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/player_tank_turret_med_base.png",
 			handle_x: 7.5,
 			handle_y: 11.5,

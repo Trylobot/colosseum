@@ -84,7 +84,7 @@ Function menu_command( command_code%, argument:Object = Null )
 		Case COMMAND.NEW_GAME
 			profile = New PLAYER_PROFILE
 			profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-			profile.cash = 1000
+			profile.cash = 100
 			profile.vehicle_key = "light_tank"
 			show_info( "new profile created" )
 			menu_command( COMMAND.BACK_TO_PARENT_MENU )

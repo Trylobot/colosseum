@@ -1,11 +1,11 @@
 {
 	name: "rookie",
-	cash: 1000,
+	cash: 100,
 	kills: 0,
 	inventory: null,
-	vehicle: "light_tank",
+	vehicle_key: "light_tank",
 	input_method: 2,
 	invert_reverse_steering: false,
 	progress: null,
-	campaign: null,
+	campaign: null
 }
