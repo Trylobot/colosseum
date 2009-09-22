@@ -143,8 +143,8 @@ Function Create_TSound_from_json:TSound( json:TJSON )
 End Function
 
 Function Create_TImage_from_json:TImage( json:TJSON )
-	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
 	Local img:TImage
+	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
 	'AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
 	AutoImageFlags( FILTEREDIMAGE )
 	path = json.GetString( "path" )
