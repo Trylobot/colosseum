@@ -64,6 +64,7 @@ Type TANK_TRACK
 					Case ORIENTATION_LEFT
 						track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 				End Select
+				frame_delay = perpendicular_frame_delay_factor / Abs( track.parent.ang_vel )
 			Else If track.parent.ang_vel < -angular_speed_threshold
 				Select orientation
 					Case ORIENTATION_RIGHT
@@ -71,8 +72,9 @@ Type TANK_TRACK
 					Case ORIENTATION_LEFT
 						track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 				End Select
+				frame_delay = perpendicular_frame_delay_factor / Abs( track.parent.ang_vel )
 			End If
-			frame_delay = perpendicular_frame_delay_factor / Abs( track.parent.ang_vel )
+			'frame_delay remains INFINITY
 		End If
 		track.frame_delay = frame_delay
 		track.update()

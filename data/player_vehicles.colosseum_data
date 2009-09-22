@@ -17,13 +17,13 @@
 				{
 					particle_key: "light_tank_track",
 					offset_x: 0,
-					offset_y: 6.5,
+					offset_y: 7.5,
 					orientation: 2
 				},
 				{
 					particle_key: "light_tank_track",
 					offset_x: 0,
-					offset_y: -6.5,
+					offset_y: -7.5,
 					orientation: 1
 				}
 			],
@@ -74,13 +74,13 @@
 				{
 					particle_key: "med_tank_track",
 					offset_x: 0,
-					offset_y: 7.5,
+					offset_y: 8.5,
 					orientation: 2
 				},
 				{
 					particle_key: "med_tank_track",
 					offset_x: 0,
-					offset_y: -7.5,
+					offset_y: -8.5,
 					orientation: 1
 				}
 			],
