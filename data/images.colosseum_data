@@ -289,9 +289,29 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/light_quad_trail.png",
+			handle_x: 9,
+			handle_y: 2.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/enemy_quad_chassis.png",
 			handle_x: 9.5,
 			handle_y: 7.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/small_wheel.png",
+			handle_x: 4,
+			handle_y: 2.5,
 			frames: 1
 		}
 	},

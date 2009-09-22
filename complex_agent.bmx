@@ -69,12 +69,14 @@ Type COMPLEX_AGENT Extends AGENT
 	Field all_widget_lists:TList 'TList<TList<WIDGET>> widget master list
 
 	Field stickies:TList 'TList<PARTICLE> damage particles
-	Field left_track:PARTICLE 'a special particle that represents the "left track" of a tank
-	Field right_track:PARTICLE 'a special particle that represents the "right track" of a tank
+	Field left_track:PARTICLE 'a special particle that represents the track of a tank
+	Field right_track:PARTICLE
 	Field trail:PARTICLE
 	Field last_emit_position:POINT
 	Field trail_emit_distance_threshold#
 	Field trail_emit_angular_threshold#
+	Field left_steering_wheel:PARTICLE 'a special particle that shows the steering action of a wheeled vehicle
+	Field right_steering_wheel:PARTICLE
 	
 	Field desire_self_destruction%
 
@@ -215,6 +217,16 @@ Type COMPLEX_AGENT Extends AGENT
 		c.trail_emit_distance_threshold = other.trail_emit_distance_threshold
 		c.trail_emit_angular_threshold = other.trail_emit_angular_threshold
 		
+		If other.right_steering_wheel <> Null And other.left_steering_wheel <> Null
+			c.right_steering_wheel = other.right_steering_wheel.clone()
+			c.right_steering_wheel.attach_at( other.right_steering_wheel.off_x, other.right_steering_wheel.off_y )
+			c.right_steering_wheel.parent = c
+			
+			c.left_steering_wheel = other.left_steering_wheel.clone()
+			c.left_steering_wheel.attach_at( other.left_steering_wheel.off_x, other.left_steering_wheel.off_y )
+			c.left_steering_wheel.parent = c
+		End If
+		
 		c.factory_queue = other.factory_queue[..]
 		
 		c.drive( 0 )
@@ -285,6 +297,18 @@ Type COMPLEX_AGENT Extends AGENT
 			left_track.frame_delay = frame_delay
 			right_track.update()
 			left_track.update()
+		End If
+		
+		'wheels
+		If right_steering_wheel <> Null And left_steering_wheel <> Null
+			If vector_length( vel_x, vel_y ) > 0.25
+				Local wheel_ang# = ang - vector_angle( vel_x, vel_y )
+				right_steering_wheel.ang = wheel_ang
+				left_steering_wheel.ang = wheel_ang
+			Else 'not moving fast enough to require steering
+				right_steering_wheel.ang :- 0.03333 * right_steering_wheel.ang
+				left_steering_wheel.ang :- 0.03333 * right_steering_wheel.ang
+			End If
 		End If
 		
 		'spawn mode
@@ -358,8 +382,13 @@ Type COMPLEX_AGENT Extends AGENT
 		SetRotation( ang )
 		'tracks
 		If right_track <> Null And left_track <> Null
-			left_track.draw( alpha_override )
 			right_track.draw( alpha_override )
+			left_track.draw( alpha_override )
+		End If
+		'wheels
+		If right_steering_wheel <> Null And left_steering_wheel <> Null
+			right_steering_wheel.draw( alpha_override )
+			left_steering_wheel.draw( alpha_override )
 		End If
 		'chassis image
 		If img
@@ -724,15 +753,30 @@ Type COMPLEX_AGENT Extends AGENT
 	offset_x#, separation_y#, ..
 	trail_emit_distance_threshold#, trail_emit_angular_threshold#  )
 		left_track = get_particle( particle_key )
+		If Not left_track
+			left_track = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG ))
+		End If
 		left_track.parent = Self
 		left_track.attach_at( offset_x, -separation_y )
 		right_track = get_particle( particle_key )
+		If Not right_track
+			right_track = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG ))
+		End If
 		right_track.parent = Self
 		right_track.attach_at( offset_x, separation_y )
 		'trail emitters
 		trail = get_particle( trail_particle_key )
 		Self.trail_emit_distance_threshold = trail_emit_distance_threshold
 		Self.trail_emit_angular_threshold = trail_emit_angular_threshold
+	End Method
+	'___________________________________________
+	Method add_steering_wheel_package( particle_key$, offset_x#, separation_y# )
+		left_steering_wheel = get_particle( particle_key )
+		left_steering_wheel.parent = Self
+		left_steering_wheel.attach_at( offset_x, -separation_y )
+		right_steering_wheel = get_particle( particle_key )
+		right_steering_wheel.parent = Self
+		right_steering_wheel.attach_at( offset_x, separation_y )
 	End Method
 	'___________________________________________
 	Method add_dust_cloud_package( offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0, dist_min# = 0.0, dist_max# = 0.0, dist_ang_min# = 0.0, dist_ang_max# = 0.0, vel_min# = 0.0, vel_max# = 0.0 )
@@ -821,6 +865,17 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	If json.TypeOf( "death_package" ) <> JSON_UNDEFINED
 		If json.GetBoolean( "death_package" )
 			cmp_ag.add_death_package()
+		End If
+	End If
+	'steering wheel package
+	If json.TypeOf( "steering_wheel_package" ) <> JSON_UNDEFINED
+		Local obj:TJSONObject = json.getObject( "steering_wheel_package" )
+		If obj And Not obj.IsNull()
+			Local wheel_json:TJSON = TJSON.Create( obj )
+			cmp_ag.add_steering_wheel_package( ..
+				wheel_json.GetString( "particle_key" ), ..
+				wheel_json.GetNumber( "offset_x" ), ..
+				wheel_json.GetNumber( "separation_y" ))
 		End If
 	End If
 	'motivator package

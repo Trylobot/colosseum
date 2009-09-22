@@ -179,7 +179,7 @@ Function draw_game()
 	If game.player
 		'black out a rectangular bar
 		SetColor( 0, 0, 0 )
-		DrawRect( game.player.pos_x - 10, game.player.pos_y + 15, 20, 2 )
+		DrawRect( game.player.pos_x - 11, game.player.pos_y + 14, 22, 4 )
 		'fill in the bar partially according to the player's current health
 		'make it blink red if it's less than a third full
 		Local c% = 255

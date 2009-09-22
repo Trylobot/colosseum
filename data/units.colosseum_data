@@ -135,11 +135,17 @@
 			driving_force_magnitude: 35,
 			turning_force_magnitude: 55,
 			death_package: true,
-			trail_package: {
-				particle_emitter_key: "tank_tread_trail_small",
+			motivator_package: {
+				trail_particle_key: "light_quad_trail",
 				offset_x: 0,
-				separation_x: 3,
-				separation_y: 4
+				separation_y: 5,
+				trail_emit_distance_threshold: 5,
+				trail_emit_angular_threshold: 5
+			},
+			steering_wheel_package: {
+				particle_key: "small_wheel",
+				offset_x: 6,
+				separation_y: 5
 			},
 			dust_cloud_package: {
 				offset_x: 0,

@@ -68,6 +68,24 @@
 	},
 	{
 		class: "particle",
+		key: "small_wheel",
+		object: {
+			particle_type: 0,
+			image_key: "small_wheel",
+		}
+	},
+	{
+		class: "particle",
+		key: "light_quad_trail",
+		object: {
+			particle_type: 0,
+			image_key: "light_quad_trail",
+			layer: 2,
+			retain: true
+		}
+	},
+	{
+		class: "particle",
 		key: "cannon_muzzle_flash",
 		object: {
 			particle_type: 0,

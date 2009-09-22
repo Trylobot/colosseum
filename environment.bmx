@@ -380,8 +380,16 @@ Type ENVIRONMENT
 	Method respawn_player()
 		If player <> Null And player_brain <> Null And player.managed() And player_brain.managed()
 			player_spawn_point = random_spawn_point( POLITICAL_ALIGNMENT.FRIENDLY )
-			player.move_to( player_spawn_point )
-			player.snap_all_turrets()
+			If player_spawn_point
+				player.move_to( player_spawn_point )
+				player.snap_all_turrets()
+			Else 'player_spawn_point invalid; assume debug mode
+				player.move_to( Create_POINT( lev.width/2, lev.height/2 ))
+				player.snap_all_turrets()
+				sandbox = True
+				battle_in_progress = True
+				battle_state_toggle_ts = now()
+			End If
 		End If
 	End Method
 	

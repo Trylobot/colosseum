@@ -56,12 +56,13 @@ Function debug_with_graphics()
 	'play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
-	
+	play_debug_level()
 End Function
 
 Function play_debug_level()
 	Local lev:LEVEL = load_level( "levels/debug.colosseum_level" )
-	Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
+	'Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
+	Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
 	play_level( lev, player )
 	game = main_game
 	game.sandbox = True
@@ -115,7 +116,10 @@ Function debug_main()
 End Function
 
 Function debug_overlay()
-	ShowMouse()
+	'ShowMouse()
+	If game And game.player
+		game.player.cur_health = game.player.max_health
+	End If
 	
 	SetRotation( 0 )
 	SetScale( 1, 1 )
@@ -202,6 +206,14 @@ Function debug_overlay()
 				DrawLine( x, y, x + f.magnitude_cur*Cos(ang), y + f.magnitude_cur*Sin(ang) )
 			End If
 		Next
+		'wheels
+		'If brain.avatar.left_steering_wheel And brain.avatar.right_steering_wheel
+		'	Local x# = brain.avatar.pos_x, y# = brain.avatar.pos_y
+		'	Local ang# = f.direction + f.combine_ang_with_parent_ang*brain.avatar.ang
+		'	SetLineWidth( 1 )
+		'	SetAlpha( 0.2 )
+		'	DrawLine( x, y, x + f.magnitude_cur*Cos(ang), y + f.magnitude_cur*Sin(ang) )
+		'End If
 	Next
 	
 	'select control_brain/avatar for inspection
