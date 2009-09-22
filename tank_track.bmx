@@ -44,16 +44,16 @@ Type TANK_TRACK
 	Field parallel_frame_delay_factor%
 	Field perpendicular_frame_delay_factor%
 	
-	Method update()
+	Method update( vel# )
 		Local frame_delay# = INFINITY
-		Local vel_ang = vector_angle( track.parent.vel_x, track.parent.vel_y )
-		If track.parent.vel > velocity_threshold
+		Local vel_ang# = vector_angle( track.parent.vel_x, track.parent.vel_y )
+		If vel > velocity_threshold
 			If Abs( ang_wrap( vel_ang - track.parent.ang )) <= 90
 				track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 			Else
 				track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 			End If
-			frame_delay = parallel_frame_delay_factor / track.parent.vel
+			frame_delay = parallel_frame_delay_factor / vel
 		End If
 		If frame_delay = INFINITY Or frame_delay >= frame_delay_max
 			If track.parent.ang_vel > angular_speed_threshold
@@ -97,6 +97,7 @@ Function Create_TANK_TRACK_from_json:TANK_TRACK( json:TJSON )
 	tt = Create_TANK_TRACK( ..
 		particle_obj,, offset_x, offset_y, orientation, ..
 		parallel_frame_delay_factor_default, perpendicular_frame_delay_factor_default )
+	If Not tt Then Return Null
 	If json.TypeOf( "parallel_frame_delay_factor" )      <> JSON_UNDEFINED Then tt.parallel_frame_delay_factor =      json.GetNumber( "parallel_frame_delay_factor" )
 	If json.TypeOf( "perpendicular_frame_delay_factor" ) <> JSON_UNDEFINED Then tt.perpendicular_frame_delay_factor = json.GetNumber( "perpendicular_frame_delay_factor" )
 	Return tt

@@ -15,6 +15,7 @@ Import "widget.bmx"
 Import "particle.bmx"
 Import "force.bmx"
 Import "pickup.bmx"
+Import "point.bmx"
 Import "tank_track.bmx"
 Import "steering_wheel.bmx"
 Import "vehicle_trail.bmx"
@@ -72,12 +73,14 @@ Type COMPLEX_AGENT Extends AGENT
 	Field all_widget_lists:TList 'TList<TList<WIDGET>> widget master list
 
 	Field stickies:TList 'TList<PARTICLE> damage particles
-	Field left_track:PARTICLE 'a special particle that represents the track of a tank
-	Field right_track:PARTICLE
+	
+	Field tracks:TANK_TRACK[] 'tracks (usually left+right)
+	
 	Field trail:PARTICLE
 	Field last_emit_position:POINT
 	Field trail_emit_distance_threshold#
 	Field trail_emit_angular_threshold#
+	
 	Field left_steering_wheel:PARTICLE 'a special particle that shows the steering action of a wheeled vehicle
 	Field right_steering_wheel:PARTICLE
 	
@@ -203,17 +206,11 @@ Type COMPLEX_AGENT Extends AGENT
 			c.add_widget( other_w, WIDGET_AI_LIGHTBULB )
 		Next
 		
-		If other.right_track <> Null And other.left_track <> Null
-			c.right_track = other.right_track.clone()
-			c.right_track.attach_at( other.right_track.off_x, other.right_track.off_y )
-			c.right_track.parent = c
-			c.right_track.animation_direction = other.right_track.animation_direction
-			
-			c.left_track = other.left_track.clone()
-			c.left_track.attach_at( other.left_track.off_x, other.left_track.off_y )
-			c.left_track.parent = c
-			c.left_track.animation_direction = other.left_track.animation_direction
-		End If
+		c.tracks = New TANK_TRACK[ other.tracks.Length ]
+		For Local i% = 0 Until c.tracks.Length
+			c.tracks[i] = Copy_TANK_TRACK( other.tracks[i], c )
+		Next
+
 		If other.trail
 			c.trail = other.trail.clone()
 		End If
@@ -241,7 +238,6 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method update()
 		Super.update()
-		
 		'smooth out and constrain velocity
 		Local vel# = vector_length( vel_x, vel_y )
 		If vel > MAX_COMPLEX_AGENT_VELOCITY
@@ -252,7 +248,6 @@ Type COMPLEX_AGENT Extends AGENT
 			vel_x = 0
 			vel_y = 0
 		End If
-		
 		'turrets
 		For Local t:TURRET = EachIn turrets
 			t.update()
@@ -269,39 +264,10 @@ Type COMPLEX_AGENT Extends AGENT
 				em.update()
 			Next
 		Next
-		
-		'tracks (will be motivator objects soon, and this will be somewhat automatic, as a function of {velocity} and {angular velocity}
-		If right_track <> Null And left_track <> Null
-			Local frame_delay# = INFINITY
-			Local vel_ang# = vector_angle( vel_x, vel_y )
-			If vel > 0.00001
-				If Abs( ang_wrap( vel_ang - ang )) <= 90
-					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
-					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
-					frame_delay = 17.5 * (1.0/vel)
-				Else
-					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
-					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
-					frame_delay = 17.5 * (1.0/vel)
-				End If
-			End If
-			If frame_delay >= 100 Or frame_delay = INFINITY
-				If ang_vel > 0.00001
-					right_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
-					left_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
-					frame_delay = 40 * (1.0/Abs(ang_vel))
-				Else If ang_vel < -0.00001
-					right_track.animation_direction = ANIMATION_DIRECTION_FORWARDS
-					left_track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
-					frame_delay = 40 * (1.0/Abs(ang_vel))
-				End If
-			End If
-			right_track.frame_delay = frame_delay
-			left_track.frame_delay = frame_delay
-			right_track.update()
-			left_track.update()
-		End If
-		
+		'tracks
+		For Local tt:TANK_TRACK = EachIn tracks
+			tt.update( vel )
+		Next
 		'wheels
 		If right_steering_wheel <> Null And left_steering_wheel <> Null
 			If vector_length( vel_x, vel_y ) > 0.25
@@ -313,10 +279,8 @@ Type COMPLEX_AGENT Extends AGENT
 				left_steering_wheel.ang :- 0.03333 * right_steering_wheel.ang
 			End If
 		End If
-		
 		'spawn mode
 		If now() - spawn_begin_ts >= spawn_time Then spawning = False
-		
 	End Method
 	'___________________________________________
 	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null )
@@ -329,22 +293,16 @@ Type COMPLEX_AGENT Extends AGENT
 			Next
 		Next
 		'trails
-		If right_track <> Null And left_track <> Null And trail <> Null
+		If trail And tracks
 			If dist_to( last_emit_position ) >= trail_emit_distance_threshold ..
 			Or Abs( ang - last_emit_position.ang ) >= trail_emit_angular_threshold
-				'DrawImage( img, ..
-				'  parent.pos_x + scale*offset*Cos( offset_ang + parent.ang ), ..
-				'  parent.pos_y + scale*offset*Sin( offset_ang + parent.ang ), frame )
-				Local left_trail:PARTICLE = trail.clone( PARTICLE_FRAME_RANDOM )
-				left_trail.manage( background_particle_manager )
-				left_trail.ang = ang
-				left_trail.pos_x = pos_x + left_track.offset*Cos( left_track.offset_ang + ang )
-				left_trail.pos_y = pos_y + left_track.offset*Sin( left_track.offset_ang + ang )
-				Local right_trail:PARTICLE = trail.clone( PARTICLE_FRAME_RANDOM )
-				right_trail.manage( background_particle_manager )
-				right_trail.ang = ang
-				right_trail.pos_x = pos_x + right_track.offset*Cos( right_track.offset_ang + ang )
-				right_trail.pos_y = pos_y + right_track.offset*Sin( right_track.offset_ang + ang )
+				For Local tt:TANK_TRACK = EachIn tracks
+					Local new_trail:PARTICLE = trail.clone( PARTICLE_FRAME_RANDOM )
+					new_trail.manage( background_particle_manager )
+					new_trail.ang = ang
+					new_trail.pos_x = pos_x + tt.track.offset*Cos( tt.track.offset_ang + ang )
+					new_trail.pos_y = pos_y + tt.track.offset*Sin( tt.track.offset_ang + ang )
+				Next
 				'emit (sorta)
 				last_emit_position = Copy_POINT( Self )
 			End If
@@ -384,10 +342,9 @@ Type COMPLEX_AGENT Extends AGENT
 		SetScale( scale_override, scale_override )
 		SetRotation( ang )
 		'tracks
-		If right_track <> Null And left_track <> Null
-			right_track.draw( alpha_override )
-			left_track.draw( alpha_override )
-		End If
+		For Local tt:TANK_TRACK = EachIn tracks
+			tt.draw( alpha_override )
+		Next
 		'wheels
 		If right_steering_wheel <> Null And left_steering_wheel <> Null
 			right_steering_wheel.draw( alpha_override )
@@ -751,6 +708,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 	End Method
 	'___________________________________________
+	Rem
 	Method add_motivator_package( ..
 	particle_key$, trail_particle_key$, ..
 	offset_x#, separation_y#, ..
@@ -772,6 +730,42 @@ Type COMPLEX_AGENT Extends AGENT
 		Self.trail_emit_distance_threshold = trail_emit_distance_threshold
 		Self.trail_emit_angular_threshold = trail_emit_angular_threshold
 	End Method
+	'OLD DATA START
+	'light_tank
+	motivator_package: {
+		particle_key: "light_tank_track",
+		trail_particle_key: "light_tank_track_trail",
+		offset_x: 0,
+		separation_y: 6.5,
+		trail_emit_distance_threshold: 24,
+		trail_emit_angular_threshold: 5
+	},
+	'medium_tank
+	motivator_package: {
+		particle_key: "med_tank_track",
+		trail_particle_key: "med_tank_track_trail",
+		offset_x: 0,
+		separation_y: 7.5,
+		trail_emit_distance_threshold: 30,
+		trail_emit_angular_threshold: 5
+	},
+	'apc
+	trail_package: {
+		particle_emitter_key: "tank_tread_trail_small",
+		offset_x: 0,
+		separation_x: 11,
+		separation_y: 8
+	},
+	'armed carrier
+	motivator_package: {
+		particle_key: "med_tank_track",
+		trail_particle_key: "med_tank_track_trail",
+		offset_x: 1,
+		separation_y: 8.5,
+		trail_emit_distance_threshold: 30,
+		trail_emit_angular_threshold: 5
+	},
+	EndRem
 	'___________________________________________
 	Method add_steering_wheel_package( particle_key$, offset_x#, separation_y# )
 		left_steering_wheel = get_particle( particle_key )
@@ -796,16 +790,18 @@ Type COMPLEX_AGENT Extends AGENT
 	
 	Method set_images_unfiltered()
 		If img Then img = unfilter_image( img )
-		If left_track Then left_track.img = unfilter_image( left_track.img )
-		If right_track Then right_track.img = unfilter_image( right_track.img )
 		For Local t:TURRET = EachIn turrets
 			t.set_images_unfiltered()
+		Next
+		For Local tt:TANK_TRACK = EachIn tracks
+			tt.track.img = unfilter_image( tt.track.img )
 		Next
 	End Method
 	
 	Method scale_all( scale# )
-		If left_track Then left_track.scale = scale
-		If right_track Then right_track.scale = scale
+		For Local tt:TANK_TRACK = EachIn tracks
+			tt.track.attach_at( tt.track.off_x * scale, tt.track.off_y * scale )
+		Next
 		For Local list:TList = EachIn Self.all_widget_lists
 			For Local w:WIDGET = EachIn list
 				w.attach_at( w.attach_x * scale, w.attach_y * scale, w.ang_offset )
@@ -870,6 +866,18 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 			cmp_ag.add_death_package()
 		End If
 	End If
+	'tank tracks
+	If json.TypeOf( "tank_tracks" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "tank_tracks" )
+		If array And Not array.IsNull()
+			cmp_ag.tracks = New TANK_TRACK[ array.Size() ]
+			For Local i% = 0 Until array.Size()
+				Local tank_track_json:TJSON = TJSON.Create( array.GetByIndex( i ))
+				Local tt:TANK_TRACK = Create_TANK_TRACK_from_json( tank_track_json )
+				If tt Then cmp_ag.tracks[i] = tt
+			Next
+		End If
+	End If
 	'steering wheel package
 	If json.TypeOf( "steering_wheel_package" ) <> JSON_UNDEFINED
 		Local obj:TJSONObject = json.getObject( "steering_wheel_package" )
@@ -881,6 +889,7 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 				wheel_json.GetNumber( "separation_y" ))
 		End If
 	End If
+	Rem
 	'motivator package
 	If json.TypeOf( "motivator_package" ) <> JSON_UNDEFINED
 		Local obj:TJSONObject = json.GetObject( "motivator_package" )
@@ -895,6 +904,7 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 				motivator_json.GetNumber( "trail_emit_angular_threshold" ))
 		End If
 	End If
+	EndRem
 	'dust cloud package
 	If json.TypeOf( "dust_cloud_package" ) <> JSON_UNDEFINED
 		Local obj:TJSONObject = json.GetObject( "dust_cloud_package" )
@@ -966,6 +976,4 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	End If
 	Return cmp_ag
 End Function
-
-
 

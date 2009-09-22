@@ -6,6 +6,18 @@
 '###############################################################################
 '###############################################################################
 
+
+Function test_draw_kill_tally()
+	Local ts% = now()
+	Local kills% = 25
+	Repeat
+		Cls()
+		draw_kill_tally( ts, kills )
+		Flip( 1 )
+	Until KeyHit( KEY_ESCAPE ) Or AppTerminate()
+End Function
+
+
 Function debug_audio_drivers()
 	DebugLog " AudioDrivers() -->"
 	For Local drv$ = EachIn AudioDrivers()

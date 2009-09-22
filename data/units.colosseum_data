@@ -18,87 +18,6 @@
 	},
 	{
 		class: "unit",
-		key: "machine_gun_emplacement",
-		object: {
-			name: "machine-gun fortification",
-			image_key: "enemy_stationary-emplacement-1_chassis",
-			gibs_image_key: "tower_gibs",
-			ai_name: "turret",
-			cash_value: 100,
-			max_health: 100,
-			mass: 1000,
-			physics_disabled: true,
-			death_package: true,
-			turret_anchors: [
-				{
-					offset_x: 0,
-					offset_y: 0
-				}
-			],
-			turrets: [
-				{
-					turret_key: "stationary_emplacement_machine_gun",
-					anchor: 0
-				}
-			]
-		}
-	},
-	{
-		class: "unit",
-		key: "cannon_emplacement",
-		object: {
-			name: "cannon fortification",
-			image_key: "enemy_stationary-emplacement-1_chassis",
-			gibs_image_key: "tower_gibs",
-			ai_name: "turret",
-			cash_value: 100,
-			max_health: 100,
-			mass: 1000,
-			physics_disabled: true,
-			death_package: true,
-			turret_anchors: [
-				{
-					offset_x: 0,
-					offset_y: 0
-				}
-			],
-			turrets: [
-				{
-					turret_key: "stationary_emplacement_light_cannon",
-					anchor: 0
-				}
-			]
-		}
-	},
-	{
-		class: "unit",
-		key: "rocket_emplacement",
-		object: {
-			name: "rocket fortification",
-			image_key: "enemy_stationary-emplacement-1_chassis",
-			gibs_image_key: "tower_gibs",
-			ai_name: "turret",
-			cash_value: 150,
-			max_health: 100,
-			mass: 1000,
-			physics_disabled: true,
-			death_package: true,
-			turret_anchors: [
-				{
-					offset_x: 0,
-					offset_y: 0
-				}
-			],
-			turrets: [
-				{
-					turret_key: "stationary_emplacement_rocket_launcher",
-					anchor: 0
-				}
-			]
-		}
-	},
-	{
-		class: "unit",
 		key: "mini_bomb",
 		object: {
 			name: "hunter-seeker",
@@ -188,14 +107,20 @@
 			driving_force_magnitude: 50,
 			turning_force_magnitude: 65,
 			death_package: true,
-			motivator_package: {
-				particle_key: "light_tank_track",
-				trail_particle_key: "light_tank_track_trail",
-				offset_x: 0,
-				separation_y: 6.5,
-				trail_emit_distance_threshold: 24,
-				trail_emit_angular_threshold: 5
-			},
+			tank_tracks: [
+				{
+					particle_key: "light_tank_track",
+					offset_x: 0,
+					offset_y: 6.5,
+					orientation: 2
+				},
+				{
+					particle_key: "light_tank_track",
+					offset_x: 0,
+					offset_y: -6.5,
+					orientation: 1
+				}
+			],
 			dust_cloud_package: {
 				offset_x: 0,
 				separation_x: 12,
@@ -241,14 +166,20 @@
 			driving_force_magnitude: 70,
 			turning_force_magnitude: 95,
 			death_package: true,
-			motivator_package: {
-				particle_key: "med_tank_track",
-				trail_particle_key: "med_tank_track_trail",
-				offset_x: 1,
-				separation_y: 8.5,
-				trail_emit_distance_threshold: 30,
-				trail_emit_angular_threshold: 5
-			},
+			tank_tracks: [
+				{
+					particle_key: "light_tank_track",
+					offset_x: 1,
+					offset_y: 8.5,
+					orientation: 2
+				},
+				{
+					particle_key: "light_tank_track",
+					offset_x: 1,
+					offset_y: -8.5,
+					orientation: 1
+				}
+			],
 			dust_cloud_package: {
 				offset_x: 0,
 				separation_x: 16,
@@ -322,6 +253,87 @@
 				{
 					unit_key: "mini_bomb",
 					count: 4
+				}
+			]
+		}
+	},
+	{
+		class: "unit",
+		key: "machine_gun_emplacement",
+		object: {
+			name: "machine-gun fortification",
+			image_key: "enemy_stationary-emplacement-1_chassis",
+			gibs_image_key: "tower_gibs",
+			ai_name: "turret",
+			cash_value: 100,
+			max_health: 100,
+			mass: 1000,
+			physics_disabled: true,
+			death_package: true,
+			turret_anchors: [
+				{
+					offset_x: 0,
+					offset_y: 0
+				}
+			],
+			turrets: [
+				{
+					turret_key: "stationary_emplacement_machine_gun",
+					anchor: 0
+				}
+			]
+		}
+	},
+	{
+		class: "unit",
+		key: "cannon_emplacement",
+		object: {
+			name: "cannon fortification",
+			image_key: "enemy_stationary-emplacement-1_chassis",
+			gibs_image_key: "tower_gibs",
+			ai_name: "turret",
+			cash_value: 100,
+			max_health: 100,
+			mass: 1000,
+			physics_disabled: true,
+			death_package: true,
+			turret_anchors: [
+				{
+					offset_x: 0,
+					offset_y: 0
+				}
+			],
+			turrets: [
+				{
+					turret_key: "stationary_emplacement_light_cannon",
+					anchor: 0
+				}
+			]
+		}
+	},
+	{
+		class: "unit",
+		key: "rocket_emplacement",
+		object: {
+			name: "rocket fortification",
+			image_key: "enemy_stationary-emplacement-1_chassis",
+			gibs_image_key: "tower_gibs",
+			ai_name: "turret",
+			cash_value: 150,
+			max_health: 100,
+			mass: 1000,
+			physics_disabled: true,
+			death_package: true,
+			turret_anchors: [
+				{
+					offset_x: 0,
+					offset_y: 0
+				}
+			],
+			turrets: [
+				{
+					turret_key: "stationary_emplacement_rocket_launcher",
+					anchor: 0
 				}
 			]
 		}
