@@ -74,15 +74,13 @@ Type COMPLEX_AGENT Extends AGENT
 
 	Field stickies:TList 'TList<PARTICLE> damage particles
 	
-	Field tracks:TANK_TRACK[] 'tracks (usually left+right)
+	Field tracks:TANK_TRACK[]
+	Field wheels:STEERING_WHEEL[]
 	
 	Field trail:PARTICLE
 	Field last_emit_position:POINT
 	Field trail_emit_distance_threshold#
 	Field trail_emit_angular_threshold#
-	
-	Field left_steering_wheel:PARTICLE 'a special particle that shows the steering action of a wheeled vehicle
-	Field right_steering_wheel:PARTICLE
 	
 	Field desire_self_destruction%
 
@@ -211,21 +209,16 @@ Type COMPLEX_AGENT Extends AGENT
 			c.tracks[i] = Copy_TANK_TRACK( other.tracks[i], c )
 		Next
 
+		c.wheels = New STEERING_WHEEL[ other.wheels.Length ]
+		For Local i% = 0 Until c.wheels.Length
+			c.wheels[i] = Copy_STEERING_WHEEL( other.wheels[i], c )
+		Next
+
 		If other.trail
 			c.trail = other.trail.clone()
 		End If
 		c.trail_emit_distance_threshold = other.trail_emit_distance_threshold
 		c.trail_emit_angular_threshold = other.trail_emit_angular_threshold
-		
-		If other.right_steering_wheel <> Null And other.left_steering_wheel <> Null
-			c.right_steering_wheel = other.right_steering_wheel.clone()
-			c.right_steering_wheel.attach_at( other.right_steering_wheel.off_x, other.right_steering_wheel.off_y )
-			c.right_steering_wheel.parent = c
-			
-			c.left_steering_wheel = other.left_steering_wheel.clone()
-			c.left_steering_wheel.attach_at( other.left_steering_wheel.off_x, other.left_steering_wheel.off_y )
-			c.left_steering_wheel.parent = c
-		End If
 		
 		c.factory_queue = other.factory_queue[..]
 		
@@ -238,13 +231,16 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method update()
 		Super.update()
+		
 		'smooth out and constrain velocity
-		Local vel# = vector_length( vel_x, vel_y )
-		If vel > MAX_COMPLEX_AGENT_VELOCITY
-			Local proportion# = MAX_COMPLEX_AGENT_VELOCITY/vel
+		Local speed# = vector_length( vel_x, vel_y )
+		Local direction# = vector_angle( vel_x, vel_y )
+		
+		If speed > MAX_COMPLEX_AGENT_VELOCITY
+			Local proportion# = MAX_COMPLEX_AGENT_VELOCITY/speed
 			vel_x :* proportion
 			vel_y :* proportion
-		Else If vel <= 0.00001
+		Else If speed <= 0.00001
 			vel_x = 0
 			vel_y = 0
 		End If
@@ -266,19 +262,12 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 		'tracks
 		For Local tt:TANK_TRACK = EachIn tracks
-			tt.update( vel )
+			tt.update( speed, direction )
 		Next
 		'wheels
-		If right_steering_wheel <> Null And left_steering_wheel <> Null
-			If vector_length( vel_x, vel_y ) > 0.25
-				Local wheel_ang# = ang - vector_angle( vel_x, vel_y )
-				right_steering_wheel.ang = wheel_ang
-				left_steering_wheel.ang = wheel_ang
-			Else 'not moving fast enough to require steering
-				right_steering_wheel.ang :- 0.03333 * right_steering_wheel.ang
-				left_steering_wheel.ang :- 0.03333 * right_steering_wheel.ang
-			End If
-		End If
+		For Local sw:STEERING_WHEEL = EachIn wheels
+			sw.update( speed, direction )
+		Next
 		'spawn mode
 		If now() - spawn_begin_ts >= spawn_time Then spawning = False
 	End Method
@@ -346,10 +335,9 @@ Type COMPLEX_AGENT Extends AGENT
 			tt.draw( alpha_override )
 		Next
 		'wheels
-		If right_steering_wheel <> Null And left_steering_wheel <> Null
-			right_steering_wheel.draw( alpha_override )
-			left_steering_wheel.draw( alpha_override )
-		End If
+		For Local sw:STEERING_WHEEL = EachIn wheels
+			sw.draw( alpha_override )
+		Next
 		'chassis image
 		If img
 			SetColor( 255, 255, 255 )
@@ -707,8 +695,9 @@ Type COMPLEX_AGENT Extends AGENT
 			Next
 		End If
 	End Method
-	'___________________________________________
 	Rem
+	##################################################
+	'___________________________________________
 	Method add_motivator_package( ..
 	particle_key$, trail_particle_key$, ..
 	offset_x#, separation_y#, ..
@@ -730,7 +719,22 @@ Type COMPLEX_AGENT Extends AGENT
 		Self.trail_emit_distance_threshold = trail_emit_distance_threshold
 		Self.trail_emit_angular_threshold = trail_emit_angular_threshold
 	End Method
-	'OLD DATA START
+	'from json converter
+	'motivator package
+	If json.TypeOf( "motivator_package" ) <> JSON_UNDEFINED
+		Local obj:TJSONObject = json.GetObject( "motivator_package" )
+		If obj And Not obj.IsNull()
+			Local motivator_json:TJSON = TJSON.Create( obj )
+			cmp_ag.add_motivator_package( ..
+				motivator_json.GetString( "particle_key" ), ..
+				motivator_json.GetString( "trail_particle_key" ), ..
+				motivator_json.GetNumber( "offset_x" ), ..
+				motivator_json.GetNumber( "separation_y" ), ..
+				motivator_json.GetNumber( "trail_emit_distance_threshold" ), ..
+				motivator_json.GetNumber( "trail_emit_angular_threshold" ))
+		End If
+	End If
+	'DATA
 	'light_tank
 	motivator_package: {
 		particle_key: "light_tank_track",
@@ -749,13 +753,6 @@ Type COMPLEX_AGENT Extends AGENT
 		trail_emit_distance_threshold: 30,
 		trail_emit_angular_threshold: 5
 	},
-	'apc
-	trail_package: {
-		particle_emitter_key: "tank_tread_trail_small",
-		offset_x: 0,
-		separation_x: 11,
-		separation_y: 8
-	},
 	'armed carrier
 	motivator_package: {
 		particle_key: "med_tank_track",
@@ -765,7 +762,21 @@ Type COMPLEX_AGENT Extends AGENT
 		trail_emit_distance_threshold: 30,
 		trail_emit_angular_threshold: 5
 	},
-	EndRem
+	'apc
+	trail_package: {
+		particle_emitter_key: "tank_tread_trail_small",
+		offset_x: 0,
+		separation_x: 11,
+		separation_y: 8
+	},
+	'machine_gun_quad
+	motivator_package: {
+		trail_particle_key: "light_quad_trail",
+		offset_x: 0,
+		separation_y: 5,
+		trail_emit_distance_threshold: 5,
+		trail_emit_angular_threshold: 5
+	},
 	'___________________________________________
 	Method add_steering_wheel_package( particle_key$, offset_x#, separation_y# )
 		left_steering_wheel = get_particle( particle_key )
@@ -775,6 +786,20 @@ Type COMPLEX_AGENT Extends AGENT
 		right_steering_wheel.parent = Self
 		right_steering_wheel.attach_at( offset_x, separation_y )
 	End Method
+	'from json converter
+	'steering wheel package
+	If json.TypeOf( "steering_wheel_package" ) <> JSON_UNDEFINED
+		Local obj:TJSONObject = json.getObject( "steering_wheel_package" )
+		If obj And Not obj.IsNull()
+			Local wheel_json:TJSON = TJSON.Create( obj )
+			cmp_ag.add_steering_wheel_package( ..
+				wheel_json.GetString( "particle_key" ), ..
+				wheel_json.GetNumber( "offset_x" ), ..
+				wheel_json.GetNumber( "separation_y" ))
+		End If
+	End If
+	##################################################
+	EndRem
 	'___________________________________________
 	Method add_dust_cloud_package( offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0, dist_min# = 0.0, dist_max# = 0.0, dist_ang_min# = 0.0, dist_ang_max# = 0.0, vel_min# = 0.0, vel_max# = 0.0 )
 		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
@@ -799,9 +824,6 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Method scale_all( scale# )
-		For Local tt:TANK_TRACK = EachIn tracks
-			tt.track.attach_at( tt.track.off_x * scale, tt.track.off_y * scale )
-		Next
 		For Local list:TList = EachIn Self.all_widget_lists
 			For Local w:WIDGET = EachIn list
 				w.attach_at( w.attach_x * scale, w.attach_y * scale, w.ang_offset )
@@ -809,6 +831,9 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 		For Local t:TURRET = EachIn turrets
 			t.scale_all( scale )
+		Next
+		For Local tt:TANK_TRACK = EachIn tracks
+			tt.track.attach_at( tt.track.off_x * scale, tt.track.off_y * scale )
 		Next
 	End Method
 	
@@ -878,33 +903,18 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 			Next
 		End If
 	End If
-	'steering wheel package
-	If json.TypeOf( "steering_wheel_package" ) <> JSON_UNDEFINED
-		Local obj:TJSONObject = json.getObject( "steering_wheel_package" )
-		If obj And Not obj.IsNull()
-			Local wheel_json:TJSON = TJSON.Create( obj )
-			cmp_ag.add_steering_wheel_package( ..
-				wheel_json.GetString( "particle_key" ), ..
-				wheel_json.GetNumber( "offset_x" ), ..
-				wheel_json.GetNumber( "separation_y" ))
+	'steering wheels
+	If json.TypeOf( "steering_wheels" ) <> JSON_UNDEFINED
+		Local array:TJSONArray = json.GetArray( "steering_wheels" )
+		If array And Not array.IsNull()
+			cmp_ag.wheels = New STEERING_WHEEL[ array.Size() ]
+			For Local i% = 0 Until array.Size()
+				Local steering_wheel_json:TJSON = TJSON.Create( array.GetByIndex( i ))
+				Local sw:STEERING_WHEEL = Create_STEERING_WHEEL_from_json( steering_wheel_json )
+				If sw Then cmp_ag.wheels[i] = sw
+			Next
 		End If
 	End If
-	Rem
-	'motivator package
-	If json.TypeOf( "motivator_package" ) <> JSON_UNDEFINED
-		Local obj:TJSONObject = json.GetObject( "motivator_package" )
-		If obj And Not obj.IsNull()
-			Local motivator_json:TJSON = TJSON.Create( obj )
-			cmp_ag.add_motivator_package( ..
-				motivator_json.GetString( "particle_key" ), ..
-				motivator_json.GetString( "trail_particle_key" ), ..
-				motivator_json.GetNumber( "offset_x" ), ..
-				motivator_json.GetNumber( "separation_y" ), ..
-				motivator_json.GetNumber( "trail_emit_distance_threshold" ), ..
-				motivator_json.GetNumber( "trail_emit_angular_threshold" ))
-		End If
-	End If
-	EndRem
 	'dust cloud package
 	If json.TypeOf( "dust_cloud_package" ) <> JSON_UNDEFINED
 		Local obj:TJSONObject = json.GetObject( "dust_cloud_package" )

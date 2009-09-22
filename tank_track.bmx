@@ -5,7 +5,9 @@ Rem
 EndRem
 SuperStrict
 Import "misc.bmx"
+Import "point.bmx"
 Import "particle.bmx"
+Import "json.bmx"
 
 '______________________________________________________________________________
 Const velocity_threshold# = 0.00001
@@ -23,7 +25,7 @@ parallel_frame_delay_factor%, ..
 perpendicular_frame_delay_factor% )
 	If Not track Then Return Null 'cannot be Null
 	Local tt:TANK_TRACK = New TANK_TRACK
-	tt.track = track
+	tt.track = track.clone()
 	tt.track.parent = parent
 	tt.track.attach_at( offset_x, offset_y )
 	tt.orientation = orientation
@@ -44,16 +46,15 @@ Type TANK_TRACK
 	Field parallel_frame_delay_factor%
 	Field perpendicular_frame_delay_factor%
 	
-	Method update( vel# )
+	Method update( speed#, direction# )
 		Local frame_delay# = INFINITY
-		Local vel_ang# = vector_angle( track.parent.vel_x, track.parent.vel_y )
-		If vel > velocity_threshold
-			If Abs( ang_wrap( vel_ang - track.parent.ang )) <= 90
+		If speed > velocity_threshold
+			If Abs( ang_wrap( direction - track.parent.ang )) <= 90
 				track.animation_direction = ANIMATION_DIRECTION_FORWARDS
 			Else
 				track.animation_direction = ANIMATION_DIRECTION_BACKWARDS
 			End If
-			frame_delay = parallel_frame_delay_factor / vel
+			frame_delay = parallel_frame_delay_factor / speed
 		End If
 		If frame_delay = INFINITY Or frame_delay >= frame_delay_max
 			If track.parent.ang_vel > angular_speed_threshold
