@@ -94,6 +94,7 @@ Function level_editor%( lev:LEVEL )
 		escape_key_update()
 
 		SetColor( 255, 255, 255 )
+		SetScale( 1, 1 )
 		SetLineWidth( 1 )
 		SetAlpha( 0.5 )
 		SetRotation( 0 )
@@ -180,7 +181,9 @@ Function level_editor%( lev:LEVEL )
 		
 		'draw the "immediate units"
 		For Local u:ENTITY_DATA = EachIn lev.immediate_units
+			reset_draw_state()
 			Local unit:COMPLEX_AGENT = get_unit( u.archetype )
+			unit.alignment = u.alignment
 			unit.pos_x = u.pos.pos_x+x
 			unit.pos_y = u.pos.pos_y+y
 			unit.ang = u.pos.ang
@@ -192,9 +195,11 @@ Function level_editor%( lev:LEVEL )
 				Case POLITICAL_ALIGNMENT.HOSTILE
 					SetColor( 255, 64, 64 )
 			End Select
+			unit.snap_all_turrets()
 			unit.update()
 			unit.draw( 0.5 )
 		Next
+		reset_draw_state()
 		
 		'draw the props
 		For Local pd:ENTITY_DATA = EachIn lev.props
@@ -206,6 +211,7 @@ Function level_editor%( lev:LEVEL )
 			SetAlpha( 0.5 )
 			prop.draw()
 		Next
+		reset_draw_state()
 		
 		'change modes detection
 		If      KeyHit( KEY_1 ) Then mode = EDIT_LEVEL_MODE_BASIC ..
@@ -216,19 +222,19 @@ Function level_editor%( lev:LEVEL )
 		Else If KeyHit( KEY_6 ) Then mode = EDIT_LEVEL_MODE_IMMEDIATES ..
 		Else If KeyHit( KEY_7 ) Then mode = EDIT_LEVEL_MODE_PROPS
 		
-		If KeyHit( KEY_NUMADD )
-			current_grid_size :+ 1
-			If current_grid_size > grid_sizes.Length - 1 Then current_grid_size = 0
-			gridsnap = grid_sizes[current_grid_size]
-			x = gridsnap
-			y = gridsnap
-		Else If KeyHit( KEY_NUMSUBTRACT )
-			current_grid_size :- 1
-			If current_grid_size < 0 Then current_grid_size = grid_sizes.Length - 1
-			gridsnap = grid_sizes[current_grid_size]
-			x = gridsnap
-			y = gridsnap
-		End If
+		'If KeyHit( KEY_NUMADD )
+		'	current_grid_size :+ 1
+		'	If current_grid_size > grid_sizes.Length - 1 Then current_grid_size = 0
+		'	gridsnap = grid_sizes[current_grid_size]
+		'	x = gridsnap
+		'	y = gridsnap
+		'Else If KeyHit( KEY_NUMSUBTRACT )
+		'	current_grid_size :- 1
+		'	If current_grid_size < 0 Then current_grid_size = grid_sizes.Length - 1
+		'	gridsnap = grid_sizes[current_grid_size]
+		'	x = gridsnap
+		'	y = gridsnap
+		'End If
 		
 		'unconditionally draw level info panel and editor help
 		info_x = round_to_nearest( window_w, gridsnap ) - 300; info_y = 0;
@@ -239,7 +245,7 @@ Function level_editor%( lev:LEVEL )
 		SetColor( 196, 196, 196 )
 		DrawLine( info_x,info_y, info_x,window_h )
 		SetColor( 255, 255, 255 )
-		info_x :+ 6; info_y :+ 3
+		info_x :+ 8; info_y :+ 10
 		
 		SetImageFont( normal_font )
 
@@ -275,11 +281,11 @@ Function level_editor%( lev:LEVEL )
 				DrawText_with_shadow( "right-click to clear area", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_UNIT_FACTORY_SYSTEM
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_UNIT_FACTORY_SYSTEM+" -> unit factory placement", info_x,info_y )
-				DrawText_with_shadow( "click to paste brush", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "right-click to clear brush", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "click to create a factory", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "right-click to reset clipboard", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "ctrl+right-click to copy to brush", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "ctrl+tab to setup cell for gated-spawner", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "ctrl+right-click to copy", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "ctrl+tab to auto-size cell", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "shift+click to set angle", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_UNIT_FACTORY_DETAILS
@@ -294,10 +300,11 @@ Function level_editor%( lev:LEVEL )
 				DrawText_with_shadow( "enter to edit squad wait time", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_IMMEDIATES
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PROPS+" -> immediate units", info_x,info_y )
+				DrawText_with_shadow( "left/right to select unit", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "click to add new", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_witH_shadow( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "pgup/pgdn to change alignment", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "[ctrl+]pgup/pgdn to change alignment", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_PROPS
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PROPS+" -> props", info_x,info_y )
 				DrawText_with_shadow( "click to add new", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
@@ -505,7 +512,7 @@ Function level_editor%( lev:LEVEL )
 							End If
 						Else If shift
 							If MouseDown( 1 )
-								closest_uf.pos.ang = round_to_nearest( ang_wrap( closest_uf.pos.ang_to( mouse )), 45 )
+								closest_uf.pos.ang = round_to_nearest( ang_wrap( closest_uf.pos.add_pos( x, y ).ang_to( mouse )), 45 )
 							End If
 						End If
 						If control And KeyHit( KEY_TAB ) And closest_uf
@@ -719,7 +726,7 @@ Function level_editor%( lev:LEVEL )
 							uf.remove_last_squadmember( cursor )
 						End If
 					End If
-					If KeyHit( KEY_EQUALS )
+					If KeyHit( KEY_EQUALS ) Or KeyHit( KEY_NUMADD )
 						uf.wave_index[cursor] :+ 1
 						For Local c% = cursor + 1 Until uf.wave_index.Length
 							If uf.wave_index[c] < uf.wave_index[cursor]
@@ -729,7 +736,7 @@ Function level_editor%( lev:LEVEL )
 							End If
 						Next
 					End If
-					If KeyHit( KEY_MINUS ) And uf.wave_index[cursor] > 0
+					If (KeyHit( KEY_MINUS ) Or KeyHit( KEY_NUMSUBTRACT )) And uf.wave_index[cursor] > 0
 						uf.wave_index[cursor] :- 1
 						For Local c% = cursor - 1 To 0 Step -1
 							If uf.wave_index[c] > uf.wave_index[cursor]
@@ -748,6 +755,15 @@ Function level_editor%( lev:LEVEL )
 				gridsnap_mouse.y = round_to_nearest( mouse.pos_y-y, gridsnap )
 				new_prop.pos.pos_x = gridsnap_mouse.x
 				new_prop.pos.pos_y = gridsnap_mouse.y
+				Select new_prop.alignment
+					Case POLITICAL_ALIGNMENT.NONE
+						SetColor( 255, 255, 255 )
+					Case POLITICAL_ALIGNMENT.FRIENDLY
+						SetColor( 64, 64, 255 )
+					Case POLITICAL_ALIGNMENT.HOSTILE
+						SetColor( 255, 64, 64 )
+				End Select
+				Drawtext_with_shadow( new_prop.archetype, mouse.pos_x, mouse.pos_y - 30 )
 				If mode = EDIT_LEVEL_MODE_IMMEDIATES
 					keys = unit_keys
 					data = lev.immediate_units
@@ -779,9 +795,18 @@ Function level_editor%( lev:LEVEL )
 						If new_prop_archetype > keys.Length - 1 Then new_prop_archetype = 0
 						new_prop.archetype = keys[ new_prop_archetype ]
 					End If
+					If KeyHit( KEY_PAGEUP )
+						new_prop.alignment :- 1
+						If new_prop.alignment < 0 Then new_prop.alignment = 2
+					End If
+					If KeyHit( KEY_PAGEDOWN )
+						new_prop.alignment :+ 1
+						If new_prop.alignment > 2 Then new_prop.alignment = 0
+					End If
 					If mode = EDIT_LEVEL_MODE_IMMEDIATES
 						Local unit:COMPLEX_AGENT = get_unit( new_prop.archetype )
 						If unit
+							unit.alignment = new_prop.alignment
 							unit.pos_x = gridsnap_mouse.x+x
 							unit.pos_y = gridsnap_mouse.y+y
 							Select unit.alignment
@@ -792,8 +817,10 @@ Function level_editor%( lev:LEVEL )
 								Case POLITICAL_ALIGNMENT.HOSTILE
 									SetColor( 255, 64, 64 )
 							End Select
+							unit.scale_all( 2.0 )
+							unit.snap_all_turrets()
 							unit.update()
-							unit.draw( 0.33333 )
+							unit.draw( 0.33333, 2.0 )
 						End If
 					Else If mode = EDIT_LEVEL_MODE_PROPS
 						Local prop:AGENT = get_prop( new_prop.archetype )
@@ -835,6 +862,14 @@ Function level_editor%( lev:LEVEL )
 								closest_pd.pos.pos_x = round_to_nearest( drag_pos_start.pos_x + (mouse.pos_x - drag_mouse_start.x), gridsnap )
 								closest_pd.pos.pos_y = round_to_nearest( drag_pos_start.pos_y + (mouse.pos_y - drag_mouse_start.y), gridsnap )
 							End If
+							If KeyHit( KEY_PAGEUP )
+								closest_pd.alignment :- 1
+								If closest_pd.alignment < 0 Then closest_pd.alignment = 2
+							End If
+							If KeyHit( KEY_PAGEDOWN )
+								closest_pd.alignment :+ 1
+								If closest_pd.alignment > 2 Then closest_pd.alignment = 0
+							End If
 						Else If alt
 							If mouse_down_1 And Not MouseDown( 1 )
 								If mode = EDIT_LEVEL_MODE_IMMEDIATES
@@ -843,15 +878,12 @@ Function level_editor%( lev:LEVEL )
 									lev.remove_prop( closest_pd )
 								End If
 							End If
+						Else If shift
+							If MouseDown( 1 )
+								closest_pd.pos.ang = closest_pd.pos.ang_to( mouse.add_pos( x, y ))
+								new_prop.pos.ang = closest_pd.pos.ang
+							End If
 						End If
-					End If
-					If KeyHit( KEY_PAGEUP )
-						closest_pd.alignment :- 1
-						If closest_pd.alignment < 0 Then closest_pd.alignment = 2
-					End If
-					If KeyHit( KEY_PAGEDOWN )
-						closest_pd.alignment :+ 1
-						If closest_pd.alignment > 2 Then closest_pd.alignment = 0
 					End If
 				End If
 				

@@ -1,26 +1,327 @@
 {
 	name: "training2",
-	width: 300,
-	height: 300,
-	row_count: 1,
-	col_count: 1,
+	width: 715,
+	height: 788,
+	row_count: 14,
+	col_count: 11,
 	hue: 0,
 	saturation: 0,
 	luminosity: 0.3,
 	horizontal_divs: [
 		0,
-		300
+		22,
+		92,
+		158,
+		217,
+		276,
+		338,
+		387,
+		432,
+		493,
+		552,
+		613,
+		695,
+		765,
+		788
 	],
 	vertical_divs: [
 		0,
-		300
+		83,
+		137,
+		199,
+		261,
+		325,
+		387,
+		448,
+		511,
+		573,
+		628,
+		715
 	],
 	path_regions: [
 		[
-			false
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			false,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			true,
+			false,
+			true,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			true,
+			false,
+			false,
+			false,
+			true,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			true,
+			false,
+			false,
+			false,
+			true,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			true,
+			false,
+			true,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			false,
+			true,
+			true
+		],
+		[
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
 		]
 	],
-	unit_factories: null,
-	immediate_units: null,
+	unit_factories: [
+		{
+			alignment: 1,
+			squads: null,
+			pos: {
+				pos_x: 168,
+				pos_y: 50,
+				ang: 90
+			},
+			delay_time: null,
+			wave_index: null
+		},
+		{
+			alignment: 2,
+			squads: [
+				[
+					"mr_the_box",
+					"mr_the_box",
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"machine_gun_quad"
+				],
+				[
+					"machine_gun_quad"
+				]
+			],
+			pos: {
+				pos_x: 542,
+				pos_y: 737,
+				ang: -90
+			},
+			delay_time: [
+				0,
+				0,
+				0
+			],
+			wave_index: [
+				0,
+				1,
+				2
+			]
+		}
+	],
+	immediate_units: [
+		{
+			archetype: "machine_gun_emplacement",
+			pos: {
+				pos_x: 356,
+				pos_y: 324,
+				ang: -89.020683
+			},
+			alignment: 2
+		},
+		{
+			archetype: "machine_gun_emplacement",
+			pos: {
+				pos_x: 425,
+				pos_y: 360,
+				ang: -43.970844
+			},
+			alignment: 2
+		},
+		{
+			archetype: "machine_gun_emplacement",
+			pos: {
+				pos_x: 427,
+				pos_y: 409,
+				ang: 49.053555
+			},
+			alignment: 2
+		},
+		{
+			archetype: "machine_gun_emplacement",
+			pos: {
+				pos_x: 357,
+				pos_y: 449,
+				ang: 89.599335
+			},
+			alignment: 2
+		},
+		{
+			archetype: "machine_gun_emplacement",
+			pos: {
+				pos_x: 281,
+				pos_y: 413,
+				ang: 134.3013
+			},
+			alignment: 2
+		},
+		{
+			archetype: "machine_gun_emplacement",
+			pos: {
+				pos_x: 281,
+				pos_y: 362,
+				ang: -131.146515
+			},
+			alignment: 2
+		}
+	],
 	props: null
 }

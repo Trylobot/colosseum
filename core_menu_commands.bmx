@@ -6,6 +6,8 @@ EndRem
 'This file must be Include'd by core.bmx
 
 '______________________________________________________________________________
+Global level_editor_requests_resume%
+
 'command_argument should be an object;
 '  the object gets cast to an appropriate type automatically, a container type with all the information necessary
 '  if the cast fails, the argument is invalid
@@ -135,6 +137,9 @@ Function menu_command( command_code%, argument:Object = Null )
 			save_level( String(argument), level_editor_cache )
 			menu_command( COMMAND.BACK_TO_PARENT_MENU )
 			show_info( "saved level "+level_editor_cache.name+" to "+String(argument) )
+			If level_editor_requests_resume
+				menu_command( COMMAND.EDIT_LEVEL )
+			End If
 		'________________________________________
 		Case COMMAND.PLAYER_INPUT_TYPE
 			If profile
@@ -222,13 +227,13 @@ Function menu_command( command_code%, argument:Object = Null )
 			show_info( "video settings changed" )
 		'________________________________________
 		Case COMMAND.EDIT_LEVEL
-			Local result% = level_editor( level_editor_cache )
-			Select result
-				Case LEVEL_EDITOR_EXIT
-					'do nothing
-				Case LEVEL_EDITOR_REQUESTS_SAVE
-					menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create( MENU_ID.SAVE_LEVEL ))
-			End Select
+			Local return_code% = level_editor( level_editor_cache )
+			If return_code = LEVEL_EDITOR_REQUESTS_SAVE
+				menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create( MENU_ID.SAVE_LEVEL ))
+				level_editor_requests_resume = True
+			Else
+				level_editor_requests_resume = False
+			End If
 			get_current_menu().update( True )
 		'________________________________________
 		Case COMMAND.EDIT_VEHICLE
