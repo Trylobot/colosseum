@@ -18,7 +18,6 @@ Import "pickup.bmx"
 Import "point.bmx"
 Import "tank_track.bmx"
 Import "steering_wheel.bmx"
-Import "vehicle_trail.bmx"
 Import "image_manip.bmx"
 Import "json.bmx"
 
@@ -72,12 +71,14 @@ Type COMPLEX_AGENT Extends AGENT
 	Field ai_lightbulb_widgets:TList 'TList<WIDGET>
 	Field all_widget_lists:TList 'TList<TList<WIDGET>> widget master list
 
+	'TODO: either flesh this out or remove it.
+	'      was thinking of doing that modular armor plating thing
 	Field stickies:TList 'TList<PARTICLE> damage particles
 	
 	Field tracks:TANK_TRACK[]
 	Field wheels:STEERING_WHEEL[]
 	
-	Field trail:PARTICLE
+	Field vehicle_trails:PARTICLE[]
 	Field last_emit_position:POINT
 	Field trail_emit_distance_threshold#
 	Field trail_emit_angular_threshold#
@@ -214,9 +215,12 @@ Type COMPLEX_AGENT Extends AGENT
 			c.wheels[i] = Copy_STEERING_WHEEL( other.wheels[i], c )
 		Next
 
-		If other.trail
-			c.trail = other.trail.clone()
-		End If
+		c.vehicle_trails = New PARTICLE[ other.vehicle_trails.Length ]
+		For Local i% = 0 Until c.vehicle_trails.Length
+			c.vehicle_trails[i] = other.vehicle_trails[i].clone()
+			c.vehicle_trails[i].parent = c
+			c.vehicle_trails[i].attach_at( other.vehicle_trails[i].off_x, other.vehicle_trails[i].off_y )
+		Next
 		c.trail_emit_distance_threshold = other.trail_emit_distance_threshold
 		c.trail_emit_angular_threshold = other.trail_emit_angular_threshold
 		
@@ -281,20 +285,18 @@ Type COMPLEX_AGENT Extends AGENT
 				em.emit( background_particle_manager, foreground_particle_manager )
 			Next
 		Next
-		'trails
-		If trail And tracks
-			If dist_to( last_emit_position ) >= trail_emit_distance_threshold ..
-			Or Abs( ang - last_emit_position.ang ) >= trail_emit_angular_threshold
-				For Local tt:TANK_TRACK = EachIn tracks
-					Local new_trail:PARTICLE = trail.clone( PARTICLE_FRAME_RANDOM )
-					new_trail.manage( background_particle_manager )
-					new_trail.ang = ang
-					new_trail.pos_x = pos_x + tt.track.offset*Cos( tt.track.offset_ang + ang )
-					new_trail.pos_y = pos_y + tt.track.offset*Sin( tt.track.offset_ang + ang )
-				Next
-				'emit (sorta)
-				last_emit_position = Copy_POINT( Self )
-			End If
+		'trail
+		If vehicle_trails And vehicle_trails.Length > 0 ..
+		And (dist_to( last_emit_position ) >= trail_emit_distance_threshold ..
+		Or Abs( ang - last_emit_position.ang ) >= trail_emit_angular_threshold)
+			For Local vt:PARTICLE = EachIn vehicle_trails
+				Local trail:PARTICLE = vt.clone( PARTICLE_FRAME_RANDOM )
+				trail.manage( background_particle_manager )
+				trail.ang = ang
+				trail.pos_x = pos_x + vt.offset*Cos( vt.offset_ang + ang )
+				trail.pos_y = pos_y + vt.offset*Sin( vt.offset_ang + ang )
+			Next
+			last_emit_position = Copy_POINT( Self )
 		End If
 	End Method
 	
@@ -399,7 +401,7 @@ Type COMPLEX_AGENT Extends AGENT
 		spawning = True
 		spawn_time = time
 		spawn_begin_ts = now()
-		move_to( p )
+		move_to( p.add_pos(Rnd(-3,3),Rnd(-3,3)).add_ang(Rnd(-3,3)) )
 	End Method
 	
 	'___________________________________________
@@ -695,111 +697,20 @@ Type COMPLEX_AGENT Extends AGENT
 			Next
 		End If
 	End Method
-	Rem
-	##################################################
 	'___________________________________________
-	Method add_motivator_package( ..
-	particle_key$, trail_particle_key$, ..
+	Method add_vehicle_trail_package( particle_key$, ..
 	offset_x#, separation_y#, ..
 	trail_emit_distance_threshold#, trail_emit_angular_threshold#  )
-		left_track = get_particle( particle_key )
-		If Not left_track
-			left_track = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG ))
-		End If
-		left_track.parent = Self
-		left_track.attach_at( offset_x, -separation_y )
-		right_track = get_particle( particle_key )
-		If Not right_track
-			right_track = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG ))
-		End If
-		right_track.parent = Self
-		right_track.attach_at( offset_x, separation_y )
-		'trail emitters
-		trail = get_particle( trail_particle_key )
+		vehicle_trails = New PARTICLE[2]
+		vehicle_trails[0] = get_particle( particle_key )
+		vehicle_trails[0].parent = Self
+		vehicle_trails[0].attach_at( offset_x, -separation_y )
+		vehicle_trails[1] = get_particle( particle_key )
+		vehicle_trails[1].parent = Self
+		vehicle_trails[1].attach_at( offset_x, separation_y )
 		Self.trail_emit_distance_threshold = trail_emit_distance_threshold
 		Self.trail_emit_angular_threshold = trail_emit_angular_threshold
 	End Method
-	'from json converter
-	'motivator package
-	If json.TypeOf( "motivator_package" ) <> JSON_UNDEFINED
-		Local obj:TJSONObject = json.GetObject( "motivator_package" )
-		If obj And Not obj.IsNull()
-			Local motivator_json:TJSON = TJSON.Create( obj )
-			cmp_ag.add_motivator_package( ..
-				motivator_json.GetString( "particle_key" ), ..
-				motivator_json.GetString( "trail_particle_key" ), ..
-				motivator_json.GetNumber( "offset_x" ), ..
-				motivator_json.GetNumber( "separation_y" ), ..
-				motivator_json.GetNumber( "trail_emit_distance_threshold" ), ..
-				motivator_json.GetNumber( "trail_emit_angular_threshold" ))
-		End If
-	End If
-	'DATA
-	'light_tank
-	motivator_package: {
-		particle_key: "light_tank_track",
-		trail_particle_key: "light_tank_track_trail",
-		offset_x: 0,
-		separation_y: 6.5,
-		trail_emit_distance_threshold: 24,
-		trail_emit_angular_threshold: 5
-	},
-	'medium_tank
-	motivator_package: {
-		particle_key: "med_tank_track",
-		trail_particle_key: "med_tank_track_trail",
-		offset_x: 0,
-		separation_y: 7.5,
-		trail_emit_distance_threshold: 30,
-		trail_emit_angular_threshold: 5
-	},
-	'armed carrier
-	motivator_package: {
-		particle_key: "med_tank_track",
-		trail_particle_key: "med_tank_track_trail",
-		offset_x: 1,
-		separation_y: 8.5,
-		trail_emit_distance_threshold: 30,
-		trail_emit_angular_threshold: 5
-	},
-	'apc
-	trail_package: {
-		particle_emitter_key: "tank_tread_trail_small",
-		offset_x: 0,
-		separation_x: 11,
-		separation_y: 8
-	},
-	'machine_gun_quad
-	motivator_package: {
-		trail_particle_key: "light_quad_trail",
-		offset_x: 0,
-		separation_y: 5,
-		trail_emit_distance_threshold: 5,
-		trail_emit_angular_threshold: 5
-	},
-	'___________________________________________
-	Method add_steering_wheel_package( particle_key$, offset_x#, separation_y# )
-		left_steering_wheel = get_particle( particle_key )
-		left_steering_wheel.parent = Self
-		left_steering_wheel.attach_at( offset_x, -separation_y )
-		right_steering_wheel = get_particle( particle_key )
-		right_steering_wheel.parent = Self
-		right_steering_wheel.attach_at( offset_x, separation_y )
-	End Method
-	'from json converter
-	'steering wheel package
-	If json.TypeOf( "steering_wheel_package" ) <> JSON_UNDEFINED
-		Local obj:TJSONObject = json.getObject( "steering_wheel_package" )
-		If obj And Not obj.IsNull()
-			Local wheel_json:TJSON = TJSON.Create( obj )
-			cmp_ag.add_steering_wheel_package( ..
-				wheel_json.GetString( "particle_key" ), ..
-				wheel_json.GetNumber( "offset_x" ), ..
-				wheel_json.GetNumber( "separation_y" ))
-		End If
-	End If
-	##################################################
-	EndRem
 	'___________________________________________
 	Method add_dust_cloud_package( offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0, dist_min# = 0.0, dist_max# = 0.0, dist_ang_min# = 0.0, dist_ang_max# = 0.0, vel_min# = 0.0, vel_max# = 0.0 )
 		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
@@ -932,6 +843,19 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 				dust_cloud_json.GetNumber( "vel_max" ))
 		End If
 	End If
+	'vehicle trail package
+	If json.TypeOf( "vehicle_trail_package" ) <> JSON_UNDEFINED
+		Local obj:TJSONObject = json.GetObject( "vehicle_trail_package" )
+		If obj And Not obj.IsNull()
+			Local vehicle_trail_json:TJSON = TJSON.Create( obj )
+			cmp_ag.add_vehicle_trail_package( ..
+				vehicle_trail_json.GetString( "particle_key" ), ..
+				vehicle_trail_json.GetNumber( "offset_x" ), ..
+				vehicle_trail_json.GetNumber( "separation_y" ), ..
+				vehicle_trail_json.GetNumber( "trail_emit_distance_threshold" ), ..
+				vehicle_trail_json.GetNumber( "trail_emit_angular_threshold" ))
+		End If
+	End If
 	'widgets
 	If json.TypeOf( "widgets" ) <> JSON_UNDEFINED
 		Local array:TJSONArray = json.GetArray( "widgets" )
@@ -987,3 +911,12 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	Return cmp_ag
 End Function
 
+Rem
+'apc
+trail_package: {
+	particle_emitter_key: "tank_tread_trail_small",
+	offset_x: 0,
+	separation_x: 11,
+	separation_y: 8
+},
+EndRem

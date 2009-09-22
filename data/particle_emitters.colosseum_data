@@ -1,24 +1,6 @@
 [
 	{
 		class: "particle_emitter",
-		key: "tank_tread_debris",
-		object: {
-			emitter_object_key: "tank_tread_debris",
-			combine_vel_ang_with_parent_ang: true,
-			interval_min: 100,
-			interval_max: 150,
-			count_min: 0,
-			count_max: 0,
-			life_time_min: 200,
-			life_time_max: 350,
-			alpha_min: 0.75,
-			alpha_max: 0.75,
-			alpha_delta_min: -0.0012,
-			alpha_delta_max: -0.0025
-		}
-	},
-	{
-		class: "particle_emitter",
 		key: "tank_tread_dust_cloud",
 		object: {
 			emitter_object_key: "dust",
@@ -41,28 +23,6 @@
 			green_max: 229,
 			blue_min: 204,
 			blue_max: 204
-		}
-	},
-	{
-		class: "particle_emitter",
-		key: "tank_tread_trail_small",
-		object: {
-			emitter_object_key: "tank_tread_trail_small",
-			interval_min: 100,
-			interval_max: 100,
-			life_time_min: 0,
-			life_time_max: 0
-		}
-	},
-	{
-		class: "particle_emitter",
-		key: "tank_tread_trail_medium",
-		object: {
-			emitter_object_key: "tank_tread_trail_medium",
-			interval_min: 100,
-			interval_max: 100,
-			life_time_min: 0,
-			life_time_max: 0
 		}
 	},
 	{
@@ -507,39 +467,6 @@
 			scale_max: 0.70,
 			scale_delta_min: 0.0008,
 			scale_delta_max: 0.0300
-		}
-	},
-	{
-		class: "particle_emitter",
-		key: "quad_wheel_debris",
-		object: {
-			emitter_object_key: "tank_tread_debris",
-			combine_vel_ang_with_parent_ang: true,
-			interval_min: 100,
-			interval_max: 150,
-			count_min: 0,
-			count_max: 0,
-			life_time_min: 200,
-			life_time_max: 350,
-			alpha_min: 0.75,
-			alpha_max: 0.75,
-			alpha_delta_min: -0.0012,
-			alpha_delta_max: -0.0025
-		}
-	},
-	{
-		class: "particle_emitter",
-		key: "quad_wheel_trail",
-		object: {
-			emitter_object_key: "tank_tread_trail_small",
-			interval_min: 100,
-			interval_max: 100,
-			life_time_min: 50,
-			life_time_max: 50,
-			scale_min: 0.60,
-			scale_max: 0.60,
-			scale_delta_min: 0.0,
-			scale_delta_max: 0.0
 		}
 	},
 	{

@@ -551,30 +551,6 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/trail_3.png",
-			handle_x: 2.5,
-			handle_y: 3.5,
-			frames: 5,
-			frame_width: 4,
-			frame_height: 5
-		}
-	},
-	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/trail_5.png",
-			handle_x: 2.5,
-			handle_y: 3.5,
-			frames: 5,
-			frame_width: 4,
-			frame_height: 7
-		}
-	},
-	{
-		class: "image",
-		key: "{path}",
-		object: {
 			path: "art/box_gib.png",
 			handle_x: 8.5,
 			handle_y: 8.5,

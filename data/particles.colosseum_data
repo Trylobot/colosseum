@@ -1,37 +1,6 @@
 [
 	{
 		class: "particle",
-		key: "tank_tread_debris",
-		object: {
-			particle_type: 0,
-			image_key: "debris",
-			layer: 2,
-			retain: false,
-			frictional_coefficient: 0.05
-		}
-	},
-	{
-		class: "particle",
-		key: "tank_tread_trail_small",
-		object: {
-			particle_type: 0,
-			image_key: "trail_3",
-			layer: 2,
-			retain: true
-		}
-	},
-	{
-		class: "particle",
-		key: "tank_tread_trail_medium",
-		object: {
-			particle_type: 0,
-			image_key: "trail_5",
-			layer: 2,
-			retain: true
-		}
-	},
-	{
-		class: "particle",
 		key: "light_tank_track",
 		object: {
 			particle_type: 1,
@@ -45,7 +14,8 @@
 			particle_type: 0,
 			image_key: "light_tank_track_trail",
 			layer: 2,
-			retain: true
+			retain: true,
+			life_time: 0
 		}
 	},
 	{
@@ -63,7 +33,8 @@
 			particle_type: 0,
 			image_key: "med_tank_track_trail",
 			layer: 2,
-			retain: true
+			retain: true,
+			life_time: 0
 		}
 	},
 	{
@@ -81,7 +52,8 @@
 			particle_type: 0,
 			image_key: "light_quad_trail",
 			layer: 2,
-			retain: true
+			retain: true,
+			life_time: 0
 		}
 	},
 	{

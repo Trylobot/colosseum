@@ -339,7 +339,7 @@ Function create_dirs()
 	CreateDir( user_path )
 End Function
 
-Function load_error( obj:Object )
-	End
+Function load_error( json:TJSON )
+	DebugLog( " *** ERROR loading~n" + json.ToSource() )
 End Function
 

@@ -38,6 +38,13 @@
 				vel_min: 0.2,
 				vel_max: 0.8
 			},
+			vehicle_trail_package: {
+				particle_key: "light_tank_track_trail",
+				offset_x: 0,
+				separation_y: 7.5,
+				trail_emit_distance_threshold: 24,
+				trail_emit_angular_threshold: 5
+			}
 			turret_anchors: [
 				{
 					offset_x: -5,
@@ -95,6 +102,13 @@
 				vel_min: 0.2,
 				vel_max: 0.8
 			},
+			vehicle_trail_package: {
+				particle_key: "med_tank_track_trail",
+				offset_x: 0,
+				separation_y: 8.5,
+				trail_emit_distance_threshold: 30,
+				trail_emit_angular_threshold: 5
+			}
 			turret_anchors: [
 				{
 					offset_x: -5,

@@ -82,7 +82,14 @@ Type POINT Extends MANAGED_OBJECT
 	
 	Method add_pos:POINT( delta_pos_x#, delta_pos_y# )
 		Local p:POINT = Copy_POINT( Self )
-		p.pos_x :+ delta_pos_x; p.pos_y :+ delta_pos_y
+		p.pos_x :+ delta_pos_x
+		p.pos_y :+ delta_pos_y
+		Return p
+	End Method
+	
+	Method add_ang:POINT( delta_ang# )
+		Local p:POINT = Copy_POINT( Self )
+		p.ang :+ delta_ang
 		Return p
 	End Method
 	
