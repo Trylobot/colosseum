@@ -239,15 +239,6 @@
 						offset_y: 0,
 						mute_offset_ang: true
 					}
-				},
-				{
-					widget_key: "spinner",
-					type: 2,
-					attach_at: {
-						offset_x: 10,
-						offset_y: 0,
-						mute_offset_ang: true
-					}
 				}
 			],
 			turret_anchors: [

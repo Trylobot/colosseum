@@ -270,7 +270,7 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 		'wheels
 		For Local sw:STEERING_WHEEL = EachIn wheels
-			sw.update( speed, direction )
+			sw.update( turning_force.control_pct )
 		Next
 		'spawn mode
 		If now() - spawn_begin_ts >= spawn_time Then spawning = False

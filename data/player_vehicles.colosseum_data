@@ -142,6 +142,28 @@
 			driving_force_magnitude: 35,
 			turning_force_magnitude: 55,
 			death_package: true,
+			steering_wheels: [
+				{
+					particle_key: "small_wheel",
+					offset_x: -1.5,
+					offset_y: -7
+				},
+				{
+					particle_key: "small_wheel",
+					offset_x: -1.5,
+					offset_y: 7
+				},
+				{
+					particle_key: "small_wheel",
+					offset_x: 6.5,
+					offset_y: -7
+				},
+				{
+					particle_key: "small_wheel",
+					offset_x: 6.5,
+					offset_y: 7
+				}
+			],
 			dust_cloud_package: {
 				offset_x: 0,
 				separation_x: 11,

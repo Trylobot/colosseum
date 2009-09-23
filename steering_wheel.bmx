@@ -31,12 +31,8 @@ End Function
 Type STEERING_WHEEL
 	Field wheel:PARTICLE
 	
-	Method update( speed#, direction# )
-		If speed > speed_threshold
-			wheel.ang = wheel.parent.ang - direction
-		Else
-			wheel.ang :- centering_factor * wheel.ang
-		End If
+	Method update( turning_control_pct# )
+		wheel.ang = 50.0 * turning_control_pct
 	End Method
 	
 	Method draw( alpha_override# = 1.0 )

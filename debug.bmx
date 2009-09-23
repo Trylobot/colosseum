@@ -48,15 +48,15 @@ Function debug_with_graphics()
 	'play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
-	'play_debug_level()
+	play_debug_level()
 End Function
 
 Function play_debug_level()
 	Local lev:LEVEL = load_level( "levels/debug.colosseum_level" )
 	'Local player:COMPLEX_AGENT = get_player_vehicle( "medium_tank" )
 	'Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
-	'Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
-	Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
+	Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
+	'Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
 	play_level( lev, player )
 	game = main_game
 	game.sandbox = True
