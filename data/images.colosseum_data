@@ -3,7 +3,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/player_tank_chassis.png",
+			path: "art/units/light_tank/player_tank_chassis.png",
 			handle_x: 11.5,
 			handle_y: 6.5,
 			frames: 1
@@ -13,7 +13,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/player_tank_chassis_lightmap.png",
+			path: "art/units/light_tank/player_tank_chassis_lightmap.png",
 			handle_x: 11.5,
 			handle_y: 6.5,
 			frames: 4,
@@ -25,7 +25,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/apc_chassis.png",
+			path: "art/units/apc/apc_chassis.png",
 			handle_x: 13.5,
 			handle_y: 9.5,
 			frames: 1
@@ -35,7 +35,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/apc_turret_base.png",
+			path: "art/units/apc/apc_turret_base.png",
 			handle_x: 3.5,
 			handle_y: 5.5,
 			frames: 1
@@ -45,7 +45,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/apc_turret_barrel.png",
+			path: "art/units/apc/apc_turret_barrel.png",
 			handle_x: 1.5,
 			handle_y: 2.5,
 			frames: 1
@@ -55,7 +55,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/light_tank_track.png",
+			path: "art/units/light_tank/light_tank_track.png",
 			handle_x: 12.5,
 			handle_y: 3.0,
 			frames: 8,
@@ -67,7 +67,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/light_tank_track_trail.png",
+			path: "art/units/light_tank/light_tank_track_trail.png",
 			handle_x: 12.5,
 			handle_y: 3.0,
 			frames: 1,
@@ -77,7 +77,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/player_tank_turret_base.png",
+			path: "art/units/light_tank/player_tank_turret_base.png",
 			handle_x: 6.5,
 			handle_y: 6.5,
 			frames: 1
@@ -87,7 +87,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/player_tank_turret_barrel.png",
+			path: "art/units/light_tank/player_tank_turret_barrel.png",
 			handle_x: 3.5,
 			handle_y: 3.5,
 			frames: 1
@@ -97,7 +97,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/player_tank_mgun_turret.png",
+			path: "art/units/light_tank/player_tank_mgun_turret.png",
 			handle_x: 3.5,
 			handle_y: 3.5,
 			frames: 1
@@ -107,7 +107,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/player_tank_chassis_med.png",
+			path: "art/units/medium_tank/player_tank_chassis_med.png",
 			handle_x: 16.5,
 			handle_y: 11.5,
 			frames: 1
@@ -117,7 +117,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/med_tank_track.png",
+			path: "art/units/medium_tank/med_tank_track.png",
 			handle_x: 16.5,
 			handle_y: 4.0,
 			frames: 8,
@@ -129,7 +129,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/med_tank_track_trail.png",
+			path: "art/units/medium_tank/med_tank_track_trail.png",
 			handle_x: 16.5,
 			handle_y: 4.0,
 			frames: 1,
@@ -139,7 +139,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/player_tank_turret_med_base.png",
+			path: "art/units/medium_tank/player_tank_turret_med_base.png",
 			handle_x: 7.5,
 			handle_y: 11.5,
 			frames: 1
@@ -149,7 +149,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/player_tank_turret_med_barrel_right.png",
+			path: "art/units/medium_tank/player_tank_turret_med_barrel_right.png",
 			handle_x: 7.5,
 			handle_y: 11.5,
 			frames: 1
@@ -159,7 +159,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/player_tank_turret_med_barrel_left.png",
+			path: "art/units/medium_tank/player_tank_turret_med_barrel_left.png",
 			handle_x: 7.5,
 			handle_y: 11.5,
 			frames: 1
@@ -169,7 +169,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/player_tank_med_mgun_turret_barrel.png",
+			path: "art/units/medium_tank/player_tank_med_mgun_turret_barrel.png",
 			handle_x: 7.5,
 			handle_y: 11.5,
 			frames: 1
@@ -179,7 +179,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/ripper_machine_gun_turret_base.png",
+			path: "art/units/medium_tank/ripper_machine_gun_turret_base.png",
 			handle_x: 8.5,
 			handle_y: 6.5,
 			frames: 1
@@ -189,7 +189,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/ripper_machine_gun_turret_barrel.png",
+			path: "art/units/medium_tank/ripper_machine_gun_turret_barrel.png",
 			handle_x: 1.5,
 			handle_y: 2.5,
 			frames: 1
@@ -199,7 +199,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/laser_turret_base-barrel.png",
+			path: "art/units/light_tank/laser_turret_base-barrel.png",
 			handle_x: 5.5,
 			handle_y: 5.5,
 			frames: 1
@@ -209,7 +209,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/medium_laser_turret_base-barrel.png",
+			path: "art/units/medium_tank/medium_laser_turret_base-barrel.png",
 			handle_x: 8.5,
 			handle_y: 6.5,
 			frames: 1
@@ -219,7 +219,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/box.png",
+			path: "art/units/box/box.png",
 			handle_x: 8.5,
 			handle_y: 8.5,
 			frames: 1
@@ -229,7 +229,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/enemy_stationary-emplacement-1_chassis.png",
+			path: "art/units/stationary/enemy_stationary-emplacement-1_chassis.png",
 			handle_x: 13.5,
 			handle_y: 13.5,
 			frames: 1
@@ -239,7 +239,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/enemy_stationary-emplacement-1_turret-base.png",
+			path: "art/units/stationary/enemy_stationary-emplacement-1_turret-base.png",
 			handle_x: 11.5,
 			handle_y: 11.5,
 			frames: 1
@@ -249,7 +249,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/enemy_stationary-emplacement-1_turret-barrel.png",
+			path: "art/units/stationary/enemy_stationary-emplacement-1_turret-barrel.png",
 			handle_x: 11.5,
 			handle_y: 11.5,
 			frames: 1
@@ -259,7 +259,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/enemy_machine-gun_emplacement_turret-barrel.png",
+			path: "art/units/stationary/enemy_machine-gun_emplacement_turret-barrel.png",
 			handle_x: 2.5,
 			handle_y: 2.5,
 			frames: 1
@@ -269,7 +269,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/nme_mobile_bomb.png",
+			path: "art/units/bomb/nme_mobile_bomb.png",
 			handle_x: 3.5,
 			handle_y: 5.5,
 			frames: 1
@@ -279,7 +279,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/limb.png",
+			path: "art/units/spider/limb.png",
 			handle_x: 2.5,
 			handle_y: 3.5,
 			frames: 1
@@ -289,7 +289,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/light_quad_trail.png",
+			path: "art/units/quad/light_quad_trail.png",
 			handle_x: 9,
 			handle_y: 2.5,
 			frames: 1
@@ -299,7 +299,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/enemy_quad_chassis.png",
+			path: "art/units/quad/enemy_quad_chassis.png",
 			handle_x: 9.5,
 			handle_y: 7.5,
 			frames: 1
@@ -309,7 +309,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/small_wheel.png",
+			path: "art/units/quad/small_wheel.png",
 			handle_x: 4,
 			handle_y: 2.5,
 			frames: 1
@@ -319,7 +319,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/enemy_light_mgun_turret_base.png",
+			path: "art/units/quad/enemy_light_mgun_turret_base.png",
 			handle_x: 3.5,
 			handle_y: 2.5,
 			frames: 1
@@ -329,7 +329,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/enemy_light_mgun_turret_barrel.png",
+			path: "art/units/quad/enemy_light_mgun_turret_barrel.png",
 			handle_x: 3.5,
 			handle_y: 2.5,
 			frames: 1
@@ -339,7 +339,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/muzzle_flash.png",
+			path: "art/effects/muzzle_flash.png",
 			handle_x: 0.5,
 			handle_y: 12.5,
 			frames: 1
@@ -349,7 +349,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/energy_mgun_flare.png",
+			path: "art/effects/energy_mgun_flare.png",
 			handle_x: 0.5,
 			handle_y: 7.5,
 			frames: 1
@@ -359,7 +359,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/mgun_muzzle_flash.png",
+			path: "art/effects/mgun_muzzle_flash.png",
 			handle_x: 0.5,
 			handle_y: 7.5,
 			frames: 1
@@ -369,7 +369,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/muzzle_smoke.png",
+			path: "art/effects/muzzle_smoke.png",
 			handle_x: 15.5,
 			handle_y: 15.5,
 			frames: 1
@@ -379,7 +379,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/mgun_muzzle_smoke.png",
+			path: "art/effects/mgun_muzzle_smoke.png",
 			handle_x: 8.5,
 			handle_y: 8.5,
 			frames: 1
@@ -389,7 +389,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/mgun_shell_casing.png",
+			path: "art/effects/mgun_shell_casing.png",
 			handle_x: 3.5,
 			handle_y: 2.5,
 			frames: 1
@@ -399,7 +399,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/projectile_shell_casing.png",
+			path: "art/effects/projectile_shell_casing.png",
 			handle_x: 5.5,
 			handle_y: 3.5,
 			frames: 1
@@ -409,7 +409,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/rocket_thrust.png",
+			path: "art/effects/rocket_thrust.png",
 			handle_x: 16.5,
 			handle_y: 6.5,
 			frames: 1
@@ -419,7 +419,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/rocket_casing.png",
+			path: "art/effects/rocket_casing.png",
 			handle_x: 6.5,
 			handle_y: 3.5,
 			frames: 1
@@ -429,7 +429,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/halo.png",
+			path: "art/ui/halo.png",
 			handle_x: 100.0,
 			handle_y: 100.0,
 			frames: 1
@@ -439,7 +439,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/spotlight.png",
+			path: "art/effects/spotlight.png",
 			handle_x: 100.0,
 			handle_y: 100.0,
 			frames: 1
@@ -449,7 +449,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/spark.png",
+			path: "art/effects/spark.png",
 			handle_x: 0.5,
 			handle_y: 2.5,
 			frames: 1
@@ -459,7 +459,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/laser_muzzle_flare.png",
+			path: "art/effects/laser_muzzle_flare.png",
 			handle_x: 1.5,
 			handle_y: 7.5,
 			frames: 1
@@ -469,7 +469,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/medium_laser_muzzle_flare.png",
+			path: "art/effects/medium_laser_muzzle_flare.png",
 			handle_x: 1.5,
 			handle_y: 7.5,
 			frames: 1
@@ -479,7 +479,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/white_circle.png",
+			path: "art/effects/white_circle.png",
 			handle_x: 25.0,
 			handle_y: 25.0,
 			frames: 1
@@ -489,7 +489,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/projectile.png",
+			path: "art/effects/projectile.png",
 			handle_x: 6.5,
 			handle_y: 3.5,
 			frames: 1
@@ -499,7 +499,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/mgun.png",
+			path: "art/effects/mgun.png",
 			handle_x: 4.5,
 			handle_y: 1.5,
 			frames: 1
@@ -509,7 +509,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/laser_red.png",
+			path: "art/effects/laser_red.png",
 			handle_x: 13.5,
 			handle_y: 2.5,
 			frames: 1
@@ -519,7 +519,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/laser.png",
+			path: "art/effects/laser.png",
 			handle_x: 13.5,
 			handle_y: 2.5,
 			frames: 1
@@ -529,7 +529,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/rocket.png",
+			path: "art/effects/rocket.png",
 			handle_x: 10.5,
 			handle_y: 3.5,
 			frames: 1
@@ -539,19 +539,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/debris.png",
-			handle_x: 2.5,
-			handle_y: 2.5,
-			frames: 5,
-			frame_width: 5,
-			frame_height: 5
-		}
-	},
-	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/box_gib.png",
+			path: "art/units/box/box_gib.png",
 			handle_x: 8.5,
 			handle_y: 8.5,
 			frames: 6,
@@ -563,7 +551,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/tower_gibs.png",
+			path: "art/units/stationary/tower_gibs.png",
 			handle_x: 11.5,
 			handle_y: 11.5,
 			frames: 11,
@@ -575,7 +563,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/bomb_gibs.png",
+			path: "art/units/bomb/bomb_gibs.png",
 			handle_x: 3.5,
 			handle_y: 5.5,
 			frames: 7,
@@ -587,7 +575,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/quad_gibs.png",
+			path: "art/units/quad/quad_gibs.png",
 			handle_x: 9.5,
 			handle_y: 7.5,
 			frames: 9,
@@ -599,7 +587,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/crate_gibs.png",
+			path: "art/props/crate_gibs.png",
 			handle_x: 16.0,
 			handle_y: 16.0,
 			frames: 26,
@@ -611,7 +599,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/crate_small_gibs.png",
+			path: "art/props/crate_small_gibs.png",
 			handle_x: 10.0,
 			handle_y: 10.0,
 			frames: 18,
@@ -623,7 +611,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/stickies.png",
+			path: "art/effects/stickies.png",
 			handle_x: 7.5,
 			handle_y: 7.5,
 			frames: 5,
@@ -635,7 +623,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/glow.png",
+			path: "art/ui/glow.png",
 			handle_x: 7.5,
 			handle_y: 7.5,
 			frames: 1
@@ -645,7 +633,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/pickup_ammo_main_5.png",
+			path: "art/items/pickup_ammo_main_5.png",
 			handle_x: 16.0,
 			handle_y: 9.0,
 			frames: 1
@@ -655,7 +643,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/pickup_ammo_main_10.png",
+			path: "art/items/pickup_ammo_main_10.png",
 			handle_x: 18.0,
 			handle_y: 9.0,
 			frames: 1
@@ -665,7 +653,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/pickup_ammo_main_15.png",
+			path: "art/items/pickup_ammo_main_15.png",
 			handle_x: 18.0,
 			handle_y: 9.0,
 			frames: 1
@@ -675,7 +663,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/pickup_ammo_main_20.png",
+			path: "art/items/pickup_ammo_main_20.png",
 			handle_x: 18.0,
 			handle_y: 9.0,
 			frames: 1
@@ -685,7 +673,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/pickup_health.png",
+			path: "art/items/pickup_health.png",
 			handle_x: 16.0,
 			handle_y: 9.0,
 			frames: 1
@@ -695,7 +683,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/pickup_cooldown.png",
+			path: "art/items/pickup_cooldown.png",
 			handle_x: 16.0,
 			handle_y: 9.0,
 			frames: 1
@@ -705,7 +693,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/health_mini.png",
+			path: "art/ui/health_mini.png",
 			handle_x: 0.0,
 			handle_y: 0.0,
 			frames: 1
@@ -715,7 +703,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/help_kb.png",
+			path: "art/ui/help_kb.png",
 			handle_x: 0.0,
 			handle_y: 0.0,
 			frames: 1
@@ -725,7 +713,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/help_kb_and_mouse.png",
+			path: "art/ui/help_kb_and_mouse.png",
 			handle_x: 0.0,
 			handle_y: 0.0,
 			frames: 1
@@ -735,7 +723,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/icon_music_note.png",
+			path: "art/ui/icon_music_note.png",
 			handle_x: 0.0,
 			handle_y: 0.0,
 			frames: 1
@@ -745,7 +733,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/icon_speaker_on.png",
+			path: "art/ui/icon_speaker_on.png",
 			handle_x: 0.0,
 			handle_y: 0.0,
 			frames: 1
@@ -755,7 +743,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/icon_speaker_off.png",
+			path: "art/ui/icon_speaker_off.png",
 			handle_x: 0.0,
 			handle_y: 0.0,
 			frames: 1
@@ -765,7 +753,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/icon_player_cannon_ammo.png",
+			path: "art/ui/icon_player_cannon_ammo.png",
 			handle_x: 0.0,
 			handle_y: 0.0,
 			frames: 1
@@ -775,7 +763,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/bar_shine.png",
+			path: "art/ui/bar_shine.png",
 			handle_x: 15.0,
 			handle_y: 0.0,
 			frames: 1
@@ -785,7 +773,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/door.png",
+			path: "art/door/door.png",
 			handle_x: 1.0,
 			handle_y: 7.0,
 			frames: 1
@@ -795,7 +783,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/crate.png",
+			path: "art/props/crate.png",
 			handle_x: 16.0,
 			handle_y: 16.0,
 			frames: 1
@@ -805,7 +793,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/crate_small.png",
+			path: "art/props/crate_small.png",
 			handle_x: 10.0,
 			handle_y: 10.0,
 			frames: 1
@@ -815,7 +803,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/reticle.png",
+			path: "art/ui/reticle.png",
 			handle_x: 22.5,
 			handle_y: 2.5,
 			frames: 1
@@ -825,7 +813,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/ghost_reticle.png",
+			path: "art/ui/ghost_reticle.png",
 			handle_x: 3.5,
 			handle_y: 3.5,
 			frames: 1
@@ -835,7 +823,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/door_bg.png",
+			path: "art/door/door_bg.png",
 			handle_x: 35.0,
 			handle_y: 74.0,
 			frames: 1
@@ -845,7 +833,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/door_fg.png",
+			path: "art/door/door_fg.png",
 			handle_x: 35.0,
 			handle_y: 74.0,
 			frames: 1
@@ -855,7 +843,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/light_tank_hitbox.png",
+			path: "art/units/light_tank/light_tank_hitbox.png",
 			handle_x: 12.5,
 			handle_y: 9.5,
 			frames: 1
@@ -865,7 +853,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/medium_tank_hitbox.png",
+			path: "art/units/medium_tank/medium_tank_hitbox.png",
 			handle_x: 16.5,
 			handle_y: 11.5,
 			frames: 1
@@ -875,7 +863,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/carrier_chassis.png",
+			path: "art/units/carrier/carrier_chassis.png",
 			handle_x: 17,
 			handle_y: 13,
 			frames: 1
@@ -885,7 +873,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/carrier_gibs.png",
+			path: "art/units/carrier/carrier_gibs.png",
 			handle_x: 17,
 			handle_y: 13,
 			frames: 21,
@@ -897,7 +885,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/carrier_hitbox.png",
+			path: "art/units/carrier/carrier_hitbox.png",
 			handle_x: 17,
 			handle_y: 13,
 			frames: 1
@@ -907,7 +895,7 @@
 		class: "image",
 		key: "bay_door_clockwise",
 		object: {
-			path: "art/bay_door.png",
+			path: "art/units/carrier/bay_door.png",
 			handle_x: 3,
 			handle_y: 2,
 			frames: 1
@@ -917,7 +905,7 @@
 		class: "image",
 		key: "bay_door_counter_clockwise",
 		object: {
-			path: "art/bay_door.png",
+			path: "art/units/carrier/bay_door.png",
 			handle_x: 3,
 			handle_y: 10,
 			frames: 1,
@@ -928,7 +916,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/ramp.png",
+			path: "art/units/carrier/ramp.png",
 			handle_x: 1,
 			handle_y: 4,
 			frames: 1
@@ -948,7 +936,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/arrow.png",
+			path: "art/ui/arrow.png",
 			handle_x: 23,
 			handle_y: 19,
 			frames: 1
@@ -958,7 +946,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/door_servo.png",
+			path: "art/door/door_servo.png",
 			handle_x: 0,
 			handle_y: 6,
 			frames: 7,
@@ -970,7 +958,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/laser_big.png",
+			path: "art/effects/laser_big.png",
 			handle_x: 15,
 			handle_y: 3.5,
 			frames: 1
@@ -980,7 +968,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/lightbulb.png",
+			path: "art/effects/lightbulb.png",
 			handle_x: 9.5,
 			handle_y: 9.5,
 			frames: 1
@@ -990,7 +978,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/skull_1x.png",
+			path: "art/ui/skull_1x.png",
 			handle_x: 0,
 			handle_y: 0,
 			frames: 1
@@ -1000,7 +988,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/discarded_energy_core_red.png",
+			path: "art/effects/discarded_energy_core_red.png",
 			handle_x: 3,
 			handle_y: 2.5,
 			frames: 1
@@ -1010,7 +998,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/discarded_energy_core_big.png",
+			path: "art/effects/discarded_energy_core_big.png",
 			handle_x: 3.5,
 			handle_y: 2.5,
 			frames: 1
@@ -1020,7 +1008,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/lock.png",
+			path: "art/ui/lock.png",
 			handle_x: 0,
 			handle_y: 0,
 			frames: 1
@@ -1030,7 +1018,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/warning.png",
+			path: "art/ui/warning.png",
 			handle_x: 0,
 			handle_y: 0,
 			frames: 1
@@ -1040,7 +1028,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/information.png",
+			path: "art/ui/information.png",
 			handle_x: 0,
 			handle_y: 0,
 			frames: 1
@@ -1050,7 +1038,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/shockwave.png",
+			path: "art/effects/shockwave.png",
 			handle_x: 75.5,
 			handle_y: 75.5,
 			frames: 1
@@ -1060,7 +1048,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/reload_bar.png",
+			path: "art/ui/reload_bar.png",
 			handle_x: 0,
 			handle_y: 0,
 			frames: 1
@@ -1070,7 +1058,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/reload_marker.png",
+			path: "art/ui/reload_marker.png",
 			handle_x: 0,
 			handle_y: 0,
 			frames: 1
@@ -1080,7 +1068,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/recharge_bar.png",
+			path: "art/ui/recharge_bar.png",
 			handle_x: 0,
 			handle_y: 0,
 			frames: 1
@@ -1090,7 +1078,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/energy_pellet.png",
+			path: "art/effects/energy_pellet.png",
 			handle_x: 2,
 			handle_y: 2,
 			frames: 1
@@ -1100,7 +1088,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/pellet_turret_base.png",
+			path: "art/units/light_tank/pellet_turret_base.png",
 			handle_x: 1,
 			handle_y: 1,
 			frames: 1
@@ -1110,7 +1098,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/menu_back_arrow_solid.png",
+			path: "art/ui/menu_back_arrow_solid.png",
 			handle_x: 0, 
 			handle_y: 0,
 			frames: 1
@@ -1120,7 +1108,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/menu_back_arrow_outline.png",
+			path: "art/ui/menu_back_arrow_outline.png",
 			handle_x: 0, 
 			handle_y: 0,
 			frames: 1
@@ -1130,7 +1118,7 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/menu_back_arrow_extra_lines.png",
+			path: "art/ui/menu_back_arrow_extra_lines.png",
 			handle_x: 0, 
 			handle_y: 0,
 			frames: 1

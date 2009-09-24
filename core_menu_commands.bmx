@@ -204,6 +204,10 @@ Function menu_command( command_code%, argument:Object = Null )
 				audio_driver = new_audio_driver
 				SetAudioDriver( audio_driver )
 				show_info( "audio driver set to "+audio_driver )
+				'force all persistent channels to re-allocate
+				bg_music = Null
+				engine_start = Null
+				engine_idle = Null
 			End If
 			menu_command( COMMAND.BACK_TO_PARENT_MENU )
 		'________________________________________

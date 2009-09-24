@@ -5,9 +5,9 @@
 		object: {
 			name: "training",
 			levels: [
-				"levels/training1.colosseum_level",
-				"levels/training2.colosseum_level",
-				"levels/training3.colosseum_level"
+				"levels/training/training1.colosseum_level",
+				"levels/training/training2.colosseum_level",
+				"levels/training/training3.colosseum_level"
 			],
 			player_vehicle: "light_tank"
 		}
