@@ -1,4 +1,5 @@
-rem   Colosseum distribution .zip file maker
+REM   Colosseum distribution .zip file maker
+set FLAGS=/E /C /I /Y
 
 mkdir __distro_7z_temp__
 mkdir __distro_7z_temp__\art
@@ -8,13 +9,15 @@ mkdir __distro_7z_temp__\levels
 mkdir __distro_7z_temp__\sound
 mkdir __distro_7z_temp__\user
 
-copy Colosseum.exe              __distro_7z_temp__
-copy art\*.png                  __distro_7z_temp__\art
-copy data\*.colosseum_data      __distro_7z_temp__\data
-copy fonts\*.ttf                __distro_7z_temp__\fonts
-copy levels\*.colosseum_level   __distro_7z_temp__\levels
-copy sound\*.ogg                __distro_7z_temp__\sound
-copy user_release\*.colosseum_* __distro_7z_temp__\user
+mkdir distros
+
+xcopy Colosseum.exe              __distro_7z_temp__        %FLAGS%
+xcopy art\*.png                  __distro_7z_temp__\art    %FLAGS%
+xcopy data\*.colosseum_data      __distro_7z_temp__\data   %FLAGS%
+xcopy fonts\*.ttf                __distro_7z_temp__\fonts  %FLAGS%
+xcopy levels\*.colosseum_level   __distro_7z_temp__\levels %FLAGS%
+xcopy sound\*.ogg                __distro_7z_temp__\sound  %FLAGS%
+xcopy user_release\*.colosseum_* __distro_7z_temp__\user   %FLAGS%
 
 cd __distro_7z_temp__
 
