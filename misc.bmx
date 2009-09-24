@@ -18,6 +18,28 @@ Function now%()
 	Return MilliSecs()
 End Function
 
+'______________________________________________________________________________
+Function find_files:TList( path$, ext$ = "", list:TList = Null )
+	If Not list Then list = CreateList()
+	If FileType( path ) = FILETYPE_DIR
+		Local path_contents$[] = LoadDir( path, True )
+		For Local entry$ = EachIn path_contents
+			If entry = ".svn" Then Continue
+			Local entry_full$ = path + "/" + entry
+			Select FileType( entry_full )
+				Case FILETYPE_FILE
+					If ext = "" Or ExtractExt( entry_full ) = ext
+						list.AddLast( entry_full )
+					End If
+				Case FILETYPE_DIR
+					find_files( entry_full, ext, list )
+			End Select
+		Next
+	End If
+	Return list
+End Function
+
+'______________________________________________________________________________
 Function Pow#( x#, p% )
 	For Local i% = 1 To p - 1
 		x :* x
@@ -260,23 +282,6 @@ Function pad$( str$, width%, pad$ = " ", align_right% = True )
 End Function
 
 '______________________________________________________________________________
-'Function combine_lists:TList( list1:TList, list2:TList )
-'	Local newlist:TList = list1.Copy()
-'	For Local obj:Object = EachIn list2
-'		list1.AddLast( obj )
-'	Next
-'	Return newlist
-'End Function
-
-Function remove_from_Int_array:Int[]( arr%[], i% )
-	
-End Function
-
-Function insert_into_Int_array:Int[]( arr%[], i%, val% )
-	
-End Function
-
-'______________________________________________________________________________
 'vector & angle functions
 Function ang_wrap#( a# ) 'forces the angle into the range [-180,180]
 	If a < -180
@@ -311,10 +316,12 @@ Function cartesian_to_polar( x#, y#, r# Var, a# Var )
 	r = Sqr( Pow(x,2) + Pow(y,2) )
 	a = ATan2( y, x )
 End Function
+
 Function polar_to_cartesian( r#, a#, x# Var, y# Var )
 	x = r*Cos( a )
 	y = r*Sin( a )
 End Function
+
 '______________________________________________________________________________
 Function round_to_nearest#( x#, interval# )
 	If (x Mod interval) < (interval / 2.0)
@@ -323,14 +330,17 @@ Function round_to_nearest#( x#, interval# )
 		Return (Int(1 + x / interval) * interval)
 	End If
 End Function
-'______________________________________________________________________________
+
 Function enforce_suffix$( str$, suffix$ )
 	Return str + suffix
 End Function
+
 '______________________________________________________________________________
+'misc/silly types
 Type INTEGER
 	Field value%
 	Function Create:INTEGER( value% )
 		Local i:INTEGER = New INTEGER; i.value = value;	Return i
 	End Function
 End Type
+

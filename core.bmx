@@ -99,7 +99,7 @@ End Function
 Function init_ai_menu_game( fit_to_window% = True )
 	If Not show_ai_menu_game Then Return
 	ai_menu_game = Create_ENVIRONMENT()
-	Local lev:LEVEL = load_level( level_path + "ai_menu_game" + "." + level_file_ext )
+	Local lev:LEVEL = load_level( level_path + "menu/" + "ai_menu_game" + "." + level_file_ext )
 	If lev
 		Local diff%
 		If fit_to_window

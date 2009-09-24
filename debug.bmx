@@ -8,7 +8,12 @@ EndRem
 '//////////////////////////////////////////////////////////////////////////////
 'new stuff to be tested or fixed
 
-
+Function test_find_files()
+	DebugLog " test_find_files() _____________________"
+	For Local entry$ = EachIn find_files( "levels", level_file_ext )
+		DebugLog " " + entry
+	Next
+End Function
 
 '//////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +45,7 @@ Function debug_no_graphics()
 	'debug_remove_from_array()
 	'debug_insert_into_array()
 	'debug_array_append
+	'test_find_files()
 	
 End Function
 
@@ -48,7 +54,7 @@ Function debug_with_graphics()
 	'play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
-	play_debug_level()
+	'play_debug_level()
 End Function
 
 Function play_debug_level()
