@@ -21,22 +21,33 @@ End Function
 '______________________________________________________________________________
 Function find_files:TList( path$, ext$ = "", list:TList = Null )
 	If Not list Then list = CreateList()
-	If FileType( path ) = FILETYPE_DIR
-		Local path_contents$[] = LoadDir( path, True )
-		For Local entry$ = EachIn path_contents
-			If entry = ".svn" Then Continue
-			Local entry_full$ = path + "/" + entry
-			Select FileType( entry_full )
-				Case FILETYPE_FILE
-					If ext = "" Or ExtractExt( entry_full ) = ext
-						list.AddLast( entry_full )
-					End If
-				Case FILETYPE_DIR
-					find_files( entry_full, ext, list )
-			End Select
-		Next
-	End If
+	For Local entry$ = EachIn LoadDir( path, True )
+		If entry = ".svn" Then Continue 'source control
+		Local entry_full$ = pcat([ path, entry ])
+		Select FileType( entry_full )
+			Case FILETYPE_FILE
+				If ext = "" Or ExtractExt( entry_full ) = ext
+					list.AddLast( entry_full )
+				End If
+			Case FILETYPE_DIR
+				find_files( entry_full, ext, list )
+		End Select
+	Next
 	Return list
+End Function
+
+Function pcat$( str$[] )
+	Local result$ = ""
+	Local first% = True
+	For Local s$ = EachIn str
+		If first
+			first = False
+		Else
+			result :+ "/"
+		End If
+		result :+ s
+	Next
+	Return result.Replace( "//", "/" ).Replace( "\\", "\" )
 End Function
 
 '______________________________________________________________________________
