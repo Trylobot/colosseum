@@ -42,13 +42,15 @@ Type IMAGE_CHOOSER
 	Method draw( x%, y% )
 		reset_draw_state()
 		SetScale( 0.1, 0.1 )
-		For Local i% = 0 Until image.Length
-			If focus <> i
+		For Local c% = 0 Until image.Length
+			If focus <> c
 				SetAlpha( 0.25 )
 			Else 'focus == i
 				SetAlpha( 1.00 )
 			End If
-			'DrawImage( image[i], x + 50*i, y )
+			For Local L% = 0 Until image[c].Length
+				DrawImage( image[c][L], x + 50*c, y + 50*L )
+			Next
 		Next
 	End Method
 	

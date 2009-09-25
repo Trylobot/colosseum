@@ -268,15 +268,30 @@ End Function
 '______________________________________________________________________________
 Function init_campaign_chooser()
 	'prepare data for campaign chooser
-	Local image:TImage[][]
-	'Local image_label$[][] = New String[][?]
-	'Local group_label$[] = New String[image_label.Length]
+	Local image:TImage[][] = New TImage[][campaign_ordering.Length]
+	Local image_label$[][] = New String[][campaign_ordering.Length]
+	Local group_label$[] = New String[campaign_ordering.Length]
 	Const image_size% = 32
 	Local callback( selected% ) = campaign_chooser_callback
 	
-	
-	
-	'campaign_chooser = Create_IMAGE_CHOOSER( )
+	For Local c% = 0 Until campaign_ordering.Length
+		Local cpd:CAMPAIGN_DATA = get_campaign_data( campaign_ordering[c] )
+		If cpd
+			image[c] = New TImage[cpd.levels.Length]
+			image_label[c] = New String[cpd.levels.Length]
+			For Local L% = 0 Until cpd.levels.Length
+				Local lev_path$ = cpd.levels[L]
+				Local lev:LEVEL = load_level( lev_path )
+				If lev
+					image[c][L] = generate_level_mini_preview( lev )
+					image_label[c][L] = lev.name
+				End If
+			Next
+			group_label[c] = cpd.name
+		End If
+	Next
+	'begin updating & drawing the campaign chooser until it calls the given callback
+	campaign_chooser = Create_IMAGE_CHOOSER( image, image_label, group_label, image_size, callback )
 End Function
 
 '______________________________________________________________________________

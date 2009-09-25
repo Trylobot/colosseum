@@ -56,9 +56,7 @@ Function draw_all_graphics()
 	
 	'menus and such
 	If FLAG.in_menu
-		If FLAG.in_menu
-			draw_main_screen()
-		End If
+		draw_main_screen()
 	End If
 	
 End Function
@@ -246,7 +244,11 @@ Function draw_main_screen()
 	DrawText_with_outline( info, x, y)
 	
 	'menu options
-	draw_menus()
+	If Not campaign_chooser
+		draw_menus()
+	Else
+		campaign_chooser.draw( main_screen_x, main_screen_y )
+	End If
 	
 	'credits/copyright stuff
 	SetAlpha( 1 )
