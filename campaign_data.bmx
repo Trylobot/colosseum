@@ -8,6 +8,7 @@ Import "json.bmx"
 
 '______________________________________________________________________________
 Global campaign_data_map:TMap = CreateMap()
+Global campaign_ordering$[]
 
 Function get_campaign_data:CAMPAIGN_DATA( key$ ) 'returns a reference to the global instance
 	Local data:CAMPAIGN_DATA = CAMPAIGN_DATA( campaign_data_map.ValueForKey( key.toLower() ))

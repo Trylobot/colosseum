@@ -26,6 +26,7 @@ Import "mouse.bmx"
 Import "graphics_base.bmx"
 Import "level_editor.bmx"
 'Import "vehicle_editor.bmx"
+Import "image_chooser.bmx"
 Include "core_menus.bmx"
 Include "core_menu_commands.bmx"
 
@@ -48,7 +49,7 @@ Global playing_multiplayer% = False
 Global main_game:ENVIRONMENT 'game in which player participates
 Global ai_menu_game:ENVIRONMENT 'menu ai demo environment
 Global game:ENVIRONMENT 'current game environment
-	
+
 'app state flags
 'Global FLAG_in_menu% = True
 Global FLAG_draw_help% = False
@@ -262,6 +263,20 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 		Next
 	Next
 	Return LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
+End Function
+
+'______________________________________________________________________________
+Function init_campaign_chooser()
+	'prepare data for campaign chooser
+	Local image:TImage[][]
+	'Local image_label$[][] = New String[][?]
+	'Local group_label$[] = New String[image_label.Length]
+	Const image_size% = 32
+	Local callback( selected% ) = campaign_chooser_callback
+	
+	
+	
+	'campaign_chooser = Create_IMAGE_CHOOSER( )
 End Function
 
 '______________________________________________________________________________

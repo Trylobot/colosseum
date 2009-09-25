@@ -5,7 +5,6 @@ Rem
 EndRem
 SuperStrict
 Import "inventory_data.bmx"
-Import "progress_data.bmx"
 Import "constants.bmx"
 Import "json.bmx"
 
@@ -20,7 +19,7 @@ Type PLAYER_PROFILE
 	Field vehicle_key$
 	Field input_method%
 	Field invert_reverse_steering%
-	Field progress:PROGRESS_DATA[]
+	Field levels_beaten$[]
 	Field campaign$
 	
 	Field src_path$ 'private field, used for load/save
@@ -164,15 +163,7 @@ Type PLAYER_PROFILE
 		this_json.SetByName( "vehicle_key", TJSONString.Create( vehicle_key ))
 		this_json.SetByName( "input_method", TJSONNumber.Create( input_method ))
 		this_json.SetByName( "invert_reverse_steering", TJSONBoolean.Create( invert_reverse_steering ))
-		If progress
-			Local prog:TJSONArray = TJSONArray.Create( progress.Length )
-			For Local i% = 0 Until progress.Length
-				prog.SetByIndex( i, progress[i].to_json() )
-			Next
-			this_json.SetByName( "progress", prog )
-		Else
-			this_json.SetByName( "progress", Null )
-		End If
+		this_json.SetByName( "levels_beaten", Create_TJSONArray_from_String_array( levels_beaten ))
 		this_json.SetByName( "campaign", TJSONString.Create( campaign ))
 		Return this_json
 	End Method
@@ -199,13 +190,7 @@ Function Create_PLAYER_PROFILE_from_json:PLAYER_PROFILE( json:TJSON )
 	prof.vehicle_key = json.GetString( "vehicle_key" )
 	prof.input_method = json.GetNumber( "input_method" )
 	prof.invert_reverse_steering = json.GetBoolean( "invert_reverse_steering" )
-	Local prog:TJSONArray = json.GetArray( "progress" )
-	If prog
-		prof.progress = New PROGRESS_DATA[ prog.Size() ]
-		For Local i% = 0 To prof.progress.Length - 1
-			prof.progress[i] = Create_PROGRESS_DATA_from_json( TJSON.Create( prog.GetByIndex( i )))
-		Next
-	End If
+	prof.levels_beaten = json.GetArrayString( "levels_beaten" )
 	prof.campaign = json.GetString( "campaign" )
 	Return prof
 End Function

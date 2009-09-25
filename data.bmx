@@ -121,7 +121,18 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 					If u Then unit_map.Insert( key, u ) Else load_error( object_json )
 				Case "campaign"
 					Local c:CAMPAIGN_DATA = Create_CAMPAIGN_DATA_from_json( object_json )
-					If c Then campaign_data_map.Insert( key, c ) Else load_error( object_json )
+					If c
+						campaign_data_map.Insert( key, c )
+						'append to global ordered array of all campaigns
+						If Not campaign_ordering
+							campaign_ordering = [ key ]
+						Else 'campaign_ordering <> Null
+							campaign_ordering = campaign_ordering[..campaign_ordering.Length+1]
+							campaign_ordering[campaign_ordering.Length-1] = key
+						End If
+					Else
+						load_error( object_json )
+					End If
 			End Select
 		End If
 	Next

@@ -7,6 +7,7 @@ EndRem
 
 '______________________________________________________________________________
 Global level_editor_requests_resume%
+Global campaign_chooser:IMAGE_CHOOSER
 
 'command_argument should be an object;
 '  the object gets cast to an appropriate type automatically, a container type with all the information necessary
@@ -39,6 +40,11 @@ Function menu_command( command_code%, argument:Object = Null )
 					show_info( "critical error: could not find vehicle [" + profile.vehicle_key + "]" )
 				End If
 				play_level( String(argument), player )
+			End If
+		'________________________________________
+		Case COMMAND.SELECT_CAMPAIGN
+			If profile
+				init_campaign_chooser()
 			End If
 		'________________________________________
 		Case COMMAND.CONTINUE_LAST_CAMPAIGN
@@ -302,5 +308,12 @@ Function menu_command( command_code%, argument:Object = Null )
 	m.recalculate_dimensions()
 	m.update()
 	
+End Function
+
+Function campaign_chooser_callback( campaign_index% )
+	'play level
+	
+	'kill the chooser
+	campaign_chooser = Null
 End Function
 
