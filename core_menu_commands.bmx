@@ -8,6 +8,7 @@ EndRem
 '______________________________________________________________________________
 Global level_editor_requests_resume%
 Global campaign_chooser:IMAGE_CHOOSER
+Global show_campaign_chooser% = False
 
 'command_argument should be an object;
 '  the object gets cast to an appropriate type automatically, a container type with all the information necessary
@@ -44,7 +45,7 @@ Function menu_command( command_code%, argument:Object = Null )
 		'________________________________________
 		Case COMMAND.SELECT_CAMPAIGN
 			If profile
-				init_campaign_chooser()
+				show_campaign_chooser = True
 			End If
 		'________________________________________
 		Case COMMAND.CONTINUE_LAST_CAMPAIGN
@@ -69,7 +70,11 @@ Function menu_command( command_code%, argument:Object = Null )
 			End If
 		'________________________________________
 		Case COMMAND.BACK_TO_PARENT_MENU
-			If current_menu > 0 Then current_menu :- 1
+			If Not campaign_chooser	
+				If current_menu > 0 Then current_menu :- 1
+			Else
+				campaign_chooser = Null
+			End If
 		'________________________________________
 		Case COMMAND.BACK_TO_MAIN_MENU
 			FLAG.in_menu = True
@@ -311,9 +316,9 @@ Function menu_command( command_code%, argument:Object = Null )
 End Function
 
 Function campaign_chooser_callback( campaign_index% )
+	'kill the chooser
+	show_campaign_chooser = False
 	'play level
 	
-	'kill the chooser
-	campaign_chooser = Null
 End Function
 

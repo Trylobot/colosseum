@@ -138,16 +138,6 @@ Function init_ai_menu_game( fit_to_window% = True )
 End Function
 
 '______________________________________________________________________________
-Function generate_level_mini_preview:TImage( lev:LEVEL )
-	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
-	pixmap.ClearPixels( encode_ARGB( 1.0, 64,64,64 ))
-	For Local w:BOX = EachIn lev.get_walls()
-		pixmap.window( w.x, w.y, w.w, w.h ).ClearPixels( encode_ARGB( 1.0, 127,127,127 ))
-	Next
-	Return LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
-End Function
-
-'______________________________________________________________________________
 Function generate_sand_image:TImage( w%, h% )
 	Local pixmap:TPixmap = CreatePixmap( w,h, PF_RGB888 )
 	Local color:TColor
@@ -266,12 +256,22 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 End Function
 
 '______________________________________________________________________________
+Function generate_level_mini_preview:TImage( lev:LEVEL )
+	Local pixmap:TPixmap = CreatePixmap( lev.width, lev.height, PF_RGBA8888 )
+	pixmap.ClearPixels( encode_ARGB( 1.0, 64,64,64 ))
+	For Local w:BOX = EachIn lev.get_walls()
+		pixmap.Window( w.x, w.y, w.w, w.h ).ClearPixels( encode_ARGB( 1.0, 127,127,127 ))
+	Next
+	Return LoadImage( pixmap, MIPMAPPEDIMAGE|DYNAMICIMAGE )
+End Function
+
+'______________________________________________________________________________
 Function init_campaign_chooser()
 	'prepare data for campaign chooser
 	Local image:TImage[][] = New TImage[][campaign_ordering.Length]
 	Local image_label$[][] = New String[][campaign_ordering.Length]
 	Local group_label$[] = New String[campaign_ordering.Length]
-	Const image_size% = 32
+	Local lock%[][] = New Int[][campaign_ordering.Length]
 	Local callback( selected% ) = campaign_chooser_callback
 	
 	For Local c% = 0 Until campaign_ordering.Length
@@ -279,6 +279,8 @@ Function init_campaign_chooser()
 		If cpd
 			image[c] = New TImage[cpd.levels.Length]
 			image_label[c] = New String[cpd.levels.Length]
+			group_label[c] = cpd.name
+			lock[c] = New Int[cpd.levels.Length]
 			For Local L% = 0 Until cpd.levels.Length
 				Local lev_path$ = cpd.levels[L]
 				Local lev:LEVEL = load_level( lev_path )
@@ -286,12 +288,12 @@ Function init_campaign_chooser()
 					image[c][L] = generate_level_mini_preview( lev )
 					image_label[c][L] = lev.name
 				End If
+				lock[c][L] = Not contained_in( lev_path, profile.levels_beaten )
 			Next
-			group_label[c] = cpd.name
 		End If
 	Next
 	'begin updating & drawing the campaign chooser until it calls the given callback
-	campaign_chooser = Create_IMAGE_CHOOSER( image, image_label, group_label, image_size, callback )
+	campaign_chooser = Create_IMAGE_CHOOSER( image, image_label, group_label, lock, callback )
 End Function
 
 '______________________________________________________________________________

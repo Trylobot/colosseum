@@ -125,7 +125,7 @@ Function get_all_input()
 			m.center_scrolling_window()
 		End If
 		'select campaign
-		If campaign_chooser
+		If show_campaign_chooser And campaign_chooser
 			campaign_chooser.upate()
 		End If
 	Else 'Not FLAG_in_menu

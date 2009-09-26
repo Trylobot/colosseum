@@ -244,10 +244,10 @@ Function draw_main_screen()
 	DrawText_with_outline( info, x, y)
 	
 	'menu options
-	If Not campaign_chooser
+	If Not show_campaign_chooser
 		draw_menus()
-	Else
-		campaign_chooser.draw( main_screen_x, main_screen_y )
+	Else 'show_campaign_chooser
+		campaign_chooser.draw( main_screen_x, main_screen_menu_y )
 	End If
 	
 	'credits/copyright stuff

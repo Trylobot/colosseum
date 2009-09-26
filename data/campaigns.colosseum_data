@@ -11,5 +11,20 @@
 			],
 			player_vehicle: "light_tank"
 		}
+	},
+	{
+		class: "campaign",
+		key: "mars",
+		object: {
+			name: "mars",
+			levels: [
+				"levels/mars/maze.colosseum_level",
+				"levels/mars/about_face.colosseum_level",
+				"levels/mars/blitz.colosseum_level",
+				"levels/mars/orchard.colosseum_level",
+				"levels/mars/three_gates.colosseum_level"
+			],
+			player_vehicle: "light_tank"
+		}
 	}
 ]

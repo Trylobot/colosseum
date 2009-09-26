@@ -6,16 +6,17 @@ EndRem
 SuperStrict
 Import "draw_misc.bmx"
 Import "mouse.bmx"
+Import "base_data.bmx"
 
 '______________________________________________________________________________
 Function Create_IMAGE_CHOOSER:IMAGE_CHOOSER( ..
 image:TImage[][], image_label$[][], group_label$[], ..
-image_size%, callback( selected% ))
+lock%[][], callback( selected% ))
 	Local ic:IMAGE_CHOOSER = New IMAGE_CHOOSER
 	ic.image = image
 	ic.image_label = image_label
 	ic.group_label = group_label
-	ic.image_size = image_size
+	ic.lock = lock
 	ic.callback = callback
 	Return ic
 End Function
@@ -25,41 +26,71 @@ Type IMAGE_CHOOSER
 	Field image_label$[][]
 	Field group_label$[]
 	Field lock%[][]
-	Field image_size%
 	Field callback( selected% )
 	
-	Field focus%
 	Field width%
 	Field height%
+	Field scale#
+	
+	Field focused_group%
 	
 	Method upate()
 		update_focus_from_mouse()
 		If KeyHit( KEY_ENTER ) Or MouseHit( 1 )
-			callback( owning_group( focus ))
+			callback( focused_group )
+		End If
+		If KeyHit( KEY_RIGHT )
+			focused_group :+ 1; If focused_group > image.Length - 1 Then focused_group = 0
+		Else If KeyHit( KEY_LEFT )
+			focused_group :- 1; If focused_group < 0 Then focused_group = image.Length - 1
 		End If
 	End Method
 	
 	Method draw( x%, y% )
 		reset_draw_state()
-		SetScale( 0.1, 0.1 )
+		Local cx%, cy%
 		For Local c% = 0 Until image.Length
-			If focus <> c
+			cx = x + c*(image_size + 3*margin)
+			cy = y
+			If focused_group = c
+				SetColor( 0, 0, 0 )
 				SetAlpha( 0.25 )
-			Else 'focus == i
+				DrawRect( cx - margin + 1, 0, cx + image_size + 2*margin - 2, window_h )
+				SetColor( 255, 255, 255 )
+				SetAlpha( 0.75 )
+				SetLineWidth( 1 )
+				DrawLine( cx - margin,                0, cx - margin,                window_h )
+				DrawLine( cx + image_size + 2*margin, 0, cx + image_size + 2*margin, window_h )
 				SetAlpha( 1.00 )
+			Else
+				SetAlpha( 0.50 )
 			End If
+			SetImageFont( get_font( "consolas_18" ))
+			DrawText_with_shadow( group_label[c], cx, cy )
+			cy :+ 26
 			For Local L% = 0 Until image[c].Length
-				DrawImage( image[c][L], x + 50*c, y + 50*L )
+				draw_preview_img( image[c][L], cx, cy, lock[c][L], (focused_group = c) )
+				cy :+ scale*image[c][L].height + 2
+				SetImageFont( get_font( "consolas_10" ))
+				DrawText_with_shadow( image_label[c][L], cx, cy )
+				cy :+ margin + 9
 			Next
 		Next
+	End Method
+	
+	Method draw_preview_img( img:TImage, x%, y%, locked%, focused% )
+		scale = Float(image_size) / Float(Max( img.width, img.height ))
+		SetScale( scale, scale )
+		DrawImage( img, x, y )
+		SetScale( 1, 1 )
 	End Method
 	
 	Method update_focus_from_mouse()
 		'if mouse is hovering over an image, update the focus
 	End Method
 	
-	Method owning_group%( index% )
-		Return 0
-	End Method
+	Const image_size% = 50
+	Const margin% = 10
+	
 End Type
 

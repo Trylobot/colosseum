@@ -65,6 +65,7 @@ init_graphics()
 menu_command( COMMAND.LOAD_ASSETS )
 'background automaton-powered menu game
 init_ai_menu_game() 'does nothing if applicable performance setting is disabled
+init_campaign_chooser()
 
 ?Debug 'debug routines requiring graphics
 debug_with_graphics()
