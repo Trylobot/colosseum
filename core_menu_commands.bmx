@@ -70,10 +70,10 @@ Function menu_command( command_code%, argument:Object = Null )
 			End If
 		'________________________________________
 		Case COMMAND.BACK_TO_PARENT_MENU
-			If Not campaign_chooser	
+			If Not show_campaign_chooser	
 				If current_menu > 0 Then current_menu :- 1
-			Else
-				campaign_chooser = Null
+			Else 'show_campaign_chooser
+				show_campaign_chooser = False
 			End If
 		'________________________________________
 		Case COMMAND.BACK_TO_MAIN_MENU

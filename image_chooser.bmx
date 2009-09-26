@@ -50,29 +50,30 @@ Type IMAGE_CHOOSER
 		reset_draw_state()
 		Local cx%, cy%
 		For Local c% = 0 Until image.Length
-			cx = x + c*(image_size + 3*margin)
+			cx = x + c*(1.5*image_size + margin)
 			cy = y
 			If focused_group = c
 				SetColor( 0, 0, 0 )
-				SetAlpha( 0.25 )
-				DrawRect( cx - margin + 1, 0, cx + image_size + 2*margin - 2, window_h )
-				SetColor( 255, 255, 255 )
-				SetAlpha( 0.75 )
+				SetAlpha( 0.50 )
+				DrawRect( cx - margin + 1, 0, image_size + 2*margin - 2, window_h )
+				SetColor( 160, 160, 160 )
+				SetAlpha( 0.80 )
 				SetLineWidth( 1 )
-				DrawLine( cx - margin,                0, cx - margin,                window_h )
-				DrawLine( cx + image_size + 2*margin, 0, cx + image_size + 2*margin, window_h )
+				DrawLine( cx - margin,              0, cx - margin,              window_h )
+				DrawLine( cx + image_size + margin, 0, cx + image_size + margin, window_h )
 				SetAlpha( 1.00 )
+				SetColor( 255, 255, 255 )
 			Else
 				SetAlpha( 0.50 )
 			End If
-			SetImageFont( get_font( "consolas_18" ))
-			DrawText_with_shadow( group_label[c], cx, cy )
-			cy :+ 26
+			SetImageFont( get_font( "consolas_bold_14" ))
+			DrawText_with_outline( group_label[c], cx, cy )
+			cy :+ 22
 			For Local L% = 0 Until image[c].Length
 				draw_preview_img( image[c][L], cx, cy, lock[c][L], (focused_group = c) )
 				cy :+ scale*image[c][L].height + 2
 				SetImageFont( get_font( "consolas_10" ))
-				DrawText_with_shadow( image_label[c][L], cx, cy )
+				DrawText_with_outline( image_label[c][L], cx, cy )
 				cy :+ margin + 9
 			Next
 		Next
