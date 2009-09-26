@@ -49,33 +49,35 @@ Type IMAGE_CHOOSER
 	Method draw( x%, y% )
 		reset_draw_state()
 		Local cx%, cy%
+		Local column_width%
+		cx = x
 		For Local c% = 0 Until image.Length
-			cx = x + c*(1.5*image_size + margin)
 			cy = y
+			SetImageFont( get_font( "consolas_bold_14" ))
+			column_width = Max( image_size + 2*margin - 1, TextWidth( group_label[c] ) + 2*margin )
 			If focused_group = c
+				Local column_left_x% = cx - margin
+				Local column_right_x% = column_left_x + column_width
 				SetColor( 0, 0, 0 )
 				SetAlpha( 0.50 )
-				DrawRect( cx - margin + 1, 0, image_size + 2*margin - 2, window_h )
+				DrawRect( column_left_x + 1, 0, column_width, window_h )
 				SetColor( 160, 160, 160 )
 				SetAlpha( 0.80 )
 				SetLineWidth( 1 )
-				DrawLine( cx - margin,              0, cx - margin,              window_h )
-				DrawLine( cx + image_size + margin, 0, cx + image_size + margin, window_h )
+				DrawLine( column_left_x,  0, column_left_x,  window_h )
+				DrawLine( column_right_x, 0, column_right_x, window_h )
 				SetAlpha( 1.00 )
 				SetColor( 255, 255, 255 )
 			Else
 				SetAlpha( 0.50 )
 			End If
-			SetImageFont( get_font( "consolas_bold_14" ))
 			DrawText_with_outline( group_label[c], cx, cy )
 			cy :+ 22
 			For Local L% = 0 Until image[c].Length
 				draw_preview_img( image[c][L], cx, cy, lock[c][L], (focused_group = c) )
-				cy :+ scale*image[c][L].height + 2
-				SetImageFont( get_font( "consolas_10" ))
-				DrawText_with_outline( image_label[c][L], cx, cy )
-				cy :+ margin + 9
+				cy :+ scale*image[c][L].height + margin
 			Next
+			cx :+ column_width + margin
 		Next
 	End Method
 	
