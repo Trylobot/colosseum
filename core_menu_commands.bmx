@@ -250,6 +250,9 @@ Function menu_command( command_code%, argument:Object = Null )
 				level_editor_requests_resume = False
 			End If
 			get_current_menu().update( True )
+			If get_current_menu().id = MENU_ID.SAVE_LEVEL
+				get_current_menu().set_focus( level_editor_cache.name )
+			End If
 		'________________________________________
 		Case COMMAND.EDIT_VEHICLE
 			'If profile

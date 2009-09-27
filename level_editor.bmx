@@ -119,7 +119,7 @@ Function level_editor%( lev:LEVEL )
 		End If
 		
 		'draw the dividers
-		SetAlpha( 0.50 )
+		SetAlpha( 0.15 )
 		For Local i% = 0 To lev.horizontal_divs.length - 1
 			DrawLine( x,y+lev.horizontal_divs[i], x+lev.width,y+lev.horizontal_divs[i] )
 		Next
@@ -303,6 +303,7 @@ Function level_editor%( lev:LEVEL )
 				DrawText_with_shadow( "left/right to select unit", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "click to add new", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_witH_shadow( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "shift+click to set angle", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				DrawText_with_shadow( "[ctrl+]pgup/pgdn to change alignment", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_PROPS

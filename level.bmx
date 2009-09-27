@@ -12,14 +12,6 @@ Import "vec.bmx"
 Import "json.bmx"
 
 '______________________________________________________________________________
-Global level_map:TMap = CreateMap()
-
-Function get_level:LEVEL( key$, copy% = True ) 'returns read-only reference
-	Local lev:LEVEL = LEVEL( level_map.ValueForKey( Key.toLower() ))
-	'If copy Then Return ...
-	Return lev
-End Function
-
 Const LINE_TYPE_HORIZONTAL% = 1
 Const LINE_TYPE_VERTICAL% = 2
 
