@@ -80,8 +80,8 @@ Type TANK_TRACK
 		track.update()
 	End Method
 	
-	Method draw( alpha_override# = 1.0 )
-		track.draw( alpha_override )
+	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
+		track.draw( alpha_override, scale_override )
 	End Method
 	
 	Const ORIENTATION_RIGHT% = 1

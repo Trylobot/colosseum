@@ -334,11 +334,11 @@ Type COMPLEX_AGENT Extends AGENT
 		SetRotation( ang )
 		'tracks
 		For Local tt:TANK_TRACK = EachIn tracks
-			tt.draw( alpha_override )
+			tt.draw( alpha_override, scale_override )
 		Next
 		'wheels
 		For Local sw:STEERING_WHEEL = EachIn wheels
-			sw.draw( alpha_override )
+			sw.draw( alpha_override, scale_override )
 		Next
 		'chassis image
 		If img
@@ -742,9 +742,6 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 		For Local t:TURRET = EachIn turrets
 			t.scale_all( scale )
-		Next
-		For Local tt:TANK_TRACK = EachIn tracks
-			tt.track.attach_at( tt.track.off_x * scale, tt.track.off_y * scale )
 		Next
 	End Method
 	

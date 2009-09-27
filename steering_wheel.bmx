@@ -35,8 +35,8 @@ Type STEERING_WHEEL
 		wheel.ang = 50.0 * turning_control_pct
 	End Method
 	
-	Method draw( alpha_override# = 1.0 )
-		wheel.draw( alpha_override )
+	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
+		wheel.draw( alpha_override, scale_override )
 	End Method
 	
 End Type

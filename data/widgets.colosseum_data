@@ -88,22 +88,5 @@
 				}
 			]
 		}
-	},
-	{
-		class: "widget",
-		key: "{image_key}",
-		object: {
-			image_key: "spinner",
-			states: [
-				{
-					ang: -180,
-					transition_time: 1000
-				},
-				{
-					ang: 180,
-					transition_time: 1000
-				}
-			]
-		}
 	}
 ]

@@ -262,55 +262,21 @@ Function level_editor%( lev:LEVEL )
 			info_x,info_y ); info_y :+ line_h 
 		DrawText_with_shadow( "numpad +/- gridsnap zoom", info_x,info_y ); info_y :+ 2*line_h
 		
-		'mode help (context-specific)
-		Local h% = 0
 		Select mode
 			Case EDIT_LEVEL_MODE_BASIC
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_BASIC+" -> camera pan", info_x,info_y )
-				DrawText_with_shadow( "click and drag to pan", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "enter to edit level name", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_DIVIDERS
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_DIVIDERS+" -> dividers", info_x,info_y )
-				DrawText_with_shadow( "click to split", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "right-click to toggle axis", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "ctrl+click to drag", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "alt+click to join", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_PATH_REGIONS
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PATH_REGIONS+" -> path regions", info_x,info_y )
-				DrawText_with_shadow( "click block out area", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "right-click to clear area", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_UNIT_FACTORY_SYSTEM
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_UNIT_FACTORY_SYSTEM+" -> unit factory placement", info_x,info_y )
-				DrawText_with_shadow( "click to create a factory", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "right-click to reset clipboard", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "ctrl+right-click to copy", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "ctrl+tab to auto-size cell", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "shift+click to set angle", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_UNIT_FACTORY_DETAILS
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_UNIT_FACTORY_DETAILS+" -> unit factory load-out", info_x,info_y )
-				DrawText_with_shadow( "hover to edit nearest", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "up/down to pick squad", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "left/right to select next unit", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "insert to add a new squad member", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "delete to remove a squad member", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "pgup/pgdn to change alignment", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "+/- to change wave (cascades)", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "enter to edit squad wait time", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_IMMEDIATES
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PROPS+" -> immediate units", info_x,info_y )
-				DrawText_with_shadow( "left/right to select unit", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "click to add new", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_witH_shadow( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "shift+click to set angle", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "[ctrl+]pgup/pgdn to change alignment", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 			Case EDIT_LEVEL_MODE_PROPS
 				DrawText_with_shadow( "mode "+EDIT_LEVEL_MODE_PROPS+" -> props", info_x,info_y )
-				DrawText_with_shadow( "click to add new", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_witH_shadow( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
-				DrawText_with_shadow( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 		End Select; info_y :+ 1.5*line_h
 		
 		'level name/title
@@ -326,11 +292,15 @@ Function level_editor%( lev:LEVEL )
 		DrawText_with_shadow( "unit factories: "+lev.unit_factories.Length, info_x,info_y ); info_y :+ line_h
 		DrawText_with_shadow( "single units: "+lev.immediate_units.Length, info_x,info_y ); info_y :+ line_h
 		
+		'mode help (context-specific)
+		Local h% = 0
 		'mode code (LOL! I rhymed) <-- WTF
 		Select mode
 			
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_BASIC
+				DrawText_with_shadow( "click and drag to pan", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "enter to edit level name", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
 				'pan
@@ -350,6 +320,10 @@ Function level_editor%( lev:LEVEL )
 			
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_DIVIDERS
+				DrawText_with_shadow( "click to split", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "right-click to toggle axis", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "ctrl+click to drag", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "alt+click to join", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				Local pos_str$ = ""
 				SetImageFont( get_font( "consolas_bold_14" ))
 				gridsnap_mouse.x = round_to_nearest( mouse.pos_x, gridsnap )
@@ -440,6 +414,8 @@ Function level_editor%( lev:LEVEL )
 									
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_PATH_REGIONS
+				DrawText_with_shadow( "click block out area", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "right-click to clear area", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				SetColor( 255, 255, 255 )
 				SetAlpha( 1 )
 				If MouseDown( 1 )
@@ -450,6 +426,14 @@ Function level_editor%( lev:LEVEL )
 				
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_UNIT_FACTORY_SYSTEM
+				DrawText_with_shadow( "click to create a factory", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "up/down to rotate", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "right-click to reset clipboard", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "ctrl+click & drag to move", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "ctrl+right-click to copy", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "ctrl+tab to auto-size cell", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "shift+click to set angle", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "alt+click to delete", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				gridsnap_mouse.x = round_to_nearest( mouse.pos_x-x, gridsnap )
 				gridsnap_mouse.y = round_to_nearest( mouse.pos_y-y, gridsnap )
 				new_unit_factory.pos.pos_x = gridsnap_mouse.x
@@ -469,6 +453,12 @@ Function level_editor%( lev:LEVEL )
 					End If
 					If MouseDown( 2 )
 						new_unit_factory = New UNIT_FACTORY_DATA
+					End If
+					If KeyHit( KEY_UP )
+						new_unit_factory.pos.ang = ang_wrap( new_unit_factory.pos.ang + 45 )
+					End If
+					If KeyHit( KEY_DOWN )
+						new_unit_factory.pos.ang = ang_wrap( new_unit_factory.pos.ang - 45 )
 					End If
 				Else
 					If Not MouseDown( 1 )
@@ -600,6 +590,14 @@ Function level_editor%( lev:LEVEL )
 				
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_UNIT_FACTORY_DETAILS
+				DrawText_with_shadow( "hover to edit nearest", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "up/down to pick squad", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "left/right to select next unit", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "insert to add a new squad member", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "delete to remove a squad member", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "pgup/pgdn to change alignment", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "+/- to change wave (cascades)", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
+				DrawText_with_shadow( "enter to edit squad wait time", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 				Local closest_uf:UNIT_FACTORY_DATA = Null
 				For Local uf:UNIT_FACTORY_DATA = EachIn lev.unit_factories
 					If closest_uf = Null Or ..
@@ -752,6 +750,19 @@ Function level_editor%( lev:LEVEL )
 			'____________________________________________________________________________________________________
 			Case EDIT_LEVEL_MODE_IMMEDIATES, ..
 			     EDIT_LEVEL_MODE_PROPS
+				If mode = EDIT_LEVEL_MODE_PROPS
+					DrawText_with_shadow( "click to add new", mouse.pos_x,mouse.pos_y+30+h ); h :+ line_h
+					DrawText_witH_shadow( "ctrl+click & drag to move", mouse.pos_x,mouse.pos_y+30+h ); h :+ line_h
+					DrawText_with_shadow( "alt+click to delete", mouse.pos_x,mouse.pos_y+30+h ); h :+ line_h
+				Else
+					DrawText_with_shadow( "left/right to select unit", mouse.pos_x,mouse.pos_y+30+h ); h :+ line_h
+					DrawText_with_shadow( "up/down to rotate", mouse.pos_x,mouse.pos_y+30+h ); h :+ line_h
+					DrawText_with_shadow( "click to add new", mouse.pos_x,mouse.pos_y+30+h ); h :+ line_h
+					DrawText_witH_shadow( "ctrl+click & drag to move", mouse.pos_x,mouse.pos_y+30+h ); h :+ line_h
+					DrawText_with_shadow( "shift+click to set angle", mouse.pos_x,mouse.pos_y+30+h ); h :+ line_h
+					DrawText_with_shadow( "alt+click to delete", mouse.pos_x,mouse.pos_y+30+h ); h :+ line_h
+					DrawText_with_shadow( "[ctrl+]pgup/pgdn to change alignment", mouse.pos_x,mouse.pos_y+30+h ); h :+ line_h
+				End If
 				gridsnap_mouse.x = round_to_nearest( mouse.pos_x-x, gridsnap )
 				gridsnap_mouse.y = round_to_nearest( mouse.pos_y-y, gridsnap )
 				new_prop.pos.pos_x = gridsnap_mouse.x
@@ -764,7 +775,7 @@ Function level_editor%( lev:LEVEL )
 					Case POLITICAL_ALIGNMENT.HOSTILE
 						SetColor( 255, 64, 64 )
 				End Select
-				Drawtext_with_shadow( new_prop.archetype, mouse.pos_x, mouse.pos_y - 30 )
+				Drawtext_with_shadow( new_prop.archetype, mouse.pos_x, mouse.pos_y - 40 )
 				If mode = EDIT_LEVEL_MODE_IMMEDIATES
 					keys = unit_keys
 					data = lev.immediate_units
@@ -796,6 +807,12 @@ Function level_editor%( lev:LEVEL )
 						If new_prop_archetype > keys.Length - 1 Then new_prop_archetype = 0
 						new_prop.archetype = keys[ new_prop_archetype ]
 					End If
+					If KeyDown( KEY_UP )
+						new_prop.pos.ang = ang_wrap( new_prop.pos.ang + 2 )
+					End If
+					If KeyDown( KEY_DOWN )
+						new_prop.pos.ang = ang_wrap( new_prop.pos.ang - 2 )
+					End If
 					If KeyHit( KEY_PAGEUP )
 						new_prop.alignment :- 1
 						If new_prop.alignment < 0 Then new_prop.alignment = 2
@@ -810,6 +827,7 @@ Function level_editor%( lev:LEVEL )
 							unit.alignment = new_prop.alignment
 							unit.pos_x = gridsnap_mouse.x+x
 							unit.pos_y = gridsnap_mouse.y+y
+							unit.ang = new_prop.pos.ang
 							Select unit.alignment
 								Case POLITICAL_ALIGNMENT.NONE
 									SetColor( 255, 255, 255 )

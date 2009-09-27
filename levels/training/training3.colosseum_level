@@ -1,7 +1,7 @@
 {
 	name: "training3",
-	width: 1106,
-	height: 823,
+	width: 1079,
+	height: 834,
 	row_count: 14,
 	col_count: 18,
 	hue: 0,
@@ -10,19 +10,19 @@
 	horizontal_divs: [
 		0,
 		21,
-		81,
-		131,
-		192,
-		245,
-		339,
-		402,
-		464,
-		521,
-		565,
-		653,
-		730,
-		800,
-		823
+		91,
+		141,
+		203,
+		256,
+		350,
+		413,
+		475,
+		532,
+		576,
+		664,
+		741,
+		811,
+		834
 	],
 	vertical_divs: [
 		0,
@@ -33,17 +33,17 @@
 		276,
 		346,
 		364,
-		448,
-		521,
-		595,
-		653,
-		733,
-		750,
-		824,
-		884,
-		949,
-		1011,
-		1106
+		434,
+		507,
+		581,
+		639,
+		709,
+		726,
+		800,
+		860,
+		922,
+		984,
+		1079
 	],
 	path_regions: [
 		[
@@ -82,7 +82,7 @@
 			true,
 			true,
 			true,
-			true,
+			false,
 			true,
 			true
 		],
@@ -108,7 +108,6 @@
 		],
 		[
 			true,
-			true,
 			false,
 			false,
 			false,
@@ -118,7 +117,8 @@
 			false,
 			false,
 			false,
-			true,
+			false,
+			false,
 			true,
 			true,
 			false,
@@ -135,26 +135,6 @@
 			false,
 			false,
 			false,
-			false,
-			false,
-			false,
-			true,
-			true,
-			true,
-			false,
-			false,
-			false,
-			true
-		],
-		[
-			true,
-			true,
-			false,
-			false,
-			false,
-			true,
-			true,
-			true,
 			false,
 			false,
 			false,
@@ -188,17 +168,37 @@
 		],
 		[
 			true,
+			true,
 			false,
 			false,
 			false,
-			false,
-			false,
+			true,
 			true,
 			true,
 			false,
 			false,
 			false,
 			true,
+			true,
+			true,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
 			true,
 			true,
 			false,
@@ -330,21 +330,115 @@
 	unit_factories: [
 		{
 			alignment: 1,
-			squads: null,
+			squads: [
+				[
+					"light_tank"
+				]
+			],
 			pos: {
 				pos_x: 187,
-				pos_y: 772,
+				pos_y: 783,
 				ang: -90
 			},
-			delay_time: null,
-			wave_index: null
+			delay_time: [
+				0
+			],
+			wave_index: [
+				0
+			]
+		},
+		{
+			alignment: 2,
+			squads: [
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"machine_gun_quad"
+				]
+			],
+			pos: {
+				pos_x: 50,
+				pos_y: 444
+			},
+			delay_time: [
+				0,
+				0
+			],
+			wave_index: [
+				0,
+				1
+			]
+		},
+		{
+			alignment: 2,
+			squads: [
+				[
+					"mr_the_box",
+					"mr_the_box"
+				],
+				[
+					"machine_gun_quad"
+				]
+			],
+			pos: {
+				pos_x: 318,
+				pos_y: 444,
+				ang: 180
+			},
+			delay_time: [
+				0,
+				0
+			],
+			wave_index: [
+				0,
+				1
+			]
+		},
+		{
+			alignment: 2,
+			squads: [
+				[
+					"machine_gun_quad"
+				]
+			],
+			pos: {
+				pos_x: 50,
+				pos_y: 172
+			},
+			delay_time: [
+				0
+			],
+			wave_index: [
+				1
+			]
+		},
+		{
+			alignment: 2,
+			squads: [
+				[
+					"light_tank"
+				]
+			],
+			pos: {
+				pos_x: 891,
+				pos_y: 49,
+				ang: 90
+			},
+			delay_time: [
+				0
+			],
+			wave_index: [
+				2
+			]
 		},
 		{
 			alignment: 2,
 			squads: null,
 			pos: {
-				pos_x: 50,
-				pos_y: 433
+				pos_x: 392,
+				pos_y: 444
 			},
 			delay_time: null,
 			wave_index: null
@@ -353,8 +447,19 @@
 			alignment: 2,
 			squads: null,
 			pos: {
-				pos_x: 318,
-				pos_y: 433,
+				pos_x: 681,
+				pos_y: 444,
+				ang: 180
+			},
+			delay_time: null,
+			wave_index: null
+		},
+		{
+			alignment: 2,
+			squads: null,
+			pos: {
+				pos_x: 681,
+				pos_y: 172,
 				ang: 180
 			},
 			delay_time: null,
@@ -365,8 +470,8 @@
 		{
 			archetype: "rocket_emplacement",
 			pos: {
-				pos_x: 598,
-				pos_y: 132,
+				pos_x: 548,
+				pos_y: 118,
 				ang: 179.225784
 			},
 			alignment: 2
@@ -374,8 +479,8 @@
 		{
 			archetype: "cannon_emplacement",
 			pos: {
-				pos_x: 595,
-				pos_y: 192,
+				pos_x: 547,
+				pos_y: 161,
 				ang: 179.225784
 			},
 			alignment: 2

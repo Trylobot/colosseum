@@ -926,16 +926,6 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/spinner.png",
-			handle_x: 6,
-			handle_y: 6,
-			frames: 1
-		}
-	},
-	{
-		class: "image",
-		key: "{path}",
-		object: {
 			path: "art/ui/arrow.png",
 			handle_x: 23,
 			handle_y: 19,
