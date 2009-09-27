@@ -361,6 +361,25 @@
 			wave_index: null
 		}
 	],
-	immediate_units: null,
+	immediate_units: [
+		{
+			archetype: "rocket_emplacement",
+			pos: {
+				pos_x: 598,
+				pos_y: 132,
+				ang: 179.225784
+			},
+			alignment: 2
+		},
+		{
+			archetype: "cannon_emplacement",
+			pos: {
+				pos_x: 595,
+				pos_y: 192,
+				ang: 179.225784
+			},
+			alignment: 2
+		}
+	],
 	props: null
 }
