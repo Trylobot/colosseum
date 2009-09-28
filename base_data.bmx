@@ -16,14 +16,14 @@ Global sound_map:TMap = CreateMap()
 Global image_map:TMap = CreateMap()
 
 Function get_font:TImageFont( key$ ) 'returns read-only reference
-	Return TImageFont( font_map.ValueForKey( Key.toLower() ))
+	Return TImageFont( font_map.ValueForKey( key.toLower() ))
 End Function
 
-Function get_sound:TSound( Key$ ) 'returns read-only reference
+Function get_sound:TSound( key$ ) 'returns read-only reference
 	Return TSound( sound_map.ValueForKey( key.toLower() ))
 End Function
 
-Function get_image:TImage( Key$ ) 'returns read-only reference
-	Return TImage( image_map.ValueForKey( Key.toLower() ))
+Function get_image:TImage( key$ ) 'returns read-only reference
+	Return TImage( image_map.ValueForKey( key.toLower() ))
 End Function
 

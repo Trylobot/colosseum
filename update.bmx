@@ -212,12 +212,14 @@ End Function
 
 Function player_wins_game()
 	game.win = True
+	record_level_beaten( game.lev.src_path )
 	game.game_in_progress = False
 	game.battle_in_progress = False
 	game.battle_state_toggle_ts = now()
 	game.close_doors( POLITICAL_ALIGNMENT.HOSTILE )
 	game.spawn_enemies = False
 	play_sound( get_sound( "victory" ))
+	FLAG.campaign_mode = False
 End Function
 
 Function player_loses_game()
@@ -226,6 +228,7 @@ Function player_loses_game()
 	game.battle_in_progress = False
 	game.battle_state_toggle_ts = now()
 	FLAG.engine_running = False
+	FLAG.campaign_mode = False
 End Function
 
 '______________________________________________________________________________

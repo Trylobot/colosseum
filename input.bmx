@@ -151,8 +151,11 @@ Function get_all_input()
 		If game.win ..
 		And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE ))
 			FLAG.engine_running = False
-			menu_command( COMMAND.QUIT_LEVEL )
-			'automatically continue to next campaign level in sequence, if there be one
+			If FLAG.campaign_mode
+				menu_command( COMMAND.PLAY_LEVEL, "levels/debug.colosseum_level" )
+			Else
+				menu_command( COMMAND.QUIT_LEVEL )
+			End If
 		End If
 	End If
 	

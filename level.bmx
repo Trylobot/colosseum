@@ -46,6 +46,7 @@ Type LEVEL Extends MANAGED_OBJECT
 	Field unit_factories:UNIT_FACTORY_DATA[] 'gated unit factories
 	Field immediate_units:ENTITY_DATA[] 'units to spawn immediately (like turrets & bosses)
 	Field props:ENTITY_DATA[] 'props, like wooden crates and stuff
+	Field src_path$ 'run-time only
 	
 	Method resize( new_width%, new_height% )
 		width = new_width

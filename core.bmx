@@ -268,11 +268,16 @@ End Function
 '______________________________________________________________________________
 Function init_campaign_chooser()
 	'prepare data for campaign chooser
-	Local image:TImage[][] = New TImage[][campaign_ordering.Length]
+	Local image:TImage[][]
+	If campaign_chooser
+		image = campaign_chooser.image
+	Else
+		image = New TImage[][campaign_ordering.Length]
+	End If
 	Local image_label$[][] = New String[][campaign_ordering.Length]
 	Local group_label$[] = New String[campaign_ordering.Length]
 	Local lock%[][] = New Int[][campaign_ordering.Length]
-	Local callback( selected% ) = campaign_chooser_callback
+	Local callback( selected:CELL ) = campaign_chooser_callback
 	
 	For Local c% = 0 Until campaign_ordering.Length
 		Local cpd:CAMPAIGN_DATA = get_campaign_data( campaign_ordering[c] )
@@ -307,10 +312,24 @@ Function record_player_kill( cash_value% )
 		game.player_kills :+ 1
 	End If
 End Function
+
 Function record_player_friendly_fire_kill( punishment_amount% )
 	If profile
 		profile.cash :- FRIENDLY_FIRE_PUNISHMENT_AMOUNT
 		If profile.cash < 0 Then profile.cash = 0
+	End If
+End Function
+
+Function record_level_beaten( level_path$ )
+	If profile
+		If profile.levels_beaten <> Null ..
+		And Not contained_in( level_path, profile.levels_beaten )
+			profile.levels_beaten = profile.levels_beaten[..profile.levels_beaten.Length+1]
+			profile.levels_beaten[profile.levels_beaten.Length-1] = level_path
+			init_campaign_chooser()
+		Else 'profile.levels_beaten == Null
+			profile.levels_beaten = [ level_path ]
+		End If
 	End If
 End Function
 

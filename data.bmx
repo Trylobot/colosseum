@@ -183,12 +183,14 @@ End Function
 
 '______________________________________________________________________________
 Function load_level:LEVEL( path$ )
-	Local file:TStream, json:TJSON
+	Local file:TStream, json:TJSON, lev:LEVEL
 	file = ReadFile( path )
 	If file
 		json = TJSON.Create( file )
 		file.Close()
-		Return Create_LEVEL_from_json( json )
+		lev = Create_LEVEL_from_json( json )
+		lev.src_path = path
+		Return lev
 	Else
 		Return Null
 	End If

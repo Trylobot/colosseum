@@ -999,8 +999,8 @@
 		key: "{path}",
 		object: {
 			path: "art/ui/lock.png",
-			handle_x: 0,
-			handle_y: 0,
+			handle_x: 6,
+			handle_y: 9,
 			frames: 1
 		}
 	},

@@ -306,6 +306,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			If FLAG.playing_multiplayer 
 				network_terminate()
 			End If
+			FLAG.campaign_mode = False
 		'________________________________________
 		Case COMMAND.QUIT_GAME
 			menu_command( COMMAND.QUIT_LEVEL )
@@ -318,10 +319,14 @@ Function menu_command( command_code%, argument:Object = Null )
 	
 End Function
 
-Function campaign_chooser_callback( campaign_index% )
+Function campaign_chooser_callback( selected:CELL )
 	'kill the chooser
 	show_campaign_chooser = False
 	'play level
-	
+	FLAG.campaign_mode = True
+	Local cpd:CAMPAIGN_DATA = get_campaign_data( campaign_ordering[selected.row] )
+	Local lev_path$ = cpd.levels[selected.col]
+	profile.vehicle_key = cpd.player_vehicle
+	menu_command( COMMAND.PLAY_LEVEL, lev_path )
 End Function
 

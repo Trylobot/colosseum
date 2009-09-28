@@ -6,18 +6,32 @@ EndRem
 SuperStrict
 Import "draw_misc.bmx"
 Import "mouse.bmx"
+Import "cell.bmx"
 Import "base_data.bmx"
 
 '______________________________________________________________________________
 Function Create_IMAGE_CHOOSER:IMAGE_CHOOSER( ..
 image:TImage[][], image_label$[][], group_label$[], ..
-lock%[][], callback( selected% ))
+lock%[][], callback( selected:CELL ))
 	Local ic:IMAGE_CHOOSER = New IMAGE_CHOOSER
 	ic.image = image
 	ic.image_label = image_label
 	ic.group_label = group_label
 	ic.lock = lock
+	'find the first locked item following an unlocked item
+	Local done% = False
+	For Local c% = 0 Until lock.Length
+		If done Then Exit
+		For Local L% = 0 Until lock[c].Length
+			If lock[c][L]
+				lock[c][L] = False
+				done = True
+				Exit
+			End If
+		Next
+	Next
 	ic.callback = callback
+	ic.focus = New CELL
 	Return ic
 End Function
 
@@ -26,23 +40,23 @@ Type IMAGE_CHOOSER
 	Field image_label$[][]
 	Field group_label$[]
 	Field lock%[][]
-	Field callback( selected% )
+	Field callback( selected:CELL )
 	
 	Field width%
 	Field height%
 	Field scale#
 	
-	Field focused_group%
+	Field focus:CELL
 	
 	Method upate()
 		update_focus_from_mouse()
 		If KeyHit( KEY_ENTER ) Or MouseHit( 1 )
-			callback( focused_group )
+			callback( focus )
 		End If
 		If KeyHit( KEY_RIGHT )
-			focused_group :+ 1; If focused_group > image.Length - 1 Then focused_group = 0
+			focus.row :+ 1; If focus.row > image.Length - 1 Then focus.row = 0
 		Else If KeyHit( KEY_LEFT )
-			focused_group :- 1; If focused_group < 0 Then focused_group = image.Length - 1
+			focus.row :- 1; If focus.row < 0 Then focus.row = image.Length - 1
 		End If
 	End Method
 	
@@ -55,7 +69,7 @@ Type IMAGE_CHOOSER
 			cy = y
 			SetImageFont( get_font( "consolas_bold_14" ))
 			column_width = Max( image_size + 2*margin - 1, TextWidth( group_label[c] ) + 2*margin )
-			If focused_group = c
+			If focus.row = c
 				Local column_left_x% = cx - margin
 				Local column_right_x% = column_left_x + column_width
 				SetColor( 0, 0, 0 )
@@ -74,7 +88,7 @@ Type IMAGE_CHOOSER
 			DrawText_with_outline( group_label[c], cx, cy )
 			cy :+ 22
 			For Local L% = 0 Until image[c].Length
-				draw_preview_img( image[c][L], cx, cy, lock[c][L], (focused_group = c) )
+				draw_preview_img( image[c][L], cx, cy, lock[c][L], (focus.row = c) )
 				cy :+ scale*image[c][L].height + margin
 			Next
 			cx :+ column_width + margin
@@ -84,8 +98,15 @@ Type IMAGE_CHOOSER
 	Method draw_preview_img( img:TImage, x%, y%, locked%, focused% )
 		scale = Float(image_size) / Float(Max( img.width, img.height ))
 		SetScale( scale, scale )
+		If locked
+			SetColor( 64, 64, 64 )
+		End If
 		DrawImage( img, x, y )
 		SetScale( 1, 1 )
+		SetColor( 255, 255, 255 )
+		If locked
+			DrawImage( get_image( "lock" ), x + scale*img.width/2, y + scale*img.height/2 )
+		End If
 	End Method
 	
 	Method update_focus_from_mouse()
