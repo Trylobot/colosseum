@@ -105,6 +105,7 @@
 			name: "light tank",
 			image_key: "player_tank_chassis",
 			hitbox_image_key: "light_tank_hitbox"
+			lightmap_image_key: "player_tank_chassis_lightmap",
 			gibs_image_key: "quad_gibs",
 			ai_name: "vehicle",
 			cash_value: 300,
