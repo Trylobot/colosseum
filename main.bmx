@@ -71,6 +71,7 @@ init_campaign_chooser()
 debug_with_graphics()
 ?
 
+?Not Debug
 '////////////////////////////////////////////////////////////////////////////////
 'MAIN
 Repeat
@@ -94,17 +95,12 @@ Repeat
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress )
 	'draw everything
 	draw_all_graphics()
-	
-	?Debug
-	debug_main()
-	?
-	
+
 	'insta-quit
 	If esc_held And KeyDown( KEY_ESCAPE ) ..
 	And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
 		draw_instaquit_progress()
 	End If
-	
 	'screenshot
 	If KeyHit( KEY_F12 )
 		screenshot()
@@ -113,4 +109,64 @@ Repeat
 	Flip( 1 )
 Until AppTerminate()
 '////////////////////////////////////////////////////////////////////////////////
+?
 
+
+
+?Debug
+'////////////////////////////////////////////////////////////////////////////////
+'MAIN +debug_overlay +timer_profiling
+Repeat
+	Cls()
+	select_game()
+	
+	'menu input and misc
+	profiler() 'begin profiling
+	get_all_input()
+	
+	'multiplayer
+	profiler() 'record current accumulator and begin another
+	update_network()
+	
+	'physics timescale and update throttling
+	If frame_time_elapsed()
+		calculate_timescale()
+		reset_frame_timer()
+		
+		'collision detection and resolution
+		profiler()
+		collide_all_objects()
+		
+		'resolve forces and emit particles, and capture player vehicle input
+		profiler()
+		update_all_objects()
+		
+	End If
+	
+	'music and sound
+	profiler()
+	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress )
+	
+	'draw everything
+	profiler()
+	draw_all_graphics()
+	
+	'end profiling
+	profiler( True )
+	
+	'debug
+	debug_main()
+	'insta-quit
+	If esc_held And KeyDown( KEY_ESCAPE ) ..
+	And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
+		draw_instaquit_progress()
+	End If
+	'screenshot
+	If KeyHit( KEY_F12 )
+		screenshot()
+	End If
+	
+	Flip( 1 )
+Until AppTerminate()
+'////////////////////////////////////////////////////////////////////////////////
+?

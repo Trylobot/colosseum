@@ -7,6 +7,14 @@
 '###############################################################################
 
 
+Function test_find_files()
+	DebugLog " test_find_files() _____________________"
+	For Local entry$ = EachIn find_files( "levels", level_file_ext )
+		DebugLog " " + entry
+	Next
+End Function
+
+
 Function test_draw_kill_tally()
 	Local ts% = now()
 	Local kills% = 25

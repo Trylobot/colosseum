@@ -8,14 +8,29 @@ EndRem
 '//////////////////////////////////////////////////////////////////////////////
 'new stuff to be tested or fixed
 
-Function test_find_files()
-	DebugLog " test_find_files() _____________________"
-	For Local entry$ = EachIn find_files( "levels", level_file_ext )
-		DebugLog " " + entry
-	Next
-End Function
+
 
 '//////////////////////////////////////////////////////////////////////////////
+
+Global profiler_label$[] = [ ..
+	"get_all_input", "update_network", ..
+	"collide_all_objects", "update_all_objects", ..
+	"play_all_audio", "draw_all_graphics" ]
+Global profiler_index% = -1
+Global profiler_value:Long[] = New Long[ profiler_label.Length ]
+Global profiler_ts%
+
+Function profiler( restart% = False )
+	If Not restart
+		If profiler_index <> -1
+			profiler_value[profiler_index] :+ now() - profiler_ts
+		End If
+		profiler_ts = now()
+		profiler_index :+ 1
+	Else 'wrap and pause
+		profiler_index = -1
+	End If
+End Function
 
 'debug system infrastructure & hooks
 Global debug_origin:cVEC = Create_cVEC( 0, 0 )
@@ -55,6 +70,7 @@ Function debug_with_graphics()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
 	'play_debug_level()
+	
 End Function
 
 Function play_debug_level()
@@ -129,7 +145,12 @@ Function debug_overlay()
 	
 	'basic info 
 	SetColor( 255, 255, 255 )
-	debug_drawtext( "current wave " + game.hostile_spawner.current_wave )
+	'debug_drawtext( "wave " + game.hostile_spawner.current_wave )
+	
+	'profiler
+	For Local i% = 0 Until profiler_label.Length
+		debug_drawtext( pad( profiler_label[i], 19 ) + pad( String.FromLong( profiler_value[i] ), 15 ))
+	Next
 	
 	If game <> Null
 		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
@@ -402,7 +423,7 @@ Function debug_drawtext( message$, h% = 10 )
 	SetColor( 0, 0, 0 )
 	SetAlpha( 0.65 )
 	SetImageFont( get_font( "consolas_10" ))
-	DrawRect( sx, sy, TextWidth( message + " " ), TextHeight( message ))
+	DrawRect( sx, sy, TextWidth( message + " " ) + 1, h)
 	SetAlpha( 1 )
 	SetColor( r, g, b )
 	DrawText_with_outline( message, sx, sy )
