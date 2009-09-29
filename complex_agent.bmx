@@ -407,7 +407,7 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method drive( pct# )
 		If Not spawning And Not is_deployed
-			driving_force.control_pct = pct
+			driving_force.control_pct = (driving_force.control_pct + pct) / 2.0
 			If pct > 0
 				enable_only_rear_emitters()
 			Else If pct < 0
@@ -420,7 +420,7 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Method turn( pct# )
 		If Not spawning And Not is_deployed
-			turning_force.control_pct = pct
+			turning_force.control_pct = (turning_force.control_pct + pct) / 2.0
 		End If
 	End Method
 	'___________________________________________

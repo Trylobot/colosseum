@@ -121,7 +121,7 @@ Repeat
 	select_game()
 	
 	'menu input and misc
-	profiler() 'begin profiling
+	profiler( True ) 'begin profiling
 	get_all_input()
 	
 	'multiplayer
@@ -152,7 +152,7 @@ Repeat
 	draw_all_graphics()
 	
 	'end profiling
-	profiler( True )
+	profiler()
 	
 	'debug
 	debug_main()

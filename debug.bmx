@@ -16,20 +16,18 @@ Global profiler_label$[] = [ ..
 	"get_all_input", "update_network", ..
 	"collide_all_objects", "update_all_objects", ..
 	"play_all_audio", "draw_all_graphics" ]
-Global profiler_index% = -1
 Global profiler_value:Long[] = New Long[ profiler_label.Length ]
+Global profiler_index%
 Global profiler_ts%
 
 Function profiler( restart% = False )
 	If Not restart
-		If profiler_index <> -1
-			profiler_value[profiler_index] :+ now() - profiler_ts
-		End If
-		profiler_ts = now()
+		profiler_value[profiler_index] :+ now() - profiler_ts
 		profiler_index :+ 1
 	Else 'wrap and pause
-		profiler_index = -1
+		profiler_index = 0
 	End If
+	profiler_ts = now()
 End Function
 
 'debug system infrastructure & hooks
