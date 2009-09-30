@@ -34,7 +34,7 @@ Function Create_CAMPAIGN_DATA_from_json:CAMPAIGN_DATA( json:TJSON )
 	Local data:CAMPAIGN_DATA = New CAMPAIGN_DATA
 	data.name = json.GetString( "name" ) 
 	data.levels = Create_String_array_from_TJSONArray( json.GetArray( "levels" ))
-	data.player_vehicle = json.GetNumber( "player_vehicle" )
+	data.player_vehicle = json.GetString( "player_vehicle" )
 	Return data
 End Function
 

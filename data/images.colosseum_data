@@ -633,39 +633,9 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/items/pickup_ammo_main_5.png",
-			handle_x: 16.0,
-			handle_y: 9.0,
-			frames: 1
-		}
-	},
-	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/items/pickup_ammo_main_10.png",
-			handle_x: 18.0,
-			handle_y: 9.0,
-			frames: 1
-		}
-	},
-	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/items/pickup_ammo_main_15.png",
-			handle_x: 18.0,
-			handle_y: 9.0,
-			frames: 1
-		}
-	},
-	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/items/pickup_ammo_main_20.png",
-			handle_x: 18.0,
-			handle_y: 9.0,
+			path: "art/items/pickup_ammo.png",
+			handle_x: 8.0,
+			handle_y: 8.0,
 			frames: 1
 		}
 	},

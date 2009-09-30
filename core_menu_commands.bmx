@@ -32,15 +32,19 @@ Function menu_command( command_code%, argument:Object = Null )
 		Case COMMAND.PLAY_LEVEL
 			If profile
 				'put the "paused" menu on top of the menu stack
-				If current_menu > 0 Then current_menu :- 1
-				current_menu :+ 1
-				menu_stack[current_menu] = MENU_ID.PAUSED
-				get_current_menu().update( True )
 				Local player:COMPLEX_AGENT = get_player_vehicle( profile.vehicle_key )
-				If Not player
+				If player
+					'place the paused menu on the stack, forcibly
+					If current_menu > 0 Then current_menu :- 1
+					current_menu :+ 1
+					menu_stack[current_menu] = MENU_ID.PAUSED
+					get_current_menu().update( True )
+					'//////////////////////////////////////
+					play_level( String(argument), player )
+					'//////////////////////////////////////
+				Else 'player == Null
 					show_info( "critical error: could not find vehicle [" + profile.vehicle_key + "]" )
 				End If
-				play_level( String(argument), player )
 			End If
 		'________________________________________
 		Case COMMAND.SELECT_CAMPAIGN

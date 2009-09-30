@@ -1,51 +1,21 @@
 [
 	{
 		class: "pickup",
+		key: "ammo",
+		object: {
+			image_key: "pickup_ammo",
+			pickup_type: 1,
+			pickup_amount: 20,
+			life_time: 60000
+		}
+	},
+	{
+		class: "pickup",
 		key: "health",
 		object: {
 			image_key: "pickup_health",
 			pickup_type: 2,
 			pickup_amount: 200,
-			life_time: 60000
-		}
-	},
-	{
-		class: "pickup",
-		key: "ammo_5",
-		object: {
-			image_key: "pickup_ammo_main_5",
-			pickup_type: 1,
-			pickup_amount: 5,
-			life_time: 60000
-		}
-	},
-	{
-		class: "pickup",
-		key: "ammo_10",
-		object: {
-			image_key: "pickup_ammo_main_10",
-			pickup_type: 1,
-			pickup_amount: 10,
-			life_time: 60000
-		}
-	},
-	{
-		class: "pickup",
-		key: "ammo_15",
-		object: {
-			image_key: "pickup_ammo_main_15",
-			pickup_type: 1,
-			pickup_amount: 15,
-			life_time: 60000
-		}
-	},
-	{
-		class: "pickup",
-		key: "ammo_20",
-		object: {
-			image_key: "pickup_ammo_main_20",
-			pickup_type: 1,
-			pickup_amount: 20,
 			life_time: 60000
 		}
 	},

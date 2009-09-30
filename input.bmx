@@ -39,8 +39,9 @@ Function get_all_input()
 		FLAG.ignore_mouse_1 = False
 	End If
 	
-	'navigate menu and select option
-	If FLAG.in_menu
+	If show_campaign_chooser 'campaign selection menu (special menu, takes precedence)
+		campaign_chooser.upate()
+	Else If FLAG.in_menu 'navigate menu and select option
 		Local m:MENU = get_current_menu()
 		'text input controls comes before anything else
 		If m.menu_type = MENU.TEXT_INPUT_DIALOG
@@ -123,10 +124,6 @@ Function get_all_input()
 				m.decrement_focus()
 			End While
 			m.center_scrolling_window()
-		End If
-		'select campaign menu
-		If show_campaign_chooser
-			campaign_chooser.upate()
 		End If
 	Else 'Not FLAG_in_menu
 		If game And game.human_participation
