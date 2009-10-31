@@ -109,7 +109,6 @@ Repeat
 	Flip( 1 )
 Until AppTerminate()
 '////////////////////////////////////////////////////////////////////////////////
-?
 
 
 
@@ -121,7 +120,7 @@ Repeat
 	select_game()
 	
 	'menu input and misc
-	profiler( True ) 'begin profiling
+	profiler( True ) 'begin new profiling cycle
 	get_all_input()
 	
 	'multiplayer
@@ -170,3 +169,4 @@ Repeat
 Until AppTerminate()
 '////////////////////////////////////////////////////////////////////////////////
 ?
+

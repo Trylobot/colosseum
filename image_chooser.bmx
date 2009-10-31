@@ -110,7 +110,37 @@ Type IMAGE_CHOOSER
 	End Method
 	
 	Method update_focus_from_mouse()
-		'if mouse is hovering over an image, update the focus
+		Local cx%, cy%
+		Local column_width%
+		cx = MouseX()
+		For Local c% = 0 Until image.Length
+			cy = MouseY()
+			'SetImageFont( get_font( "consolas_bold_14" ))
+			column_width = Max( image_size + 2*margin - 1, TextWidth( group_label[c] ) + 2*margin )
+			'If focus.row = c
+			Local column_left_x% = cx - margin
+			Local column_right_x% = column_left_x + column_width
+			'SetColor( 0, 0, 0 )
+			'SetAlpha( 0.50 )
+			'DrawRect( column_left_x + 1, 0, column_width, window_h )
+			'SetColor( 160, 160, 160 )
+			'SetAlpha( 0.80 )
+			'SetLineWidth( 1 )
+			'DrawLine( column_left_x,  0, column_left_x,  window_h )
+			'DrawLine( column_right_x, 0, column_right_x, window_h )
+			'SetAlpha( 1.00 )
+			'SetColor( 255, 255, 255 )
+			'Else
+			'SetAlpha( 0.50 )
+			'End If
+			'DrawText_with_outline( group_label[c], cx, cy )
+			cy :+ 22
+			For Local L% = 0 Until image[c].Length
+				'draw_preview_img( image[c][L], cx, cy, lock[c][L], (focus.row = c) )
+				cy :+ scale*image[c][L].height + margin
+			Next
+			cx :+ column_width + margin
+		Next
 	End Method
 	
 	Const image_size% = 50

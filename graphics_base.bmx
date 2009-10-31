@@ -19,7 +19,8 @@ Function init_graphics()
 	SetClsColor( 0, 0, 0 )
 	'SetClsColor( 127, 127, 127 )
 	Cls()
-  SetBlend( ALPHABLEND )
+	SetBlend( ALPHABLEND )
+	SetMaskColor( 255, 255, 255 )
 	?Win32
 	set_window( WS_MINIMIZEBOX )
 	?

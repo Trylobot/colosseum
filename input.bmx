@@ -41,6 +41,9 @@ Function get_all_input()
 	
 	If show_campaign_chooser 'campaign selection menu (special menu, takes precedence)
 		campaign_chooser.upate()
+		If KeyHit( KEY_ESCAPE ) Or KeyHit( KEY_BACKSPACE )
+			show_campaign_chooser = False
+		End If
 	Else If FLAG.in_menu 'navigate menu and select option
 		Local m:MENU = get_current_menu()
 		'text input controls comes before anything else
@@ -153,6 +156,9 @@ Function get_all_input()
 			Else
 				menu_command( COMMAND.QUIT_LEVEL )
 			End If
+		Else If game.game_over ..
+		And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE ))
+			menu_command( COMMAND.PLAY_LEVEL, "" )
 		End If
 	End If
 	
