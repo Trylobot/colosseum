@@ -83,14 +83,14 @@ Function draw_game()
 	SetScale( 1, 1 )
 
 	'arena background + retained particles
-	game.graffiti.draw()
+	game.graffiti.draw() 'zoom
 
 	'background particles
 	For Local part:PARTICLE = EachIn game.retained_particle_list
-		part.draw()
+		part.draw(,zoom)
 	Next
 	For Local part:PARTICLE = EachIn game.particle_list_background
-		part.draw()
+		part.draw(,zoom)
 	Next
 	
 	'door backgrounds
@@ -103,12 +103,12 @@ Function draw_game()
 	
 	'props
 	For Local prop:AGENT = EachIn game.prop_list
-		prop.draw()
+		prop.draw(,zoom)
 	Next
 	
 	'projectiles
 	For Local proj:PROJECTILE = EachIn game.projectile_list
-		proj.draw()
+		proj.draw(,zoom)
 	Next
 	SetRotation( 0 )
 	SetScale( 1, 1 )
@@ -122,7 +122,7 @@ Function draw_game()
 
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
-	SetScale( 1, 1 )
+	SetScale( zoom, zoom )
 	SetRotation( 0 )
 
 	'arena foreground
@@ -135,13 +135,13 @@ Function draw_game()
 	'complex agents
 	For Local list:TList = EachIn game.complex_agent_lists
 		For Local ag_cmp:COMPLEX_AGENT = EachIn list
-			ag_cmp.draw()
+			ag_cmp.draw(,zoom)
 		Next
 	Next
 	
 	'foreground particles
 	For Local part:PARTICLE = EachIn game.particle_list_foreground
-		part.draw()
+		part.draw(,zoom)
 	Next
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )
@@ -150,12 +150,12 @@ Function draw_game()
 	
 	'environmental widgets
 	For Local w:WIDGET = EachIn game.environmental_widget_list
-		w.draw()
+		w.draw(,zoom)
 	Next
 
 	'door foregrounds
 	For Local d:DOOR = EachIn game.doors
-		d.draw_fg()
+		d.draw_fg() 'zoom
 	Next
 
 	If game.human_participation

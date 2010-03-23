@@ -6,6 +6,10 @@ EndRem
 SuperStrict
 
 '______________________________________________________________________________
+'Non Configurable
+Global zoom# = 1.0
+
+'Configurable
 Global window_w%
 Global window_h%
 Global fullscreen%
