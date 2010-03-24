@@ -3,12 +3,12 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	
 	author: Tyler W Cole, aka "Tylerbot"
-	email: mailto:tylerbot@gmail.com
-	site: none
-	description: retro overhead tank warfare
+	email: tylerbot@gmail.com
+	description: top-down tank fight
 EndRem
 SuperStrict
-Framework brl.GLMax2D
+Framework brl.D3D7Max2D
+'Framework brl.GLMax2D
 Import "settings.bmx"
 Import "data.bmx"
 Import "core.bmx"
@@ -32,7 +32,8 @@ Const version_major%    = 0
 Const version_minor%    = 4
 Const version_revision% = 0
 '////////////////////////////
-SetGraphicsDriver GLMax2DDriver()
+SetGraphicsDriver D3D7Max2DDriver() 
+'SetGraphicsDriver GLMax2DDriver()
 
 'defaults
 apply_default_settings()
@@ -48,7 +49,12 @@ End If
 menu_command( COMMAND.NEW_LEVEL )
 'autosave/load user profile
 Global autosave_profile_path$ = load_autosave()
-menu_command( COMMAND.LOAD_GAME, autosave_profile_path )
+If autosave_profile_path
+	menu_command( COMMAND.load_game, autosave_profile_path )
+Else
+	menu_command( COMMAND.new_game )
+	menu_command( COMMAND.save_game )
+End If
 
 'window title
 AppTitle = "Colosseum " + version_major + "." + version_minor + "." + version_revision

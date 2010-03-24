@@ -607,17 +607,17 @@ Function draw_game_over()
 End Function
 
 Function draw_help_stuff()
-	Local img_help_kb:TImage = get_image( "help_kb" )
-	Local img_help_kb_mouse:TImage = get_image( "help_kb_and_mouse" )
+	'Local img_help_kb:TImage = get_image( "help_kb" )
+	'Local img_help_kb_mouse:TImage = get_image( "help_kb_and_mouse" )
 	SetColor( 0, 0, 0 )
 	SetAlpha( 0.550 )
 	DrawRect( 0, 0, window_w, window_h )
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD
-		DrawImage( img_help_kb, window_w/2 - img_help_kb.width/2, window_h/2 - img_help_kb.height/2 )
+		
 	Else If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-		DrawImage( img_help_kb_mouse, window_w/2 - img_help_kb_mouse.width/2, window_h/2 - img_help_kb_mouse.height/2 )
+		
 	End If
 End Function
 
