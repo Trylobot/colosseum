@@ -13,5 +13,5 @@ REM     http://pypi.python.org/pypi/argparse
 set name=atlas
 del art\%name%.png
 dir art\*.png /s /b > atlasgen\%name%.dat
-python atlasgen\create_texture_atlas.py -o art\%name%.png -c art\%name%.json < atlasgen\%name%.dat
+python atlasgen\create_texture_atlas.py -o art\%name%.png -c data\%name%.colosseum_data < atlasgen\%name%.dat
 
