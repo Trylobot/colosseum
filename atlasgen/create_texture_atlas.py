@@ -120,10 +120,22 @@ def main():
         
     atlas = Image.new( mode, (ox,oy))
 
-    atlas_entry = Template( '\n\t{\n\t\tsource_path:"$source_path",\n\t\tatlas_path:"$atlas_path",\n\t\tx:"$tx",\n\t\ty:"$ty",\n\t\tw:"$tw",\n\t\th:"$th"\n\t}' )
-
     with open(args.chart,'w') as f:
-        f.write( '[' )
+        
+        f.write( '[\n'
+               + '\t{\n'
+               + '\t\tatlas_path: "' + args.output + '",\n'
+               + '\t\tframes: [' )
+        
+        atlas_entry = Template( '\n'
+                              + '\t\t\t{\n'
+                              + '\t\t\t\tsource_path: "$source_path",\n'
+                              + '\t\t\t\tx: $tx,\n'
+                              + '\t\t\t\ty: $ty,\n'
+                              + '\t\t\t\tw: $tw,\n'
+                              + '\t\t\t\th: $th\n'
+                              + '\t\t\t}' )
+        
         first = True
         for pr in packed_rects:
             if first:
@@ -139,9 +151,12 @@ def main():
             x,y = int(pr.bottomleft[0]), int(pr.bottomleft[1])
             w,h = int(pr.bottomright[0] - pr.bottomleft[0]), int(pr.topright[1] - pr.bottomright[1])
             
-            f.write( atlas_entry.substitute( source_path=pr.name, atlas_path=args.output, tx=x, ty=y, tw=w, th=h ))
+            f.write( atlas_entry.substitute( source_path=pr.name, tx=x, ty=y, tw=w, th=h ))
         
-        f.write( '\n]\n' )
+        f.write( '\n'
+               + '\t\t]\n'
+               + '\t}\n'
+               + ']\n' )
     atlas.save( args.output )
     
 if __name__ == '__main__':

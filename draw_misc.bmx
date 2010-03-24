@@ -5,6 +5,7 @@ Rem
 EndRem
 SuperStrict
 Import "settings.bmx"
+Import "box.bmx"
 
 '______________________________________________________________________________
 Function reset_draw_state()
@@ -24,6 +25,14 @@ Function DrawRectLines( x%, y%, w%, h% )
 	DrawLine( x+w-1, y,     x+w-1, y+h-1, False )
 	DrawLine( x+w-1, y+h-1, x,     y+h-1, False )
 	DrawLine( x,     y+h-1, x,     y,     False )
+End Function
+
+Function draw_box( b:BOX, solid% = False )
+	If solid
+		DrawRect( b.x, b.y, b.w, b.h )
+	Else
+		DrawRectLines( b.x, b.y, b.w, b.h )
+	End If
 End Function
 
 Function draw_percentage_bar( ..

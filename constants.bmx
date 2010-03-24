@@ -19,8 +19,9 @@ Const level_path$ = "levels/"
 Const sound_path$ = "sound/"
 Const user_path$ = "user/"
 
-Const default_settings_file_name$ = "settings."+settings_file_ext
-Const default_assets_file_name$ = "assets."+data_file_ext
+Const default_settings_file_name$ = "settings." + settings_file_ext
+Const default_assets_file_name$ = "assets." + data_file_ext
+Const default_texture_atlas_file_name$ = "atlas." + data_file_ext
 
 '______________________________________________________________________________
 'TODO: this should just be an int.

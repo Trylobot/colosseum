@@ -4,7 +4,6 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
-Import "draw_misc.bmx"
 
 '______________________________________________________________________________
 Function Create_BOX:BOX( x#, y#, w#, h# )
@@ -30,13 +29,4 @@ Type BOX
 		Return Not( x > (b.x+b.w) Or b.x > (x+w) Or y > (b.y+b.h) Or b.y > (y+h) )
 	End Method
 	
-	Method draw( solid% = False )
-		If solid
-			DrawRect( x, y, w, h )
-		Else
-			DrawRectLines( x, y, w, h )
-		End If
-	End Method
-
 End Type
-

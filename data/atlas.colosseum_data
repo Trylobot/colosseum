@@ -1,882 +1,777 @@
 [
 	{
-		source_path:"art\door\door.png",
-		atlas_path:"art\atlas.png",
-		x:"946",
-		y:"131",
-		w:"34",
-		h:"14"
-	},
-	{
-		source_path:"art\door\door_bg.png",
-		atlas_path:"art\atlas.png",
-		x:"551",
-		y:"0",
-		w:"77",
-		h:"148"
-	},
-	{
-		source_path:"art\door\door_fg.png",
-		atlas_path:"art\atlas.png",
-		x:"628",
-		y:"0",
-		w:"77",
-		h:"148"
-	},
-	{
-		source_path:"art\door\door_servo.png",
-		atlas_path:"art\atlas.png",
-		x:"778",
-		y:"50",
-		w:"63",
-		h:"12"
-	},
-	{
-		source_path:"art\effects\discarded_energy_core_big.png",
-		atlas_path:"art\atlas.png",
-		x:"1004",
-		y:"32",
-		w:"7",
-		h:"5"
-	},
-	{
-		source_path:"art\effects\discarded_energy_core_red.png",
-		atlas_path:"art\atlas.png",
-		x:"1018",
-		y:"32",
-		w:"6",
-		h:"5"
-	},
-	{
-		source_path:"art\effects\energy_mgun_flare.png",
-		atlas_path:"art\atlas.png",
-		x:"965",
-		y:"37",
-		w:"19",
-		h:"13"
-	},
-	{
-		source_path:"art\effects\energy_pellet.png",
-		atlas_path:"art\atlas.png",
-		x:"937",
-		y:"161",
-		w:"5",
-		h:"5"
-	},
-	{
-		source_path:"art\effects\laser.png",
-		atlas_path:"art\atlas.png",
-		x:"931",
-		y:"32",
-		w:"15",
-		h:"5"
-	},
-	{
-		source_path:"art\effects\laser_big.png",
-		atlas_path:"art\atlas.png",
-		x:"805",
-		y:"171",
-		w:"17",
-		h:"7"
-	},
-	{
-		source_path:"art\effects\laser_muzzle_flare.png",
-		atlas_path:"art\atlas.png",
-		x:"897",
-		y:"131",
-		w:"17",
-		h:"15"
-	},
-	{
-		source_path:"art\effects\laser_red.png",
-		atlas_path:"art\atlas.png",
-		x:"946",
-		y:"32",
-		w:"15",
-		h:"5"
-	},
-	{
-		source_path:"art\effects\lightbulb.png",
-		atlas_path:"art\atlas.png",
-		x:"705",
-		y:"112",
-		w:"19",
-		h:"19"
-	},
-	{
-		source_path:"art\effects\medium_laser_muzzle_flare.png",
-		atlas_path:"art\atlas.png",
-		x:"914",
-		y:"131",
-		w:"17",
-		h:"15"
-	},
-	{
-		source_path:"art\effects\mgun.png",
-		atlas_path:"art\atlas.png",
-		x:"991",
-		y:"23",
-		w:"6",
-		h:"3"
-	},
-	{
-		source_path:"art\effects\mgun_muzzle_flash.png",
-		atlas_path:"art\atlas.png",
-		x:"855",
-		y:"131",
-		w:"23",
-		h:"15"
-	},
-	{
-		source_path:"art\effects\mgun_muzzle_smoke.png",
-		atlas_path:"art\atlas.png",
-		x:"974",
-		y:"112",
-		w:"17",
-		h:"17"
-	},
-	{
-		source_path:"art\effects\mgun_shell_casing.png",
-		atlas_path:"art\atlas.png",
-		x:"1011",
-		y:"32",
-		w:"7",
-		h:"5"
-	},
-	{
-		source_path:"art\effects\muzzle_flash.png",
-		atlas_path:"art\atlas.png",
-		x:"740",
-		y:"63",
-		w:"38",
-		h:"25"
-	},
-	{
-		source_path:"art\effects\muzzle_smoke.png",
-		atlas_path:"art\atlas.png",
-		x:"898",
-		y:"0",
-		w:"31",
-		h:"31"
-	},
-	{
-		source_path:"art\effects\projectile.png",
-		atlas_path:"art\atlas.png",
-		x:"874",
-		y:"171",
-		w:"9",
-		h:"7"
-	},
-	{
-		source_path:"art\effects\projectile_shell_casing.png",
-		atlas_path:"art\atlas.png",
-		x:"863",
-		y:"171",
-		w:"11",
-		h:"7"
-	},
-	{
-		source_path:"art\effects\rocket.png",
-		atlas_path:"art\atlas.png",
-		x:"837",
-		y:"171",
-		w:"13",
-		h:"7"
-	},
-	{
-		source_path:"art\effects\rocket_casing.png",
-		atlas_path:"art\atlas.png",
-		x:"850",
-		y:"171",
-		w:"13",
-		h:"7"
-	},
-	{
-		source_path:"art\effects\rocket_thrust.png",
-		atlas_path:"art\atlas.png",
-		x:"984",
-		y:"37",
-		w:"17",
-		h:"13"
-	},
-	{
-		source_path:"art\effects\shockwave.png",
-		atlas_path:"art\atlas.png",
-		x:"400",
-		y:"0",
-		w:"151",
-		h:"151"
-	},
-	{
-		source_path:"art\effects\spark.png",
-		atlas_path:"art\atlas.png",
-		x:"839",
-		y:"32",
-		w:"30",
-		h:"5"
-	},
-	{
-		source_path:"art\effects\spotlight.png",
-		atlas_path:"art\atlas.png",
-		x:"0",
-		y:"0",
-		w:"200",
-		h:"200"
-	},
-	{
-		source_path:"art\effects\stickies.png",
-		atlas_path:"art\atlas.png",
-		x:"705",
-		y:"131",
-		w:"80",
-		h:"16"
-	},
-	{
-		source_path:"art\effects\white_circle.png",
-		atlas_path:"art\atlas.png",
-		x:"765",
-		y:"0",
-		w:"50",
-		h:"50"
-	},
-	{
-		source_path:"art\items\pickup_ammo.png",
-		atlas_path:"art\atlas.png",
-		x:"1008",
-		y:"112",
-		w:"16",
-		h:"16"
-	},
-	{
-		source_path:"art\items\pickup_ammo_main_10.png",
-		atlas_path:"art\atlas.png",
-		x:"724",
-		y:"112",
-		w:"38",
-		h:"18"
-	},
-	{
-		source_path:"art\items\pickup_ammo_main_15.png",
-		atlas_path:"art\atlas.png",
-		x:"762",
-		y:"112",
-		w:"38",
-		h:"18"
-	},
-	{
-		source_path:"art\items\pickup_ammo_main_20.png",
-		atlas_path:"art\atlas.png",
-		x:"800",
-		y:"112",
-		w:"38",
-		h:"18"
-	},
-	{
-		source_path:"art\items\pickup_ammo_main_5.png",
-		atlas_path:"art\atlas.png",
-		x:"838",
-		y:"112",
-		w:"34",
-		h:"18"
-	},
-	{
-		source_path:"art\items\pickup_cooldown.png",
-		atlas_path:"art\atlas.png",
-		x:"823",
-		y:"131",
-		w:"16",
-		h:"16"
-	},
-	{
-		source_path:"art\items\pickup_health.png",
-		atlas_path:"art\atlas.png",
-		x:"839",
-		y:"131",
-		w:"16",
-		h:"16"
-	},
-	{
-		source_path:"art\props\crate.png",
-		atlas_path:"art\atlas.png",
-		x:"839",
-		y:"0",
-		w:"32",
-		h:"32"
-	},
-	{
-		source_path:"art\props\crate_gibs.png",
-		atlas_path:"art\atlas.png",
-		x:"0",
-		y:"200",
-		w:"832",
-		h:"32"
-	},
-	{
-		source_path:"art\props\crate_small.png",
-		atlas_path:"art\atlas.png",
-		x:"989",
-		y:"63",
-		w:"20",
-		h:"20"
-	},
-	{
-		source_path:"art\props\crate_small_gibs.png",
-		atlas_path:"art\atlas.png",
-		x:"400",
-		y:"151",
-		w:"360",
-		h:"20"
-	},
-	{
-		source_path:"art\ui\arrow.png",
-		atlas_path:"art\atlas.png",
-		x:"815",
-		y:"0",
-		w:"24",
-		h:"37"
-	},
-	{
-		source_path:"art\ui\bar_shine.png",
-		atlas_path:"art\atlas.png",
-		x:"931",
-		y:"151",
-		w:"30",
-		h:"10"
-	},
-	{
-		source_path:"art\ui\ghost_reticle.png",
-		atlas_path:"art\atlas.png",
-		x:"1017",
-		y:"131",
-		w:"7",
-		h:"7"
-	},
-	{
-		source_path:"art\ui\glow.png",
-		atlas_path:"art\atlas.png",
-		x:"931",
-		y:"131",
-		w:"15",
-		h:"15"
-	},
-	{
-		source_path:"art\ui\halo.png",
-		atlas_path:"art\atlas.png",
-		x:"200",
-		y:"0",
-		w:"200",
-		h:"200"
-	},
-	{
-		source_path:"art\ui\health_mini.png",
-		atlas_path:"art\atlas.png",
-		x:"841",
-		y:"50",
-		w:"12",
-		h:"12"
-	},
-	{
-		source_path:"art\ui\icon_music_note.png",
-		atlas_path:"art\atlas.png",
-		x:"980",
-		y:"131",
-		w:"11",
-		h:"11"
-	},
-	{
-		source_path:"art\ui\icon_player_cannon_ammo.png",
-		atlas_path:"art\atlas.png",
-		x:"1020",
-		y:"50",
-		w:"4",
-		h:"6"
-	},
-	{
-		source_path:"art\ui\icon_speaker_off.png",
-		atlas_path:"art\atlas.png",
-		x:"992",
-		y:"50",
-		w:"14",
-		h:"11"
-	},
-	{
-		source_path:"art\ui\icon_speaker_on.png",
-		atlas_path:"art\atlas.png",
-		x:"1006",
-		y:"50",
-		w:"14",
-		h:"11"
-	},
-	{
-		source_path:"art\ui\information.png",
-		atlas_path:"art\atlas.png",
-		x:"785",
-		y:"131",
-		w:"19",
-		h:"16"
-	},
-	{
-		source_path:"art\ui\kb_key_left.png",
-		atlas_path:"art\atlas.png",
-		x:"871",
-		y:"0",
-		w:"13",
-		h:"32"
-	},
-	{
-		source_path:"art\ui\kb_key_mid.png",
-		atlas_path:"art\atlas.png",
-		x:"897",
-		y:"0",
-		w:"1",
-		h:"32"
-	},
-	{
-		source_path:"art\ui\kb_key_right.png",
-		atlas_path:"art\atlas.png",
-		x:"884",
-		y:"0",
-		w:"13",
-		h:"32"
-	},
-	{
-		source_path:"art\ui\lock.png",
-		atlas_path:"art\atlas.png",
-		x:"1012",
-		y:"89",
-		w:"12",
-		h:"16"
-	},
-	{
-		source_path:"art\ui\menu_back_arrow_extra_lines.png",
-		atlas_path:"art\atlas.png",
-		x:"705",
-		y:"0",
-		w:"20",
-		h:"63"
-	},
-	{
-		source_path:"art\ui\menu_back_arrow_outline.png",
-		atlas_path:"art\atlas.png",
-		x:"725",
-		y:"0",
-		w:"20",
-		h:"63"
-	},
-	{
-		source_path:"art\ui\menu_back_arrow_solid.png",
-		atlas_path:"art\atlas.png",
-		x:"745",
-		y:"0",
-		w:"20",
-		h:"63"
-	},
-	{
-		source_path:"art\ui\recharge_bar.png",
-		atlas_path:"art\atlas.png",
-		x:"961",
-		y:"151",
-		w:"60",
-		h:"8"
-	},
-	{
-		source_path:"art\ui\reload_bar.png",
-		atlas_path:"art\atlas.png",
-		x:"664",
-		y:"171",
-		w:"60",
-		h:"8"
-	},
-	{
-		source_path:"art\ui\reload_marker.png",
-		atlas_path:"art\atlas.png",
-		x:"771",
-		y:"171",
-		w:"10",
-		h:"8"
-	},
-	{
-		source_path:"art\ui\reticle.png",
-		atlas_path:"art\atlas.png",
-		x:"869",
-		y:"32",
-		w:"25",
-		h:"5"
-	},
-	{
-		source_path:"art\ui\skull_1x.png",
-		atlas_path:"art\atlas.png",
-		x:"1009",
-		y:"63",
-		w:"15",
-		h:"18"
-	},
-	{
-		source_path:"art\ui\warning.png",
-		atlas_path:"art\atlas.png",
-		x:"804",
-		y:"131",
-		w:"19",
-		h:"16"
-	},
-	{
-		source_path:"art\units\apc\apc_chassis.png",
-		atlas_path:"art\atlas.png",
-		x:"958",
-		y:"89",
-		w:"29",
-		h:"19"
-	},
-	{
-		source_path:"art\units\apc\apc_turret_barrel.png",
-		atlas_path:"art\atlas.png",
-		x:"987",
-		y:"32",
-		w:"9",
-		h:"5"
-	},
-	{
-		source_path:"art\units\apc\apc_turret_base.png",
-		atlas_path:"art\atlas.png",
-		x:"991",
-		y:"131",
-		w:"8",
-		h:"11"
-	},
-	{
-		source_path:"art\units\bomb\bomb_gibs.png",
-		atlas_path:"art\atlas.png",
-		x:"853",
-		y:"50",
-		w:"105",
-		h:"11"
-	},
-	{
-		source_path:"art\units\bomb\nme_mobile_bomb.png",
-		atlas_path:"art\atlas.png",
-		x:"977",
-		y:"50",
-		w:"15",
-		h:"11"
-	},
-	{
-		source_path:"art\units\box\box.png",
-		atlas_path:"art\atlas.png",
-		x:"991",
-		y:"112",
-		w:"17",
-		h:"17"
-	},
-	{
-		source_path:"art\units\box\box_gib.png",
-		atlas_path:"art\atlas.png",
-		x:"872",
-		y:"112",
-		w:"102",
-		h:"17"
-	},
-	{
-		source_path:"art\units\carrier\bay_door.png",
-		atlas_path:"art\atlas.png",
-		x:"1016",
-		y:"37",
-		w:"6",
-		h:"12"
-	},
-	{
-		source_path:"art\units\carrier\carrier_chassis.png",
-		atlas_path:"art\atlas.png",
-		x:"956",
-		y:"0",
-		w:"35",
-		h:"26"
-	},
-	{
-		source_path:"art\units\carrier\carrier_gibs.png",
-		atlas_path:"art\atlas.png",
-		x:"0",
-		y:"232",
-		w:"735",
-		h:"26"
-	},
-	{
-		source_path:"art\units\carrier\carrier_hitbox.png",
-		atlas_path:"art\atlas.png",
-		x:"705",
-		y:"63",
-		w:"35",
-		h:"26"
-	},
-	{
-		source_path:"art\units\carrier\ramp.png",
-		atlas_path:"art\atlas.png",
-		x:"757",
-		y:"171",
-		w:"14",
-		h:"8"
-	},
-	{
-		source_path:"art\units\light_tank\laser_turret_base-barrel.png",
-		atlas_path:"art\atlas.png",
-		x:"958",
-		y:"50",
-		w:"19",
-		h:"11"
-	},
-	{
-		source_path:"art\units\light_tank\light_tank_hitbox.png",
-		atlas_path:"art\atlas.png",
-		x:"987",
-		y:"89",
-		w:"25",
-		h:"19"
-	},
-	{
-		source_path:"art\units\light_tank\light_tank_track.png",
-		atlas_path:"art\atlas.png",
-		x:"400",
-		y:"179",
-		w:"200",
-		h:"6"
-	},
-	{
-		source_path:"art\units\light_tank\light_tank_track_trail.png",
-		atlas_path:"art\atlas.png",
-		x:"883",
-		y:"171",
-		w:"25",
-		h:"6"
-	},
-	{
-		source_path:"art\units\light_tank\pellet_turret_base.png",
-		atlas_path:"art\atlas.png",
-		x:"908",
-		y:"171",
-		w:"8",
-		h:"6"
-	},
-	{
-		source_path:"art\units\light_tank\player_tank_chassis.png",
-		atlas_path:"art\atlas.png",
-		x:"942",
-		y:"37",
-		w:"23",
-		h:"13"
-	},
-	{
-		source_path:"art\units\light_tank\player_tank_chassis_lightmap.png",
-		atlas_path:"art\atlas.png",
-		x:"815",
-		y:"37",
-		w:"92",
-		h:"13"
-	},
-	{
-		source_path:"art\units\light_tank\player_tank_mgun_turret.png",
-		atlas_path:"art\atlas.png",
-		x:"999",
-		y:"131",
-		w:"18",
-		h:"8"
-	},
-	{
-		source_path:"art\units\light_tank\player_tank_turret_barrel.png",
-		atlas_path:"art\atlas.png",
-		x:"781",
-		y:"171",
-		w:"24",
-		h:"7"
-	},
-	{
-		source_path:"art\units\light_tank\player_tank_turret_base.png",
-		atlas_path:"art\atlas.png",
-		x:"765",
-		y:"50",
-		w:"13",
-		h:"13"
-	},
-	{
-		source_path:"art\units\medium_tank\medium_laser_turret_base-barrel.png",
-		atlas_path:"art\atlas.png",
-		x:"907",
-		y:"37",
-		w:"35",
-		h:"13"
-	},
-	{
-		source_path:"art\units\medium_tank\medium_tank_hitbox.png",
-		atlas_path:"art\atlas.png",
-		x:"991",
-		y:"0",
-		w:"33",
-		h:"23"
-	},
-	{
-		source_path:"art\units\medium_tank\med_tank_track.png",
-		atlas_path:"art\atlas.png",
-		x:"400",
-		y:"171",
-		w:"264",
-		h:"8"
-	},
-	{
-		source_path:"art\units\medium_tank\med_tank_track_trail.png",
-		atlas_path:"art\atlas.png",
-		x:"724",
-		y:"171",
-		w:"33",
-		h:"8"
-	},
-	{
-		source_path:"art\units\medium_tank\player_tank_chassis_med.png",
-		atlas_path:"art\atlas.png",
-		x:"778",
-		y:"63",
-		w:"33",
-		h:"23"
-	},
-	{
-		source_path:"art\units\medium_tank\player_tank_med_mgun_turret_barrel.png",
-		atlas_path:"art\atlas.png",
-		x:"811",
-		y:"63",
-		w:"33",
-		h:"23"
-	},
-	{
-		source_path:"art\units\medium_tank\player_tank_turret_med_barrel_left.png",
-		atlas_path:"art\atlas.png",
-		x:"844",
-		y:"63",
-		w:"33",
-		h:"23"
-	},
-	{
-		source_path:"art\units\medium_tank\player_tank_turret_med_barrel_right.png",
-		atlas_path:"art\atlas.png",
-		x:"877",
-		y:"63",
-		w:"33",
-		h:"23"
-	},
-	{
-		source_path:"art\units\medium_tank\player_tank_turret_med_base.png",
-		atlas_path:"art\atlas.png",
-		x:"910",
-		y:"63",
-		w:"33",
-		h:"23"
-	},
-	{
-		source_path:"art\units\medium_tank\ripper_machine_gun_turret_barrel.png",
-		atlas_path:"art\atlas.png",
-		x:"975",
-		y:"32",
-		w:"12",
-		h:"5"
-	},
-	{
-		source_path:"art\units\medium_tank\ripper_machine_gun_turret_base.png",
-		atlas_path:"art\atlas.png",
-		x:"1001",
-		y:"37",
-		w:"15",
-		h:"13"
-	},
-	{
-		source_path:"art\units\quad\enemy_light_mgun_turret_barrel.png",
-		atlas_path:"art\atlas.png",
-		x:"961",
-		y:"32",
-		w:"14",
-		h:"5"
-	},
-	{
-		source_path:"art\units\quad\enemy_light_mgun_turret_base.png",
-		atlas_path:"art\atlas.png",
-		x:"931",
-		y:"161",
-		w:"6",
-		h:"5"
-	},
-	{
-		source_path:"art\units\quad\enemy_quad_chassis.png",
-		atlas_path:"art\atlas.png",
-		x:"878",
-		y:"131",
-		w:"19",
-		h:"15"
-	},
-	{
-		source_path:"art\units\quad\light_quad_trail.png",
-		atlas_path:"art\atlas.png",
-		x:"913",
-		y:"32",
-		w:"18",
-		h:"5"
-	},
-	{
-		source_path:"art\units\quad\quad_gibs.png",
-		atlas_path:"art\atlas.png",
-		x:"760",
-		y:"151",
-		w:"171",
-		h:"15"
-	},
-	{
-		source_path:"art\units\quad\small_wheel.png",
-		atlas_path:"art\atlas.png",
-		x:"996",
-		y:"32",
-		w:"8",
-		h:"5"
-	},
-	{
-		source_path:"art\units\spider\limb.png",
-		atlas_path:"art\atlas.png",
-		x:"822",
-		y:"171",
-		w:"15",
-		h:"7"
-	},
-	{
-		source_path:"art\units\stationary\enemy_machine-gun_emplacement_turret-barrel.png",
-		atlas_path:"art\atlas.png",
-		x:"894",
-		y:"32",
-		w:"19",
-		h:"5"
-	},
-	{
-		source_path:"art\units\stationary\enemy_stationary-emplacement-1_chassis.png",
-		atlas_path:"art\atlas.png",
-		x:"929",
-		y:"0",
-		w:"27",
-		h:"27"
-	},
-	{
-		source_path:"art\units\stationary\enemy_stationary-emplacement-1_turret-barrel.png",
-		atlas_path:"art\atlas.png",
-		x:"943",
-		y:"63",
-		w:"23",
-		h:"23"
-	},
-	{
-		source_path:"art\units\stationary\enemy_stationary-emplacement-1_turret-base.png",
-		atlas_path:"art\atlas.png",
-		x:"966",
-		y:"63",
-		w:"23",
-		h:"23"
-	},
-	{
-		source_path:"art\units\stationary\tower_gibs.png",
-		atlas_path:"art\atlas.png",
-		x:"705",
-		y:"89",
-		w:"253",
-		h:"23"
+		atlas_path: "art\atlas.png",
+		frames: [
+			{
+				source_path: "art\door\door.png",
+				x: 946,
+				y: 131,
+				w: 34,
+				h: 14
+			},
+			{
+				source_path: "art\door\door_bg.png",
+				x: 628,
+				y: 0,
+				w: 77,
+				h: 148
+			},
+			{
+				source_path: "art\door\door_fg.png",
+				x: 551,
+				y: 0,
+				w: 77,
+				h: 148
+			},
+			{
+				source_path: "art\door\door_servo.png",
+				x: 778,
+				y: 50,
+				w: 63,
+				h: 12
+			},
+			{
+				source_path: "art\effects\discarded_energy_core_big.png",
+				x: 1004,
+				y: 32,
+				w: 7,
+				h: 5
+			},
+			{
+				source_path: "art\effects\discarded_energy_core_red.png",
+				x: 1018,
+				y: 32,
+				w: 6,
+				h: 5
+			},
+			{
+				source_path: "art\effects\energy_mgun_flare.png",
+				x: 965,
+				y: 37,
+				w: 19,
+				h: 13
+			},
+			{
+				source_path: "art\effects\energy_pellet.png",
+				x: 937,
+				y: 161,
+				w: 5,
+				h: 5
+			},
+			{
+				source_path: "art\effects\laser.png",
+				x: 931,
+				y: 32,
+				w: 15,
+				h: 5
+			},
+			{
+				source_path: "art\effects\laser_big.png",
+				x: 805,
+				y: 171,
+				w: 17,
+				h: 7
+			},
+			{
+				source_path: "art\effects\laser_muzzle_flare.png",
+				x: 897,
+				y: 131,
+				w: 17,
+				h: 15
+			},
+			{
+				source_path: "art\effects\laser_red.png",
+				x: 946,
+				y: 32,
+				w: 15,
+				h: 5
+			},
+			{
+				source_path: "art\effects\lightbulb.png",
+				x: 705,
+				y: 112,
+				w: 19,
+				h: 19
+			},
+			{
+				source_path: "art\effects\medium_laser_muzzle_flare.png",
+				x: 914,
+				y: 131,
+				w: 17,
+				h: 15
+			},
+			{
+				source_path: "art\effects\mgun.png",
+				x: 991,
+				y: 23,
+				w: 6,
+				h: 3
+			},
+			{
+				source_path: "art\effects\mgun_muzzle_flash.png",
+				x: 855,
+				y: 131,
+				w: 23,
+				h: 15
+			},
+			{
+				source_path: "art\effects\mgun_muzzle_smoke.png",
+				x: 974,
+				y: 112,
+				w: 17,
+				h: 17
+			},
+			{
+				source_path: "art\effects\mgun_shell_casing.png",
+				x: 1011,
+				y: 32,
+				w: 7,
+				h: 5
+			},
+			{
+				source_path: "art\effects\muzzle_flash.png",
+				x: 740,
+				y: 63,
+				w: 38,
+				h: 25
+			},
+			{
+				source_path: "art\effects\muzzle_smoke.png",
+				x: 898,
+				y: 0,
+				w: 31,
+				h: 31
+			},
+			{
+				source_path: "art\effects\projectile.png",
+				x: 874,
+				y: 171,
+				w: 9,
+				h: 7
+			},
+			{
+				source_path: "art\effects\projectile_shell_casing.png",
+				x: 863,
+				y: 171,
+				w: 11,
+				h: 7
+			},
+			{
+				source_path: "art\effects\rocket.png",
+				x: 837,
+				y: 171,
+				w: 13,
+				h: 7
+			},
+			{
+				source_path: "art\effects\rocket_casing.png",
+				x: 850,
+				y: 171,
+				w: 13,
+				h: 7
+			},
+			{
+				source_path: "art\effects\rocket_thrust.png",
+				x: 984,
+				y: 37,
+				w: 17,
+				h: 13
+			},
+			{
+				source_path: "art\effects\shockwave.png",
+				x: 400,
+				y: 0,
+				w: 151,
+				h: 151
+			},
+			{
+				source_path: "art\effects\spark.png",
+				x: 839,
+				y: 32,
+				w: 30,
+				h: 5
+			},
+			{
+				source_path: "art\effects\spotlight.png",
+				x: 0,
+				y: 0,
+				w: 200,
+				h: 200
+			},
+			{
+				source_path: "art\effects\stickies.png",
+				x: 705,
+				y: 131,
+				w: 80,
+				h: 16
+			},
+			{
+				source_path: "art\effects\white_circle.png",
+				x: 765,
+				y: 0,
+				w: 50,
+				h: 50
+			},
+			{
+				source_path: "art\items\pickup_ammo.png",
+				x: 1008,
+				y: 112,
+				w: 16,
+				h: 16
+			},
+			{
+				source_path: "art\items\pickup_ammo_main_10.png",
+				x: 724,
+				y: 112,
+				w: 38,
+				h: 18
+			},
+			{
+				source_path: "art\items\pickup_ammo_main_15.png",
+				x: 762,
+				y: 112,
+				w: 38,
+				h: 18
+			},
+			{
+				source_path: "art\items\pickup_ammo_main_20.png",
+				x: 800,
+				y: 112,
+				w: 38,
+				h: 18
+			},
+			{
+				source_path: "art\items\pickup_ammo_main_5.png",
+				x: 838,
+				y: 112,
+				w: 34,
+				h: 18
+			},
+			{
+				source_path: "art\items\pickup_cooldown.png",
+				x: 823,
+				y: 131,
+				w: 16,
+				h: 16
+			},
+			{
+				source_path: "art\items\pickup_health.png",
+				x: 839,
+				y: 131,
+				w: 16,
+				h: 16
+			},
+			{
+				source_path: "art\props\crate.png",
+				x: 839,
+				y: 0,
+				w: 32,
+				h: 32
+			},
+			{
+				source_path: "art\props\crate_gibs.png",
+				x: 0,
+				y: 200,
+				w: 832,
+				h: 32
+			},
+			{
+				source_path: "art\props\crate_small.png",
+				x: 989,
+				y: 63,
+				w: 20,
+				h: 20
+			},
+			{
+				source_path: "art\props\crate_small_gibs.png",
+				x: 400,
+				y: 151,
+				w: 360,
+				h: 20
+			},
+			{
+				source_path: "art\ui\arrow.png",
+				x: 815,
+				y: 0,
+				w: 24,
+				h: 37
+			},
+			{
+				source_path: "art\ui\bar_shine.png",
+				x: 931,
+				y: 151,
+				w: 30,
+				h: 10
+			},
+			{
+				source_path: "art\ui\ghost_reticle.png",
+				x: 1017,
+				y: 131,
+				w: 7,
+				h: 7
+			},
+			{
+				source_path: "art\ui\glow.png",
+				x: 931,
+				y: 131,
+				w: 15,
+				h: 15
+			},
+			{
+				source_path: "art\ui\halo.png",
+				x: 200,
+				y: 0,
+				w: 200,
+				h: 200
+			},
+			{
+				source_path: "art\ui\health_mini.png",
+				x: 841,
+				y: 50,
+				w: 12,
+				h: 12
+			},
+			{
+				source_path: "art\ui\icon_music_note.png",
+				x: 980,
+				y: 131,
+				w: 11,
+				h: 11
+			},
+			{
+				source_path: "art\ui\icon_player_cannon_ammo.png",
+				x: 1020,
+				y: 50,
+				w: 4,
+				h: 6
+			},
+			{
+				source_path: "art\ui\icon_speaker_off.png",
+				x: 992,
+				y: 50,
+				w: 14,
+				h: 11
+			},
+			{
+				source_path: "art\ui\icon_speaker_on.png",
+				x: 1006,
+				y: 50,
+				w: 14,
+				h: 11
+			},
+			{
+				source_path: "art\ui\information.png",
+				x: 785,
+				y: 131,
+				w: 19,
+				h: 16
+			},
+			{
+				source_path: "art\ui\kb_key_left.png",
+				x: 871,
+				y: 0,
+				w: 13,
+				h: 32
+			},
+			{
+				source_path: "art\ui\kb_key_mid.png",
+				x: 897,
+				y: 0,
+				w: 1,
+				h: 32
+			},
+			{
+				source_path: "art\ui\kb_key_right.png",
+				x: 884,
+				y: 0,
+				w: 13,
+				h: 32
+			},
+			{
+				source_path: "art\ui\lock.png",
+				x: 1012,
+				y: 89,
+				w: 12,
+				h: 16
+			},
+			{
+				source_path: "art\ui\menu_back_arrow_extra_lines.png",
+				x: 705,
+				y: 0,
+				w: 20,
+				h: 63
+			},
+			{
+				source_path: "art\ui\menu_back_arrow_outline.png",
+				x: 725,
+				y: 0,
+				w: 20,
+				h: 63
+			},
+			{
+				source_path: "art\ui\menu_back_arrow_solid.png",
+				x: 745,
+				y: 0,
+				w: 20,
+				h: 63
+			},
+			{
+				source_path: "art\ui\recharge_bar.png",
+				x: 961,
+				y: 151,
+				w: 60,
+				h: 8
+			},
+			{
+				source_path: "art\ui\reload_bar.png",
+				x: 664,
+				y: 171,
+				w: 60,
+				h: 8
+			},
+			{
+				source_path: "art\ui\reload_marker.png",
+				x: 771,
+				y: 171,
+				w: 10,
+				h: 8
+			},
+			{
+				source_path: "art\ui\reticle.png",
+				x: 869,
+				y: 32,
+				w: 25,
+				h: 5
+			},
+			{
+				source_path: "art\ui\skull_1x.png",
+				x: 1009,
+				y: 63,
+				w: 15,
+				h: 18
+			},
+			{
+				source_path: "art\ui\warning.png",
+				x: 804,
+				y: 131,
+				w: 19,
+				h: 16
+			},
+			{
+				source_path: "art\units\apc\apc_chassis.png",
+				x: 958,
+				y: 89,
+				w: 29,
+				h: 19
+			},
+			{
+				source_path: "art\units\apc\apc_turret_barrel.png",
+				x: 987,
+				y: 32,
+				w: 9,
+				h: 5
+			},
+			{
+				source_path: "art\units\apc\apc_turret_base.png",
+				x: 991,
+				y: 131,
+				w: 8,
+				h: 11
+			},
+			{
+				source_path: "art\units\bomb\bomb_gibs.png",
+				x: 853,
+				y: 50,
+				w: 105,
+				h: 11
+			},
+			{
+				source_path: "art\units\bomb\nme_mobile_bomb.png",
+				x: 977,
+				y: 50,
+				w: 15,
+				h: 11
+			},
+			{
+				source_path: "art\units\box\box.png",
+				x: 991,
+				y: 112,
+				w: 17,
+				h: 17
+			},
+			{
+				source_path: "art\units\box\box_gib.png",
+				x: 872,
+				y: 112,
+				w: 102,
+				h: 17
+			},
+			{
+				source_path: "art\units\carrier\bay_door.png",
+				x: 1016,
+				y: 37,
+				w: 6,
+				h: 12
+			},
+			{
+				source_path: "art\units\carrier\carrier_chassis.png",
+				x: 956,
+				y: 0,
+				w: 35,
+				h: 26
+			},
+			{
+				source_path: "art\units\carrier\carrier_gibs.png",
+				x: 0,
+				y: 232,
+				w: 735,
+				h: 26
+			},
+			{
+				source_path: "art\units\carrier\carrier_hitbox.png",
+				x: 705,
+				y: 63,
+				w: 35,
+				h: 26
+			},
+			{
+				source_path: "art\units\carrier\ramp.png",
+				x: 757,
+				y: 171,
+				w: 14,
+				h: 8
+			},
+			{
+				source_path: "art\units\light_tank\laser_turret_base-barrel.png",
+				x: 958,
+				y: 50,
+				w: 19,
+				h: 11
+			},
+			{
+				source_path: "art\units\light_tank\light_tank_hitbox.png",
+				x: 987,
+				y: 89,
+				w: 25,
+				h: 19
+			},
+			{
+				source_path: "art\units\light_tank\light_tank_track.png",
+				x: 400,
+				y: 179,
+				w: 200,
+				h: 6
+			},
+			{
+				source_path: "art\units\light_tank\light_tank_track_trail.png",
+				x: 883,
+				y: 171,
+				w: 25,
+				h: 6
+			},
+			{
+				source_path: "art\units\light_tank\pellet_turret_base.png",
+				x: 908,
+				y: 171,
+				w: 8,
+				h: 6
+			},
+			{
+				source_path: "art\units\light_tank\player_tank_chassis.png",
+				x: 942,
+				y: 37,
+				w: 23,
+				h: 13
+			},
+			{
+				source_path: "art\units\light_tank\player_tank_chassis_lightmap.png",
+				x: 815,
+				y: 37,
+				w: 92,
+				h: 13
+			},
+			{
+				source_path: "art\units\light_tank\player_tank_mgun_turret.png",
+				x: 999,
+				y: 131,
+				w: 18,
+				h: 8
+			},
+			{
+				source_path: "art\units\light_tank\player_tank_turret_barrel.png",
+				x: 781,
+				y: 171,
+				w: 24,
+				h: 7
+			},
+			{
+				source_path: "art\units\light_tank\player_tank_turret_base.png",
+				x: 765,
+				y: 50,
+				w: 13,
+				h: 13
+			},
+			{
+				source_path: "art\units\medium_tank\medium_laser_turret_base-barrel.png",
+				x: 907,
+				y: 37,
+				w: 35,
+				h: 13
+			},
+			{
+				source_path: "art\units\medium_tank\medium_tank_hitbox.png",
+				x: 991,
+				y: 0,
+				w: 33,
+				h: 23
+			},
+			{
+				source_path: "art\units\medium_tank\med_tank_track.png",
+				x: 400,
+				y: 171,
+				w: 264,
+				h: 8
+			},
+			{
+				source_path: "art\units\medium_tank\med_tank_track_trail.png",
+				x: 724,
+				y: 171,
+				w: 33,
+				h: 8
+			},
+			{
+				source_path: "art\units\medium_tank\player_tank_chassis_med.png",
+				x: 778,
+				y: 63,
+				w: 33,
+				h: 23
+			},
+			{
+				source_path: "art\units\medium_tank\player_tank_med_mgun_turret_barrel.png",
+				x: 811,
+				y: 63,
+				w: 33,
+				h: 23
+			},
+			{
+				source_path: "art\units\medium_tank\player_tank_turret_med_barrel_left.png",
+				x: 844,
+				y: 63,
+				w: 33,
+				h: 23
+			},
+			{
+				source_path: "art\units\medium_tank\player_tank_turret_med_barrel_right.png",
+				x: 877,
+				y: 63,
+				w: 33,
+				h: 23
+			},
+			{
+				source_path: "art\units\medium_tank\player_tank_turret_med_base.png",
+				x: 910,
+				y: 63,
+				w: 33,
+				h: 23
+			},
+			{
+				source_path: "art\units\medium_tank\ripper_machine_gun_turret_barrel.png",
+				x: 975,
+				y: 32,
+				w: 12,
+				h: 5
+			},
+			{
+				source_path: "art\units\medium_tank\ripper_machine_gun_turret_base.png",
+				x: 1001,
+				y: 37,
+				w: 15,
+				h: 13
+			},
+			{
+				source_path: "art\units\quad\enemy_light_mgun_turret_barrel.png",
+				x: 961,
+				y: 32,
+				w: 14,
+				h: 5
+			},
+			{
+				source_path: "art\units\quad\enemy_light_mgun_turret_base.png",
+				x: 931,
+				y: 161,
+				w: 6,
+				h: 5
+			},
+			{
+				source_path: "art\units\quad\enemy_quad_chassis.png",
+				x: 878,
+				y: 131,
+				w: 19,
+				h: 15
+			},
+			{
+				source_path: "art\units\quad\light_quad_trail.png",
+				x: 913,
+				y: 32,
+				w: 18,
+				h: 5
+			},
+			{
+				source_path: "art\units\quad\quad_gibs.png",
+				x: 760,
+				y: 151,
+				w: 171,
+				h: 15
+			},
+			{
+				source_path: "art\units\quad\small_wheel.png",
+				x: 996,
+				y: 32,
+				w: 8,
+				h: 5
+			},
+			{
+				source_path: "art\units\spider\limb.png",
+				x: 822,
+				y: 171,
+				w: 15,
+				h: 7
+			},
+			{
+				source_path: "art\units\stationary\enemy_machine-gun_emplacement_turret-barrel.png",
+				x: 894,
+				y: 32,
+				w: 19,
+				h: 5
+			},
+			{
+				source_path: "art\units\stationary\enemy_stationary-emplacement-1_chassis.png",
+				x: 929,
+				y: 0,
+				w: 27,
+				h: 27
+			},
+			{
+				source_path: "art\units\stationary\enemy_stationary-emplacement-1_turret-barrel.png",
+				x: 943,
+				y: 63,
+				w: 23,
+				h: 23
+			},
+			{
+				source_path: "art\units\stationary\enemy_stationary-emplacement-1_turret-base.png",
+				x: 966,
+				y: 63,
+				w: 23,
+				h: 23
+			},
+			{
+				source_path: "art\units\stationary\tower_gibs.png",
+				x: 705,
+				y: 89,
+				w: 253,
+				h: 23
+			}
+		]
 	}
 ]

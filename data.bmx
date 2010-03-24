@@ -21,14 +21,28 @@ Import "level.bmx"
 Import "campaign_data.bmx"
 Import "image_manip.bmx"
 Import "settings.bmx"
+Import "texture_manager.bmx"
 
 '_____________________________________________________________________________
 Global loading_progress# = 0.0
 
 Function load_assets%()
-	Local file:TStream = ReadFile( data_path + default_assets_file_name )
+	Local file:TStream
+	Local json:TJSON
+	'load texture atlas
+	file = ReadFile( data_path + default_texture_atlas_file_name )
 	If Not file Then Return False
-	Local json:TJSON = TJSON.Create( file )
+	json = TJSON.Create( file )
+	file.Close()
+	If Not json.isNull() 'read successful
+		TEXTURE_MANAGER.Load_TEXTURE_MANAGER_from_json( json )
+	Else
+		Return False
+	End If
+	'load all remaining assets
+	file = ReadFile( data_path + default_assets_file_name )
+	If Not file Then Return False
+	json = TJSON.Create( file )
 	file.Close()
 	If Not json.isNull() 'read successful
 		Local asset_path$
@@ -53,6 +67,8 @@ Function load_assets%()
 		End If
 		DebugLog( "~n~n" )
 		Return True
+	Else
+		Return False
 	End If
 	Return False
 End Function
