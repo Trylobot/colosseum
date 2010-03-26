@@ -46,8 +46,10 @@ End Type
 Type TEXTURE_MANAGER
 	Global image_atlases:TImageAtlas[]
 	Global reference_map:TMap
+	Global image_key_map:TMap
   
-  Function GetImageRef:IMAGE_ATLAS_REFERENCE( image_source_path$ )
+  Function GetImageRef:IMAGE_ATLAS_REFERENCE( image_key$ )
+		Local image_source_path$ = String( image_key_map.ValueForKey( image_key ))
 		Return IMAGE_ATLAS_REFERENCE( reference_map.ValueForKey( image_source_path ))
   End Function
 	
@@ -64,6 +66,7 @@ Type TEXTURE_MANAGER
 		If atlases_json
 			image_atlases = New TImageAtlas[atlases_json.Size()]
 			reference_map = CreateMap()
+			image_key_map = CreateMap()
 			For Local a% = 0 Until atlases_json.Size()
 				atlas_json = TJSON.Create( atlases_json.GetByIndex( a ))
 				atlas_path = atlas_json.GetString( "atlas_path" )
@@ -90,11 +93,12 @@ Type TEXTURE_MANAGER
 		End If
 	End Function
 	
-	Function Load_TImage_json( json:TJSON )
+	Function Load_TImage_json( json:TJSON, image_key$ )
 		Local ref:IMAGE_ATLAS_REFERENCE
 		Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
 		path = json.GetString( "path" )
-		ref = TEXTURE_MANAGER.GetImageRef( path )
+		image_key_map.Insert( image_key, path )
+		ref = GetImageRef( image_key )
 		frames = json.GetNumber( "frames" )
 		'flip_horizontal = json.GetBoolean( "flip_horizontal" )
 		'flip_vertical = json.GetBoolean( "flip_vertical" )
