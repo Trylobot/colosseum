@@ -5,6 +5,7 @@ Rem
 EndRem
 SuperStrict
 Import "constants.bmx"
+Import "texture_manager.bmx"
 Import "agent.bmx"
 Import "turret.bmx"
 Import "vec.bmx"
@@ -49,7 +50,7 @@ Const MAX_COMPLEX_AGENT_VELOCITY# = 4.0 'hard velocity limit; this shouldn't be 
 '___________________________________________
 Type COMPLEX_AGENT Extends AGENT
 	
-	Field lightmap:TImage 'lighting effect image array
+	Field lightmap:IMAGE_ATLAS_REFERENCE 'lighting effect image array
 	
 	Field alignment% '{friendly|hostile}
 	Field ai_name$ 'artificial intelligence variant identifier (only used for AI-controlled agents)
@@ -114,9 +115,9 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Function Archetype:Object( ..
 	name$ = Null, ..
-	img:TImage = Null, ..
-	hitbox:TImage = Null, ..
-	gibs:TImage = Null, ..
+	img:IMAGE_ATLAS_REFERENCE = Null, ..
+	hitbox:IMAGE_ATLAS_REFERENCE = Null, ..
+	gibs:IMAGE_ATLAS_REFERENCE = Null, ..
 	ai_name$ = Null, ..
 	cash_value% = 0, ..
 	max_health# = 100.0, ..
@@ -318,7 +319,7 @@ Type COMPLEX_AGENT Extends AGENT
 			SetAlpha( 0.15*alpha_override )
 			Local glow_scale# = 0.3*scale_override*(img.width-2)/17.0
 			SetScale( glow_scale, glow_scale )
-			DrawImage( get_image( "halo" ), pos_x, pos_y )
+			DrawImageRef( get_image( "halo" ), pos_x, pos_y )
 		End If
 		'widgets behind
 		For Local widget_list:TList = EachIn all_widget_lists
@@ -346,16 +347,16 @@ Type COMPLEX_AGENT Extends AGENT
 			SetAlpha( alpha_override )
 			SetScale( scale_override, scale_override )
 			SetRotation( ang )
-			DrawImage( img, pos_x, pos_y )
+			DrawImageRef( img, pos_x, pos_y )
 			'chassis lighting effect
 			If lightmap
 				SetBlend( LIGHTBLEND )
-				Local separation# = 360.0 / lightmap.frames.Length
-				For Local i% = 0 Until lightmap.frames.Length
+				Local separation# = 360.0 / lightmap.frames
+				For Local i% = 0 Until lightmap.frames
 					Local diff# = Abs( ang_wrap( ang - ((i - 1) * separation )))
 					If diff < 90.0
 						SetAlpha( alpha_override * 0.5 * (90.0 - diff)/90.0 )
-						DrawImage( lightmap, pos_x, pos_y, i )
+						DrawImageRef( lightmap, pos_x, pos_y, i )
 					End If
 				Next
 				SetBlend( ALPHABLEND )
@@ -385,7 +386,7 @@ Type COMPLEX_AGENT Extends AGENT
 			SetAlpha( alpha_override )
 			SetScale( scale_override, scale_override )
 			SetRotation( ang )
-			DrawImage( img, pos_x, pos_y )
+			DrawImageRef( img, pos_x, pos_y )
 			SetBlend( ALPHABLEND )
 		End If
 	End Method
@@ -725,12 +726,12 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	Method set_images_unfiltered()
-		If img Then img = unfilter_image( img )
+		'If img Then img = unfilter_image( img )
 		For Local t:TURRET = EachIn turrets
 			t.set_images_unfiltered()
 		Next
 		For Local tt:TANK_TRACK = EachIn tracks
-			tt.track.img = unfilter_image( tt.track.img )
+			'tt.track.img = unfilter_image( tt.track.img )
 		Next
 	End Method
 	
@@ -908,12 +909,3 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	Return cmp_ag
 End Function
 
-Rem
-'apc
-trail_package: {
-	particle_emitter_key: "tank_tread_trail_small",
-	offset_x: 0,
-	separation_x: 11,
-	separation_y: 8
-},
-EndRem

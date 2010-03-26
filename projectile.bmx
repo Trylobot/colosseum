@@ -6,6 +6,7 @@ EndRem
 SuperStrict
 Import "physical_object.bmx"
 Import "emitter.bmx"
+Import "texture_manager.bmx"
 Import "particle_emitter.bmx"
 Import "agent.bmx"
 Import "audio.bmx"
@@ -25,7 +26,7 @@ Const PROJECTILE_MEMBER_EMITTER_PAYLOAD% = 1
 
 Type PROJECTILE Extends PHYSICAL_OBJECT
 	
-	Field img:TImage 'image to be drawn
+	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn
 	Field snd_impact:TSound 'sound to be played on impact
 	Field damage# 'maximum damage dealt by projectile
 	Field explosive_force_magnitude#
@@ -42,7 +43,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	End Method
 	
 	Function Create:Object( ..
-	img:TImage = Null, ..
+	img:IMAGE_ATLAS_REFERENCE = Null, ..
 	snd_impact:TSound = Null, ..
 	damage# = 0.0, ..
 	explosive_force_magnitude# = 0.0, ..
@@ -116,7 +117,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	
 	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
 		SetRotation( ang )
-		DrawImage( img, pos_x, pos_y )
+		DrawImageRef( img, pos_x, pos_y )
 	End Method
 	
 	'Method impact( material%, hit_player% = False )

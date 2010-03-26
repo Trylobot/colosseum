@@ -49,12 +49,14 @@ Function collide_all_objects()
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
 				SetRotation( ag.ang )
-				CollideImage( ag.hitbox, ag.pos_x, ag.pos_y, 0, 0, AGENT_COLLISION_LAYER, ag )
+				ag.hitbox.UseFrame()
+				CollideImage( ag.hitbox.atlas.image, ag.pos_x, ag.pos_y, 0, 0, AGENT_COLLISION_LAYER, ag )
 			Next
 		Next
 		For proj = EachIn game.projectile_list
 			SetRotation( proj.ang )
-			result = CollideImage( proj.img, proj.pos_x, proj.pos_y, 0, AGENT_COLLISION_LAYER, PROJECTILE_COLLISION_LAYER, proj )
+			proj.img.UseFrame()
+			result = CollideImage( proj.img.atlas.image, proj.pos_x, proj.pos_y, 0, AGENT_COLLISION_LAYER, PROJECTILE_COLLISION_LAYER, proj )
 			For ag = EachIn result
 				'examine id's; projectiles will never collide with their owners
 				If proj.source_id <> ag.id
@@ -69,7 +71,8 @@ Function collide_all_objects()
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
 				SetRotation( ag.ang )
-				result = CollideImage( ag.hitbox, ag.pos_x, ag.pos_y, 0, AGENT_COLLISION_LAYER, SECONDARY_AGENT_COLLISION_LAYER, ag )
+				ag.hitbox.UseFrame()
+				result = CollideImage( ag.hitbox.atlas.image, ag.pos_x, ag.pos_y, 0, AGENT_COLLISION_LAYER, SECONDARY_AGENT_COLLISION_LAYER, ag )
 				For other = EachIn result
 					If ag.id <> other.id 'not colliding with self
 						'COLLISION! between {ag} and {other}
@@ -98,12 +101,13 @@ Function collide_all_objects()
 		For Local d:DOOR = EachIn game.doors
 			For Local slider:WIDGET = EachIn d.all_sliders
 				SetRotation( slider.get_ang() )
-				result = CollideImage( slider.img, slider.get_x(), slider.get_y(), 0, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
+				slider.img.UseFrame()
+				result = CollideImage( slider.img.atlas.image, slider.get_x(), slider.get_y(), 0, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
 				For ag = EachIn result
 					'COLLISION! between {ag} and {door}
 					collision_agent_door( ag, slider )
 				Next
-				result = CollideImage( slider.img, slider.get_x(), slider.get_y(), 0, PROJECTILE_COLLISION_LAYER, 0, slider )
+				result = CollideImage( slider.img.atlas.image, slider.get_x(), slider.get_y(), 0, PROJECTILE_COLLISION_LAYER, 0, slider )
 				For proj = EachIn result
 					'COLLISION! between {proj} and {door}
 					collision_projectile_door( proj, slider )
@@ -115,10 +119,12 @@ Function collide_all_objects()
 		If game.human_participation And game.player And Not game.player.dead()
 			For pkp = EachIn game.pickup_list
 				SetRotation( 0 )
-				CollideImage( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
+				pkp.img.UseFrame()
+				CollideImage( pkp.img.atlas.image, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
 			Next
 			SetRotation( game.player.ang )
-			result = CollideImage( game.player.hitbox, game.player.pos_x, game.player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, game.player )
+			game.player.hitbox.UseFrame()
+			result = CollideImage( game.player.hitbox.atlas.image, game.player.pos_x, game.player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, game.player )
 			For pkp = EachIn result
 				'COLLISION! between {player} and {pkp}
 				game.player.grant_pickup( pkp ) 'i can has lewts?!

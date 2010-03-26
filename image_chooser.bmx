@@ -105,7 +105,7 @@ Type IMAGE_CHOOSER
 		SetScale( 1, 1 )
 		SetColor( 255, 255, 255 )
 		If locked
-			DrawImage( get_image( "lock" ), x + scale*img.width/2, y + scale*img.height/2 )
+			DrawImageRef( get_image( "lock" ), x + scale*img.width/2, y + scale*img.height/2 )
 		End If
 	End Method
 	

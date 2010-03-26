@@ -29,6 +29,8 @@ Global loading_progress# = 0.0
 Function load_assets%()
 	Local file:TStream
 	Local json:TJSON
+	'AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
+	AutoImageFlags( FILTEREDIMAGE )
 	'load texture atlas
 	file = ReadFile( data_path + default_texture_atlas_file_name )
 	If Not file Then Return False
@@ -97,8 +99,9 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 					Local s:TSound = Create_TSound_from_json( object_json )
 					If s Then sound_map.Insert( key, s ) Else load_error( object_json )
 				Case "image"
-					Local i:TImage = Create_TImage_from_json( object_json )
-					If i Then image_map.Insert( key, i ) Else load_error( object_json )
+					'Local i:TImage = Create_TImage_from_json( object_json )
+					'If i Then image_map.Insert( key, i ) Else load_error( object_json )
+					TEXTURE_MANAGER.Load_TImage_json( object_json )
 				Case "prop"
 					Local p:AGENT = Create_AGENT_from_json( object_json )
 					If p Then prop_map.Insert( key, p ) Else load_error( object_json )
@@ -170,11 +173,10 @@ Function Create_TSound_from_json:TSound( json:TJSON )
 End Function
 
 'Deprecated
+REM
 Function Create_TImage_from_json:TImage( json:TJSON )
 	Local img:TImage
 	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
-	'AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
-	AutoImageFlags( FILTEREDIMAGE )
 	path = json.GetString( "path" )
 	frames = json.GetNumber( "frames" )
 	If frames >= 1
@@ -197,35 +199,7 @@ Function Create_TImage_from_json:TImage( json:TJSON )
 	End If
 	Return Null
 End Function
-
-Function Create_IMAGE_ATLAS_REFERENCE_from_json:IMAGE_ATLAS_REFERENCE( json:TJSON )
-	Local img:IMAGE_ATLAS_REFERENCE
-	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
-	'AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
-	AutoImageFlags( FILTEREDIMAGE )
-	path = json.GetString( "path" )
-	frames = json.GetNumber( "frames" )
-	If frames >= 1
-		If frames = 1
-			'img = LoadImage( path )
-		Else 'frames > 1
-			'frame_width = json.GetNumber( "frame_width" )
-			'frame_height = json.GetNumber( "frame_height" )
-			'img = LoadAnimImage( path, frame_width, frame_height, 0, frames )
-			
-		End If
-		If img
-			'flip_horizontal = json.GetBoolean( "flip_horizontal" )
-			'flip_vertical = json.GetBoolean( "flip_vertical" )
-			'img = pixel_transform( img, flip_horizontal, flip_vertical ) 'does nothing if both are false
-			'handle_x = json.GetNumber( "handle_x" )
-			'handle_y = json.GetNumber( "handle_y" )
-			'SetImageHandle( img, handle_x, handle_y )
-			'Return img
-		End If
-	End If
-	Return Null
-End Function
+ENDREM
 
 '______________________________________________________________________________
 Function load_level:LEVEL( path$ )

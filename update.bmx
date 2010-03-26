@@ -104,12 +104,12 @@ Function update_all_objects()
 				Local damage# = player_health_last - game.player.cur_health
 				Local health_pct# = game.player.cur_health / game.player.max_health
 				Local damage_pct# = damage / game.player.max_health
-				Local bit:WIDGET = WIDGET( WIDGET.Create( create_rect_img( damage_pct * health_bar_w, health_bar_h - 3 ),,, REPEAT_MODE_LOOP_BACK, True ))
-				bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0.0,  0.0,   0, 255, 255, 255, 1.0,,, 500 )))
-				bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 6.0,-16.0,-3.0, 255,   0,   0, 0.0,,, 500 )))
-				bit.parent = Create_POINT( get_image( "health_mini" ).width + 3, window_h - 2*(get_font( "consolas_bold_12" ).Height() + 3) + 2 )
-				bit.attach_at( health_pct * health_bar_w, 2, 0, True )
-				bit.manage( health_bits )
+				'Local bit:WIDGET = WIDGET( WIDGET.Create( create_rect_img( damage_pct * health_bar_w, health_bar_h - 3 ),,, REPEAT_MODE_LOOP_BACK, True ))
+				'bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 0.0,  0.0,   0, 255, 255, 255, 1.0,,, 500 )))
+				'bit.add_state( TRANSFORM_STATE( TRANSFORM_STATE.Create( 6.0,-16.0,-3.0, 255,   0,   0, 0.0,,, 500 )))
+				'bit.parent = Create_POINT( get_image( "health_mini" ).width + 3, window_h - 2*(get_font( "consolas_bold_12" ).Height() + 3) + 2 )
+				'bit.attach_at( health_pct * health_bar_w, 2, 0, True )
+				'bit.manage( health_bits )
 			End If
 			player_health_last = game.player.cur_health
 		End If

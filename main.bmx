@@ -10,6 +10,7 @@ SuperStrict
 Framework brl.D3D7Max2D
 'Framework brl.GLMax2D
 Import "settings.bmx"
+Import "image_atlas.bmx"
 Import "data.bmx"
 Import "core.bmx"
 Import "constants.bmx"
@@ -26,20 +27,19 @@ Import "instaquit.bmx"
 ?Debug
 Include "debug.bmx"
 ?
-'////////////////////////////
-'application versioning
+
 Const version_major%    = 0
 Const version_minor%    = 4
 Const version_revision% = 0
-'////////////////////////////
-SetGraphicsDriver D3D7Max2DDriver() 
+
+SetGraphicsDriver D3D7Max2DDriver()
 'SetGraphicsDriver GLMax2DDriver()
 
 'defaults
 apply_default_settings()
 FLAG.in_menu = True
 
-'data directory enforce
+'create directories if not present
 create_dirs()
 'settings
 If Not load_settings()

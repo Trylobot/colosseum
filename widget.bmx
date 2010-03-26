@@ -6,6 +6,7 @@ EndRem
 SuperStrict
 Import "managed_object.bmx"
 Import "point.bmx"
+Import "texture_manager.bmx"
 Import "transform_state.bmx"
 Import "base_data.bmx"
 Import "json.bmx"
@@ -32,7 +33,7 @@ Const LAYER_IN_FRONT_OF_PARENT% = 1
 Type WIDGET Extends MANAGED_OBJECT
 	
 	Field parent:POINT 'parent object, provides local origin
-	Field img:TImage 'image to be drawn
+	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn
 	Field layer% 'whether to be drawn before the parent or after it
 	Field visible% '{true|false}
 	
@@ -60,7 +61,7 @@ Type WIDGET Extends MANAGED_OBJECT
 	End Method
 	
 	Function Create:Object( ..
-	img:TImage, ..
+	img:IMAGE_ATLAS_REFERENCE, ..
 	layer% = LAYER_IN_FRONT_OF_PARENT, ..
 	visible% = True, ..
 	repeat_mode% = REPEAT_MODE_CYCLIC_WRAP, ..
@@ -141,7 +142,7 @@ Type WIDGET Extends MANAGED_OBJECT
 			SetAlpha( actual_state.alpha*alpha_override )
 			SetScale( actual_state.scale_x*scale_override, actual_state.scale_y*scale_override )
 			SetRotation( get_ang() )
-			DrawImage( img, get_x(), get_y() )
+			DrawImageRef( img, get_x(), get_y() )
 		End If
 	End Method
 	
@@ -275,7 +276,7 @@ Function Create_WIDGET_from_json:WIDGET( json:TJSON )
 	Local w:WIDGET
 	'required fields
 	Local image_key$
-	Local img:TImage
+	Local img:IMAGE_ATLAS_REFERENCE
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED Then image_key = json.GetString( "image_key" ) Else Return Null
 	img = get_image( image_key )
 	If Not img Then Return Null

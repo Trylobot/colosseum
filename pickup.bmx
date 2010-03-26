@@ -7,6 +7,7 @@ SuperStrict
 Import "managed_object.bmx"
 Import "audio.bmx"
 Import "json.bmx"
+Import "texture_manager.bmx"
 
 '______________________________________________________________________________
 Const PICKUP_PROBABILITY# = 0.25 'chance of an enemy dropping a pickup (randomly selected from all pickups)
@@ -24,7 +25,7 @@ Type PICKUP Extends MANAGED_OBJECT
 	Const HEALTH% = 2
 	Const COOLDOWN% = 3
 
-	Field img:TImage 'image to be drawn
+	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn
 	Field pickup_type% 'pickup type indicator
 	Field pickup_amount% 'magnitude of pickup
 	Field life_time% 'time until object is deleted
@@ -38,7 +39,7 @@ Type PICKUP Extends MANAGED_OBJECT
 	End Method
 	
 	Function Create:Object( ..
-	img:TImage = Null, ..
+	img:IMAGE_ATLAS_REFERENCE = Null, ..
 	pickup_type% = 0, ..
 	pickup_amount% = 0, ..
 	life_time% = 0, ..
@@ -80,7 +81,7 @@ Type PICKUP Extends MANAGED_OBJECT
 		SetRotation( 0 )
 		SetAlpha( alpha )
 		SetScale( 1, 1 )
-		DrawImage( img, pos_x, pos_y )
+		DrawImageRef( img, pos_x, pos_y )
 	End Method
 	
 	Method play_categorical_sound()

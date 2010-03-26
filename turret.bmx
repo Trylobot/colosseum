@@ -5,6 +5,7 @@ Rem
 EndRem
 SuperStrict
 Import "point.bmx"
+Import "texture_manager.bmx"
 Import "turret_barrel.bmx"
 Import "emitter.bmx"
 Import "particle_emitter.bmx"
@@ -30,7 +31,7 @@ Type TURRET Extends POINT
 	Field parent:POINT 'parental anchor (complex agent) this turret is attached to
 	Field class% '{ammunition|energy}
 	Field priority% '{primary|secondary}
-	Field img:TImage 'image to be drawn for the "base" of the turret
+	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn for the "base" of the turret
 	Field cash_value%
 	Field snd_fire:TSound 'sound to be played when the turret is fired
 '	Field snd_turn:TSound 'sound to be played when the turret is turned
@@ -66,7 +67,7 @@ Type TURRET Extends POINT
 	Function Create:Object( ..
 	name$ = Null, ..
 	class%, priority%, ..
-	img:TImage = Null, ..
+	img:IMAGE_ATLAS_REFERENCE = Null, ..
 	cash_value% = 0, ..
 	snd_fire:TSound = Null, ..
 	turret_barrel_count%, ..
@@ -199,7 +200,7 @@ Type TURRET Extends POINT
 			tb.draw( alpha_override, scale_override )
 		Next
 		If img
-			DrawImage( img, pos_x, pos_y )
+			DrawImageRef( img, pos_x, pos_y )
 		End If
 	End Method
 	
@@ -298,9 +299,9 @@ Type TURRET Extends POINT
 	End Method
 	
 	Method set_images_unfiltered()
-		If img Then img = unfilter_image( img )
+		'If img Then img = unfilter_image( img )
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
-			If tb.img Then tb.img = unfilter_image( tb.img )
+			'If tb.img Then tb.img = unfilter_image( tb.img )
 		Next
 	End Method
 	

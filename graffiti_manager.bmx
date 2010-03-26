@@ -5,6 +5,7 @@ Rem
 EndRem
 SuperStrict
 Import "box.bmx"
+Import "texture_manager.bmx"
 Import "particle.bmx"
 
 '______________________________________________________________________________
@@ -69,7 +70,7 @@ Type GRAFFITI_MANAGER
 						SetAlpha( p.alpha )
 						SetScale( p.scale, p.scale )
 						SetRotation( p.ang )
-						DrawImage( p.img, p.pos_x Mod col_width, p.pos_y Mod row_height, p.frame )
+						DrawImageRef( p.img, p.pos_x Mod col_width, p.pos_y Mod row_height, p.frame )
 					End If
 				Next
 				If changed

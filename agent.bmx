@@ -4,6 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "texture_manager.bmx"
 Import "physical_object.bmx"
 Import "constants.bmx"
 Import "particle.bmx"
@@ -23,8 +24,8 @@ Function get_prop:AGENT( Key$, Copy% = True )
 End Function
 
 Function Create_AGENT:AGENT( ..
-img:TImage = Null, ..
-gibs:TImage = Null, ..
+img:IMAGE_ATLAS_REFERENCE = Null, ..
+gibs:IMAGE_ATLAS_REFERENCE = Null, ..
 max_health# = 1.0, ..
 mass# = 1.0, ..
 frictional_coefficient# = 0.0, ..
@@ -55,9 +56,9 @@ End Function
 
 Type AGENT Extends PHYSICAL_OBJECT
 
-	Field img:TImage 'image to be drawn
-	Field hitbox:TImage	'required for accurate-looking hit detection, since complex agents can be composed of many parts
-	Field gibs:TImage 'gib image(s)
+	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn
+	Field hitbox:IMAGE_ATLAS_REFERENCE	'required for accurate-looking hit detection, since complex agents can be composed of many parts
+	Field gibs:IMAGE_ATLAS_REFERENCE 'gib image(s)
 
 	Field max_health# 'maximum health
 	Field death_emitters:TList 'particle emitters to be activated on death
@@ -77,7 +78,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 		SetAlpha( alpha_override )
 		SetScale( scale_override, scale_override )
 		SetRotation( ang )
-		DrawImage( img, pos_x, pos_y )
+		DrawImageRef( img, pos_x, pos_y )
 '		If flash
 '			flash = False
 '			SetBlend( LIGHTBLEND )
@@ -109,7 +110,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 			'this should also be controlled by a death emitter, albeit a more complex one.
 			'perhaps a special type of emitter that takes a multi-frame image and a series of data to specify initial conditions for each of the gibs.
 			If gibs <> Null
-				For Local i% = 0 To gibs.frames.Length - 1
+				For Local i% = 0 To gibs.frames - 1
 					Local gib:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, gibs, i,,,, LAYER_BACKGROUND, True, 0.100,,,,,,, 750 ))
 					Local gib_offset#, gib_offset_ang#
 					cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )

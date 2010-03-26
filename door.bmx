@@ -4,6 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import "texture_manager.bmx"
 Import "widget.bmx"
 Import "managed_object.bmx"
 Import "point.bmx"
@@ -39,8 +40,8 @@ Type DOOR Extends MANAGED_OBJECT
 	Const DOOR_OPEN% = 1
 	
 	Field parent:POINT
-	Field bg:TImage
-	Field fg:TImage
+	Field bg:IMAGE_ATLAS_REFERENCE
+	Field fg:IMAGE_ATLAS_REFERENCE
 	Field left_slider:WIDGET
 	Field right_slider:WIDGET
 	Field all_sliders:WIDGET[]
@@ -74,7 +75,7 @@ Type DOOR Extends MANAGED_OBJECT
 		SetScale( 1, 1 )
 		SetAlpha( 1 )
 		SetRotation( parent.ang )
-		DrawImage( bg, parent.pos_x, parent.pos_y )
+		DrawImageRef( bg, parent.pos_x, parent.pos_y )
 	End Method
 	
 	Method draw_fg()
@@ -82,7 +83,7 @@ Type DOOR Extends MANAGED_OBJECT
 		SetScale( 1, 1 )
 		SetAlpha( 1 )
 		SetRotation( parent.ang )
-		DrawImage( fg, parent.pos_x, parent.pos_y )
+		DrawImageRef( fg, parent.pos_x, parent.pos_y )
 		left_slider.draw()
 		right_slider.draw()
 		left_servo.draw()

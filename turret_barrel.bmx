@@ -5,6 +5,7 @@ Rem
 EndRem
 SuperStrict
 Import "point.bmx"
+Import "texture_manager.bmx"
 Import "emitter.bmx"
 Import "particle_emitter.bmx"
 Import "projectile_launcher.bmx"
@@ -20,7 +21,7 @@ Function get_turret_barrel:TURRET_BARREL( key$, copy% = True )
 End Function
 
 Function Create_TURRET_BARREL:TURRET_BARREL( ..
-img:TImage = Null, ..
+img:IMAGE_ATLAS_REFERENCE = Null, ..
 reload_time% = 1000, ..
 recoil_max# = 0 )
 	Local tb:TURRET_BARREL = New TURRET_BARREL
@@ -34,7 +35,7 @@ recoil_max# = 0 )
 End Function
 
 Type TURRET_BARREL Extends POINT
-	Field img:TImage 'image associated with this turret barrel
+	Field img:IMAGE_ATLAS_REFERENCE 'image associated with this turret barrel
 	Field reload_time% 'time required to reload this barrel
 	Field recoil_max# 'maximum recoil distance
 	Field attach_x#, attach_y# 'attachment anchor (at default orientation), set at create-time
@@ -93,7 +94,7 @@ Type TURRET_BARREL Extends POINT
 	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
 		If img
 			SetRotation( ang )
-			DrawImage( img, pos_x, pos_y )
+			DrawImageRef( img, pos_x, pos_y )
 		End If
 	End Method
 	

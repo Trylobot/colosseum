@@ -1,11 +1,11 @@
 {
 	name: "developer",
-	cash: 100000,
-	kills: 2475,
+	cash: 100500,
+	kills: 2483,
 	inventory: null,
 	vehicle_key: "light_tank",
 	input_method: 2,
 	invert_reverse_steering: false,
-	progress: null,
-	campaign: null,
+	levels_beaten: null,
+	campaign: ""
 }
