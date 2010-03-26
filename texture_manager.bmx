@@ -43,6 +43,7 @@ Type TEXTURE_MANAGER
 		Local atlas_path$
 		Local source_path$[]
 		Local rects:BOX[]
+		Local handles:cVEC[]
 		
 		atlases_json = json.GetArray("")
 		If atlases_json
@@ -56,6 +57,7 @@ Type TEXTURE_MANAGER
 				
 				source_path = New String[atlas_image_frames.Size()]
 				rects = New BOX[atlas_image_frames.Size()]
+				handles = New cVEC[atlas_image_frames.Size()]
 				For Local f% = 0 Until atlas_image_frames.Size()
 					atlas_image_frame = TJSON.Create( atlas_image_frames.GetByIndex( f ))
 					source_path[f] = atlas_image_frame.GetString( "source_path" )
@@ -66,7 +68,7 @@ Type TEXTURE_MANAGER
 					rects[f].h = atlas_image_frame.GetNumber( "h" )
 				Next
 				
-				image_atlases[a] = LoadImageAtlas( atlas_path, rects )
+				image_atlases[a] = LoadImageAtlas( atlas_path, rects, handles )
 				For Local f% = 0 Until source_path.Length
 					reference_map.Insert( source_path[f], IMAGE_ATLAS_REFERENCE.Create( image_atlases[a], f ))
 				Next

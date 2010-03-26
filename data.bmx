@@ -169,6 +169,7 @@ Function Create_TSound_from_json:TSound( json:TJSON )
 	Return LoadSound( path, (looping&SOUND_LOOP) )
 End Function
 
+'Deprecated
 Function Create_TImage_from_json:TImage( json:TJSON )
 	Local img:TImage
 	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
@@ -192,6 +193,35 @@ Function Create_TImage_from_json:TImage( json:TJSON )
 			handle_y = json.GetNumber( "handle_y" )
 			SetImageHandle( img, handle_x, handle_y )
 			Return img
+		End If
+	End If
+	Return Null
+End Function
+
+Function Create_IMAGE_ATLAS_REFERENCE_from_json:IMAGE_ATLAS_REFERENCE( json:TJSON )
+	Local img:IMAGE_ATLAS_REFERENCE
+	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
+	'AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
+	AutoImageFlags( FILTEREDIMAGE )
+	path = json.GetString( "path" )
+	frames = json.GetNumber( "frames" )
+	If frames >= 1
+		If frames = 1
+			'img = LoadImage( path )
+		Else 'frames > 1
+			'frame_width = json.GetNumber( "frame_width" )
+			'frame_height = json.GetNumber( "frame_height" )
+			'img = LoadAnimImage( path, frame_width, frame_height, 0, frames )
+			
+		End If
+		If img
+			'flip_horizontal = json.GetBoolean( "flip_horizontal" )
+			'flip_vertical = json.GetBoolean( "flip_vertical" )
+			'img = pixel_transform( img, flip_horizontal, flip_vertical ) 'does nothing if both are false
+			'handle_x = json.GetNumber( "handle_x" )
+			'handle_y = json.GetNumber( "handle_y" )
+			'SetImageHandle( img, handle_x, handle_y )
+			'Return img
 		End If
 	End If
 	Return Null
