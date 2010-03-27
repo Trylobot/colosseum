@@ -19,8 +19,8 @@ Type IMAGE_ATLAS_REFERENCE
   Field frames%
 	Field width%
 	Field height%
-	Field handle_x%
-	Field handle_y%
+	Field handle_x#
+	Field handle_y#
 	
 	Function Create:IMAGE_ATLAS_REFERENCE( atlas:TImageAtlas, atlas_entry_index% )
 		Local ref:IMAGE_ATLAS_REFERENCE = New IMAGE_ATLAS_REFERENCE
@@ -40,6 +40,10 @@ Type IMAGE_ATLAS_REFERENCE
 		atlas.UseFrame( atlas_entry_index )
 	End Method
 	
+	Method ToString$()
+		Return "{ i:" + atlas_entry_index + " }"
+	End Method
+	
 End Type
 
 '______________________________________________________________________________
@@ -49,6 +53,10 @@ Type TEXTURE_MANAGER
 	Global image_key_map:TMap
   
   Function GetImageRef:IMAGE_ATLAS_REFERENCE( image_key$ )
+		'THIS WILL FAIL
+		'because addresses of strings being compared are not equal
+		'if strings were immutable it would be fine
+		'FUCK.
 		Local image_source_path$ = String( image_key_map.ValueForKey( image_key ))
 		Return IMAGE_ATLAS_REFERENCE( reference_map.ValueForKey( image_source_path ))
   End Function
@@ -91,6 +99,9 @@ Type TEXTURE_MANAGER
 				Next
 			Next
 		End If
+		?Debug
+		DebugLog( Dump_Refs() )
+		?
 	End Function
 	
 	Function Load_TImage_json( json:TJSON, image_key$ )
@@ -98,6 +109,9 @@ Type TEXTURE_MANAGER
 		Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
 		path = json.GetString( "path" )
 		image_key_map.Insert( image_key, path )
+		?Debug
+		DebugLog( Dump_ImgKeys() )
+		?
 		ref = GetImageRef( image_key )
 		frames = json.GetNumber( "frames" )
 		'flip_horizontal = json.GetBoolean( "flip_horizontal" )
@@ -134,6 +148,26 @@ Type TEXTURE_MANAGER
 		'End If
 		'Return Null
 	End Function
+	
+	?Debug
+	Function Dump_Refs$()
+		Local str$ = " Texture_Manager.reference_map = ~n{"
+		For Local key$ = EachIn reference_map.Keys()
+			str :+ "~n  ~q" + key + "~q: " + IMAGE_ATLAS_REFERENCE(reference_map.ValueForKey(key)).ToString()
+		Next
+		str :+ "~n}"
+		Return str
+	End Function
+	
+	Function Dump_ImgKeys$()
+		Local str$ = " Texture_Manager.image_key_map = ~n{"
+		For Local key$ = EachIn image_key_map.Keys()
+			str :+ "~n  ~q" + key + "~q: ~q" + String(image_key_map.ValueForKey(key)) + "~q"
+		Next
+		str :+ "~n}"
+		Return str
+	End Function
+	?
   
 End Type
 

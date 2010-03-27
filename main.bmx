@@ -67,11 +67,7 @@ debug_no_graphics()
 'graphical window
 init_graphics()
 'assets
-'menu_command( COMMAND_LOAD_ASSETS, INTEGER.Create( 1 ))
-?Debug
-DebugStop
-?
-menu_command( COMMAND.LOAD_ASSETS )
+load_all_assets()
 'background automaton-powered menu game
 init_ai_menu_game() 'does nothing if applicable performance setting is disabled
 init_campaign_chooser()

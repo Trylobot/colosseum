@@ -72,7 +72,7 @@ def main():
     textures = {}
     rects = []
     while True:
-        input = sys.stdin.readline().strip().replace( os.getcwd() + '\\', '' )
+        input = sys.stdin.readline().strip().replace( os.getcwd() + '\\', '' ).replace( '\\', '/' )
         if len(input) == 0:
           break
         try:

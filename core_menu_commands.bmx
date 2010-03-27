@@ -266,11 +266,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			'End If
 		'________________________________________
 		Case COMMAND.LOAD_ASSETS
-			load_assets()
-			MENU.load_fonts()
-			If show_ai_menu_game
-				init_ai_menu_game()
-			End If
+			load_all_assets()
 			show_info( "external data loaded" )
 		'________________________________________
 		Case COMMAND.BUY_PART
@@ -332,5 +328,14 @@ Function campaign_chooser_callback( selected:CELL )
 	Local lev_path$ = cpd.levels[selected.col]
 	profile.vehicle_key = cpd.player_vehicle
 	menu_command( COMMAND.PLAY_LEVEL, lev_path )
+End Function
+
+Function load_all_assets()
+	load_texture_atlases()
+	load_assets()
+	MENU.load_fonts()
+	If show_ai_menu_game
+		init_ai_menu_game()
+	End If
 End Function
 

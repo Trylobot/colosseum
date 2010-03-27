@@ -26,7 +26,7 @@ Import "texture_manager.bmx"
 '_____________________________________________________________________________
 Global loading_progress# = 0.0
 
-Function load_assets%()
+Function load_texture_atlases%()
 	Local file:TStream
 	Local json:TJSON
 	'AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
@@ -41,6 +41,11 @@ Function load_assets%()
 	Else
 		Return False
 	End If
+End Function
+
+Function load_assets%()
+	Local file:TStream
+	Local json:TJSON
 	'load all remaining assets
 	file = ReadFile( data_path + default_assets_file_name )
 	If Not file Then Return False

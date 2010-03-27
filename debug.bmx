@@ -476,6 +476,15 @@ Function print_array( name$, arr%[] )
 	DebugLog " " + name + " = " + str
 End Function
 
+Function print_PAIR_array( name$, arr:PAIR[] )
+	Local str$ = "{"
+	For Local i% = 0 Until arr.Length
+		str :+ "~n~q" + arr[i].key + "~q: " + address(arr[i].value)
+	Next
+	str :+ "~n}"
+	DebugLog " " + name + " = " + str
+End Function
+
 Function map_to_array:PAIR[]( map:TMap )
 	Local list:TList = CreateList()
 	Local size% = 0
