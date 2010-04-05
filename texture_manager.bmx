@@ -13,6 +13,44 @@ Function DrawImageRef( img:IMAGE_ATLAS_REFERENCE, x#, y#, anim_frame% = 0 )
 	img.atlas.Draw( x, y, img.atlas_entry_index, anim_frame% )
 End Function
 
+'______________________________________________________________________________
+Rem
+Type HASHMAP_KEY
+	Field key$
+	
+	Function Create:HASHMAP_KEY( key$ )
+		Local k:HASHMAP_KEY = New HASHMAP_KEY
+		k.key = key
+		Return k
+	End Function
+	
+	Method Compare:Int( withObject:Object )
+		Local otherStr$ = String(withObject)
+    If otherStr 'compare with String
+      Return Hash( key ) - Hash( otherStr )
+		Else
+      Local otherHMK:HASHMAP_KEY = HASHMAP_KEY(withObject)
+      If otherHMK 'compare with HASHMAP_KEY
+        Return Hash( key ) - Hash( otherHMK.key )
+      End If
+    End If
+    'Fail
+		Throw "(HASHMAP_KEY) can only be compared to (HASHMAP_KEY) or (String)"
+	End Method
+	
+	Function Hash:Long( str:String )
+		'djb2 string hashing algorithm by Dan Bernstein, from comp.lang.c
+		Local _hash:Long = 5381
+		For Local i% = 0 Until str.Length
+			'_hash = ((_hash shl 5) + _hash) + str[i..(i+1)]
+			_hash = _hash * 33 ~ Asc(str[i..(i+1)]) 'bitwise exclusive-or with ascii value of character
+		Next
+		Return _hash
+	End Method
+End Type
+EndRem
+
+'______________________________________________________________________________
 Type IMAGE_ATLAS_REFERENCE
   Field atlas:TImageAtlas
 	Field atlas_entry_index%
@@ -49,16 +87,17 @@ End Type
 '______________________________________________________________________________
 Type TEXTURE_MANAGER
 	Global image_atlases:TImageAtlas[]
-	Global reference_map:TMap
-	Global image_key_map:TMap
+	Global reference_map:TMap 'map[String] --> IMAGE_ATLAS_REFERENCE
+	Global image_key_map:TMap 'map[String] --> String
   
   Function GetImageRef:IMAGE_ATLAS_REFERENCE( image_key$ )
-		'THIS WILL FAIL
-		'because addresses of strings being compared are not equal
-		'if strings were immutable it would be fine
-		'FUCK.
-		Local image_source_path$ = String( image_key_map.ValueForKey( image_key ))
-		Return IMAGE_ATLAS_REFERENCE( reference_map.ValueForKey( image_source_path ))
+    If image_key
+      Local image_src$ = String( image_key_map.ValueForKey( image_key ))
+      If image_src
+        Return IMAGE_ATLAS_REFERENCE( reference_map.ValueForKey( image_src ))
+      End If
+    End If
+    Return Null
   End Function
 	
 	Function Load_TEXTURE_MANAGER_from_json( json:TJSON )
@@ -67,7 +106,7 @@ Type TEXTURE_MANAGER
 		Local atlas_image_frames:TJSONArray
 		Local atlas_image_frame:TJSON
 		Local atlas_path$
-		Local source_path$[]
+		Local source_path:String[]
 		Local rects:BOX[]
 		Local handles:cVEC[]
 		atlases_json = json.GetArray("")
@@ -77,14 +116,14 @@ Type TEXTURE_MANAGER
 			image_key_map = CreateMap()
 			For Local a% = 0 Until atlases_json.Size()
 				atlas_json = TJSON.Create( atlases_json.GetByIndex( a ))
-				atlas_path = atlas_json.GetString( "atlas_path" )
+				atlas_path = atlas_json.GetString( "atlas_path" ).Trim()
 				atlas_image_frames = atlas_json.GetArray( "frames" )
 				source_path = New String[atlas_image_frames.Size()]
 				rects = New BOX[atlas_image_frames.Size()]
 				handles = New cVEC[atlas_image_frames.Size()]
 				For Local f% = 0 Until atlas_image_frames.Size()
 					atlas_image_frame = TJSON.Create( atlas_image_frames.GetByIndex( f ))
-					source_path[f] = atlas_image_frame.GetString( "source_path" )
+					source_path[f] = atlas_image_frame.GetString( "source_path" ).Trim()
 					rects[f] = New BOX
 					rects[f].x = atlas_image_frame.GetNumber( "x" )
 					rects[f].y = atlas_image_frame.GetNumber( "y" )
@@ -99,19 +138,14 @@ Type TEXTURE_MANAGER
 				Next
 			Next
 		End If
-		?Debug
-		DebugLog( Dump_Refs() )
-		?
 	End Function
 	
 	Function Load_TImage_json( json:TJSON, image_key$ )
 		Local ref:IMAGE_ATLAS_REFERENCE
 		Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
+		Local handle:cVEC
 		path = json.GetString( "path" )
 		image_key_map.Insert( image_key, path )
-		?Debug
-		DebugLog( Dump_ImgKeys() )
-		?
 		ref = GetImageRef( image_key )
 		frames = json.GetNumber( "frames" )
 		'flip_horizontal = json.GetBoolean( "flip_horizontal" )
@@ -122,10 +156,11 @@ Type TEXTURE_MANAGER
 		If frames = 1
 			ref.handle_x = handle_x
 			ref.handle_y = handle_y
-			ref.atlas.handles[ref.atlas_entry_index].x = handle_x
-			ref.atlas.handles[ref.atlas_entry_index].y = handle_y
+			handle = Create_cVEC( handle_x, handle_y )
+			ref.atlas.handles[ref.atlas_entry_index] = handle
 		Else If frames > 1
-			
+			'TO DO
+			'...
 		End If
 		'If frames >= 1
 			'If frames = 1
@@ -149,25 +184,5 @@ Type TEXTURE_MANAGER
 		'Return Null
 	End Function
 	
-	?Debug
-	Function Dump_Refs$()
-		Local str$ = " Texture_Manager.reference_map = ~n{"
-		For Local key$ = EachIn reference_map.Keys()
-			str :+ "~n  ~q" + key + "~q: " + IMAGE_ATLAS_REFERENCE(reference_map.ValueForKey(key)).ToString()
-		Next
-		str :+ "~n}"
-		Return str
-	End Function
-	
-	Function Dump_ImgKeys$()
-		Local str$ = " Texture_Manager.image_key_map = ~n{"
-		For Local key$ = EachIn image_key_map.Keys()
-			str :+ "~n  ~q" + key + "~q: ~q" + String(image_key_map.ValueForKey(key)) + "~q"
-		Next
-		str :+ "~n}"
-		Return str
-	End Function
-	?
-  
 End Type
 

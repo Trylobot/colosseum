@@ -83,20 +83,20 @@ End Function
 Function load_objects%( json:TJSON, source_file$ = Null )
 	For Local i% = 0 To TJSONArray( json.Root ).Size() - 1
 		Local item:TJSON = TJSON.Create( json.GetObject( String.FromInt( i )))
-		Local key$ = item.GetString( "key" )
+		Local key$ = item.GetString( "key" ).Trim()
 		Select key 'special implicit keys for certain objects
 			Case "{path}"
-				key = StripAll( item.GetString( "object.path" ))
+				key = StripAll( item.GetString( "object.path" ).Trim() )
 			Case "{image_key}"
-				key = item.GetString( "object.image_key" )
+				key = item.GetString( "object.image_key" ).Trim()
 			Case "{chassis_key}"
-				key = item.GetString( "object.chassis_key" )
+				key = item.GetString( "object.chassis_key" ).Trim()
 		End Select
 		If key And key <> ""
 			key = key.toLower()
 			DebugLog( "    " + key )
 			Local object_json:TJSON = TJSON.Create( item.GetObject( "object" ))
-			Select item.GetString( "class" )
+			Select item.GetString( "class" ).Trim()
 				Case "font"
 					Local f:TImageFont = Create_TImageFont_from_json( object_json )
 					If f Then font_map.Insert( key, f ) Else load_error( object_json )
