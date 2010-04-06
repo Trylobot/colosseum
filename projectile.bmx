@@ -162,6 +162,9 @@ Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
 	p = PROJECTILE( PROJECTILE.Create() )
 	'read and assign optional fields as available
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED                 Then p.img = get_image( json.GetString( "image_key" ))
+	If p.img
+		p.hitbox = Create_BOX( p.img.handle.x, p.img.handle.y, p.img.width, p.img.height )
+	End If
 	If json.TypeOf( "impact_sound_key" ) <> JSON_UNDEFINED          Then p.snd_impact = get_sound( json.GetString( "impact_sound_key" ))
 	If json.TypeOf( "damage" ) <> JSON_UNDEFINED                    Then p.damage = json.GetNumber( "damage" )
 	If json.TypeOf( "explosive_force_magnitude" ) <> JSON_UNDEFINED Then p.explosive_force_magnitude = json.GetNumber( "explosive_force_magnitude" )

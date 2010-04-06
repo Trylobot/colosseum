@@ -48,15 +48,13 @@ Function collide_all_objects()
 		'collisions between projectiles and complex_agents
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
-				SetRotation( ag.ang )
-				CollideImageRef( ag.hitbox, ag.pos_x, ag.pos_y, 0, 0, AGENT_COLLISION_LAYER, ag )
+				ag.collide( 0, AGENT_COLLISION_LAYER )
 			Next
 		Next
 		For proj = EachIn game.projectile_list
-			SetRotation( proj.ang )
-			result = CollideImageRef( proj.img, proj.pos_x, proj.pos_y, 0, AGENT_COLLISION_LAYER, PROJECTILE_COLLISION_LAYER, proj )
+			result = proj.collide( AGENT_COLLISION_LAYER, PROJECTILE_COLLISION_LAYER )
 			For ag = EachIn result
-				'examine id's; projectiles will never collide with their owners
+				'examine id's; projectiles should not collide with their owners
 				If proj.source_id <> ag.id
 					'COLLISION! between {proj} & {ag}
 					collision_projectile_agent( proj, ag )
@@ -68,8 +66,7 @@ Function collide_all_objects()
 		'collisions between agents and other agents
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
-				SetRotation( ag.ang )
-				result = CollideImageRef( ag.hitbox, ag.pos_x, ag.pos_y, 0, AGENT_COLLISION_LAYER, SECONDARY_AGENT_COLLISION_LAYER, ag )
+				result = ag.collide( AGENT_COLLISION_LAYER, SECONDARY_AGENT_COLLISION_LAYER )
 				For other = EachIn result
 					If ag.id <> other.id 'not colliding with self
 						'COLLISION! between {ag} and {other}
@@ -82,6 +79,7 @@ Function collide_all_objects()
 		'collisions between {walls} and {agents|projectiles}
 		For Local wall:BOX = EachIn game.walls
 			SetRotation( 0 )
+			SetHandle( 0, 0 )
 			result = CollideRect( wall.x,wall.y, wall.w,wall.h, AGENT_COLLISION_LAYER, WALL_COLLISION_LAYER, wall )
 			For ag = EachIn result
 				'COLLISION! between {ag} and {wall}
@@ -98,12 +96,13 @@ Function collide_all_objects()
 		For Local d:DOOR = EachIn game.doors
 			For Local slider:WIDGET = EachIn d.all_sliders
 				SetRotation( slider.get_ang() )
-				result = CollideImageRef( slider.img, slider.get_x(), slider.get_y(), 0, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
+				SetHandle( slider.img.handle.x, slider.img.handle.y )
+				result = CollideRect( slider.get_x(), slider.get_y(), slider.img.width, slider.img.height, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
 				For ag = EachIn result
 					'COLLISION! between {ag} and {door}
 					collision_agent_door( ag, slider )
 				Next
-				result = CollideImageRef( slider.img, slider.get_x(), slider.get_y(), 0, PROJECTILE_COLLISION_LAYER, 0, slider )
+				result = CollideRect( slider.get_x() - slider.img.handle.x, slider.get_y() - slider.img.handle.y, slider.img.width, slider.img.height, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
 				For proj = EachIn result
 					'COLLISION! between {proj} and {door}
 					collision_projectile_door( proj, slider )
@@ -115,10 +114,11 @@ Function collide_all_objects()
 		If game.human_participation And game.player And Not game.player.dead()
 			For pkp = EachIn game.pickup_list
 				SetRotation( 0 )
-				CollideImageRef( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
+				SetHandle( pkp.img.handle.x, pkp.img.handle.y )
+				'CollideImageRef( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
+				CollideRect( pkp.pos_x, pkp.pos_y, pkp.img.width, pkp.img.height, 0, PICKUP_COLLISION_LAYER, pkp )
 			Next
-			SetRotation( game.player.ang )
-			result = CollideImageRef( game.player.hitbox, game.player.pos_x, game.player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, game.player )
+			result = game.player.collide( PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER )
 			For pkp = EachIn result
 				'COLLISION! between {player} and {pkp}
 				game.player.grant_pickup( pkp ) 'i can has lewts?!
@@ -126,6 +126,9 @@ Function collide_all_objects()
 				pkp.unmanage()
 			Next
 		End If
+		
+		SetRotation( 0 )
+		SetHandle( 0, 0 )
 
 	End If
 End Function

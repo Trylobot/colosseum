@@ -45,15 +45,16 @@ Const FRIENDLY_FIRE_PUNISHMENT_AMOUNT% = 75
 'multiplayer
 Global playing_multiplayer% = False
 
-'environmental objects
-Global main_game:ENVIRONMENT 'game in which player participates
-Global ai_menu_game:ENVIRONMENT 'menu ai demo environment
-Global game:ENVIRONMENT 'current game environment
-
 'app state flags
 'Global FLAG_in_menu% = True
 Global FLAG_draw_help% = False
 Global FLAG_console% = False
+
+'environmental objects
+Global main_game:ENVIRONMENT 'game in which player participates
+Global ai_menu_game:ENVIRONMENT 'menu ai demo environment
+'current environment reference
+Global game:ENVIRONMENT 'current game environment
 
 Function select_game()
 	If FLAG.in_menu

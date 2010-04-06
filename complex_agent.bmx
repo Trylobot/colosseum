@@ -116,7 +116,7 @@ Type COMPLEX_AGENT Extends AGENT
 	Function Archetype:Object( ..
 	name$ = Null, ..
 	img:IMAGE_ATLAS_REFERENCE = Null, ..
-	hitbox:IMAGE_ATLAS_REFERENCE = Null, ..
+	hitbox_img:IMAGE_ATLAS_REFERENCE = Null, ..
 	gibs:IMAGE_ATLAS_REFERENCE = Null, ..
 	ai_name$ = Null, ..
 	cash_value% = 0, ..
@@ -131,8 +131,10 @@ Type COMPLEX_AGENT Extends AGENT
 		'static fields
 		c.name = name
 		c.img = img
-		c.hitbox = hitbox
-		If hitbox = Null Then c.hitbox = img
+		If c.img
+			If Not hitbox_img Then hitbox_img = c.img
+			c.hitbox = Create_BOX( hitbox_img.handle.x, hitbox_img.handle.y, hitbox_img.width, hitbox_img.height )
+		End If
 		c.gibs = gibs
 		c.ai_name = ai_name
 		c.cash_value = cash_value
@@ -764,15 +766,17 @@ End Type
 
 Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	Local cmp_ag:COMPLEX_AGENT
+	Local hitbox_img:IMAGE_ATLAS_REFERENCE
 	'no required fields
 	cmp_ag = COMPLEX_AGENT( COMPLEX_AGENT.Archetype() )
 	'optional fields
 	If json.TypeOf( "name" ) <> JSON_UNDEFINED                    Then cmp_ag.name = json.GetString( "name" )
-	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED
-		cmp_ag.img = get_image( json.GetString( "image_key" ))
-		cmp_ag.hitbox = cmp_ag.img
+	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED               Then cmp_ag.img = get_image( json.GetString( "image_key" ))
+	If json.TypeOf( "hitbox_image_key" ) <> JSON_UNDEFINED        Then hitbox_img = get_image( json.GetString( "hitbox_image_key" ))
+	If cmp_ag.img
+		If Not hitbox_img Then hitbox_img = cmp_ag.img
+		cmp_ag.hitbox = Create_BOX( hitbox_img.handle.x, hitbox_img.handle.y, hitbox_img.width, hitbox_img.height )
 	End If
-	If json.TypeOf( "hitbox_image_key" ) <> JSON_UNDEFINED        Then cmp_ag.hitbox = get_image( json.GetString( "hitbox_image_key" ))
 	If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED          Then cmp_ag.gibs = get_image( json.GetString( "gibs_image_key" ))
 	If json.TypeOf( "lightmap_image_key" ) <> JSON_UNDEFINED      Then cmp_ag.lightmap = get_image( json.GetString( "lightmap_image_key" ))
 	If json.TypeOf( "ai_name" ) <> JSON_UNDEFINED                 Then cmp_ag.ai_name = json.GetString( "ai_name" )

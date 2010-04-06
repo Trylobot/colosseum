@@ -5,11 +5,13 @@ Rem
 EndRem
 SuperStrict
 Import "point.bmx"
+Import "box.bmx"
 Import "force.bmx"
 
 '______________________________________________________________________________
 Type PHYSICAL_OBJECT Extends POINT
 	
+	Field hitbox:BOX 'collision rectangle
 	Field mass# 'number representing the mass units of this object
 	'this object's center of mass is assumed to be this object's position
 	Field force_list:TList 'all the forces acting on this object
@@ -18,6 +20,16 @@ Type PHYSICAL_OBJECT Extends POINT
 	
 	Method New()
 		force_list = CreateList()
+	End Method
+	
+	Method collide:Object[]( collidemask%, writemask% )
+		If hitbox
+			SetRotation( ang )
+			SetHandle( hitbox.x, hitbox.y )
+			Return CollideRect( pos_x, pos_y, hitbox.w, hitbox.h, collidemask, writemask, Self )
+		Else
+			Return Null
+		End If
 	End Method
 	
 	Method update()

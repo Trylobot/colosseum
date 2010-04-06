@@ -33,7 +33,9 @@ physics_disabled% = False, ..
 destruct_on_contact% = False )
 	Local ag:AGENT = New AGENT
 	ag.img = img
-	ag.hitbox = img
+	If ag.img
+		ag.hitbox = Create_BOX( ag.img.handle.x, ag.img.handle.y, ag.img.width, ag.img.height )
+	End If
 	ag.gibs = gibs
 	ag.max_health = max_health
 	ag.mass = mass
@@ -57,7 +59,6 @@ End Function
 Type AGENT Extends PHYSICAL_OBJECT
 
 	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn
-	Field hitbox:IMAGE_ATLAS_REFERENCE	'required for accurate-looking hit detection, since complex agents can be composed of many parts
 	Field gibs:IMAGE_ATLAS_REFERENCE 'gib image(s)
 
 	Field max_health# 'maximum health
@@ -82,7 +83,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 '		If flash
 '			flash = False
 '			SetBlend( LIGHTBLEND )
-'			DrawImage( img, pos_x, pos_y )
+'			DrawImageRef( img, pos_x, pos_y )
 '			SetBlend( ALPHABLEND )
 '		End If
 	End Method
@@ -175,6 +176,9 @@ Function Create_AGENT_from_json:AGENT( json:TJSON )
 	a = Create_AGENT()
 	'read and assign optional fields as available
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED              Then a.img = get_image( json.GetString( "image_key" ))
+	If a.img
+		a.hitbox = Create_BOX( a.img.handle.x, a.img.handle.y, a.img.width, a.img.height )
+	End If
 	If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED         Then a.gibs = get_image( json.GetString( "gibs_image_key" ))
 	If json.TypeOf( "max_health" ) <> JSON_UNDEFINED             Then a.max_health = json.GetNumber( "max_health" )
 	If json.TypeOf( "mass" ) <> JSON_UNDEFINED                   Then a.mass = json.GetNumber( "mass" )

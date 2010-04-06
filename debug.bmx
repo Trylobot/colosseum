@@ -64,7 +64,7 @@ End Function
 
 Function debug_with_graphics()
 	'show_me()
-	'play_debug_level()
+	play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
 	'play_debug_level()
@@ -74,15 +74,16 @@ End Function
 Function play_debug_level()
 	Local lev:LEVEL = load_level( "levels/debug.colosseum_level" )
 	'Local player:COMPLEX_AGENT = get_player_vehicle( "medium_tank" )
-	'Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
-	Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
+	Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
+	'Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
 	'Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
 	play_level( lev, player )
 	game = main_game
 	game.sandbox = True
-	player.move_to( Create_POINT( lev.width/2, lev.height/2, -90 ))
+	player.move_to( Create_POINT( 0.25*lev.width, 0.5*lev.height, -90.0 ))
 	player.snap_all_turrets()
 	player_has_entered_arena()
+	game.spawn_unit( "mr_the_box", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.75*lev.width, 0.5*lev.height, 0.0 ))
 End Function
 
 Function show_me()
