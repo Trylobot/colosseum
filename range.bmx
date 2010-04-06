@@ -3,8 +3,8 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import brl.Random
+'SuperStrict
+'Import brl.Random
 
 '______________________________________________________________________________
 Type RANGE

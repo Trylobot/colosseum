@@ -3,10 +3,10 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "box.bmx"
-Import "texture_manager.bmx"
-Import "particle.bmx"
+'SuperStrict
+'Import "box.bmx"
+'Import "texture_manager.bmx"
+'Import "particle.bmx"
 
 '______________________________________________________________________________
 Type GRAFFITI_MANAGER

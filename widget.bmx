@@ -3,13 +3,13 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "managed_object.bmx"
-Import "point.bmx"
-Import "texture_manager.bmx"
-Import "transform_state.bmx"
-Import "base_data.bmx"
-Import "json.bmx"
+'SuperStrict
+'Import "managed_object.bmx"
+'Import "point.bmx"
+'Import "texture_manager.bmx"
+'Import "transform_state.bmx"
+'Import "base_data.bmx"
+'Import "json.bmx"
 
 '______________________________________________________________________________
 Global widget_map:TMap = CreateMap()

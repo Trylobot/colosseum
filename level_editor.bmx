@@ -3,19 +3,19 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "mouse.bmx"
-Import "level.bmx"
-Import "vec.bmx"
-Import "point.bmx"
-Import "complex_agent.bmx"
-Import "unit_factory_data.bmx"
-Import "entity_data.bmx"
-Import "base_data.bmx"
-Import "console.bmx"
-Import "draw_misc.bmx"
-Import "misc.bmx"
-Import "instaquit.bmx"
+'SuperStrict
+'Import "mouse.bmx"
+'Import "level.bmx"
+'Import "vec.bmx"
+'Import "point.bmx"
+'Import "complex_agent.bmx"
+'Import "unit_factory_data.bmx"
+'Import "entity_data.bmx"
+'Import "base_data.bmx"
+'Import "console.bmx"
+'Import "draw_misc.bmx"
+'Import "misc.bmx"
+'Import "instaquit.bmx"
 
 '______________________________________________________________________________
 Const spawn_point_preview_radius% = 10

@@ -3,11 +3,11 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "draw_misc.bmx"
-Import "mouse.bmx"
-Import "cell.bmx"
-Import "base_data.bmx"
+'SuperStrict
+'Import "draw_misc.bmx"
+'Import "mouse.bmx"
+'Import "cell.bmx"
+'Import "base_data.bmx"
 
 '______________________________________________________________________________
 Function Create_IMAGE_CHOOSER:IMAGE_CHOOSER( ..

@@ -3,24 +3,24 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "constants.bmx"
-Import "texture_manager.bmx"
-Import "agent.bmx"
-Import "turret.bmx"
-Import "vec.bmx"
-Import "emitter.bmx"
-Import "particle_emitter.bmx"
-Import "projectile_launcher.bmx"
-Import "widget.bmx"
-Import "particle.bmx"
-Import "force.bmx"
-Import "pickup.bmx"
-Import "point.bmx"
-Import "tank_track.bmx"
-Import "steering_wheel.bmx"
-Import "image_manip.bmx"
-Import "json.bmx"
+'SuperStrict
+'Import "constants.bmx"
+'Import "texture_manager.bmx"
+'Import "agent.bmx"
+'Import "turret.bmx"
+'Import "vec.bmx"
+'Import "emitter.bmx"
+'Import "particle_emitter.bmx"
+'Import "projectile_launcher.bmx"
+'Import "widget.bmx"
+'Import "particle.bmx"
+'Import "force.bmx"
+'Import "pickup.bmx"
+'Import "point.bmx"
+'Import "tank_track.bmx"
+'Import "steering_wheel.bmx"
+'Import "image_manip.bmx"
+'Import "json.bmx"
 
 '______________________________________________________________________________
 Global player_vehicle_map:TMap = CreateMap()

@@ -3,11 +3,11 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "flags.bmx"
-Import "settings.bmx"
-Import "misc.bmx"
-Import "base_data.bmx"
+'SuperStrict
+'Import "flags.bmx"
+'Import "settings.bmx"
+'Import "misc.bmx"
+'Import "base_data.bmx"
 
 '______________________________________________________________________________
 'Audio

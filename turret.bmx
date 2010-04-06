@@ -3,15 +3,15 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "point.bmx"
-Import "texture_manager.bmx"
-Import "turret_barrel.bmx"
-Import "emitter.bmx"
-Import "particle_emitter.bmx"
-Import "audio.bmx"
-Import "misc.bmx"
-Import "image_manip.bmx"
+'SuperStrict
+'Import "point.bmx"
+'Import "texture_manager.bmx"
+'Import "turret_barrel.bmx"
+'Import "emitter.bmx"
+'Import "particle_emitter.bmx"
+'Import "audio.bmx"
+'Import "misc.bmx"
+'Import "image_manip.bmx"
 
 '______________________________________________________________________________
 Global turret_map:TMap = CreateMap()

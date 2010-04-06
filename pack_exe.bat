@@ -1,1 +1,1 @@
-upx -9 Colosseum.exe
+upx -9 colosseum.exe

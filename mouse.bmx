@@ -3,9 +3,9 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "point.bmx"
-Import "vec.bmx"
+'SuperStrict
+'Import "point.bmx"
+'Import "vec.bmx"
 
 '______________________________________________________________________________
 Global mouse:POINT = Create_POINT( MouseX(), MouseY() ) 'mouse position relative to window top-left

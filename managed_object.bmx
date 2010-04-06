@@ -3,7 +3,7 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
+'SuperStrict
 
 '______________________________________________________________________________
 Const NULL_ID% = -1 'this should be a static member of MANAGED_OBJECT

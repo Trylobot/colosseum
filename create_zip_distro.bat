@@ -10,7 +10,7 @@ mkdir __distro_7z_temp__\levels
 mkdir __distro_7z_temp__\sound
 REM mkdir __distro_7z_temp__\user
 
-copy  Colosseum.exe              __distro_7z_temp__        
+copy  colosseum.exe              __distro_7z_temp__        
 REM xcopy art\*.png                  __distro_7z_temp__\art    %FLAGS%
 xcopy art\atlas*.png             __distro_7z_temp__\art    %FLAGS%
 xcopy data\*.colosseum_data      __distro_7z_temp__\data   %FLAGS%

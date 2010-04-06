@@ -3,11 +3,11 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "managed_object.bmx"
-Import "audio.bmx"
-Import "json.bmx"
-Import "texture_manager.bmx"
+'SuperStrict
+'Import "managed_object.bmx"
+'Import "audio.bmx"
+'Import "json.bmx"
+'Import "texture_manager.bmx"
 
 '______________________________________________________________________________
 Const PICKUP_PROBABILITY# = 0.25 'chance of an enemy dropping a pickup (randomly selected from all pickups)

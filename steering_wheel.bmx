@@ -3,10 +3,10 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "point.bmx"
-Import "particle.bmx"
-Import "json.bmx"
+'SuperStrict
+'Import "point.bmx"
+'Import "particle.bmx"
+'Import "json.bmx"
 
 '______________________________________________________________________________
 Const speed_threshold# = 0.25

@@ -3,13 +3,13 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import brl.Map
-Import brl.FreeTypeFont
-Import brl.FreeAudioAudio
-Import brl.OGGLoader
-Import brl.PNGLoader
-Import "texture_manager.bmx"
+'SuperStrict
+'Import brl.Map
+'Import brl.FreeTypeFont
+'Import brl.FreeAudioAudio
+'Import brl.OGGLoader
+'Import brl.PNGLoader
+'Import "texture_manager.bmx"
 
 '______________________________________________________________________________
 Global font_map:TMap = CreateMap()

@@ -3,7 +3,7 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
+'SuperStrict
 
 '______________________________________________________________________________
 Type MENU_OPTION

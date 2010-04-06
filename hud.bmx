@@ -3,8 +3,8 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "widget.bmx"
+'SuperStrict
+'Import "widget.bmx"
 
 '______________________________________________________________________________
 Const	health_bar_w% = 85

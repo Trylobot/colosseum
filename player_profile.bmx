@@ -3,10 +3,10 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "inventory_data.bmx"
-Import "constants.bmx"
-Import "json.bmx"
+'SuperStrict
+'Import "inventory_data.bmx"
+'Import "constants.bmx"
+'Import "json.bmx"
 
 '______________________________________________________________________________
 Global profile:PLAYER_PROFILE

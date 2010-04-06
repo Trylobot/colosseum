@@ -3,13 +3,13 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "cell.bmx"
-Import "unit_factory_data.bmx"
-Import "entity_data.bmx"
-Import "box.bmx"
-Import "vec.bmx"
-Import "json.bmx"
+'SuperStrict
+'Import "cell.bmx"
+'Import "unit_factory_data.bmx"
+'Import "entity_data.bmx"
+'Import "box.bmx"
+'Import "vec.bmx"
+'Import "json.bmx"
 
 '______________________________________________________________________________
 Const LINE_TYPE_HORIZONTAL% = 1

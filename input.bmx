@@ -3,19 +3,19 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "point.bmx"
-Import "vec.bmx"
-Import "console.bmx"
-Import "mouse.bmx"
-Import "flags.bmx"
-Import "instaquit.bmx"
-Import "core.bmx"
-Import "player_profile.bmx"
-Import "constants.bmx"
-Import "audio.bmx"
-Import "draw_misc.bmx"
-Import "data.bmx"
+'SuperStrict
+'Import "point.bmx"
+'Import "vec.bmx"
+'Import "console.bmx"
+'Import "mouse.bmx"
+'Import "flags.bmx"
+'Import "instaquit.bmx"
+'Import "core.bmx"
+'Import "player_profile.bmx"
+'Import "constants.bmx"
+'Import "audio.bmx"
+'Import "draw_misc.bmx"
+'Import "data.bmx"
 
 '______________________________________________________________________________
 Global chat_input_listener:CONSOLE = New CONSOLE

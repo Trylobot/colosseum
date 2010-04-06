@@ -3,9 +3,9 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import brl.Random
-Import brl.Map
+'SuperStrict
+'Import brl.Random
+'Import brl.Map
 
 '______________________________________________________________________________
 SeedRnd MilliSecs()

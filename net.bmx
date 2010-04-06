@@ -3,18 +3,18 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import vertex.bnetex
-Import "complex_agent.bmx"
-Import "control_brain.bmx"
-Import "vehicle_data.bmx"
-Import "json.bmx"
-Import "settings.bmx"
-Import "flags.bmx"
-'Import "connection.bmx"
-'Import "remote_player.bmx"
-'Import "chat_message.bmx"
-'Import "network_id.bmx"
+'SuperStrict
+'Import vertex.bnetex
+'Import "complex_agent.bmx"
+'Import "control_brain.bmx"
+'Import "vehicle_data.bmx"
+'Import "json.bmx"
+'Import "settings.bmx"
+'Import "flags.bmx"
+''Import "connection.bmx"
+''Import "remote_player.bmx"
+''Import "chat_message.bmx"
+''Import "network_id.bmx"
 
 '______________________________________________________________________________
 Global network_host% = False

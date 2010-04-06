@@ -3,10 +3,10 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "emitter.bmx"
-Import "projectile.bmx"
-Import "json.bmx"
+'SuperStrict
+'Import "emitter.bmx"
+'Import "projectile.bmx"
+'Import "json.bmx"
 
 '______________________________________________________________________________
 Global projectile_launcher_map:TMap = CreateMap()

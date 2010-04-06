@@ -3,10 +3,10 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "point.bmx"
-Import "box.bmx"
-Import "force.bmx"
+'SuperStrict
+'Import "point.bmx"
+'Import "box.bmx"
+'Import "force.bmx"
 
 '______________________________________________________________________________
 Type PHYSICAL_OBJECT Extends POINT

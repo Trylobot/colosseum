@@ -3,9 +3,9 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "managed_object.bmx"
-Import "misc.bmx"
+'SuperStrict
+'Import "managed_object.bmx"
+'Import "misc.bmx"
 
 '______________________________________________________________________________
 Const PHYSICS_FORCE% = 0

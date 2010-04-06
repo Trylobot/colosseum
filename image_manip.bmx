@@ -3,8 +3,8 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "color.bmx"
+'SuperStrict
+'Import "color.bmx"
 
 '______________________________________________________________________________
 Function create_rect_img:TIMage( w%, h%, hx% = 0, hy% = 0 )

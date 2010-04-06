@@ -3,21 +3,21 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "managed_object.bmx"
-Import "pathing_structure.bmx"
-Import "player_profile.bmx"
-Import "ai_type.bmx"
-Import "complex_agent.bmx"
-Import "constants.bmx"
-Import "agent.bmx"
-Import "spawn_request.bmx"
-Import "mouse.bmx"
-Import "point.bmx"
-Import "vec.bmx"
-Import "box.bmx"
-Import "flags.bmx"
-Import "cell.bmx"
+'SuperStrict
+'Import "managed_object.bmx"
+'Import "pathing_structure.bmx"
+'Import "player_profile.bmx"
+'Import "ai_type.bmx"
+'Import "complex_agent.bmx"
+'Import "constants.bmx"
+'Import "agent.bmx"
+'Import "spawn_request.bmx"
+'Import "mouse.bmx"
+'Import "point.bmx"
+'Import "vec.bmx"
+'Import "box.bmx"
+'Import "flags.bmx"
+'Import "cell.bmx"
 
 '______________________________________________________________________________
 Const low_speed_waypoint_radius_level_1# = 100.0

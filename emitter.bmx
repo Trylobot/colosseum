@@ -3,11 +3,11 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "managed_object.bmx"
-Import "point.bmx"
-Import "range.bmx"
-Import "json.bmx"
+'SuperStrict
+'Import "managed_object.bmx"
+'Import "point.bmx"
+'Import "range.bmx"
+'Import "json.bmx"
 
 'this class should be considered ABSTRACT (even though it isn't)
 'don't initialize it directly

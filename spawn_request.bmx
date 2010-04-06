@@ -3,8 +3,8 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "point.bmx"
+'SuperStrict
+'Import "point.bmx"
 
 '______________________________________________________________________________
 Function Create_SPAWN_REQUEST:SPAWN_REQUEST( unit_key$, alignment%, spawn_point:POINT, source_spawner_index% = -1 )

@@ -3,15 +3,15 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "core.bmx"
-Import "agent.bmx"
-Import "complex_agent.bmx"
-Import "projectile.bmx"
-Import "pickup.bmx"
-Import "door.bmx"
-Import "widget.bmx"
-Import "box.bmx"
+'SuperStrict
+'Import "core.bmx"
+'Import "agent.bmx"
+'Import "complex_agent.bmx"
+'Import "projectile.bmx"
+'Import "pickup.bmx"
+'Import "door.bmx"
+'Import "widget.bmx"
+'Import "box.bmx"
 
 '______________________________________________________________________________
 'Collision Detection and Resolution

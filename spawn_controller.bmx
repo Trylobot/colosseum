@@ -3,13 +3,13 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "constants.bmx"
-Import "cell.bmx"
-Import "unit_factory_data.bmx"
-Import "entity_data.bmx"
-Import "spawn_request.bmx"
-Import "agent.bmx"
+'SuperStrict
+'Import "constants.bmx"
+'Import "cell.bmx"
+'Import "unit_factory_data.bmx"
+'Import "entity_data.bmx"
+'Import "spawn_request.bmx"
+'Import "agent.bmx"
 
 '______________________________________________________________________________
 Function Create_SPAWN_CONTROLLER:SPAWN_CONTROLLER( unit_factories:UNIT_FACTORY_DATA[], immediate_units:ENTITY_DATA[] )

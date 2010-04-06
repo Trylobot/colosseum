@@ -3,8 +3,8 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "misc.bmx"
+'SuperStrict
+'Import "misc.bmx"
 
 '______________________________________________________________________________
 Type CONSOLE

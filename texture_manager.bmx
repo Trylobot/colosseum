@@ -3,12 +3,12 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import brl.max2d
-Import brl.map
-Import "vec.bmx"
-Import "box.bmx"
-Import "json.bmx"
+'SuperStrict
+'Import brl.max2d
+'Import brl.map
+'Import "vec.bmx"
+'Import "box.bmx"
+'Import "json.bmx"
 
 '______________________________________________________________________________
 Function DrawImageRef( ref:IMAGE_ATLAS_REFERENCE, x#, y#, f% = 0 )

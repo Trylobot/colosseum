@@ -3,10 +3,10 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "complex_agent.bmx"
-Import "turret.bmx"
-Import "json.bmx"
+'SuperStrict
+'Import "complex_agent.bmx"
+'Import "turret.bmx"
+'Import "json.bmx"
 
 '______________________________________________________________________________
 Function Create_INVENTORY_DATA:INVENTORY_DATA( ..

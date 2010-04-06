@@ -5,10 +5,10 @@ Rem
 	derivative author: Tyler W Cole
 	downloaded from http://www.blitzbasic.com/codearcs/codearcs_bmx/2066.bmx at 12:57 PM on Sunday, August 24th, 2008
 EndRem
-SuperStrict
+'SuperStrict
 
-Import brl.LinkedList
-Import brl.Map
+'Import brl.LinkedList
+'Import brl.Map
 
 Rem
 

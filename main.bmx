@@ -6,26 +6,26 @@ Rem
 	email: tylerbot@gmail.com
 	description: top-down tank fight
 EndRem
-SuperStrict
-Framework brl.D3D7Max2D
-'Framework brl.GLMax2D
-Import "settings.bmx"
-Import "data.bmx"
-Import "core.bmx"
-Import "constants.bmx"
-Import "graphics_base.bmx"
-Import "environment.bmx"
-Import "input.bmx"
-Import "net.bmx"
-Import "timescale.bmx"
-Import "collide.bmx"
-Import "update.bmx"
-Import "draw.bmx"
-Import "audio.bmx"
-Import "instaquit.bmx"
-?Debug
-Include "debug.bmx"
-?
+'SuperStrict
+'Framework brl.D3D7Max2D
+''Framework brl.GLMax2D
+'Import "settings.bmx"
+'Import "data.bmx"
+'Import "core.bmx"
+'Import "constants.bmx"
+'Import "graphics_base.bmx"
+'Import "environment.bmx"
+'Import "input.bmx"
+'Import "net.bmx"
+'Import "timescale.bmx"
+'Import "collide.bmx"
+'Import "update.bmx"
+'Import "draw.bmx"
+'Import "audio.bmx"
+'Import "instaquit.bmx"
+'?Debug
+'Include "debug.bmx"
+'?
 
 Const version_major%    = 0
 Const version_minor%    = 4
@@ -152,7 +152,7 @@ Repeat
 	
 	'draw everything
 	profiler()
-	draw_all_graphics()
+	'draw_all_graphics()
 	
 	'end profiling
 	profiler()

@@ -3,9 +3,9 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "settings.bmx"
-Import "box.bmx"
+'SuperStrict
+'Import "settings.bmx"
+'Import "box.bmx"
 
 '______________________________________________________________________________
 Function reset_draw_state()

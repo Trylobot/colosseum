@@ -2,11 +2,10 @@ Rem
 	os-windows.bmx
 	This is a COLOSSEUM project BlitzMax source file.
 EndRem
-SuperStrict
+'SuperStrict
 
-?Win32
-Import pub.Win32
-Import "icon/icon.o"
+'Import pub.Win32
+'Import "icon/icon.o"
 
 Extern "win32"
 	Function FindWindowA( lpClassName$z, lpWindowName$z )
@@ -23,4 +22,3 @@ Function set_window( GWLStyleFlags% = 0 )
 	SetWindowLongA(hWnd, GWL_STYLE, GetWindowLongA(hWnd, GWL_STYLE) | GWLStyleFlags)
 	SendMessageA(hWnd, WM_SETICON, ICON_BIG, LoadIconA(GetModuleHandleA(Null), Byte Ptr(101)))
 EndFunction
-?

@@ -3,16 +3,16 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "texture_manager.bmx"
-Import "physical_object.bmx"
-Import "constants.bmx"
-Import "particle.bmx"
-Import "force.bmx"
-Import "emitter.bmx"
-Import "particle_emitter.bmx"
-Import "audio.bmx"
-Import "json.bmx"
+'SuperStrict
+'Import "texture_manager.bmx"
+'Import "physical_object.bmx"
+'Import "constants.bmx"
+'Import "particle.bmx"
+'Import "force.bmx"
+'Import "emitter.bmx"
+'Import "particle_emitter.bmx"
+'Import "audio.bmx"
+'Import "json.bmx"
 
 '______________________________________________________________________________
 Global prop_map:TMap = CreateMap()

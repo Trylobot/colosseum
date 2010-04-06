@@ -3,11 +3,11 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "managed_object.bmx"
-import "timescale.bmx"
-Import "vec.bmx"
-Import "json.bmx"
+'SuperStrict
+'Import "managed_object.bmx"
+'Import "timescale.bmx"
+'Import "vec.bmx"
+'Import "json.bmx"
 
 '______________________________________________________________________________
 Function Create_POINT:POINT( ..

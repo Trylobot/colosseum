@@ -3,25 +3,25 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "constants.bmx"
-Import "base_data.bmx"
-Import "agent.bmx"
-Import "particle.bmx"
-Import "projectile.bmx"
-Import "emitter.bmx"
-Import "widget.bmx"
-Import "pickup.bmx"
-Import "turret_barrel.bmx"
-Import "turret.bmx"
-Import "ai_type.bmx"
-Import "complex_agent.bmx"
-Import "player_profile.bmx"
-Import "level.bmx"
-Import "campaign_data.bmx"
-Import "image_manip.bmx"
-Import "settings.bmx"
-Import "texture_manager.bmx"
+'SuperStrict
+'Import "constants.bmx"
+'Import "base_data.bmx"
+'Import "agent.bmx"
+'Import "particle.bmx"
+'Import "projectile.bmx"
+'Import "emitter.bmx"
+'Import "widget.bmx"
+'Import "pickup.bmx"
+'Import "turret_barrel.bmx"
+'Import "turret.bmx"
+'Import "ai_type.bmx"
+'Import "complex_agent.bmx"
+'Import "player_profile.bmx"
+'Import "level.bmx"
+'Import "campaign_data.bmx"
+'Import "image_manip.bmx"
+'Import "settings.bmx"
+'Import "texture_manager.bmx"
 
 '_____________________________________________________________________________
 Global loading_progress# = 0.0

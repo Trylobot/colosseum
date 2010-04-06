@@ -3,10 +3,10 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "cell.bmx"
-Import "path_queue.bmx"
-Import "level.bmx"
+'SuperStrict
+'Import "cell.bmx"
+'Import "path_queue.bmx"
+'Import "level.bmx"
 
 '______________________________________________________________________________
 Type PATHING_STRUCTURE

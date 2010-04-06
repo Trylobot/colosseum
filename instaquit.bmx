@@ -3,12 +3,12 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "base_data.bmx"
-Import "misc.bmx"
-Import "flags.bmx"
-Import "settings.bmx"
-Import "draw_misc.bmx"
+'SuperStrict
+'Import "base_data.bmx"
+'Import "misc.bmx"
+'Import "flags.bmx"
+'Import "settings.bmx"
+'Import "draw_misc.bmx"
 
 '______________________________________________________________________________
 'Instaquit: quit instantly from anywhere, just hold ESC for a few seconds

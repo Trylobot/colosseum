@@ -3,8 +3,8 @@ Rem
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
-SuperStrict
-Import "json.bmx"
+'SuperStrict
+'Import "json.bmx"
 
 '______________________________________________________________________________
 Global campaign_data_map:TMap = CreateMap()
