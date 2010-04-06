@@ -25,16 +25,23 @@ Type IMAGE_ATLAS_REFERENCE
 	Field src_uv:BOX
 	Field width%
 	Field height%
-	'additional image data
+	'additional image data (separate)
 	Field handle:cVEC
 	Field flip_x%
 	Field flip_y%
-	'sprite animation data
+	'sprite animation data (optional)
 	Field frames%
 	Field rect:BOX[]
 	Field uv:BOX[]
 	'temps for scale push/pop
 	Global g_sx#, g_sy#
+	
+	Method Draw( x#, y#, f% = 0 )
+		PreDraw( f )
+		ScalePush()
+		DrawImageRect( atlas, x, y, rect[f].w, rect[f].h )
+		ScalePop()
+	End Method
 	
 	Method LoadAtlas( atlas:TImage, rect:BOX )
 		Self.atlas = atlas
@@ -43,11 +50,7 @@ Type IMAGE_ATLAS_REFERENCE
 		Self.src_rect = rect
 		Self.width = src_rect.w
 		Self.height = src_rect.h
-		Self.src_uv = Create_BOX( ..
-			rect.x / atlas.width, ..
-			rect.y / atlas.height, ..
-			(rect.x + rect.w) / atlas.width, ..
-			(rect.y + rect.h) / atlas.height )
+		Self.src_uv = CalculateUV( rect, atlas.width, atlas.height )
 	End Method
 	
 	Method LoadLegacy( handle:cVEC, flip_x% = False, flip_y% = False )
@@ -57,26 +60,34 @@ Type IMAGE_ATLAS_REFERENCE
 	End Method
 	
 	Method NullAnim()
-		Self.frames = 1
-		Self.rect = [src_rect]
-		Self.uv = [src_uv]
+		frames = 1
+		rect = [src_rect]
+		uv = [src_uv]
 	End Method
 	
 	Method LoadAnim( frames%, frame_width%, frame_height% )
 		Self.frames = frames
-		Self.rect = New BOX[frames]
-		Self.uv = New BOX[frames]
-		For Local f% = 0 Until frames
-			'rect[f] = ...
-			'uv[f] = ... 
+		rect = New BOX[frames]
+		uv = New BOX[frames]
+		Local rows% = src_rect.h / frame_height
+		Local cols% = src_rect.w / frame_width
+		Local f% = 0
+		For Local r% = 0 Until rows
+			For Local c% = 0 Until cols
+				'anim frame "sub-rect" within this atlas-ref's rect
+				rect[f] = Create_BOX( ..
+					src_rect.x + (c*frame_width), ..
+					src_rect.y + (r*frame_height), ..
+					frame_width, ..
+					frame_height )
+				uv[f] = CalculateUV( rect[f], atlas.width, atlas.height )
+				'total frame count
+				f :+ 1
+				If f >= frames
+					Return 'done loading anim
+				End If
+			Next
 		Next
-	End Method
-	
-	Method Draw( x#, y#, f% = 0 )
-		PreDraw( f )
-		ScalePush()
-		DrawImageRect( atlas, x, y, rect[f].w, rect[f].h )
-		ScalePop()
 	End Method
 	
 	Method PreDraw( f% = 0 )
@@ -95,6 +106,14 @@ Type IMAGE_ATLAS_REFERENCE
 		SetScale( g_sx, g_sy )
 	End Method
 	
+	Function CalculateUV:BOX( r:BOX, tw#, th# )
+		Return Create_BOX( ..
+			r.x / tw, ..
+			r.y / th, ..
+			(r.x + r.w) / tw, ..
+			(r.y + r.h) / th )
+	End Function
+	
 End Type
 
 '______________________________________________________________________________
@@ -110,11 +129,12 @@ Type TEXTURE_MANAGER
       If ref
 				Return ref
 			Else
-				Throw "reference_map[~q" + image_src + "~q] is null"
+				'Throw "reference_map[~q" + image_src + "~q] is null"
 			End If
 		Else
-			Throw "image_key_map[~q" + image_key + "~q] is null"
+			'Throw "image_key_map[~q" + image_key + "~q] is null"
     End If
+		Return Null
   End Function
 	
 	Function Load_TEXTURE_MANAGER_from_json( json:TJSON )
