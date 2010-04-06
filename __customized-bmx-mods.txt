@@ -1,0 +1,11 @@
+'The following are customized Types and Functions to replace stock versions by the same name
+
+'brl.max2d
+Function CollideImage:Object[](image:TImage,x,y,frame,collidemask%,writemask%,id:Object=Null,w=-1,h=-1)
+	Local	q:TQuad
+	If w=-1 Then w=image.width
+	If h=-1 Then h=image.height
+	q=CreateQuad(image,frame,x,y,w,h,id)
+	Return CollideQuad(q,collidemask,writemask)
+End Function
+

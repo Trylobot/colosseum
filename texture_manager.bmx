@@ -20,21 +20,22 @@ Type IMAGE_ATLAS_REFERENCE
 	Field atlas:TImage
 	Field DXFrame:TD3D7ImageFrame
 	'Field GLFrame:TGLImageFrame
-	'source image data
+	'texture atlas composition data
 	Field src_rect:BOX
 	Field src_uv:BOX
 	Field width%
 	Field height%
-	'additional image data (separate)
+	'legacy image data
 	Field handle:cVEC
 	Field flip_x%
 	Field flip_y%
-	'sprite animation data (optional)
+	'sprite animation data (multi-cell)
 	Field frames%
 	Field rect:BOX[]
 	Field uv:BOX[]
-	'temps for scale push/pop
-	Global g_sx#, g_sy#
+	'static temps (flip_x&y)
+	Global g_sx#
+	Global g_sy#
 	
 	Method Draw( x#, y#, f% = 0 )
 		PreDraw( f )
@@ -48,8 +49,8 @@ Type IMAGE_ATLAS_REFERENCE
 		Self.DXFrame = TD3D7ImageFrame( atlas.frame( 0 ))
 		'Self.GLFrame = TGLImageFrame( atlas.frame( 0 ))
 		Self.src_rect = rect
-		Self.width = src_rect.w
-		Self.height = src_rect.h
+		width = rect.w
+		height = rect.h
 		Self.src_uv = CalculateUV( rect, atlas.width, atlas.height )
 	End Method
 	
@@ -91,12 +92,10 @@ Type IMAGE_ATLAS_REFERENCE
 	End Method
 	
 	Method PreDraw( f% = 0 )
-		atlas.width = width
-		atlas.height = height
-		atlas.handle_x = handle.x
-		atlas.handle_y = handle.y
 		DXFrame.setUV( uv[f].x, uv[f].y, uv[f].w, uv[f].h )
 		'GLFrame.u0 = uv.x; GLFrame.v0 = uv.w; GLFrame.u1 = uv.y; GLFrame.v1 = uv.h
+		atlas.handle_x = handle.x
+		atlas.handle_y = handle.y
 	End Method
 	
 	Method ScalePush()
