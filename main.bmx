@@ -10,7 +10,6 @@ SuperStrict
 Framework brl.D3D7Max2D
 'Framework brl.GLMax2D
 Import "settings.bmx"
-Import "image_atlas.bmx"
 Import "data.bmx"
 Import "core.bmx"
 Import "constants.bmx"

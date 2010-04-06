@@ -10,8 +10,8 @@ Import "box.bmx"
 Import "json.bmx"
 
 '______________________________________________________________________________
-Function DrawImageRef( ref:IMAGE_ATLAS_REFERENCE, x#, y#, anim_frame% = 0 )
-	ref.Draw( x, y, anim_frame% )
+Function DrawImageRef( ref:IMAGE_ATLAS_REFERENCE, x#, y#, f% = 0 )
+	ref.Draw( x, y, f )
 End Function
 
 '______________________________________________________________________________
@@ -21,23 +21,29 @@ Type IMAGE_ATLAS_REFERENCE
 	Field DXFrame:TD3D7ImageFrame
 	'Field GLFrame:TGLImageFrame
 	'source image data
-	Field rect:BOX
-	Field uv:BOX
+	Field src_rect:BOX
+	Field src_uv:BOX
+	Field width%
+	Field height%
 	'additional image data
 	Field handle:cVEC
 	Field flip_x%
 	Field flip_y%
 	'sprite animation data
 	Field frames%
-	Field anim_rect:BOX[]
-	Field anim_uv:BOX[]
+	Field rect:BOX[]
+	Field uv:BOX[]
+	'temps for scale push/pop
+	Global g_sx#, g_sy#
 	
 	Method LoadAtlas( atlas:TImage, rect:BOX )
 		Self.atlas = atlas
 		Self.DXFrame = TD3D7ImageFrame( atlas.frame( 0 ))
 		'Self.GLFrame = TGLImageFrame( atlas.frame( 0 ))
-		Self.rect = rect
-		Self.uv = Create_BOX( ..
+		Self.src_rect = rect
+		Self.width = src_rect.w
+		Self.height = src_rect.h
+		Self.src_uv = Create_BOX( ..
 			rect.x / atlas.width, ..
 			rect.y / atlas.height, ..
 			(rect.x + rect.w) / atlas.width, ..
@@ -52,39 +58,40 @@ Type IMAGE_ATLAS_REFERENCE
 	
 	Method NullAnim()
 		Self.frames = 1
-		Self.frame_rect = Null
-		Self.frame_uv = Null
+		Self.rect = [src_rect]
+		Self.uv = [src_uv]
 	End Method
 	
 	Method LoadAnim( frames%, frame_width%, frame_height% )
 		Self.frames = frames
-		Self.frame_rect = New BOX[frames]
-		Self.frame_uv = New BOX[frames]
+		Self.rect = New BOX[frames]
+		Self.uv = New BOX[frames]
+		For Local f% = 0 Until frames
+			'rect[f] = ...
+			'uv[f] = ... 
+		Next
 	End Method
 	
-	Method Draw( x#, y#, anim_frame% = 0 )
-		PreDraw()
+	Method Draw( x#, y#, f% = 0 )
+		PreDraw( f )
 		ScalePush()
-		DrawImageRect( atlas, x, y, rect.w, rect.h )
-		ScaleRevert()
+		DrawImageRect( atlas, x, y, rect[f].w, rect[f].h )
+		ScalePop()
 	End Method
 	
-	Method PreDraw()
-		DXFrame.setUV( uv.x, uv.y, uv.w, uv.h )
+	Method PreDraw( f% = 0 )
+		DXFrame.setUV( uv[f].x, uv[f].y, uv[f].w, uv[f].h )
 		'GLFrame.u0 = uv.x; GLFrame.v0 = uv.w; GLFrame.u1 = uv.y; GLFrame.v1 = uv.h
 		atlas.handle_x = handle.x
 		atlas.handle_y = handle.y
 	End Method
-	
-	
-	Global g_sx#, g_sy#
 	
 	Method ScalePush()
 		GetScale( g_sx, g_sy )
 		SetScale( g_sx * (1 - 2*flip_x), g_sy * (1 - 2*flip_y) )
 	End Method
 	
-	Method ScaleRevert()
+	Method ScalePop()
 		SetScale( g_sx, g_sy )
 	End Method
 	
@@ -97,13 +104,17 @@ Type TEXTURE_MANAGER
 	Global image_key_map:TMap 'map[image_name:String] --> source_path:String
   
   Function GetImageRef:IMAGE_ATLAS_REFERENCE( image_key$ )
-    If image_key
-      Local image_src$ = String( image_key_map.ValueForKey( image_key ))
-      If image_src
-        Return IMAGE_ATLAS_REFERENCE( reference_map.ValueForKey( image_src ))
-      End If
+    Local image_src$ = String( image_key_map.ValueForKey( image_key ))
+		If image_src
+			Local ref:IMAGE_ATLAS_REFERENCE = IMAGE_ATLAS_REFERENCE( reference_map.ValueForKey( image_src ))
+      If ref
+				Return ref
+			Else
+				Throw "reference_map[~q" + image_src + "~q] is null"
+			End If
+		Else
+			Throw "image_key_map[~q" + image_key + "~q] is null"
     End If
-    Return Null
   End Function
 	
 	Function Load_TEXTURE_MANAGER_from_json( json:TJSON )
@@ -137,7 +148,9 @@ Type TEXTURE_MANAGER
 					rect.w = atlas_image_frame.GetNumber( "w" )
 					rect.h = atlas_image_frame.GetNumber( "h" )
 					ref = New IMAGE_ATLAS_REFERENCE
+					'////////////////////////////
 					ref.LoadAtlas( atlas, rect )
+					'////////////////////////////
 					source_path = atlas_image_frame.GetString( "source_path" ).Trim()
 					reference_map.Insert( source_path, ref )
 				Next
@@ -147,6 +160,7 @@ Type TEXTURE_MANAGER
 	
 	Function Load_TImage_json( json:TJSON, image_key$ )
 		Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
+		Local handle:cVEC
 		Local ref:IMAGE_ATLAS_REFERENCE
 		
 		path = json.GetString( "path" ).Trim()
@@ -157,13 +171,18 @@ Type TEXTURE_MANAGER
 		flip_vertical = json.GetBoolean( "flip_vertical" )
 		handle_x = json.GetNumber( "handle_x" )
 		handle_y = json.GetNumber( "handle_y" )
-		ref.LoadLegacy( Create_cVEC( handle_x, handle_y ), flip_horizontal, flip_vertical )
+		handle = Create_cVEC( handle_x, handle_y )
+		'////////////////////////////////////////////////////////
+		ref.LoadLegacy( handle, flip_horizontal, flip_vertical )
+		'////////////////////////////////////////////////////////
 		If frames = 1
 			ref.NullAnim()
 		Else If frames > 1
 			frame_width = json.GetNumber( "frame_width" )
 			frame_height = json.GetNumber( "frame_height" )
+			'/////////////////////////////////////////////////
 			ref.LoadAnim( frames, frame_width, frame_height )
+			'/////////////////////////////////////////////////
 		End If
 	End Function
 	
