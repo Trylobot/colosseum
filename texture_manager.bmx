@@ -4,6 +4,7 @@ Rem
 	author: Tyler W Cole
 EndRem
 SuperStrict
+Import brl.max2d
 Import brl.map
 Import "vec.bmx"
 Import "box.bmx"
@@ -20,6 +21,7 @@ Type IMAGE_ATLAS_REFERENCE
 	Field atlas:TImage
 	Field DXFrame:TD3D7ImageFrame
 	'Field GLFrame:TGLImageFrame
+	Field src_pixmap:TPixmap
 	'texture atlas composition data
 	Field src_rect:BOX
 	Field src_uv:BOX
@@ -44,10 +46,11 @@ Type IMAGE_ATLAS_REFERENCE
 		ScalePop()
 	End Method
 	
-	Method LoadAtlas( atlas:TImage, rect:BOX )
+	Method LoadAtlas( atlas:TImage, pixmap:TPixmap, DXFrame:TD3D7ImageFrame, rect:BOX )
 		Self.atlas = atlas
-		Self.DXFrame = TD3D7ImageFrame( atlas.frame( 0 ))
-		'Self.GLFrame = TGLImageFrame( atlas.frame( 0 ))
+		Self.src_pixmap = pixmap
+		Self.DXFrame = DXFrame
+		'Self.GLFrame = GLFrame
 		Self.src_rect = rect
 		width = rect.w
 		height = rect.h
@@ -96,6 +99,9 @@ Type IMAGE_ATLAS_REFERENCE
 		'GLFrame.u0 = uv.x; GLFrame.v0 = uv.w; GLFrame.u1 = uv.y; GLFrame.v1 = uv.h
 		atlas.handle_x = handle.x
 		atlas.handle_y = handle.y
+		atlas.width = width
+		atlas.height = height
+		atlas.pixmaps[0] = src_pixmap
 	End Method
 	
 	Method ScalePush()
@@ -146,6 +152,10 @@ Type TEXTURE_MANAGER
 		
 		Local atlas_path$
 		Local atlas:TImage
+		Local DXFrame:TD3D7ImageFrame
+		'Local GLFrame:TGLImageFrame
+		Local pixmap:TPixmap
+		Local ref_pixmap:TPixmap
 		Local source_path$
 		Local rect:BOX
 		Local ref:IMAGE_ATLAS_REFERENCE
@@ -158,8 +168,12 @@ Type TEXTURE_MANAGER
 			For Local a% = 0 Until atlases_json.Size()
 				atlas_json = TJSON.Create( atlases_json.GetByIndex( a ))
 				atlas_path = atlas_json.GetString( "atlas_path" ).Trim()
+				
 				atlas = LoadImage( atlas_path )
 				image_atlases[a] = atlas
+				DXFrame = TD3D7ImageFrame( atlas.Frame( 0 ))
+				pixmap = atlas.pixmaps[0]
+				
 				atlas_image_frames = atlas_json.GetArray( "frames" )
 				For Local f% = 0 Until atlas_image_frames.Size()
 					atlas_image_frame = TJSON.Create( atlas_image_frames.GetByIndex( f ))
@@ -169,9 +183,10 @@ Type TEXTURE_MANAGER
 					rect.w = atlas_image_frame.GetNumber( "w" )
 					rect.h = atlas_image_frame.GetNumber( "h" )
 					ref = New IMAGE_ATLAS_REFERENCE
-					'////////////////////////////
-					ref.LoadAtlas( atlas, rect )
-					'////////////////////////////
+					ref_pixmap = pixmap.Window( rect.x, rect.y, rect.w, rect.h )
+					'/////////////////////////////////////////////////
+					ref.LoadAtlas( atlas, ref_pixmap, DXFrame, rect )
+					'/////////////////////////////////////////////////
 					source_path = atlas_image_frame.GetString( "source_path" ).Trim()
 					reference_map.Insert( source_path, ref )
 				Next

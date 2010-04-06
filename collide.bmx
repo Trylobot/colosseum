@@ -49,13 +49,11 @@ Function collide_all_objects()
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
 				SetRotation( ag.ang )
-				ag.hitbox.PreDraw()
 				CollideImageRef( ag.hitbox, ag.pos_x, ag.pos_y, 0, 0, AGENT_COLLISION_LAYER, ag )
 			Next
 		Next
 		For proj = EachIn game.projectile_list
 			SetRotation( proj.ang )
-			proj.img.PreDraw()
 			result = CollideImageRef( proj.img, proj.pos_x, proj.pos_y, 0, AGENT_COLLISION_LAYER, PROJECTILE_COLLISION_LAYER, proj )
 			For ag = EachIn result
 				'examine id's; projectiles will never collide with their owners
@@ -71,7 +69,6 @@ Function collide_all_objects()
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
 				SetRotation( ag.ang )
-				ag.hitbox.PreDraw()
 				result = CollideImageRef( ag.hitbox, ag.pos_x, ag.pos_y, 0, AGENT_COLLISION_LAYER, SECONDARY_AGENT_COLLISION_LAYER, ag )
 				For other = EachIn result
 					If ag.id <> other.id 'not colliding with self
@@ -101,7 +98,6 @@ Function collide_all_objects()
 		For Local d:DOOR = EachIn game.doors
 			For Local slider:WIDGET = EachIn d.all_sliders
 				SetRotation( slider.get_ang() )
-				slider.img.PreDraw()
 				result = CollideImageRef( slider.img, slider.get_x(), slider.get_y(), 0, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
 				For ag = EachIn result
 					'COLLISION! between {ag} and {door}
@@ -119,11 +115,9 @@ Function collide_all_objects()
 		If game.human_participation And game.player And Not game.player.dead()
 			For pkp = EachIn game.pickup_list
 				SetRotation( 0 )
-				pkp.img.PreDraw()
 				CollideImageRef( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
 			Next
 			SetRotation( game.player.ang )
-			game.player.hitbox.PreDraw()
 			result = CollideImageRef( game.player.hitbox, game.player.pos_x, game.player.pos_y, 0, PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER, game.player )
 			For pkp = EachIn result
 				'COLLISION! between {player} and {pkp}
@@ -321,6 +315,7 @@ End Function
 
 '______________________________________________________________________________
 Function CollideImageRef:Object[]( ref:IMAGE_ATLAS_REFERENCE, x#, y#, frame%, collidemask%, writemask%, id:Object=Null )
-	CollideImage( ref.atlas, x, y, frame, collidemask, writemask, id, ref.width, ref.height )
+	ref.PreDraw()
+	CollideImage( ref.atlas, x, y, frame, collidemask, writemask, id )
 End Function
 

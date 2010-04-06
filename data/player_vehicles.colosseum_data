@@ -6,7 +6,7 @@
 			name: "war horse",
 			image_key: "player_tank_chassis",
 			hitbox_image_key: "light_tank_hitbox",
-			lightmap_image_key: "player_tank_chassis_lightmap",
+			lightmap_image_key: null,
 			gibs_image_key: "quad_gibs",
 			max_health: 500,
 			mass: 800,
