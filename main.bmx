@@ -152,7 +152,7 @@ Repeat
 	
 	'draw everything
 	profiler()
-	'draw_all_graphics()
+	draw_all_graphics()
 	
 	'end profiling
 	profiler()

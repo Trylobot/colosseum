@@ -64,7 +64,7 @@ End Function
 
 Function debug_with_graphics()
 	'show_me()
-	play_debug_level()
+	'play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
 	'play_debug_level()
