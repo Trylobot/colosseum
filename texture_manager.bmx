@@ -91,10 +91,12 @@ Type IMAGE_ATLAS_REFERENCE
 	End Method
 	
 	Method PreDraw( f% = 0 )
-		DXFrame.setUV( uv[f].x, uv[f].y, uv[f].w, uv[f].h )
-		'GLFrame.u0 = uv.x; GLFrame.v0 = uv.w; GLFrame.u1 = uv.y; GLFrame.v1 = uv.h
+		atlas.width = width
+		atlas.height = height
 		atlas.handle_x = handle.x
 		atlas.handle_y = handle.y
+		DXFrame.setUV( uv[f].x, uv[f].y, uv[f].w, uv[f].h )
+		'GLFrame.u0 = uv.x; GLFrame.v0 = uv.w; GLFrame.u1 = uv.y; GLFrame.v1 = uv.h
 	End Method
 	
 	Method ScalePush()
