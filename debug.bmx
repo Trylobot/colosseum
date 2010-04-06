@@ -80,10 +80,10 @@ Function play_debug_level()
 	play_level( lev, player )
 	game = main_game
 	game.sandbox = True
-	player.move_to( Create_POINT( 0.25*lev.width, 0.5*lev.height, -90.0 ))
+	player.move_to( Create_POINT( 0.48*lev.width, 0.5*lev.height, -90.0 ))
 	player.snap_all_turrets()
 	player_has_entered_arena()
-	game.spawn_unit( "mr_the_box", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.75*lev.width, 0.5*lev.height, 0.0 ))
+	game.spawn_unit( "mr_the_box", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.52*lev.width, 0.5*lev.height, 0.0 ))
 End Function
 
 Function show_me()
