@@ -93,6 +93,8 @@ Type IMAGE_ATLAS_REFERENCE
 		Self.cell_count = cell_count
     width = cell_width
     height = cell_height
+    sw = width
+    sh = height
 		cell_pos = New cVEC[cell_count]
 		Local columns% = src_rect.w / width
 		Local rows% = src_rect.h / height
