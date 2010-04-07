@@ -72,13 +72,13 @@ init_campaign_chooser()
 debug_with_graphics()
 ?
 
-?Not Debug
 '////////////////////////////////////////////////////////////////////////////////
 'MAIN
 Repeat
 	Cls()
 	select_game()
 	
+	?Not Debug '////////////////////////////////
 	'menu input and misc
 	get_all_input()
 	'multiplayer
@@ -96,32 +96,9 @@ Repeat
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress )
 	'draw everything
 	draw_all_graphics()
-
-	'insta-quit
-	If esc_held And KeyDown( KEY_ESCAPE ) ..
-	And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
-		draw_instaquit_progress()
-	End If
-	'screenshot
-	If KeyHit( KEY_F12 )
-		screenshot()
-	End If
-	
-	Flip( 1 )
-Until AppTerminate()
-'////////////////////////////////////////////////////////////////////////////////
-
-
-
-?Debug
-'////////////////////////////////////////////////////////////////////////////////
-'MAIN +debug_overlay +timer_profiling
-Repeat
-	Cls()
-	select_game()
+	?Debug  '////////////////////////////////
 	'begin new profiling cycle
 	profiler()
-
 	'menu input and misc
 	get_all_input(); profiler(0)
 	'multiplayer
@@ -139,9 +116,10 @@ Repeat
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress ); profiler(4)
 	'draw everything
 	draw_all_graphics(); profiler(5)
-
 	'debug
 	debug_main()
+	? '////////////////////////////////
+
 	'insta-quit
 	If esc_held And KeyDown( KEY_ESCAPE ) ..
 	And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
@@ -155,5 +133,4 @@ Repeat
 	Flip( 1 )
 Until AppTerminate()
 '////////////////////////////////////////////////////////////////////////////////
-?
 
