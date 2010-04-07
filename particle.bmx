@@ -111,7 +111,7 @@ Type PARTICLE Extends POINT
 	
 	Method clone:PARTICLE( new_frame% = 0 )
 		If new_frame = PARTICLE_FRAME_RANDOM And img
-			new_frame = Rand( 0, img.frames - 1 )
+			new_frame = Rand( 0, img.cell_count - 1 )
 		Else
 			new_frame = 0
 		End If
@@ -181,10 +181,10 @@ Type PARTICLE Extends POINT
 		last_frame_advance_ts = now()
 		If animation_direction = ANIMATION_DIRECTION_FORWARDS
 			frame :+ 1
-			If frame >= img.frames - 1 Then frame = 0
+			If frame >= img.cell_count - 1 Then frame = 0
 		Else If animation_direction = ANIMATION_DIRECTION_BACKWARDS
 			frame :- 1
-			If frame < 0 Then frame = img.frames - 1
+			If frame < 0 Then frame = img.cell_count - 1
 		End If
 	End Method
 	

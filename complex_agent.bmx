@@ -50,7 +50,7 @@ Const MAX_COMPLEX_AGENT_VELOCITY# = 4.0 'hard velocity limit; this shouldn't be 
 '___________________________________________
 Type COMPLEX_AGENT Extends AGENT
 	
-	Field lightmap:IMAGE_ATLAS_REFERENCE 'lighting effect image array
+	'Field lightmap:IMAGE_ATLAS_REFERENCE 'lighting effect image array
 	
 	Field alignment% '{friendly|hostile}
 	Field ai_name$ 'artificial intelligence variant identifier (only used for AI-controlled agents)
@@ -167,7 +167,7 @@ Type COMPLEX_AGENT Extends AGENT
 		c.img = other.img
 		c.hitbox = other.hitbox
 		c.gibs = other.gibs
-		c.lightmap = other.lightmap
+		'c.lightmap = other.lightmap
 		c.ai_name = other.ai_name
 		c.cash_value = other.cash_value
 		c.max_health = other.max_health
@@ -351,18 +351,18 @@ Type COMPLEX_AGENT Extends AGENT
 			SetRotation( ang )
 			DrawImageRef( img, pos_x, pos_y )
 			'chassis lighting effect
-			If lightmap
-				SetBlend( LIGHTBLEND )
-				Local separation# = 360.0 / lightmap.frames
-				For Local i% = 0 Until lightmap.frames
-					Local diff# = Abs( ang_wrap( ang - ((i - 1) * separation )))
-					If diff < 90.0
-						SetAlpha( alpha_override * 0.5 * (90.0 - diff)/90.0 )
-						DrawImageRef( lightmap, pos_x, pos_y, i )
-					End If
-				Next
-				SetBlend( ALPHABLEND )
-			End If
+			'If lightmap
+			'	SetBlend( LIGHTBLEND )
+			'	Local separation# = 360.0 / lightmap.cell_count
+			'	For Local i% = 0 Until lightmap.cell_count
+			'		Local diff# = Abs( ang_wrap( ang - ((i - 1) * separation )))
+			'		If diff < 90.0
+			'			SetAlpha( alpha_override * 0.5 * (90.0 - diff)/90.0 )
+			'			DrawImageRef( lightmap, pos_x, pos_y, i )
+			'		End If
+			'	Next
+			'	SetBlend( ALPHABLEND )
+			'End If
 		End If
 		'widgets in front of
 		For Local widget_list:TList = EachIn all_widget_lists
@@ -778,7 +778,7 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 		cmp_ag.hitbox = Create_BOX( hitbox_img.handle_x, hitbox_img.handle_y, hitbox_img.width, hitbox_img.height )
 	End If
 	If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED          Then cmp_ag.gibs = get_image( json.GetString( "gibs_image_key" ))
-	If json.TypeOf( "lightmap_image_key" ) <> JSON_UNDEFINED      Then cmp_ag.lightmap = get_image( json.GetString( "lightmap_image_key" ))
+	'If json.TypeOf( "lightmap_image_key" ) <> JSON_UNDEFINED      Then cmp_ag.lightmap = get_image( json.GetString( "lightmap_image_key" ))
 	If json.TypeOf( "ai_name" ) <> JSON_UNDEFINED                 Then cmp_ag.ai_name = json.GetString( "ai_name" )
 	If json.TypeOf( "cash_value" ) <> JSON_UNDEFINED              Then cmp_ag.cash_value = json.GetNumber( "cash_value" )
 	If json.TypeOf( "max_health" ) <> JSON_UNDEFINED              Then cmp_ag.max_health = json.GetNumber( "max_health" )

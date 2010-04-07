@@ -17,7 +17,7 @@ Import brl.PNGLoader
 Import brl.Random
 Import brl.Max2D
 Import vertex.BNetEx
-'Import aco.FarseerPhysics
+Import aco.FarseerPhysics
 ?Win32
 Import pub.Win32
 Import "icon/icon.o"

@@ -111,7 +111,7 @@ Type AGENT Extends PHYSICAL_OBJECT
 			'this should also be controlled by a death emitter, albeit a more complex one.
 			'perhaps a special type of emitter that takes a multi-frame image and a series of data to specify initial conditions for each of the gibs.
 			If gibs <> Null
-				For Local i% = 0 To gibs.frames - 1
+				For Local i% = 0 To gibs.cell_count - 1
 					Local gib:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, gibs, i,,,, LAYER_BACKGROUND, True, 0.100,,,,,,, 750 ))
 					Local gib_offset#, gib_offset_ang#
 					cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
