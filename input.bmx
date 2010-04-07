@@ -39,7 +39,8 @@ Function get_all_input()
 		FLAG.ignore_mouse_1 = False
 	End If
 	
-	If show_campaign_chooser 'campaign selection menu (special menu, takes precedence)
+	'campaign selection menu (special menu, takes precedence)
+	If show_campaign_chooser 
 		campaign_chooser.upate()
 		If KeyHit( KEY_ESCAPE ) Or KeyHit( KEY_BACKSPACE )
 			show_campaign_chooser = False
@@ -130,6 +131,14 @@ Function get_all_input()
 		End If
 	Else 'Not FLAG_in_menu
 		If game And game.human_participation
+			'/////////////////////////////////////////////
+			'player input
+			If FLAG.chat_mode
+				game.player_brain.human_input_blocked_update()
+			Else
+				game.player_brain.update()
+			End If
+			'/////////////////////////////////////////////
 			'pause game
 			If escape_key_release() 'KeyHit( KEY_ESCAPE )
 				If Not game.paused

@@ -16,6 +16,7 @@ Import brl.PNGLoader
 Import brl.Random
 Import brl.Max2D
 Import vertex.BNetEx
+Import aco.FarseerPhysics
 
 ?Win32
 Import pub.Win32
@@ -64,6 +65,7 @@ Include "menu_option.bmx"
 Include "misc.bmx"
 Include "mouse.bmx"
 Include "net.bmx"
+Include "os-windows.bmx"
 Include "particle.bmx"
 Include "particle_emitter.bmx"
 Include "pathing_structure.bmx"
@@ -91,16 +93,7 @@ Include "vec.bmx"
 Include "vehicle_data.bmx"
 'Include "vehicle_editor.bmx"
 Include "widget.bmx"
-
-?Win32
-Include "os-windows.bmx"
-?
-
-?Debug
 Include "debug.bmx"
-?
 
-'//////////////////
 Include "main.bmx"
-'//////////////////
 

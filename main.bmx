@@ -31,9 +31,6 @@ Const version_major%    = 0
 Const version_minor%    = 4
 Const version_revision% = 0
 
-SetGraphicsDriver D3D7Max2DDriver()
-'SetGraphicsDriver GLMax2DDriver()
-
 'defaults
 apply_default_settings()
 FLAG.in_menu = True
@@ -122,41 +119,27 @@ Until AppTerminate()
 Repeat
 	Cls()
 	select_game()
-	
+	'begin new profiling cycle
+	profiler()
+
 	'menu input and misc
-	profiler( True ) 'begin new profiling cycle
-	get_all_input()
-	
+	get_all_input(); profiler(0)
 	'multiplayer
-	profiler() 'record current accumulator and begin another
-	update_network()
-	
+	update_network(); profiler(1)
 	'physics timescale and update throttling
 	If frame_time_elapsed()
 		calculate_timescale()
 		reset_frame_timer()
-		
 		'collision detection and resolution
-		profiler()
-		collide_all_objects()
-		
+		collide_all_objects(); profiler(2)
 		'resolve forces and emit particles, and capture player vehicle input
-		profiler()
-		update_all_objects()
-		
+		update_all_objects(); profiler(3)
 	End If
-	
 	'music and sound
-	profiler()
-	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress )
-	
+	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress ); profiler(4)
 	'draw everything
-	profiler()
-	draw_all_graphics()
-	
-	'end profiling
-	profiler()
-	
+	draw_all_graphics(); profiler(5)
+
 	'debug
 	debug_main()
 	'insta-quit

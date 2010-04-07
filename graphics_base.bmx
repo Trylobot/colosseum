@@ -11,6 +11,8 @@ EndRem
 
 '______________________________________________________________________________
 Function init_graphics()
+	SetGraphicsDriver D3D7Max2DDriver()
+	'SetGraphicsDriver GLMax2DDriver()
 	If Not fullscreen
 		Graphics( window_w, window_h,,, GRAPHICS_BACKBUFFER )
 	Else 'fullscreen

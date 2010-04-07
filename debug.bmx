@@ -5,27 +5,51 @@ Rem
 EndRem
 'main.bmx --> Include "debug.bmx"
 
+?Debug
+
 '//////////////////////////////////////////////////////////////////////////////
-'new stuff to be tested or fixed
 
 
+
+Function debug_init()
+	'debug_audio_drivers()
+	'debug_get_keys()
+	
+End Function
+
+Function debug_no_graphics()
+	'debug_set_range()
+	'debug_remove_from_array()
+	'debug_insert_into_array()
+	'debug_array_append
+	'test_find_files()
+	
+End Function
+
+Function debug_with_graphics()
+	'show_me()
+	play_debug_level()
+	'debug_graffiti_manager
+	'test_draw_kill_tally()
+	'play_debug_level()
+	
+End Function
 
 '//////////////////////////////////////////////////////////////////////////////
 
 Global profiler_label$[] = [ ..
-	"get_all_input", "update_network", ..
-	"collide_all_objects", "update_all_objects", ..
-	"play_all_audio", "draw_all_graphics" ]
+	"get_all_input", ..
+	"update_network", ..
+	"collide_all_objects", ..
+	"update_all_objects", ..
+	"play_all_audio", ..
+	"draw_all_graphics" ]
 Global profiler_value:Long[] = New Long[ profiler_label.Length ]
-Global profiler_index%
 Global profiler_ts%
 
-Function profiler( restart% = False )
-	If Not restart
-		profiler_value[profiler_index] :+ now() - profiler_ts
-		profiler_index :+ 1
-	Else 'wrap and pause
-		profiler_index = 0
+Function profiler( i% = -1 )
+	If i >= 0
+		profiler_value[i] :+ now() - profiler_ts
 	End If
 	profiler_ts = now()
 End Function
@@ -46,30 +70,6 @@ Global spawn_archetype$ = ""
 Global spawn_alignment% = POLITICAL_ALIGNMENT.NONE
 Global spawn_agent:COMPLEX_AGENT
 Global cb:CONTROL_BRAIN = Null
-
-Function debug_init()
-	'debug_audio_drivers()
-	'debug_get_keys()
-	
-End Function
-
-Function debug_no_graphics()
-	'debug_set_range()
-	'debug_remove_from_array()
-	'debug_insert_into_array()
-	'debug_array_append
-	'test_find_files()
-	
-End Function
-
-Function debug_with_graphics()
-	'show_me()
-	'play_debug_level()
-	'debug_graffiti_manager
-	'test_draw_kill_tally()
-	'play_debug_level()
-	
-End Function
 
 Function play_debug_level()
 	Local lev:LEVEL = load_level( "levels/debug.colosseum_level" )
@@ -148,7 +148,7 @@ Function debug_overlay()
 	
 	'profiler
 	For Local i% = 0 Until profiler_label.Length
-		debug_drawtext( pad( profiler_label[i], 19 ) + pad( String.FromLong( profiler_value[i] ), 15 ))
+		debug_drawtext( pad( profiler_label[i], 19,, True ) + pad( String.FromLong( profiler_value[i] ), 15,, True ))
 	Next
 	
 	If game <> Null
@@ -514,4 +514,5 @@ Type PAIR
 	End Function
 End Type
 
+?
 

@@ -7,6 +7,8 @@ EndRem
 'Import pub.Win32
 'Import "icon/icon.o"
 
+?Win32
+
 Extern "win32"
 	Function FindWindowA( lpClassName$z, lpWindowName$z )
 EndExtern
@@ -22,3 +24,5 @@ Function set_window( GWLStyleFlags% = 0 )
 	SetWindowLongA(hWnd, GWL_STYLE, GetWindowLongA(hWnd, GWL_STYLE) | GWLStyleFlags)
 	SendMessageA(hWnd, WM_SETICON, ICON_BIG, LoadIconA(GetModuleHandleA(Null), Byte Ptr(101)))
 EndFunction
+
+?

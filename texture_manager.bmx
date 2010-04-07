@@ -21,7 +21,6 @@ Type IMAGE_ATLAS_REFERENCE
 	Field atlas:TImage
 	Field DXFrame:TD3D7ImageFrame
 	'Field GLFrame:TGLImageFrame
-	Field src_pixmap:TPixmap
 	'texture atlas composition data
 	Field src_rect:BOX
 	Field src_uv:BOX
@@ -39,37 +38,28 @@ Type IMAGE_ATLAS_REFERENCE
 	Global g_sx#
 	Global g_sy#
 	
-	Method Draw( x#, y#, f% = 0 )
-		PreDraw( f )
-		ScalePush()
-		DrawImageRect( atlas, x, y, rect[f].w, rect[f].h )
-		ScalePop()
-	End Method
+	Function Create:IMAGE_ATLAS_REFERENCE( atlas:TImage, rect:BOX )
+		Local ref:IMAGE_ATLAS_REFERENCE = New IMAGE_ATLAS_REFERENCE
+		ref.atlas = atlas
+		ref.DXFrame = TD3D7ImageFrame( atlas.Frame( 0 ))
+		'ref.GLFrame = TGLImageFrame( atlas.Frame( 0 ))
+		ref.src_rect = rect
+		ref.src_uv = CalculateUV( rect, atlas.width, atlas.height )
+		ref.width = rect.w
+		ref.height = rect.h
+		ref.frames = 1
+		ref.rect = [ref.src_rect]
+		ref.uv = [ref.src_uv]
+		Return ref
+	End Function
 	
-	Method LoadAtlas( atlas:TImage, pixmap:TPixmap, DXFrame:TD3D7ImageFrame, rect:BOX )
-		Self.atlas = atlas
-		Self.src_pixmap = pixmap
-		Self.DXFrame = DXFrame
-		'Self.GLFrame = GLFrame
-		Self.src_rect = rect
-		width = rect.w
-		height = rect.h
-		Self.src_uv = CalculateUV( rect, atlas.width, atlas.height )
-	End Method
-	
-	Method LoadLegacy( handle:cVEC, flip_x% = False, flip_y% = False )
+	Method LoadImageModifiers( handle:cVEC, flip_x% = False, flip_y% = False )
 		Self.handle = handle
 		Self.flip_x = flip_x
 		Self.flip_y = flip_y
 	End Method
 	
-	Method NullAnim()
-		frames = 1
-		rect = [src_rect]
-		uv = [src_uv]
-	End Method
-	
-	Method LoadAnim( frames%, frame_width%, frame_height% )
+	Method LoadMultiFrameAnimation( frames%, frame_width%, frame_height% )
 		Self.frames = frames
 		rect = New BOX[frames]
 		uv = New BOX[frames]
@@ -94,14 +84,21 @@ Type IMAGE_ATLAS_REFERENCE
 		Next
 	End Method
 	
+	Method Draw( x#, y#, f% = 0 )
+		ScalePush()
+		PreDraw( f )
+		'DrawImageRect( atlas, x, y, rect[f].w, rect[f].h )
+		DrawImage( atlas, x, y, 0 )
+		ScalePop()
+	End Method
+
 	Method PreDraw( f% = 0 )
 		DXFrame.setUV( uv[f].x, uv[f].y, uv[f].w, uv[f].h )
-		'GLFrame.u0 = uv.x; GLFrame.v0 = uv.w; GLFrame.u1 = uv.y; GLFrame.v1 = uv.h
+		'GLFrame.u0 = uv[f].x; GLFrame.v0 = uv[f].w; GLFrame.u1 = uv[f].y; GLFrame.v1 = uv[f].h
 		atlas.handle_x = handle.x
 		atlas.handle_y = handle.y
-		atlas.width = width
-		atlas.height = height
-		atlas.pixmaps[0] = src_pixmap
+		'atlas.width = width
+		'atlas.height = height
 	End Method
 	
 	Method ScalePush()
@@ -152,10 +149,6 @@ Type TEXTURE_MANAGER
 		
 		Local atlas_path$
 		Local atlas:TImage
-		Local DXFrame:TD3D7ImageFrame
-		'Local GLFrame:TGLImageFrame
-		Local pixmap:TPixmap
-		Local ref_pixmap:TPixmap
 		Local source_path$
 		Local rect:BOX
 		Local ref:IMAGE_ATLAS_REFERENCE
@@ -171,8 +164,6 @@ Type TEXTURE_MANAGER
 				
 				atlas = LoadImage( atlas_path )
 				image_atlases[a] = atlas
-				DXFrame = TD3D7ImageFrame( atlas.Frame( 0 ))
-				pixmap = atlas.pixmaps[0]
 				
 				atlas_image_frames = atlas_json.GetArray( "frames" )
 				For Local f% = 0 Until atlas_image_frames.Size()
@@ -183,9 +174,8 @@ Type TEXTURE_MANAGER
 					rect.w = atlas_image_frame.GetNumber( "w" )
 					rect.h = atlas_image_frame.GetNumber( "h" )
 					ref = New IMAGE_ATLAS_REFERENCE
-					ref_pixmap = pixmap.Window( rect.x, rect.y, rect.w, rect.h )
 					'/////////////////////////////////////////////////
-					ref.LoadAtlas( atlas, ref_pixmap, DXFrame, rect )
+					ref = IMAGE_ATLAS_REFERENCE.Create( atlas, rect )
 					'/////////////////////////////////////////////////
 					source_path = atlas_image_frame.GetString( "source_path" ).Trim()
 					reference_map.Insert( source_path, ref )
@@ -208,17 +198,15 @@ Type TEXTURE_MANAGER
 		handle_x = json.GetNumber( "handle_x" )
 		handle_y = json.GetNumber( "handle_y" )
 		handle = Create_cVEC( handle_x, handle_y )
-		'////////////////////////////////////////////////////////
-		ref.LoadLegacy( handle, flip_horizontal, flip_vertical )
-		'////////////////////////////////////////////////////////
-		If frames = 1
-			ref.NullAnim()
-		Else If frames > 1
+		'////////////////////////////////////////////////////////////////
+		ref.LoadImageModifiers( handle, flip_horizontal, flip_vertical )
+		'////////////////////////////////////////////////////////////////
+		If frames > 1
 			frame_width = json.GetNumber( "frame_width" )
 			frame_height = json.GetNumber( "frame_height" )
-			'/////////////////////////////////////////////////
-			ref.LoadAnim( frames, frame_width, frame_height )
-			'/////////////////////////////////////////////////
+			'////////////////////////////////////////////////////////////////
+			ref.LoadMultiFrameAnimation( frames, frame_width, frame_height )
+			'////////////////////////////////////////////////////////////////
 		End If
 	End Function
 	
