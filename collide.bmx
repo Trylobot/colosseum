@@ -96,13 +96,13 @@ Function collide_all_objects()
 		For Local d:DOOR = EachIn game.doors
 			For Local slider:WIDGET = EachIn d.all_sliders
 				SetRotation( slider.get_ang() )
-				SetHandle( slider.img.handle.x, slider.img.handle.y )
+				SetHandle( slider.img.handle_x, slider.img.handle_y )
 				result = CollideRect( slider.get_x(), slider.get_y(), slider.img.width, slider.img.height, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
 				For ag = EachIn result
 					'COLLISION! between {ag} and {door}
 					collision_agent_door( ag, slider )
 				Next
-				result = CollideRect( slider.get_x() - slider.img.handle.x, slider.get_y() - slider.img.handle.y, slider.img.width, slider.img.height, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
+				result = CollideRect( slider.get_x(), slider.get_y(), slider.img.width, slider.img.height, PROJECTILE_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
 				For proj = EachIn result
 					'COLLISION! between {proj} and {door}
 					collision_projectile_door( proj, slider )
@@ -114,7 +114,7 @@ Function collide_all_objects()
 		If game.human_participation And game.player And Not game.player.dead()
 			For pkp = EachIn game.pickup_list
 				SetRotation( 0 )
-				SetHandle( pkp.img.handle.x, pkp.img.handle.y )
+				SetHandle( pkp.img.handle_x, pkp.img.handle_y )
 				'CollideImageRef( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
 				CollideRect( pkp.pos_x, pkp.pos_y, pkp.img.width, pkp.img.height, 0, PICKUP_COLLISION_LAYER, pkp )
 			Next
@@ -314,11 +314,5 @@ Function clamp_ang_to_bifurcate_door_diagonals#( ang#, wall:BOX )
 		If ang < angles[i-1] Then Return average([angles[i-1],angles[i]])
 	Next
 	Return average([angles[3],angles[0]])
-End Function
-
-'______________________________________________________________________________
-Function CollideImageRef:Object[]( ref:IMAGE_ATLAS_REFERENCE, x#, y#, frame%, collidemask%, writemask%, id:Object=Null )
-	ref.PreDraw()
-	CollideImage( ref.atlas, x, y, frame, collidemask, writemask, id )
 End Function
 

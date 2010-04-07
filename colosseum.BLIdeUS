@@ -6,14 +6,15 @@
       <FileName>agent.bmx</FileName>
       <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>0</Y>
+        <X>60</X>
+        <Y>177</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:153:153:153</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -111,14 +112,15 @@
       <FileName>collide.bmx</FileName>
       <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>0</Y>
+        <X>56</X>
+        <Y>308</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:153:153:153</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -141,14 +143,15 @@
       <FileName>complex_agent.bmx</FileName>
       <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>0</Y>
+        <X>74</X>
+        <Y>785</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:153:153:153</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -244,10 +247,10 @@
     </Included_File>
     <Included_File>
       <FileName>data.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>0</X>
-        <Y>0</Y>
+        <Y>31</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -260,7 +263,7 @@
     </Included_File>
     <Included_File>
       <FileName>debug.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>33</X>
         <Y>181</Y>
@@ -270,7 +273,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:153:153:153</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -293,8 +295,8 @@
       <FileName>draw.bmx</FileName>
       <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>18</X>
-        <Y>7</Y>
+        <X>24</X>
+        <Y>352</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -415,7 +417,7 @@
       <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>0</X>
-        <Y>15</Y>
+        <Y>31</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -473,7 +475,7 @@
     </Included_File>
     <Included_File>
       <FileName>input.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>45</X>
         <Y>214</Y>
@@ -483,7 +485,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:153:153:153</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -564,10 +565,10 @@
     </Included_File>
     <Included_File>
       <FileName>main.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
         <X>0</X>
-        <Y>0</Y>
+        <Y>62</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -625,7 +626,7 @@
     </Included_File>
     <Included_File>
       <FileName>misc.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>16</X>
         <Y>300</Y>
@@ -635,7 +636,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:153:153:153</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -681,7 +681,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:153:153:153</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -747,10 +746,10 @@
     </Included_File>
     <Included_File>
       <FileName>physical_object.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>34</X>
-        <Y>27</Y>
+        <X>48</X>
+        <Y>73</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -808,10 +807,10 @@
     </Included_File>
     <Included_File>
       <FileName>project.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>6</Y>
+        <X>12</X>
+        <Y>1</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -826,14 +825,15 @@
       <FileName>projectile.bmx</FileName>
       <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>0</Y>
+        <X>49</X>
+        <Y>122</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:153:153:153</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -871,14 +871,15 @@
       <FileName>settings.bmx</FileName>
       <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>0</Y>
+        <X>6</X>
+        <Y>4</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:153:153:153</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -946,8 +947,8 @@
       <FileName>texture_manager.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>12</X>
-        <Y>15</Y>
+        <X>18</X>
+        <Y>1</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1035,17 +1036,16 @@
     </Included_File>
     <Included_File>
       <FileName>update.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>30</Y>
+        <X>6</X>
+        <Y>4</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:153:153:153</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -1121,7 +1121,7 @@
   </Project>
   <Compiler_Configuration>
     <Quick_Build>true</Quick_Build>
-    <Debugging>false</Debugging>
+    <Debugging>true</Debugging>
     <Threaded>false</Threaded>
   </Compiler_Configuration>
 </UnmanagedSolution>

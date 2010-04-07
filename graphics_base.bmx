@@ -11,20 +11,22 @@ EndRem
 
 '______________________________________________________________________________
 Function init_graphics()
-	SetGraphicsDriver D3D7Max2DDriver()
+	SetGraphicsDriver D3D9Max2DDriver()
+	'SetGraphicsDriver D3D7Max2DDriver()
 	'SetGraphicsDriver GLMax2DDriver()
 	If Not fullscreen
 		Graphics( window_w, window_h,,, GRAPHICS_BACKBUFFER )
+		?Win32
+		set_window( WS_MINIMIZEBOX )
+		?
 	Else 'fullscreen
 		Graphics( window_w, window_h, bit_depth, refresh_rate, GRAPHICS_BACKBUFFER )
 	End If
 	SetClsColor( 0, 0, 0 )
-	'SetClsColor( 127, 127, 127 )
 	Cls()
 	SetBlend( ALPHABLEND )
-	SetMaskColor( 255, 255, 255 )
-	?Win32
-	set_window( WS_MINIMIZEBOX )
-	?
+	'AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
+	AutoImageFlags( FILTEREDIMAGE )
 End Function
+
 

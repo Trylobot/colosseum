@@ -327,7 +327,7 @@ Function draw_menus()
 						TURRET(inventory_object).set_images_unfiltered()
 						TURRET(inventory_object).scale_all( MOUSE_SHADOW_SCALE )
 						If TURRET(inventory_object).img
-							cx :+ 3*TURRET(inventory_object).img.handle.x
+							cx :+ 3*TURRET(inventory_object).img.handle_x
 						Else 'ghost base for turrets with none
 							SetColor( 255, 255, 255 )
 							SetAlpha( 0.15 )
@@ -339,7 +339,7 @@ Function draw_menus()
 						COMPLEX_AGENT(inventory_object).set_images_unfiltered()
 						COMPLEX_AGENT(inventory_object).scale_all( MOUSE_SHADOW_SCALE )
 						If COMPLEX_AGENT(inventory_object).img
-							cx :+ 3*COMPLEX_AGENT(inventory_object).img.handle.x
+							cx :+ 3*COMPLEX_AGENT(inventory_object).img.handle_x
 						End If
 					End If
 					Local a# = 1.0

@@ -29,8 +29,6 @@ Global loading_progress# = 0.0
 Function load_texture_atlases%()
 	Local file:TStream
 	Local json:TJSON
-	'AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
-	AutoImageFlags( FILTEREDIMAGE )
 	'load texture atlas
 	file = ReadFile( data_path + default_texture_atlas_file_name )
 	If Not file Then Return False

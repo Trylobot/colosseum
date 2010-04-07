@@ -4,7 +4,8 @@ Rem
 EndRem
 SuperStrict
 
-Framework brl.D3D7Max2D
+Framework brl.D3D9Max2D
+'Framework brl.D3D7Max2D
 'Framework brl.GLMax2D
 
 Import brl.LinkedList
@@ -16,13 +17,11 @@ Import brl.PNGLoader
 Import brl.Random
 Import brl.Max2D
 Import vertex.BNetEx
-Import aco.FarseerPhysics
-
+'Import aco.FarseerPhysics
 ?Win32
 Import pub.Win32
 Import "icon/icon.o"
 ?
-
 Include "agent.bmx"
 Include "ai_type.bmx"
 Include "audio.bmx"

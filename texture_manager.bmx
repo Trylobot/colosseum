@@ -12,49 +12,62 @@ EndRem
 
 '______________________________________________________________________________
 Function DrawImageRef( ref:IMAGE_ATLAS_REFERENCE, x#, y#, f% = 0 )
-	ref.Draw( x, y, f )
+	If ref Then ref.Draw( x, y, f )
 End Function
 
 '______________________________________________________________________________
 Type IMAGE_ATLAS_REFERENCE
 	'image data pointer
 	Field atlas:TImage
-	Field DXFrame:TD3D7ImageFrame
-	'Field GLFrame:TGLImageFrame
+	Field iframe:TImageFrame
 	'texture atlas composition data
 	Field src_rect:BOX
-	Field src_uv:BOX
 	Field width%
 	Field height%
 	'legacy image data
-	Field handle:cVEC
+	Field handle_x#
+	Field handle_y#
 	Field flip_x%
 	Field flip_y%
 	'sprite animation data (multi-cell)
 	Field frames%
 	Field rect:BOX[]
-	Field uv:BOX[]
-	'static temps (flip_x&y)
-	Global g_sx#
-	Global g_sy#
 	
+  'static memory
+	Global x0#,x1#, y0#,y1#, tx#,ty#, sx#,sy#, sw#,sh#
+	
+	Method Draw( x#, y#, f% = 0 )
+		x0 = -handle_x
+    y0 = -handle_y
+		x1 = x0 + width
+    y1 = y0 + height
+		GetOrigin( tx, ty )
+    tx :+ x
+    ty :+ y
+		sx = rect[f].x
+    sy = rect[f].y
+    sw = width
+    sh = height
+		'///////////////////////////////////////////////
+		iframe.Draw( x0,y0, x1,y1, tx,ty, sx,sy,sw,sh )
+		'///////////////////////////////////////////////
+	End Method
+
 	Function Create:IMAGE_ATLAS_REFERENCE( atlas:TImage, rect:BOX )
 		Local ref:IMAGE_ATLAS_REFERENCE = New IMAGE_ATLAS_REFERENCE
 		ref.atlas = atlas
-		ref.DXFrame = TD3D7ImageFrame( atlas.Frame( 0 ))
-		'ref.GLFrame = TGLImageFrame( atlas.Frame( 0 ))
+		ref.iframe = atlas.Frame( 0 )
 		ref.src_rect = rect
-		ref.src_uv = CalculateUV( rect, atlas.width, atlas.height )
 		ref.width = rect.w
 		ref.height = rect.h
 		ref.frames = 1
 		ref.rect = [ref.src_rect]
-		ref.uv = [ref.src_uv]
 		Return ref
 	End Function
 	
-	Method LoadImageModifiers( handle:cVEC, flip_x% = False, flip_y% = False )
-		Self.handle = handle
+	Method LoadImageModifiers( handle_x#, handle_y#, flip_x% = False, flip_y% = False )
+		Self.handle_x = handle_x
+		Self.handle_y = handle_y
 		Self.flip_x = flip_x
 		Self.flip_y = flip_y
 	End Method
@@ -62,61 +75,26 @@ Type IMAGE_ATLAS_REFERENCE
 	Method LoadMultiFrameAnimation( frames%, frame_width%, frame_height% )
 		Self.frames = frames
 		rect = New BOX[frames]
-		uv = New BOX[frames]
-		Local rows% = src_rect.h / frame_height
-		Local cols% = src_rect.w / frame_width
+		Local cols% = width / frame_width
+		Local rows% = height / frame_height
 		Local f% = 0
 		For Local r% = 0 Until rows
 			For Local c% = 0 Until cols
-				'anim frame "sub-rect" within this atlas-ref's rect
+				'texture coordinates for this cell of animation
 				rect[f] = Create_BOX( ..
 					src_rect.x + (c*frame_width), ..
 					src_rect.y + (r*frame_height), ..
 					frame_width, ..
 					frame_height )
-				uv[f] = CalculateUV( rect[f], atlas.width, atlas.height )
-				'total frame count
 				f :+ 1
 				If f >= frames
-					Return 'done loading anim
+					Return
 				End If
 			Next
 		Next
+    width = frame_width
+    height = frame_height
 	End Method
-	
-	Method Draw( x#, y#, f% = 0 )
-		ScalePush()
-		PreDraw( f )
-		'DrawImageRect( atlas, x, y, rect[f].w, rect[f].h )
-		DrawImage( atlas, x, y, 0 )
-		ScalePop()
-	End Method
-
-	Method PreDraw( f% = 0 )
-		DXFrame.setUV( uv[f].x, uv[f].y, uv[f].w, uv[f].h )
-		'GLFrame.u0 = uv[f].x; GLFrame.v0 = uv[f].w; GLFrame.u1 = uv[f].y; GLFrame.v1 = uv[f].h
-		atlas.handle_x = handle.x
-		atlas.handle_y = handle.y
-		'atlas.width = width
-		'atlas.height = height
-	End Method
-	
-	Method ScalePush()
-		GetScale( g_sx, g_sy )
-		SetScale( g_sx * (1 - 2*flip_x), g_sy * (1 - 2*flip_y) )
-	End Method
-	
-	Method ScalePop()
-		SetScale( g_sx, g_sy )
-	End Method
-	
-	Function CalculateUV:BOX( r:BOX, tw#, th# )
-		Return Create_BOX( ..
-			r.x / tw, ..
-			r.y / th, ..
-			(r.x + r.w) / tw, ..
-			(r.y + r.h) / th )
-	End Function
 	
 End Type
 
@@ -127,18 +105,13 @@ Type TEXTURE_MANAGER
 	Global image_key_map:TMap 'map[image_name:String] --> source_path:String
   
   Function GetImageRef:IMAGE_ATLAS_REFERENCE( image_key$ )
-    Local image_src$ = String( image_key_map.ValueForKey( image_key ))
-		If image_src
-			Local ref:IMAGE_ATLAS_REFERENCE = IMAGE_ATLAS_REFERENCE( reference_map.ValueForKey( image_src ))
-      If ref
-				Return ref
-			Else
-				'Throw "reference_map[~q" + image_src + "~q] is null"
-			End If
-		Else
-			'Throw "image_key_map[~q" + image_key + "~q] is null"
+    If image_key
+      Local src_path$ = String( image_key_map.ValueForKey( image_key ))
+      If src_path
+        Return IMAGE_ATLAS_REFERENCE( reference_map.ValueForKey( src_path ))
+      End If
     End If
-		Return Null
+    Return Null
   End Function
 	
 	Function Load_TEXTURE_MANAGER_from_json( json:TJSON )
@@ -197,10 +170,9 @@ Type TEXTURE_MANAGER
 		flip_vertical = json.GetBoolean( "flip_vertical" )
 		handle_x = json.GetNumber( "handle_x" )
 		handle_y = json.GetNumber( "handle_y" )
-		handle = Create_cVEC( handle_x, handle_y )
-		'////////////////////////////////////////////////////////////////
-		ref.LoadImageModifiers( handle, flip_horizontal, flip_vertical )
-		'////////////////////////////////////////////////////////////////
+		'////////////////////////////////////////////////////////////////////////////
+		ref.LoadImageModifiers( handle_x, handle_y, flip_horizontal, flip_vertical )
+		'////////////////////////////////////////////////////////////////////////////
 		If frames > 1
 			frame_width = json.GetNumber( "frame_width" )
 			frame_height = json.GetNumber( "frame_height" )
