@@ -25,42 +25,68 @@ Type BMP_FONT
 
 	Field font_img:IMAGE_ATLAS_REFERENCE
 	Field char_width%[]
+  Field scale%
 	
 	Method draw_string( str$, x#, y# )
 		Local cx% = x
 		Local cy% = y
 		Local glyph%
+    SetScale( scale, scale )
 		For Local i% = 0 Until str.Length
 			glyph = str[i] - ascii_start
 			If glyph < char_count
 				DrawImageRef( font_img, cx, cy, glyph )
-				cx :+ char_width[glyph]
+				cx :+ scale * char_width[glyph]
 			End If
 		Next
 	End Method
 	
 	Function Create_from_json:BMP_FONT( json:TJSON )
 		Local src_path$
-		Local scale%
+    Local offset_x%
 		Local baseline_y%
 		Local char_width%[]
 		Local img:IMAGE_ATLAS_REFERENCE
 		Local f:BMP_FONT
-		src_path = json.GetString( "path" ).Trim()
-		scale = json.GetNumber( "scale" )
+		
+    src_path = json.GetString( "path" )
+    offset_x = json.GetNumber( "offset_x" )
 		baseline_y = json.GetNumber( "baseline_y" )
 		char_width = Create_Int_array_from_TJSONArray( json.GetArray( "char_widths" ))
 		If char_width.Length <> char_count
-			DebugLog "Error in BMP_FONT Create_from_json: expected " + char_count + " characters, found " + char_width.Length 
+			DebugStop
 			Return Null
 		End If
 		img = IMAGE_ATLAS_REFERENCE( TEXTURE_MANAGER.reference_map.ValueForKey( src_path ))
-		img.LoadVariableWidthBMPFont( char_count, char_width, scale, baseline_y )
+		img.LoadVariableWidthBMPFont( char_count, char_width, offset_x, baseline_y )
 		f = New BMP_FONT
 		f.font_img = img
 		f.char_width = char_width
+    f.scale = 1
 		Return f
 	End Function
+  
+  Method clone:BMP_FONT()
+    Local f:BMP_FONT = New BMP_FONT
+    f.font_img = font_img
+    f.char_width = char_width[..]
+    f.scale = scale
+    Return f
+  End Method
+  
+  Function Create_copy_from_json:BMP_FONT( json:TJSON )
+    Local base_font_key$
+    Local base_font:BMP_FONT
+    Local scale%
+    Local f:BMP_FONT
+    
+    base_font_key = json.GetString( "base_font" )
+    base_font = get_bmp_font( base_font_key )
+    scale = json.GetNumber( "scale" )
+		f = base_font.clone()
+    f.scale = scale
+		Return f
+  End Function
 	
 End Type
 

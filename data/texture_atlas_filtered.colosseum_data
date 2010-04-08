@@ -1,6 +1,8 @@
 [
 	{
-		atlas_path: "art\atlas.png",
+		atlas_path: "art\texture_atlas_filtered.png",
+		filtered: true,
+		mipmapped: false,
 		frames: [
 			{
 				source_path: "art/door/door.png",
@@ -67,8 +69,8 @@
 			},
 			{
 				source_path: "art/effects/laser_big.png",
-				x: 781,
-				y: 180,
+				x: 805,
+				y: 171,
 				w: 17,
 				h: 7
 			},
@@ -144,29 +146,29 @@
 			},
 			{
 				source_path: "art/effects/projectile.png",
-				x: 850,
-				y: 180,
+				x: 874,
+				y: 171,
 				w: 9,
 				h: 7
 			},
 			{
 				source_path: "art/effects/projectile_shell_casing.png",
-				x: 839,
-				y: 180,
+				x: 863,
+				y: 171,
 				w: 11,
 				h: 7
 			},
 			{
 				source_path: "art/effects/rocket.png",
-				x: 813,
-				y: 180,
+				x: 837,
+				y: 171,
 				w: 13,
 				h: 7
 			},
 			{
 				source_path: "art/effects/rocket_casing.png",
-				x: 826,
-				y: 180,
+				x: 850,
+				y: 171,
 				w: 13,
 				h: 7
 			},
@@ -211,13 +213,6 @@
 				y: 0,
 				w: 50,
 				h: 50
-			},
-			{
-				source_path: "art/fonts/04b11_6pt.png",
-				x: 400,
-				y: 171,
-				w: 593,
-				h: 9
 			},
 			{
 				source_path: "art/items/pickup_ammo.png",
@@ -432,13 +427,13 @@
 			{
 				source_path: "art/ui/reload_bar.png",
 				x: 664,
-				y: 180,
+				y: 171,
 				w: 60,
 				h: 8
 			},
 			{
 				source_path: "art/ui/reload_marker.png",
-				x: 1007,
+				x: 771,
 				y: 171,
 				w: 10,
 				h: 8
@@ -543,7 +538,7 @@
 			},
 			{
 				source_path: "art/units/carrier/ramp.png",
-				x: 993,
+				x: 757,
 				y: 171,
 				w: 14,
 				h: 8
@@ -565,21 +560,21 @@
 			{
 				source_path: "art/units/light_tank/light_tank_track.png",
 				x: 400,
-				y: 188,
+				y: 179,
 				w: 200,
 				h: 6
 			},
 			{
 				source_path: "art/units/light_tank/light_tank_track_trail.png",
-				x: 859,
-				y: 180,
+				x: 883,
+				y: 171,
 				w: 25,
 				h: 6
 			},
 			{
 				source_path: "art/units/light_tank/pellet_turret_base.png",
-				x: 884,
-				y: 180,
+				x: 908,
+				y: 171,
 				w: 8,
 				h: 6
 			},
@@ -606,8 +601,8 @@
 			},
 			{
 				source_path: "art/units/light_tank/player_tank_turret_barrel.png",
-				x: 757,
-				y: 180,
+				x: 781,
+				y: 171,
 				w: 24,
 				h: 7
 			},
@@ -635,14 +630,14 @@
 			{
 				source_path: "art/units/medium_tank/med_tank_track.png",
 				x: 400,
-				y: 180,
+				y: 171,
 				w: 264,
 				h: 8
 			},
 			{
 				source_path: "art/units/medium_tank/med_tank_track_trail.png",
 				x: 724,
-				y: 180,
+				y: 171,
 				w: 33,
 				h: 8
 			},
@@ -739,8 +734,8 @@
 			},
 			{
 				source_path: "art/units/spider/limb.png",
-				x: 798,
-				y: 180,
+				x: 822,
+				y: 171,
 				w: 15,
 				h: 7
 			},

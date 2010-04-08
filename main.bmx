@@ -79,6 +79,7 @@ Repeat
 	select_game()
 	
 	?Not Debug '////////////////////////////////
+  
 	'menu input and misc
 	get_all_input()
 	'multiplayer
@@ -96,8 +97,10 @@ Repeat
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress )
 	'draw everything
 	draw_all_graphics()
-	?Debug  '////////////////////////////////
-	'begin new profiling cycle
+	
+  ?Debug  '////////////////////////////////
+	
+  'begin new profiling cycle
 	profiler()
 	'menu input and misc
 	get_all_input(); profiler(0)
@@ -118,7 +121,8 @@ Repeat
 	draw_all_graphics(); profiler(5)
 	'debug
 	debug_main()
-	? '////////////////////////////////
+	
+  ? '////////////////////////////////
 
 	'insta-quit
 	If esc_held And KeyDown( KEY_ESCAPE ) ..

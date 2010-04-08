@@ -23,41 +23,51 @@ EndRem
 'Import "settings.bmx"
 'Import "texture_manager.bmx"
 
+Global loading_progress%
 '_____________________________________________________________________________
-Global loading_progress# = 0.0
-
 Function load_texture_atlases%()
+  Local path$
 	Local file:TStream
 	Local json:TJSON
-	'load texture atlases before assets, since they will reference source paths of original images transparently
-	file = ReadFile( data_path + default_texture_atlas_file_name )
-	If Not file Then Return False
-	json = TJSON.Create( file )
-	file.Close()
-	If Not json.isNull() 'read successful
-		TEXTURE_MANAGER.Load_TEXTURE_MANAGER_from_json( json )
-	Else
-		Return False
-	End If
+  DebugLog( "  " + "texture_atlases" )
+  For Local a% = 0 Until texture_atlas_files.Length
+		DebugLog( "    " + texture_atlas_files[a] )
+    path = data_path + texture_atlas_files[a] + "." + data_file_ext
+    file = ReadFile( path )
+    If file
+      json = TJSON.Create( file )
+      file.Close()
+      If Not json.isNull() 'read successful
+        TEXTURE_MANAGER.Load_TEXTURE_MANAGER_from_json( json )
+      Else
+        Return False
+      End If
+    Else
+      Return False
+    End If
+		loading_progress :+ 1
+	Next
+	Return True
 End Function
-
+'_____________________________________________________________________________
 Function load_assets%()
-	Local asset_path$
-	Local asset_file:TStream
-	Local asset_json:TJSON
+	Local path$
+	Local file:TStream
+	Local json:TJSON
 	For Local a% = 0 Until asset_files.Length
 		DebugLog( "  "+asset_files[a] )
-		asset_path = data_path + asset_files[a] + "." + data_file_ext
-		asset_file = ReadFile( asset_path )
-		If asset_file
-			asset_json = TJSON.Create( asset_file )
-			If Not asset_json.isNull() And TJSONArray( asset_json.Root ) 'read successful
-				load_objects( asset_json, asset_files[a] )
+		path = data_path + asset_files[a] + "." + data_file_ext
+		file = ReadFile( path )
+		If file
+			json = TJSON.Create( file )
+      file.Close()
+			If Not json.isNull() And TJSONArray( json.Root ) 'read successful
+				load_objects( json, asset_files[a] )
 			End If
 		Else
 			Return False
 		End If
-		loading_progress :+ 100.0 * Float(a+1) / asset_files.Length
+		loading_progress :+ 1
 	Next
 	DebugLog( "~n~n" )
 	Return True
@@ -86,13 +96,16 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				Case "bmp_font"
 					Local f:BMP_FONT = BMP_FONT.Create_from_json( object_json )
 					If f Then bmp_font_map.Insert( key, f ) Else load_error( object_json )
+        Case "bmp_font_copy"
+          Local f:BMP_FONT = BMP_FONT.Create_copy_from_json( object_json )
+          If f Then bmp_font_map.Insert( key, f ) Else load_error( object_json )
 				Case "sound"
 					Local s:TSound = Create_TSound_from_json( object_json )
 					If s Then sound_map.Insert( key, s ) Else load_error( object_json )
 				Case "image"
+					TEXTURE_MANAGER.Load_TImage_json( object_json, key )
 					'Local i:TImage = Create_TImage_from_json( object_json )
 					'If i Then image_map.Insert( key, i ) Else load_error( object_json )
-					TEXTURE_MANAGER.Load_TImage_json( object_json, key )
 				Case "prop"
 					Local p:AGENT = Create_AGENT_from_json( object_json )
 					If p Then prop_map.Insert( key, p ) Else load_error( object_json )

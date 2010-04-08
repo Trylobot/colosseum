@@ -34,6 +34,7 @@ Type TEXTURE_MANAGER
 		Local atlas_image_frame:TJSON
 		
 		Local atlas_path$
+    Local flags%
 		Local atlas:TImage
 		Local source_path$
 		Local rect:BOX
@@ -47,8 +48,10 @@ Type TEXTURE_MANAGER
 			For Local a% = 0 Until atlases_json.Size()
 				atlas_json = TJSON.Create( atlases_json.GetByIndex( a ))
 				atlas_path = atlas_json.GetString( "atlas_path" ).Trim()
-				
-				atlas = LoadImage( atlas_path )
+        flags = 0
+        If atlas_json.GetBoolean( "filtered" ) Then flags :| FILTEREDIMAGE
+        If atlas_json.GetBoolean( "mipmapped" ) Then flags :| MIPMAPPEDIMAGE
+				atlas = LoadImage( atlas_path, flags )
 				image_atlases[a] = atlas
 				
 				atlas_image_frames = atlas_json.GetArray( "frames" )
@@ -60,9 +63,9 @@ Type TEXTURE_MANAGER
 					rect.w = atlas_image_frame.GetNumber( "w" )
 					rect.h = atlas_image_frame.GetNumber( "h" )
 					ref = New IMAGE_ATLAS_REFERENCE
-					'/////////////////////////////////////////////////
-					ref = IMAGE_ATLAS_REFERENCE.Create( atlas, rect )
-					'/////////////////////////////////////////////////
+					'///////////////////////////////////
+					ref = CreateImageRef( atlas, rect )
+					'///////////////////////////////////
 					source_path = atlas_image_frame.GetString( "source_path" ).Trim()
 					reference_map.Insert( source_path, ref )
 				Next

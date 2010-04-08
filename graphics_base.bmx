@@ -25,8 +25,6 @@ Function init_graphics()
 	SetClsColor( 0, 0, 0 )
 	Cls()
 	SetBlend( ALPHABLEND )
-	'AutoImageFlags( FILTEREDIMAGE|MIPMAPPEDIMAGE )
-	AutoImageFlags( FILTEREDIMAGE )
 End Function
 
 

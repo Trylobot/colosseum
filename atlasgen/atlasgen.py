@@ -33,36 +33,30 @@ def get_arg_parser():
     parser.add_argument('-w','--ymax',type=int,action='store', help='maximum height of the target atlas')
     parser.add_argument('-o','--output',action='store', help='file to which the texture atlas (PNG) will be written')
     parser.add_argument('-c','--chart',action='store', help='file to which the coordinate data (JSON) will be written')
-    parser.set_defaults(xmin=1,ymin=1,xmax=8192,ymax=8192)
+    parser.add_argument('-f','--filtered',action='store_true',help='whether the texture should be loaded with the FILTEREDIMAGE flag set')
+    parser.add_argument('-m','--mipmapped',action='store_true',help='whether the texture should be loaded with the MIPMAPPEDIMAGE flag set')
+    parser.set_defaults(xmin=1,ymin=1,xmax=8192,ymax=8192,filtered=False,mipmapped=False)
     return parser
 
 def get_width_height( pr ):
-    """
-    return a tuple containing, repectively, the width and height
-    of the rectangle r
-    """
+    # return a tuple containing, repectively, the width and height
+    # of the rectangle r
     w,h = pr.bottomright[0] - pr.bottomleft[0], pr.topright[1] - pr.bottomright[1]
     return (w,h)
 
 def log2(n):
-    """
-    return the log base 2 of n
-    """
+    # return the log base 2 of n
     return log(n)/log(2)
 
 def pow2( start, stop ):
-    """
-    generate the powers of 2 in sequence
-    from 2^start till 2^stop
-    """
+    # generate the powers of 2 in sequence
+    # from 2^start till 2^stop
     while start <= stop:
       yield pow(2,start)
       start += 1
       
 class Success( Exception ):
-    """
-    Used to break out of a nested loop
-    """
+    # used to break out of a nested loop
     pass
 
 def main():
@@ -122,9 +116,19 @@ def main():
 
     with open(args.chart,'w') as f:
         
+        filtered = 'filtered: false'
+        if args.filtered:
+          filtered = 'filtered: true'
+        
+        mipmapped = 'mipmapped: false'
+        if args.mipmapped:
+          mipmapped = 'mipmapped: true'
+        
         f.write( '[\n'
                + '\t{\n'
                + '\t\tatlas_path: "' + args.output + '",\n'
+               + '\t\t' + filtered + ',\n'
+               + '\t\t' + mipmapped + ',\n'
                + '\t\tframes: [' )
         
         atlas_entry = Template( '\n'
@@ -158,6 +162,7 @@ def main():
                + '\t}\n'
                + ']\n' )
     atlas.save( args.output )
+
     
 if __name__ == '__main__':
     main()    

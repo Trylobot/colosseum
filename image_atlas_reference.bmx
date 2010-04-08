@@ -12,6 +12,41 @@ Function DrawImageRef( ref:IMAGE_ATLAS_REFERENCE, x#, y#, f% = 0 )
 	If ref Then ref.Draw( x, y, f )
 End Function
 
+Function CreateImageRef:IMAGE_ATLAS_REFERENCE( atlas:TImage, rect:BOX )
+  Local ref:IMAGE_ATLAS_REFERENCE = New IMAGE_ATLAS_REFERENCE
+  ref.LoadAtlasRect( atlas, rect )
+  Return ref
+End Function
+
+Function CopyImageRef:IMAGE_ATLAS_REFERENCE( other:IMAGE_ATLAS_REFERENCE )
+  Local ref:IMAGE_ATLAS_REFERENCE = New IMAGE_ATLAS_REFERENCE
+  ref.atlas = other.atlas
+  ref.iframe = other.iframe
+  ref.src_rect = other.src_rect.clone()
+  ref.handle_x = other.handle_x
+  ref.handle_y = other.handle_y
+  ref.flip_x = other.flip_x
+  ref.flip_y = other.flip_y
+  ref.multi_cell = other.multi_cell
+  ref.variable_width = other.variable_width
+  ref.cell_count = other.cell_count
+  ref.cell_rect = New BOX[ref.cell_count]
+  For Local i% = 0 Until ref.cell_count
+    ref.cell_rect[i] = other.cell_rect[i].clone()
+  Next
+  ref.x0 = other.x0
+  ref.x1 = other.x1
+  ref.y0 = other.y0
+  ref.y1 = other.y1
+  ref.tx = other.tx
+  ref.ty = other.ty
+  ref.sx = other.sx
+  ref.sy = other.sy
+  ref.sw = other.sw
+  ref.sh = other.sh
+  Return ref
+End Function
+
 '______________________________________________________________________________
 Type IMAGE_ATLAS_REFERENCE
 	'base image data
@@ -51,12 +86,6 @@ Type IMAGE_ATLAS_REFERENCE
 		'///////////////////////////////////////////////
 	End Method
 
-	Function Create:IMAGE_ATLAS_REFERENCE( atlas:TImage, rect:BOX )
-		Local ref:IMAGE_ATLAS_REFERENCE = New IMAGE_ATLAS_REFERENCE
-		ref.LoadAtlasRect( atlas, rect )
-		Return ref
-	End Function
-	
 	Method LoadAtlasRect( atlas:TImage, rect:BOX )
 		Self.atlas = atlas
 		iframe = atlas.Frame( 0 )
@@ -133,7 +162,7 @@ Type IMAGE_ATLAS_REFERENCE
 		Next
 	End Method
 	
-	Method LoadVariableWidthBMPFont( count%, char_width%[], scale%, baseline_y% )
+	Method LoadVariableWidthBMPFont( count%, char_width%[], offset_x%, baseline_y% )
 		If count <= 1 Then Return
 		multi_cell = True
 		variable_width = True
@@ -150,7 +179,7 @@ Type IMAGE_ATLAS_REFERENCE
 			'x-coordinate advancement per-character
 			current_x :+ char_width[current_char]
 		Next
-		handle_x = 0
+		handle_x = offset_x
 		handle_y = baseline_y
 		x0 = -handle_x
 		x1 = 0 'determined at draw-time

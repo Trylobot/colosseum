@@ -4,7 +4,7 @@
 		key: "normal_5",
 		object: {
 			path: "art/fonts/04b11_6pt.png",
-			scale: 1,
+      offset_x: 0,
       baseline_y: 6,
       char_widths: [
         4,
@@ -102,6 +102,38 @@
         5,
         5
       ]
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "normal_10",
+		object: {
+			base_font: "normal_5",
+			scale: 2,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "normal_15",
+		object: {
+			base_font: "normal_5",
+			scale: 3,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "normal_20",
+		object: {
+			base_font: "normal_5",
+			scale: 4,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "normal_25",
+		object: {
+			base_font: "normal_5",
+			scale: 5,
 		}
 	}
 ]

@@ -26,7 +26,11 @@ Const sound_path$ = "sound/"
 Const user_path$ = "user/"
 
 Const default_settings_file_name$ = "settings" + "." + settings_file_ext
-Const default_texture_atlas_file_name$ = "atlas" + "." + data_file_ext
+
+Global texture_atlas_files$[] = [ ..
+  "texture_atlas_filtered", ..
+  "texture_atlas_raw" ..
+]
 
 Global asset_files$[] = [ ..
 	"fonts", ..

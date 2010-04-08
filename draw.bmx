@@ -257,7 +257,8 @@ Function draw_main_screen()
 	SetScale( 1, 1 )
 	SetColor( 157, 157, 157 )
 	'SetImageFont( get_font( "consolas_10" ))
-	Local font:BMP_FONT = get_bmp_font( "normal_5" )
+	'Local font:BMP_FONT = get_bmp_font( "normal_5" )
+  Local font:BMP_FONT = get_bmp_font( "normal_10" )
 	h = 0.75*TextHeight( info )
 	x = 1
 	y = window_h - h*3 - 1
@@ -634,6 +635,7 @@ End Function
 Global asset_loading_x% = 0
 Global asset_loading_y% = 0
 Global asset_loading_longest_string_length% = 0
+
 Function draw_loaded_asset( asset_id$ = Null, next_section% = False )
 	If next_section
 		asset_loading_x :+ asset_loading_longest_string_length + 1
