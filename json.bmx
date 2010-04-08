@@ -671,6 +671,7 @@ Type TJSONParser
 		Local full_err$ = " JSON Error; index "+Index+"; " + err
 		?Debug
 		DebugLog( full_err )
+		DebugStop
 		?Not Debug
 		Notify( full_err, True )
 		?

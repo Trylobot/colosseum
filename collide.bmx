@@ -93,16 +93,19 @@ Function collide_all_objects()
 		Next
 		
 		'collisions between {doors} and {agents|projectiles}
+		Local w#, h#
 		For Local d:DOOR = EachIn game.doors
 			For Local slider:WIDGET = EachIn d.all_sliders
 				SetRotation( slider.get_ang() )
 				SetHandle( slider.img.handle_x, slider.img.handle_y )
-				result = CollideRect( slider.get_x(), slider.get_y(), slider.img.width, slider.img.height, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
+				w = slider.img.width()
+				h = slider.img.height()
+				result = CollideRect( slider.get_x(), slider.get_y(), w, h, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
 				For ag = EachIn result
 					'COLLISION! between {ag} and {door}
 					collision_agent_door( ag, slider )
 				Next
-				result = CollideRect( slider.get_x(), slider.get_y(), slider.img.width, slider.img.height, PROJECTILE_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
+				result = CollideRect( slider.get_x(), slider.get_y(), w, h, PROJECTILE_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
 				For proj = EachIn result
 					'COLLISION! between {proj} and {door}
 					collision_projectile_door( proj, slider )
@@ -116,7 +119,7 @@ Function collide_all_objects()
 				SetRotation( 0 )
 				SetHandle( pkp.img.handle_x, pkp.img.handle_y )
 				'CollideImageRef( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
-				CollideRect( pkp.pos_x, pkp.pos_y, pkp.img.width, pkp.img.height, 0, PICKUP_COLLISION_LAYER, pkp )
+				CollideRect( pkp.pos_x, pkp.pos_y, pkp.img.width(), pkp.img.height(), 0, PICKUP_COLLISION_LAYER, pkp )
 			Next
 			result = game.player.collide( PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER )
 			For pkp = EachIn result

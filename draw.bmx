@@ -256,14 +256,20 @@ Function draw_main_screen()
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	SetColor( 157, 157, 157 )
-	SetImageFont( get_font( "consolas_10" ))
+	'SetImageFont( get_font( "consolas_10" ))
+	Local font:BMP_FONT = get_bmp_font( "normal_5" )
 	h = 0.75*TextHeight( info )
 	x = 1
 	y = window_h - h*3 - 1
 	If Not main_game
-		DrawText_with_outline( "COLOSSEUM   2008 Tyler W.R. Cole (aka Tylerbot), written in 100% BlitzMax", x, y ); y :+ h
-		DrawText_with_outline( "music by NickPerrin and Yoshi-1up, JSON binding by grable", x, y ); y :+ h
-		DrawText_with_outline( "thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, Firelord88", x, y ); y :+ h
+		'DrawText_with_outline( "COLOSSEUM (c)2008 Tyler W.R. Cole, written in 100% BlitzMax", x, y ); y :+ h
+		'DrawText_with_outline( "physics by Jeff Weber & Alex Okafor, networking by Vertex", x, y ); y :+ h
+		'DrawText_with_outline( "music by NickPerrin & Yoshi-1up, JSON by grable, font by Yuji Oshimoto", x, y ); y :+ h
+		'DrawText_with_outline( "also thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, & Firelord88", x, y ); y :+ h
+		font.draw_string( "COLOSSEUM (c)2008 Tyler W.R. Cole, written in 100% BlitzMax", x, y ); y :+ h
+		font.draw_string( "physics by Jeff Weber & Alex Okafor, networking by Vertex", x, y ); y :+ h
+		font.draw_string( "music by NickPerrin & Yoshi-1up, JSON by grable, font by Yuji Oshimoto", x, y ); y :+ h
+		font.draw_string( "also thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, & Firelord88", x, y ); y :+ h
 	End If
 	
 End Function
@@ -303,12 +309,12 @@ Function draw_menus()
 					DrawRect( 0, main_screen_menu_y + breadcrumb_h - 1, main_screen_x, get_current_menu().height )
 					SetAlpha( 0.75 + 0.25 * Sin( now() Mod 1000 ))
 					'DrawImageRef( get_image( "menu_back_arrow_extra_lines" ), 3, main_screen_menu_y + breadcrumb_h + get_current_menu().height/2.0 - get_image( "menu_back_arrow_extra_lines" ).height/2.0 )
-					DrawImageRef( get_image( "menu_back_arrow_solid" ), 3, main_screen_menu_y + breadcrumb_h + get_current_menu().height/2.0 - get_image( "menu_back_arrow_solid" ).height/2.0 )
+					DrawImageRef( get_image( "menu_back_arrow_solid" ), 3, main_screen_menu_y + breadcrumb_h + get_current_menu().height/2.0 - get_image( "menu_back_arrow_solid" ).height()/2.0 )
 					hide_selection = True
 				Else
 					SetAlpha( 0.25 )
 					'DrawImageRef( get_image( "menu_back_arrow_extra_lines" ), 3, main_screen_menu_y + breadcrumb_h + get_current_menu().height/2.0 - get_image( "menu_back_arrow_extra_lines" ).height/2.0 )
-					DrawImageRef( get_image( "menu_back_arrow_outline" ), 3, main_screen_menu_y + breadcrumb_h + get_current_menu().height/2.0 - get_image( "menu_back_arrow_outline" ).height/2.0 )
+					DrawImageRef( get_image( "menu_back_arrow_outline" ), 3, main_screen_menu_y + breadcrumb_h + get_current_menu().height/2.0 - get_image( "menu_back_arrow_outline" ).height()/2.0 )
 				End If
 			End If
 			'////////////////////////////////////////////////////////////
@@ -382,12 +388,14 @@ Function draw_lighting_and_effects()
 	SetAlpha( 0.95 * time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
 	
 	Local size% = Max( window_w, window_h)
-	DrawRect( game.player.pos_x - 100 - size, game.player.pos_y - 100 - size, size, 2*size )
-	DrawRect( game.player.pos_x + 100,        game.player.pos_y - 100 - size, size, 2*size )
-	DrawRect( game.player.pos_x - 100,        game.player.pos_y - 100 - size,  200,   size )
-	DrawRect( game.player.pos_x - 100,        game.player.pos_y + 100,         200,   size )
+	Local x% = Int(game.player.pos_x)
+	Local y% = Int(game.player.pos_y)
+	DrawRect( x - 100 - size, y - 100 - size, size, 2*size )
+	DrawRect( x + 100,        y - 100 - size, size, 2*size )
+	DrawRect( x - 100,        y - 100 - size,  200,   size )
+	DrawRect( x - 100,        y + 100,         200,   size )
 
-	DrawImageRef( get_image( "spotlight" ), game.player.pos_x, game.player.pos_y )
+	DrawImageRef( get_image( "spotlight" ), x, y )
 End Function
 
 '______________________________________________________________________________
@@ -457,7 +465,7 @@ Function draw_HUD()
 	Local pct# = game.player.cur_health/game.player.max_health
 	Local c% = 255
 	If pct <= 0.33333 Then c = 255 * Sin( now() Mod 180 )
-	draw_percentage_bar( x + img_health_mini.width + 3,y, w,h, pct, 1.0, 255, c, c ) ', (1 - (0.5*pct)) )
+	draw_percentage_bar( x + img_health_mini.width() + 3,y, w,h, pct, 1.0, 255, c, c ) ', (1 - (0.5*pct)) )
 	
 	y = y2
 	'player cash
@@ -478,7 +486,7 @@ Function draw_HUD()
 	'player ammo, overheat & charge indicators
 	Local img_icon_player_cannon_ammo:IMAGE_ATLAS_REFERENCE = get_image( "icon_player_cannon_ammo" )
 	Local img_shine:IMAGE_ATLAS_REFERENCE = get_image( "bar_shine" )
-	Local ammo_row_len% = w / img_icon_player_cannon_ammo.width
+	Local ammo_row_len% = w / img_icon_player_cannon_ammo.width()
 	Local temp_x%, temp_y%
 	For Local t:TURRET = EachIn game.player.turrets
 		y = y1
@@ -509,11 +517,11 @@ Function draw_HUD()
 			For Local i% = 0 To t.cur_ammo - 1
 				If ((i Mod ammo_row_len) = 0) And (i > 0)
 					temp_x = x
-					If ((i / ammo_row_len) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width / 2
-					temp_y :+ img_icon_player_cannon_ammo.height / 2
+					If ((i / ammo_row_len) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width() / 2
+					temp_y :+ img_icon_player_cannon_ammo.height() / 2
 				End If
 				DrawImageRef( img_icon_player_cannon_ammo, temp_x, temp_y )
-				temp_x :+ img_icon_player_cannon_ammo.width
+				temp_x :+ img_icon_player_cannon_ammo.width()
 			Next
 			x :+ w + HORIZONTAL_HUD_MARGIN
 		End If
@@ -559,7 +567,7 @@ Function draw_HUD()
 		SetAlpha( 0.5 )
 		img_spkr = img_icon_speaker_off
 	End If
-	DrawImageRef( img_icon_music_note, x, y ); x :+ img_icon_music_note.width + 5
+	DrawImageRef( img_icon_music_note, x, y ); x :+ img_icon_music_note.width() + 5
 	DrawImageRef( img_spkr, x, y )
 	
 	'help
@@ -717,8 +725,10 @@ Function draw_kill_tally( start_ts%, count% )
 	Const fade_in_time% = 250
 	
 	Local skull_1x:IMAGE_ATLAS_REFERENCE = get_image( "skull_1x" )
+	Local sk_w# = skull_1x.width()
+	Local sk_h# = skull_1x.height()
 	Local skulls_per_row% = 10
-	Local area_width% = skulls_per_row * skull_1x.Width
+	Local area_width% = skulls_per_row * sk_w
 	Local tally_x% = (window_w - area_width)/2
 	Local elapsed% = now() - start_ts
 	Local s% = elapsed / fade_in_time 'current skull fading in
@@ -736,7 +746,7 @@ Function draw_kill_tally( start_ts%, count% )
 			Continue 'skip this iteration entirely, nothing to draw
 		End If
 
-		DrawImageRef( skull_1x, tally_x + skull_1x.Width * cursor.col, tally_y + skull_1x.Height * cursor.row )
+		DrawImageRef( skull_1x, tally_x + sk_w * cursor.col, tally_y + sk_h * cursor.row )
 
 		cursor.col :+ 1
 		If cursor.col >= skulls_per_row

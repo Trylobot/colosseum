@@ -12,10 +12,46 @@ EndRem
 'Import "texture_manager.bmx"
 
 '______________________________________________________________________________
-Global font_map:TMap = CreateMap()
+Const settings_file_ext$ = "colosseum_settings"
+Const data_file_ext$ = "colosseum_data"
+Const level_file_ext$ = "colosseum_level"
+Const saved_game_file_ext$ = "colosseum_profile"
+Const autosave_path$ = "user/autosave.colosseum_data"
+
+Const art_path$ = "art/"
+Const data_path$ = "data/"
+Const font_path$ = "fonts/"
+Const level_path$ = "levels/"
+Const sound_path$ = "sound/"
+Const user_path$ = "user/"
+
+Const default_settings_file_name$ = "settings" + "." + settings_file_ext
+Const default_texture_atlas_file_name$ = "atlas" + "." + data_file_ext
+
+Global asset_files$[] = [ ..
+	"fonts", ..
+	"bmp_fonts", ..
+	"sounds", ..
+	"images", ..
+	"props", ..
+	"particles", ..
+	"particle_emitters", ..
+	"projectiles", ..
+	"projectile_launchers", ..
+	"widgets", ..
+	"pickups", ..
+	"turret_barrels", ..
+	"turrets", ..
+	"ai_types", ..
+	"player_vehicles", ..
+	"units", ..
+	"campaigns" ..
+]
+
+'______________________________________________________________________________
+Global font_map:TMap = CreateMap() 'deprecated; use BMP_FONT instead
 Global sound_map:TMap = CreateMap()
-'Global image_map:TMap = CreateMap()
-'use TEXTURE_MANAGER instead
+'Global image_map:TMap = CreateMap() 'use TEXTURE_MANAGER instead of image map
 
 Function get_font:TImageFont( key$ ) 'returns read-only reference
 	Return TImageFont( font_map.ValueForKey( key.toLower() ))

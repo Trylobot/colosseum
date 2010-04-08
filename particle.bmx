@@ -209,7 +209,7 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Method get_bounding_box:BOX()
-		Local size# = Max( img.width, img.height )
+		Local size# = Max( img.width( frame ), img.height( frame ) )
 		Return Create_BOX( pos_x - size/2.0, pos_y - size/2.0, size, size )
 	End Method
 	

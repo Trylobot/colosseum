@@ -16,18 +16,18 @@ Function Create_DOOR:DOOR( parent:POINT )
 	d.parent = parent
 	d.left_slider = get_widget( "door" )
 	d.left_slider.parent = parent
-	d.left_slider.attach_at( 25 + 50/3 - d.left_slider.img.height/2 + 1, 0, 90, True )
+	d.left_slider.attach_at( 25 + 50/3 - d.left_slider.img.height()/2 + 1, 0, 90, True )
 	d.right_slider = get_widget( "door" )
 	d.right_slider.parent = parent
-	d.right_slider.attach_at( 25 + 50/3 - d.right_slider.img.height/2 + 1, 0, -90, True )
+	d.right_slider.attach_at( 25 + 50/3 - d.right_slider.img.height()/2 + 1, 0, -90, True )
 	d.all_sliders = [ d.left_slider, d.right_slider ]
 	d.left_servo = get_particle( "door_servo" )
 	d.left_servo.parent = parent
-	d.left_servo.attach_at( 25 + 50/3 - d.left_slider.img.height/2 + 1, 73 )
+	d.left_servo.attach_at( 25 + 50/3 - d.left_slider.img.height()/2 + 1, 73 )
 	d.left_servo.ang = -90
 	d.right_servo = get_particle( "door_servo" )
 	d.right_servo.parent = parent
-	d.right_servo.attach_at( 25 + 50/3 - d.right_slider.img.height/2 + 1, -73 )
+	d.right_servo.attach_at( 25 + 50/3 - d.right_slider.img.height()/2 + 1, -73 )
 	d.right_servo.ang = 90
 	d.bg = get_image( "door_bg" )
 	d.fg = get_image( "door_fg" )

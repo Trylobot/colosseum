@@ -6,24 +6,6 @@ EndRem
 'SuperStrict
 
 '______________________________________________________________________________
-Const settings_file_ext$ = "colosseum_settings"
-Const data_file_ext$ = "colosseum_data"
-Const level_file_ext$ = "colosseum_level"
-Const saved_game_file_ext$ = "colosseum_profile"
-Const autosave_path$ = "user/autosave.colosseum_data"
-
-Const art_path$ = "art/"
-Const data_path$ = "data/"
-Const font_path$ = "fonts/"
-Const level_path$ = "levels/"
-Const sound_path$ = "sound/"
-Const user_path$ = "user/"
-
-Const default_settings_file_name$ = "settings." + settings_file_ext
-Const default_assets_file_name$ = "assets." + data_file_ext
-Const default_texture_atlas_file_name$ = "atlas." + data_file_ext
-
-'______________________________________________________________________________
 'TODO: this should just be an int.
 ' change references to team_id
 ' team-specific objects should be abstracted to any number of teams

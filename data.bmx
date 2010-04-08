@@ -29,7 +29,7 @@ Global loading_progress# = 0.0
 Function load_texture_atlases%()
 	Local file:TStream
 	Local json:TJSON
-	'load texture atlas
+	'load texture atlases before assets, since they will reference source paths of original images transparently
 	file = ReadFile( data_path + default_texture_atlas_file_name )
 	If Not file Then Return False
 	json = TJSON.Create( file )
@@ -42,40 +42,25 @@ Function load_texture_atlases%()
 End Function
 
 Function load_assets%()
-	Local file:TStream
-	Local json:TJSON
-	'load all remaining assets
-	file = ReadFile( data_path + default_assets_file_name )
-	If Not file Then Return False
-	json = TJSON.Create( file )
-	file.Close()
-	If Not json.isNull() 'read successful
-		Local asset_path$
-		Local asset_file:TStream
-		Local asset_json:TJSON
-		Local asset_id$
-		Local asset_identifiers:TJSONArray = json.GetArray("")
-		If asset_identifiers 'the root object is an array
-			For Local a% = 0 Until asset_identifiers.Size()
-				asset_path = asset_identifiers.GetByIndex( a ).ToString()
-				Local source_file$ = StripAll( asset_path )
-				DebugLog( "  "+asset_path )
-				asset_file = ReadFile( asset_path )
-				If file
-					asset_json = TJSON.Create( asset_file )
-					If Not asset_json.isNull() And TJSONArray( asset_json.Root ) 'read successful
-						load_objects( asset_json, source_file )
-					End If
-				End If
-				loading_progress :+ 100.0 * Float(a+1) / asset_identifiers.Size()
-			Next
+	Local asset_path$
+	Local asset_file:TStream
+	Local asset_json:TJSON
+	For Local a% = 0 Until asset_files.Length
+		DebugLog( "  "+asset_files[a] )
+		asset_path = data_path + asset_files[a] + "." + data_file_ext
+		asset_file = ReadFile( asset_path )
+		If asset_file
+			asset_json = TJSON.Create( asset_file )
+			If Not asset_json.isNull() And TJSONArray( asset_json.Root ) 'read successful
+				load_objects( asset_json, asset_files[a] )
+			End If
+		Else
+			Return False
 		End If
-		DebugLog( "~n~n" )
-		Return True
-	Else
-		Return False
-	End If
-	Return False
+		loading_progress :+ 100.0 * Float(a+1) / asset_files.Length
+	Next
+	DebugLog( "~n~n" )
+	Return True
 End Function
 '______________________________________________________________________________
 Function load_objects%( json:TJSON, source_file$ = Null )
@@ -98,6 +83,9 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				Case "font"
 					Local f:TImageFont = Create_TImageFont_from_json( object_json )
 					If f Then font_map.Insert( key, f ) Else load_error( object_json )
+				Case "bmp_font"
+					Local f:BMP_FONT = BMP_FONT.Create_from_json( object_json )
+					If f Then bmp_font_map.Insert( key, f ) Else load_error( object_json )
 				Case "sound"
 					Local s:TSound = Create_TSound_from_json( object_json )
 					If s Then sound_map.Insert( key, s ) Else load_error( object_json )
@@ -377,5 +365,6 @@ End Function
 
 Function load_error( json:TJSON )
 	DebugLog( " *** ERROR loading~n" + json.ToSource() )
+	DebugStop
 End Function
 

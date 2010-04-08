@@ -133,7 +133,7 @@ Type COMPLEX_AGENT Extends AGENT
 		c.img = img
 		If c.img
 			If Not hitbox_img Then hitbox_img = c.img
-			c.hitbox = Create_BOX( hitbox_img.handle_x, hitbox_img.handle_y, hitbox_img.width, hitbox_img.height )
+			c.hitbox = Create_BOX( hitbox_img.handle_x, hitbox_img.handle_y, hitbox_img.width(), hitbox_img.height() )
 		End If
 		c.gibs = gibs
 		c.ai_name = ai_name
@@ -319,7 +319,7 @@ Type COMPLEX_AGENT Extends AGENT
 					SetColor( 255, 255, 255 )
 			End Select
 			SetAlpha( 0.15*alpha_override )
-			Local glow_scale# = 0.3*scale_override*(img.width-2)/17.0
+			Local glow_scale# = 0.3*scale_override*(img.width()-2)/17.0
 			SetScale( glow_scale, glow_scale )
 			DrawImageRef( get_image( "halo" ), pos_x, pos_y )
 		End If
@@ -775,7 +775,7 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	If json.TypeOf( "hitbox_image_key" ) <> JSON_UNDEFINED        Then hitbox_img = get_image( json.GetString( "hitbox_image_key" ))
 	If cmp_ag.img
 		If Not hitbox_img Then hitbox_img = cmp_ag.img
-		cmp_ag.hitbox = Create_BOX( hitbox_img.handle_x, hitbox_img.handle_y, hitbox_img.width, hitbox_img.height )
+		cmp_ag.hitbox = Create_BOX( hitbox_img.handle_x, hitbox_img.handle_y, hitbox_img.width(), hitbox_img.height() )
 	End If
 	If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED          Then cmp_ag.gibs = get_image( json.GetString( "gibs_image_key" ))
 	'If json.TypeOf( "lightmap_image_key" ) <> JSON_UNDEFINED      Then cmp_ag.lightmap = get_image( json.GetString( "lightmap_image_key" ))
