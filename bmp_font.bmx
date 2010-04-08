@@ -15,27 +15,26 @@ Function get_bmp_font:BMP_FONT( key$ )
 End Function
 
 Type BMP_FONT
-	Const ascii_start% = 32
-	Const ascii_end% = 126
-	Const char_count% = ascii_end - ascii_start
 	Rem
 	character ordering
 	 !"#$%'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
 	EndRem
+	Const ascii_start% = 32  'ASCII Space
+	Const ascii_end%   = 126 'ASCII Tilde
+	Const char_count%  = ascii_end - ascii_start
+
 	Field font_img:IMAGE_ATLAS_REFERENCE
 	Field char_width%[]
 	
 	Method draw_string( str$, x#, y# )
 		Local cx% = x
 		Local cy% = y
-		Local glyph_index%
+		Local glyph%
 		For Local i% = 0 Until str.Length
-			glyph_index = Asc( str[i..i+1] ) - ascii_start
-			If glyph_index < char_width.Length
-				DrawImageRef( font_img, cx, cy, glyph_index )
-				cx :+ char_width[glyph_index]
-			Else
-				Return
+			glyph = str[i] - ascii_start
+			If glyph < char_count
+				DrawImageRef( font_img, cx, cy, glyph )
+				cx :+ char_width[glyph]
 			End If
 		Next
 	End Method
