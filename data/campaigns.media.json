@@ -1,0 +1,30 @@
+[
+	{
+		class: "campaign",
+		key: "training",
+		object: {
+			name: "training",
+			levels: [
+				"levels/training/training1.level.json",
+				"levels/training/training2.level.json",
+				"levels/training/training3.level.json"
+			],
+			player_vehicle: "light_tank"
+		}
+	},
+	{
+		class: "campaign",
+		key: "mars",
+		object: {
+			name: "mars",
+			levels: [
+				"levels/mars/maze.level.json",
+				"levels/mars/about_face.level.json",
+				"levels/mars/blitz.level.json",
+				"levels/mars/orchard.level.json",
+				"levels/mars/three_gates.level.json"
+			],
+			player_vehicle: "light_tank"
+		}
+	}
+]

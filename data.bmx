@@ -32,8 +32,8 @@ Function load_texture_atlases%()
   DebugLog( "  " + "texture_atlases" )
 	TEXTURE_MANAGER.init( texture_atlas_files.Length )
   For Local a% = 0 Until texture_atlas_files.Length
-		DebugLog( "    " + texture_atlas_files[a] )
     path = data_path + texture_atlas_files[a] + "." + data_file_ext
+		DebugLog( "    " + path )
     file = ReadFile( path )
     If file
       json = TJSON.Create( file )
@@ -56,8 +56,8 @@ Function load_assets%()
 	Local file:TStream
 	Local json:TJSON
 	For Local a% = 0 Until asset_files.Length
-		DebugLog( "  "+asset_files[a] )
 		path = data_path + asset_files[a] + "." + data_file_ext
+		DebugLog( "  " + path )
 		file = ReadFile( path )
 		If file
 			json = TJSON.Create( file )

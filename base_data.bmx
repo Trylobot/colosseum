@@ -12,12 +12,6 @@ EndRem
 'Import "texture_manager.bmx"
 
 '______________________________________________________________________________
-Const settings_file_ext$ = "colosseum_settings"
-Const data_file_ext$ = "colosseum_data"
-Const level_file_ext$ = "colosseum_level"
-Const saved_game_file_ext$ = "colosseum_profile"
-Const autosave_path$ = "user/autosave.colosseum_data"
-
 Const art_path$ = "art/"
 Const data_path$ = "data/"
 Const font_path$ = "fonts/"
@@ -25,6 +19,12 @@ Const level_path$ = "levels/"
 Const sound_path$ = "sound/"
 Const user_path$ = "user/"
 
+Const settings_file_ext$ = "config.json"
+Const data_file_ext$ = "media.json"
+Const level_file_ext$ = "level.json"
+Const saved_game_file_ext$ = "profile.json"
+
+Const autosave_path$ = user_path + "autosave" + "." + settings_file_ext
 Const default_settings_file_name$ = "settings" + "." + settings_file_ext
 
 Global texture_atlas_files$[] = [ ..

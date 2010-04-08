@@ -293,8 +293,12 @@ Function init_campaign_chooser()
 				If lev
 					image[c][L] = generate_level_mini_preview( lev )
 					image_label[c][L] = lev.name
+					lock[c][L] = Not contained_in( lev_path, profile.levels_beaten )
+				Else
+					"Error: level not found ~q" + lev_path + "~q"
+					DebugStop
 				End If
-				lock[c][L] = Not contained_in( lev_path, profile.levels_beaten )
+				lock[c][L] = True
 			Next
 		End If
 	Next
