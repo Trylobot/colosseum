@@ -30,6 +30,7 @@ Function load_texture_atlases%()
 	Local file:TStream
 	Local json:TJSON
   DebugLog( "  " + "texture_atlases" )
+	TEXTURE_MANAGER.init( texture_atlas_files.Length )
   For Local a% = 0 Until texture_atlas_files.Length
 		DebugLog( "    " + texture_atlas_files[a] )
     path = data_path + texture_atlas_files[a] + "." + data_file_ext
@@ -38,7 +39,7 @@ Function load_texture_atlases%()
       json = TJSON.Create( file )
       file.Close()
       If Not json.isNull() 'read successful
-        TEXTURE_MANAGER.Load_TEXTURE_MANAGER_from_json( json )
+        TEXTURE_MANAGER.load_texture_from_json( json )
       Else
         Return False
       End If
@@ -103,7 +104,7 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 					Local s:TSound = Create_TSound_from_json( object_json )
 					If s Then sound_map.Insert( key, s ) Else load_error( object_json )
 				Case "image"
-					TEXTURE_MANAGER.Load_TImage_json( object_json, key )
+					TEXTURE_MANAGER.load_image_data( object_json, key )
 					'Local i:TImage = Create_TImage_from_json( object_json )
 					'If i Then image_map.Insert( key, i ) Else load_error( object_json )
 				Case "prop"

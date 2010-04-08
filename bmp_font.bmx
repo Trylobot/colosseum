@@ -58,6 +58,9 @@ Type BMP_FONT
 			Return Null
 		End If
 		img = IMAGE_ATLAS_REFERENCE( TEXTURE_MANAGER.reference_map.ValueForKey( src_path ))
+		If Not img
+			DebugStop
+		End If
 		img.LoadVariableWidthBMPFont( char_count, char_width, offset_x, baseline_y )
 		f = New BMP_FONT
 		f.font_img = img
