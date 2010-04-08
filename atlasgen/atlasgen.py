@@ -62,6 +62,8 @@ class Success( Exception ):
 def main():
     parser = get_arg_parser()
     args = parser.parse_args()
+    
+    atlas_path = args.output.strip().replace( '\\', '/' )
 
     textures = {}
     rects = []
@@ -70,7 +72,7 @@ def main():
         if len(input) == 0:
           break
         try:
-            tname = input.strip()
+            tname = input
             textures[tname] = Image.open( tname )
             rects.append( Rect.Rect( textures[ tname ].size, tname ) )
             args.xmin = max( args.xmin, textures[tname].size[0] )
@@ -126,7 +128,7 @@ def main():
         
         f.write( '[\n'
                + '\t{\n'
-               + '\t\tatlas_path: "' + args.output + '",\n'
+               + '\t\tatlas_path: "' + atlas_path + '",\n'
                + '\t\t' + filtered + ',\n'
                + '\t\t' + mipmapped + ',\n'
                + '\t\tframes: [' )
@@ -151,7 +153,6 @@ def main():
             
             atlas.paste( textures[pr.name], box )  
 
-            path = pr.name
             x,y = int(pr.bottomleft[0]), int(pr.bottomleft[1])
             w,h = int(pr.bottomright[0] - pr.bottomleft[0]), int(pr.topright[1] - pr.bottomright[1])
             
@@ -161,7 +162,7 @@ def main():
                + '\t\t]\n'
                + '\t}\n'
                + ']\n' )
-    atlas.save( args.output )
+    atlas.save( atlas_path )
 
     
 if __name__ == '__main__':

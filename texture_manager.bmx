@@ -55,6 +55,10 @@ Type TEXTURE_MANAGER
 				If atlas_json.GetBoolean( "filtered" ) Then flags :| FILTEREDIMAGE
 				If atlas_json.GetBoolean( "mipmapped" ) Then flags :| MIPMAPPEDIMAGE
 				atlas = LoadImage( atlas_path, flags )
+				If Not atlas
+					DebugLog( "Error: atlas not found ~q" + atlas_path + "~q" )
+					DebugStop
+				End If
 				image_atlases[a] = atlas
 				
 				atlas_image_frames = atlas_json.GetArray( "frames" )

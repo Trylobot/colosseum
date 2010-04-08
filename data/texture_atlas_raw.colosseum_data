@@ -1,6 +1,6 @@
 [
 	{
-		atlas_path: "art\texture_atlas_raw.png",
+		atlas_path: "art/texture_atlas_raw.png",
 		filtered: false,
 		mipmapped: false,
 		frames: [
