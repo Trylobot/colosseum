@@ -257,9 +257,9 @@ Function draw_main_screen()
 	SetScale( 1, 1 )
 	SetColor( 157, 157, 157 )
 	'SetImageFont( get_font( "consolas_10" ))
-	'Local font:BMP_FONT = get_bmp_font( "normal_5" )
-  Local font:BMP_FONT = get_bmp_font( "normal_10" )
-	h = 0.75*TextHeight( info )
+	Local font:BMP_FONT = get_bmp_font( "normal_5" )
+  'Local font:BMP_FONT = get_bmp_font( "normal_10" )
+	h = font.height
 	x = 1
 	y = window_h - h*3 - 1
 	If Not main_game

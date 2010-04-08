@@ -26,6 +26,7 @@ Type BMP_FONT
 	Field font_img:IMAGE_ATLAS_REFERENCE
 	Field char_width%[]
   Field scale%
+  Field height%
 	
 	Method draw_string( str$, x#, y# )
 		Local cx% = x
@@ -66,12 +67,14 @@ Type BMP_FONT
 		f.font_img = img
 		f.char_width = char_width
     f.scale = 1
+    f.height = img.height()
 		Return f
 	End Function
   
   Method clone:BMP_FONT()
     Local f:BMP_FONT = New BMP_FONT
     f.font_img = font_img
+    f.height = height
     f.char_width = char_width[..]
     f.scale = scale
     Return f
@@ -88,6 +91,7 @@ Type BMP_FONT
     scale = json.GetNumber( "scale" )
 		f = base_font.clone()
     f.scale = scale
+    f.height = scale*base_font.height
 		Return f
   End Function
 	

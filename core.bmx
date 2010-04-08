@@ -295,7 +295,7 @@ Function init_campaign_chooser()
 					image_label[c][L] = lev.name
 					lock[c][L] = Not contained_in( lev_path, profile.levels_beaten )
 				Else
-					"Error: level not found ~q" + lev_path + "~q"
+					DebugLog( "Error: level not found ~q" + lev_path + "~q" )
 					DebugStop
 				End If
 				lock[c][L] = True
