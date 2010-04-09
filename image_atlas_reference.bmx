@@ -18,35 +18,6 @@ Function CreateImageRef:IMAGE_ATLAS_REFERENCE( atlas:TImage, rect:BOX )
   Return ref
 End Function
 
-Function CopyImageRef:IMAGE_ATLAS_REFERENCE( other:IMAGE_ATLAS_REFERENCE )
-  Local ref:IMAGE_ATLAS_REFERENCE = New IMAGE_ATLAS_REFERENCE
-  ref.atlas = other.atlas
-  ref.iframe = other.iframe
-  ref.src_rect = other.src_rect.clone()
-  ref.handle_x = other.handle_x
-  ref.handle_y = other.handle_y
-  ref.flip_x = other.flip_x
-  ref.flip_y = other.flip_y
-  ref.multi_cell = other.multi_cell
-  ref.variable_width = other.variable_width
-  ref.cell_count = other.cell_count
-  ref.cell_rect = New BOX[ref.cell_count]
-  For Local i% = 0 Until ref.cell_count
-    ref.cell_rect[i] = other.cell_rect[i].clone()
-  Next
-  ref.x0 = other.x0
-  ref.x1 = other.x1
-  ref.y0 = other.y0
-  ref.y1 = other.y1
-  ref.tx = other.tx
-  ref.ty = other.ty
-  ref.sx = other.sx
-  ref.sy = other.sy
-  ref.sw = other.sw
-  ref.sh = other.sh
-  Return ref
-End Function
-
 '______________________________________________________________________________
 Type IMAGE_ATLAS_REFERENCE
 	'base image data
@@ -96,10 +67,18 @@ Type IMAGE_ATLAS_REFERENCE
 	End Method
 	
 	Method LoadImageModifiers( handle_x#, handle_y#, flip_x% = False, flip_y% = False )
-		Self.handle_x = handle_x
-		Self.handle_y = handle_y
 		Self.flip_x = flip_x
 		Self.flip_y = flip_y
+		If Not flip_x
+			Self.handle_x = handle_x
+		Else 'flip_x
+			Self.handle_x = src_rect.w - handle_x
+		End If
+		If Not flip_y
+			Self.handle_y = handle_y
+		Else 'flip_y
+			Self.handle_y = src_rect.y - handle_y
+		End If
 		sx = src_rect.x
 		sy = src_rect.y
 		sw = src_rect.w
@@ -124,22 +103,6 @@ Type IMAGE_ATLAS_REFERENCE
 		If count <= 1 Then Return
 		multi_cell = True
 		variable_width = False
-		sw = cell_width
-		sh = cell_height
-		If Not flip_x
-			x0 = -handle_x
-			x1 = x0 + sw
-		Else 'flip_x
-			x1 = -handle_x
-			x0 = x1 + sw
-		End If
-		If Not flip_y
-			y0 = -handle_y
-			y1 = y0 + sh
-		Else 'flip_y
-			y1 = -handle_y
-			y0 = y1 + sh
-		End If
 		cell_count = count
 		cell_rect = New BOX[count]
 		Local columns% = src_rect.w / cell_width
@@ -156,10 +119,31 @@ Type IMAGE_ATLAS_REFERENCE
 				'early break-out (for animations that don't fill the entire src_rect
 				current_cell :+ 1
 				If current_cell >= count
-					Return
+					current_column = columns
+					current_row = rows
 				End If
 			Next
 		Next
+		'handle_x  already set
+		'handle_y  already set
+		'sx  determined at draw-time
+		'sy  determined at draw-time
+		sw = cell_width
+		sh = cell_height
+		If Not flip_x
+			x0 = -handle_x
+			x1 = x0 + sw
+		Else 'flip_x
+			x1 = -handle_x
+			x0 = x1 + sw
+		End If
+		If Not flip_y
+			y0 = -handle_y
+			y1 = y0 + sh
+		Else 'flip_y
+			y1 = -handle_y
+			y0 = y1 + sh
+		End If
 	End Method
 	
 	Method LoadVariableWidthBMPFont( count%, char_width%[], offset_x%, baseline_y% )
@@ -179,14 +163,18 @@ Type IMAGE_ATLAS_REFERENCE
 			'x-coordinate advancement per-character
 			current_x :+ char_width[current_char]
 		Next
+		'flip_x  ignored
+		'flip_y  ignored
 		handle_x = offset_x
 		handle_y = baseline_y
+		'sx  determined at draw-time
+		'sy  determined at draw-time
+		'sw  determined at draw_time
+		sh = src_rect.h
 		x0 = -handle_x
-		x1 = 0 'determined at draw-time
+		'x1  determined at draw-time
 		y0 = -handle_y
 		y1 = y0 + src_rect.h
-		sw = 0 'determined at draw_time
-		sh = src_rect.h
 	End Method
 	
 	Method width#( f% = 0 )
@@ -206,4 +194,33 @@ Type IMAGE_ATLAS_REFERENCE
 	End Method
 	
 End Type
+
+Function CopyImageRef:IMAGE_ATLAS_REFERENCE( other:IMAGE_ATLAS_REFERENCE )
+  Local ref:IMAGE_ATLAS_REFERENCE = New IMAGE_ATLAS_REFERENCE
+  ref.atlas = other.atlas
+  ref.iframe = other.iframe
+  ref.src_rect = other.src_rect.clone()
+  ref.handle_x = other.handle_x
+  ref.handle_y = other.handle_y
+  ref.flip_x = other.flip_x
+  ref.flip_y = other.flip_y
+  ref.multi_cell = other.multi_cell
+  ref.variable_width = other.variable_width
+  ref.cell_count = other.cell_count
+  ref.cell_rect = New BOX[ref.cell_count]
+  For Local i% = 0 Until ref.cell_count
+    ref.cell_rect[i] = other.cell_rect[i].clone()
+  Next
+  ref.x0 = other.x0
+  ref.x1 = other.x1
+  ref.y0 = other.y0
+  ref.y1 = other.y1
+  ref.tx = other.tx
+  ref.ty = other.ty
+  ref.sx = other.sx
+  ref.sy = other.sy
+  ref.sw = other.sw
+  ref.sh = other.sh
+  Return ref
+End Function
 

@@ -123,9 +123,9 @@ Function contained_in%( x$, arr$[] )
 End Function
 
 Function boolean_to_string$( b% )
-	If b = True
+	If b
 		Return "true"
-	Else 'b = false
+	Else
 		Return "false"
 	End If
 End Function
@@ -136,20 +136,6 @@ Function string_to_boolean%( str$ )
 			Return 1
 		Case "false"
 			Return 0
-		Case "yes"
-			Return 1
-		Case "no"
-			Return 0
-		Case "on"
-			Return 1
-		Case "off"
-			Return 0
-		Case "enabled"
-			Return 1
-		Case "disabled"
-			Return 0
-		Default
-			Return str.ToInt()
 	End Select
 End Function
 
@@ -172,6 +158,14 @@ Function str_repeat$( str$, count% )
 		result :+ str
 	Next
 	Return result
+End Function
+
+Function reverse_string$( str$ )
+	Local rev$ = ""
+	For Local i% = 0 Until str.Length
+		rev :+ str[str.Length - 1 - i..str.Length - 1 - i + 1]
+	Next
+	Return rev
 End Function
 
 Function array_append%[]( src%[], value% )

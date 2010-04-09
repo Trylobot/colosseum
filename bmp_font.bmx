@@ -14,11 +14,12 @@ Function get_bmp_font:BMP_FONT( key$ )
 	Return BMP_FONT( bmp_font_map.ValueForKey( key.toLower() ))
 End Function
 
+Rem
+the font image is required to contain exactly these characters (including the space character at position 0):
+ !"#$%'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+EndRem
 Type BMP_FONT
-	Rem
-	character ordering
-	 !"#$%'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
-	EndRem
+	Const test_string$ = " !~q#$%'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~~"
 	Const ascii_start% = 32  'ASCII Space
 	Const ascii_end%   = 126 'ASCII Tilde
 	Const char_count%  = ascii_end - ascii_start
@@ -26,6 +27,7 @@ Type BMP_FONT
 	Field font_img:IMAGE_ATLAS_REFERENCE
 	Field char_width%[]
   Field scale%
+	Field baseline_y%
   Field height%
 	
 	Method draw_string( str$, x#, y# )
@@ -34,7 +36,8 @@ Type BMP_FONT
 		Local glyph%
     SetScale( scale, scale )
 		For Local i% = 0 Until str.Length
-			glyph = str[i] - ascii_start
+			glyph = str[i]
+			glyph :- ascii_start
 			If glyph < char_count
 				DrawImageRef( font_img, cx, cy, glyph )
 				cx :+ scale * char_width[glyph]
@@ -67,6 +70,7 @@ Type BMP_FONT
 		f.font_img = img
 		f.char_width = char_width
     f.scale = 1
+		f.baseline_y = baseline_y
     f.height = img.height()
 		Return f
 	End Function
@@ -74,9 +78,10 @@ Type BMP_FONT
   Method clone:BMP_FONT()
     Local f:BMP_FONT = New BMP_FONT
     f.font_img = font_img
-    f.height = height
     f.char_width = char_width[..]
     f.scale = scale
+		f.baseline_y = baseline_y
+    f.height = height
     Return f
   End Method
   
@@ -92,6 +97,7 @@ Type BMP_FONT
 		f = base_font.clone()
     f.scale = scale
     f.height = scale*base_font.height
+		f.baseline_y = scale*base_font.baseline_y
 		Return f
   End Function
 	

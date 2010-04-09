@@ -48,8 +48,9 @@ Global autosave_profile_path$ = load_autosave()
 If autosave_profile_path
 	menu_command( COMMAND.load_game, autosave_profile_path )
 Else
-	menu_command( COMMAND.new_game )
-	menu_command( COMMAND.save_game )
+	profile = create_new_user_profile()
+	show_info( "new profile created" )
+	menu_command( COMMAND.save_game, [True] )
 End If
 
 'window title

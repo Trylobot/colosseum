@@ -256,12 +256,13 @@ Function draw_main_screen()
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	SetColor( 157, 157, 157 )
+	'SetColor( 100, 149, 237 ) 'Cornflower Blue
 	'SetImageFont( get_font( "consolas_10" ))
 	Local font:BMP_FONT = get_bmp_font( "normal_5" )
   'Local font:BMP_FONT = get_bmp_font( "normal_10" )
 	h = font.height
 	x = 1
-	y = window_h - h*3 - 1
+	y = window_h - h*3 - h/2
 	If Not main_game
 		'DrawText_with_outline( "COLOSSEUM (c)2008 Tyler W.R. Cole, written in 100% BlitzMax", x, y ); y :+ h
 		'DrawText_with_outline( "physics by Jeff Weber & Alex Okafor, networking by Vertex", x, y ); y :+ h

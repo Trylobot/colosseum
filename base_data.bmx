@@ -25,7 +25,7 @@ Const level_file_ext$ = "level.json"
 Const saved_game_file_ext$ = "profile.json"
 
 Const autosave_path$ = user_path + "autosave" + "." + settings_file_ext
-Const default_settings_file_name$ = "settings" + "." + settings_file_ext
+Const settings_path$ = user_path + "settings" + "." + settings_file_ext
 
 Global texture_atlas_files$[] = [ ..
   "texture_atlas_filtered", ..

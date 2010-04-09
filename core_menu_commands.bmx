@@ -99,15 +99,14 @@ Function menu_command( command_code%, argument:Object = Null )
 			FLAG.ignore_mouse_1 = True
 		'________________________________________
 		Case COMMAND.NEW_GAME
-			profile = New PLAYER_PROFILE
-			profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-			profile.cash = 100
-			profile.vehicle_key = "light_tank"
+			'create the profile
+			profile = create_new_user_profile()
 			show_info( "new profile created" )
 			menu_command( COMMAND.BACK_TO_PARENT_MENU )
 			get_current_menu().update( True )
 			'immediately prompt for a rename
 			menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create(MENU_ID.INPUT_PROFILE_NAME) )
+			get_current_menu().update( True )
 		'________________________________________
 		Case COMMAND.PLAYER_PROFILE_NAME
 			profile.name = String(argument)
@@ -120,7 +119,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			profile = load_game( String(argument) )
 			If profile
 				save_autosave( profile.src_path )
-				show_info( "loaded profile "+profile.name+" from "+profile.src_path )
+				show_info( "loaded player data "+profile.name+" from file "+StripAll(profile.src_path) )
 			End If
 			menu_command( COMMAND.BACK_TO_PARENT_MENU )
 			get_current_menu().update( True )
@@ -129,7 +128,9 @@ Function menu_command( command_code%, argument:Object = Null )
 			If profile
 				If save_game( profile.src_path, profile )
 					save_autosave( profile.src_path )
-					show_info( "saved profile "+profile.name+" to "+profile.src_path )
+					If argument And (Int[](argument)[0] = True) 'suppress save message
+						show_info( "saved player data "+profile.name+" to file "+StripAll(profile.src_path) )
+					End If
 				End If
 			Else 'Not profile
 				save_autosave( Null )
@@ -144,14 +145,14 @@ Function menu_command( command_code%, argument:Object = Null )
 		Case COMMAND.LOAD_LEVEL
 			level_editor_cache = load_level( String(argument) )
 			menu_command( COMMAND.BACK_TO_PARENT_MENU )
-			show_info( "loaded level "+level_editor_cache.name+" from "+String(argument) )
+			show_info( "loaded level data "+level_editor_cache.name+" into editor from file "+String(argument).Replace("." + level_file_ext,"") )
 			get_menu( MENU_ID.LEVEL_EDITOR ).recalculate_dimensions()
 			menu_command( COMMAND.EDIT_LEVEL )
 		'________________________________________
 		Case COMMAND.SAVE_LEVEL
 			save_level( String(argument), level_editor_cache )
 			menu_command( COMMAND.BACK_TO_PARENT_MENU )
-			show_info( "saved level "+level_editor_cache.name+" to "+String(argument) )
+			show_info( "saved level data "+level_editor_cache.name+" from editor as file "+String(argument).Replace("." + level_file_ext,"") )
 			If level_editor_requests_resume
 				menu_command( COMMAND.EDIT_LEVEL )
 			End If
@@ -267,7 +268,7 @@ Function menu_command( command_code%, argument:Object = Null )
 		'________________________________________
 		Case COMMAND.LOAD_ASSETS
 			load_all_assets()
-			show_info( "external data loaded" )
+			show_info( "loading complete" )
 		'________________________________________
 		Case COMMAND.BUY_PART
 			profile.buy_item( INVENTORY_DATA(argument) )
@@ -338,5 +339,13 @@ Function load_all_assets()
 	If show_ai_menu_game
 		init_ai_menu_game()
 	End If
+End Function
+
+Function create_new_user_profile:PLAYER_PROFILE()
+	Local p:PLAYER_PROFILE = New PLAYER_PROFILE
+	p.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
+	p.cash = 100
+	p.vehicle_key = "light_tank"
+	Return p
 End Function
 

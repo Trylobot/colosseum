@@ -135,5 +135,45 @@
 			base_font: "normal_5",
 			scale: 5,
 		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "normal_30",
+		object: {
+			base_font: "normal_5",
+			scale: 6,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "normal_35",
+		object: {
+			base_font: "normal_5",
+			scale: 7,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "normal_40",
+		object: {
+			base_font: "normal_5",
+			scale: 8,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "normal_45",
+		object: {
+			base_font: "normal_5",
+			scale: 9,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "normal_50",
+		object: {
+			base_font: "normal_5",
+			scale: 10,
+		}
 	}
 ]

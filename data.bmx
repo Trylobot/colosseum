@@ -24,6 +24,7 @@ EndRem
 'Import "texture_manager.bmx"
 
 Global loading_progress%
+
 '_____________________________________________________________________________
 Function load_texture_atlases%()
   Local path$
@@ -50,6 +51,7 @@ Function load_texture_atlases%()
 	Next
 	Return True
 End Function
+
 '_____________________________________________________________________________
 Function load_assets%()
 	Local path$
@@ -73,6 +75,7 @@ Function load_assets%()
 	DebugLog( "~n~n" )
 	Return True
 End Function
+
 '______________________________________________________________________________
 Function load_objects%( json:TJSON, source_file$ = Null )
 	For Local i% = 0 To TJSONArray( json.Root ).Size() - 1
@@ -170,6 +173,7 @@ Function Create_TImageFont_from_json:TImageFont( json:TJSON )
 	Return LoadImageFont( path, size )
 End Function
 
+'______________________________________________________________________________
 Function Create_TSound_from_json:TSound( json:TJSON )
 	Local path$, looping%
 	path = json.GetString( "path" )
@@ -177,6 +181,7 @@ Function Create_TSound_from_json:TSound( json:TJSON )
 	Return LoadSound( path, (looping&SOUND_LOOP) )
 End Function
 
+'______________________________________________________________________________
 'Deprecated
 Rem
 Function Create_TImage_from_json:TImage( json:TJSON )
@@ -221,6 +226,7 @@ Function load_level:LEVEL( path$ )
 	End If
 End Function
 
+'______________________________________________________________________________
 Function save_level%( path$, lev:LEVEL )
 	If lev <> Null
 		Local file:TStream, json:TJSON
@@ -253,6 +259,7 @@ Function load_game:PLAYER_PROFILE( path$ )
 	End If
 End Function
 
+'______________________________________________________________________________
 Function save_game%( path$, prof:PLAYER_PROFILE )
 	Local file:TStream, json:TJSON
 	json = TJSON.Create( prof.to_json() )
@@ -268,7 +275,7 @@ End Function
 
 '______________________________________________________________________________
 Function load_settings%()
-	Local file:TStream = ReadFile( user_path + default_settings_file_name )
+	Local file:TStream = ReadFile( settings_path )
 	If Not file Return False
 	Local json:TJSON = TJSON.Create( file )
 	file.Close()
@@ -301,6 +308,7 @@ Function load_settings%()
 	Return False
 End Function
 
+'______________________________________________________________________________
 Function save_settings%()
 	Local this_json:TJSONObject = New TJSONObject
 	this_json.SetByName( "window_w", TJSONNumber.Create( window_w ))
@@ -320,7 +328,7 @@ Function save_settings%()
 	this_json.SetByName( "network_port", TJSONNumber.Create( network_port ))
 	'output json data
 	Local json:TJSON = TJSON.Create( this_json )
-	Local file:TStream = WriteFile( user_path + default_settings_file_name )
+	Local file:TStream = WriteFile( settings_path )
 	If Not file Return False
 	json.Write( file )
 	file.Close()
@@ -339,6 +347,7 @@ Function load_autosave$()
 	End If
 End Function
 
+'______________________________________________________________________________
 Function save_autosave( profile_path$ )
 	Local file:TStream, json:TJSON
 	json = TJSON.Create( New TJSONObject )
@@ -377,6 +386,7 @@ Function create_dirs()
 	CreateDir( user_path )
 End Function
 
+'______________________________________________________________________________
 Function load_error( json:TJSON )
 	DebugLog( " *** ERROR loading~n" + json.ToSource() )
 	DebugStop
