@@ -16,13 +16,13 @@ End Function
 
 Rem
 the font image is required to contain exactly these characters (including the space character at position 0):
- !"#$%'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
 EndRem
 Type BMP_FONT
-	Const test_string$ = " !~q#$%'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~~"
+	Const test_string$ = " !~q#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~~"
 	Const ascii_start% = 32  'ASCII Space
-	Const ascii_end%   = 126 'ASCII Tilde
-	Const char_count%  = ascii_end - ascii_start
+	Const ascii_end%   = 126 'ASCII Tilde (inclusive)
+	Const char_count%  = ascii_end + 1 - ascii_start
 
 	Field font_img:IMAGE_ATLAS_REFERENCE
 	Field char_width%[]
@@ -36,12 +36,10 @@ Type BMP_FONT
 		Local glyph%
     SetScale( scale, scale )
 		For Local i% = 0 Until str.Length
-			glyph = str[i]
-			glyph :- ascii_start
-			If glyph < char_count
-				DrawImageRef( font_img, cx, cy, glyph )
-				cx :+ scale * char_width[glyph]
-			End If
+			glyph = str[i] - ascii_start
+			If glyph < 0 Or glyph >= char_count Then glyph = 0
+			DrawImageRef( font_img, cx, cy, glyph )
+			cx :+ scale * char_width[glyph]
 		Next
 	End Method
 	

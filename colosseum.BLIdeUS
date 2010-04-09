@@ -50,7 +50,7 @@
     </Included_File>
     <Included_File>
       <FileName>base_data.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>21</X>
         <Y>10</Y>
@@ -117,8 +117,8 @@
       <FileName>bmp_font.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>45</Y>
+        <X>50</X>
+        <Y>23</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -170,7 +170,7 @@
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>103</Y>
+              <Y>101</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -182,7 +182,7 @@
             </StartPoint>
             <EndPoint>
               <X>11</X>
-              <Y>45</Y>
+              <Y>43</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -194,19 +194,19 @@
             </StartPoint>
             <EndPoint>
               <X>6</X>
-              <Y>44</Y>
+              <Y>42</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
           </Range>
           <Range>
             <StartPoint>
-              <X>24</X>
-              <Y>40</Y>
+              <X>43</X>
+              <Y>39</Y>
             </StartPoint>
             <EndPoint>
-              <X>9</X>
-              <Y>43</Y>
+              <X>53</X>
+              <Y>39</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>3</Level>
@@ -214,11 +214,11 @@
           <Range>
             <StartPoint>
               <X>49</X>
-              <Y>47</Y>
+              <Y>45</Y>
             </StartPoint>
             <EndPoint>
               <X>13</X>
-              <Y>75</Y>
+              <Y>73</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -226,11 +226,11 @@
           <Range>
             <StartPoint>
               <X>36</X>
-              <Y>59</Y>
+              <Y>57</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>62</Y>
+              <Y>60</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -238,11 +238,11 @@
           <Range>
             <StartPoint>
               <X>12</X>
-              <Y>64</Y>
+              <Y>62</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>66</Y>
+              <Y>64</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -250,11 +250,11 @@
           <Range>
             <StartPoint>
               <X>25</X>
-              <Y>77</Y>
+              <Y>75</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>85</Y>
+              <Y>83</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -262,11 +262,11 @@
           <Range>
             <StartPoint>
               <X>55</X>
-              <Y>87</Y>
+              <Y>85</Y>
             </StartPoint>
             <EndPoint>
               <X>14</X>
-              <Y>101</Y>
+              <Y>99</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -383,7 +383,7 @@
     </Included_File>
     <Included_File>
       <FileName>constants.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>42</X>
         <Y>11</Y>
@@ -430,7 +430,7 @@
     </Included_File>
     <Included_File>
       <FileName>core_menu_commands.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>43</X>
         <Y>267</Y>
@@ -894,7 +894,7 @@
     </Included_File>
     <Included_File>
       <FileName>data.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>0</X>
         <Y>394</Y>
@@ -1657,8 +1657,8 @@
       <FileName>debug.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>74</X>
-        <Y>49</Y>
+        <X>27</X>
+        <Y>22</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -2675,7 +2675,7 @@
       <Document_Active>true</Document_Active>
       <Caret_Position>
         <X>12</X>
-        <Y>276</Y>
+        <Y>269</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -3027,7 +3027,7 @@
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>276</Y>
+              <Y>269</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3047,11 +3047,11 @@
           <Range>
             <StartPoint>
               <X>17</X>
-              <Y>265</Y>
+              <Y>262</Y>
             </StartPoint>
             <EndPoint>
               <X>7</X>
-              <Y>274</Y>
+              <Y>267</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3059,11 +3059,11 @@
           <Range>
             <StartPoint>
               <X>21</X>
-              <Y>278</Y>
+              <Y>271</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>382</Y>
+              <Y>375</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3071,11 +3071,11 @@
           <Range>
             <StartPoint>
               <X>10</X>
-              <Y>287</Y>
+              <Y>280</Y>
             </StartPoint>
             <EndPoint>
               <X>5</X>
-              <Y>381</Y>
+              <Y>374</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3083,11 +3083,11 @@
           <Range>
             <StartPoint>
               <X>59</X>
-              <Y>289</Y>
+              <Y>282</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>380</Y>
+              <Y>373</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -3095,11 +3095,11 @@
           <Range>
             <StartPoint>
               <X>11</X>
-              <Y>294</Y>
+              <Y>287</Y>
             </StartPoint>
             <EndPoint>
               <X>9</X>
-              <Y>304</Y>
+              <Y>297</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>3</Level>
@@ -3107,11 +3107,11 @@
           <Range>
             <StartPoint>
               <X>23</X>
-              <Y>295</Y>
+              <Y>288</Y>
             </StartPoint>
             <EndPoint>
               <X>10</X>
-              <Y>303</Y>
+              <Y>296</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>4</Level>
@@ -3119,11 +3119,11 @@
           <Range>
             <StartPoint>
               <X>68</X>
-              <Y>306</Y>
+              <Y>299</Y>
             </StartPoint>
             <EndPoint>
               <X>9</X>
-              <Y>320</Y>
+              <Y>313</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>3</Level>
@@ -3131,11 +3131,11 @@
           <Range>
             <StartPoint>
               <X>38</X>
-              <Y>308</Y>
+              <Y>301</Y>
             </StartPoint>
             <EndPoint>
               <X>10</X>
-              <Y>319</Y>
+              <Y>312</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>4</Level>
@@ -3143,11 +3143,11 @@
           <Range>
             <StartPoint>
               <X>53</X>
-              <Y>326</Y>
+              <Y>319</Y>
             </StartPoint>
             <EndPoint>
               <X>9</X>
-              <Y>364</Y>
+              <Y>357</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>3</Level>
@@ -3155,11 +3155,11 @@
           <Range>
             <StartPoint>
               <X>23</X>
-              <Y>330</Y>
+              <Y>323</Y>
             </StartPoint>
             <EndPoint>
               <X>10</X>
-              <Y>363</Y>
+              <Y>356</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>4</Level>
@@ -3167,11 +3167,11 @@
           <Range>
             <StartPoint>
               <X>32</X>
-              <Y>333</Y>
+              <Y>326</Y>
             </StartPoint>
             <EndPoint>
               <X>11</X>
-              <Y>351</Y>
+              <Y>344</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>5</Level>
@@ -3179,11 +3179,11 @@
           <Range>
             <StartPoint>
               <X>37</X>
-              <Y>336</Y>
+              <Y>329</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>344</Y>
+              <Y>337</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>6</Level>
@@ -3191,11 +3191,11 @@
           <Range>
             <StartPoint>
               <X>44</X>
-              <Y>348</Y>
+              <Y>341</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>350</Y>
+              <Y>343</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>6</Level>
@@ -3203,11 +3203,11 @@
           <Range>
             <StartPoint>
               <X>25</X>
-              <Y>353</Y>
+              <Y>346</Y>
             </StartPoint>
             <EndPoint>
               <X>34</X>
-              <Y>353</Y>
+              <Y>346</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>5</Level>
@@ -3215,11 +3215,11 @@
           <Range>
             <StartPoint>
               <X>20</X>
-              <Y>356</Y>
+              <Y>349</Y>
             </StartPoint>
             <EndPoint>
               <X>11</X>
-              <Y>362</Y>
+              <Y>355</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>5</Level>
@@ -3227,11 +3227,11 @@
           <Range>
             <StartPoint>
               <X>36</X>
-              <Y>385</Y>
+              <Y>378</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>400</Y>
+              <Y>393</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3239,11 +3239,11 @@
           <Range>
             <StartPoint>
               <X>23</X>
-              <Y>407</Y>
+              <Y>400</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>432</Y>
+              <Y>425</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3251,11 +3251,11 @@
           <Range>
             <StartPoint>
               <X>28</X>
-              <Y>408</Y>
+              <Y>401</Y>
             </StartPoint>
             <EndPoint>
               <X>7</X>
-              <Y>431</Y>
+              <Y>424</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3263,11 +3263,11 @@
           <Range>
             <StartPoint>
               <X>32</X>
-              <Y>409</Y>
+              <Y>402</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>430</Y>
+              <Y>423</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -3275,11 +3275,11 @@
           <Range>
             <StartPoint>
               <X>70</X>
-              <Y>414</Y>
+              <Y>407</Y>
             </StartPoint>
             <EndPoint>
               <X>9</X>
-              <Y>429</Y>
+              <Y>422</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>3</Level>
@@ -3287,11 +3287,11 @@
           <Range>
             <StartPoint>
               <X>19</X>
-              <Y>438</Y>
+              <Y>431</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>584</Y>
+              <Y>577</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3299,11 +3299,11 @@
           <Range>
             <StartPoint>
               <X>23</X>
-              <Y>468</Y>
+              <Y>461</Y>
             </StartPoint>
             <EndPoint>
               <X>54</X>
-              <Y>468</Y>
+              <Y>461</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3311,11 +3311,11 @@
           <Range>
             <StartPoint>
               <X>32</X>
-              <Y>477</Y>
+              <Y>470</Y>
             </StartPoint>
             <EndPoint>
               <X>7</X>
-              <Y>482</Y>
+              <Y>475</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3323,11 +3323,11 @@
           <Range>
             <StartPoint>
               <X>10</X>
-              <Y>492</Y>
+              <Y>485</Y>
             </StartPoint>
             <EndPoint>
               <X>5</X>
-              <Y>550</Y>
+              <Y>543</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3335,11 +3335,11 @@
           <Range>
             <StartPoint>
               <X>36</X>
-              <Y>495</Y>
+              <Y>488</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>498</Y>
+              <Y>491</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -3347,11 +3347,11 @@
           <Range>
             <StartPoint>
               <X>32</X>
-              <Y>500</Y>
+              <Y>493</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>513</Y>
+              <Y>506</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -3359,11 +3359,11 @@
           <Range>
             <StartPoint>
               <X>12</X>
-              <Y>509</Y>
+              <Y>502</Y>
             </StartPoint>
             <EndPoint>
               <X>7</X>
-              <Y>511</Y>
+              <Y>504</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>3</Level>
@@ -3371,11 +3371,11 @@
           <Range>
             <StartPoint>
               <X>27</X>
-              <Y>517</Y>
+              <Y>510</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>528</Y>
+              <Y>521</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -3383,11 +3383,11 @@
           <Range>
             <StartPoint>
               <X>12</X>
-              <Y>518</Y>
+              <Y>511</Y>
             </StartPoint>
             <EndPoint>
               <X>7</X>
-              <Y>526</Y>
+              <Y>519</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>3</Level>
@@ -3395,11 +3395,11 @@
           <Range>
             <StartPoint>
               <X>45</X>
-              <Y>519</Y>
+              <Y>512</Y>
             </StartPoint>
             <EndPoint>
               <X>10</X>
-              <Y>523</Y>
+              <Y>516</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>4</Level>
@@ -3407,11 +3407,11 @@
           <Range>
             <StartPoint>
               <X>43</X>
-              <Y>521</Y>
+              <Y>514</Y>
             </StartPoint>
             <EndPoint>
               <X>93</X>
-              <Y>521</Y>
+              <Y>514</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>5</Level>
@@ -3419,11 +3419,11 @@
           <Range>
             <StartPoint>
               <X>27</X>
-              <Y>530</Y>
+              <Y>523</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>549</Y>
+              <Y>542</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -3431,11 +3431,11 @@
           <Range>
             <StartPoint>
               <X>63</X>
-              <Y>536</Y>
+              <Y>529</Y>
             </StartPoint>
             <EndPoint>
               <X>9</X>
-              <Y>547</Y>
+              <Y>540</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>3</Level>
@@ -3443,11 +3443,11 @@
           <Range>
             <StartPoint>
               <X>20</X>
-              <Y>564</Y>
+              <Y>557</Y>
             </StartPoint>
             <EndPoint>
               <X>7</X>
-              <Y>570</Y>
+              <Y>563</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3455,11 +3455,11 @@
           <Range>
             <StartPoint>
               <X>23</X>
-              <Y>580</Y>
+              <Y>573</Y>
             </StartPoint>
             <EndPoint>
               <X>7</X>
-              <Y>582</Y>
+              <Y>575</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3467,11 +3467,11 @@
           <Range>
             <StartPoint>
               <X>19</X>
-              <Y>586</Y>
+              <Y>579</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>599</Y>
+              <Y>592</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3479,11 +3479,11 @@
           <Range>
             <StartPoint>
               <X>25</X>
-              <Y>601</Y>
+              <Y>594</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>617</Y>
+              <Y>610</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3491,11 +3491,11 @@
           <Range>
             <StartPoint>
               <X>26</X>
-              <Y>619</Y>
+              <Y>612</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>632</Y>
+              <Y>625</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3503,11 +3503,11 @@
           <Range>
             <StartPoint>
               <X>55</X>
-              <Y>627</Y>
+              <Y>620</Y>
             </StartPoint>
             <EndPoint>
               <X>7</X>
-              <Y>631</Y>
+              <Y>624</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3515,11 +3515,11 @@
           <Range>
             <StartPoint>
               <X>69</X>
-              <Y>639</Y>
+              <Y>632</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>651</Y>
+              <Y>644</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3527,11 +3527,11 @@
           <Range>
             <StartPoint>
               <X>16</X>
-              <Y>640</Y>
+              <Y>633</Y>
             </StartPoint>
             <EndPoint>
               <X>7</X>
-              <Y>646</Y>
+              <Y>639</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3539,11 +3539,11 @@
           <Range>
             <StartPoint>
               <X>19</X>
-              <Y>653</Y>
+              <Y>646</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>664</Y>
+              <Y>657</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3551,11 +3551,11 @@
           <Range>
             <StartPoint>
               <X>32</X>
-              <Y>659</Y>
+              <Y>652</Y>
             </StartPoint>
             <EndPoint>
               <X>10</X>
-              <Y>662</Y>
+              <Y>655</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3563,11 +3563,11 @@
           <Range>
             <StartPoint>
               <X>21</X>
-              <Y>667</Y>
+              <Y>660</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>701</Y>
+              <Y>694</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3575,11 +3575,11 @@
           <Range>
             <StartPoint>
               <X>18</X>
-              <Y>675</Y>
+              <Y>668</Y>
             </StartPoint>
             <EndPoint>
               <X>7</X>
-              <Y>683</Y>
+              <Y>676</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3587,11 +3587,11 @@
           <Range>
             <StartPoint>
               <X>10</X>
-              <Y>685</Y>
+              <Y>678</Y>
             </StartPoint>
             <EndPoint>
               <X>5</X>
-              <Y>700</Y>
+              <Y>693</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3599,11 +3599,11 @@
           <Range>
             <StartPoint>
               <X>17</X>
-              <Y>687</Y>
+              <Y>680</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>691</Y>
+              <Y>684</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -3611,11 +3611,11 @@
           <Range>
             <StartPoint>
               <X>17</X>
-              <Y>693</Y>
+              <Y>686</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>697</Y>
+              <Y>690</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -3623,11 +3623,11 @@
           <Range>
             <StartPoint>
               <X>59</X>
-              <Y>704</Y>
+              <Y>697</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>722</Y>
+              <Y>715</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3635,11 +3635,11 @@
           <Range>
             <StartPoint>
               <X>45</X>
-              <Y>725</Y>
+              <Y>718</Y>
             </StartPoint>
             <EndPoint>
               <X>12</X>
-              <Y>759</Y>
+              <Y>752</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>0</Level>
@@ -3647,11 +3647,11 @@
           <Range>
             <StartPoint>
               <X>10</X>
-              <Y>741</Y>
+              <Y>734</Y>
             </StartPoint>
             <EndPoint>
               <X>5</X>
-              <Y>758</Y>
+              <Y>751</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>1</Level>
@@ -3659,11 +3659,11 @@
           <Range>
             <StartPoint>
               <X>10</X>
-              <Y>742</Y>
+              <Y>735</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>749</Y>
+              <Y>742</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -3671,11 +3671,11 @@
           <Range>
             <StartPoint>
               <X>33</X>
-              <Y>754</Y>
+              <Y>747</Y>
             </StartPoint>
             <EndPoint>
               <X>8</X>
-              <Y>757</Y>
+              <Y>750</Y>
             </EndPoint>
             <Visible>true</Visible>
             <Level>2</Level>
@@ -3822,8 +3822,8 @@
       <FileName>image_atlas_reference.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>167</Y>
+        <X>12</X>
+        <Y>37</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -4378,7 +4378,7 @@
     </Included_File>
     <Included_File>
       <FileName>misc.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>5</X>
         <Y>166</Y>
