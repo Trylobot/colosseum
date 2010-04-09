@@ -139,11 +139,20 @@ Type TColor
 End Type
 
 Function encode_ARGB%( alpha#, red%, green%, blue% )
-	Local argb% = 0
-	argb :+ blue Shl 0
-	argb :+ green Shl 8
-	argb :+ red Shl 16
-	argb :+ Int(alpha*255) Shl 24
-	Return argb
+	Return (blue)|(green Shl 8)|(red Shl 16)|(Int(alpha*255) Shl 24)
 End Function
+
+Const MASK_ALPHA% = 2^31 + 2^30 + 2^29 + 2^28 + 2^27 + 2^26 + 2^25 + 2^24
+Const MASK_RED%   = 2^23 + 2^22 + 2^21 + 2^20 + 2^19 + 2^18 + 2^17 + 2^16
+Const MASK_GREEN% = 2^15 + 2^14 + 2^13 + 2^12 + 2^11 + 2^10 + 2^9  + 2^8 
+Const MASK_BLUE%  = 2^7  + 2^6  + 2^5  + 2^4  + 2^3  + 2^2  + 2^1  + 2^0 
+
+Function decode_ARGB( argb%, alpha# Var, red% Var, green% Var, blue% Var )
+	alpha = Float(argb Shr 24)/255.0
+	red   = (argb & MASK_RED) Shr 16
+	green = (argb & MASK_GREEN) Shr 8
+	blue  = (argb & MASK_BLUE)
+End Function
+
+
 

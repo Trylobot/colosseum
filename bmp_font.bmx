@@ -1,7 +1,6 @@
 Rem
 	bmp_font.bmx
 	This is a COLOSSEUM project BlitzMax source file.
-
 EndRem
 'SuperStrict
 'Import "image_atlas.bmx"
@@ -14,6 +13,19 @@ Function get_bmp_font:BMP_FONT( key$ )
 	Return BMP_FONT( bmp_font_map.ValueForKey( key.toLower() ))
 End Function
 
+'______________________________________________________________________________
+Function draw_layered_string( str$, x#, y#, fg_font:BMP_FONT = Null, bg_font:BMP_FONT = Null, fg_red% = 255, fg_green% = 255, fg_blue% = 255, bg_red% = 127, bg_green% = 127, bg_blue% = 127 )
+	If bg_font
+		SetColor( bg_red, bg_green, bg_blue )
+		bg_font.draw_string( str, x, y )
+	End If
+	If fg_font
+		SetColor( fg_red, fg_green, fg_blue )
+		fg_font.draw_string( str, x, y )
+	End If
+End Function
+
+'______________________________________________________________________________
 Rem
 the font image is required to contain exactly these characters (including the space character at position 0):
  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
@@ -29,6 +41,7 @@ Type BMP_FONT
   Field scale%
 	Field baseline_y%
   Field height%
+	Field char_spacing%
 	
 	Method draw_string( str$, x#, y# )
 		Local cx% = x
@@ -39,7 +52,7 @@ Type BMP_FONT
 			glyph = str[i] - ascii_start
 			If glyph < 0 Or glyph >= char_count Then glyph = 0
 			DrawImageRef( font_img, cx, cy, glyph )
-			cx :+ scale * char_width[glyph]
+			cx :+ scale * (char_width[glyph] + char_spacing)
 		Next
 	End Method
 	
@@ -70,6 +83,7 @@ Type BMP_FONT
     f.scale = 1
 		f.baseline_y = baseline_y
     f.height = img.height()
+		f.char_spacing = json.GetNumber( "char_spacing" )
 		Return f
 	End Function
   
@@ -80,6 +94,7 @@ Type BMP_FONT
     f.scale = scale
 		f.baseline_y = baseline_y
     f.height = height
+		f.char_spacing = char_spacing
     Return f
   End Method
   
@@ -96,6 +111,7 @@ Type BMP_FONT
     f.scale = scale
     f.height = scale*base_font.height
 		f.baseline_y = scale*base_font.baseline_y
+		f.char_spacing = scale*base_font.char_spacing
 		Return f
   End Function
 	

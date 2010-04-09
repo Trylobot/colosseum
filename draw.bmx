@@ -252,19 +252,19 @@ Function draw_main_screen()
 	End If
 	
 	'credits & copyrights
-	SetAlpha( 1 )
-	SetRotation( 0 )
-	SetScale( 1, 1 )
-	SetColor( 157, 157, 157 )
-	Local font:BMP_FONT = get_bmp_font( "normal_5" )
-	h = font.height
-	x = 1
-	y = window_h - h*3 - h/2
 	If Not main_game
-		font.draw_string( "COLOSSEUM (c)2008 Tyler W.R. Cole, written in BlitzMax", x, y ); y :+ h
-		font.draw_string( "physics by Jeff Weber & Alex Okafor, networking by Vertex", x, y ); y :+ h
-		font.draw_string( "music by NickPerrin & Yoshi-1up, JSON by grable, font by Yuji Oshimoto", x, y ); y :+ h
-		font.draw_string( "also thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, Firelord88", x, y ); y :+ h
+		SetRotation( 0 )
+		SetScale( 1, 1 )
+		SetAlpha( 1 )
+		Local fg_font:BMP_FONT = get_bmp_font( "normal_5" )
+		Local bg_font:BMP_FONT = get_bmp_font( "outline_5" )
+		h = fg_font.height
+		x = 1
+		y = window_h - h*3 - h/2
+		draw_layered_string( "COLOSSEUM (c)2008 Tyler W.R. Cole, written in BlitzMax",                 x, y, fg_font, bg_font, 157, 157, 157, 78, 78, 78 ); y :+ h
+		draw_layered_string( "physics by Jeff Weber & Alex Okafor, networking by Vertex",              x, y, fg_font, bg_font, 157, 157, 157, 78, 78, 78 ); y :+ h
+		draw_layered_string( "music by NickPerrin & Yoshi-1up, JSON by grable, font by Yuji Oshimoto", x, y, fg_font, bg_font, 157, 157, 157, 78, 78, 78 ); y :+ h
+		draw_layered_string( "also thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, Firelord88",     x, y, fg_font, bg_font, 157, 157, 157, 78, 78, 78 ); y :+ h
 	End If
 	
 End Function

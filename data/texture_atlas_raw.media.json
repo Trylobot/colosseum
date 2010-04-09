@@ -7,9 +7,16 @@
 			{
 				source_path: "art/fonts/04b11_6pt.png",
 				x: 0,
-				y: 0,
+				y: 11,
 				w: 600,
 				h: 9
+			},
+			{
+				source_path: "art/fonts/04b11_6pt_outline.png",
+				x: 0,
+				y: 0,
+				w: 789,
+				h: 11
 			}
 		]
 	}

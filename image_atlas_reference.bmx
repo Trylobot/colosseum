@@ -22,7 +22,6 @@ End Function
 Type IMAGE_ATLAS_REFERENCE
 	'base image data
 	Field atlas:TImage 'pixel data
-	Field iframe:TImageFrame 'for drawing
 	'texture coords
 	Field src_rect:BOX 'coordinates on texture of this specific image
 	'legacy image
@@ -52,14 +51,13 @@ Type IMAGE_ATLAS_REFERENCE
 				x1 = x0 + sw
 			End If
 		End If
-		'///////////////////////////////////////////////
-		iframe.Draw( x0,y0, x1,y1, tx,ty, sx,sy,sw,sh )
-		'///////////////////////////////////////////////
+		'///////////////////////////////////////////////////////
+		atlas.Frame(0).Draw( x0,y0, x1,y1, tx,ty, sx,sy,sw,sh )
+		'///////////////////////////////////////////////////////
 	End Method
 
 	Method LoadAtlasRect( atlas:TImage, rect:BOX )
 		Self.atlas = atlas
-		iframe = atlas.Frame( 0 )
 		src_rect = rect
 		multi_cell = False
 		variable_width = False
@@ -198,7 +196,6 @@ End Type
 Function CopyImageRef:IMAGE_ATLAS_REFERENCE( other:IMAGE_ATLAS_REFERENCE )
   Local ref:IMAGE_ATLAS_REFERENCE = New IMAGE_ATLAS_REFERENCE
   ref.atlas = other.atlas
-  ref.iframe = other.iframe
   ref.src_rect = other.src_rect.clone()
   ref.handle_x = other.handle_x
   ref.handle_y = other.handle_y

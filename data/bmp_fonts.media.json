@@ -6,6 +6,7 @@
 			path: "art/fonts/04b11_6pt.png",
       offset_x: 0,
       baseline_y: 6,
+      char_spacing: 0,
       char_widths: [
         4,
         3,
@@ -174,6 +175,185 @@
 		key: "normal_50",
 		object: {
 			base_font: "normal_5",
+			scale: 10,
+		}
+	},
+	{
+		class: "bmp_font",
+		key: "outline_5",
+		object: {
+			path: "art/fonts/04b11_6pt_outline.png",
+      offset_x: 0,
+      baseline_y: 7,
+      char_spacing: -2,
+      char_widths: [
+        6,
+        5,
+        8,
+        10,
+        10,
+        9,
+        8,
+        5,
+        6,
+        6,
+        8,
+        9,
+        5,
+        9,
+        5,
+        9,
+        9,
+        6,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        5,
+        5,
+        7,
+        9,
+        7,
+        9,
+        10,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        7,
+        9,
+        9,
+        9,
+        10,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        11,
+        9,
+        9,
+        9,
+        6,
+        9,
+        6,
+        7,
+        9,
+        6,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        5,
+        7,
+        9,
+        5,
+        11,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        11,
+        9,
+        9,
+        9,
+        7,
+        5,
+        7,
+        7
+      ]
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "outline_10",
+		object: {
+			base_font: "outline_5",
+			scale: 2,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "outline_15",
+		object: {
+			base_font: "outline_5",
+			scale: 3,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "outline_20",
+		object: {
+			base_font: "outline_5",
+			scale: 4,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "outline_25",
+		object: {
+			base_font: "outline_5",
+			scale: 5,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "outline_30",
+		object: {
+			base_font: "outline_5",
+			scale: 6,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "outline_35",
+		object: {
+			base_font: "outline_5",
+			scale: 7,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "outline_40",
+		object: {
+			base_font: "outline_5",
+			scale: 8,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "outline_45",
+		object: {
+			base_font: "outline_5",
+			scale: 9,
+		}
+	},
+	{
+		class: "bmp_font_copy",
+		key: "outline_50",
+		object: {
+			base_font: "outline_5",
 			scale: 10,
 		}
 	}
