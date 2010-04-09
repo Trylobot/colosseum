@@ -28,7 +28,7 @@ Function apply_default_settings()
 	fullscreen = False
 	bit_depth = 32
 	refresh_rate = 60
-	audio_driver = Null
+	audio_driver = "FreeAudio DirectSound"
 	bg_music_enabled = True
 	show_ai_menu_game = True
 	active_particle_limit = 1000

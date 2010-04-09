@@ -24,9 +24,8 @@ Type PLAYER_PROFILE
 	
 	Field src_path$ 'private field, used for load/save
 		
-	Method New()
-		name = "new_profile"
-		src_path = generate_src_path()
+	Method generate_src_path$()
+		Return user_path + name + "." + saved_game_file_ext
 	End Method
 	
 	Method buy_item( query_item:INVENTORY_DATA )
@@ -142,10 +141,6 @@ Type PLAYER_PROFILE
 		inventory.Sort()
 	End Method
 
-	Method generate_src_path$()
-		Return user_path + name + "." + saved_game_file_ext
-	End Method
-	
 	Method to_json:TJSONObject()
 		Local this_json:TJSONObject = New TJSONObject
 		this_json.SetByName( "name", TJSONString.Create( name ))

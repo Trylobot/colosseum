@@ -178,7 +178,7 @@ Function Create_TSound_from_json:TSound( json:TJSON )
 	Local path$, looping%
 	path = json.GetString( "path" )
 	looping = json.GetBoolean( "looping" )
-	Return LoadSound( path, (looping&SOUND_LOOP) )
+	Return LoadSound( path, (looping&SOUND_LOOP)|SOUND_HARDWARE )
 End Function
 
 '______________________________________________________________________________

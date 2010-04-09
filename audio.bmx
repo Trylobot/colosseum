@@ -33,7 +33,7 @@ End Function
 'other random, global audio functions can exist in an audio_misc.bmx or something
 Function play_all_audio( human_is_rocking_out% = False )
 	'background music
-	If bg_music = Null
+	If Not bg_music
 		bg_music = AllocChannel()
 		CueSound( get_sound( "bgm" ), bg_music )
 		bg_music.SetVolume( 0.5 )

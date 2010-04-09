@@ -219,6 +219,7 @@ Function menu_command( command_code%, argument:Object = Null )
 			If AudioDriverExists( new_audio_driver )
 				audio_driver = new_audio_driver
 				SetAudioDriver( audio_driver )
+				save_settings()
 				show_info( "audio driver set to "+audio_driver )
 				'force all persistent channels to re-allocate
 				bg_music = Null
@@ -343,9 +344,11 @@ End Function
 
 Function create_new_user_profile:PLAYER_PROFILE()
 	Local p:PLAYER_PROFILE = New PLAYER_PROFILE
+	p.name = "new_profile"
 	p.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
 	p.cash = 100
 	p.vehicle_key = "light_tank"
+	p.src_path = p.generate_src_path()
 	Return p
 End Function
 
