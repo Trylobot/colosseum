@@ -14,15 +14,28 @@ Function get_bmp_font:BMP_FONT( key$ )
 End Function
 
 '______________________________________________________________________________
-Function draw_layered_string( str$, x#, y#, fg_font:BMP_FONT = Null, bg_font:BMP_FONT = Null, fg_red% = 255, fg_green% = 255, fg_blue% = 255, bg_red% = 127, bg_green% = 127, bg_blue% = 127 )
+Function draw_layered_string#( str$, x#, y#, fg_font:BMP_FONT = Null, bg_font:BMP_FONT = Null, fg_red% = 255, fg_green% = 255, fg_blue% = 255, bg_red% = 127, bg_green% = 127, bg_blue% = 127 )
+	Local y_delta# = 0
 	If bg_font
 		SetColor( bg_red, bg_green, bg_blue )
-		bg_font.draw_string( str, x, y )
+		y_delta = bg_font.draw_string( str, x, y )
 	End If
 	If fg_font
 		SetColor( fg_red, fg_green, fg_blue )
 		fg_font.draw_string( str, x, y )
 	End If
+	Return y_delta
+End Function
+
+Function draw_outline_procedurally#( font:BMP_FONT, str$, x#, y#, d# = 1 )
+	If Not font Then Return 0
+	Local y_delta# = 0
+	For Local r% = 0 Until 3
+		For Local c% = 0 Until 3
+			y_delta = font.draw_string( str, x + (r-1)*d, y + (c-1)*d )
+		Next
+	Next
+	Return y_delta
 End Function
 
 '______________________________________________________________________________
@@ -35,6 +48,7 @@ Type BMP_FONT
 	Const ascii_start% = 32  'ASCII Space
 	Const ascii_end%   = 126 'ASCII Tilde (inclusive)
 	Const char_count%  = ascii_end + 1 - ascii_start
+	Const ASCII_NEWLINE% = Asc("~n")
 
 	Field font_img:IMAGE_ATLAS_REFERENCE
 	Field offset_x%
@@ -44,17 +58,24 @@ Type BMP_FONT
   Field scale%
   Field height%
 	
-	Method draw_string( str$, x#, y# )
+	Method draw_string#( str$, x#, y# )
 		Local cx% = x
 		Local cy% = y
-		Local glyph%
+		Local ascii%, glyph%
     SetScale( scale, scale )
 		For Local i% = 0 Until str.Length
-			glyph = str[i] - ascii_start
+			ascii = str[i]
+			If ascii = ASCII_NEWLINE
+				cx = x
+				cy :+ height
+				Continue
+			End If
+			glyph = ascii - ascii_start
 			If glyph < 0 Or glyph >= char_count Then glyph = 0
 			DrawImageRef( font_img, cx, cy, glyph )
 			cx :+ scale * (char_width[glyph] + char_spacing)
 		Next
+		Return (cy - y)
 	End Method
 	
 	Method width%( str$, offset% = 0, length% = -1 )

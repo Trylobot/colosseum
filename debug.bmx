@@ -32,41 +32,35 @@ Function debug_with_graphics()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
 	'play_debug_level()
-	test_bmp_fonts()
+	'test_bmp_fonts()
 	
 End Function
 
 Function test_bmp_fonts()
 	Local font:BMP_FONT
-	Local x% = 2, y% = 0, h%, t%
+	Local x%, y% = 0, h%, t%
 	SetClsColor( 127, 127, 127 )
 	Cls
 	'Local size%[] = [ 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 ]
 	Local size%[] = [ 7, 14 ]
 	'Local size%[] = [ 7 ]
+	Local test_str$ = " !~q#$%&'()*+,-./0123456789:;<=>?@~nABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`~nabcdefghijklmnopqrstuvwxyz{|}~~"
 	For Local s% = 0 Until size.Length
+		x = 2*size[s]/size[0]
 		font = get_bmp_font( "arcade_" + size[s] )
 		h = font.height; y :+ h
 		t = y
 		SetColor( 0, 0, 0 )
-		draw_outline_procedurally( font, BMP_FONT.test_string, x, y, size[s]/7 ); y :+ h
-		draw_outline_procedurally( font, reverse_string( BMP_FONT.test_string ), x, y, size[s]/7 ); y :+ h
+		y :+ draw_outline_procedurally( font, test_str, x, y, size[s]/size[0] ); y :+ h; y :+ h
+		y :+ draw_outline_procedurally( font, reverse_string( test_str ), x, y, size[s]/size[0] ); y :+ h; y :+ h
 		y = t
 		SetColor( 255, 255, 255 )
-		font.draw_string( BMP_FONT.test_string, x, y ); y :+ h
-		font.draw_string( reverse_string( BMP_FONT.test_string ), x, y ); y :+ h
+		y :+ font.draw_string( test_str, x, y ); y :+ h; y :+ h
+		y :+ font.draw_string( reverse_string( test_str ), x, y ); y :+ h; y :+ h
 	Next
 	Flip
 	WaitKey
-	SetClsColor( 0, 0, 0 )
-End Function
-
-Function draw_outline_procedurally( font:BMP_FONT, str$, x#, y#, d# = 1 )
-	For Local r% = 0 Until 3
-		For Local c% = 0 Until 3
-			font.draw_string( str, x + (r-1)*d, y + (c-1)*d )
-		Next
-	Next
+	End
 End Function
 
 '//////////////////////////////////////////////////////////////////////////////

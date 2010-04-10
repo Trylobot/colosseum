@@ -381,7 +381,7 @@
       <Document_Active>true</Document_Active>
       <Caret_Position>
         <X>15</X>
-        <Y>127</Y>
+        <Y>26</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1747,8 +1747,8 @@
       <FileName>debug.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>25</X>
-        <Y>64</Y>
+        <X>0</X>
+        <Y>37</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -3804,8 +3804,8 @@
       <FileName>menu.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>42</X>
-        <Y>712</Y>
+        <X>22</X>
+        <Y>711</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
