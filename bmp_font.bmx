@@ -37,11 +37,12 @@ Type BMP_FONT
 	Const char_count%  = ascii_end + 1 - ascii_start
 
 	Field font_img:IMAGE_ATLAS_REFERENCE
+	Field offset_x%
+	Field baseline_y%
+	Field char_spacing%
 	Field char_width%[]
   Field scale%
-	Field baseline_y%
   Field height%
-	Field char_spacing%
 	
 	Method draw_string( str$, x#, y# )
 		Local cx% = x
@@ -69,62 +70,68 @@ Type BMP_FONT
 	End Method
 	
 	Function Create_from_json:BMP_FONT( json:TJSON )
-		Local src_path$
+		Local path$
     Local offset_x%
 		Local baseline_y%
+		Local char_spacing%
 		Local char_width%[]
 		Local img:IMAGE_ATLAS_REFERENCE
 		Local f:BMP_FONT
 		
-    src_path = json.GetString( "path" )
+    path = json.GetString( "path" )
     offset_x = json.GetNumber( "offset_x" )
 		baseline_y = json.GetNumber( "baseline_y" )
+		char_spacing = json.GetNumber( "char_spacing" )
 		char_width = Create_Int_array_from_TJSONArray( json.GetArray( "char_widths" ))
 		If char_width.Length <> char_count
 			DebugStop
 			Return Null
 		End If
-		img = IMAGE_ATLAS_REFERENCE( TEXTURE_MANAGER.reference_map.ValueForKey( src_path ))
+		img = IMAGE_ATLAS_REFERENCE( TEXTURE_MANAGER.reference_map.ValueForKey( path ))
 		If Not img
 			DebugStop
 		End If
 		img.LoadVariableWidthBMPFont( char_count, char_width, offset_x, baseline_y )
 		f = New BMP_FONT
 		f.font_img = img
+		f.offset_x = offset_x
+		f.baseline_y = baseline_y
+		f.char_spacing = char_spacing
 		f.char_width = char_width
     f.scale = 1
-		f.baseline_y = baseline_y
     f.height = img.height()
-		f.char_spacing = json.GetNumber( "char_spacing" )
 		Return f
 	End Function
   
   Method clone:BMP_FONT()
     Local f:BMP_FONT = New BMP_FONT
     f.font_img = font_img
+		f.offset_x = offset_x
+		f.baseline_y = baseline_y
+		f.char_spacing = char_spacing
     f.char_width = char_width[..]
     f.scale = scale
-		f.baseline_y = baseline_y
     f.height = height
-		f.char_spacing = char_spacing
     Return f
   End Method
   
   Function Create_copy_from_json:BMP_FONT( json:TJSON )
-    Local base_font_key$
-    Local base_font:BMP_FONT
+    Local key$
+    Local b:BMP_FONT
     Local scale%
     Local f:BMP_FONT
     
-    base_font_key = json.GetString( "base_font" )
-    base_font = get_bmp_font( base_font_key )
-		If Not base_font Then Return Null
+    key = json.GetString( "base_font" )
+    b = get_bmp_font( key )
+		If Not b Then Return Null
     scale = json.GetNumber( "scale" )
-		f = base_font.clone()
+		f = b.clone()
+		'recalculate members which rely on scale
+		f.offset_x = scale*b.offset_x
+		f.baseline_y = scale*b.baseline_y
+		f.char_spacing = scale*b.char_spacing
     f.scale = scale
-    f.height = scale*base_font.height
-		f.baseline_y = scale*base_font.baseline_y
-		f.char_spacing = scale*base_font.char_spacing
+    f.height = scale*b.height
 		Return f
   End Function
 	

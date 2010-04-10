@@ -710,12 +710,12 @@ Type MENU
 	End Function
 	
 	Function load_fonts()
-		title_font = get_bmp_font( "arcade_25" )
-		menu_font = get_bmp_font( "arcade_20" )
-		menu_font_small = get_bmp_font( "arcade_10" )
-		title_font_bg = get_bmp_font( "arcade_outline_25" )
-		menu_font_bg = get_bmp_font( "arcade_outline_20" )
-		menu_font_small_bg = get_bmp_font( "arcade_outline_10" )
+		title_font = get_bmp_font( "arcade_21" )
+		menu_font = get_bmp_font( "arcade_14" )
+		menu_font_small = get_bmp_font( "arcade_7" )
+		title_font_bg = get_bmp_font( "arcade_outline_21" )
+		menu_font_bg = get_bmp_font( "arcade_outline_14" )
+		menu_font_small_bg = get_bmp_font( "arcade_outline_7" )
 	End Function
 
 End Type

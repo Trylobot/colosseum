@@ -38,19 +38,35 @@ End Function
 
 Function test_bmp_fonts()
 	Local font:BMP_FONT
-	Local y% = 0, h% = 0
+	Local x% = 2, y% = 0, h%, t%
+	SetClsColor( 127, 127, 127 )
 	Cls
-	SetColor( 255, 255, 255 )
 	'Local size%[] = [ 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 ]
 	Local size%[] = [ 7, 14 ]
+	'Local size%[] = [ 7 ]
 	For Local s% = 0 Until size.Length
 		font = get_bmp_font( "arcade_" + size[s] )
-		h = 0.80 * Float(font.height); y :+ h
-		font.draw_string( BMP_FONT.test_string, 1, y ); y :+ h
-		font.draw_string( reverse_string( BMP_FONT.test_string ), 1, y ); y :+ h
+		h = font.height; y :+ h
+		t = y
+		SetColor( 0, 0, 0 )
+		draw_outline_procedurally( font, BMP_FONT.test_string, x, y, size[s]/7 ); y :+ h
+		draw_outline_procedurally( font, reverse_string( BMP_FONT.test_string ), x, y, size[s]/7 ); y :+ h
+		y = t
+		SetColor( 255, 255, 255 )
+		font.draw_string( BMP_FONT.test_string, x, y ); y :+ h
+		font.draw_string( reverse_string( BMP_FONT.test_string ), x, y ); y :+ h
 	Next
 	Flip
 	WaitKey
+	SetClsColor( 0, 0, 0 )
+End Function
+
+Function draw_outline_procedurally( font:BMP_FONT, str$, x#, y#, d# = 1 )
+	For Local r% = 0 Until 3
+		For Local c% = 0 Until 3
+			font.draw_string( str, x + (r-1)*d, y + (c-1)*d )
+		Next
+	Next
 End Function
 
 '//////////////////////////////////////////////////////////////////////////////

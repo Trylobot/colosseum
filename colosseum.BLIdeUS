@@ -380,8 +380,8 @@
       <FileName>bmp_font.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>33</X>
-        <Y>104</Y>
+        <X>15</X>
+        <Y>127</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1747,8 +1747,8 @@
       <FileName>debug.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>1</X>
-        <Y>34</Y>
+        <X>25</X>
+        <Y>64</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1778,8 +1778,8 @@
       <FileName>draw.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>26</X>
-        <Y>264</Y>
+        <X>1</X>
+        <Y>237</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -3804,8 +3804,8 @@
       <FileName>menu.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>6</X>
-        <Y>270</Y>
+        <X>42</X>
+        <Y>712</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -3828,7 +3828,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
