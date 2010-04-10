@@ -128,7 +128,7 @@
 		key: "small_outline_5",
 		object: {
 			path: "art/fonts/04b11_6pt_outline.png",
-      offset_x: 0,
+      offset_x: 1,
       baseline_y: 7,
       char_spacing: -2,
       line_spacing: -2,
