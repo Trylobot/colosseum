@@ -5,6 +5,7 @@
 		object: {
 			path: "art/fonts/04b11_6pt.png",
       offset_x: 0,
+      offset_y: 0,
       baseline_y: 6,
       char_spacing: 0,
       line_spacing: 0,
@@ -129,6 +130,7 @@
 		object: {
 			path: "art/fonts/04b11_6pt_outline.png",
       offset_x: 1,
+      offset_y: 1,
       baseline_y: 7,
       char_spacing: -2,
       line_spacing: -2,
@@ -253,6 +255,7 @@
     object: {
       path: "art/fonts/PressStartK_6pt.png",
       offset_x: 0,
+      offset_y: 0,
       baseline_y: 8,
       char_spacing: 0,
       line_spacing: 0,
@@ -385,6 +388,7 @@
     object: {
       path: "art/fonts/PressStartK_6pt_outline.png",
       offset_x: 2,
+      offset_y: 1,
       baseline_y: 9,
       char_spacing: -2,
       line_spacing: -2,

@@ -262,7 +262,7 @@ Function draw_main_screen()
 		Local bg_red% = 55,  bg_green% = 55,  bg_blue% = 55
 		h = fg_font.height
 		x = 1
-		y = window_h - h*3 - h/2
+		y = window_h - h*credits.Length
 		For Local i% = 0 Until credits.Length
 			draw_layered_string( credits[i], x, y, fg_font, bg_font, fg_red, fg_green, fg_blue, bg_red, bg_green, bg_blue )
 			y :+ h

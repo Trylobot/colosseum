@@ -41,15 +41,16 @@ Function test_bmp_fonts()
 	Local x%, y% = 0, h%, t%, fg%, bg%
 	Local test_str$ = " !~q#$%&'()*+,-./0123456789:;<=>?@~nABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`~nabcdefghijklmnopqrstuvwxyz{|}~~"
 	Local size%[]
+	
 	SetClsColor( 127, 127, 127 )
 	Cls
-
+	
 	size = [ 5, 10 ]
 	For Local s% = 0 Until size.Length
 		x = 2*size[s]/size[0]
 		fg_font = get_bmp_font( "small_" + size[s] )
 		bg_font = get_bmp_font( "small_outline_" + size[s] )
-		h = fg_font.height; y :+ h
+		h = fg_font.height
 		fg = 255
 		bg = 0
 		y :+ draw_layered_string( test_str, x, y, fg_font, bg_font, fg,fg,fg, bg,bg,bg ); y :+ 2*h
@@ -61,7 +62,7 @@ Function test_bmp_fonts()
 		x = 2*size[s]/size[0]
 		fg_font = get_bmp_font( "arcade_" + size[s] )
 		bg_font = get_bmp_font( "arcade_outline_" + size[s] )
-		h = fg_font.height; y :+ h
+		h = fg_font.height
 		fg = 255
 		bg = 0
 		y :+ draw_layered_string( test_str, x, y, fg_font, bg_font, fg,fg,fg, bg,bg,bg ); y :+ 2*h

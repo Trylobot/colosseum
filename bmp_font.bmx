@@ -27,15 +27,13 @@ Function draw_layered_string#( str$, x#, y#, fg_font:BMP_FONT = Null, bg_font:BM
 	Return y_delta
 End Function
 
-Function draw_outline_procedurally#( font:BMP_FONT, str$, x#, y#, d# = 1 )
-	If Not font Then Return 0
-	Local y_delta# = 0
+Function draw_outline_procedurally( font:BMP_FONT, str$, x#, y#, d# = 1 )
+	If Not font Then Return
 	For Local r% = 0 Until 3
 		For Local c% = 0 Until 3
-			y_delta = font.draw_string( str, x + (r-1)*d, y + (c-1)*d )
+			font.draw_string( str, x + (r-1)*d, y + (c-1)*d )
 		Next
 	Next
-	Return y_delta
 End Function
 
 '______________________________________________________________________________
@@ -45,13 +43,14 @@ the font image is required to contain exactly these characters (including the sp
 EndRem
 Type BMP_FONT
 	Const test_string$ = " !~q#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~~"
-	Const ascii_start% = 32  'ASCII Space
-	Const ascii_end%   = 126 'ASCII Tilde (inclusive)
-	Const char_count%  = ascii_end + 1 - ascii_start
 	Const ASCII_NEWLINE% = Asc("~n")
+	Const ASCII_START% = 32  'space
+	Const ASCII_END%   = 126 'tilde
+	Const CHAR_COUNT%  = ASCII_END - ASCII_START + 1
 
 	Field font_img:IMAGE_ATLAS_REFERENCE
 	Field offset_x%
+	Field offset_y%
 	Field baseline_y%
 	Field char_spacing%
 	Field line_spacing%
@@ -60,21 +59,25 @@ Type BMP_FONT
   Field height%
 	
 	Method draw_string#( str$, x#, y# )
-		Local cx% = x - offset_x
-		Local cy% = y - baseline_y
+		x :- offset_x
+		y :- offset_y
+		Local cx% = x
+		Local cy% = y
 		Local ascii%, glyph%
+		SetRotation( 0 )
     SetScale( scale, scale )
 		For Local i% = 0 Until str.Length
 			ascii = str[i]
 			If ascii = ASCII_NEWLINE
-				cx = x - offset_x
+				cx = x
 				cy :+ height + line_spacing
 				Continue
 			End If
 			glyph = ascii - ascii_start
-			If glyph < 0 Or glyph >= char_count Then glyph = 0
-			DrawImageRef( font_img, cx, cy, glyph )
-			cx :+ char_width[glyph] + char_spacing
+			If glyph >= 0 And glyph < char_count
+				DrawImageRef( font_img, cx, cy, glyph )
+				cx :+ char_width[glyph] + char_spacing
+			End If
 		Next
 		Return (cy - y)
 	End Method
@@ -94,6 +97,7 @@ Type BMP_FONT
 	Function Create_from_json:BMP_FONT( json:TJSON )
 		Local path$
     Local offset_x%
+		Local offset_y%
 		Local baseline_y%
 		Local char_spacing%
 		Local line_spacing%
@@ -103,6 +107,7 @@ Type BMP_FONT
 		
     path = json.GetString( "path" )
     offset_x = json.GetNumber( "offset_x" )
+		offset_y = json.GetNumber( "offset_y" )
 		baseline_y = json.GetNumber( "baseline_y" )
 		char_spacing = json.GetNumber( "char_spacing" )
 		line_spacing = json.GetNumber( "line_spacing" )
@@ -119,6 +124,7 @@ Type BMP_FONT
 		f = New BMP_FONT
 		f.font_img = img
 		f.offset_x = offset_x
+		f.offset_y = offset_y
 		f.baseline_y = baseline_y
 		f.char_spacing = char_spacing
 		f.line_spacing = line_spacing
@@ -132,6 +138,7 @@ Type BMP_FONT
     Local f:BMP_FONT = New BMP_FONT
     f.font_img = font_img
 		f.offset_x = offset_x
+		f.offset_y = offset_y
 		f.baseline_y = baseline_y
 		f.char_spacing = char_spacing
 		f.line_spacing = line_spacing
@@ -155,6 +162,7 @@ Type BMP_FONT
     f.scale = scale
 		'apply scale
 		f.offset_x :* scale
+		f.offset_y :* scale
 		f.baseline_y :* scale
 		f.char_spacing :* scale
 		f.line_spacing :* scale
