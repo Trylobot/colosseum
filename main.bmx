@@ -6,6 +6,7 @@ Rem
 	email: tylerbot@gmail.com
 	description: top-down tank fight
 EndRem
+
 'SuperStrict
 'Framework brl.D3D7Max2D
 ''Framework brl.GLMax2D
@@ -30,6 +31,13 @@ EndRem
 Const version_major%    = 0
 Const version_minor%    = 4
 Const version_revision% = 0
+
+Global credits$[] = [ ..
+	"COLOSSEUM (c)2008 Tyler W.R. Cole, written in BlitzMax", ..
+	"Physics by Jeff Weber & Alex Okafor, JSON by grable, TCP/UDP by Vertex", ..
+	"Music by NickPerrin & Yoshi-1up, Fonts by codeman38 & Yuji Oshimoto", ..
+	"also thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, Firelord88" ..
+]
 
 'defaults
 apply_default_settings()

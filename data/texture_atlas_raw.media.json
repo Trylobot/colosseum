@@ -7,7 +7,7 @@
 			{
 				source_path: "art/fonts/04b11_6pt.png",
 				x: 0,
-				y: 11,
+				y: 21,
 				w: 599,
 				h: 9
 			},
@@ -17,6 +17,13 @@
 				y: 0,
 				w: 788,
 				h: 11
+			},
+			{
+				source_path: "art/fonts/PressStartK_6pt.png",
+				x: 0,
+				y: 11,
+				w: 680,
+				h: 10
 			}
 		]
 	}

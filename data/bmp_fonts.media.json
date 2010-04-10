@@ -1,7 +1,7 @@
 [
 	{
 		class: "bmp_font",
-		key: "normal_5",
+		key: "small_5",
 		object: {
 			path: "art/fonts/04b11_6pt.png",
       offset_x: 0,
@@ -108,79 +108,23 @@
 	},
 	{
 		class: "bmp_font_copy",
-		key: "normal_10",
+		key: "small_10",
 		object: {
-			base_font: "normal_5",
+			base_font: "small_5",
 			scale: 2,
 		}
 	},
 	{
 		class: "bmp_font_copy",
-		key: "normal_15",
+		key: "small_15",
 		object: {
-			base_font: "normal_5",
+			base_font: "small_5",
 			scale: 3,
 		}
 	},
 	{
-		class: "bmp_font_copy",
-		key: "normal_20",
-		object: {
-			base_font: "normal_5",
-			scale: 4,
-		}
-	},
-	{
-		class: "bmp_font_copy",
-		key: "normal_25",
-		object: {
-			base_font: "normal_5",
-			scale: 5,
-		}
-	},
-	{
-		class: "bmp_font_copy",
-		key: "normal_30",
-		object: {
-			base_font: "normal_5",
-			scale: 6,
-		}
-	},
-	{
-		class: "bmp_font_copy",
-		key: "normal_35",
-		object: {
-			base_font: "normal_5",
-			scale: 7,
-		}
-	},
-	{
-		class: "bmp_font_copy",
-		key: "normal_40",
-		object: {
-			base_font: "normal_5",
-			scale: 8,
-		}
-	},
-	{
-		class: "bmp_font_copy",
-		key: "normal_45",
-		object: {
-			base_font: "normal_5",
-			scale: 9,
-		}
-	},
-	{
-		class: "bmp_font_copy",
-		key: "normal_50",
-		object: {
-			base_font: "normal_5",
-			scale: 10,
-		}
-	},
-	{
 		class: "bmp_font",
-		key: "outline_5",
+		key: "small_outline_5",
 		object: {
 			path: "art/fonts/04b11_6pt_outline.png",
       offset_x: 0,
@@ -287,74 +231,141 @@
 	},
 	{
 		class: "bmp_font_copy",
-		key: "outline_10",
+		key: "small_outline_10",
 		object: {
-			base_font: "outline_5",
+			base_font: "small_outline_5",
 			scale: 2,
 		}
 	},
 	{
 		class: "bmp_font_copy",
-		key: "outline_15",
+		key: "small_outline_15",
 		object: {
-			base_font: "outline_5",
+			base_font: "small_outline_5",
 			scale: 3,
 		}
 	},
+  {
+    class: "bmp_font",
+    key: "arcade_7",
+    object: {
+      path: "art/fonts/PressStartK_6pt.png",
+      offset_x: 0,
+      baseline_y: 8,
+      char_spacing: 0,
+      char_widths: [
+        5,
+        5,
+        6,
+        8,
+        7,
+        7,
+        8,
+        3,
+        5,
+        5,
+        8,
+        7,
+        4,
+        7,
+        3,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        3,
+        4,
+        6,
+        5,
+        6,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        5,
+        7,
+        5,
+        8,
+        8,
+        4,
+        8,
+        8,
+        8,
+        8,
+        8,
+        7,
+        8,
+        8,
+        5,
+        5,
+        7,
+        5,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        6,
+        3,
+        6,
+        8
+      ]
+    }
+  },
 	{
 		class: "bmp_font_copy",
-		key: "outline_20",
+		key: "arcade_14",
 		object: {
-			base_font: "outline_5",
-			scale: 4,
+			base_font: "arcade_7",
+			scale: 2,
 		}
 	},
 	{
 		class: "bmp_font_copy",
-		key: "outline_25",
+		key: "arcade_21",
 		object: {
-			base_font: "outline_5",
-			scale: 5,
-		}
-	},
-	{
-		class: "bmp_font_copy",
-		key: "outline_30",
-		object: {
-			base_font: "outline_5",
-			scale: 6,
-		}
-	},
-	{
-		class: "bmp_font_copy",
-		key: "outline_35",
-		object: {
-			base_font: "outline_5",
-			scale: 7,
-		}
-	},
-	{
-		class: "bmp_font_copy",
-		key: "outline_40",
-		object: {
-			base_font: "outline_5",
-			scale: 8,
-		}
-	},
-	{
-		class: "bmp_font_copy",
-		key: "outline_45",
-		object: {
-			base_font: "outline_5",
-			scale: 9,
-		}
-	},
-	{
-		class: "bmp_font_copy",
-		key: "outline_50",
-		object: {
-			base_font: "outline_5",
-			scale: 10,
+			base_font: "arcade_7",
+			scale: 3,
 		}
 	}
 ]

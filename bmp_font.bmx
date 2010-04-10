@@ -56,6 +56,18 @@ Type BMP_FONT
 		Next
 	End Method
 	
+	Method width%( str$, offset% = 0, length% = -1 )
+		If length = -1 Then length = str.length
+		Local w% = 0
+		Local glyph%
+		For Local i% = offset Until length
+			glyph = str[i] - ascii_start
+			If glyph < 0 Or glyph >= char_count Then glyph = 0
+			w :+ scale * (char_width[glyph] + char_spacing)
+		Next
+		Return w
+	End Method
+	
 	Function Create_from_json:BMP_FONT( json:TJSON )
 		Local src_path$
     Local offset_x%
@@ -106,6 +118,7 @@ Type BMP_FONT
     
     base_font_key = json.GetString( "base_font" )
     base_font = get_bmp_font( base_font_key )
+		If Not base_font Then Return Null
     scale = json.GetNumber( "scale" )
 		f = base_font.clone()
     f.scale = scale

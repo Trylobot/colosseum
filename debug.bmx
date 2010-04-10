@@ -32,7 +32,7 @@ Function debug_with_graphics()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
 	'play_debug_level()
-	'test_bmp_fonts()
+	test_bmp_fonts()
 	
 End Function
 
@@ -42,9 +42,9 @@ Function test_bmp_fonts()
 	Cls
 	SetColor( 255, 255, 255 )
 	'Local size%[] = [ 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 ]
-	Local size%[] = [ 5 ]
+	Local size%[] = [ 7, 14 ]
 	For Local s% = 0 Until size.Length
-		font = get_bmp_font( "normal_" + size[s] )
+		font = get_bmp_font( "arcade_" + size[s] )
 		h = 0.80 * Float(font.height); y :+ h
 		font.draw_string( BMP_FONT.test_string, 1, y ); y :+ h
 		font.draw_string( reverse_string( BMP_FONT.test_string ), 1, y ); y :+ h
