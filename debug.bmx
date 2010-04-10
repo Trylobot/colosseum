@@ -32,7 +32,7 @@ Function debug_with_graphics()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
 	'play_debug_level()
-	test_bmp_fonts()
+	'test_bmp_fonts()
 	
 End Function
 
@@ -82,7 +82,8 @@ Global profiler_label$[] = [ ..
 	"collide_all_objects", ..
 	"update_all_objects", ..
 	"play_all_audio", ..
-	"draw_all_graphics" ]
+	"draw_all_graphics", ..
+	"farseer physics" ]
 Global profiler_value:Long[] = New Long[ profiler_label.Length ]
 Global profiler_ts%
 

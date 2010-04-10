@@ -42,6 +42,9 @@ Type ENVIRONMENT
 	Field origin_max_x% 'camera constraint
 	Field origin_max_y% 'camera constraint
 	
+	Field physics:TPhysicsSimulator
+	'Field physics_viewer:TPhysicsSimulatorView
+	
 	Field background:TImage
 	Field graffiti:GRAFFITI_MANAGER
 	Field foreground:TImage
@@ -96,6 +99,9 @@ Type ENVIRONMENT
 	Field player:COMPLEX_AGENT
 	
 	Method New()
+		physics = TPhysicsSimulator.Create( Vector2.Create( 0, 0 ))
+		'physics_viewer = TPhysicsSimulatorView.Create( physics )
+		
 		game_mouse = Create_cVEC( 0, 0 )
 		drawing_origin = Create_cVEC( 0, 0 )
 		walls = CreateList()
@@ -303,6 +309,10 @@ Type ENVIRONMENT
 		End Select
 		unit.manage( allied_agent_list )
 		unit.spawn_at( spawn_point, 800 )
+		
+		unit.body = TBodyFactory.CreateRectangleBody( physics, unit.hitbox.w, unit.hitbox.h, unit.mass )
+		unit.body.SetStatic( unit.physics_disabled )
+		
 		unit.snap_all_turrets()
 		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( ..
 			unit, CONTROL_BRAIN.CONTROL_TYPE_AI, ..

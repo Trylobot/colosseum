@@ -120,9 +120,13 @@ Repeat
 		calculate_timescale()
 		reset_frame_timer()
 		'collision detection and resolution
-		collide_all_objects(); profiler(2)
+		'collide_all_objects(); profiler(2)
 		'resolve forces and emit particles, and capture player vehicle input
 		update_all_objects(); profiler(3)
+	End If
+	'new physics engine (temporary spot
+	If game And game.physics
+		game.physics.Update( now() - before ); profiler(6)
 	End If
 	'music and sound
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress ); profiler(4)
