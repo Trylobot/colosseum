@@ -54,26 +54,27 @@ Type BMP_FONT
 	Field offset_x%
 	Field baseline_y%
 	Field char_spacing%
+	Field line_spacing%
 	Field char_width%[]
   Field scale%
   Field height%
 	
 	Method draw_string#( str$, x#, y# )
-		Local cx% = x
-		Local cy% = y
+		Local cx% = x - offset_x
+		Local cy% = y - baseline_y
 		Local ascii%, glyph%
     SetScale( scale, scale )
 		For Local i% = 0 Until str.Length
 			ascii = str[i]
 			If ascii = ASCII_NEWLINE
-				cx = x
-				cy :+ height
+				cx = x - offset_x
+				cy :+ height + line_spacing
 				Continue
 			End If
 			glyph = ascii - ascii_start
 			If glyph < 0 Or glyph >= char_count Then glyph = 0
 			DrawImageRef( font_img, cx, cy, glyph )
-			cx :+ scale * (char_width[glyph] + char_spacing)
+			cx :+ char_width[glyph] + char_spacing
 		Next
 		Return (cy - y)
 	End Method
@@ -95,6 +96,7 @@ Type BMP_FONT
     Local offset_x%
 		Local baseline_y%
 		Local char_spacing%
+		Local line_spacing%
 		Local char_width%[]
 		Local img:IMAGE_ATLAS_REFERENCE
 		Local f:BMP_FONT
@@ -103,6 +105,7 @@ Type BMP_FONT
     offset_x = json.GetNumber( "offset_x" )
 		baseline_y = json.GetNumber( "baseline_y" )
 		char_spacing = json.GetNumber( "char_spacing" )
+		line_spacing = json.GetNumber( "line_spacing" )
 		char_width = Create_Int_array_from_TJSONArray( json.GetArray( "char_widths" ))
 		If char_width.Length <> char_count
 			DebugStop
@@ -112,12 +115,13 @@ Type BMP_FONT
 		If Not img
 			DebugStop
 		End If
-		img.LoadVariableWidthBMPFont( char_count, char_width, offset_x, baseline_y )
+		img.LoadVariableWidthBMPFont( char_count, char_width, 0, 0 )
 		f = New BMP_FONT
 		f.font_img = img
 		f.offset_x = offset_x
 		f.baseline_y = baseline_y
 		f.char_spacing = char_spacing
+		f.line_spacing = line_spacing
 		f.char_width = char_width
     f.scale = 1
     f.height = img.height()
@@ -130,6 +134,7 @@ Type BMP_FONT
 		f.offset_x = offset_x
 		f.baseline_y = baseline_y
 		f.char_spacing = char_spacing
+		f.line_spacing = line_spacing
     f.char_width = char_width[..]
     f.scale = scale
     f.height = height
@@ -143,16 +148,20 @@ Type BMP_FONT
     Local f:BMP_FONT
     
     key = json.GetString( "base_font" )
+    scale = json.GetNumber( "scale" )
     b = get_bmp_font( key )
 		If Not b Then Return Null
-    scale = json.GetNumber( "scale" )
 		f = b.clone()
-		'recalculate members which rely on scale
-		f.offset_x = scale*b.offset_x
-		f.baseline_y = scale*b.baseline_y
-		f.char_spacing = scale*b.char_spacing
     f.scale = scale
-    f.height = scale*b.height
+		'apply scale
+		f.offset_x :* scale
+		f.baseline_y :* scale
+		f.char_spacing :* scale
+		f.line_spacing :* scale
+		For Local i% = 0 Until b.char_width.Length
+			f.char_width[i] :* scale
+		Next
+    f.height :* scale
 		Return f
   End Function
 	

@@ -7,23 +7,30 @@
 			{
 				source_path: "art/fonts/04b11_6pt.png",
 				x: 0,
-				y: 21,
+				y: 33,
 				w: 599,
 				h: 9
 			},
 			{
 				source_path: "art/fonts/04b11_6pt_outline.png",
 				x: 0,
-				y: 0,
+				y: 12,
 				w: 788,
 				h: 11
 			},
 			{
 				source_path: "art/fonts/PressStartK_6pt.png",
 				x: 0,
-				y: 11,
+				y: 23,
 				w: 680,
 				h: 10
+			},
+			{
+				source_path: "art/fonts/PressStartK_6pt_outline.png",
+				x: 0,
+				y: 0,
+				w: 871,
+				h: 12
 			}
 		]
 	}

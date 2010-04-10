@@ -32,32 +32,42 @@ Function debug_with_graphics()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
 	'play_debug_level()
-	'test_bmp_fonts()
+	test_bmp_fonts()
 	
 End Function
 
 Function test_bmp_fonts()
-	Local font:BMP_FONT
-	Local x%, y% = 0, h%, t%
+	Local fg_font:BMP_FONT, bg_font:BMP_FONT
+	Local x%, y% = 0, h%, t%, fg%, bg%
+	Local test_str$ = " !~q#$%&'()*+,-./0123456789:;<=>?@~nABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`~nabcdefghijklmnopqrstuvwxyz{|}~~"
+	Local size%[]
 	SetClsColor( 127, 127, 127 )
 	Cls
-	'Local size%[] = [ 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 ]
-	Local size%[] = [ 7, 14 ]
-	'Local size%[] = [ 7 ]
-	Local test_str$ = " !~q#$%&'()*+,-./0123456789:;<=>?@~nABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`~nabcdefghijklmnopqrstuvwxyz{|}~~"
+
+	size = [ 5, 10 ]
 	For Local s% = 0 Until size.Length
 		x = 2*size[s]/size[0]
-		font = get_bmp_font( "arcade_" + size[s] )
-		h = font.height; y :+ h
-		t = y
-		SetColor( 0, 0, 0 )
-		y :+ draw_outline_procedurally( font, test_str, x, y, size[s]/size[0] ); y :+ h; y :+ h
-		y :+ draw_outline_procedurally( font, reverse_string( test_str ), x, y, size[s]/size[0] ); y :+ h; y :+ h
-		y = t
-		SetColor( 255, 255, 255 )
-		y :+ font.draw_string( test_str, x, y ); y :+ h; y :+ h
-		y :+ font.draw_string( reverse_string( test_str ), x, y ); y :+ h; y :+ h
+		fg_font = get_bmp_font( "small_" + size[s] )
+		bg_font = get_bmp_font( "small_outline_" + size[s] )
+		h = fg_font.height; y :+ h
+		fg = 255
+		bg = 0
+		y :+ draw_layered_string( test_str, x, y, fg_font, bg_font, fg,fg,fg, bg,bg,bg ); y :+ 2*h
+		y :+ draw_layered_string( reverse_string(test_str), x, y, fg_font, bg_font, fg,fg,fg, bg,bg,bg ); y :+ 2*h
 	Next
+	
+	size = [ 7, 14 ]
+	For Local s% = 0 Until size.Length
+		x = 2*size[s]/size[0]
+		fg_font = get_bmp_font( "arcade_" + size[s] )
+		bg_font = get_bmp_font( "arcade_outline_" + size[s] )
+		h = fg_font.height; y :+ h
+		fg = 255
+		bg = 0
+		y :+ draw_layered_string( test_str, x, y, fg_font, bg_font, fg,fg,fg, bg,bg,bg ); y :+ 2*h
+		y :+ draw_layered_string( reverse_string(test_str), x, y, fg_font, bg_font, fg,fg,fg, bg,bg,bg ); y :+ 2*h
+	Next
+
 	Flip
 	WaitKey
 	End

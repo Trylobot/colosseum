@@ -380,8 +380,8 @@
       <FileName>bmp_font.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>15</X>
-        <Y>26</Y>
+        <X>20</X>
+        <Y>57</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1747,8 +1747,8 @@
       <FileName>debug.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>37</Y>
+        <X>17</X>
+        <Y>58</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
