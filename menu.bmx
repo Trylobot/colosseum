@@ -16,7 +16,7 @@ EndRem
 '______________________________________________________________________________
 Const border_width% = 1
 Const scrollbar_width% = 20
-Const text_height_factor# = 0.70
+Const text_height_factor# = 1.0 '0.70
 Const breadcrumb_h% = 14
 
 'these need to go away, kind of a hack

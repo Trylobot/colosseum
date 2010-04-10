@@ -45,6 +45,7 @@ Type PHYSICAL_OBJECT Extends POINT
 	End Method
 	
 	Method update()
+		If Not body Then Return
 		pos_x = body._position.X
 		pos_y = body._position.Y
 		If Not force_list.IsEmpty()
@@ -106,12 +107,10 @@ Type PHYSICAL_OBJECT Extends POINT
 	End Method
 	
 	Method add_force:FORCE( other_f:FORCE, combine_ang_with_parent_ang% = False )
-		Rem
 		Local f:FORCE = FORCE( FORCE.Copy( other_f, force_list ))
 		'f.parent = Self
 		f.combine_ang_with_parent_ang = combine_ang_with_parent_ang
 		return f
-		EndRem
 	End Method
 	
 	Rem
