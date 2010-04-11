@@ -126,7 +126,7 @@ Repeat
 	End If
 	'new physics engine (temporary spot
 	If game And game.physics
-		game.physics.Update( now() - before ); profiler(6)
+		game.physics.Update( 0.08 ); profiler(6)
 	End If
 	'music and sound
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress ); profiler(4)

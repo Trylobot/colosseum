@@ -31,9 +31,24 @@ Function debug_with_graphics()
 	'play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
-	'play_debug_level()
+	play_debug_level()
 	'test_bmp_fonts()
 	
+End Function
+
+Function play_debug_level()
+	Local lev:LEVEL = load_level( "levels/debug.level.json" )
+	'Local player:COMPLEX_AGENT = get_player_vehicle( "medium_tank" )
+	Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
+	'Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
+	'Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
+	play_level( lev, player )
+	game = main_game
+	game.sandbox = True
+	player.move_to( Create_POINT( 0.48*lev.width, 0.5*lev.height, -90.0 ))
+	player.snap_all_turrets()
+	player_has_entered_arena()
+	game.spawn_unit( "mr_the_box", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.52*lev.width, 0.5*lev.height, 0.0 ))
 End Function
 
 Function test_bmp_fonts()
@@ -41,10 +56,8 @@ Function test_bmp_fonts()
 	Local x%, y% = 0, h%, t%, fg%, bg%
 	Local test_str$ = " !~q#$%&'()*+,-./0123456789:;<=>?@~nABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`~nabcdefghijklmnopqrstuvwxyz{|}~~"
 	Local size%[]
-	
 	SetClsColor( 127, 127, 127 )
 	Cls
-	
 	size = [ 5, 10 ]
 	For Local s% = 0 Until size.Length
 		x = 2*size[s]/size[0]
@@ -56,7 +69,6 @@ Function test_bmp_fonts()
 		y :+ draw_layered_string( test_str, x, y, fg_font, bg_font, fg,fg,fg, bg,bg,bg ); y :+ 2*h
 		y :+ draw_layered_string( reverse_string(test_str), x, y, fg_font, bg_font, fg,fg,fg, bg,bg,bg ); y :+ 2*h
 	Next
-	
 	size = [ 7, 14 ]
 	For Local s% = 0 Until size.Length
 		x = 2*size[s]/size[0]
@@ -68,7 +80,6 @@ Function test_bmp_fonts()
 		y :+ draw_layered_string( test_str, x, y, fg_font, bg_font, fg,fg,fg, bg,bg,bg ); y :+ 2*h
 		y :+ draw_layered_string( reverse_string(test_str), x, y, fg_font, bg_font, fg,fg,fg, bg,bg,bg ); y :+ 2*h
 	Next
-
 	Flip
 	WaitKey
 	End
@@ -110,21 +121,6 @@ Global spawn_archetype$ = ""
 Global spawn_alignment% = POLITICAL_ALIGNMENT.NONE
 Global spawn_agent:COMPLEX_AGENT
 Global cb:CONTROL_BRAIN = Null
-
-Function play_debug_level()
-	Local lev:LEVEL = load_level( "levels/debug.colosseum_level" )
-	'Local player:COMPLEX_AGENT = get_player_vehicle( "medium_tank" )
-	Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
-	'Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
-	'Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
-	play_level( lev, player )
-	game = main_game
-	game.sandbox = True
-	player.move_to( Create_POINT( 0.48*lev.width, 0.5*lev.height, -90.0 ))
-	player.snap_all_turrets()
-	player_has_entered_arena()
-	game.spawn_unit( "mr_the_box", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.52*lev.width, 0.5*lev.height, 0.0 ))
-End Function
 
 Function show_me()
 	Local veh:PAIR[] = map_to_array( player_vehicle_map )

@@ -39,9 +39,7 @@ Type PHYSICAL_OBJECT Extends POINT
 	
 	Method move_to( argument:Object, dummy1% = False, dummy2% = False )
 		Super.move_to( argument, dummy1, dummy2 )
-		If body
-			body.SetPosition( Vector2.Create( pos_x, pos_y ))
-		End If
+		If body Then body.SetPosition( Vector2.Create( pos_x, pos_y ))
 	End Method
 	
 	Method update()

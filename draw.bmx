@@ -46,8 +46,13 @@ Function draw_all_graphics()
 	SetLineWidth( 1 )
 
 	'game content
-	If game <> Null
+	If game
 		draw_game()
+		
+		'SetClsColor( 127, 127, 127 )
+		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+		game.physics_viewer.Draw()
+		
 		SetColor( 255, 255, 255 )
 		SetRotation( 0 )
 		SetAlpha( 1 )
@@ -65,9 +70,6 @@ End Function
 '______________________________________________________________________________
 'In-game stuff
 Function draw_game()
-	SetBlend( ALPHABLEND )
-	SetOrigin( 0, 0 )
-	
 	'update graffiti manager (for particles that wish to be retained)
 	If game.retained_particle_count >= active_particle_limit
 		game.graffiti.add_graffiti( game.retained_particle_list )

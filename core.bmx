@@ -70,7 +70,12 @@ End Function
 
 '______________________________________________________________________________
 Function play_level( level_reference:Object, player:COMPLEX_AGENT )
-	If Not player Or Not level_reference Then Return
+	If Not level_reference
+		DebugStop
+	End If
+	If Not player
+		DebugStop
+	End If
 	main_game = Create_ENVIRONMENT( True )
 	Local lev:LEVEL
 	If String( level_reference )

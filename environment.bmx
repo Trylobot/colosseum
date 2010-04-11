@@ -43,7 +43,7 @@ Type ENVIRONMENT
 	Field origin_max_y% 'camera constraint
 	
 	Field physics:TPhysicsSimulator
-	'Field physics_viewer:TPhysicsSimulatorView
+	Field physics_viewer:TPhysicsSimulatorView
 	
 	Field background:TImage
 	Field graffiti:GRAFFITI_MANAGER
@@ -100,7 +100,8 @@ Type ENVIRONMENT
 	
 	Method New()
 		physics = TPhysicsSimulator.Create( Vector2.Create( 0, 0 ))
-		'physics_viewer = TPhysicsSimulatorView.Create( physics )
+		physics_viewer = TPhysicsSimulatorView.Create( physics )
+		physics_viewer._enablePerformancePanelView = False
 		
 		game_mouse = Create_cVEC( 0, 0 )
 		drawing_origin = Create_cVEC( 0, 0 )
@@ -185,6 +186,10 @@ Type ENVIRONMENT
 		For Local pd:ENTITY_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )
 			prop.manage( prop_list )
+
+			prop.body = TBodyFactory.CreateRectangleBody( physics, prop.hitbox.w, prop.hitbox.h, prop.mass )
+			prop.body.SetStatic( prop.physics_disabled )
+
 			prop.move_to( pd.pos )
 		Next
 		'spawning system
@@ -367,6 +372,9 @@ Type ENVIRONMENT
 		'add new player
 		player = new_player
 		player.manage( friendly_agent_list )
+
+		player.body = TBodyFactory.CreateRectangleBody( physics, player.hitbox.w, player.hitbox.h, player.mass )
+
 		player_brain = new_player_brain
 		player_brain.manage( control_brain_list )
 		FLAG.engine_ignition = False
