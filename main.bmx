@@ -124,10 +124,6 @@ Repeat
 		'resolve forces and emit particles, and capture player vehicle input
 		update_all_objects(); profiler(3)
 	End If
-	'new physics engine (temporary spot
-	If game And game.physics
-		game.physics.Update( 0.08 ); profiler(6)
-	End If
 	'music and sound
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress ); profiler(4)
 	'draw everything

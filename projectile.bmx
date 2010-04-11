@@ -44,6 +44,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	
 	Function Create:Object( ..
 	img:IMAGE_ATLAS_REFERENCE = Null, ..
+	hitbox:BOX = Null, ..
 	snd_impact:TSound = Null, ..
 	damage# = 0.0, ..
 	explosive_force_magnitude# = 0.0, ..
@@ -61,6 +62,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		
 		'static fields
 		p.img = img
+		p.hitbox = hitbox
 		p.snd_impact = snd_impact
 		p.damage = damage
 		p.radius = radius
@@ -81,7 +83,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	
 	Method clone:PROJECTILE( new_source_id% = NULL_ID )
 		Local p:PROJECTILE = PROJECTILE( PROJECTILE.Create( ..
-			img, snd_impact, damage, explosive_force_magnitude, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
+			img, hitbox, snd_impact, damage, explosive_force_magnitude, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
 		'emitter lists
 		For Local em:PARTICLE_EMITTER = EachIn emitter_list_constant
 			p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_CONSTANT )

@@ -188,4 +188,3 @@ Function Create_AGENT_from_json:AGENT( json:TJSON )
 	Return a
 End Function
 
-

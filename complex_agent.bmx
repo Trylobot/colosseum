@@ -279,9 +279,9 @@ Type COMPLEX_AGENT Extends AGENT
 		If now() - spawn_begin_ts >= spawn_time Then spawning = False
 	End Method
 	'___________________________________________
-	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null )
+	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null, physics:TPhysicsSimulator )
 		For Local t:TURRET = EachIn turrets
-			t.emit( projectile_manager, background_particle_manager, foreground_particle_manager )
+			t.emit( projectile_manager, background_particle_manager, foreground_particle_manager, physics:TPhysicsSimulator )
 		Next
 		For Local list:TList = EachIn all_emitter_lists
 			For Local em:PARTICLE_EMITTER = EachIn list

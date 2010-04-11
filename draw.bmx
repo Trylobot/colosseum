@@ -49,7 +49,7 @@ Function draw_all_graphics()
 	If game
 		draw_game()
 		
-		'SetClsColor( 127, 127, 127 )
+		'SetClsColor( 200, 200, 200 )
 		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
 		game.physics_viewer.Draw()
 		

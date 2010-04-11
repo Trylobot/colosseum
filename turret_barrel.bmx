@@ -82,9 +82,9 @@ Type TURRET_BARREL Extends POINT
 		Next
 	End Method
 	
-	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null )
+	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null, physics:TPhysicsSimulator )
 		If launcher
-			launcher.emit( projectile_manager )
+			launcher.emit( projectile_manager, physics )
 		End If
 		For Local em:PARTICLE_EMITTER = EachIn emitter_list
 			em.emit( background_particle_manager, foreground_particle_manager )

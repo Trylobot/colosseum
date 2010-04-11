@@ -29,13 +29,18 @@ Type PROJECTILE_LAUNCHER Extends EMITTER
 	Field emitter_object:PROJECTILE 'template for objects to be emitted
 	Field source_id% 'to prevent collisions between emitted projectiles and the emitter parent
 	
-	Method emit:PROJECTILE( list:TList )
+	Method emit:PROJECTILE( list:TList, physics:TPhysicsSimulator )
 		If is_enabled() And ready()
 			'create a new object (particle/projectile) and set it up
 			Local p:PROJECTILE = emitter_object.clone( source_id )
-			'manager
+			'managers
 			If list
 				p.manage( list )
+			Else
+				Return Null
+			End If
+			If physics
+				p.setup_physics( physics, Vector2.Create( p.img.handle_x, p.img.handle_y ))
 			Else
 				Return Null
 			End If
@@ -44,12 +49,14 @@ Type PROJECTILE_LAUNCHER Extends EMITTER
 			Local dist_ang_actual# = dist_ang.get()
 			p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist_actual * Cos( dist_ang_actual + parent.ang )
 			p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist_actual * Sin( dist_ang_actual + parent.ang )
+			p.body.SetPosition( Vector2.Create( p.pos_x, p.pos_y ))
 			'orientation
 			If inherit_ang_from_dist_ang
 				p.ang = dist_ang_actual + parent.ang
 			Else
 				p.ang = ang.get() + parent.ang
 			End If
+			p.body.SetRotation( MathHelper.ToRadians( p.ang ))
 			'velocity
 			Local vel_actual# = vel.get()
 			Local vel_ang_actual#
@@ -60,8 +67,10 @@ Type PROJECTILE_LAUNCHER Extends EMITTER
 			End If
 			p.vel_x = vel_actual * Cos( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_x )
 			p.vel_y = vel_actual * Sin( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_y )
+			p.body.SetLinearVelocity( Vector2.Create( p.vel_x, p.vel_y ))
 			'angular velocity
 			p.ang_vel = ang_vel.get()
+			'p.body.Set
 			'forces
 			p.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, acc.get())), True )
 			'emitter state maintenance

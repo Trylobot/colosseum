@@ -9,7 +9,15 @@ EndRem
 'Import "force.bmx"
 
 '______________________________________________________________________________
+Const mass_mod# = 0.01
+Const linear_friction_mod# = 1.0
+Const angular_friction_mod# = 1.0
+
+
 Type PHYSICAL_OBJECT Extends POINT
+	
+	Field body:TBody
+	Field geom:TGeom
 	
 	Field hitbox:BOX 'collision rectangle
 	Field mass# 'number representing the mass units of this object
@@ -18,10 +26,25 @@ Type PHYSICAL_OBJECT Extends POINT
 	Field frictional_coefficient# 'frictional coefficient
 	Field physics_disabled% 'turn off all force-based calculations?
 	
-	Field body:TBody
-	
 	Method New()
 		force_list = CreateList()
+	End Method
+	
+	Method setup_physics( physics:TPhysicsSimulator, offset:Vector2 )
+		If Not hitbox Then Return
+		body = New TBody
+		body.SetMass( mass )
+		Local momentOfInertia# = TBodyFactory.MOIForRectangle( hitbox.w, hitbox.h, mass )
+		body.SetMomentOfInertia( momentOfInertia )
+		body.SetStatic( physics_disabled )
+		body.SetPosition( Vector2.Create( pos_x, pos_y ))
+		body.SetRotation( MathHelper.ToRadians( ang ))
+		Local verts:TVertices = TVertices.CreateRectangle( hitbox.w, hitbox.h )
+		Local rotationOffset# = 90
+		Local collisionGridCellSize# = TGeomFactory.CalculateGridCellSizeFromAABB( verts )
+		geom = TGeom.Create( body, verts, collisionGridCellSize, offset, rotationOffset )
+		physics.AddBody( body )
+		physics.AddGeom( geom )
 	End Method
 	
 	Method collide:Object[]( collidemask%, writemask% )
@@ -39,13 +62,17 @@ Type PHYSICAL_OBJECT Extends POINT
 	
 	Method move_to( argument:Object, dummy1% = False, dummy2% = False )
 		Super.move_to( argument, dummy1, dummy2 )
-		If body Then body.SetPosition( Vector2.Create( pos_x, pos_y ))
+		If body
+			body.SetPosition( Vector2.Create( pos_x, pos_y ))
+			body.SetRotation( MathHelper.ToRadians( ang ))
+		End If
 	End Method
 	
 	Method update()
-		If Not body Then Return
 		pos_x = body._position.X
 		pos_y = body._position.Y
+		ang = MathHelper.ToDegrees( body._rotation )
+		
 		If Not force_list.IsEmpty()
 			For Local f:FORCE = EachIn force_list
 				f.update()

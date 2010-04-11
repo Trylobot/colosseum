@@ -178,7 +178,10 @@ Type ENVIRONMENT
 		pathing = PATHING_STRUCTURE.Create( lev )
 		'walls (Collisions)
 		For Local cursor:CELL = EachIn lev.get_blocking_cells()
-			walls.AddLast( lev.get_wall( cursor ))
+			Local wall:BOX = lev.get_wall( cursor )
+			walls.AddLast( wall )
+			
+			setup_physics_from_wall( wall, physics )
 		Next
 		'graffiti
 		graffiti = GRAFFITI_MANAGER.Create( background, window_w, window_h )
@@ -186,11 +189,9 @@ Type ENVIRONMENT
 		For Local pd:ENTITY_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )
 			prop.manage( prop_list )
-
-			prop.body = TBodyFactory.CreateRectangleBody( physics, prop.hitbox.w, prop.hitbox.h, prop.mass )
-			prop.body.SetStatic( prop.physics_disabled )
-
 			prop.move_to( pd.pos )
+			
+			setup_physics_from_agent( prop, physics )
 		Next
 		'spawning system
 		initialize_spawning_system()
@@ -315,8 +316,7 @@ Type ENVIRONMENT
 		unit.manage( allied_agent_list )
 		unit.spawn_at( spawn_point, 800 )
 		
-		unit.body = TBodyFactory.CreateRectangleBody( physics, unit.hitbox.w, unit.hitbox.h, unit.mass )
-		unit.body.SetStatic( unit.physics_disabled )
+		setup_physics_from_agent( unit, physics )
 		
 		unit.snap_all_turrets()
 		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( ..
@@ -373,7 +373,7 @@ Type ENVIRONMENT
 		player = new_player
 		player.manage( friendly_agent_list )
 
-		player.body = TBodyFactory.CreateRectangleBody( physics, player.hitbox.w, player.hitbox.h, player.mass )
+		setup_physics_from_agent( player, physics )
 
 		player_brain = new_player_brain
 		player_brain.manage( control_brain_list )
@@ -548,4 +548,19 @@ Type ENVIRONMENT
 	End Method
 	
 End Type
+
+Function setup_physics_from_agent( unit:AGENT, physics:TPhysicsSimulator )
+	unit.setup_physics( physics, Vector2.Create( unit.img.handle_x, unit.img.handle_y ))
+End Function
+
+Function setup_physics_from_wall( wall:BOX, physics:TPhysicsSimulator )
+	Local body:TBody = New TBody
+	body.SetStatic( True )
+	body.SetPosition( Vector2.Create( wall.x, wall.y ))
+	Local verts:TVertices = TVertices.CreateRectangle( wall.w, wall.h )
+	Local collisionGridCellSize# = TGeomFactory.CalculateGridCellSizeFromAABB( verts )
+	Local geom:TGeom = TGeom.Create( body, verts, collisionGridCellSize )
+	physics.AddBody( body )
+	physics.AddGeom( geom )
+End Function
 
