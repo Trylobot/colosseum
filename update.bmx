@@ -137,7 +137,7 @@ Function update_all_objects()
 		
 		'new physics engine (temporary spot)
 		If game And game.physics
-			game.physics.Update( 0.05 ); profiler(6)
+			game.physics.Update( physics_timestep_in_seconds ); profiler(6)
 		End If
 		
 	End If

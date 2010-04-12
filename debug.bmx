@@ -151,6 +151,9 @@ Function debug_main()
 	If game <> Null And FLAG_debug_overlay
 		debug_overlay()
 		debug_fps()
+		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+		game.physics_viewer.Draw()
+		SetOrigin( 0, 0 )
 	End If
 	If profile
 		If KeyDown( KEY_NUMADD )

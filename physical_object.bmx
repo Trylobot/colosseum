@@ -9,11 +9,6 @@ EndRem
 'Import "force.bmx"
 
 '______________________________________________________________________________
-Const mass_mod# = 0.01
-Const linear_friction_mod# = 1.0
-Const angular_friction_mod# = 1.0
-
-
 Type PHYSICAL_OBJECT Extends POINT
 	
 	Field body:TBody
@@ -30,17 +25,25 @@ Type PHYSICAL_OBJECT Extends POINT
 		force_list = CreateList()
 	End Method
 	
+	Const mass_mod# = 0.05
+	Const linear_friction_mod# = 1.0
+	Const angular_friction_mod# = 1.0
+	Const rotationOffset# = 0.0
+	Const force_mod# = 1.0
+	Const torque_mod# = 1.0
+	
 	Method setup_physics( physics:TPhysicsSimulator, offset:Vector2 )
 		If Not hitbox Then Return
+		offset = Null
 		body = New TBody
-		body.SetMass( mass )
+		body.SetMass( mass * mass_mod )
 		Local momentOfInertia# = TBodyFactory.MOIForRectangle( hitbox.w, hitbox.h, mass )
 		body.SetMomentOfInertia( momentOfInertia )
 		body.SetStatic( physics_disabled )
 		body.SetPosition( Vector2.Create( pos_x, pos_y ))
 		body.SetRotation( MathHelper.ToRadians( ang ))
+		body.SetLinearDragCoefficient( frictional_coefficient * linear_friction_mod )
 		Local verts:TVertices = TVertices.CreateRectangle( hitbox.w, hitbox.h )
-		Local rotationOffset# = 90
 		Local collisionGridCellSize# = TGeomFactory.CalculateGridCellSizeFromAABB( verts )
 		geom = TGeom.Create( body, verts, collisionGridCellSize, offset, rotationOffset )
 		physics.AddBody( body )
@@ -81,15 +84,15 @@ Type PHYSICAL_OBJECT Extends POINT
 						Case PHYSICS_FORCE
 							Local fv:Vector2 = Vector2.Zero()
 							If f.combine_ang_with_parent_ang
-								fv.X = f.magnitude_cur*Cos( f.direction + ang )
-								fv.Y = f.magnitude_cur*Sin( f.direction + ang )
+								fv.X = f.magnitude_cur*Cos( f.direction + ang ) * force_mod
+								fv.Y = f.magnitude_cur*Sin( f.direction + ang ) * force_mod
 							Else
-								fv.X = f.magnitude_cur*Cos( f.direction )
-								fv.Y = f.magnitude_cur*Sin( f.direction )
+								fv.X = f.magnitude_cur*Cos( f.direction ) * force_mod
+								fv.Y = f.magnitude_cur*Sin( f.direction ) * force_mod
 							End If
 							body.ApplyForce( fv )
 						Case PHYSICS_TORQUE
-							body.ApplyTorque( f.magnitude_cur )
+							body.ApplyTorque( f.magnitude_cur * torque_mod )
 					End Select
 				End If
 			Next
