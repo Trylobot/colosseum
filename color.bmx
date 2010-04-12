@@ -16,6 +16,10 @@ Type TColor
 	
 	Field R%, G%, B%
 	Field H#, S#, L#
+  
+  Method Set()
+    SetColor( R, G, B )
+  End Method
 	
 	'( H [0.0,360.0] ), ( S,L [0.0,1.0] )
 	Function Create_by_HSL:TColor( H#, S#, L#, auto_calc_RGB% = False )
@@ -142,10 +146,10 @@ Function encode_ARGB%( alpha#, red%, green%, blue% )
 	Return (blue)|(green Shl 8)|(red Shl 16)|(Int(alpha*255) Shl 24)
 End Function
 
-Const MASK_ALPHA% = 2^31 + 2^30 + 2^29 + 2^28 + 2^27 + 2^26 + 2^25 + 2^24
-Const MASK_RED%   = 2^23 + 2^22 + 2^21 + 2^20 + 2^19 + 2^18 + 2^17 + 2^16
-Const MASK_GREEN% = 2^15 + 2^14 + 2^13 + 2^12 + 2^11 + 2^10 + 2^9  + 2^8 
-Const MASK_BLUE%  = 2^7  + 2^6  + 2^5  + 2^4  + 2^3  + 2^2  + 2^1  + 2^0 
+Const MASK_ALPHA% = 2 Shl 31 + 2 Shl 30 + 2 Shl 29 + 2 Shl 28 + 2 Shl 27 + 2 Shl 26 + 2 Shl 25 + 2 Shl 24
+Const MASK_RED%   = 2 Shl 23 + 2 Shl 22 + 2 Shl 21 + 2 Shl 20 + 2 Shl 19 + 2 Shl 18 + 2 Shl 17 + 2 Shl 16
+Const MASK_GREEN% = 2 Shl 15 + 2 Shl 14 + 2 Shl 13 + 2 Shl 12 + 2 Shl 11 + 2 Shl 10 + 2 Shl 9  + 2 Shl 8 
+Const MASK_BLUE%  = 2 Shl 7  + 2 Shl 6  + 2 Shl 5  + 2 Shl 4  + 2 Shl 3  + 2 Shl 2  + 2 Shl 1  + 2 Shl 0 
 
 Function decode_ARGB( argb%, alpha# Var, red% Var, green% Var, blue% Var )
 	alpha = Float(argb Shr 24)/255.0

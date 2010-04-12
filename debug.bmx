@@ -9,8 +9,6 @@ EndRem
 
 '//////////////////////////////////////////////////////////////////////////////
 
-
-
 Function debug_init()
 	'debug_audio_drivers()
 	'debug_get_keys()
@@ -31,9 +29,44 @@ Function debug_with_graphics()
 	'play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
-	play_debug_level()
+	'play_debug_level()
 	'test_bmp_fonts()
+  test_ui_list()
 	
+End Function
+
+'//////////////////////////////////////////////////////////////////////////////
+
+Function test_ui_list()
+  
+  Local list:TUIList = TUIList.Create( ..
+    [ "0", "1", "2", "3", "4" ], ..
+    TColor.Create_by_RGB( 127, 127, 127 ), ..
+    TColor.Create_by_RGB( 255, 255, 255 ), ..
+    TColor.Create_by_RGB( 127, 127, 127 ), ..
+    "test_ui_list", ..
+    FONT_STYLE.Create( "arcade_14", "arcade_outline_14", [255, 255, 255], [0, 0, 0] ), ..
+    [ "item0", "item1", "item2", "item3", "item4", "item5" ], ..
+    FONT_STYLE.Create( "arcade_7", "arcade_outline_7", [255, 255, 255], [0, 0, 0] ), ..
+    FONT_STYLE.Create( "arcade_7", "arcade_outline_7", [0, 0, 0], [255, 255, 255] ) )
+  
+  list.add_item_clicked_event_handler( ui_list_item_clicked )
+  
+  Repeat
+    Cls
+    list.draw( 5, 5 )
+    list.on_mouse_move( MouseX(), MouseY() )
+    If MouseHit( 1 )
+      list.on_mouse_click( MouseX(), MouseY() )
+    End If
+    Flip
+  Until KeyHit( KEY_ESCAPE ) Or KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE )
+  End
+  
+End Function
+
+Function ui_list_item_clicked( ui_list_clicked:TUIList, item_clicked_index% )
+  DebugLog( "list item clicked " + ui_list_clicked.items_display[item_clicked_index] )
 End Function
 
 Function play_debug_level()
@@ -84,8 +117,6 @@ Function test_bmp_fonts()
 	WaitKey
 	End
 End Function
-
-'//////////////////////////////////////////////////////////////////////////////
 
 Global profiler_label$[] = [ ..
 	"get_all_input", ..
