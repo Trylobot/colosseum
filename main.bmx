@@ -115,6 +115,7 @@ Repeat
 	get_all_input(); profiler(0)
 	'multiplayer
 	update_network(); profiler(1)
+	
 	'physics timescale and update throttling
 	If frame_time_elapsed()
 		calculate_timescale()
@@ -122,8 +123,17 @@ Repeat
 		'collision detection and resolution
 		'collide_all_objects(); profiler(2)
 		'resolve forces and emit particles, and capture player vehicle input
-		update_all_objects(); profiler(3)
+		'update_all_objects(); profiler(3)
 	End If
+	
+	'always update?
+	update_all_objects(); profiler(3)
+
+	'new physics engine (temporary spot)
+	If game And game.physics
+		game.physics.Update( physics_timestep_in_seconds ); profiler(6)
+	End If
+
 	'music and sound
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress ); profiler(4)
 	'draw everything

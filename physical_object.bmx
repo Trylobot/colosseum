@@ -25,24 +25,25 @@ Type PHYSICAL_OBJECT Extends POINT
 		force_list = CreateList()
 	End Method
 	
-	Const mass_mod# = 0.05
-	Const linear_friction_mod# = 1.0
-	Const angular_friction_mod# = 1.0
+	Const mass_mod# = 0.01
+	Const linear_friction_mod# = 0.5
+	Const angular_friction_mod# = 200.0
+	Const force_mod# = 25.0
+	Const torque_mod# = 200.0
 	Const rotationOffset# = 0.0
-	Const force_mod# = 1.0
-	Const torque_mod# = 1.0
 	
 	Method setup_physics( physics:TPhysicsSimulator, offset:Vector2 )
 		If Not hitbox Then Return
 		offset = Null
 		body = New TBody
 		body.SetMass( mass * mass_mod )
-		Local momentOfInertia# = TBodyFactory.MOIForRectangle( hitbox.w, hitbox.h, mass )
+		Local momentOfInertia# = TBodyFactory.MOIForRectangle( hitbox.w, hitbox.h, mass * mass_mod )
 		body.SetMomentOfInertia( momentOfInertia )
 		body.SetStatic( physics_disabled )
 		body.SetPosition( Vector2.Create( pos_x, pos_y ))
 		body.SetRotation( MathHelper.ToRadians( ang ))
 		body.SetLinearDragCoefficient( frictional_coefficient * linear_friction_mod )
+		body.SetRotationalDragCoefficient( frictional_coefficient * angular_friction_mod )
 		Local verts:TVertices = TVertices.CreateRectangle( hitbox.w, hitbox.h )
 		Local collisionGridCellSize# = TGeomFactory.CalculateGridCellSizeFromAABB( verts )
 		geom = TGeom.Create( body, verts, collisionGridCellSize, offset, rotationOffset )

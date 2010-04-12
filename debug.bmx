@@ -149,11 +149,14 @@ Function debug_main()
 		main_game.retained_particle_count = active_particle_limit
 	End If
 	If game <> Null And FLAG_debug_overlay
-		debug_overlay()
-		debug_fps()
+		
 		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
 		game.physics_viewer.Draw()
 		SetOrigin( 0, 0 )
+		
+		debug_overlay()
+		debug_fps()
+		
 	End If
 	If profile
 		If KeyDown( KEY_NUMADD )

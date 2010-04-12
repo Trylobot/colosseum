@@ -1745,8 +1745,8 @@
       <FileName>debug.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>19</X>
-        <Y>155</Y>
+        <X>2</X>
+        <Y>158</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -2775,8 +2775,8 @@
       <FileName>main.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>1</X>
-        <Y>110</Y>
+        <X>21</X>
+        <Y>113</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -4001,8 +4001,8 @@
       <FileName>physical_object.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>11</X>
-        <Y>134</Y>
+        <X>26</X>
+        <Y>31</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -4610,8 +4610,8 @@
       <FileName>projectile_launcher.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>58</X>
-        <Y>51</Y>
+        <X>41</X>
+        <Y>75</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -4832,8 +4832,8 @@
       <FileName>update.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>38</X>
-        <Y>128</Y>
+        <X>0</X>
+        <Y>136</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>

@@ -134,12 +134,6 @@ Function update_all_objects()
 			w.update()
 			If w.state_index_cur = 1 Then w.unmanage()
 		Next
-		
-		'new physics engine (temporary spot)
-		If game And game.physics
-			game.physics.Update( physics_timestep_in_seconds ); profiler(6)
-		End If
-		
 	End If
 End Function
 '______________________________________________________________________________

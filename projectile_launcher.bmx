@@ -70,6 +70,7 @@ Type PROJECTILE_LAUNCHER Extends EMITTER
 			p.body.SetLinearVelocity( Vector2.Create( p.vel_x, p.vel_y ))
 			'angular velocity
 			p.ang_vel = ang_vel.get()
+			p.body.SetAngularVelocity( p.ang_vel )
 			'p.body.Set
 			'forces
 			p.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, acc.get())), True )
