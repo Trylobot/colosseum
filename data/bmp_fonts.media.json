@@ -387,7 +387,7 @@
     key: "arcade_outline_7",
     object: {
       path: "art/fonts/PressStartK_6pt_outline.png",
-      offset_x: 2,
+      offset_x: 1,
       offset_y: 1,
       baseline_y: 9,
       char_spacing: -2,

@@ -1,6 +1,7 @@
 Rem
 	bmp_font.bmx
 	This is a COLOSSEUM project BlitzMax source file.
+	author: Tyler W Cole
 EndRem
 'SuperStrict
 'Import "image_atlas.bmx"

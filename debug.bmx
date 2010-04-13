@@ -30,7 +30,7 @@ Function debug_with_graphics()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
 	'play_debug_level()
-	'test_bmp_fonts()
+  'test_bmp_fonts()
   test_ui_list()
 	
 End Function
@@ -44,8 +44,6 @@ Function test_ui_list()
     TColor.Create_by_RGB( 127, 127, 127 ), ..
     TColor.Create_by_RGB( 255, 255, 255 ), ..
     TColor.Create_by_RGB( 127, 127, 127 ), ..
-    "test_ui_list", ..
-    FONT_STYLE.Create( "arcade_14", "arcade_outline_14", [255, 255, 255], [0, 0, 0] ), ..
     [ "item0", "item1", "item2", "item3", "item4", "item5" ], ..
     FONT_STYLE.Create( "arcade_7", "arcade_outline_7", [255, 255, 255], [0, 0, 0] ), ..
     FONT_STYLE.Create( "arcade_7", "arcade_outline_7", [0, 0, 0], [255, 255, 255] ) )
@@ -65,8 +63,8 @@ Function test_ui_list()
   
 End Function
 
-Function ui_list_item_clicked( ui_list_clicked:TUIList, item_clicked_index% )
-  DebugLog( "list item clicked " + ui_list_clicked.items_display[item_clicked_index] )
+Function ui_list_item_clicked( list:TUIList, i% )
+  DebugLog( "list item clicked " + list.items_display[i] )
 End Function
 
 Function play_debug_level()
