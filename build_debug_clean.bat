@@ -1,1 +1,1 @@
-bmk makeapp -a -d -o project.debug.exe project.bmx
+bmk makeapp -a -d -o main.debug.exe main.bmx

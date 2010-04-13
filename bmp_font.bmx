@@ -19,81 +19,81 @@ Type FONT_STYLE
   Field bg_font:BMP_FONT
   Field fg_color:TColor
   Field bg_color:TColor
+	Field height%
   
-  Method draw_string#( str$, x#, y# )
-    If Not fg_font Or Not bg_font Or Not fg_color Or Not bg_color Then Return 0.0
+  Method draw_string#( str$, x%, y% )
     Return draw_layered_string( str, x, y, fg_font, bg_font, fg_color.R, fg_color.G, fg_color.B, bg_color.R, bg_color.G, bg_color.B )
   End Method
+	
+	Method width%( str$, offset% = 0, length% = -1 )
+		Return fg_font.width( str, offset, length )
+	End Method
 
   Function Create:FONT_STYLE( fg_font:Object, bg_font:Object, fg_color:Object, bg_color:Object )
     Local fs:FONT_STYLE = New FONT_STYLE
-    
     If BMP_FONT(fg_font)
-      fg_font = BMP_FONT(fg_font)
+      fs.fg_font = BMP_FONT(fg_font)
     Else If String(fg_font)
-      fg_font = get_bmp_font( String(fg_font) )
+      fs.fg_font = get_bmp_font( String(fg_font) )
     End If
-    If Not fg_font
+    If Not fs.fg_font
       DebugLog( "font_style: fg_font is null" )
       DebugStop
     End If
-    
     If BMP_FONT(bg_font)
-      bg_font = BMP_FONT(bg_font)
+      fs.bg_font = BMP_FONT(bg_font)
     Else If String(bg_font)
-      bg_font = get_bmp_font( String(bg_font) )
+      fs.bg_font = get_bmp_font( String(bg_font) )
     End If
-    If Not bg_font
+    If Not fs.bg_font
       DebugLog( "font_style: bg_font is null" )
       DebugStop
     End If
-    
     If TColor(fg_color)
-      fg_color = TColor(fg_color)
+      fs.fg_color = TColor(fg_color)
     Else If Int[](fg_color) 'assumes RGB
       Local color%[] = Int[](fg_color)
       If color.Length = 3
-        fg_color = TColor.Create_by_RGB( color[0], color[1], color[2], False )
+        fs.fg_color = TColor.Create_by_RGB( color[0], color[1], color[2], False )
       End If
     End If
-    If Not fg_color
+    If Not fs.fg_color
       DebugLog( "font_style: fg_color is null" )
       DebugStop
     End If
-    
     If TColor(bg_color)
-      bg_color = TColor(bg_color)
+      fs.bg_color = TColor(bg_color)
     Else If Int[](bg_color) 'assumes RGB
       Local color%[] = Int[](bg_color)
       If color.Length = 3
-        bg_color = TColor.Create_by_RGB( color[0], color[1], color[2], False )
+        fs.bg_color = TColor.Create_by_RGB( color[0], color[1], color[2], False )
       End If
     End If
-    If Not fg_color
+    If Not fs.fg_color
       DebugLog( "font_style: bg_color is null" )
       DebugStop
     End If
-    
+		fs.height = fs.fg_font.height
     Return fs
   End Function
   
 End Type
 
 '______________________________________________________________________________
-Function draw_layered_string#( str$, x#, y#, fg_font:BMP_FONT = Null, bg_font:BMP_FONT = Null, fg_red% = 255, fg_green% = 255, fg_blue% = 255, bg_red% = 127, bg_green% = 127, bg_blue% = 127 )
-	Local y_delta# = 0
+Function draw_layered_string#( str$, x%, y%, fg_font:BMP_FONT = Null, bg_font:BMP_FONT = Null, fg_red% = 255, fg_green% = 255, fg_blue% = 255, bg_red% = 127, bg_green% = 127, bg_blue% = 127 )
+	Local y_delta# = 0.0
 	If bg_font
 		SetColor( bg_red, bg_green, bg_blue )
-		y_delta = bg_font.draw_string( str, x, y )
+		bg_font.draw_string( str, x, y )
 	End If
 	If fg_font
 		SetColor( fg_red, fg_green, fg_blue )
-		fg_font.draw_string( str, x, y )
+		y_delta = fg_font.draw_string( str, x, y )
 	End If
 	Return y_delta
 End Function
 
-Function draw_outline_procedurally( font:BMP_FONT, str$, x#, y#, d# = 1 )
+Function draw_outline_procedurally( font:BMP_FONT, str$, x%, y%, d% = 1 )
 	If Not font Then Return
 	For Local r% = 0 Until 3
 		For Local c% = 0 Until 3
@@ -124,7 +124,7 @@ Type BMP_FONT
   Field scale%
   Field height%
 	
-	Method draw_string#( str$, x#, y# )
+	Method draw_string#( str$, x%, y% )
 		x :- offset_x
 		y :- offset_y
 		Local cx% = x

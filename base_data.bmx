@@ -23,6 +23,7 @@ Const settings_file_ext$ = "config.json"
 Const data_file_ext$ = "media.json"
 Const level_file_ext$ = "level.json"
 Const saved_game_file_ext$ = "profile.json"
+Const level_preview_ext$ = "preview.png"
 
 Const autosave_path$ = user_path + "autosave" + "." + settings_file_ext
 Const settings_path$ = user_path + "settings" + "." + settings_file_ext

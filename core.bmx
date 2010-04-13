@@ -263,12 +263,12 @@ End Function
 
 '______________________________________________________________________________
 Function generate_level_mini_preview:TImage( lev:LEVEL )
-	Local pixmap:TPixmap = CreatePixmap( lev.width, lev.height, PF_RGBA8888 )
+	Local pixmap:TPixmap = CreatePixmap( lev.width, lev.height, PF_I8 )'PF_RGBA8888 )
 	pixmap.ClearPixels( encode_ARGB( 1.0, 64,64,64 ))
 	For Local w:BOX = EachIn lev.get_walls()
 		pixmap.Window( w.x, w.y, w.w, w.h ).ClearPixels( encode_ARGB( 1.0, 127,127,127 ))
 	Next
-	Return LoadImage( pixmap, MIPMAPPEDIMAGE|DYNAMICIMAGE )
+	Return LoadImage( pixmap, FILTEREDIMAGE )
 End Function
 
 '______________________________________________________________________________
@@ -296,11 +296,23 @@ Function init_campaign_chooser()
 				Local lev_path$ = cpd.levels[L]
 				Local lev:LEVEL = load_level( lev_path )
 				If lev
-					image[c][L] = generate_level_mini_preview( lev )
+					DebugLog( " level data loaded from ~q" + lev_path + "~q" )
+					Local lev_preview_path$ = lev_path[..(lev_path.Length-level_file_ext.Length)] + level_preview_ext
+					If FileTime( lev_path ) > FileTime( lev_preview_path )
+						DeleteFile( lev_preview_path )
+					End If
+					image[c][L] = LoadImage( lev_preview_path, FILTEREDIMAGE )
+					If Not image[c][L]
+						image[c][L] = generate_level_mini_preview( lev )
+						SavePixmapPNG( image[c][L].pixmaps[0], lev_preview_path, 5 )
+						DebugLog( " level preview saved to ~q" + lev_preview_path + "~q" )
+					Else
+						DebugLog( " level preview loaded from ~q" + lev_preview_path + "~q" )
+					End If
 					image_label[c][L] = lev.name
 					lock[c][L] = Not contained_in( lev_path, profile.levels_beaten )
 				Else
-					DebugLog( "Error: level not found ~q" + lev_path + "~q" )
+					DebugLog( " ERROR: level not found ~q" + lev_path + "~q" )
 					DebugStop
 				End If
 				lock[c][L] = True

@@ -55,14 +55,13 @@ Type TUIList
     DrawRect( x, y, w, h )
     line_color.Set()
     DrawRectLines( x, y, w, h )
-    Local ix% = x
-    Local iy% = y
-    y :+ header_font.draw_string( header_str, ix, iy )
+    Local ix% = x, iy% = y
+    iy :+ header_font.draw_string( header_str, ix, iy ) + header_font.height
     For Local i% = 0 Until items_display.Length
       If i <> hover_item
-        y :+ item_font.draw_string( items_display[i], ix, iy )
+        iy :+ item_font.draw_string( items_display[i], ix, iy ) + item_font.height
       Else 'i == hover_item
-        y :+ item_hover_font.draw_string( items_display[i], ix, iy )
+        iy :+ item_hover_font.draw_string( items_display[i], ix, iy ) + item_font.height
       End If
     Next
   End Method
@@ -87,10 +86,12 @@ Type TUIList
   
   Method on_mouse_click( mx%, my% )
     Local i% = get_item_index_by_screen_coord( mx, my )
-    Local event_handler( ui_list_clicked:TUIList, item_clicked_index% )
-    For h% = 0 Until item_clicked_event_handlers.Length
-      item_clicked_event_handlers[h]( Self, i )
-    Next
+    If i <> -1
+      Local event_handler( ui_list_clicked:TUIList, item_clicked_index% )
+      For h% = 0 Until item_clicked_event_handlers.Length
+        item_clicked_event_handlers[h]( Self, i )
+      Next
+    End If
   End Method
   
   Method add_item_clicked_event_handler( event_handler( ui_list_clicked:TUIList, item_clicked_index% ))
