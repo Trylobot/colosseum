@@ -73,3 +73,8 @@ Function get_image:IMAGE_ATLAS_REFERENCE( key$ )
 	Return TEXTURE_MANAGER.GetImageRef( key )
 End Function
 
+'______________________________________________________________________________
+Function level_preview_path_from_level_path$( lev_path$ )
+  Return lev_path[..(lev_path.Length-level_file_ext.Length)] + level_preview_ext
+End Function
+

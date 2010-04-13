@@ -294,28 +294,22 @@ Function init_campaign_chooser()
 			lock[c] = New Int[cpd.levels.Length]
 			For Local L% = 0 Until cpd.levels.Length
 				Local lev_path$ = cpd.levels[L]
-				Local lev:LEVEL = load_level( lev_path )
-				If lev
-					DebugLog( " level data loaded from ~q" + lev_path + "~q" )
-					Local lev_preview_path$ = lev_path[..(lev_path.Length-level_file_ext.Length)] + level_preview_ext
-					If FileTime( lev_path ) > FileTime( lev_preview_path )
-						DeleteFile( lev_preview_path )
-					End If
-					image[c][L] = LoadImage( lev_preview_path, FILTEREDIMAGE )
-					If Not image[c][L]
-						image[c][L] = generate_level_mini_preview( lev )
-						SavePixmapPNG( image[c][L].pixmaps[0], lev_preview_path, 5 )
-						DebugLog( " level preview saved to ~q" + lev_preview_path + "~q" )
-					Else
-						DebugLog( " level preview loaded from ~q" + lev_preview_path + "~q" )
-					End If
-					image_label[c][L] = lev.name
-					lock[c][L] = Not contained_in( lev_path, profile.levels_beaten )
-				Else
-					DebugLog( " ERROR: level not found ~q" + lev_path + "~q" )
-					DebugStop
-				End If
-				lock[c][L] = True
+				Local lev_preview_path$ = level_preview_path_from_level_path( lev_path )
+        If FileExists( lev_preview_path ) And FileTime( lev_path ) <= FileTime( lev_preview_path )
+          image[c][L] = LoadImage( lev_preview_path, FILTEREDIMAGE )
+        Else 'preview does not exist, or level file is newer than its preview (needs to be generated from scratch)
+          Local lev:LEVEL = load_level( lev_path )
+          If lev
+            DeleteFile( lev_preview_path )
+            image[c][L] = generate_level_mini_preview( lev )
+            SavePixmapPNG( image[c][L].pixmaps[0], lev_preview_path, 5 )
+          Else
+            DebugLog( " ERROR: level file not found ~q" + lev_path + "~q" )
+            DebugStop
+          End If
+        End If
+        image_label[c][L] = "" 'lev.name
+        lock[c][L] = Not contained_in( lev_path, profile.levels_beaten )
 			Next
 		End If
 	Next

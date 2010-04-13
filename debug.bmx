@@ -43,16 +43,17 @@ Function test_ui_list()
     [ "0", "1", "2", "3", "4" ], ..
     TColor.Create_by_RGB( 127, 127, 127 ), ..
     TColor.Create_by_RGB( 255, 255, 255 ), ..
-    TColor.Create_by_RGB( 127, 127, 127 ), ..
-    [ "item0", "item1", "item2", "item3", "item4", "item5" ], ..
+    TColor.Create_by_RGB( 0, 0, 0 ), ..
+    [ "item0", "item1", "item2", "item3", "item4" ], ..
     FONT_STYLE.Create( "arcade_7", "arcade_outline_7", [255, 255, 255], [0, 0, 0] ), ..
     FONT_STYLE.Create( "arcade_7", "arcade_outline_7", [0, 0, 0], [255, 255, 255] ) )
   
   list.add_item_clicked_event_handler( ui_list_item_clicked )
+  list.set_position( 10, 10 )
   
   Repeat
     Cls
-    list.draw( 5, 5 )
+    list.draw()
     list.on_mouse_move( MouseX(), MouseY() )
     If MouseHit( 1 )
       list.on_mouse_click( MouseX(), MouseY() )

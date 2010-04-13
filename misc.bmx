@@ -18,6 +18,14 @@ Function now%()
 	Return MilliSecs()
 End Function
 
+Function FileExists%( path$ )
+  Return FileType( path ) = FILETYPE_FILE
+End Function
+
+Function DirExists%( path$ )
+  Return FileType( path ) = FILETYPE_DIR
+End Function
+
 '______________________________________________________________________________
 Function find_files:TList( path$, ext$ = "", list:TList = Null )
 	If Not list Then list = CreateList()

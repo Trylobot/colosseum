@@ -15,6 +15,7 @@ Type TUIList
   Field item_count%
   'panel display
   Field panel_color:TColor
+  Field border_color:TColor
   Field inner_border_color:TColor
   'item display
   Field items_display:String[]
@@ -25,6 +26,8 @@ Type TUIList
   Field item_clicked_event_handlers( list:TUIList, i% )[]
   
   'private fields
+  Field x%
+  Field y%
   Field width%
   Field height%
   Field margin_x%
@@ -32,12 +35,18 @@ Type TUIList
   
   Function Create:TUIList( ..
   items:Object[], ..
-  panel_color:TColor, inner_border_color:TColor, ..
+  panel_color:TColor, border_color:TColor, inner_border_color:TColor, ..
   items_display:String[], item_font:FONT_STYLE, item_hover_font:FONT_STYLE )
     Local ui_list:TUIList = New TUIList
+    'checks
+    If items.Length <> items_display.Length
+      DebugLog( "item count mis-match" )
+      DebugStop
+    End If
     'initialization
     ui_list.items = items
     ui_list.panel_color = panel_color
+    ui_list.border_color = border_color
     ui_list.inner_border_color = inner_border_color
     ui_list.items_display = items_display
     ui_list.item_font = item_font
@@ -45,30 +54,42 @@ Type TUIList
     ui_list.hover_item = -1
     'derived fields
     ui_list.item_count = items.Length
-    ui_list.margin_x = item_font.width( "w" )
-    ui_list.margin_y = Int(0.75 * Float(item_font.height))
+    ui_list.margin_x = item_font.width( " " )
+    ui_list.margin_y = Int(0.5 * Float(item_font.height))
     ui_list.calculate_dimensions()
     Return ui_list
   End Function
   
-  Method draw( x%, y% )
+  Method set_position( x%, y% )
+    Self.x = x
+    Self.y = y
+  End Method
+  
+  Method draw()
     'draw panels
     If panel_color
       panel_color.Set()
       DrawRect( x, y, width, height )
     End If
-    If inner_border_color
-      inner_border_color.Set()
+    Const line_width% = 1
+    SetLineWidth( line_width )
+    If border_color
+      border_color.Set()
       DrawRectLines( x, y, width, height )
     End If
+    If inner_border_color
+      inner_border_color.Set()
+      DrawRectLines( x + line_width, y + line_width, width - 2*line_width, height - 2*line_width )
+    End If
     'draw list item text
-    Local ix% = x, iy% = y
+    Local ix% = x + margin_x
+    Local iy% = y + margin_y
     For Local i% = 0 Until items_display.Length
       If i <> hover_item
-        iy :+ item_font.draw_string( items_display[i], ix, iy ) + item_font.height
+        iy :+ item_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
       Else 'i == hover_item
         'effects behind?
-        iy :+ item_hover_font.draw_string( items_display[i], ix, iy ) + item_font.height
+        iy :+ item_hover_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
         'effects in front?
       End If
     Next
@@ -114,7 +135,9 @@ Type TUIList
     item_clicked_event_handlers[item_clicked_event_handlers.Length-1] = event_handler
   End Method
   
-  Method get_item_index_by_screen_coord%( x%, y% )
+  Method get_item_index_by_screen_coord%( sx%, sy% )
+    If sx < x Or sx > x + width Then Return -1
+    If sy < y Or sy > y + height Then Return -1
     'TODO
     Return -1
   End Method
