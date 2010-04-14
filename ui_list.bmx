@@ -21,6 +21,7 @@ Type TUIList
   Field items_display:String[]
   Field item_font:FONT_STYLE
   Field item_hover_font:FONT_STYLE
+	Field item_panel_hover_color:TColor
   Field hover_item% '-1 if none
   'event handlers
   Field item_clicked_event_handlers( list:TUIList, i% )[]
@@ -35,7 +36,7 @@ Type TUIList
   
   Function Create:TUIList( ..
   items:Object[], ..
-  panel_color:TColor, border_color:TColor, inner_border_color:TColor, ..
+  panel_color:TColor, border_color:TColor, inner_border_color:TColor, item_panel_hover_color:TColor, ..
   items_display:String[], item_font:FONT_STYLE, item_hover_font:FONT_STYLE )
     Local ui_list:TUIList = New TUIList
     'checks
@@ -48,6 +49,7 @@ Type TUIList
     ui_list.panel_color = panel_color
     ui_list.border_color = border_color
     ui_list.inner_border_color = inner_border_color
+		ui_list.item_panel_hover_color = item_panel_hover_color
     ui_list.items_display = items_display
     ui_list.item_font = item_font
     ui_list.item_hover_font = item_hover_font
@@ -60,19 +62,17 @@ Type TUIList
     Return ui_list
   End Function
   
-  Method set_position( x%, y% )
-    Self.x = x
-    Self.y = y
-  End Method
-  
   Method draw()
+    SetAlpha( 1 )
+		SetRotation( 0 )
+		SetScale( 1, 1 )
+		Const line_width% = 1
+    SetLineWidth( line_width )
     'draw panels
     If panel_color
       panel_color.Set()
       DrawRect( x, y, width, height )
     End If
-    Const line_width% = 1
-    SetLineWidth( line_width )
     If border_color
       border_color.Set()
       DrawRectLines( x, y, width, height )
@@ -86,12 +86,16 @@ Type TUIList
     Local iy% = y + margin_y
     For Local i% = 0 Until items_display.Length
       If i <> hover_item
-        iy :+ item_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
+        'draw normal item text
+				iy :+ item_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
       Else 'i == hover_item
-        'effects behind?
+        'draw hover select box
+				item_panel_hover_color.Set()
+				DrawRect( x, y + margin_y/2 + i*(margin_y + item_font.height), width, margin_y + item_font.height )
+				'draw hover item text
         iy :+ item_hover_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
-        'effects in front?
       End If
+			SetScale( 1, 1 )
     Next
     'scrollbar
     'TODO - add intelligent scrollbar support
@@ -103,6 +107,11 @@ Type TUIList
     items[item_count-1] = item
     items_display = items_display[..item_count]
     items_display[item_count-1] = item_display
+  End Method
+  
+  Method set_position( x%, y% )
+    Self.x = x
+    Self.y = y
   End Method
   
   Method calculate_dimensions()
@@ -136,10 +145,17 @@ Type TUIList
   End Method
   
   Method get_item_index_by_screen_coord%( sx%, sy% )
-    If sx < x Or sx > x + width Then Return -1
-    If sy < y Or sy > y + height Then Return -1
-    'TODO
-    Return -1
+    sx :- x
+		sy :- y
+		If sx < 0 Or sx > width Then Return -1
+    If sy < 0 Or sy > height Then Return -1
+		Local i%
+		i = (sy - margin_y/2) / (margin_y + item_font.height)
+		If i >= 0 And i < item_count
+			Return i
+		Else
+			Return -1
+		End If
   End Method
   
 End Type

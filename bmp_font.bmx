@@ -156,7 +156,7 @@ Type BMP_FONT
 		For Local i% = offset Until length
 			glyph = str[i] - ascii_start
 			If glyph < 0 Or glyph >= char_count Then glyph = 0
-			w :+ scale * (char_width[glyph] + char_spacing)
+			w :+ char_width[glyph] + char_spacing
 		Next
 		Return w
 	End Method

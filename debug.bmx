@@ -31,7 +31,7 @@ Function debug_with_graphics()
 	'test_draw_kill_tally()
 	'play_debug_level()
   'test_bmp_fonts()
-  test_ui_list()
+  'test_ui_list()
 	
 End Function
 
@@ -39,14 +39,16 @@ End Function
 
 Function test_ui_list()
   
-  Local list:TUIList = TUIList.Create( ..
+  Local size% = 14
+	Local list:TUIList = TUIList.Create( ..
     [ "0", "1", "2", "3", "4" ], ..
     TColor.Create_by_RGB( 127, 127, 127 ), ..
     TColor.Create_by_RGB( 255, 255, 255 ), ..
     TColor.Create_by_RGB( 0, 0, 0 ), ..
+    TColor.Create_by_RGB( 255, 255, 255 ), ..
     [ "item0", "item1", "item2", "item3", "item4" ], ..
-    FONT_STYLE.Create( "arcade_7", "arcade_outline_7", [255, 255, 255], [0, 0, 0] ), ..
-    FONT_STYLE.Create( "arcade_7", "arcade_outline_7", [0, 0, 0], [255, 255, 255] ) )
+    FONT_STYLE.Create( "arcade_"+size, "arcade_outline_"+size, [255, 255, 255], [0, 0, 0] ), ..
+    FONT_STYLE.Create( "arcade_"+size, "arcade_outline_"+size, [0, 0, 0], [255, 255, 255] ) )
   
   list.add_item_clicked_event_handler( ui_list_item_clicked )
   list.set_position( 10, 10 )

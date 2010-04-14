@@ -324,7 +324,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -332,15 +331,15 @@
       <FileName>bmp_font.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>46</X>
-        <Y>27</Y>
+        <X>6</X>
+        <Y>109</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -371,7 +370,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -417,7 +415,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -493,7 +490,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -732,7 +728,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -740,15 +735,15 @@
       <FileName>debug.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>11</X>
-        <Y>33</Y>
+        <X>3</X>
+        <Y>32</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -779,7 +774,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -1033,7 +1027,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -1778,7 +1771,7 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -3004,7 +2997,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -3582,7 +3574,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -3598,7 +3589,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -3744,7 +3734,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -3797,15 +3786,15 @@
       <FileName>ui_list.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>88</X>
-        <Y>63</Y>
+        <X>72</X>
+        <Y>93</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -3836,7 +3825,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:55:55:55</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
