@@ -18,6 +18,7 @@ Function now%()
 	Return MilliSecs()
 End Function
 
+'______________________________________________________________________________
 Function FileExists%( path$ )
   Return FileType( path ) = FILETYPE_FILE
 End Function
@@ -122,6 +123,7 @@ Function one_of%( x%, arr%[] )
 	Return False
 End Function
 
+'______________________________________________________________________________
 Function contained_in%( x$, arr$[] )
 	If arr.Length = 0 Then Return False
 	For Local i$ = EachIn arr
@@ -176,6 +178,11 @@ Function reverse_string$( str$ )
 	Return rev
 End Function
 
+Function line_count%( multi_line_str$ )
+	Return multi_line_str.Split( "~n" ).Length
+End Function
+
+'______________________________________________________________________________
 Function array_append%[]( src%[], value% )
 	If src
 		Return insert_into_array( value, src, (src.Length - 1) )

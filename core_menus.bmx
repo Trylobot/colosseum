@@ -42,6 +42,7 @@ Function postfix_index%( amount% = 1 )
 	Return (array_index - amount)
 End Function
 
+'______________________________________________________________________________
 Local m:MENU
 reset_index()
 'special characters ●
@@ -204,3 +205,47 @@ all_menus[postfix_index()] = MENU.Create( "game paused", "pause", 96, 96, 96, ME
 	MENU_OPTION.Create( "abandon level", COMMAND.QUIT_LEVEL,, True, True ), ..
 	MENU_OPTION.Create( "quit game", COMMAND.QUIT_GAME,, True, True ) ])
 
+'______________________________________________________________________________
+Global all_ui_menus:TUIList[50]
+
+Function initialize_menus()
+	Local list:TUIList
+	Local menu_fg_font:BMP_FONT = get_bmp_font( "arcade_14" )
+	Local menu_bg_font:BMP_FONT = get_bmp_font( "arcade_outline_14" )
+	reset_index()
+	
+	list = TUIList.Create( ..
+		Null, ..
+		[ "PLAY GAME", "PROFILE", "SETTINGS", "ADVANCED", "QUIT" ], ..
+		5, ..
+		[ 127, 127, 127 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], ..
+		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [255, 255, 255], [0, 0, 0] ), ..
+		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [0, 0, 0], [205, 205, 205] ) )
+	list.set_position( 10, 10 )
+	list.add_item_clicked_event_handler( menu_item_clicked )
+	all_ui_menus[postfix_index()] = list
+	
+	
+
+End Function
+
+Function menu_item_clicked( list:TUIList, i% )
+	Select i
+		Case 0
+			menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create(MENU_ID.LOADING_BAY) )
+		Case 1
+			menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create(MENU_ID.PROFILE_MENU) )
+		Case 2
+			menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create(MENU_ID.SETTINGS) )
+		Case 3
+			menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create(MENU_ID.GAME_DATA) )
+		Case 4
+			menu_command( COMMAND.QUIT_GAME )
+	End Select
+End Function
+
+
+
+
+
+	

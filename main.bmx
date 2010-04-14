@@ -105,12 +105,12 @@ Const version_major%    = 0
 Const version_minor%    = 4
 Const version_revision% = 0
 
-Global credits$[] = [ ..
-	"COLOSSEUM (c)2008 Tyler W.R. Cole, written in BlitzMax", ..
-	"Physics by Jeff Weber & Alex Okafor, JSON by grable, TCP/UDP by Vertex", ..
-	"Music by NickPerrin & Yoshi-1up, Fonts by codeman38 & Yuji Oshimoto", ..
-	"also thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, Firelord88" ..
-]
+Global colosseum_credits$ = ..
+	"COLOSSEUM (c)2008 Tyler W.R. Cole, written in BlitzMax~n" + ..
+	"Physics by Jeff Weber & Alex Okafor, JSON by grable, TCP/UDP by Vertex~n" + ..
+	"Music by NickPerrin & Yoshi-1up, Fonts by codeman38 & Yuji Oshimoto~n" + ..
+	"also thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, Firelord88"
+Global colosseum_credits_linecount% = line_count( colosseum_credits )
 
 'defaults
 apply_default_settings()

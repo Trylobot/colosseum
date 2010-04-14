@@ -42,13 +42,11 @@ Function test_ui_list()
   Local size% = 14
 	Local list:TUIList = TUIList.Create( ..
     [ "0", "1", "2", "3", "4" ], ..
-    TColor.Create_by_RGB( 127, 127, 127 ), ..
-    TColor.Create_by_RGB( 255, 255, 255 ), ..
-    TColor.Create_by_RGB( 0, 0, 0 ), ..
-    TColor.Create_by_RGB( 255, 255, 255 ), ..
     [ "item0", "item1", "item2", "item3", "item4" ], ..
+		5, ..
+    [ 127, 127, 127 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], ..
     FONT_STYLE.Create( "arcade_"+size, "arcade_outline_"+size, [255, 255, 255], [0, 0, 0] ), ..
-    FONT_STYLE.Create( "arcade_"+size, "arcade_outline_"+size, [0, 0, 0], [255, 255, 255] ) )
+    FONT_STYLE.Create( "arcade_"+size, "arcade_outline_"+size, [0, 0, 0], [205, 205, 205] ) )
   
   list.add_item_clicked_event_handler( ui_list_item_clicked )
   list.set_position( 10, 10 )

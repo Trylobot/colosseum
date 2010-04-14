@@ -32,52 +32,24 @@ Type FONT_STYLE
 
   Function Create:FONT_STYLE( fg_font:Object, bg_font:Object, fg_color:Object, bg_color:Object )
     Local fs:FONT_STYLE = New FONT_STYLE
-    If BMP_FONT(fg_font)
-      fs.fg_font = BMP_FONT(fg_font)
-    Else If String(fg_font)
-      fs.fg_font = get_bmp_font( String(fg_font) )
-    End If
-    If Not fs.fg_font
-      DebugLog( "font_style: fg_font is null" )
-      DebugStop
-    End If
-    If BMP_FONT(bg_font)
-      fs.bg_font = BMP_FONT(bg_font)
-    Else If String(bg_font)
-      fs.bg_font = get_bmp_font( String(bg_font) )
-    End If
-    If Not fs.bg_font
-      DebugLog( "font_style: bg_font is null" )
-      DebugStop
-    End If
-    If TColor(fg_color)
-      fs.fg_color = TColor(fg_color)
-    Else If Int[](fg_color) 'assumes RGB
-      Local color%[] = Int[](fg_color)
-      If color.Length = 3
-        fs.fg_color = TColor.Create_by_RGB( color[0], color[1], color[2], False )
-      End If
-    End If
-    If Not fs.fg_color
-      DebugLog( "font_style: fg_color is null" )
-      DebugStop
-    End If
-    If TColor(bg_color)
-      fs.bg_color = TColor(bg_color)
-    Else If Int[](bg_color) 'assumes RGB
-      Local color%[] = Int[](bg_color)
-      If color.Length = 3
-        fs.bg_color = TColor.Create_by_RGB( color[0], color[1], color[2], False )
-      End If
-    End If
-    If Not fs.fg_color
-      DebugLog( "font_style: bg_color is null" )
-      DebugStop
-    End If
+    fs.fg_font = Create_BMP_FONT_from_obj( fg_font )
+		fs.bg_font = Create_BMP_FONT_from_obj( bg_font )
+    fs.fg_color = TColor.Create_by_RGB_object( fg_color )
+		fs.bg_color = TColor.Create_by_RGB_object( bg_color )
 		fs.height = fs.fg_font.height
     Return fs
   End Function
   
+	Function Create_BMP_FONT_from_obj:BMP_FONT( obj:Object )
+		If String(obj)
+			Return get_bmp_font( String(obj) )
+		Else If BMP_FONT(obj)
+			Return BMP_FONT(obj)
+		Else
+			Return Null
+		End If
+	End Function
+
 End Type
 
 '______________________________________________________________________________

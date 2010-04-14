@@ -337,6 +337,7 @@ Function load_all_assets()
 	load_texture_atlases()
 	load_assets()
 	MENU.load_fonts()
+	initialize_menus()
 	If show_ai_menu_game
 		init_ai_menu_game()
 	End If

@@ -94,6 +94,21 @@ Type TColor
 		Return c
 	End Function
 	
+	Function Create_by_RGB_object:TColor( obj:Object )
+		If Int[](obj)
+			Local RGB%[] = Int[](obj)
+			If RGB.Length = 3
+				Return Create_by_RGB( RGB[0], RGB[1], RGB[2], False )
+			Else
+				Return Null
+			End If
+		Else If TColor(obj)
+			Return TColor(obj)
+		Else
+			Return Null
+		End If
+	End Function
+	
 	Method calc_HSL()
 		Local nR# = R / 255.0
 		Local nG# = G / 255.0
@@ -157,6 +172,4 @@ Function decode_ARGB( argb%, alpha# Var, red% Var, green% Var, blue% Var )
 	green = (argb & MASK_GREEN) Shr 8
 	blue  = (argb & MASK_BLUE)
 End Function
-
-
 

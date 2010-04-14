@@ -17,6 +17,11 @@ Type BOX
 	Field x#, y# 'position components
 	Field w#, h# 'dimension components
 	
+	Method Set( x#, y#, w#, h# )
+		Self.x = x; Self.y = y
+		Self.w = w; Self.h = h
+	End Method
+	
 	Method clone:BOX()
 		Return Create_BOX( x, y, w, h )
 	End Method

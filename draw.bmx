@@ -255,16 +255,17 @@ Function draw_main_screen()
 		SetScale( 1, 1 )
 		SetAlpha( 1 )
 		Local fg_font:BMP_FONT = get_bmp_font( "small_5" )
-		Local bg_font:BMP_FONT = get_bmp_font( "small_outline_5" )
+		'Local bg_font:BMP_FONT = get_bmp_font( "small_outline_5" )
 		Local fg_red% = 157, fg_green% = 157, fg_blue% = 157
-		Local bg_red% = 55,  bg_green% = 55,  bg_blue% = 55
+		'Local bg_red% = 55,  bg_green% = 55,  bg_blue% = 55
 		h = fg_font.height
 		x = 1
-		y = window_h - h*credits.Length
-		For Local i% = 0 Until credits.Length
-			draw_layered_string( credits[i], x, y, fg_font, bg_font, fg_red, fg_green, fg_blue, bg_red, bg_green, bg_blue )
-			y :+ h
-		Next
+		y = window_h - h*colosseum_credits_linecount
+		'For Local i% = 0 Until credits.Length
+		'	draw_layered_string( credits[i], x, y, fg_font, bg_font, fg_red, fg_green, fg_blue, bg_red, bg_green, bg_blue )
+		'	y :+ h
+		'Next
+		draw_layered_string( colosseum_credits, x, y, fg_font,, fg_red, fg_green, fg_blue )
 	End If
 	
 End Function
@@ -313,7 +314,11 @@ Function draw_menus()
 				End If
 			End If
 			'////////////////////////////////////////////////////////////
-			m.draw( mouse, dragging_scrollbar,,, blink, hide_selection )
+			If m.id = MENU_ID.MAIN_MENU
+				all_ui_menus[0].draw()
+			Else
+				m.draw( mouse, dragging_scrollbar,,, blink, hide_selection )
+			End If
 			'////////////////////////////////////////////////////////////
 			'shop decorations
 			Local MOUSE_SHADOW_SCALE# = 3.0 'Temporary, while vehicle editor is offline
