@@ -28,6 +28,8 @@ Const PARTICLE_TYPE_IMG% = 0
 Const PARTICLE_TYPE_ANIM% = 1
 Const PARTICLE_TYPE_STR% = 2
 
+Const LIFETIME_WHILE_MOVING% = -2
+
 Const PARTICLE_FRAME_RANDOM% = -1
 
 Const ANIMATION_DIRECTION_FORWARDS% = 0
@@ -191,8 +193,14 @@ Type PARTICLE Extends POINT
 	Method dead%()
 		Return ..
 			(Not (life_time = INFINITY)) And ..
+      (Not (life_time = LIFETIME_WHILE_MOVING And in_motion())) And ..
 			(now() - created_ts) >= life_time
 	End Method
+  
+  Method in_motion%()
+    Return (vel_x < COMPONENT_MOTION_THRESHOLD And vel_y < COMPONENT_MOTION_THRESHOLD)
+  End Method
+  Const COMPONENT_MOTION_THRESHOLD# = 0.0005
 	
 	'indicates whether the particle was successfully "pruned" (removed from its managed list)
 	Method prune%()

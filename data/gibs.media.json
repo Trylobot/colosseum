@@ -3,7 +3,6 @@
 		class: "gibs",
 		key: "light_tank",
 		object: {
-    {
       gibs: [
         {
           image: "light_tank_gib_0",

@@ -22,6 +22,8 @@ Type TGibs
   Field gib_image:IMAGE_ATLAS_REFERENCE[]
   Field gib_speed#[]
   Field gib_direction#[]
+  'constants
+  Const gibs_coefficient_of_friction# = 0.0100
   
   Method emit( parent:POINT, particle_list:TList )
     Local g:PARTICLE
@@ -31,8 +33,8 @@ Type TGibs
         gib_image[i],,,,, ..
         LAYER_FOREGROUND, ..
         True, ..
-        0.0100,,,,,,, ..
-        500, ..
+        gibs_coefficient_of_friction,,,,,,, ..
+        LIFETIME_WHILE_MOVING, ..
         parent.pos_x, ..
         parent.pos_y, ..
         parent.vel_x + gib_speed[i]*Cos( gib_direction[i] ), ..
