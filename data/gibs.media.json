@@ -1,0 +1,21 @@
+[
+  {
+		class: "gibs",
+		key: "light_tank",
+		object: {
+    {
+      gibs: [
+        {
+          image: "light_tank_gib_0",
+          speed: 1.0,
+          direction: 45
+        },
+        {
+          image: "light_tank_gib_1",
+          speed: 1.2,
+          direction: 315
+        }
+      ]
+    }
+  }
+]

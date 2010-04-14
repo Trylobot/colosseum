@@ -50,6 +50,7 @@ Global asset_files$[] = [ ..
 	"ai_types", ..
 	"player_vehicles", ..
 	"units", ..
+  "gibs", ..
 	"campaigns" ..
 ]
 

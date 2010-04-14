@@ -873,6 +873,22 @@
       </Folding>
     </Included_File>
     <Included_File>
+      <FileName>gibs.bmx</FileName>
+      <Document_Active>true</Document_Active>
+      <Caret_Position>
+        <X>35</X>
+        <Y>41</Y>
+      </Caret_Position>
+      <SplitVisible>false</SplitVisible>
+      <SplitVertical>false</SplitVertical>
+      <SplitSize>138</SplitSize>
+      <Folding>
+        <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
+        <Ranges />
+      </Folding>
+    </Included_File>
+    <Included_File>
       <FileName>graffiti_manager.bmx</FileName>
       <Document_Active>false</Document_Active>
       <Caret_Position>
@@ -2547,6 +2563,22 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <Ranges />
+      </Folding>
+    </Included_File>
+    <Included_File>
+      <FileName>ui_input.bmx</FileName>
+      <Document_Active>true</Document_Active>
+      <Caret_Position>
+        <X>35</X>
+        <Y>41</Y>
+      </Caret_Position>
+      <SplitVisible>false</SplitVisible>
+      <SplitVertical>false</SplitVertical>
+      <SplitSize>138</SplitSize>
+      <Folding>
+        <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>

@@ -19,6 +19,7 @@ Global prop_map:TMap = CreateMap()
 
 Function get_prop:AGENT( Key$, Copy% = True )
 	Local ag:AGENT = AGENT( prop_map.ValueForKey( Key.toLower() ))
+  'TODO: attach gibs if available
 	If Copy And ag Then Return Copy_AGENT( ag )
 	Return ag
 End Function
