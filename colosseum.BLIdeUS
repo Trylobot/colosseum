@@ -502,8 +502,8 @@
       <FileName>core_menu_commands.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>10</X>
-        <Y>63</Y>
+        <X>22</X>
+        <Y>80</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -518,12 +518,12 @@
       <FileName>core_menus.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>1</X>
-        <Y>58</Y>
+        <X>22</X>
+        <Y>40</Y>
       </Caret_Position>
-      <SplitVisible>false</SplitVisible>
+      <SplitVisible>true</SplitVisible>
       <SplitVertical>false</SplitVertical>
-      <SplitSize>363</SplitSize>
+      <SplitSize>537</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
         <OutlineColor>255:48:48:48</OutlineColor>
@@ -579,7 +579,7 @@
     </Included_File>
     <Included_File>
       <FileName>draw.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>13</X>
         <Y>275</Y>
@@ -1314,8 +1314,8 @@
       <FileName>input.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>24</X>
-        <Y>64</Y>
+        <X>8</X>
+        <Y>66</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -2379,10 +2379,10 @@
     </Included_File>
     <Included_File>
       <FileName>ui_list.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>10</X>
-        <Y>198</Y>
+        <X>0</X>
+        <Y>248</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>

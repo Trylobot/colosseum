@@ -242,12 +242,9 @@ Type TUIListEventHandler
 End Type
 
 '______________________________________________________________________________
-Type TUIListFancy
-	'this some fancy shit, yo
-	Field header_font:FONT_STYLE
-	Field header_panel_color:TColor
-	Field list:TUIList
-	
-	
-End Type
+'Type TUIList Extends TUIList
+'	Field header_font:FONT_STYLE
+'	Field header_panel_color:TColor
+'	
+'End Type
 
