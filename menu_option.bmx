@@ -6,6 +6,7 @@ EndRem
 'SuperStrict
 
 '______________________________________________________________________________
+Rem
 Type MENU_OPTION
 	Field name$ 'display this to user
 	Field command_code% 'command to execute when this option is selected
@@ -44,4 +45,4 @@ Type MENU_OPTION
 	End Method
 	
 End Type
-
+EndRem

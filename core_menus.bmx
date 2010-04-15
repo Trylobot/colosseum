@@ -28,17 +28,17 @@ Function pop_menu()
 	End If
 End Function
 
-'Type MENU
-'	Global main_menu:TUIList
-'	Global pause_menu:TUIList
-'End Type
+Type MENU
+	Global root:TUIList
+	Global pause:TUIList
+End Type
 
 '______________________________________________________________________________
 Function initialize_menus()
-	Local menu_fg_font:BMP_FONT = get_bmp_font( "arcade_14" )
-	Local menu_bg_font:BMP_FONT = get_bmp_font( "arcade_outline_14" )
+	Local menu_fg_font:BMP_FONT = get_bmp_font( "arcade_21" )
+	Local menu_bg_font:BMP_FONT = get_bmp_font( "arcade_outline_21" )
 	
-	Local menu_list:TUIList = TUIList.Create( ..
+	MENU.root = TUIList.Create( ..
 		[ "", "", "", "", "" ], ..
 		[ "PLAY GAME", "PROFILE", "SETTINGS", "ADVANCED", "QUIT" ], ..
 		5, ..
@@ -50,13 +50,12 @@ Function initialize_menus()
 		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [255, 255, 255], [0, 0, 0] ), ..
 		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [0, 0, 0], [205, 205, 205] ), ..
 		10, 50 )
-	menu_list.add_item_clicked_event_handler( 0, cmd_show_menu )
-	menu_list.add_item_clicked_event_handler( 1, cmd_show_menu )
-	menu_list.add_item_clicked_event_handler( 2, cmd_show_menu )
-	menu_list.add_item_clicked_event_handler( 3, cmd_show_menu )
-	menu_list.add_item_clicked_event_handler( 4, cmd_quit_game )
-	push_menu( menu_list )
-	
+	MENU.root.add_item_clicked_event_handler( 0, cmd_show_menu )
+	MENU.root.add_item_clicked_event_handler( 1, cmd_show_menu )
+	MENU.root.add_item_clicked_event_handler( 2, cmd_show_menu )
+	MENU.root.add_item_clicked_event_handler( 3, cmd_show_menu )
+	MENU.root.add_item_clicked_event_handler( 4, cmd_quit_game )
+	push_menu( MENU.root )
 	
 	
 

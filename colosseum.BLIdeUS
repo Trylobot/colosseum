@@ -329,7 +329,7 @@
     </Included_File>
     <Included_File>
       <FileName>bmp_font.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>32</X>
         <Y>85</Y>
@@ -345,7 +345,7 @@
     </Included_File>
     <Included_File>
       <FileName>box.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>24</X>
         <Y>21</Y>
@@ -482,7 +482,7 @@
     </Included_File>
     <Included_File>
       <FileName>core.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>0</X>
         <Y>58</Y>
@@ -500,8 +500,8 @@
       <FileName>core_menu_commands.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>2</X>
-        <Y>111</Y>
+        <X>0</X>
+        <Y>44</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -516,8 +516,8 @@
       <FileName>core_menus.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>29</Y>
+        <X>34</X>
+        <Y>35</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -545,10 +545,10 @@
     </Included_File>
     <Included_File>
       <FileName>debug.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>13</X>
-        <Y>216</Y>
+        <X>7</X>
+        <Y>205</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -576,7 +576,7 @@
     </Included_File>
     <Included_File>
       <FileName>draw.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>19</X>
         <Y>279</Y>
@@ -592,210 +592,18 @@
     </Included_File>
     <Included_File>
       <FileName>draw_misc.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>12</X>
-        <Y>20</Y>
+        <X>7</X>
+        <Y>58</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <Ranges>
-          <Range>
-            <StartPoint>
-              <X>0</X>
-              <Y>0</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>7</X>
-              <Y>4</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>0</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>27</X>
-              <Y>10</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>12</X>
-              <Y>15</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>0</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>27</X>
-              <Y>17</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>12</X>
-              <Y>20</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>0</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>40</X>
-              <Y>22</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>12</X>
-              <Y>27</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>0</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>42</X>
-              <Y>29</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>12</X>
-              <Y>35</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>0</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>9</X>
-              <Y>30</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>7</X>
-              <Y>34</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>1</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>41</X>
-              <Y>41</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>12</X>
-              <Y>71</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>0</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>18</X>
-              <Y>43</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>7</X>
-              <Y>48</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>1</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>13</X>
-              <Y>50</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>7</X>
-              <Y>54</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>1</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>11</X>
-              <Y>60</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>7</X>
-              <Y>70</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>1</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>33</X>
-              <Y>73</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>12</X>
-              <Y>93</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>0</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>7</X>
-              <Y>74</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>7</X>
-              <Y>92</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>1</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>45</X>
-              <Y>95</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>12</X>
-              <Y>103</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>0</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>69</X>
-              <Y>105</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>12</X>
-              <Y>120</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>0</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>25</X>
-              <Y>110</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>7</X>
-              <Y>112</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>1</Level>
-          </Range>
-          <Range>
-            <StartPoint>
-              <X>43</X>
-              <Y>122</Y>
-            </StartPoint>
-            <EndPoint>
-              <X>12</X>
-              <Y>131</Y>
-            </EndPoint>
-            <Visible>true</Visible>
-            <Level>0</Level>
-          </Range>
-        </Ranges>
+        <OutlineColor>255:48:48:48</OutlineColor>
+        <Ranges />
       </Folding>
     </Included_File>
     <Included_File>
@@ -875,7 +683,7 @@
     </Included_File>
     <Included_File>
       <FileName>gibs.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>21</X>
         <Y>41</Y>
@@ -1500,7 +1308,7 @@
     </Included_File>
     <Included_File>
       <FileName>input.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>6</X>
         <Y>255</Y>
@@ -1516,16 +1324,17 @@
     </Included_File>
     <Included_File>
       <FileName>instaquit.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>0</Y>
+        <X>9</X>
+        <Y>51</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -1593,8 +1402,8 @@
       <FileName>main.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>47</X>
-        <Y>130</Y>
+        <X>18</X>
+        <Y>228</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1622,7 +1431,7 @@
     </Included_File>
     <Included_File>
       <FileName>menu.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>6</X>
         <Y>743</Y>
@@ -1638,22 +1447,23 @@
     </Included_File>
     <Included_File>
       <FileName>menu_option.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>1</X>
-        <Y>17</Y>
+        <X>6</X>
+        <Y>46</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
     <Included_File>
       <FileName>misc.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>19</X>
         <Y>180</Y>
@@ -2547,7 +2357,7 @@
     </Included_File>
     <Included_File>
       <FileName>ui_input.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>0</X>
         <Y>8</Y>
@@ -2563,7 +2373,7 @@
     </Included_File>
     <Included_File>
       <FileName>ui_list.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>0</X>
         <Y>123</Y>
@@ -2594,7 +2404,7 @@
     </Included_File>
     <Included_File>
       <FileName>update.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>2</X>
         <Y>255</Y>

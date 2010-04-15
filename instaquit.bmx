@@ -49,9 +49,14 @@ Function draw_instaquit_progress()
 	DrawRect( 0,0, window_w,window_h )
 	SetAlpha( 1.0 * alpha_multiplier )
 	SetColor( 255, 255, 255 )
-	draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required - 50 ))
+	draw_percentage_bar( 100,window_h/2-25, window_w-200,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required - 50 ),,,,,,, 2 )
 	Local str$ = "continue holding ESC to quit"
-	SetImageFont( get_font( "consolas_bold_24" ))
-	DrawText_with_outline( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
+	'SetImageFont( get_font( "consolas_bold_24" ))
+	Local fg:BMP_FONT = get_bmp_font( "arcade_14" )
+	Local bg:BMP_FONT = get_bmp_font( "arcade_outline_14" )
+	'DrawText_with_outline( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
+	Local x% = window_w/2 - fg.width( str )/2
+	Local y% = window_h/2 + 35
+	draw_layered_string( str, x, y, fg, bg, 0,0,0, 255,255,255 )
 End Function
 

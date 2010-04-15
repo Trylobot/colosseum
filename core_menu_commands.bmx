@@ -56,7 +56,7 @@ Function cmd_play_level( item:Object = Null )
 		'current_menu :+ 1
 		'menu_stack[current_menu] = MENU_ID.PAUSED
 		'get_current_menu().update( True )
-		'push_menu( MENU.pause )
+		push_menu( menu.pause )
 		'//////////////////////////////////////
 		play_level( lev_path, player )
 		'//////////////////////////////////////

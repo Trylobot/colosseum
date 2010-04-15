@@ -20,11 +20,13 @@ Function screencap:TImage()
 	Return LoadImage( GrabPixmap( 0, 0, window_w, window_h ))
 End Function
 
-Function DrawRectLines( x%, y%, w%, h% )
-	DrawLine( x,     y,     x+w-1, y,     False )
-	DrawLine( x+w-1, y,     x+w-1, y+h-1, False )
-	DrawLine( x+w-1, y+h-1, x,     y+h-1, False )
-	DrawLine( x,     y+h-1, x,     y,     False )
+Function DrawRectLines( x%, y%, w%, h%, L% = -1 )
+	If L >= 0 Then SetLineWidth( L ) Else L = 1
+	Local K% = (L+1)/2
+	DrawLine( x, y+K, x+w, y+K, False ) 'top horiz
+	DrawLine( x, y+h-K, x+w, y+h-K, False ) 'bottom horiz
+	DrawLine( x+K, y, x+K, y+h, False ) 'left vert
+	DrawLine( x+w-K, y, x+w-K, y+h, False ) 'right vert
 End Function
 
 Function draw_box( b:BOX, solid% = False )
@@ -39,13 +41,15 @@ Function draw_percentage_bar( ..
 x#, y#, w#, h#, ..
 pct#, ..
 a# = 1.0, r% = 255, g% = 255, b% = 255, ..
-borders% = True, snap_to_pixels% = True )
+borders% = True, snap_to_pixels% = True, ..
+line_width# = 1.0 )
 	'truncate
 	If snap_to_pixels
 		x = Floor( x )
 		y = Floor( y )
 		w = Floor( w )
 		h = Floor( h )
+		line_width = Floor( line_width )
 	End If
 	'normalize
 	If pct > 1.0
@@ -53,17 +57,18 @@ borders% = True, snap_to_pixels% = True )
 	Else If pct < 0.0
 		pct = 0.0
 	End If
-	SetAlpha( a / 3.0 )
+	SetAlpha( a )
 	SetColor( 0, 0, 0 )
 	SetScale( 1, 1 )
 	SetRotation( 0 )
 	DrawRect( x, y, w, h )
+	SetAlpha( a / 3.0 )
 	If borders
 		SetAlpha( a )
 		SetColor( r, g, b )
-		SetLineWidth( 1 )
+		SetLineWidth( line_width )
 		DrawRectLines( x, y, w, h )
-		DrawRect( x + 2.0, y + 2.0, pct*(w - 4.0), h - 4.0 )
+		DrawRect( x + 2.0*line_width, y + 2.0*line_width, pct*(w - 4.0*line_width), h - 4.0*line_width )
 	Else 'no borders
 		SetAlpha( a )
 		SetColor( r, g, b )
