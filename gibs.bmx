@@ -30,7 +30,7 @@ Type TGibs
     For Local i% = 0 Until gib_count
       g = PARTICLE(PARTICLE.Create( ..
         PARTICLE_TYPE_IMG, ..
-        gib_image[i],,,,, ..
+        gib_image[i],,,,,, ..
         LAYER_FOREGROUND, ..
         True, ..
         gibs_coefficient_of_friction,,,,,,, ..

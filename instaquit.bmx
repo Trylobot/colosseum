@@ -53,7 +53,7 @@ Function draw_instaquit_progress()
 	Local str$ = "continue holding ESC to quit"
 	'SetImageFont( get_font( "consolas_bold_24" ))
 	Local fg:BMP_FONT = get_bmp_font( "arcade_14" )
-	Local bg:BMP_FONT = get_bmp_font( "arcade_outline_14" )
+	Local bg:BMP_FONT = get_bmp_font( "arcade_14_outline" )
 	'DrawText_with_outline( str, window_w/2-TextWidth( str )/2, window_h/2+30 )
 	Local x% = window_w/2 - fg.width( str )/2
 	Local y% = window_h/2 + 35

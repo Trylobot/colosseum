@@ -50,8 +50,8 @@ Function test_ui_list()
 		[ 0, 0, 0 ], ..
 		[ 255, 255, 255 ], ..
 		2, ..
-    FONT_STYLE.Create( "arcade_14", "arcade_outline_14", [255, 255, 255], [0, 0, 0] ), ..
-    FONT_STYLE.Create( "arcade_14", "arcade_outline_14", [0, 0, 0], [205, 205, 205] ), ..
+    FONT_STYLE.Create( "arcade_14", "arcade_14_outline", [255, 255, 255], [0, 0, 0] ), ..
+    FONT_STYLE.Create( "arcade_14", "arcade_14_outline", [0, 0, 0], [205, 205, 205] ), ..
 		10, 10 )
   list1.add_item_clicked_event_handler( 0, debug_ui_list_item_clicked )
   list1.add_item_clicked_event_handler( 1, debug_ui_list_item_clicked )
@@ -68,8 +68,8 @@ Function test_ui_list()
 		[ 0, 0, 0 ], ..
 		[ 255, 255, 255 ], ..
 		3, ..
-    FONT_STYLE.Create( "arcade_21", "arcade_outline_21", [255, 255, 255], [0, 0, 0] ), ..
-    FONT_STYLE.Create( "arcade_21", "arcade_outline_21", [0, 0, 0], [205, 205, 205] ), ..
+    FONT_STYLE.Create( "arcade_21", "arcade_21_outline", [255, 255, 255], [0, 0, 0] ), ..
+    FONT_STYLE.Create( "arcade_21", "arcade_21_outline", [0, 0, 0], [205, 205, 205] ), ..
 		10, 10 + list1.rect.h + 10 )
   list2.add_item_clicked_event_handler( 0, debug_ui_list_item_clicked )
   list2.add_item_clicked_event_handler( 1, debug_ui_list_item_clicked )
@@ -123,7 +123,7 @@ Function test_bmp_fonts()
 	For Local s% = 0 Until size.Length
 		x = 2*size[s]/size[0]
 		fg_font = get_bmp_font( "small_" + size[s] )
-		bg_font = get_bmp_font( "small_outline_" + size[s] )
+		bg_font = get_bmp_font( "small_" + size[s] + "_outline" )
 		h = fg_font.height
 		fg = 255
 		bg = 0
@@ -134,7 +134,7 @@ Function test_bmp_fonts()
 	For Local s% = 0 Until size.Length
 		x = 2*size[s]/size[0]
 		fg_font = get_bmp_font( "arcade_" + size[s] )
-		bg_font = get_bmp_font( "arcade_outline_" + size[s] )
+		bg_font = get_bmp_font( "arcade_" + size[s] + "_outline" )
 		h = fg_font.height
 		fg = 255
 		bg = 0

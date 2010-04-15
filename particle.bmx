@@ -40,7 +40,7 @@ Type PARTICLE Extends POINT
 	Field particle_type% '{single_image|animated|string}
 	Field img:IMAGE_ATLAS_REFERENCE, frame% 'image to be drawn, and the current frame index for animation and randomly varied particle sets
 	Field frame_delay% 'actual delay until next frame, can be INFINITE
-	Field str$, font:TImageFont 'text string and font for STR particles
+	Field str$, font:BMP_FONT, font_outline:BMP_FONT 'text string and font for STR particles
 	Field layer% 'layer {foreground|background}
 	Field retain% 'copy particle to background on death?
 	Field frictional_coefficient# 'fake friction for slowing particles down
@@ -68,7 +68,7 @@ Type PARTICLE Extends POINT
 	particle_type%, ..
 	img:IMAGE_ATLAS_REFERENCE = Null, frame% = 0, ..
 	frame_delay% = INFINITY, ..
-	str$ = Null, font:TImageFont = Null, ..
+	str$ = Null, font:BMP_FONT = Null, font_outline:BMP_FONT = Null, ..
 	layer% = LAYER_UNSPECIFIED, ..
 	retain% = False, ..
 	frictional_coefficient# = 0.0, ..
@@ -88,7 +88,7 @@ Type PARTICLE Extends POINT
 		'static fields
 		p.particle_type = particle_type
 		p.img = img; p.frame = frame
-		p.str = str; p.font = font
+		p.str = str; p.font = font; p.font_outline = font_outline
 		p.str_update()
 		p.layer = layer
 		p.retain = retain
@@ -118,7 +118,7 @@ Type PARTICLE Extends POINT
 			new_frame = 0
 		End If
 		Return PARTICLE( PARTICLE.Create( ..
-			particle_type, img, new_frame, frame_delay, str, font, layer, retain, frictional_coefficient, red, green, blue, red_delta, green_delta, blue_delta, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
+			particle_type, img, new_frame, frame_delay, str, font, font_outline, layer, retain, frictional_coefficient, red, green, blue, red_delta, green_delta, blue_delta, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
 	End Method
 	
 	Method update()
@@ -141,13 +141,13 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
-		SetColor( red, green, blue )
 		SetAlpha( alpha*alpha_override )
 		Local final_scale# = scale*scale_override
 		SetScale( final_scale, final_scale )
 		
 		Select particle_type
 			Case PARTICLE_TYPE_IMG, PARTICLE_TYPE_ANIM
+				SetColor( red, green, blue )
 				If img <> Null
 					If parent
 						SetRotation( ang + parent.ang )
@@ -159,13 +159,16 @@ Type PARTICLE Extends POINT
 				End If
 			Case PARTICLE_TYPE_STR
 				If font <> Null And str <> Null
-					SetImageFont( font )
+					'SetImageFont( font )
+					SetRotation( 0 )
 					If parent
-						SetRotation( ang + parent.ang )
-						DrawText_with_outline( str, parent.pos_x + final_scale*offset*Cos( offset_ang + parent.ang ) - text_width/2, parent.pos_y + final_scale*offset*Sin( offset_ang + parent.ang ) - text_height/2 )
+						'SetRotation( ang + parent.ang )
+						'DrawText_with_outline( str, parent.pos_x + final_scale*offset*Cos( offset_ang + parent.ang ) - text_width/2, parent.pos_y + final_scale*offset*Sin( offset_ang + parent.ang ) - text_height/2 )
+						draw_layered_string( str, parent.pos_x + final_scale*offset*Cos( offset_ang + parent.ang ) - text_width/2, parent.pos_y + final_scale*offset*Sin( offset_ang + parent.ang ) - text_height/2, font, font_outline, red, green, blue, 0, 0, 0 )
 					Else
-						SetRotation( ang )
-						DrawText_with_outline( str, pos_x - scale*text_width/2, pos_y - scale*text_height/2 )
+						'SetRotation( ang )
+						'DrawText_with_outline( str, pos_x - scale*text_width/2, pos_y - scale*text_height/2 )
+						draw_layered_string( str, pos_x - scale*text_width/2, pos_y - scale*text_height/2, font, font_outline, red, green, blue, 0, 0, 0 )
 					End If
 				End If
 		End Select
@@ -173,9 +176,11 @@ Type PARTICLE Extends POINT
 	
 	Method str_update()
 		If str <> Null And font <> Null
-			SetImageFont( font )
-			text_width = TextWidth( str )/2.0
-			text_height = TextHeight( str )/2.0
+			'SetImageFont( font )
+			'text_width = TextWidth( str )/2.0
+			'text_height = TextHeight( str )/2.0
+			text_width = font.width( str )/2.0
+			text_height = font.height/2.0
 		End If
 	End Method
 	
@@ -236,7 +241,10 @@ Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
 	If json.TypeOf( "frame" ) <> JSON_UNDEFINED                  Then p.frame = json.GetNumber( "frame" )
 	If json.TypeOf( "frame_delay" ) <> JSON_UNDEFINED            Then p.frame_delay = json.GetNumber( "frame_delay" )
 	If json.TypeOf( "str" ) <> JSON_UNDEFINED                    Then p.str = json.GetString( "str" )
-	If json.TypeOf( "font" ) <> JSON_UNDEFINED                   Then p.font = get_font( json.GetString( "font" ))
+	If json.TypeOf( "font" ) <> JSON_UNDEFINED
+		p.font = get_bmp_font( json.GetString( "font" )) 'get_font( json.GetString( "font" ))
+		p.font_outline = get_bmp_font_outline( json.GetString( "font" ))
+	End If
 	If json.TypeOf( "layer" ) <> JSON_UNDEFINED                  Then p.layer = json.GetNumber( "layer" )
 	If json.TypeOf( "retain" ) <> JSON_UNDEFINED                 Then p.retain = json.GetBoolean( "retain" )
 	If json.TypeOf( "frictional_coefficient" ) <> JSON_UNDEFINED Then p.frictional_coefficient = json.GetNumber( "frictional_coefficient" )

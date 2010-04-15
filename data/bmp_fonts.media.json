@@ -126,7 +126,7 @@
 	},
 	{
 		class: "bmp_font",
-		key: "small_outline_5",
+		key: "small_5_outline",
 		object: {
 			path: "art/fonts/04b11_6pt_outline.png",
       offset_x: 1,
@@ -235,17 +235,17 @@
 	},
 	{
 		class: "bmp_font_copy",
-		key: "small_outline_10",
+		key: "small_10_outline",
 		object: {
-			base_font: "small_outline_5",
+			base_font: "small_5_outline",
 			scale: 2,
 		}
 	},
 	{
 		class: "bmp_font_copy",
-		key: "small_outline_15",
+		key: "small_15_outline",
 		object: {
-			base_font: "small_outline_5",
+			base_font: "small_5_outline",
 			scale: 3,
 		}
 	},
@@ -384,7 +384,7 @@
 	},
   {
     class: "bmp_font",
-    key: "arcade_outline_7",
+    key: "arcade_7_outline",
     object: {
       path: "art/fonts/PressStartK_6pt_outline.png",
       offset_x: 1,
@@ -493,25 +493,25 @@
   },
 	{
 		class: "bmp_font_copy",
-		key: "arcade_outline_14",
+		key: "arcade_14_outline",
 		object: {
-			base_font: "arcade_outline_7",
+			base_font: "arcade_7_outline",
 			scale: 2,
 		}
 	},
 	{
 		class: "bmp_font_copy",
-		key: "arcade_outline_21",
+		key: "arcade_21_outline",
 		object: {
-			base_font: "arcade_outline_7",
+			base_font: "arcade_7_outline",
 			scale: 3,
 		}
 	},
 	{
 		class: "bmp_font_copy",
-		key: "arcade_outline_28",
+		key: "arcade_28_outline",
 		object: {
-			base_font: "arcade_outline_7",
+			base_font: "arcade_7_outline",
 			scale: 4,
 		}
 	}

@@ -14,6 +14,10 @@ Function get_bmp_font:BMP_FONT( key$ )
 	Return BMP_FONT( bmp_font_map.ValueForKey( key.toLower() ))
 End Function
 
+Function get_bmp_font_outline:BMP_FONT( key$ )
+	Return BMP_FONT( bmp_font_map.ValueForKey( key.toLower() + "outline" ))
+End Function
+
 '______________________________________________________________________________
 Type FONT_STYLE
   Field fg_font:BMP_FONT
@@ -86,7 +90,7 @@ Type BMP_FONT
 	Const ASCII_START% = 32  'space
 	Const ASCII_END%   = 126 'tilde
 	Const CHAR_COUNT%  = ASCII_END - ASCII_START + 1
-
+	
 	Field font_img:IMAGE_ATLAS_REFERENCE
 	Field offset_x%
 	Field offset_y%

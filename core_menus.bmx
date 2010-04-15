@@ -36,7 +36,7 @@ End Type
 '______________________________________________________________________________
 Function initialize_menus()
 	Local menu_fg_font:BMP_FONT = get_bmp_font( "arcade_21" )
-	Local menu_bg_font:BMP_FONT = get_bmp_font( "arcade_outline_21" )
+	Local menu_bg_font:BMP_FONT = get_bmp_font( "arcade_21_outline" )
 	
 	MENU.root = TUIList.Create( ..
 		[ "", "", "", "", "" ], ..
