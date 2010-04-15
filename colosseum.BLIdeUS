@@ -4,7 +4,7 @@
     <Main_File>main.bmx</Main_File>
     <Included_File>
       <FileName>agent.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>84</X>
         <Y>115</Y>
@@ -330,7 +330,7 @@
     </Included_File>
     <Included_File>
       <FileName>bmp_font.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>13</X>
         <Y>72</Y>
@@ -470,14 +470,15 @@
       <FileName>control_brain.bmx</FileName>
       <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>0</Y>
+        <X>26</X>
+        <Y>37</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -501,8 +502,8 @@
       <FileName>core_menu_commands.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>44</Y>
+        <X>10</X>
+        <Y>63</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -517,8 +518,8 @@
       <FileName>core_menus.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>55</X>
-        <Y>38</Y>
+        <X>1</X>
+        <Y>58</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -531,7 +532,7 @@
     </Included_File>
     <Included_File>
       <FileName>data.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>79</X>
         <Y>361</Y>
@@ -547,7 +548,7 @@
     </Included_File>
     <Included_File>
       <FileName>debug.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>14</X>
         <Y>528</Y>
@@ -580,8 +581,8 @@
       <FileName>draw.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>14</X>
-        <Y>731</Y>
+        <X>13</X>
+        <Y>275</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -594,7 +595,7 @@
     </Included_File>
     <Included_File>
       <FileName>draw_misc.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>22</X>
         <Y>110</Y>
@@ -685,7 +686,7 @@
     </Included_File>
     <Included_File>
       <FileName>gibs.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>26</X>
         <Y>32</Y>
@@ -1159,7 +1160,7 @@
     </Included_File>
     <Included_File>
       <FileName>image_chooser.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>17</X>
         <Y>135</Y>
@@ -1311,10 +1312,10 @@
     </Included_File>
     <Included_File>
       <FileName>input.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>6</X>
-        <Y>255</Y>
+        <X>24</X>
+        <Y>64</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1327,7 +1328,7 @@
     </Included_File>
     <Included_File>
       <FileName>instaquit.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>15</X>
         <Y>56</Y>
@@ -1388,7 +1389,7 @@
     </Included_File>
     <Included_File>
       <FileName>level_editor.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>16</X>
         <Y>985</Y>
@@ -1406,8 +1407,8 @@
       <FileName>main.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>18</X>
-        <Y>228</Y>
+        <X>7</X>
+        <Y>194</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1435,7 +1436,7 @@
     </Included_File>
     <Included_File>
       <FileName>menu.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>44</X>
         <Y>718</Y>
@@ -1451,7 +1452,7 @@
     </Included_File>
     <Included_File>
       <FileName>menu_option.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>6</X>
         <Y>46</Y>
@@ -1528,10 +1529,10 @@
     </Included_File>
     <Included_File>
       <FileName>particle.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>51</Y>
+        <X>34</X>
+        <Y>44</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -2378,10 +2379,10 @@
     </Included_File>
     <Included_File>
       <FileName>ui_list.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>123</Y>
+        <X>10</X>
+        <Y>198</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -2455,7 +2456,7 @@
     </Included_File>
     <Included_File>
       <FileName>vehicle_editor.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>14</X>
         <Y>642</Y>

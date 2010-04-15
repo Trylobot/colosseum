@@ -21,8 +21,8 @@ Type TUIList
 	Field line_width%
   'item display
   Field item_font:FONT_STYLE
-  Field item_hover_font:FONT_STYLE
-	Field item_panel_hover_color:TColor
+  Field item_selected_font:FONT_STYLE
+	Field item_panel_selected_color:TColor
 
   'private fields
   Field selected_item% '-1 if none
@@ -36,9 +36,9 @@ Type TUIList
 
   Function Create:TUIList( ..
   items:Object[], items_display:String[], item_count%, ..
-  panel_color:Object, border_color:Object, inner_border_color:Object, item_panel_hover_color:Object, ..
+  panel_color:Object, border_color:Object, inner_border_color:Object, item_panel_selected_color:Object, ..
 	line_width%, ..
-  item_font:FONT_STYLE, item_hover_font:FONT_STYLE, ..
+  item_font:FONT_STYLE, item_selected_font:FONT_STYLE, ..
 	x% = 0, y% = 0 )
     Local ui_list:TUIList = New TUIList
     'initialization
@@ -49,9 +49,9 @@ Type TUIList
     ui_list.border_color = TColor.Create_by_RGB_object( border_color )
     ui_list.inner_border_color = TColor.Create_by_RGB_object( inner_border_color )
 		ui_list.line_width = line_width
-		ui_list.item_panel_hover_color = TColor.Create_by_RGB_object( item_panel_hover_color )
+		ui_list.item_panel_selected_color = TColor.Create_by_RGB_object( item_panel_selected_color )
     ui_list.item_font = item_font
-    ui_list.item_hover_font = item_hover_font
+    ui_list.item_selected_font = item_selected_font
 		ui_list.set_position( x, y )
     'derived fields
     ui_list.selected_item = -1
@@ -89,12 +89,12 @@ Type TUIList
         'draw normal item text
 				iy :+ item_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
       Else 'i == selected_item
-        'draw hover select box
-				item_panel_hover_color.Set()
+        'draw selected item box
+				item_panel_selected_color.Set()
 				ir = item_rects[i]
 				DrawRect( ir.x, ir.y, ir.w, ir.h )
-				'draw hover item text
-        iy :+ item_hover_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
+				'draw item text
+        iy :+ item_selected_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
       End If
 			SetScale( 1, 1 )
     Next
@@ -173,7 +173,7 @@ Type TUIList
 	
 	Method select_next_item()
 		selected_item :+ 1
-		If selected_item > item_count - 1
+		If selected_item > (item_count - 1)
 			selected_item = 0
 		End If
 	End Method
@@ -186,6 +186,10 @@ Type TUIList
     Local i% = get_item_index_by_screen_coord( mx, my )
 		invoke( i )
   End Method
+	
+	Method invoke_selected()
+		invoke( selected_item )
+	End Method
 	
 	Method invoke( i% )
     If i >= 0 And i < item_count And item_clicked_event_handlers[i]

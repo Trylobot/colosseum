@@ -20,6 +20,7 @@ EndRem
 '______________________________________________________________________________
 Global chat_input_listener:CONSOLE = New CONSOLE
 Global chat$
+Global mouse_idle%
 
 Function get_all_input()
 		
@@ -28,6 +29,11 @@ Function get_all_input()
 	'mouse update
 	mouse_delta.x = MouseX() - mouse.pos_x
 	mouse_delta.y = MouseY() - mouse.pos_y
+	If mouse_delta.x = 0 And mouse_delta.y = 0
+		mouse_idle = True
+	Else
+		mouse_idle = False
+	End If
 	mouse.pos_x = MouseX()
 	mouse.pos_y = MouseY()
 	If Not FLAG.in_menu And game <> Null And game.human_participation And game.player_brain <> Null And profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
@@ -47,11 +53,26 @@ Function get_all_input()
 		End If
 	'regular menu mode
 	Else If FLAG.in_menu 'Not show_campaign_chooser
-		Local current_menu:TUIList = get_current_menu()
-		current_menu.on_mouse_move( mouse.pos_x, mouse.pos_y )
+		'current menu
+		Local current_menu:TUIList = MENU.get_top()
+		'keyboard input
+		If KeyHit( KEY_DOWN )
+			current_menu.select_next_item()
+		End If
+		If KeyHit( KEY_UP )
+			current_menu.select_previous_item()
+		End If
+		If KeyHit( KEY_ENTER )
+			current_menu.invoke_selected()
+		End If
+		'mouse input
+		If Not mouse_idle
+			current_menu.on_mouse_move( mouse.pos_x, mouse.pos_y )
+		End If
 		If mouse_clicked_1()
 			current_menu.on_mouse_click( mouse.pos_x, mouse.pos_y )
 		End If
+		
 		Rem
 		Local m:MENU = get_current_menu()
 		'text input controls comes before anything else

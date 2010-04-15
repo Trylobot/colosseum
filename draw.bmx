@@ -233,17 +233,20 @@ End Function
 Function draw_main_screen()
 	Local x%, y%, h%
 	Local fg_font:BMP_FONT = get_bmp_font( "arcade_7" )
+	Local bg_font:BMP_FONT = get_bmp_font( "arcade_7_outline" )
 	Local fg_red%, fg_green%, fg_blue%
-	x = main_screen_x
+	x = 10
+	y = 10
 	
 	'info
 	'SetImageFont( get_font( "consolas_italic_12" ))
 	'SetColor( 100, 149, 237 ) 'Cornflower Blue
-	SetColor( 255, 255, 127 ) 'Title Yellow
 	SetAlpha( time_alpha_pct( info_change_ts + info_stay_time, info_fade_time, False ))
-	y = main_screen_y
 	'DrawText_with_outline( info, x, y )
+	SetColor( 255, 255, 127 ) 'Title Yellow
 	fg_font.draw_string( info, x, y )
+	SetColor( 20, 20, 20 )
+	bg_font.draw_string( info, x, y )
 	
 	'menu options
 	If Not show_campaign_chooser
@@ -257,19 +260,13 @@ Function draw_main_screen()
 		SetRotation( 0 )
 		SetScale( 1, 1 )
 		SetAlpha( 1 )
-		'Local fg_font:BMP_FONT = get_bmp_font( "arcade_5" )
-		'Local bg_font:BMP_FONT = get_bmp_font( "small_outline_5" )
-		Local fg_red% = 105, fg_green% = 105, fg_blue% = 105 'sort of title yellow
-		SetColor( fg_red, fg_green, fg_blue )
-		'Local bg_red% = 55,  bg_green% = 55,  bg_blue% = 55
 		h = fg_font.height
-		x = 1
-		y = window_h - h*colosseum_credits_linecount
-		'For Local i% = 0 Until credits.Length
-		'	draw_layered_string( credits[i], x, y, fg_font, bg_font, fg_red, fg_green, fg_blue, bg_red, bg_green, bg_blue )
-		'	y :+ h
-		'Next
+		x = 10
+		y = window_h - h*colosseum_credits_linecount - 10
+		SetColor( 105, 105, 105 )
 		fg_font.draw_string( colosseum_credits, x, y )
+		SetColor( 20, 20, 20 )
+		bg_font.draw_string( colosseum_credits, x, y )
 	End If
 	
 End Function
@@ -277,7 +274,7 @@ End Function
 '______________________________________________________________________________
 Function draw_menus()
 	SetAlpha( 1 )
-	get_current_menu().draw()
+	MENU.get_top().draw()
 End Function
 
 Rem

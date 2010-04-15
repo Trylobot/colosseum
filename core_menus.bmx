@@ -6,56 +6,55 @@ EndRem
 'This file must be Include'd by core.bmx
 
 '______________________________________________________________________________
-Global menu_stack:TList = CreateList()
-
-Function get_current_menu:TUIList()
-	If menu_stack.IsEmpty()
-		DebugLog( "menu stack is empty :(" )
-		DebugStop
-		Return Null
-	End If
-	Return TUIList(menu_stack.Last())
-End Function
-
-Function push_menu( menu_list:TUIList )
-	menu_stack.AddLast( menu_list )
-End Function
-
-Function pop_menu()
-	'prevent removal of root menu
-	If menu_stack.Count() > 1
-		menu_stack.RemoveLast()
-	End If
-End Function
-
 Type MENU
+	Global stack:TList = CreateList()
+	
 	Global root:TUIList
 	Global pause:TUIList
+	Global loading_bay:TUIList
+	
+	Function push( m:TUIList )
+		stack.AddLast( m )
+	End Function
+	
+	Function pop()
+		If stack.Last() <> root
+			stack.RemoveLast()
+		End If
+	End Function
+	
+	Function get_top:TUIList()
+		Return TUIList(stack.Last())
+	End Function
+	
 End Type
 
 '______________________________________________________________________________
 Function initialize_menus()
 	Local menu_fg_font:BMP_FONT = get_bmp_font( "arcade_21" )
 	Local menu_bg_font:BMP_FONT = get_bmp_font( "arcade_21_outline" )
+	Local menu_line_width% = 3
 	
-	MENU.root = TUIList.Create( ..
+	Local root:TUIList = TUIList.Create( ..
 		[ "", "", "", "", "" ], ..
 		[ "PLAY GAME", "PROFILE", "SETTINGS", "ADVANCED", "QUIT" ], ..
 		5, ..
-		[ 127, 127, 127 ], ..
+		[ 78, 78, 78 ], ..
 		[ 255, 255, 255 ], ..
 		[ 0, 0, 0 ], ..
 		[ 255, 255, 255 ], ..
-		2, ..
+		menu_line_width, ..
 		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [255, 255, 255], [0, 0, 0] ), ..
 		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [0, 0, 0], [205, 205, 205] ), ..
-		10, 50 )
-	MENU.root.add_item_clicked_event_handler( 0, cmd_show_menu )
-	MENU.root.add_item_clicked_event_handler( 1, cmd_show_menu )
-	MENU.root.add_item_clicked_event_handler( 2, cmd_show_menu )
-	MENU.root.add_item_clicked_event_handler( 3, cmd_show_menu )
-	MENU.root.add_item_clicked_event_handler( 4, cmd_quit_game )
-	push_menu( MENU.root )
+		10, 70 )
+	MENU.root = root
+	MENU.push( root )
+	'root.set_position( window_w/2 - MENU.root.rect.w/2, window_h/2 - MENU.root.rect.h/2 )
+	root.add_item_clicked_event_handler( 0, cmd_show_menu )
+	root.add_item_clicked_event_handler( 1, cmd_show_menu )
+	root.add_item_clicked_event_handler( 2, cmd_show_menu )
+	root.add_item_clicked_event_handler( 3, cmd_show_menu )
+	root.add_item_clicked_event_handler( 4, cmd_quit_game )
 	
 	
 

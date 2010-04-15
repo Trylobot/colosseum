@@ -12,12 +12,12 @@ Global show_campaign_chooser% = False
 
 '______________________________________________________________________________
 Function cmd_show_menu( item:Object = Null )
-	'menu_stack_push( TUIList(item) )
+	If item And TUIList(item) Then MENU.push( TUIList(item) )
 End Function
 
-'Function menu_show_loading_bay()
-'	
-'End Function
+Function cmd_show_previous_menu( item:Object = Null )
+	MENU.pop()
+End Function
 
 Function cmd_load_game( item:Object = Null )
 	If Not item Then Return
@@ -51,22 +51,21 @@ Function cmd_play_level( item:Object = Null )
 	
 	Local player:COMPLEX_AGENT = get_player_vehicle( profile.vehicle_key )
 	If player
-		'place the paused menu on the stack, forcibly
-		'If current_menu > 0 Then current_menu :- 1
-		'current_menu :+ 1
-		'menu_stack[current_menu] = MENU_ID.PAUSED
-		'get_current_menu().update( True )
-		push_menu( menu.pause )
-		'//////////////////////////////////////
+		MENU.push( MENU.pause )
+		'//////////////////////////////
 		play_level( lev_path, player )
-		'//////////////////////////////////////
-	Else 'player == Null
+		'//////////////////////////////
+	Else
 		show_info( "critical error: could not find vehicle [" + profile.vehicle_key + "]" )
 	End If
 End Function
 
 Function cmd_pause_game( item:Object = Null )
-	
+	MENU.push( MENU.pause )
+	FLAG.in_menu = True
+	If main_game <> Null Then main_game.paused = True
+	FlushKeys()
+	FlushMouse()
 End Function
 
 Function cmd_new_level_editor_cache( item:Object = Null )
@@ -93,6 +92,10 @@ Function cmd_quit_game( item:Object = Null )
 End Function
 
 '______________________________________________________________________________
+'Function menu_show_loading_bay()
+'	
+'End Function
+
 Function campaign_chooser_callback( selected:CELL )
 	'kill the chooser
 	show_campaign_chooser = False
