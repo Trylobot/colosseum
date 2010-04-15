@@ -45,7 +45,14 @@ Function get_all_input()
 		If KeyHit( KEY_ESCAPE ) Or KeyHit( KEY_BACKSPACE )
 			show_campaign_chooser = False
 		End If
-	Else If FLAG.in_menu 'navigate menu and select option
+	'regular menu mode
+	Else If FLAG.in_menu 'Not show_campaign_chooser
+		Local current_menu:TUIList = get_current_menu()
+		current_menu.on_mouse_move( mouse.pos_x, mouse.pos_y )
+		If mouse_clicked_1()
+			current_menu.on_mouse_click( mouse.pos_x, mouse.pos_y )
+		End If
+		Rem
 		Local m:MENU = get_current_menu()
 		'text input controls comes before anything else
 		If m.menu_type = MENU.TEXT_INPUT_DIALOG
@@ -129,6 +136,8 @@ Function get_all_input()
 			End While
 			m.center_scrolling_window()
 		End If
+		EndRem
+	'non-menu input mode
 	Else 'Not FLAG_in_menu
 		If game And game.human_participation
 			'/////////////////////////////////////////////
@@ -142,7 +151,8 @@ Function get_all_input()
 			'pause game
 			If escape_key_release() 'KeyHit( KEY_ESCAPE )
 				If Not game.paused
-					menu_command( COMMAND.PAUSE )
+					'menu_command( COMMAND.PAUSE )
+					cmd_pause_game()
 				End If
 				FlushKeys()
 			End If
@@ -161,13 +171,16 @@ Function get_all_input()
 		And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE ))
 			FLAG.engine_running = False
 			If FLAG.campaign_mode
-				menu_command( COMMAND.PLAY_LEVEL, "levels/debug.colosseum_level" )
+				'menu_command( COMMAND.play_level, "levels/debug.level.json" )
+				cmd_play_level( level_path + "debug" + "." + level_file_ext )
 			Else
-				menu_command( COMMAND.QUIT_LEVEL )
+				'menu_command( COMMAND.QUIT_LEVEL )
+				cmd_quit_level
 			End If
 		Else If game.game_over ..
 		And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE ))
-			menu_command( COMMAND.PLAY_LEVEL, "" )
+			'menu_command( COMMAND.PLAY_LEVEL, "" )
+			cmd_play_level( "" )
 		End If
 	End If
 	
@@ -184,9 +197,11 @@ Function get_all_input()
 	
 End Function
 
+Rem
 Function execute_option( opt:MENU_OPTION )
 	If opt Then menu_command( opt.command_code, opt.argument )
 End Function
+EndRem
 
 '______________________________________________________________________________
 Function get_chat_input()
@@ -234,8 +249,9 @@ Function screenshot()
 End Function
 
 '______________________________________________________________________________
+Rem
 Function mouse_hovering_on_back_button%()
 	Return (mouse.pos_x >= 0 And mouse.pos_x <= main_screen_x ..
 	    And mouse.pos_y >= main_screen_menu_y + breadcrumb_h And mouse.pos_y <= main_screen_menu_y + breadcrumb_h + get_current_menu().height)
 End Function
-
+EndRem

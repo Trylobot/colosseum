@@ -18,24 +18,28 @@ Type TUIList
   Field panel_color:TColor
   Field border_color:TColor
   Field inner_border_color:TColor
+	Field line_width%
   'item display
   Field item_font:FONT_STYLE
   Field item_hover_font:FONT_STYLE
 	Field item_panel_hover_color:TColor
-  Field hover_item% '-1 if none
-  'event handlers
-  Field item_clicked_event_handlers( list:TUIList, i% )[]
-  
+
   'private fields
-	Field rect:BOX
+  Field selected_item% '-1 if none
   Field margin_x%
   Field margin_y%
+	Field rect:BOX
 	Field item_rects:BOX[]
+  'event handlers
+  Field item_clicked_event_handlers:TList[]
   
+
   Function Create:TUIList( ..
   items:Object[], items_display:String[], item_count%, ..
   panel_color:Object, border_color:Object, inner_border_color:Object, item_panel_hover_color:Object, ..
-  item_font:FONT_STYLE, item_hover_font:FONT_STYLE )
+	line_width%, ..
+  item_font:FONT_STYLE, item_hover_font:FONT_STYLE, ..
+	x% = 0, y% = 0 )
     Local ui_list:TUIList = New TUIList
     'initialization
     ui_list.items = items
@@ -44,14 +48,17 @@ Type TUIList
     ui_list.panel_color = TColor.Create_by_RGB_object( panel_color )
     ui_list.border_color = TColor.Create_by_RGB_object( border_color )
     ui_list.inner_border_color = TColor.Create_by_RGB_object( inner_border_color )
+		ui_list.line_width = line_width
 		ui_list.item_panel_hover_color = TColor.Create_by_RGB_object( item_panel_hover_color )
     ui_list.item_font = item_font
     ui_list.item_hover_font = item_hover_font
-    ui_list.hover_item = -1
+		ui_list.set_position( x, y )
     'derived fields
+    ui_list.selected_item = -1
     ui_list.margin_x = item_font.width( " " )
     ui_list.margin_y = Int(0.5 * Float(item_font.height))
     ui_list.calculate_dimensions()
+		ui_list.item_clicked_event_handlers = New TList[item_count]
     Return ui_list
   End Function
   
@@ -59,7 +66,6 @@ Type TUIList
     SetAlpha( 1 )
 		SetRotation( 0 )
 		SetScale( 1, 1 )
-		Const line_width% = 1
     SetLineWidth( line_width )
     'draw panels
     If panel_color
@@ -79,10 +85,10 @@ Type TUIList
     Local iy% = rect.y + margin_y
 		Local ir:BOX
     For Local i% = 0 Until items_display.Length
-      If i <> hover_item
+      If i <> selected_item
         'draw normal item text
 				iy :+ item_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
-      Else 'i == hover_item
+      Else 'i == selected_item
         'draw hover select box
 				item_panel_hover_color.Set()
 				ir = item_rects[i]
@@ -104,18 +110,28 @@ Type TUIList
     items_display[item_count-1] = item_display
 		item_rects = item_rects[..item_count]
 		item_rects[item_count-1] = New BOX
+		item_clicked_event_handlers = item_clicked_event_handlers[..item_count]
 		calculate_dimensions()
   End Method
 	
-	Method update_item_display( display$, i% )
+	Method set_item( i%, item:Object )
+		If i < 0 Or i >= item_count Then Return
+		items[i] = item
+	End Method
+	
+	Method update_item_display( i%, display$ )
+		If i < 0 Or i >= item_count Then Return
 		items_display[i] = display
 		calculate_dimensions()
 	End Method
   
   Method set_position( x%, y% )
+		If Not rect Then rect = New BOX
     rect.x = x
     rect.y = y
-    For Local i% = 0 Until item_count
+		If Not item_rects Then item_rects = New BOX[item_count]
+		For Local i% = 0 Until item_count
+			If Not item_rects[i] Then item_rects[i] = New BOX
 			item_rects[i].x = rect.x
 			item_rects[i].y = rect.y + margin_y/2 + i*(margin_y + item_font.height)
 		Next
@@ -140,23 +156,50 @@ Type TUIList
 		Next
   End Method
   
-  Method on_mouse_move( mx%, my% )
-    hover_item = get_item_index_by_screen_coord( mx, my )
+  Method select_item( i% )
+		If i >= 0 And i < item_count
+			selected_item = i
+		Else
+			selected_item = -1
+		End If
+	End Method
+	
+	Method select_previous_item()
+		selected_item :- 1
+		If selected_item < 0
+			selected_item = item_count - 1
+		End If
+	End Method
+	
+	Method select_next_item()
+		selected_item :+ 1
+		If selected_item > item_count - 1
+			selected_item = 0
+		End If
+	End Method
+	
+	Method on_mouse_move( mx%, my% )
+    selected_item = get_item_index_by_screen_coord( mx, my )
   End Method
   
   Method on_mouse_click( mx%, my% )
     Local i% = get_item_index_by_screen_coord( mx, my )
-    If i <> -1
-      Local event_handler( ui_list_clicked:TUIList, item_clicked_index% )
-      For Local h% = 0 Until item_clicked_event_handlers.Length
-        item_clicked_event_handlers[h]( Self, i )
+		invoke( i )
+  End Method
+	
+	Method invoke( i% )
+    If i >= 0 And i < item_count And item_clicked_event_handlers[i]
+      For Local event_handler:TUIListEventHandler = EachIn item_clicked_event_handlers[i]
+        event_handler.invoke( items[i] )
       Next
     End If
-  End Method
+	End Method
   
-  Method add_item_clicked_event_handler( event_handler( ui_list_clicked:TUIList, item_clicked_index% ))
-    item_clicked_event_handlers = item_clicked_event_handlers[..item_clicked_event_handlers.Length+1]
-    item_clicked_event_handlers[item_clicked_event_handlers.Length-1] = event_handler
+  Method add_item_clicked_event_handler( i%, event_handler(item:Object) )
+		If i >= 0 And i < item_count
+			If Not item_clicked_event_handlers[i] Then item_clicked_event_handlers[i] = CreateList()
+			item_clicked_event_handlers[i].AddLast( TUIListEventHandler.Create( event_handler ))
+		End If
   End Method
   
   Method get_item_index_by_screen_coord%( sx%, sy% )
@@ -177,6 +220,21 @@ Type TUIList
 		If i >= 0 And i < item_count Then Return item_rects[i] Else Return Null
 	End Method
   
+End Type
+
+Type TUIListEventHandler
+	'private fields
+	Field event_handler(item:Object)
+	'factory
+	Function Create:TUIListEventHandler( event_handler(item:Object) )
+		Local h:TUIListEventHandler = New TUIListEventHandler
+		h.event_handler = event_handler
+		Return h
+	End Function
+	'handler invocation
+	Method invoke( item:Object )
+		event_handler( item )
+	End Method
 End Type
 
 '______________________________________________________________________________

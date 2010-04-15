@@ -33,7 +33,8 @@ Global player_health_last# 'for producing choppy bits of health on the HUD
 Function update_all_objects()
 	'instaquit flag support
 	If FLAG.instaquit_plz
-		menu_command( COMMAND.QUIT_GAME )
+		'menu_command( COMMAND.QUIT_GAME )
+		cmd_quit_game()
 	End If
 	'meta-variables used for dynamic menu information
 	update_meta_variable_cache()
@@ -251,9 +252,9 @@ Function update_meta_variable_cache()
 		| update_map( meta_variable_cache, "network_ip_address", network_ip_address ) ..
 		| update_map( meta_variable_cache, "network_port", String.FromInt( network_port )) ..
 		| update_map( meta_variable_cache, "network_level", StripAll( network_level ))
-	If changed
-		get_current_menu().recalculate_dimensions()
-	End If
+	'If changed
+	'	get_current_menu().recalculate_dimensions()
+	'End If
 End Function
 
 Function update_map%( map:TMap, key:Object, value:Object )

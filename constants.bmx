@@ -25,6 +25,7 @@ Type EVENT
 	Const DEATH% = 5
 End Type
 
+Rem
 Type COMMAND
 	Const NONE% = 0
 	Const LOAD_ASSETS% = 10
@@ -198,3 +199,5 @@ Type MENU_ID
 		End Select
 	End Function
 End Type
+EndRem
+

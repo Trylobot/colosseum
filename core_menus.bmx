@@ -6,8 +6,64 @@ EndRem
 'This file must be Include'd by core.bmx
 
 '______________________________________________________________________________
-Global level_editor_cache:LEVEL
+Global menu_stack:TList = CreateList()
 
+Function get_current_menu:TUIList()
+	If menu_stack.IsEmpty()
+		DebugLog( "menu stack is empty :(" )
+		DebugStop
+		Return Null
+	End If
+	Return TUIList(menu_stack.Last())
+End Function
+
+Function push_menu( menu_list:TUIList )
+	menu_stack.AddLast( menu_list )
+End Function
+
+Function pop_menu()
+	'prevent removal of root menu
+	If menu_stack.Count() > 1
+		menu_stack.RemoveLast()
+	End If
+End Function
+
+'Type MENU
+'	Global main_menu:TUIList
+'	Global pause_menu:TUIList
+'End Type
+
+'______________________________________________________________________________
+Function initialize_menus()
+	Local menu_fg_font:BMP_FONT = get_bmp_font( "arcade_14" )
+	Local menu_bg_font:BMP_FONT = get_bmp_font( "arcade_outline_14" )
+	
+	Local menu_list:TUIList = TUIList.Create( ..
+		[ "", "", "", "", "" ], ..
+		[ "PLAY GAME", "PROFILE", "SETTINGS", "ADVANCED", "QUIT" ], ..
+		5, ..
+		[ 127, 127, 127 ], ..
+		[ 255, 255, 255 ], ..
+		[ 0, 0, 0 ], ..
+		[ 255, 255, 255 ], ..
+		2, ..
+		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [255, 255, 255], [0, 0, 0] ), ..
+		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [0, 0, 0], [205, 205, 205] ), ..
+		10, 50 )
+	menu_list.add_item_clicked_event_handler( 0, cmd_show_menu )
+	menu_list.add_item_clicked_event_handler( 1, cmd_show_menu )
+	menu_list.add_item_clicked_event_handler( 2, cmd_show_menu )
+	menu_list.add_item_clicked_event_handler( 3, cmd_show_menu )
+	menu_list.add_item_clicked_event_handler( 4, cmd_quit_game )
+	push_menu( menu_list )
+	
+	
+	
+
+End Function
+
+'______________________________________________________________________________
+Rem
 Global menu_margin% = 8
 Global dynamic_subsection_window_size% = 8
 Global all_menus:MENU[50]
@@ -34,13 +90,16 @@ Function get_menu:MENU( id% )
 End Function
 
 Global array_index%
+
 Function reset_index()
 	array_index = 0
 End Function
+
 Function postfix_index%( amount% = 1 )
 	array_index :+ amount
 	Return (array_index - amount)
 End Function
+
 
 '______________________________________________________________________________
 Local m:MENU
@@ -205,47 +264,5 @@ all_menus[postfix_index()] = MENU.Create( "game paused", "pause", 96, 96, 96, ME
 	MENU_OPTION.Create( "abandon level", COMMAND.QUIT_LEVEL,, True, True ), ..
 	MENU_OPTION.Create( "quit game", COMMAND.QUIT_GAME,, True, True ) ])
 
-'______________________________________________________________________________
-Global all_ui_menus:TUIList[50]
+EndRem
 
-Function initialize_menus()
-	Local list:TUIList
-	Local menu_fg_font:BMP_FONT = get_bmp_font( "arcade_14" )
-	Local menu_bg_font:BMP_FONT = get_bmp_font( "arcade_outline_14" )
-	reset_index()
-	
-	list = TUIList.Create( ..
-		Null, ..
-		[ "PLAY GAME", "PROFILE", "SETTINGS", "ADVANCED", "QUIT" ], ..
-		5, ..
-		[ 127, 127, 127 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], ..
-		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [255, 255, 255], [0, 0, 0] ), ..
-		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [0, 0, 0], [205, 205, 205] ) )
-	list.set_position( 10, 10 )
-	list.add_item_clicked_event_handler( menu_item_clicked )
-	all_ui_menus[postfix_index()] = list
-	
-	
-
-End Function
-
-Function menu_item_clicked( list:TUIList, i% )
-	Select i
-		Case 0
-			menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create(MENU_ID.LOADING_BAY) )
-		Case 1
-			menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create(MENU_ID.PROFILE_MENU) )
-		Case 2
-			menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create(MENU_ID.SETTINGS) )
-		Case 3
-			menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create(MENU_ID.GAME_DATA) )
-		Case 4
-			menu_command( COMMAND.QUIT_GAME )
-	End Select
-End Function
-
-
-
-
-
-	

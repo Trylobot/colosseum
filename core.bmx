@@ -56,6 +56,8 @@ Global ai_menu_game:ENVIRONMENT 'menu ai demo environment
 'current environment reference
 Global game:ENVIRONMENT 'current game environment
 
+Global level_editor_cache:LEVEL
+
 Function select_game()
 	If FLAG.in_menu
 		If main_game = Null

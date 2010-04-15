@@ -39,24 +39,53 @@ End Function
 
 Function test_ui_list()
   
-  Local size% = 14
-	Local list:TUIList = TUIList.Create( ..
+	Local list1:TUIList, list2:TUIList
+	
+	list1 = TUIList.Create( ..
     [ "0", "1", "2", "3", "4" ], ..
     [ "item0", "item1", "item2", "item3", "item4" ], ..
 		5, ..
-    [ 127, 127, 127 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], ..
-    FONT_STYLE.Create( "arcade_"+size, "arcade_outline_"+size, [255, 255, 255], [0, 0, 0] ), ..
-    FONT_STYLE.Create( "arcade_"+size, "arcade_outline_"+size, [0, 0, 0], [205, 205, 205] ) )
+    [ 127, 127, 127 ], ..
+		[ 255, 255, 255 ], ..
+		[ 0, 0, 0 ], ..
+		[ 255, 255, 255 ], ..
+		2, ..
+    FONT_STYLE.Create( "arcade_14", "arcade_outline_14", [255, 255, 255], [0, 0, 0] ), ..
+    FONT_STYLE.Create( "arcade_14", "arcade_outline_14", [0, 0, 0], [205, 205, 205] ), ..
+		10, 10 )
+  list1.add_item_clicked_event_handler( 0, debug_ui_list_item_clicked )
+  list1.add_item_clicked_event_handler( 1, debug_ui_list_item_clicked )
+  list1.add_item_clicked_event_handler( 2, debug_ui_list_item_clicked )
+  list1.add_item_clicked_event_handler( 3, debug_ui_list_item_clicked )
+  list1.add_item_clicked_event_handler( 4, debug_ui_list_item_clicked )
   
-  list.add_item_clicked_event_handler( ui_list_item_clicked )
-  list.set_position( 10, 10 )
-  
+	list2 = TUIList.Create( ..
+    [ "0", "1", "2", "3", "4" ], ..
+    [ "item0", "item1", "item2", "item3", "item4" ], ..
+		5, ..
+    [ 127, 127, 127 ], ..
+		[ 255, 255, 255 ], ..
+		[ 0, 0, 0 ], ..
+		[ 255, 255, 255 ], ..
+		3, ..
+    FONT_STYLE.Create( "arcade_21", "arcade_outline_21", [255, 255, 255], [0, 0, 0] ), ..
+    FONT_STYLE.Create( "arcade_21", "arcade_outline_21", [0, 0, 0], [205, 205, 205] ), ..
+		10, 10 + list1.rect.h + 10 )
+  list2.add_item_clicked_event_handler( 0, debug_ui_list_item_clicked )
+  list2.add_item_clicked_event_handler( 1, debug_ui_list_item_clicked )
+  list2.add_item_clicked_event_handler( 2, debug_ui_list_item_clicked )
+  list2.add_item_clicked_event_handler( 3, debug_ui_list_item_clicked )
+  list2.add_item_clicked_event_handler( 4, debug_ui_list_item_clicked )
+
   Repeat
     Cls
-    list.draw()
-    list.on_mouse_move( MouseX(), MouseY() )
+    list1.draw()
+    list1.on_mouse_move( MouseX(), MouseY() )
+    list2.draw()
+    list2.on_mouse_move( MouseX(), MouseY() )
     If MouseHit( 1 )
-      list.on_mouse_click( MouseX(), MouseY() )
+      list1.on_mouse_click( MouseX(), MouseY() )
+      list2.on_mouse_click( MouseX(), MouseY() )
     End If
     Flip
   Until KeyHit( KEY_ESCAPE ) Or KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE )
@@ -64,8 +93,8 @@ Function test_ui_list()
   
 End Function
 
-Function ui_list_item_clicked( list:TUIList, i% )
-  DebugLog( "list item clicked " + list.items_display[i] )
+Function debug_ui_list_item_clicked( item:Object )
+  DebugLog( "list item clicked " + String(item) )
 End Function
 
 Function play_debug_level()
@@ -194,7 +223,7 @@ Function debug_main()
 		Else If KeyDown( KEY_NUMSUBTRACT )
 			If profile.cash > 0 Then profile.cash :- 1
 		End If
-		get_current_menu().update()
+		'get_current_menu().update()
 	End If
 	If game And game.player And FLAG_god_mode
 		game.player.cur_health = game.player.max_health

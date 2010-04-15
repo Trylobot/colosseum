@@ -10,6 +10,124 @@ Global level_editor_requests_resume%
 Global campaign_chooser:IMAGE_CHOOSER
 Global show_campaign_chooser% = False
 
+'______________________________________________________________________________
+Function cmd_show_menu( item:Object = Null )
+	'menu_stack_push( TUIList(item) )
+End Function
+
+'Function menu_show_loading_bay()
+'	
+'End Function
+
+Function cmd_load_game( item:Object = Null )
+	If Not item Then Return
+	Local saved_game_path$ = String(item)
+	If Not saved_game_path Then Return
+	profile = load_game( saved_game_path )
+	If profile
+		save_autosave( profile.src_path )
+		show_info( "loaded player data "+profile.name+" from file "+StripAll(profile.src_path) )
+	End If
+	'menu_command( COMMAND.BACK_TO_PARENT_MENU )
+	'get_current_menu().update( True )
+End Function
+
+Function cmd_save_game( item:Object = Null )
+	If profile
+		If save_game( profile.src_path, profile )
+			save_autosave( profile.src_path )
+			show_info( "saved player data "+profile.name+" to file "+StripAll(profile.src_path) )
+		End If
+	Else 'Not profile
+		save_autosave( Null )
+	End If
+End Function
+
+Function cmd_play_level( item:Object = Null )
+	If Not profile Then Return
+	If Not item Then Return
+	Local lev_path$ = String(item)
+	If Not lev_path Then Return
+	
+	Local player:COMPLEX_AGENT = get_player_vehicle( profile.vehicle_key )
+	If player
+		'place the paused menu on the stack, forcibly
+		'If current_menu > 0 Then current_menu :- 1
+		'current_menu :+ 1
+		'menu_stack[current_menu] = MENU_ID.PAUSED
+		'get_current_menu().update( True )
+		'push_menu( MENU.pause )
+		'//////////////////////////////////////
+		play_level( lev_path, player )
+		'//////////////////////////////////////
+	Else 'player == Null
+		show_info( "critical error: could not find vehicle [" + profile.vehicle_key + "]" )
+	End If
+End Function
+
+Function cmd_pause_game( item:Object = Null )
+	
+End Function
+
+Function cmd_new_level_editor_cache( item:Object = Null )
+	level_editor_cache = Create_LEVEL( 300, 300 )
+	'menu_command( COMMAND.BACK_TO_PARENT_MENU )
+	'show_info( "new level loaded" )
+End Function
+
+Function cmd_quit_level( item:Object = Null )
+	FLAG.in_menu = True
+	main_game = Null
+	game = ai_menu_game
+	cmd_save_game( item )
+	'menu_show_loading_bay()
+	If FLAG.playing_multiplayer 
+		network_terminate()
+	End If
+	FLAG.campaign_mode = False
+End Function
+
+Function cmd_quit_game( item:Object = Null )
+	cmd_quit_level( item )
+	End
+End Function
+
+'______________________________________________________________________________
+Function campaign_chooser_callback( selected:CELL )
+	'kill the chooser
+	show_campaign_chooser = False
+	'play level
+	FLAG.campaign_mode = True
+	Local cpd:CAMPAIGN_DATA = get_campaign_data( campaign_ordering[selected.row] )
+	Local lev_path$ = cpd.levels[selected.col]
+	profile.vehicle_key = cpd.player_vehicle
+	'menu_command( COMMAND.PLAY_LEVEL, lev_path )
+	cmd_play_level( lev_path )
+End Function
+
+Function load_all_assets()
+  loading_progress = 0
+	load_texture_atlases()
+	load_assets()
+	'MENU.load_fonts()
+	initialize_menus()
+	If show_ai_menu_game
+		init_ai_menu_game()
+	End If
+End Function
+
+Function create_new_user_profile:PLAYER_PROFILE()
+	Local p:PLAYER_PROFILE = New PLAYER_PROFILE
+	p.name = "new_profile"
+	p.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
+	p.cash = 100
+	p.vehicle_key = "light_tank"
+	p.src_path = p.generate_src_path()
+	Return p
+End Function
+
+'______________________________________________________________________________
+Rem
 'command_argument should be an object;
 '  the object gets cast to an appropriate type automatically, a container type with all the information necessary
 '  if the cast fails, the argument is invalid
@@ -320,36 +438,5 @@ Function menu_command( command_code%, argument:Object = Null )
 	m.update()
 	
 End Function
-
-Function campaign_chooser_callback( selected:CELL )
-	'kill the chooser
-	show_campaign_chooser = False
-	'play level
-	FLAG.campaign_mode = True
-	Local cpd:CAMPAIGN_DATA = get_campaign_data( campaign_ordering[selected.row] )
-	Local lev_path$ = cpd.levels[selected.col]
-	profile.vehicle_key = cpd.player_vehicle
-	menu_command( COMMAND.PLAY_LEVEL, lev_path )
-End Function
-
-Function load_all_assets()
-  loading_progress = 0
-	load_texture_atlases()
-	load_assets()
-	MENU.load_fonts()
-	initialize_menus()
-	If show_ai_menu_game
-		init_ai_menu_game()
-	End If
-End Function
-
-Function create_new_user_profile:PLAYER_PROFILE()
-	Local p:PLAYER_PROFILE = New PLAYER_PROFILE
-	p.name = "new_profile"
-	p.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-	p.cash = 100
-	p.vehicle_key = "light_tank"
-	p.src_path = p.generate_src_path()
-	Return p
-End Function
+EndRem
 

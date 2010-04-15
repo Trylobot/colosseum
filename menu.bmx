@@ -14,16 +14,17 @@ EndRem
 'Import "draw_misc.bmx"
 
 '______________________________________________________________________________
-Const border_width% = 1
-Const scrollbar_width% = 20
-Const text_height_factor# = 0.70 '1.0 '0.70
-Const breadcrumb_h% = 14
-
 'these need to go away, kind of a hack
 Const main_screen_x% = 25
 Const main_screen_y% = 15
 
 Const main_screen_menu_y% = 30
+
+Rem
+Const border_width% = 1
+Const scrollbar_width% = 20
+Const text_height_factor# = 0.70 '1.0 '0.70
+Const breadcrumb_h% = 14
 
 Type MENU
 	Const VERTICAL_LIST% = 10
@@ -719,8 +720,10 @@ Type MENU
 	End Function
 
 End Type
+EndRem
 
 '______________________________________________________________________________
+Rem
 Function draw_scrollbar( x%, y%, w%, h%, total_size%, window_offset%, window_size%, r% = 64, g% = 64, b% = 64 )
 	SetLineWidth( 1 )
 	Local offset# = (h-2*border_width)*Float(window_offset)/Float(total_size)
@@ -739,7 +742,7 @@ Function draw_scrollbar( x%, y%, w%, h%, total_size%, window_offset%, window_siz
 		x+border_width + 1, y+border_width + offset + 1, ..
 		w-2*border_width - 2, size - 2 )
 End Function
-
+EndRem
 '______________________________________________________________________________
 Global meta_variable_cache:TMap
 
