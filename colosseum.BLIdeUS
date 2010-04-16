@@ -329,7 +329,7 @@
     </Included_File>
     <Included_File>
       <FileName>bmp_font.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>17</X>
         <Y>38</Y>
@@ -360,7 +360,7 @@
     </Included_File>
     <Included_File>
       <FileName>campaign_data.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>12</X>
         <Y>14</Y>
@@ -496,14 +496,14 @@
     </Included_File>
     <Included_File>
       <FileName>core_menu_commands.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>25</X>
         <Y>75</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
-      <SplitSize>395</SplitSize>
+      <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
         <OutlineColor>255:48:48:48</OutlineColor>
@@ -512,14 +512,14 @@
     </Included_File>
     <Included_File>
       <FileName>core_menus.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>54</X>
+        <X>1</X>
         <Y>53</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
-      <SplitSize>516</SplitSize>
+      <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
         <OutlineColor>255:48:48:48</OutlineColor>
@@ -528,7 +528,7 @@
     </Included_File>
     <Included_File>
       <FileName>data.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>72</X>
         <Y>362</Y>
@@ -544,7 +544,7 @@
     </Included_File>
     <Included_File>
       <FileName>debug.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>2</X>
         <Y>44</Y>
@@ -1289,7 +1289,7 @@
     </Included_File>
     <Included_File>
       <FileName>input.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>38</X>
         <Y>138</Y>
@@ -1380,7 +1380,7 @@
     </Included_File>
     <Included_File>
       <FileName>main.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>7</X>
         <Y>194</Y>
@@ -2153,16 +2153,17 @@
     </Included_File>
     <Included_File>
       <FileName>projectile_launcher.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>41</X>
-        <Y>75</Y>
+        <X>39</X>
+        <Y>43</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -2350,8 +2351,8 @@
       <FileName>ui_list.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>23</X>
-        <Y>31</Y>
+        <X>29</X>
+        <Y>58</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>

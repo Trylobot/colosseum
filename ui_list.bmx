@@ -56,7 +56,7 @@ Type TUIList
     ui_list.item_selected_font = FONT_STYLE.Create( FONT_STYLE.Create_BMP_FONT_from_obj( item_fg_font ), FONT_STYLE.Create_BMP_FONT_from_obj( item_bg_font ), item_selected_fg_color, item_selected_bg_color )
 		ui_list.set_position( x, y )
     'derived fields
-    ui_list.selected_item = -1
+    ui_list.selected_item = 0
     ui_list.margin_x = ui_list.item_font.width( " " )
     ui_list.margin_y = Int(0.5 * Float(ui_list.item_font.height))
     ui_list.calculate_dimensions()

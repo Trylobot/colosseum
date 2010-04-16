@@ -41,6 +41,7 @@ Type PROJECTILE_LAUNCHER Extends EMITTER
 			End If
 			If physics
 				p.setup_physics( physics, Vector2.Create( p.img.handle_x, p.img.handle_y ))
+				p.geom.SetCollisionEnabled( False )
 			Else
 				Return Null
 			End If
@@ -58,7 +59,7 @@ Type PROJECTILE_LAUNCHER Extends EMITTER
 			End If
 			p.body.SetRotation( MathHelper.ToRadians( p.ang ))
 			'velocity
-			Local vel_actual# = vel.get()
+			Local vel_actual# = vel.get() * 25.0
 			Local vel_ang_actual#
 			If inherit_vel_ang_from_ang
 				vel_ang_actual = p.ang
