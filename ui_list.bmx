@@ -11,9 +11,7 @@ EndRem
 '______________________________________________________________________________
 Type TUIList
   'list data
-  Field items:Object[]
   Field items_display:String[]
-  Field item_count%
   'panel display
   Field panel_color:TColor
   Field border_color:TColor
@@ -24,7 +22,9 @@ Type TUIList
   Field item_selected_font:FONT_STYLE
 	Field item_panel_selected_color:TColor
 
-  'private fields
+  'private & derived fields
+  Field items:Object[]
+  Field item_count%
   Field selected_item% '-1 if none
   Field margin_x%
   Field margin_y%
@@ -35,23 +35,25 @@ Type TUIList
   
 
   Function Create:TUIList( ..
-  items:Object[], items_display:String[], item_count%, ..
+  items_display:String[], ..
   panel_color:Object, border_color:Object, inner_border_color:Object, item_panel_selected_color:Object, ..
 	line_width%, ..
-  item_font:FONT_STYLE, item_selected_font:FONT_STYLE, ..
+	item_fg_font:BMP_FONT, item_bg_font:BMP_FONT, ..
+	item_fg_color:Object, item_bg_color:Object, ..
+	item_selected_fg_color:Object, item_selected_bg_color:Object, ..
 	x% = 0, y% = 0 )
     Local ui_list:TUIList = New TUIList
     'initialization
-    ui_list.items = items
     ui_list.items_display = items_display
-    ui_list.item_count = item_count
+    ui_list.item_count = items_display.Length
+    ui_list.items = New Object[ui_list.item_count]
     ui_list.panel_color = TColor.Create_by_RGB_object( panel_color )
     ui_list.border_color = TColor.Create_by_RGB_object( border_color )
     ui_list.inner_border_color = TColor.Create_by_RGB_object( inner_border_color )
 		ui_list.line_width = line_width
 		ui_list.item_panel_selected_color = TColor.Create_by_RGB_object( item_panel_selected_color )
-    ui_list.item_font = item_font
-    ui_list.item_selected_font = item_selected_font
+    ui_list.item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_fg_color, item_bg_color )
+    ui_list.item_selected_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_selected_fg_color, item_selected_bg_color )
 		ui_list.set_position( x, y )
     'derived fields
     ui_list.selected_item = -1
@@ -178,17 +180,28 @@ Type TUIList
 		End If
 	End Method
 	
-	Method on_mouse_move( mx%, my% )
+	Method on_mouse_move%( mx%, my% )
     selected_item = get_item_index_by_screen_coord( mx, my )
+		Return selected_item <> -1
   End Method
   
-  Method on_mouse_click( mx%, my% )
+  Method on_mouse_click%( mx%, my% )
     Local i% = get_item_index_by_screen_coord( mx, my )
-		invoke( i )
+		If selected_item <> -1
+			invoke( i )
+			Return True
+		Else
+			Return False
+		End If
   End Method
 	
-	Method invoke_selected()
-		invoke( selected_item )
+	Method invoke_selected%()
+		If selected_item <> -1
+			invoke( selected_item )
+			Return True
+		Else
+			Return False
+		End If
 	End Method
 	
 	Method invoke( i% )

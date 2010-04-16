@@ -65,12 +65,18 @@ Function get_all_input()
 		If KeyHit( KEY_ENTER )
 			current_menu.invoke_selected()
 		End If
+		If KeyHit( KEY_ESCAPE )|KeyHit( KEY_BACKSPACE )
+			cmd_show_previous_menu()
+		End If
 		'mouse input
 		If Not mouse_idle
 			current_menu.on_mouse_move( mouse.pos_x, mouse.pos_y )
 		End If
 		If mouse_clicked_1()
-			current_menu.on_mouse_click( mouse.pos_x, mouse.pos_y )
+			Local action% = current_menu.on_mouse_click( mouse.pos_x, mouse.pos_y )
+			If Not action
+				cmd_show_previous_menu()
+			End If
 		End If
 		
 		Rem

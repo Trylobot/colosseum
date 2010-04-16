@@ -60,6 +60,10 @@ Function cmd_play_level( item:Object = Null )
 	End If
 End Function
 
+Function cmd_continue_last_campaign( item:Object = Null )
+	
+End Function
+
 Function cmd_pause_game( item:Object = Null )
 	MENU.push( MENU.pause )
 	FLAG.in_menu = True

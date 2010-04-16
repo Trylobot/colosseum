@@ -34,21 +34,14 @@ Function initialize_menus()
 	Local menu_fg_font:BMP_FONT = get_bmp_font( "arcade_21" )
 	Local menu_bg_font:BMP_FONT = get_bmp_font( "arcade_21_outline" )
 	Local menu_line_width% = 3
+	Local menu_x% = 10, menu_y% = 70
 	Local none:Object = Null
 	
 	Local root:TUIList = TUIList.Create( ..
-		[ none, none, none, none, none ], ..
-		[ "PLAY GAME", "PROFILE", "SETTINGS", "ADVANCED", "QUIT" ], ..
-		5, ..
-		[ 78, 78, 78 ], ..
-		[ 255, 255, 255 ], ..
-		[ 0, 0, 0 ], ..
-		[ 255, 255, 255 ], ..
-		menu_line_width, ..
-		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [255, 255, 255], [0, 0, 0] ), ..
-		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [0, 0, 0], [205, 205, 205] ), ..
-		10, 70 )
-	'root.set_position( window_w/2 - MENU.root.rect.w/2, window_h/2 - MENU.root.rect.h/2 )
+		Null, [ "PLAY GAME", "PROFILE", "SETTINGS", "ADVANCED", "QUIT" ], 5, ..
+		[ 78, 78, 78 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], menu_line_width, ..
+		menu_fg_font, menu_bg_font, [255, 255, 255], [0, 0, 0], [0, 0, 0], [205, 205, 205] )
+	root.set_position( menu_x, menu_y )
 	root.add_item_clicked_event_handler( 0, cmd_show_menu )
 	root.add_item_clicked_event_handler( 1, cmd_show_menu )
 	root.add_item_clicked_event_handler( 2, cmd_show_menu )
@@ -58,18 +51,11 @@ Function initialize_menus()
 	MENU.push( root )
 	
 	Local loading_bay:TUIList = TUIList.Create( ..
-		[ none, none, none, none, none, none ], ..
-		[ "RESUME GAME", "CHOOSE CAMPAIGN", "PLAY CUSTOM" ], ..
-		3, ..
-		[ 78, 78, 78 ], ..
-		[ 255, 255, 255 ], ..
-		[ 0, 0, 0 ], ..
-		[ 255, 255, 255 ], ..
-		menu_line_width, ..
-		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [255, 255, 255], [0, 0, 0] ), ..
-		FONT_STYLE.Create( menu_fg_font, menu_bg_font, [0, 0, 0], [205, 205, 205] ), ..
-		10, 70 )
-	'loading_bay.add_item_clicked_event_handler( 0, ? )
+		Null, [ "RESUME GAME", "CHOOSE CAMPAIGN", "PLAY CUSTOM" ], 3, ..
+		[ 78, 78, 78 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], menu_line_width, ..
+		menu_fg_font, menu_bg_font, [255, 255, 255], [0, 0, 0], [0, 0, 0], [205, 205, 205] )
+	loading_bay.set_position( menu_x, menu_y )
+	loading_bay.add_item_clicked_event_handler( 0, cmd_continue_last_campaign )
 	root.set_item( 0, loading_bay )
 
 End Function

@@ -14,15 +14,15 @@
 	},
 	{
 		class: "campaign",
-		key: "mars",
+		key: "campaign1",
 		object: {
-			name: "mars",
+			name: "campaign1",
 			levels: [
-				"levels/mars/maze.level.json",
-				"levels/mars/about_face.level.json",
-				"levels/mars/blitz.level.json",
-				"levels/mars/orchard.level.json",
-				"levels/mars/three_gates.level.json"
+				"levels/campaign1/maze.level.json",
+				"levels/campaign1/about_face.level.json",
+				"levels/campaign1/blitz.level.json",
+				"levels/campaign1/orchard.level.json",
+				"levels/campaign1/three_gates.level.json"
 			],
 			player_vehicle: "light_tank"
 		}

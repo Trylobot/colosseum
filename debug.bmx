@@ -39,53 +39,31 @@ End Function
 
 Function test_ui_list()
   
-	Local list1:TUIList, list2:TUIList
+	Local list1:TUIList
 	
 	list1 = TUIList.Create( ..
-    [ "0", "1", "2", "3", "4" ], ..
     [ "item0", "item1", "item2", "item3", "item4" ], ..
-		5, ..
-    [ 127, 127, 127 ], ..
-		[ 255, 255, 255 ], ..
-		[ 0, 0, 0 ], ..
-		[ 255, 255, 255 ], ..
-		2, ..
-    FONT_STYLE.Create( "arcade_14", "arcade_14_outline", [255, 255, 255], [0, 0, 0] ), ..
-    FONT_STYLE.Create( "arcade_14", "arcade_14_outline", [0, 0, 0], [205, 205, 205] ), ..
-		10, 10 )
+		[ 127, 127, 127 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], 2, ..
+    "arcade_14", "arcade_14_outline", ..
+		[255, 255, 255], [0, 0, 0], [0, 0, 0], [205, 205, 205] )
+	list1.set_position( 10, 10 )
   list1.add_item_clicked_event_handler( 0, debug_ui_list_item_clicked )
+	list1.set_item( 0, "0" )
   list1.add_item_clicked_event_handler( 1, debug_ui_list_item_clicked )
+	list1.set_item( 1, "1" )
   list1.add_item_clicked_event_handler( 2, debug_ui_list_item_clicked )
+	list1.set_item( 2, "2" )
   list1.add_item_clicked_event_handler( 3, debug_ui_list_item_clicked )
+	list1.set_item( 3, "3" )
   list1.add_item_clicked_event_handler( 4, debug_ui_list_item_clicked )
+	list1.set_item( 4, "4" )
   
-	list2 = TUIList.Create( ..
-    [ "0", "1", "2", "3", "4" ], ..
-    [ "item0", "item1", "item2", "item3", "item4" ], ..
-		5, ..
-    [ 127, 127, 127 ], ..
-		[ 255, 255, 255 ], ..
-		[ 0, 0, 0 ], ..
-		[ 255, 255, 255 ], ..
-		3, ..
-    FONT_STYLE.Create( "arcade_21", "arcade_21_outline", [255, 255, 255], [0, 0, 0] ), ..
-    FONT_STYLE.Create( "arcade_21", "arcade_21_outline", [0, 0, 0], [205, 205, 205] ), ..
-		10, 10 + list1.rect.h + 10 )
-  list2.add_item_clicked_event_handler( 0, debug_ui_list_item_clicked )
-  list2.add_item_clicked_event_handler( 1, debug_ui_list_item_clicked )
-  list2.add_item_clicked_event_handler( 2, debug_ui_list_item_clicked )
-  list2.add_item_clicked_event_handler( 3, debug_ui_list_item_clicked )
-  list2.add_item_clicked_event_handler( 4, debug_ui_list_item_clicked )
-
   Repeat
     Cls
     list1.draw()
     list1.on_mouse_move( MouseX(), MouseY() )
-    list2.draw()
-    list2.on_mouse_move( MouseX(), MouseY() )
     If MouseHit( 1 )
       list1.on_mouse_click( MouseX(), MouseY() )
-      list2.on_mouse_click( MouseX(), MouseY() )
     End If
     Flip
   Until KeyHit( KEY_ESCAPE ) Or KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE )
