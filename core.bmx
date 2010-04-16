@@ -275,6 +275,7 @@ End Function
 
 '______________________________________________________________________________
 Function init_campaign_chooser()
+	Rem
 	'prepare data for campaign chooser
 	Local image:TImage[][]
 	If campaign_chooser
@@ -317,6 +318,7 @@ Function init_campaign_chooser()
 	Next
 	'begin updating & drawing the campaign chooser until it calls the given callback
 	campaign_chooser = Create_IMAGE_CHOOSER( image, image_label, group_label, lock, callback )
+	EndRem
 End Function
 
 '______________________________________________________________________________

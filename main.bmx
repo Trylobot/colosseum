@@ -94,6 +94,7 @@ Include "turret.bmx"
 Include "turret_barrel.bmx"
 Include "ui_image_grid.bmx"
 Include "ui_input.bmx"
+Include "ui_interface.bmx"
 Include "ui_list.bmx"
 Include "unit_factory_data.bmx"
 Include "update.bmx"
@@ -155,7 +156,9 @@ load_all_assets()
 'background automaton-powered menu game
 'does nothing if AI menu game is disabled
 init_ai_menu_game()
-init_campaign_chooser()
+'init_campaign_chooser()
+
+mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
 
 ?Debug 'debug routines requiring graphics
 debug_with_graphics()

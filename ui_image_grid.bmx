@@ -1,53 +1,26 @@
 Rem
-	image_chooser.bmx
+	ui_image_grid.bmx
 	This is a COLOSSEUM project BlitzMax source file.
 	author: Tyler W Cole
 EndRem
 'SuperStrict
-'Import "draw_misc.bmx"
-'Import "mouse.bmx"
-'Import "cell.bmx"
-'Import "base_data.bmx"
 
 '______________________________________________________________________________
-Function Create_IMAGE_CHOOSER:IMAGE_CHOOSER( ..
-image:TImage[][], image_label$[][], group_label$[], ..
-lock%[][], callback( selected:CELL ))
-	Local ic:IMAGE_CHOOSER = New IMAGE_CHOOSER
-	ic.image = image
-	ic.image_label = image_label
-	ic.group_label = group_label
-	ic.lock = lock
-	'find the first locked item following an unlocked item
-	Local done% = False
-	For Local c% = 0 Until lock.Length
-		If done Then Exit
-		For Local L% = 0 Until lock[c].Length
-			If lock[c][L]
-				lock[c][L] = False
-				done = True
-				Exit
-			End If
-		Next
-	Next
-	ic.callback = callback
-	ic.focus = New CELL
-	Return ic
-End Function
-
-Type IMAGE_CHOOSER
+Type TUIImageGrid Extends TUIObject
 	Field image:TImage[][]
-	Field image_label$[][]
-	Field group_label$[]
-	Field lock%[][]
-	Field callback( selected:CELL )
+	Field enabled%[][]
+	Field label$[]
 	
-	Field width%
-	Field height%
-	Field scale#
+	Rem
+	Function Create:TUIImageGrid( image:TImage[][], enabled%[][], label$[] )
+		Local g:TUIImageGrid = New TUIImageGrid
+		g.image = image
+		g.enabled = enabled
+		g.label = label
+		Return g
+	End Function
 	
-	Field focus:CELL
-	
+	Rem
 	Method upate()
 		update_focus_from_mouse()
 		If KeyHit( KEY_ENTER ) Or MouseHit( 1 )
@@ -145,6 +118,8 @@ Type IMAGE_CHOOSER
 	
 	Const image_size% = 50
 	Const margin% = 10
+	
+	EndRem
 	
 End Type
 

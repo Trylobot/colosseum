@@ -9,7 +9,7 @@ EndRem
 'Import "color.bmx"
 
 '______________________________________________________________________________
-Type TUIList
+Type TUIList Extends TUIObject
   'list data
   Field items_display:String[]
   'panel display
@@ -166,20 +166,6 @@ Type TUIList
 		End If
 	End Method
 	
-	Method select_previous_item()
-		selected_item :- 1
-		If selected_item < 0
-			selected_item = item_count - 1
-		End If
-	End Method
-	
-	Method select_next_item()
-		selected_item :+ 1
-		If selected_item > (item_count - 1)
-			selected_item = 0
-		End If
-	End Method
-	
 	Method on_mouse_move%( mx%, my% )
     selected_item = get_item_index_by_screen_coord( mx, my )
 		Return selected_item <> -1
@@ -195,7 +181,27 @@ Type TUIList
 		End If
   End Method
 	
-	Method invoke_selected%()
+	Method on_keyboard_up()
+		selected_item :- 1
+		If selected_item < 0
+			selected_item = item_count - 1
+		End If
+	End Method
+	
+	Method on_keyboard_down()
+		selected_item :+ 1
+		If selected_item > (item_count - 1)
+			selected_item = 0
+		End If
+	End Method
+	
+	Method on_keyboard_left()
+	End Method
+	
+	Method on_keyboard_right()
+	End Method
+	
+	Method on_keyboard_enter%()
 		If selected_item <> -1
 			invoke( selected_item )
 			Return True
@@ -206,7 +212,7 @@ Type TUIList
 	
 	Method invoke( i% )
     If i >= 0 And i < item_count And item_clicked_event_handlers[i]
-      For Local event_handler:TUIListEventHandler = EachIn item_clicked_event_handlers[i]
+      For Local event_handler:TUIEventHandler = EachIn item_clicked_event_handlers[i]
         event_handler.invoke( items[i] )
       Next
     End If
@@ -215,7 +221,7 @@ Type TUIList
   Method add_item_clicked_event_handler( i%, event_handler(item:Object) )
 		If i >= 0 And i < item_count
 			If Not item_clicked_event_handlers[i] Then item_clicked_event_handlers[i] = CreateList()
-			item_clicked_event_handlers[i].AddLast( TUIListEventHandler.Create( event_handler ))
+			item_clicked_event_handlers[i].AddLast( TUIEventHandler.Create( event_handler ))
 		End If
   End Method
   
@@ -238,26 +244,4 @@ Type TUIList
 	End Method
   
 End Type
-
-Type TUIListEventHandler
-	'private fields
-	Field event_handler(item:Object)
-	'factory
-	Function Create:TUIListEventHandler( event_handler(item:Object) )
-		Local h:TUIListEventHandler = New TUIListEventHandler
-		h.event_handler = event_handler
-		Return h
-	End Function
-	'handler invocation
-	Method invoke( item:Object )
-		event_handler( item )
-	End Method
-End Type
-
-'______________________________________________________________________________
-'Type TUIList Extends TUIList
-'	Field header_font:FONT_STYLE
-'	Field header_panel_color:TColor
-'	
-'End Type
 

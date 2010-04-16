@@ -45,6 +45,7 @@ Function get_all_input()
 		FLAG.ignore_mouse_1 = False
 	End If
 	
+	Rem
 	'campaign selection menu (special menu, takes precedence)
 	If show_campaign_chooser 
 		campaign_chooser.upate()
@@ -53,17 +54,26 @@ Function get_all_input()
 		End If
 	'regular menu mode
 	Else If FLAG.in_menu 'Not show_campaign_chooser
+	EndRem
+	
+	If FLAG.in_menu
 		'current menu
-		Local current_menu:TUIList = MENU.get_top()
+		Local current_menu:TUIObject = MENU.get_top()
 		'keyboard input
-		If KeyHit( KEY_DOWN )
-			current_menu.select_next_item()
-		End If
 		If KeyHit( KEY_UP )
-			current_menu.select_previous_item()
+			current_menu.on_keyboard_up()
+		End If
+		If KeyHit( KEY_DOWN )
+			current_menu.on_keyboard_down()
+		End If
+		If KeyHit( KEY_LEFT )
+			current_menu.on_keyboard_left()
+		End If
+		If KeyHit( KEY_RIGHT )
+			current_menu.on_keyboard_right()
 		End If
 		If KeyHit( KEY_ENTER )
-			current_menu.invoke_selected()
+			current_menu.on_keyboard_enter()
 		End If
 		If KeyHit( KEY_ESCAPE )|KeyHit( KEY_BACKSPACE )
 			cmd_show_previous_menu()
@@ -164,7 +174,7 @@ Function get_all_input()
 			m.center_scrolling_window()
 		End If
 		EndRem
-	'non-menu input mode
+	'non-menu input mode (game mode)
 	Else 'Not FLAG_in_menu
 		If game And game.human_participation
 			'/////////////////////////////////////////////
@@ -191,8 +201,10 @@ Function get_all_input()
 	End If
 	
 	mouse_state_update()
+	mouse_last_z = MouseZ()
 	
 	'win
+	'TODO: this needs to go someplace else
 	If game And game.human_participation
 		If game.win ..
 		And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE ))
@@ -210,8 +222,6 @@ Function get_all_input()
 			cmd_play_level( "" )
 		End If
 	End If
-	
-	mouse_last_z = MouseZ()
 	
 	'music enable/disable
 	If KeyHit( KEY_M )

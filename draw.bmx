@@ -248,12 +248,16 @@ Function draw_main_screen()
 	SetColor( 20, 20, 20 )
 	bg_font.draw_string( info, x, y )
 	
+	Rem
 	'menu options
 	If Not show_campaign_chooser
 		draw_menus()
 	Else 'show_campaign_chooser
 		campaign_chooser.draw( main_screen_x, main_screen_menu_y )
 	End If
+	EndRem
+	
+	draw_menus()
 	
 	'credits & copyrights
 	If Not main_game

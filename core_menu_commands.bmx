@@ -7,8 +7,8 @@ EndRem
 
 '______________________________________________________________________________
 Global level_editor_requests_resume%
-Global campaign_chooser:IMAGE_CHOOSER
-Global show_campaign_chooser% = False
+'Global campaign_chooser:IMAGE_CHOOSER
+'Global show_campaign_chooser% = False
 
 '______________________________________________________________________________
 Function cmd_show_menu( item:Object = Null )
@@ -116,6 +116,7 @@ End Function
 '	
 'End Function
 
+Rem
 Function campaign_chooser_callback( selected:CELL )
 	'kill the chooser
 	show_campaign_chooser = False
@@ -127,6 +128,7 @@ Function campaign_chooser_callback( selected:CELL )
 	'menu_command( COMMAND.PLAY_LEVEL, lev_path )
 	cmd_play_level( lev_path )
 End Function
+EndRem
 
 Function load_all_assets()
   loading_progress = 0
