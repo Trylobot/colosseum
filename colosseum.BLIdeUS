@@ -329,16 +329,17 @@
     </Included_File>
     <Included_File>
       <FileName>bmp_font.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>13</X>
-        <Y>72</Y>
+        <X>17</X>
+        <Y>38</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -361,8 +362,8 @@
       <FileName>campaign_data.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>16</Y>
+        <X>12</X>
+        <Y>14</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -497,10 +498,10 @@
       <FileName>core_menu_commands.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>1</X>
-        <Y>63</Y>
+        <X>25</X>
+        <Y>75</Y>
       </Caret_Position>
-      <SplitVisible>true</SplitVisible>
+      <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>395</SplitSize>
       <Folding>
@@ -513,10 +514,10 @@
       <FileName>core_menus.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>74</X>
-        <Y>57</Y>
+        <X>54</X>
+        <Y>53</Y>
       </Caret_Position>
-      <SplitVisible>true</SplitVisible>
+      <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>516</SplitSize>
       <Folding>
@@ -543,10 +544,10 @@
     </Included_File>
     <Included_File>
       <FileName>debug.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>12</X>
-        <Y>35</Y>
+        <X>2</X>
+        <Y>44</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1148,22 +1149,6 @@
             <Level>1</Level>
           </Range>
         </Ranges>
-      </Folding>
-    </Included_File>
-    <Included_File>
-      <FileName>image_chooser.bmx</FileName>
-      <Document_Active>true</Document_Active>
-      <Caret_Position>
-        <X>21</X>
-        <Y>3</Y>
-      </Caret_Position>
-      <SplitVisible>false</SplitVisible>
-      <SplitVertical>false</SplitVertical>
-      <SplitSize>138</SplitSize>
-      <Folding>
-        <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:48:48:48</OutlineColor>
-        <Ranges />
       </Folding>
     </Included_File>
     <Included_File>
@@ -2363,10 +2348,10 @@
     </Included_File>
     <Included_File>
       <FileName>ui_list.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>74</X>
-        <Y>156</Y>
+        <X>23</X>
+        <Y>31</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>

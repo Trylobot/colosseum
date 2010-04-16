@@ -38,7 +38,7 @@ Type TUIList
   items_display:String[], ..
   panel_color:Object, border_color:Object, inner_border_color:Object, item_panel_selected_color:Object, ..
 	line_width%, ..
-	item_fg_font:BMP_FONT, item_bg_font:BMP_FONT, ..
+	item_fg_font:Object, item_bg_font:Object, ..
 	item_fg_color:Object, item_bg_color:Object, ..
 	item_selected_fg_color:Object, item_selected_bg_color:Object, ..
 	x% = 0, y% = 0 )
@@ -52,15 +52,15 @@ Type TUIList
     ui_list.inner_border_color = TColor.Create_by_RGB_object( inner_border_color )
 		ui_list.line_width = line_width
 		ui_list.item_panel_selected_color = TColor.Create_by_RGB_object( item_panel_selected_color )
-    ui_list.item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_fg_color, item_bg_color )
-    ui_list.item_selected_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_selected_fg_color, item_selected_bg_color )
+    ui_list.item_font = FONT_STYLE.Create( FONT_STYLE.Create_BMP_FONT_from_obj( item_fg_font ), FONT_STYLE.Create_BMP_FONT_from_obj( item_bg_font ), item_fg_color, item_bg_color )
+    ui_list.item_selected_font = FONT_STYLE.Create( FONT_STYLE.Create_BMP_FONT_from_obj( item_fg_font ), FONT_STYLE.Create_BMP_FONT_from_obj( item_bg_font ), item_selected_fg_color, item_selected_bg_color )
 		ui_list.set_position( x, y )
     'derived fields
     ui_list.selected_item = -1
-    ui_list.margin_x = item_font.width( " " )
-    ui_list.margin_y = Int(0.5 * Float(item_font.height))
+    ui_list.margin_x = ui_list.item_font.width( " " )
+    ui_list.margin_y = Int(0.5 * Float(ui_list.item_font.height))
     ui_list.calculate_dimensions()
-		ui_list.item_clicked_event_handlers = New TList[item_count]
+		ui_list.item_clicked_event_handlers = New TList[ui_list.item_count]
     Return ui_list
   End Function
   

@@ -38,7 +38,7 @@ Function initialize_menus()
 	Local none:Object = Null
 	
 	Local root:TUIList = TUIList.Create( ..
-		Null, [ "PLAY GAME", "PROFILE", "SETTINGS", "ADVANCED", "QUIT" ], 5, ..
+		[ "PLAY GAME", "PROFILE", "SETTINGS", "ADVANCED", "QUIT" ], ..
 		[ 78, 78, 78 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], menu_line_width, ..
 		menu_fg_font, menu_bg_font, [255, 255, 255], [0, 0, 0], [0, 0, 0], [205, 205, 205] )
 	root.set_position( menu_x, menu_y )
@@ -51,7 +51,7 @@ Function initialize_menus()
 	MENU.push( root )
 	
 	Local loading_bay:TUIList = TUIList.Create( ..
-		Null, [ "RESUME GAME", "CHOOSE CAMPAIGN", "PLAY CUSTOM" ], 3, ..
+		[ "RESUME GAME", "CHOOSE CAMPAIGN", "PLAY CUSTOM" ], ..
 		[ 78, 78, 78 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], menu_line_width, ..
 		menu_fg_font, menu_bg_font, [255, 255, 255], [0, 0, 0], [0, 0, 0], [205, 205, 205] )
 	loading_bay.set_position( menu_x, menu_y )

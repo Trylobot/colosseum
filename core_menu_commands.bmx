@@ -61,7 +61,23 @@ Function cmd_play_level( item:Object = Null )
 End Function
 
 Function cmd_continue_last_campaign( item:Object = Null )
-	
+	Local current_campaign_key$ = campaign_ordering[0]
+	If profile.campaign And profile.campaign.Length > 0 Then current_campaign_key = profile.campaign
+	Local cdat:CAMPAIGN_DATA = get_campaign_data( current_campaign_key )
+	Local highest_level_index% = 0
+	Local cdat_level$
+	For Local i% = 0 Until cdat.levels.Length
+		cdat_level = cdat.levels[i]
+		If contained_in( cdat_level, profile.levels_beaten )
+			highest_level_index = i%
+		End If
+	Next
+	highest_level_index :+ 1
+	If highest_level_index >= cdat.levels.Length
+		'beat current campaign
+	End If
+	profile.vehicle_key = cdat.player_vehicle
+	cmd_play_level( cdat.levels[highest_level_index] )
 End Function
 
 Function cmd_pause_game( item:Object = Null )
