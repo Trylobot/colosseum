@@ -205,7 +205,7 @@ Repeat
 		reset_frame_timer()
 		'collision detection and resolution
 		'collide_all_objects(); profiler(2)
-		'resolve forces and emit particles, and capture player vehicle input
+		'update object positions, emit particles
 		'update_all_objects(); profiler(3)
 	End If
 	

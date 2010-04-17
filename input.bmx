@@ -84,7 +84,11 @@ Function get_all_input()
 		End If
 		If mouse_clicked_1()
 			Local action% = current_menu.on_mouse_click( mouse.pos_x, mouse.pos_y )
-			If Not action
+			If action
+				If current_menu <> MENU.get_top()
+					MENU.get_top().on_mouse_move( mouse.pos_x, mouse.pos_y )
+				End If
+			Else
 				cmd_show_previous_menu()
 			End If
 		End If

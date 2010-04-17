@@ -27,11 +27,14 @@ Type FONT_STYLE
 	Field height%
   
   Method draw_string#( str$, x%, y% )
-    Return draw_layered_string( str, x, y, fg_font, bg_font, fg_color.R, fg_color.G, fg_color.B, bg_color.R, bg_color.G, bg_color.B )
+		If fg_font And bg_font And fg_color And bg_color
+    	Return draw_layered_string( str, x, y, fg_font, bg_font, fg_color.R, fg_color.G, fg_color.B, bg_color.R, bg_color.G, bg_color.B )
+		End If
   End Method
 	
 	Method width%( str$, offset% = 0, length% = -1 )
-		Return fg_font.width( str, offset, length )
+		If fg_font Then Return fg_font.width( str, offset, length ) ..
+		Else Return 0
 	End Method
 
   Function Create:FONT_STYLE( fg_font:Object, bg_font:Object, fg_color:Object, bg_color:Object )

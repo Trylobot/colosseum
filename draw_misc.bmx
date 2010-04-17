@@ -20,13 +20,11 @@ Function screencap:TImage()
 	Return LoadImage( GrabPixmap( 0, 0, window_w, window_h ))
 End Function
 
-Function DrawRectLines( x%, y%, w%, h%, L% = -1 )
-	If L >= 0 Then SetLineWidth( L ) Else L = 1
-	Local K% = (L+1)/2
-	DrawLine( x, y+K, x+w, y+K, False ) 'top horiz
-	DrawLine( x, y+h-K, x+w, y+h-K, False ) 'bottom horiz
-	DrawLine( x+K, y, x+K, y+h, False ) 'left vert
-	DrawLine( x+w-K, y, x+w-K, y+h, False ) 'right vert
+Function DrawRectLines( x%, y%, w%, h%, L% = 1 )
+	DrawRect( x, y, w, L ) 'top horiz
+	DrawRect( x+w-L, y, L, h ) 'right vert
+	DrawRect( x, y+h-L, w, L ) 'bottom horiz
+	DrawRect( x, y, L, h ) 'left vert
 End Function
 
 Function draw_box( b:BOX, solid% = False )
@@ -62,16 +60,13 @@ line_width# = 1.0 )
 	SetScale( 1, 1 )
 	SetRotation( 0 )
 	DrawRect( x, y, w, h )
-	SetAlpha( a / 3.0 )
+	SetAlpha( a )
+	SetColor( r, g, b )
+	
 	If borders
-		SetAlpha( a )
-		SetColor( r, g, b )
-		SetLineWidth( line_width )
-		DrawRectLines( x, y, w, h )
+		DrawRectLines( x, y, w, h, line_width )
 		DrawRect( x + 2.0*line_width, y + 2.0*line_width, pct*(w - 4.0*line_width), h - 4.0*line_width )
-	Else 'no borders
-		SetAlpha( a )
-		SetColor( r, g, b )
+	Else 'Not borders
 		DrawRect( x, y, pct*w, h )
 	End If
 End Function

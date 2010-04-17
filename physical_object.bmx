@@ -26,10 +26,10 @@ Type PHYSICAL_OBJECT Extends POINT
 	End Method
 	
 	Const mass_mod# = 0.01
-	Const linear_friction_mod# = 0.5
+	Const linear_friction_mod# = 0.45
 	Const angular_friction_mod# = 200.0
-	Const force_mod# = 25.0
-	Const torque_mod# = 200.0
+	Const force_mod# = 12.5
+	Const torque_mod# = 100.0
 	Const rotationOffset# = 0.0
 	
 	Method setup_physics( physics:TPhysicsSimulator, offset:Vector2 )
@@ -39,11 +39,11 @@ Type PHYSICAL_OBJECT Extends POINT
 		body.SetMass( mass * mass_mod )
 		Local momentOfInertia# = TBodyFactory.MOIForRectangle( hitbox.w, hitbox.h, mass * mass_mod )
 		body.SetMomentOfInertia( momentOfInertia )
-		body.SetStatic( physics_disabled )
 		body.SetPosition( Vector2.Create( pos_x, pos_y ))
 		body.SetRotation( MathHelper.ToRadians( ang ))
 		body.SetLinearDragCoefficient( frictional_coefficient * linear_friction_mod )
 		body.SetRotationalDragCoefficient( frictional_coefficient * angular_friction_mod )
+		body.SetStatic( physics_disabled )
 		Local verts:TVertices = TVertices.CreateRectangle( hitbox.w, hitbox.h )
 		Local collisionGridCellSize# = TGeomFactory.CalculateGridCellSizeFromAABB( verts )
 		geom = TGeom.Create( body, verts, collisionGridCellSize, offset, rotationOffset )
@@ -73,30 +73,35 @@ Type PHYSICAL_OBJECT Extends POINT
 	End Method
 	
 	Method update()
-		pos_x = body._position.X
-		pos_y = body._position.Y
-		ang = MathHelper.ToDegrees( body._rotation )
-		
-		If Not force_list.IsEmpty()
-			For Local f:FORCE = EachIn force_list
-				f.update()
-				If f.managed()
-					Select f.physics_type
-						Case PHYSICS_FORCE
-							Local fv:Vector2 = Vector2.Zero()
-							If f.combine_ang_with_parent_ang
-								fv.X = f.magnitude_cur*Cos( f.direction + ang ) * force_mod
-								fv.Y = f.magnitude_cur*Sin( f.direction + ang ) * force_mod
-							Else
-								fv.X = f.magnitude_cur*Cos( f.direction ) * force_mod
-								fv.Y = f.magnitude_cur*Sin( f.direction ) * force_mod
-							End If
-							body.ApplyForce( fv )
-						Case PHYSICS_TORQUE
-							body.ApplyTorque( f.magnitude_cur * torque_mod )
-					End Select
-				End If
-			Next
+		If body
+			pos_x = body._position.X
+			pos_y = body._position.Y
+			ang = MathHelper.ToDegrees( body._rotation )
+			vel_x = body._bodyLinearvelocity.X / 30.0
+			vel_y = body._bodyLinearvelocity.Y / 30.0
+			ang_vel = MathHelper.ToDegrees( body._angularVelocity ) / 100.0
+			
+			If Not force_list.IsEmpty()
+				For Local f:FORCE = EachIn force_list
+					f.update()
+					If f.managed()
+						Select f.physics_type
+							Case PHYSICS_FORCE
+								Local fv:Vector2 = Vector2.Zero()
+								If f.combine_ang_with_parent_ang
+									fv.X = f.magnitude_cur*Cos( f.direction + ang ) * force_mod
+									fv.Y = f.magnitude_cur*Sin( f.direction + ang ) * force_mod
+								Else
+									fv.X = f.magnitude_cur*Cos( f.direction ) * force_mod
+									fv.Y = f.magnitude_cur*Sin( f.direction ) * force_mod
+								End If
+								body.ApplyForce( fv )
+							Case PHYSICS_TORQUE
+								body.ApplyTorque( f.magnitude_cur * torque_mod )
+						End Select
+					End If
+				Next
+			End If
 		End If
 		Rem
 		If physics_disabled

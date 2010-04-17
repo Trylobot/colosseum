@@ -10,19 +10,17 @@ EndRem
 
 '______________________________________________________________________________
 Type TUIList Extends TUIObject
-  'list data
+	Field header:String
   Field items_display:String[]
-  'panel display
   Field panel_color:TColor
   Field border_color:TColor
   Field inner_border_color:TColor
+	Field item_panel_selected_color:TColor
 	Field line_width%
-  'item display
+	Field header_font:FONT_STYLE
   Field item_font:FONT_STYLE
   Field item_selected_font:FONT_STYLE
-	Field item_panel_selected_color:TColor
 
-  'private & derived fields
   Field items:Object[]
   Field item_count%
   Field selected_item% '-1 if none
@@ -30,30 +28,33 @@ Type TUIList Extends TUIObject
   Field margin_y%
 	Field rect:BOX
 	Field item_rects:BOX[]
-  'event handlers
   Field item_clicked_event_handlers:TList[]
   
 
   Function Create:TUIList( ..
-  items_display:String[], ..
+  header:String, items_display:String[], ..
   panel_color:Object, border_color:Object, inner_border_color:Object, item_panel_selected_color:Object, ..
 	line_width%, ..
+	header_fg_font:Object, header_bg_font:Object, ..
+	header_fg_color:Object, header_bg_color:Object, ..
 	item_fg_font:Object, item_bg_font:Object, ..
 	item_fg_color:Object, item_bg_color:Object, ..
 	item_selected_fg_color:Object, item_selected_bg_color:Object, ..
 	x% = 0, y% = 0 )
     Local ui_list:TUIList = New TUIList
     'initialization
+		ui_list.header = header
     ui_list.items_display = items_display
     ui_list.item_count = items_display.Length
     ui_list.items = New Object[ui_list.item_count]
     ui_list.panel_color = TColor.Create_by_RGB_object( panel_color )
     ui_list.border_color = TColor.Create_by_RGB_object( border_color )
     ui_list.inner_border_color = TColor.Create_by_RGB_object( inner_border_color )
-		ui_list.line_width = line_width
 		ui_list.item_panel_selected_color = TColor.Create_by_RGB_object( item_panel_selected_color )
-    ui_list.item_font = FONT_STYLE.Create( FONT_STYLE.Create_BMP_FONT_from_obj( item_fg_font ), FONT_STYLE.Create_BMP_FONT_from_obj( item_bg_font ), item_fg_color, item_bg_color )
-    ui_list.item_selected_font = FONT_STYLE.Create( FONT_STYLE.Create_BMP_FONT_from_obj( item_fg_font ), FONT_STYLE.Create_BMP_FONT_from_obj( item_bg_font ), item_selected_fg_color, item_selected_bg_color )
+		ui_list.line_width = line_width
+		ui_list.header_font = FONT_STYLE.Create( header_fg_font, header_bg_font, header_fg_color, header_bg_color )
+    ui_list.item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_fg_color, item_bg_color )
+    ui_list.item_selected_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_selected_fg_color, item_selected_bg_color )
 		ui_list.set_position( x, y )
     'derived fields
     ui_list.selected_item = 0
@@ -68,7 +69,6 @@ Type TUIList Extends TUIObject
     SetAlpha( 1 )
 		SetRotation( 0 )
 		SetScale( 1, 1 )
-    SetLineWidth( line_width )
     'draw panels
     If panel_color
       panel_color.Set()
@@ -76,12 +76,17 @@ Type TUIList Extends TUIObject
     End If
     If border_color
       border_color.Set()
-      DrawRectLines( rect.x, rect.y, rect.w, rect.h )
+      DrawRectLines( rect.x, rect.y, rect.w, rect.h, line_width )
     End If
     If inner_border_color
       inner_border_color.Set()
-      DrawRectLines( rect.x + line_width, rect.y + line_width, rect.w - 2*line_width, rect.h - 2*line_width )
+      DrawRectLines( rect.x + line_width, rect.y + line_width, rect.w - 2*line_width, rect.h - 2*line_width, line_width )
     End If
+		'draw header
+		If header_font
+			SetScale( 1, 1 )
+			header_font.draw_string( header, rect.x + margin_x/2, rect.y - header_font.height - margin_y/2 )
+		End If
     'draw list item text
     Local ix% = rect.x + margin_x
     Local iy% = rect.y + margin_y
@@ -89,16 +94,17 @@ Type TUIList Extends TUIObject
     For Local i% = 0 Until items_display.Length
       If i <> selected_item
         'draw normal item text
+				SetScale( 1, 1 )
 				iy :+ item_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
       Else 'i == selected_item
         'draw selected item box
 				item_panel_selected_color.Set()
 				ir = item_rects[i]
+				SetScale( 1, 1 )
 				DrawRect( ir.x, ir.y, ir.w, ir.h )
 				'draw item text
         iy :+ item_selected_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
       End If
-			SetScale( 1, 1 )
     Next
     'scrollbar
     'TODO - add intelligent scrollbar support

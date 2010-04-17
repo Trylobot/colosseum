@@ -25,6 +25,7 @@ Function debug_no_graphics()
 End Function
 
 Function debug_with_graphics()
+	'test_draw_rect_lines()
 	'show_me()
 	'play_debug_level()
 	'debug_graffiti_manager
@@ -37,13 +38,30 @@ End Function
 
 '//////////////////////////////////////////////////////////////////////////////
 
+Function test_draw_rect_lines()
+	SetColor( 255, 255, 255 )
+	Repeat
+		Cls
+		DrawRectLines( 0,   0,  49, 19, 1 )
+		DrawRectLines( 50,  20, 49, 19, 2 )
+		DrawRectLines( 100, 40, 49, 19, 3 )
+		DrawRectLines( 150, 60, 49, 19, 4 )
+		DrawRectLines( 200, 80, 49, 19, 5 )
+		Flip
+	Until AppTerminate() Or KeyHit( KEY_ESCAPE )
+	End
+End Function
+
 Function test_ui_list()
   
 	Local list1:TUIList
 	
 	list1 = TUIList.Create( ..
-    [ "item0", "item1", "item2", "item3", "item4" ], ..
-		[ 127, 127, 127 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], 2, ..
+    "test", [ "item0", "item1", "item2", "item3", "item4" ], ..
+		[ 127, 127, 127 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], ..
+		2, ..
+		"arcade_21", "arcade_21_outline", ..
+		[255, 255, 255], [0, 0, 0], ..
     "arcade_14", "arcade_14_outline", ..
 		[255, 255, 255], [0, 0, 0], [0, 0, 0], [205, 205, 205] )
 	list1.set_position( 10, 10 )

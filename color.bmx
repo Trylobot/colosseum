@@ -7,12 +7,13 @@ EndRem
 
 '______________________________________________________________________________
 Type TColor
-	Global RED% = 1
-	Global GREEN% = 2
-	Global BLUE% = 3
-	Global HUE% = 1
-	Global SATURATION% = 2
-	Global LUMINANCE% = 3
+	Const RED% = 1
+	Const GREEN% = 2
+	Const BLUE% = 3
+	
+	Const HUE% = 1
+	Const SATURATION% = 2
+	Const LUMINANCE% = 3
 	
 	Field R%, G%, B%
 	Field H#, S#, L#
@@ -153,6 +154,13 @@ Type TColor
 			H :* 60.0
 			If H < 0.0 Then H :+ 360.0
 		End If
+	End Method
+	
+	Method clone:TColor()
+		Local c:TColor = New TColor
+		c.R = R; c.G = G; c.B = B
+		c.H = H; c.S = S; c.L = L
+		Return c
 	End Method
 	
 End Type
