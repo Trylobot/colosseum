@@ -81,7 +81,7 @@ Function cmd_continue_last_campaign( item:Object = Null )
 End Function
 
 Function cmd_pause_game( item:Object = Null )
-	MENU.push( MENU.pause )
+	FLAG.paused = True
 	FLAG.in_menu = True
 	If main_game <> Null Then main_game.paused = True
 	FlushKeys()

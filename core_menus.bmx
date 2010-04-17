@@ -120,7 +120,17 @@ Function initialize_menus()
 	root.set_item( 3, advanced )
 	
 	
-	MENU.pause = New TUIList
+	Local pause:TUIList = TUIList.Create( ..
+		"PAUSED", [ "RESUME", "SETTINGS", "PREFERENCES", "QUIT LEVEL", "QUIT GAME" ], ..
+		dark_gray, white, black, white, ..
+		menu_line_width, ..
+		menu_header_fg_font, menu_header_bg_font, ..
+		white, black, ..
+		menu_item_fg_font, menu_item_bg_font, ..
+		white, black, black, light_gray )
+	
+	pause.set_position( menu_x, menu_y )
+	MENU.pause = pause
 	
 	
 End Function

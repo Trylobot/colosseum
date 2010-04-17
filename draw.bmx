@@ -278,7 +278,11 @@ End Function
 '______________________________________________________________________________
 Function draw_menus()
 	SetAlpha( 1 )
-	MENU.get_top().draw()
+	If Not FLAG.paused
+		MENU.get_top().draw()
+	Else 'paused
+		MENU.pause.draw()
+	End If
 End Function
 
 Rem

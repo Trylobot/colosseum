@@ -58,7 +58,12 @@ Function get_all_input()
 	
 	If FLAG.in_menu
 		'current menu
-		Local current_menu:TUIObject = MENU.get_top()
+		Local current_menu:TUIObject
+		If Not FLAG.paused
+			current_menu = MENU.get_top()
+		Else 'paused
+			current_menu = MENU.pause
+		End If
 		'keyboard input
 		If KeyHit( KEY_UP )
 			current_menu.on_keyboard_up()
@@ -76,7 +81,11 @@ Function get_all_input()
 			current_menu.on_keyboard_enter()
 		End If
 		If KeyHit( KEY_ESCAPE )|KeyHit( KEY_BACKSPACE )
-			cmd_show_previous_menu()
+			If Not FLAG.paused
+				cmd_show_previous_menu()
+			Else 'paused
+				FLAG.paused = False
+			End If
 		End If
 		'mouse input
 		If Not mouse_idle
@@ -85,7 +94,7 @@ Function get_all_input()
 		If mouse_clicked_1()
 			Local action% = current_menu.on_mouse_click( mouse.pos_x, mouse.pos_y )
 			If action
-				If current_menu <> MENU.get_top()
+				If Not FLAG.paused And current_menu <> MENU.get_top()
 					MENU.get_top().on_mouse_move( mouse.pos_x, mouse.pos_y )
 				End If
 			Else
