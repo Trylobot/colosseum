@@ -100,6 +100,7 @@ Type ENVIRONMENT
 	
 	Method New()
 		physics = TPhysicsSimulator.Create( Vector2.Create( 0, 0 ))
+		
 		physics_viewer = TPhysicsSimulatorView.Create( physics )
 		physics_viewer._enablePerformancePanelView = False
 		

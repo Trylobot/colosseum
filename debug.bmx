@@ -30,7 +30,7 @@ Function debug_with_graphics()
 	'play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
-	'play_debug_level()
+	play_debug_level()
   'test_bmp_fonts()
   'test_ui_list()
 	
@@ -38,15 +38,31 @@ End Function
 
 '//////////////////////////////////////////////////////////////////////////////
 
+Function play_debug_level()
+	Local lev:LEVEL = load_level( "levels/debug.level.json" )
+	'Local player:COMPLEX_AGENT = get_player_vehicle( "medium_tank" )
+	Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
+	'Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
+	'Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
+	play_level( lev, player )
+	game = main_game
+	game.sandbox = True
+	player.move_to( Create_POINT( 0.48*lev.width, 0.5*lev.height, 0 ))
+	player.snap_all_turrets()
+	player_has_entered_arena()
+	game.spawn_unit( "mr_the_box", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.52*lev.width, 0.5*lev.height, 0.0 ))
+	game.spawn_unit( "mr_the_box", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.60*lev.width, 0.5*lev.height, 0.0 ))
+End Function
+
 Function test_draw_rect_lines()
 	SetColor( 255, 255, 255 )
 	Repeat
 		Cls
-		DrawRectLines( 0,   0,  49, 19, 1 )
-		DrawRectLines( 50,  20, 49, 19, 2 )
-		DrawRectLines( 100, 40, 49, 19, 3 )
-		DrawRectLines( 150, 60, 49, 19, 4 )
-		DrawRectLines( 200, 80, 49, 19, 5 )
+		DrawRectLines( 0,   0,  50, 20, 1 )
+		DrawRectLines( 50,  20, 50, 20, 2 )
+		DrawRectLines( 100, 40, 50, 20, 3 )
+		DrawRectLines( 150, 60, 50, 20, 4 )
+		DrawRectLines( 200, 80, 50, 20, 5 )
 		Flip
 	Until AppTerminate() Or KeyHit( KEY_ESCAPE )
 	End
@@ -91,21 +107,6 @@ End Function
 
 Function debug_ui_list_item_clicked( item:Object )
   DebugLog( "list item clicked " + String(item) )
-End Function
-
-Function play_debug_level()
-	Local lev:LEVEL = load_level( "levels/debug.level.json" )
-	'Local player:COMPLEX_AGENT = get_player_vehicle( "medium_tank" )
-	Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
-	'Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
-	'Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
-	play_level( lev, player )
-	game = main_game
-	game.sandbox = True
-	player.move_to( Create_POINT( 0.48*lev.width, 0.5*lev.height, -90.0 ))
-	player.snap_all_turrets()
-	player_has_entered_arena()
-	game.spawn_unit( "mr_the_box", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.52*lev.width, 0.5*lev.height, 0.0 ))
 End Function
 
 Function test_bmp_fonts()

@@ -25,11 +25,11 @@ Type PHYSICAL_OBJECT Extends POINT
 		force_list = CreateList()
 	End Method
 	
-	Const mass_mod# = 0.01
-	Const linear_friction_mod# = 0.45
-	Const angular_friction_mod# = 200.0
-	Const force_mod# = 12.5
-	Const torque_mod# = 100.0
+	Const mass_mod# = 0.005
+	Const linear_friction_mod# = 2.00
+	Const angular_friction_mod# = 400.0
+	Const force_mod# = 500.0
+	Const torque_mod# = 3000.0
 	Const rotationOffset# = 0.0
 	
 	Method setup_physics( physics:TPhysicsSimulator, offset:Vector2 )
@@ -77,9 +77,9 @@ Type PHYSICAL_OBJECT Extends POINT
 			pos_x = body._position.X
 			pos_y = body._position.Y
 			ang = MathHelper.ToDegrees( body._rotation )
-			vel_x = body._bodyLinearvelocity.X / 30.0
-			vel_y = body._bodyLinearvelocity.Y / 30.0
-			ang_vel = MathHelper.ToDegrees( body._angularVelocity ) / 100.0
+			vel_x = body._bodyLinearvelocity.X / 133.0
+			vel_y = body._bodyLinearvelocity.Y / 133.0
+			ang_vel = MathHelper.ToDegrees( body._angularVelocity ) / 133.0
 			
 			If Not force_list.IsEmpty()
 				For Local f:FORCE = EachIn force_list
