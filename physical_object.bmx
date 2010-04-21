@@ -25,11 +25,11 @@ Type PHYSICAL_OBJECT Extends POINT
 		force_list = CreateList()
 	End Method
 	
-	Const mass_mod# = 0.005
-	Const linear_friction_mod# = 2.00
-	Const angular_friction_mod# = 400.0
-	Const force_mod# = 500.0
-	Const torque_mod# = 3000.0
+	Const mass_mod# = 0.00001
+	Const linear_drag# = 0.0105
+	Const rotational_drag# = 0.8
+	Const force_mod# = 1.0
+	Const torque_mod# = 1.0
 	Const rotationOffset# = 0.0
 	
 	Method setup_physics( physics:TPhysicsSimulator, offset:Vector2 )
@@ -41,8 +41,8 @@ Type PHYSICAL_OBJECT Extends POINT
 		body.SetMomentOfInertia( momentOfInertia )
 		body.SetPosition( Vector2.Create( pos_x, pos_y ))
 		body.SetRotation( MathHelper.ToRadians( ang ))
-		body.SetLinearDragCoefficient( frictional_coefficient * linear_friction_mod )
-		body.SetRotationalDragCoefficient( frictional_coefficient * angular_friction_mod )
+		body.SetLinearDragCoefficient( linear_drag )
+		body.SetRotationalDragCoefficient( rotational_drag )
 		body.SetStatic( physics_disabled )
 		Local verts:TVertices = TVertices.CreateRectangle( hitbox.w, hitbox.h )
 		Local collisionGridCellSize# = TGeomFactory.CalculateGridCellSizeFromAABB( verts )

@@ -544,7 +544,7 @@
       <Document_Active>true</Document_Active>
       <Caret_Position>
         <X>0</X>
-        <Y>37</Y>
+        <Y>16</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1381,8 +1381,8 @@
       <FileName>main.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>58</X>
-        <Y>166</Y>
+        <X>27</X>
+        <Y>130</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1440,16 +1440,17 @@
     </Included_File>
     <Included_File>
       <FileName>misc.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>19</X>
-        <Y>180</Y>
+        <X>25</X>
+        <Y>304</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -1562,8 +1563,8 @@
       <FileName>physical_object.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>24</X>
-        <Y>27</Y>
+        <X>36</X>
+        <Y>45</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -2275,8 +2276,8 @@
       <FileName>timescale.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>42</X>
-        <Y>9</Y>
+        <X>43</X>
+        <Y>11</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>

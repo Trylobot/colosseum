@@ -180,10 +180,14 @@ Repeat
 	If frame_time_elapsed()
 		calculate_timescale()
 		reset_frame_timer()
-		'collision detection and resolution
-		collide_all_objects()
+		''collision detection and resolution
+		'collide_all_objects()
 		'resolve forces and emit particles, and capture player vehicle input
 		update_all_objects()
+	End If
+	'new physics engine (temporary spot)
+	If game And game.physics
+		game.physics.Update( physics_timestep_in_seconds )
 	End If
 	'music and sound
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress )
@@ -203,15 +207,11 @@ Repeat
 	If frame_time_elapsed()
 		calculate_timescale()
 		reset_frame_timer()
-		'collision detection and resolution
+		''collision detection and resolution
 		'collide_all_objects(); profiler(2)
 		'update object positions, emit particles
-		'update_all_objects(); profiler(3)
+		update_all_objects(); profiler(3)
 	End If
-	
-	'always update?
-	update_all_objects(); profiler(3)
-
 	'new physics engine (temporary spot)
 	If game And game.physics
 		game.physics.Update( physics_timestep_in_seconds ); profiler(6)
