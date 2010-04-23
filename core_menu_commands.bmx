@@ -12,14 +12,30 @@ Global level_editor_requests_resume%
 
 '______________________________________________________________________________
 Function cmd_show_menu( item:Object = Null )
-	If item And TUIList(item) Then MENU.push( TUIList(item) )
+	Local m:TUIObject = TUIObject(item)
+	If m
+		MENU.push( m )
+		MENU.get_top().on_show()
+	End If
 End Function
 
 Function cmd_show_previous_menu( item:Object = Null )
 	MENU.pop()
+	MENU.get_top().on_show()
 End Function
 
-Function cmd_load_game( item:Object = Null )
+Function cmd_create_new_profile( item:Object = Null )
+	'create the profile
+	profile = create_new_user_profile()
+	show_info( "new profile created" )
+	'menu_command( COMMAND.BACK_TO_PARENT_MENU )
+	'get_current_menu().update( True )
+	''immediately prompt for a rename
+	'menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create(MENU_ID.INPUT_PROFILE_NAME) )
+	'get_current_menu().update( True )
+End Function
+
+Function cmd_load_profile( item:Object )
 	If Not item Then Return
 	Local saved_game_path$ = String(item)
 	If Not saved_game_path Then Return
@@ -32,7 +48,7 @@ Function cmd_load_game( item:Object = Null )
 	'get_current_menu().update( True )
 End Function
 
-Function cmd_save_game( item:Object = Null )
+Function cmd_save_profile( item:Object = Null )
 	If profile
 		If save_game( profile.src_path, profile )
 			save_autosave( profile.src_path )
@@ -43,7 +59,7 @@ Function cmd_save_game( item:Object = Null )
 	End If
 End Function
 
-Function cmd_play_level( item:Object = Null )
+Function cmd_play_level( item:Object )
 	If Not profile Then Return
 	If Not item Then Return
 	Local lev_path$ = String(item)
@@ -83,7 +99,15 @@ End Function
 Function cmd_pause_game( item:Object = Null )
 	FLAG.paused = True
 	FLAG.in_menu = True
-	If main_game <> Null Then main_game.paused = True
+	If main_game Then main_game.paused = True
+	FlushKeys()
+	FlushMouse()
+End Function
+
+Function cmd_unpause_game( item:Object = Null )
+	FLAG.paused = False
+	FLAG.in_menu = False
+	If main_game Then main_game.paused = False
 	FlushKeys()
 	FlushMouse()
 End Function
@@ -94,11 +118,27 @@ Function cmd_new_level_editor_cache( item:Object = Null )
 	'show_info( "new level loaded" )
 End Function
 
+Function cmd_enter_level_editor( item:Object = Null )
+	
+End Function
+
+Function cmd_enter_unit_editor( item:Object = Null )
+	
+End Function
+
+Function cmd_enter_gibs_editor( item:Object = Null )
+	
+End Function
+
+Function cmd_reload_assets( item:Object = Null )
+	
+End Function
+
 Function cmd_quit_level( item:Object = Null )
 	FLAG.in_menu = True
 	main_game = Null
 	game = ai_menu_game
-	cmd_save_game( item )
+	cmd_save_profile( item )
 	'menu_show_loading_bay()
 	If FLAG.playing_multiplayer 
 		network_terminate()

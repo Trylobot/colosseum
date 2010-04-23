@@ -28,10 +28,24 @@ Type TUIList Extends TUIObject
   Field margin_y%
 	Field rect:BOX
 	Field item_rects:BOX[]
-  Field item_clicked_event_handlers:TList[]
+	Field list_content_refresh_event_handler:TUIEventHandler
+  Field item_clicked_event_handlers:TUIEventHandler[]
   
+	
+	Method New()
+		Construct( ..
+			"NULL", [ "NULL" ], ..
+			[ 127, 127, 127 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], ..
+			2, ..
+			"arcade_14", "arcade_14_outline", ..
+			[255, 255, 255], [0, 0, 0], ..
+			"arcade_7", "arcade_7_outline", ..
+			[255, 255, 255], [0, 0, 0], ..
+			[0, 0, 0], [205, 205, 205], ..
+			10, 70 )
+	End Method
 
-  Function Create:TUIList( ..
+  Method Construct( ..
   header:String, items_display:String[], ..
   panel_color:Object, border_color:Object, inner_border_color:Object, item_panel_selected_color:Object, ..
 	line_width%, ..
@@ -41,29 +55,29 @@ Type TUIList Extends TUIObject
 	item_fg_color:Object, item_bg_color:Object, ..
 	item_selected_fg_color:Object, item_selected_bg_color:Object, ..
 	x% = 0, y% = 0 )
-    Local ui_list:TUIList = New TUIList
     'initialization
-		ui_list.header = header
-    ui_list.items_display = items_display
-    ui_list.item_count = items_display.Length
-    ui_list.items = New Object[ui_list.item_count]
-    ui_list.panel_color = TColor.Create_by_RGB_object( panel_color )
-    ui_list.border_color = TColor.Create_by_RGB_object( border_color )
-    ui_list.inner_border_color = TColor.Create_by_RGB_object( inner_border_color )
-		ui_list.item_panel_selected_color = TColor.Create_by_RGB_object( item_panel_selected_color )
-		ui_list.line_width = line_width
-		ui_list.header_font = FONT_STYLE.Create( header_fg_font, header_bg_font, header_fg_color, header_bg_color )
-    ui_list.item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_fg_color, item_bg_color )
-    ui_list.item_selected_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_selected_fg_color, item_selected_bg_color )
-		ui_list.set_position( x, y )
+		Self.header = header
+    Self.items_display = items_display
+    Self.item_count = items_display.Length
+    Self.items = New Object[Self.item_count]
+    Self.panel_color = TColor.Create_by_RGB_object( panel_color )
+    Self.border_color = TColor.Create_by_RGB_object( border_color )
+    Self.inner_border_color = TColor.Create_by_RGB_object( inner_border_color )
+		Self.item_panel_selected_color = TColor.Create_by_RGB_object( item_panel_selected_color )
+		Self.line_width = line_width
+		Self.header_font = FONT_STYLE.Create( header_fg_font, header_bg_font, header_fg_color, header_bg_color )
+    Self.item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_fg_color, item_bg_color )
+    Self.item_selected_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_selected_fg_color, item_selected_bg_color )
+		Self.rect = Null
+		Self.item_rects = Null
+		Self.set_position( x, y )
     'derived fields
-    ui_list.selected_item = 0
-    ui_list.margin_x = ui_list.item_font.width( " " )
-    ui_list.margin_y = Int(0.5 * Float(ui_list.item_font.height))
-    ui_list.calculate_dimensions()
-		ui_list.item_clicked_event_handlers = New TList[ui_list.item_count]
-    Return ui_list
-  End Function
+    Self.selected_item = 0
+    Self.margin_x = Self.item_font.width( " " )
+    Self.margin_y = Int(0.5 * Float(Self.item_font.height))
+    Self.calculate_dimensions()
+		Self.item_clicked_event_handlers = New TUIEventHandler[Self.item_count]
+  End Method
   
   Method draw()
     SetAlpha( 1 )
@@ -127,7 +141,7 @@ Type TUIList Extends TUIObject
 		items[i] = item
 	End Method
 	
-	Method update_item_display( i%, display$ )
+	Method set_item_display( i%, display$ )
 		If i < 0 Or i >= item_count Then Return
 		items_display[i] = display
 		calculate_dimensions()
@@ -216,19 +230,26 @@ Type TUIList Extends TUIObject
 		End If
 	End Method
 	
+	Method on_show()
+		If list_content_refresh_event_handler
+			list_content_refresh_event_handler.invoke( Self )
+		End If
+	End Method
+	
 	Method invoke( i% )
     If i >= 0 And i < item_count And item_clicked_event_handlers[i]
-      For Local event_handler:TUIEventHandler = EachIn item_clicked_event_handlers[i]
-        event_handler.invoke( items[i] )
-      Next
+      item_clicked_event_handlers[i].invoke( items[i] )
     End If
 	End Method
   
-  Method add_item_clicked_event_handler( i%, event_handler(item:Object) )
+  Method set_item_clicked_event_handler( i%, event_handler(item:Object) )
 		If i >= 0 And i < item_count
-			If Not item_clicked_event_handlers[i] Then item_clicked_event_handlers[i] = CreateList()
-			item_clicked_event_handlers[i].AddLast( TUIEventHandler.Create( event_handler ))
+			item_clicked_event_handlers[i] = TUIEventHandler.Create( event_handler )
 		End If
+  End Method
+  
+  Method set_list_content_refresh_event_handler( event_handler(item:Object) )
+		list_content_refresh_event_handler = TUIEventHandler.Create( event_handler )
   End Method
   
   Method get_item_index_by_screen_coord%( sx%, sy% )

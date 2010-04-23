@@ -16,6 +16,7 @@ Type TUIObject Abstract
 	Method on_keyboard_left() Abstract
 	Method on_keyboard_right() Abstract
 	Method on_keyboard_enter() Abstract
+	Method on_show() Abstract
 End Type
 
 '______________________________________________________________________________
@@ -29,7 +30,7 @@ Type TUIEventHandler
 		Return h
 	End Function
 	'handler invocation
-	Method invoke( item:Object )
+	Method invoke( item:Object = Null )
 		event_handler( item )
 	End Method
 End Type

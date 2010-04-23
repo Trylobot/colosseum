@@ -1,1 +1,1 @@
-bmk makeapp -r -t gui -o colosseum.exe project.bmx
+bmk makeapp -r -t gui -o colosseum.exe main.bmx

@@ -7,12 +7,12 @@ EndRem
 
 '______________________________________________________________________________
 Type MENU
-	Global stack:TList = CreateList()
+	Global stack:TList
 	
 	Global root:TUIList
-	Global pause:TUIList
-	Global loading_bay:TUIList
+	Global play_game:TUIList
 	Global campaign_select:TUIImageGrid
+	Global pause:TUIList
 	
 	Function push( m:TUIObject )
 		stack.AddLast( m )
@@ -44,11 +44,30 @@ Function initialize_menus()
 	Local menu_header_bg_font:BMP_FONT = get_bmp_font( "arcade_28_outline" )
 	Local menu_item_fg_font:BMP_FONT = get_bmp_font( "arcade_21" )
 	Local menu_item_bg_font:BMP_FONT = get_bmp_font( "arcade_21_outline" )
+	Local menu_small_item_fg_font:BMP_FONT = get_bmp_font( "arcade_14" )
+	Local menu_small_item_bg_font:BMP_FONT = get_bmp_font( "arcade_14_outline" )
 	Local menu_line_width% = 3
+	Local menu_small_line_width% = 2
 	Local menu_x% = 10, menu_y% = 70
 	
+	MENU.stack = CreateList()
 	
-	Local root:TUIList = TUIList.Create( ..
+	Local root_menu:TUIList = New TUIList
+		Local play_game_menu:TUIList = New TUIList
+			Local campaign_select_menu:TUIImageGrid '= New TUIImageGrid
+			Local custom_level_select_menu:TUIList = New TUIList
+		Local profile_menu:TUIList = New TUIList
+			Local profile_prefs_menu:TUIList = New TUIList
+				Local controls_menu:TUIList = New TUIList
+		Local settings_menu:TUIList = New TUIList
+			Local video_settings_menu:TUIList = New TUIList
+			Local audio_settings_menu:TUIList = New TUIList
+			Local performance_settings_menu:TUIList = New TUIList
+		Local advanced_menu:TUIList = New TUIList
+	Local pause_menu:TUIList = New TUIList
+	
+	
+	root_menu.Construct( ..
 		"COLOSSEUM", [ "PLAY GAME", "PROFILE", "SETTINGS", "ADVANCED", "QUIT" ], ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
@@ -56,18 +75,20 @@ Function initialize_menus()
 		bright_yellow, dark_yellow, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray )
-		
-	root.set_position( menu_x, menu_y )
-	root.add_item_clicked_event_handler( 0, cmd_show_menu )
-	root.add_item_clicked_event_handler( 1, cmd_show_menu )
-	root.add_item_clicked_event_handler( 2, cmd_show_menu )
-	root.add_item_clicked_event_handler( 3, cmd_show_menu )
-	root.add_item_clicked_event_handler( 4, cmd_quit_game )
-	MENU.root = root
-	MENU.push( root )
+	root_menu.set_position( menu_x, menu_y )
+	root_menu.set_item_clicked_event_handler( 0, cmd_show_menu )
+	root_menu.set_item( 0, play_game_menu )
+	root_menu.set_item_clicked_event_handler( 1, cmd_show_menu )
+	root_menu.set_item( 1, profile_menu )
+	root_menu.set_item_clicked_event_handler( 2, cmd_show_menu )
+	root_menu.set_item( 2, settings_menu )
+	root_menu.set_item_clicked_event_handler( 3, cmd_show_menu )
+	root_menu.set_item( 3, advanced_menu )
+	root_menu.set_item_clicked_event_handler( 4, cmd_quit_game )
+	MENU.root = root_menu
+	MENU.push( root_menu )
 	
-	
-	Local loading_bay:TUIList = TUIList.Create( ..
+	play_game_menu.Construct( ..
 		"PLAY GAME", [ "RESUME GAME", "CHOOSE CAMPAIGN", "PLAY CUSTOM" ], ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
@@ -75,13 +96,15 @@ Function initialize_menus()
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray )
+	play_game_menu.set_position( menu_x, menu_y )
+	play_game_menu.set_item_clicked_event_handler( 0, cmd_continue_last_campaign )
+	play_game_menu.set_item_clicked_event_handler( 1, cmd_show_menu )
+	play_game_menu.set_item( 1, campaign_select_menu )
+	play_game_menu.set_item_clicked_event_handler( 2, cmd_show_menu )
+	play_game_menu.set_item( 2, custom_level_select_menu )
+	MENU.play_game = play_game_menu
 	
-	loading_bay.set_position( menu_x, menu_y )
-	loading_bay.add_item_clicked_event_handler( 0, cmd_continue_last_campaign )
-	root.set_item( 0, loading_bay )
-	
-	
-	Local profile_menu:TUIList = TUIList.Create( ..
+	profile_menu.Construct( ..
 		"PROFILE", [ "CREATE NEW", "SAVE PROFILE", "LOAD PROFILE", "PREFERENCES", "CHANGE NAME" ], ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
@@ -89,25 +112,26 @@ Function initialize_menus()
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray )
-	
 	profile_menu.set_position( menu_x, menu_y )
-	root.set_item( 1, profile_menu )
+	profile_menu.set_item_clicked_event_handler( 0, cmd_create_new_profile )
+	profile_menu.set_item_clicked_event_handler( 1, cmd_save_profile )
+	profile_menu.set_item_clicked_event_handler( 2, cmd_load_profile )
+	profile_menu.set_item_clicked_event_handler( 3, cmd_show_menu )
+	profile_menu.set_item( 3, profile_prefs_menu )
+	'profile_menu.set_item_clicked_event_handler( 4, cmd_modify_profile_pref )
+	'profile_menu.set_item( 4, ? )
 	
-	
-	Local settings_menu:TUIList = TUIList.Create( ..
-		"SETTINGS", [ "VIDEO SETTINGS", "PERFORMANCE SETTINGS", "AUDIO SETTINGS" ], ..
+	settings_menu.Construct( ..
+		"SETTINGS", [ "VIDEO SETTINGS", "AUDIO SETTINGS", "PERFORMANCE SETTINGS" ], ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
 		menu_header_fg_font, menu_header_bg_font, ..
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray )
-	
 	settings_menu.set_position( menu_x, menu_y )
-	root.set_item( 2, settings_menu )
 	
-	
-	Local advanced:TUIList = TUIList.Create( ..
+	advanced_menu.Construct( ..
 		"ADVANCED", [ "LEVEL EDITOR", "UNIT EDITOR", "GIBS EDITOR", "RELOAD ASSETS" ], ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
@@ -115,12 +139,61 @@ Function initialize_menus()
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray )
+	advanced_menu.set_position( menu_x, menu_y )
+	advanced_menu.set_item_clicked_event_handler( 0, cmd_enter_level_editor )
+	advanced_menu.set_item_clicked_event_handler( 1, cmd_enter_unit_editor )
+	advanced_menu.set_item_clicked_event_handler( 2, cmd_enter_gibs_editor )
+	advanced_menu.set_item_clicked_event_handler( 3, cmd_reload_assets )
 	
-	advanced.set_position( menu_x, menu_y )
-	root.set_item( 3, advanced )
+	profile_prefs_menu.Construct( ..
+		"PREFERENCES", [ "CONTROLS", "INVERT REVERSE STEERING" ], ..
+		dark_gray, white, black, white, ..
+		menu_line_width, ..
+		menu_header_fg_font, menu_header_bg_font, ..
+		white, black, ..
+		menu_item_fg_font, menu_item_bg_font, ..
+		white, black, black, light_gray )
+	profile_prefs_menu.set_position( menu_x, menu_y )
+	profile_prefs_menu.set_item_clicked_event_handler( 0, cmd_show_menu )
+	profile_prefs_menu.set_item( 0, controls_menu )
+	'profile_prefs_menu.set_item_clicked_event_handler( 1, cmd_modify_profile_pref )
+	'profile_prefs_menu.set_item( 1, ? )
 	
+	video_settings_menu.Construct( ..
+		"VIDEO SETTINGS", [ "FULL SCREEN", "RESOLUTION", "REFRESH RATE", "BIT DEPTH" ], ..
+		dark_gray, white, black, white, ..
+		menu_line_width, ..
+		menu_header_fg_font, menu_header_bg_font, ..
+		white, black, ..
+		menu_item_fg_font, menu_item_bg_font, ..
+		white, black, black, light_gray )
+	video_settings_menu.set_position( menu_x, menu_y )
+	'video_settings_menu.set_item_clicked_event_handler( 0, cmd_modify_setting )
+	'video_settings_menu.set_item( 0, ? )
+	'video_settings_menu.set_item_clicked_event_handler( 1, cmd_modify_setting )
+	'video_settings_menu.set_item( 1, ? )
+	'video_settings_menu.set_item_clicked_event_handler( 2, cmd_modify_setting )
+	'video_settings_menu.set_item( 2, ? )
+	'video_settings_menu.set_item_clicked_event_handler( 3, cmd_modify_setting )
+	'video_settings_menu.set_item( 3, ? )
 	
-	Local pause:TUIList = TUIList.Create( ..
+	audio_settings_menu.Construct( ..
+		"AUDIO SETTINGS", [ "EFFECTS VOLUME", "MUSIC VOLUME", "AUDIO DRIVER" ], ..
+		dark_gray, white, black, white, ..
+		menu_line_width, ..
+		menu_header_fg_font, menu_header_bg_font, ..
+		white, black, ..
+		menu_small_item_fg_font, menu_small_item_bg_font, ..
+		white, black, black, light_gray )
+	audio_settings_menu.set_position( menu_x, menu_y )
+	'audio_settings_menu.set_item_clicked_event_handler( 0, cmd_modify_setting )
+	'audio_settings_menu.set_item( 0, ? )
+	'audio_settings_menu.set_item_clicked_event_handler( 1, cmd_modify_setting )
+	'audio_settings_menu.set_item( 1, ? )
+	'audio_settings_menu.set_item_clicked_event_handler( 2, cmd_modify_setting )
+	'audio_settings_menu.set_item( 2, ? )
+
+	pause_menu.Construct( ..
 		"PAUSED", [ "RESUME", "SETTINGS", "PREFERENCES", "QUIT LEVEL", "QUIT GAME" ], ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
@@ -128,9 +201,16 @@ Function initialize_menus()
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray )
+	pause_menu.set_position( menu_x, menu_y )
+	pause_menu.set_item_clicked_event_handler( 0, cmd_unpause_game )
+	pause_menu.set_item_clicked_event_handler( 1, cmd_show_menu )
+	pause_menu.set_item( 1, settings_menu )
+	pause_menu.set_item_clicked_event_handler( 2, cmd_show_menu )
+	pause_menu.set_item( 2, profile_prefs_menu )
+	pause_menu.set_item_clicked_event_handler( 3, cmd_quit_level )
+	pause_menu.set_item_clicked_event_handler( 4, cmd_quit_game )
+	MENU.pause = pause_menu
 	
-	pause.set_position( menu_x, menu_y )
-	MENU.pause = pause
 	
 	
 End Function

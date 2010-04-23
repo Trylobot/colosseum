@@ -129,15 +129,15 @@ End If
 'menu_command( COMMAND.NEW_LEVEL )
 cmd_new_level_editor_cache()
 'autosave/load user profile
-Global autosave_profile_path$ = load_autosave()
+Global autosave_profile_path$ = load_autosave_profile_path()
 If autosave_profile_path
 	'menu_command( COMMAND.load_game, autosave_profile_path )
-	cmd_load_game( autosave_profile_path )
+	cmd_load_profile( autosave_profile_path )
 Else
 	profile = create_new_user_profile()
 	show_info( "new profile created" )
 	'menu_command( COMMAND.save_game, [True] )
-	cmd_save_game()
+	cmd_save_profile()
 End If
 
 'window title

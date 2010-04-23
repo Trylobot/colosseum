@@ -335,7 +335,7 @@ Function save_settings%()
 End Function
 
 '______________________________________________________________________________
-Function load_autosave$()
+Function load_autosave_profile_path$()
 	Local file:TStream, json:TJSON
 	file = ReadFile( autosave_path )
 	If file
