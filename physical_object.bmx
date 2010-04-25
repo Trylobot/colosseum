@@ -154,7 +154,7 @@ Type PHYSICAL_OBJECT Extends POINT
 		Local f:FORCE = FORCE( FORCE.Copy( other_f, force_list ))
 		'f.parent = Self
 		f.combine_ang_with_parent_ang = combine_ang_with_parent_ang
-		return f
+		Return f
 	End Method
 	
 	Rem

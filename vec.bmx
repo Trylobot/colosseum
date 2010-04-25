@@ -30,7 +30,7 @@ Type cVEC 'cartesian coordinate system 2D vector
 	End Method
 	
 	Method r#()
-		Return Sqr( Pow( x, 2 ) + Pow( y, 2 ))
+		Return Sqr( x*x + y*y )
 	End Method
 	
 	Method a#()
