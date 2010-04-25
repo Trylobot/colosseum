@@ -348,13 +348,15 @@ Function debug_overlay()
 	End If
 	
 	If KeyHit( KEY_C )
-		If closest_cb <> Null
+		If closest_cb
 			Local p:PARTICLE = get_particle( "cash_from_kill" )
-			p.str :+ closest_cb.avatar.cash_value
-			p.str_update()
-			p.pos_x = closest_cb.avatar.pos_x
-			p.pos_y = closest_cb.avatar.pos_y - 20
-			p.manage( game.particle_list_foreground )
+			If p
+				p.str :+ closest_cb.avatar.cash_value
+				p.str_update()
+				p.pos_x = closest_cb.avatar.pos_x
+				p.pos_y = closest_cb.avatar.pos_y - 20
+				p.manage( game.particle_list_foreground )
+			End If
 		End If
 	End If
 

@@ -41,18 +41,25 @@ Function collide_all_objects()
 		Local ag:AGENT, other:AGENT
 		Local proj:PROJECTILE
 		Local pkp:PICKUP
+		Local wall:BOX
 		Local result:Object[]
 		
 		ResetCollisions()
 		
-		'collisions between projectiles and complex_agents
+		'collisions between projectiles and {agents|walls}
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
 				ag.collide( 0, AGENT_COLLISION_LAYER )
 			Next
 		Next
+		SetRotation( 0 )
+		SetHandle( 0, 0 )
+		For wall = EachIn game.walls
+			CollideRect( wall.x,wall.y, wall.w,wall.h, 0, WALL_COLLISION_LAYER, wall )
+		Next
 		For proj = EachIn game.projectile_list
-			result = proj.collide( AGENT_COLLISION_LAYER, PROJECTILE_COLLISION_LAYER )
+			'check for projectile/agent
+			result = proj.collide( AGENT_COLLISION_LAYER, 0 )
 			For ag = EachIn result
 				'examine id's; projectiles should not collide with their owners
 				If proj.source_id <> ag.id
@@ -61,8 +68,31 @@ Function collide_all_objects()
 					ag.flash = True
 				End If
 			Next
+			'check for projectile/wall
+			result = proj.collide( WALL_COLLISION_LAYER, 0 )
+			For wall = EachIn result
+				collision_projectile_wall( proj, wall )
+			Next
 		Next
 		
+		'collisions between player and pickups
+		If game.human_participation And game.player And Not game.player.dead()
+			For pkp = EachIn game.pickup_list
+				SetRotation( 0 )
+				SetHandle( pkp.img.handle_x, pkp.img.handle_y )
+				'CollideImageRef( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
+				CollideRect( pkp.pos_x, pkp.pos_y, pkp.img.width(), pkp.img.height(), 0, PICKUP_COLLISION_LAYER, pkp )
+			Next
+			result = game.player.collide( PICKUP_COLLISION_LAYER, 0 )
+			For pkp = EachIn result
+				'COLLISION! between {player} and {pkp}
+				game.player.grant_pickup( pkp ) 'i can has lewts?!
+				pkp.play_categorical_sound()
+				pkp.unmanage()
+			Next
+		End If
+		
+		Rem
 		'collisions between agents and other agents
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
@@ -112,23 +142,7 @@ Function collide_all_objects()
 				Next
 			Next
 		Next
-
-		'collisions between player and pickups
-		If game.human_participation And game.player And Not game.player.dead()
-			For pkp = EachIn game.pickup_list
-				SetRotation( 0 )
-				SetHandle( pkp.img.handle_x, pkp.img.handle_y )
-				'CollideImageRef( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
-				CollideRect( pkp.pos_x, pkp.pos_y, pkp.img.width(), pkp.img.height(), 0, PICKUP_COLLISION_LAYER, pkp )
-			Next
-			result = game.player.collide( PICKUP_COLLISION_LAYER, PLAYER_COLLISION_LAYER )
-			For pkp = EachIn result
-				'COLLISION! between {player} and {pkp}
-				game.player.grant_pickup( pkp ) 'i can has lewts?!
-				pkp.play_categorical_sound()
-				pkp.unmanage()
-			Next
-		End If
+		EndRem
 		
 		SetRotation( 0 )
 		SetHandle( 0, 0 )

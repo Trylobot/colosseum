@@ -11,6 +11,7 @@ EndRem
 '______________________________________________________________________________
 Type PHYSICAL_OBJECT Extends POINT
 	
+	Field physics:TPhysicsSimulator
 	Field body:TBody
 	Field geom:TGeom
 	
@@ -25,19 +26,21 @@ Type PHYSICAL_OBJECT Extends POINT
 		force_list = CreateList()
 	End Method
 	
-	Const mass_mod# = 0.00001
-	Const linear_drag# = 0.0105
-	Const rotational_drag# = 0.8
-	Const force_mod# = 1.0
-	Const torque_mod# = 1.0
-	Const rotationOffset# = 0.0
+	Const mass_mod# = 1.0
+	Const linear_drag# = 10.0
+	Const rotational_drag# = 1000.0
+	Const force_mod# = 7.0
+	Const torque_mod# = 13.0
+	Const apparent_linear_velocity_mod# = 0.020
+	Const apparent_angular_velocity_mod# = 0.020
 	
-	Method setup_physics( physics:TPhysicsSimulator, offset:Vector2 )
+	Method setup_physics( physics:TPhysicsSimulator )
+		If Not physics Then Return
+		Self.physics = physics
 		If Not hitbox Then Return
-		offset = Null
 		body = New TBody
-		body.SetMass( mass * mass_mod )
-		Local momentOfInertia# = TBodyFactory.MOIForRectangle( hitbox.w, hitbox.h, mass * mass_mod )
+		body.SetMass( mass_mod )
+		Local momentOfInertia# = TBodyFactory.MOIForRectangle( hitbox.w, hitbox.h, mass_mod )
 		body.SetMomentOfInertia( momentOfInertia )
 		body.SetPosition( Vector2.Create( pos_x, pos_y ))
 		body.SetRotation( MathHelper.ToRadians( ang ))
@@ -46,22 +49,28 @@ Type PHYSICAL_OBJECT Extends POINT
 		body.SetStatic( physics_disabled )
 		Local verts:TVertices = TVertices.CreateRectangle( hitbox.w, hitbox.h )
 		Local collisionGridCellSize# = TGeomFactory.CalculateGridCellSizeFromAABB( verts )
-		geom = TGeom.Create( body, verts, collisionGridCellSize, offset, rotationOffset )
+		geom = TGeom.Create( body, verts, collisionGridCellSize )
 		physics.AddBody( body )
 		physics.AddGeom( geom )
 	End Method
 	
+	Method destroy_physics()
+		physics.RemoveBody( body )
+		physics.RemoveGeom( geom )
+	End Method
+
 	Method collide:Object[]( collidemask%, writemask% )
-		Return Null
-		Rem
 		If hitbox
 			SetRotation( ang )
-			SetHandle( hitbox.x, hitbox.y )
-			Return CollideRect( pos_x, pos_y, hitbox.w, hitbox.h, collidemask, writemask, Self )
+			Return CollideRect( ..
+				pos_x - hitbox.x*Cos(ang), ..
+				pos_y - hitbox.y*Sin(ang), ..
+				hitbox.w, hitbox.h, ..
+				collidemask, writemask, ..
+				Self )
 		Else
 			Return Null
 		End If
-		EndRem
 	End Method
 	
 	Method move_to( argument:Object, dummy1% = False, dummy2% = False )
@@ -77,9 +86,9 @@ Type PHYSICAL_OBJECT Extends POINT
 			pos_x = body._position.X
 			pos_y = body._position.Y
 			ang = MathHelper.ToDegrees( body._rotation )
-			vel_x = body._bodyLinearvelocity.X / 133.0
-			vel_y = body._bodyLinearvelocity.Y / 133.0
-			ang_vel = MathHelper.ToDegrees( body._angularVelocity ) / 133.0
+			vel_x = body._bodyLinearvelocity.X * apparent_linear_velocity_mod
+			vel_y = body._bodyLinearvelocity.Y * apparent_linear_velocity_mod
+			ang_vel = MathHelper.ToDegrees( body._angularVelocity ) * apparent_angular_velocity_mod
 			
 			If Not force_list.IsEmpty()
 				For Local f:FORCE = EachIn force_list
@@ -102,42 +111,43 @@ Type PHYSICAL_OBJECT Extends POINT
 					End If
 				Next
 			End If
-		End If
-		Rem
-		If physics_disabled
-			force_list.Clear()
-			Return
-		End If
-		If Not force_list.IsEmpty()
-			'reset acceleration and angular acceleration
-			acc_x = 0; acc_y = 0; ang_acc = 0
-			'net force and torque
-			For Local f:FORCE = EachIn force_list
-				f.update()
-				If f.managed()
-					Select f.physics_type
-						Case PHYSICS_FORCE
-							If f.combine_ang_with_parent_ang
-								acc_x :+ f.magnitude_cur*Cos( f.direction + ang ) / mass
-								acc_y :+ f.magnitude_cur*Sin( f.direction + ang ) / mass
-							Else
-								acc_x :+ f.magnitude_cur*Cos( f.direction ) / mass
-								acc_y :+ f.magnitude_cur*Sin( f.direction ) / mass
-							End If
-						Case PHYSICS_TORQUE
-							ang_acc :+ f.magnitude_cur / mass
-					End Select
+		Else
+			If physics_disabled
+				force_list.Clear()
+				Return
+			End If
+			If Not force_list.IsEmpty()
+				'reset acceleration and angular acceleration
+				acc_x = 0; acc_y = 0; ang_acc = 0
+				'net force and torque
+				For Local f:FORCE = EachIn force_list
+					f.update()
+					If f.managed()
+						Select f.physics_type
+							Case PHYSICS_FORCE
+								If f.combine_ang_with_parent_ang
+									acc_x :+ f.magnitude_cur*Cos( f.direction + ang ) / mass
+									acc_y :+ f.magnitude_cur*Sin( f.direction + ang ) / mass
+								Else
+									acc_x :+ f.magnitude_cur*Cos( f.direction ) / mass
+									acc_y :+ f.magnitude_cur*Sin( f.direction ) / mass
+								End If
+							Case PHYSICS_TORQUE
+								ang_acc :+ f.magnitude_cur / mass
+						End Select
+					End If
+				Next
+				If frictional_coefficient > 0
+					'friction
+					acc_x :+ frictional_coefficient*( -vel_x ) / mass
+					acc_y :+ frictional_coefficient*( -vel_y ) / mass
+					'angular friction
+					ang_acc :+ frictional_coefficient*( -ang_vel ) / mass
 				End If
-			Next
-			'friction
-			acc_x :+ frictional_coefficient*( -vel_x ) / mass
-			acc_y :+ frictional_coefficient*( -vel_y ) / mass
-			'angular friction
-			ang_acc :+ frictional_coefficient*( -ang_vel ) / mass
+			End If
+			'update point variables
+			Super.update()
 		End If
-		'update point variables
-		Super.update()
-		EndRem
 	End Method
 	
 	Method add_force:FORCE( other_f:FORCE, combine_ang_with_parent_ang% = False )

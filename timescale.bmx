@@ -7,7 +7,7 @@ EndRem
 'Import "misc.bmx"
 
 '______________________________________________________________________________
-Const physics_timestep_in_seconds# = 0.001 '1.0 / 120.0
+Const physics_timestep_in_seconds# = 0.01
 
 Const time_per_frame_min% = 8 'milliseconds
 Const timescale_constant_factor# = 0.350 'represents simulation speed

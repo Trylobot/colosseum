@@ -59,7 +59,7 @@ Type PROJECTILE_LAUNCHER Extends EMITTER
 			End If
 			'p.body.SetRotation( MathHelper.ToRadians( p.ang ))
 			'velocity
-			Local vel_actual# = vel.get() * 25.0
+			Local vel_actual# = vel.get()' * 25.0
 			Local vel_ang_actual#
 			If inherit_vel_ang_from_ang
 				vel_ang_actual = p.ang

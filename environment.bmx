@@ -551,7 +551,7 @@ Type ENVIRONMENT
 End Type
 
 Function setup_physics_from_agent( unit:AGENT, physics:TPhysicsSimulator )
-	unit.setup_physics( physics, Vector2.Create( unit.img.handle_x, unit.img.handle_y ))
+	unit.setup_physics( physics )
 End Function
 
 Function setup_physics_from_wall( wall:BOX, physics:TPhysicsSimulator )
