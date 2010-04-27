@@ -180,8 +180,8 @@ Repeat
 	If frame_time_elapsed()
 		calculate_timescale()
 		reset_frame_timer()
-		'collision detection and resolution
-		collide_all_objects()
+		''collision detection and resolution
+		'collide_all_objects()
 		'resolve forces and emit particles, and capture player vehicle input
 		update_all_objects()
 	End If
@@ -207,8 +207,8 @@ Repeat
 	If frame_time_elapsed()
 		calculate_timescale()
 		reset_frame_timer()
-		'collision detection and resolution
-		collide_all_objects(); profiler(2)
+		''collision detection and resolution
+		'collide_all_objects(); profiler(2)
 		'update object positions, emit particles
 		update_all_objects(); profiler(3)
 	End If

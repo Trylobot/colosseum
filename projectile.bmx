@@ -25,7 +25,7 @@ Const PROJECTILE_MEMBER_EMITTER_CONSTANT% = 0
 Const PROJECTILE_MEMBER_EMITTER_PAYLOAD% = 1
 
 Type PROJECTILE Extends PHYSICAL_OBJECT
-	
+	Field active% 'whether this projectile is "live"/"armed"; set to false after collision
 	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn
 	Field snd_impact:TSound 'sound to be played on impact
 	Field damage# 'maximum damage dealt by projectile
@@ -36,6 +36,7 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 	Field source_id% '(private) reference to entity which emitted this projectile; allows for collisions with it to be ignored
 	Field emitter_list_constant:TList
 	Field emitter_list_payload:TList
+	Field source_pool:PROJECTILE_POOL
 	
 	Method New()
 		emitter_list_constant = CreateList()
@@ -122,6 +123,38 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		DrawImageRef( img, pos_x, pos_y )
 	End Method
 	
+	'Collision is imminent
+	Method SendMessage:Object( message:Object, context:Object )
+		'early breakout for duplicate collisions
+		If Not active Then Return Null
+		'This method will always return Null, because collisions are always terminal.
+		'However, sometimes my side needs to act on a true collision, and then kill the Geom.
+		Local me:TGeom = TGeom( message )
+		Local args:TCollisionEventArgs = TCollisionEventArgs( context )
+		Local other:TGeom
+		If      me = args.geom1 Then other = args.geom2 ..
+		Else If me = args.geom2 Then other = args.geom1
+		
+		If other.GetId() = source_id
+			'no collision, this is the parent
+			Return Null
+		Else
+			active = False
+			'COLLISION! Between PROJECTILE and NON-PARENT, NON-PROJECTILE ENTITY
+			Local ag:AGENT = AGENT(other.GetTag())
+			If ag 'Between PROJECTILE and AGENT
+				collision_projectile_agent( Self, ag )
+				Return Null 'done
+			End If
+			Local wall:BOX = BOX(other.GetTag())
+			If wall
+				collision_projectile_wall( Self, wall )
+				Return Null 'done
+			End If
+			Return Null
+		End If
+	End Method
+	
 	'Method impact( material%, hit_player% = False )
 	Method impact( ..
 	other:AGENT = Null, other_agent_is_player% = False, ..
@@ -156,6 +189,10 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		End Select
 	End Method
 	
+	Method free()
+		source_pool.free( Self )
+	End Method
+	
 End Type
 
 Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
@@ -165,7 +202,12 @@ Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
 	'read and assign optional fields as available
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED                 Then p.img = get_image( json.GetString( "image_key" ))
 	If p.img
-		p.hitbox = Create_BOX( p.img.handle_x, p.img.handle_y, p.img.width(), p.img.height() )
+		'p.hitbox = Create_BOX( p.img.handle_x, p.img.handle_y, p.img.width(), p.img.height() )
+		Local x# = -(p.img.handle_x - p.img.width()/2.0)
+		Local y# = -(p.img.handle_y - p.img.height()/2.0)
+		Local w# = json.GetNumber( "geometry.width" )
+		Local h# = json.GetNumber( "geometry.height" )
+		p.hitbox = Create_BOX( x, y, w, h )
 	End If
 	If json.TypeOf( "impact_sound_key" ) <> JSON_UNDEFINED          Then p.snd_impact = get_sound( json.GetString( "impact_sound_key" ))
 	If json.TypeOf( "damage" ) <> JSON_UNDEFINED                    Then p.damage = json.GetNumber( "damage" )
@@ -195,4 +237,53 @@ Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
 	Return p
 End Function
 
+
+
+Type PROJECTILE_POOL
+	
+	Field template:PROJECTILE
+	Field stack:TList
+	Field count%
+	
+	Method New() 
+		stack = CreateList() 
+	End Method
+	
+	Method init( size%, template:PROJECTILE ) 
+		Self.template = template
+		Local p:PROJECTILE
+		For Local i% = 0 Until size
+			p = template.clone()
+			p.body = TBodyFactory.CloneBody( Null, template.body )
+			p.geom = TGeomFactory.CloneGeom( Null, p.body, template.geom )
+			stack.AddLast( p )
+		Next
+		count = size
+	End Method
+	
+	Method fetch:PROJECTILE( new_source_id%, physics:TPhysicsSimulator )
+		Local p:PROJECTILE
+		If count > 0 Then
+			count :- 1
+			p = PROJECTILE(stack.RemoveLast())
+		Else
+			p = template.clone()
+			p.body = TBodyFactory.CloneBody( Null, template.body )
+			p.geom = TGeomFactory.CloneGeom( Null, p.body, template.geom )
+		End If
+		p.active = True
+		p.source_id = new_source_id
+		p.insert_into_physics( physics )
+		Return p
+	End Method
+	
+	Method free( p:PROJECTILE ) 
+		count :+ 1
+		p.active = False
+		p.unmanage()
+		p.destroy_physics()
+		stack.AddLast( p ) 
+	End Method
+	
+End Type
 

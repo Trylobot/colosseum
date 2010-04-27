@@ -3,12 +3,17 @@
 		class: "projectile",
 		key: "tank_cannon",
 		object: {
+      geometry: {
+        primitive: "rectangle",
+        width: 5,
+        height: 3,
+      },
 			image_key: "projectile",
 			impact_sound_key: "cannon_hit",
 			damage: 50,
 			explosive_force_magnitude: 1000,
 			radius: 25,
-			mass: 0.03
+			mass: 0.03,
 			payload_emitters: [
 				{
 					particle_emitter_key: "cannon_ricochet_spark",
@@ -34,6 +39,11 @@
 		class: "projectile",
 		key: "machine_gun",
 		object: {
+      geometry: {
+        primitive: "rectangle",
+        width: 4,
+        height: 1,
+      },
 			image_key: "mgun",
 			impact_sound_key: "mgun_hit",
 			damage: 5,
@@ -55,6 +65,11 @@
 		class: "projectile",
 		key: "energy_pellet",
 		object: {
+      geometry: {
+        primitive: "rectangle",
+        width: 3,
+        height: 1,
+      },
 			image_key: "energy_pellet",
 			impact_sound_key: "laser_hit",
 			damage: 1,
@@ -76,6 +91,11 @@
 		class: "projectile",
 		key: "laser_red",
 		object: {
+      geometry: {
+        primitive: "rectangle",
+        width: 13,
+        height: 3,
+      },
 			image_key: "laser_red",
 			impact_sound_key: "laser_hit",
 			damage: 15,
@@ -108,6 +128,11 @@
 		class: "projectile",
 		key: "laser_big",
 		object: {
+      geometry: {
+        primitive: "rectangle",
+        width: 15,
+        height: 3,
+      },
 			image_key: "laser_big",
 			impact_sound_key: "laser_hit",
 			damage: 40,
@@ -140,6 +165,11 @@
 		class: "projectile",
 		key: "rocket",
 		object: {
+      geometry: {
+        primitive: "rectangle",
+        width: 11,
+        height: 3,
+      },
 			image_key: "rocket",
 			impact_sound_key: "cannon_hit",
 			damage: 100,

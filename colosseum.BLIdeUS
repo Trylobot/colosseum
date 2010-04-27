@@ -6,15 +6,14 @@
       <FileName>agent.bmx</FileName>
       <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>55</X>
-        <Y>138</Y>
+        <X>88</X>
+        <Y>181</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -393,7 +392,7 @@
       <Document_Active>true</Document_Active>
       <Caret_Position>
         <X>0</X>
-        <Y>77</Y>
+        <Y>153</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -423,8 +422,8 @@
       <FileName>complex_agent.bmx</FileName>
       <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>6</X>
-        <Y>276</Y>
+        <X>97</X>
+        <Y>788</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -605,13 +604,14 @@
       <Document_Active>false</Document_Active>
       <Caret_Position>
         <X>0</X>
-        <Y>0</Y>
+        <Y>143</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -632,10 +632,10 @@
     </Included_File>
     <Included_File>
       <FileName>environment.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>23</X>
-        <Y>534</Y>
+        <X>16</X>
+        <Y>555</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1377,10 +1377,10 @@
     </Included_File>
     <Included_File>
       <FileName>main.bmx</FileName>
-      <Document_Active>true</Document_Active>
+      <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>8</X>
-        <Y>183</Y>
+        <X>13</X>
+        <Y>176</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -1403,7 +1403,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -1559,10 +1558,10 @@
     </Included_File>
     <Included_File>
       <FileName>physical_object.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>18</X>
-        <Y>40</Y>
+        <X>48</X>
+        <Y>43</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -2132,31 +2131,31 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
     <Included_File>
       <FileName>projectile.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>13</X>
-        <Y>63</Y>
+        <X>14</X>
+        <Y>282</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
     <Included_File>
       <FileName>projectile_launcher.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>34</X>
-        <Y>57</Y>
+        <X>9</X>
+        <Y>119</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -2274,10 +2273,10 @@
     </Included_File>
     <Included_File>
       <FileName>timescale.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>12</X>
-        <Y>5</Y>
+        <X>0</X>
+        <Y>14</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>

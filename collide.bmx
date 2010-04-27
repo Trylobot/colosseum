@@ -32,6 +32,7 @@ Const PROJECTILE_PROJECTILE_ENERGY_COEFFICIENT# = 0.012 'energy multiplier for a
 Const AGENT_AGENT_ENERGY_COEFFICIENT# = 0.05 'energy multiplier for all agent-agent collisions
 Const WALL_NUDGE_DIST# = 0.2
 
+Rem
 Function collide_all_objects()
 	
 	'collision detection & resolution body
@@ -142,13 +143,14 @@ Function collide_all_objects()
 				Next
 			Next
 		Next
-		EndRem
+		
 		
 		SetRotation( 0 )
 		SetHandle( 0, 0 )
 
 	End If
 End Function
+EndRem
 
 Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 	'activate collision response for affected entity(ies)
@@ -210,7 +212,7 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 		impact_sound, .. 
 		game.particle_list_background, game.particle_list_foreground )
 	'remove projectile
-	proj.unmanage()
+	proj.free()
 End Function
 
 Function collision_agent_agent( ag:AGENT, other:AGENT )
@@ -296,12 +298,12 @@ End Function
 
 Function collision_projectile_door( proj:PROJECTILE, door:WIDGET )
 	proj.impact( ,, proj.snd_impact, game.particle_list_background, game.particle_list_foreground )
-	proj.unmanage()
+	proj.free()
 End Function
 
 Function collision_projectile_wall( proj:PROJECTILE, wall:BOX )
 	proj.impact( ,, proj.snd_impact, game.particle_list_background, game.particle_list_foreground )
-	proj.unmanage()
+	proj.free()
 End Function
 
 Function clamp_ang_to_bifurcate_wall_diagonals#( ang#, wall:BOX )

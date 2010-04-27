@@ -29,14 +29,12 @@ Type PHYSICAL_OBJECT Extends POINT
 	Const mass_mod# = 1.0
 	Const linear_drag# = 10.0
 	Const rotational_drag# = 1000.0
-	Const force_mod# = 7.0
-	Const torque_mod# = 13.0
+	Const force_mod# = 5.5
+	Const torque_mod# = 11.0
 	Const apparent_linear_velocity_mod# = 0.020
 	Const apparent_angular_velocity_mod# = 0.020
 	
 	Method setup_physics( physics:TPhysicsSimulator )
-		If Not physics Then Return
-		Self.physics = physics
 		If Not hitbox Then Return
 		body = New TBody
 		body.SetMass( mass_mod )
@@ -49,7 +47,14 @@ Type PHYSICAL_OBJECT Extends POINT
 		body.SetStatic( physics_disabled )
 		Local verts:TVertices = TVertices.CreateRectangle( hitbox.w, hitbox.h )
 		Local collisionGridCellSize# = TGeomFactory.CalculateGridCellSizeFromAABB( verts )
-		geom = TGeom.Create( body, verts, collisionGridCellSize )
+		Local offset:Vector2 = Vector2.Create( hitbox.x, hitbox.y )
+		geom = TGeom.Create( body, verts, collisionGridCellSize, offset )
+		insert_into_physics( physics )
+	End Method
+	
+	Method insert_into_physics( physics:TPhysicsSimulator )
+		If Not physics Then Return
+		Self.physics = physics
 		physics.AddBody( body )
 		physics.AddGeom( geom )
 	End Method
@@ -59,6 +64,7 @@ Type PHYSICAL_OBJECT Extends POINT
 		physics.RemoveGeom( geom )
 	End Method
 
+	Rem
 	Method collide:Object[]( collidemask%, writemask% )
 		If hitbox
 			SetRotation( ang )
@@ -72,6 +78,7 @@ Type PHYSICAL_OBJECT Extends POINT
 			Return Null
 		End If
 	End Method
+	EndRem
 	
 	Method move_to( argument:Object, dummy1% = False, dummy2% = False )
 		Super.move_to( argument, dummy1, dummy2 )
@@ -111,6 +118,7 @@ Type PHYSICAL_OBJECT Extends POINT
 					End If
 				Next
 			End If
+		Rem
 		Else
 			If physics_disabled
 				force_list.Clear()
@@ -147,6 +155,7 @@ Type PHYSICAL_OBJECT Extends POINT
 			End If
 			'update point variables
 			Super.update()
+		EndRem
 		End If
 	End Method
 	
