@@ -782,7 +782,7 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	If json.TypeOf( "hitbox_image_key" ) <> JSON_UNDEFINED        Then hitbox_img = get_image( json.GetString( "hitbox_image_key" ))
 	If cmp_ag.img
 		If Not hitbox_img Then hitbox_img = cmp_ag.img
-		cmp_ag.hitbox = Create_BOX( hitbox_img.handle_x, hitbox_img.handle_y, hitbox_img.width(), hitbox_img.height() )
+		cmp_ag.hitbox = Create_BOX( -(hitbox_img.handle_x - hitbox_img.width()/2), -(hitbox_img.handle_y - hitbox_img.height()/2.0), hitbox_img.width(), hitbox_img.height() )
 	End If
 	If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED          Then cmp_ag.gibs = get_image( json.GetString( "gibs_image_key" ))
 	'If json.TypeOf( "lightmap_image_key" ) <> JSON_UNDEFINED      Then cmp_ag.lightmap = get_image( json.GetString( "lightmap_image_key" ))

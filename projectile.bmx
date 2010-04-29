@@ -290,6 +290,7 @@ Type PROJECTILE_POOL
 		p.active = False
 		p.unmanage()
 		p.destroy_physics()
+		p.body.ResetDynamics()
 		stack.AddLast( p ) 
 	End Method
 	

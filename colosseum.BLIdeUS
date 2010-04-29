@@ -6,14 +6,15 @@
       <FileName>agent.bmx</FileName>
       <Document_Active>false</Document_Active>
       <Caret_Position>
-        <X>88</X>
-        <Y>181</Y>
+        <X>33</X>
+        <Y>169</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -420,10 +421,10 @@
     </Included_File>
     <Included_File>
       <FileName>complex_agent.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>36</X>
-        <Y>191</Y>
+        <X>6</X>
+        <Y>761</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -541,10 +542,10 @@
     </Included_File>
     <Included_File>
       <FileName>debug.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
         <X>2</X>
-        <Y>387</Y>
+        <Y>207</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -2137,8 +2138,8 @@
       <FileName>projectile.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>4</X>
-        <Y>265</Y>
+        <X>24</X>
+        <Y>292</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -2153,8 +2154,8 @@
       <FileName>projectile_launcher.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>1</X>
-        <Y>96</Y>
+        <X>12</X>
+        <Y>99</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
