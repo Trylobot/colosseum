@@ -153,12 +153,12 @@ End Function
 EndRem
 
 Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
-	'activate collision response for affected entity(ies)
-	Local offset#, offset_ang#
-	cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
-	Local total_force# = proj.mass*PROJECTILE_AGENT_ENERGY_COEFFICIENT*Sqr( Pow(proj.vel_x,2) + Pow(proj.vel_y,2) )
-	ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - proj.ang ), 100 )))
-	ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, PROJECTILE_AGENT_TORQUE_COEFFICIENT*offset*total_force*Sin( offset_ang - proj.ang ), 100 )))
+	''activate collision response for affected entity(ies)
+	'Local offset#, offset_ang#
+	'cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
+	'Local total_force# = proj.mass*PROJECTILE_AGENT_ENERGY_COEFFICIENT*Sqr( Pow(proj.vel_x,2) + Pow(proj.vel_y,2) )
+	'ag.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, offset_ang, total_force*Cos( offset_ang - proj.ang ), 100 )))
+	'ag.add_force( FORCE( FORCE.Create( PHYSICS_TORQUE, 0, PROJECTILE_AGENT_TORQUE_COEFFICIENT*offset*total_force*Sin( offset_ang - proj.ang ), 100 )))
 	'add damage sticky to agent
 	'ag.add_sticky( PARTICLE( PARTICLE.Create( img_stickies, Rand( 0, img_stickies.frames.Length - 1 ), LAYER_FOREGROUND, False, 0.0, 255, 255, 255, INFINITY, 0.0, 0.0, 0.0, 0.0, proj.ang, 0.0, 0.5, 0.0, 1.0, 0.0 ))).attach_at( proj.pos_x - ag.pos_x, proj.pos_y - ag.pos_y )
 	'add explosive force to nearby agents

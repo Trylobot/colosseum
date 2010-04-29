@@ -186,7 +186,12 @@ Type COMPLEX_AGENT Extends AGENT
 		Next
 		For Local sys_index% = 0 To other.turret_systems.Length-1
 			For Local tur_index% = 0 To other.turret_systems[sys_index].Length-1
-				c.add_turret( other.turrets[other.turret_systems[sys_index][tur_index]], sys_index )
+				Local t:TURRET = c.add_turret( other.turrets[other.turret_systems[sys_index][tur_index]], sys_index )
+				For Local tb:TURRET_BARREL = EachIn t.turret_barrel_array
+					Local lchr:PROJECTILE_LAUNCHER = tb.launcher
+					lchr.pool = New PROJECTILE_POOL
+					lchr.pool.init( lchr.pool_size, lchr.emitter_object )
+				Next
 			Next
 		Next
 

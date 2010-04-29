@@ -129,8 +129,12 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		If Not active Then Return Null
 		'This method will always return Null, because collisions are always terminal.
 		'However, sometimes my side needs to act on a true collision, and then kill the Geom.
-		Local me:TGeom = TGeom( message )
 		Local args:TCollisionEventArgs = TCollisionEventArgs( context )
+		If Not args.isExiting
+			'When the geometry of the projectile is NO LONGER colliding AFTER a collision, THEN process it
+			Return Null
+		End If
+		Local me:TGeom = TGeom( message )
 		Local other:TGeom
 		If      me = args.geom1 Then other = args.geom2 ..
 		Else If me = args.geom2 Then other = args.geom1

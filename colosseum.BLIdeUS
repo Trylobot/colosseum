@@ -391,8 +391,8 @@
       <FileName>collide.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>0</X>
-        <Y>153</Y>
+        <X>2</X>
+        <Y>160</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -420,16 +420,17 @@
     </Included_File>
     <Included_File>
       <FileName>complex_agent.bmx</FileName>
-      <Document_Active>false</Document_Active>
+      <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>97</X>
-        <Y>788</Y>
+        <X>36</X>
+        <Y>191</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
+        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -611,7 +612,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -1387,7 +1387,6 @@
       <SplitSize>138</SplitSize>
       <Folding>
         <AllowOutlining>true</AllowOutlining>
-        <OutlineColor>255:48:48:48</OutlineColor>
         <Ranges />
       </Folding>
     </Included_File>
@@ -2138,8 +2137,8 @@
       <FileName>projectile.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>14</X>
-        <Y>282</Y>
+        <X>1</X>
+        <Y>134</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>
@@ -2154,8 +2153,8 @@
       <FileName>projectile_launcher.bmx</FileName>
       <Document_Active>true</Document_Active>
       <Caret_Position>
-        <X>9</X>
-        <Y>119</Y>
+        <X>17</X>
+        <Y>84</Y>
       </Caret_Position>
       <SplitVisible>false</SplitVisible>
       <SplitVertical>false</SplitVertical>

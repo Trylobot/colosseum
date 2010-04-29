@@ -94,8 +94,7 @@ Function Copy_PROJECTILE_LAUNCHER:PROJECTILE_LAUNCHER( other_lchr:PROJECTILE_LAU
 	lchr.emitter_object.setup_physics( Null )
 	lchr.emitter_object.body.SetLinearDragCoefficient( 0.0 )
 	lchr.emitter_object.body.SetRotationalDragCoefficient( 0.0 )
-	lchr.pool = New PROJECTILE_POOL
-	lchr.pool.init( lchr.pool_size, lchr.emitter_object )
+	lchr.emitter_object.body.SetMass( lchr.emitter_object.body.GetMass() / 10.0 )
 	lchr = PROJECTILE_LAUNCHER( copy_generic_EMITTER( lchr, other_lchr, managed_list, new_parent ))
 	Return lchr
 End Function
