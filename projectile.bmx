@@ -260,6 +260,10 @@ Type PROJECTILE_POOL
 			p = template.clone()
 			p.body = TBodyFactory.CloneBody( Null, template.body )
 			p.geom = TGeomFactory.CloneGeom( Null, p.body, template.geom )
+			'p.setup_physics( p.physics )
+			'p.body.SetLinearDragCoefficient( 0.0 )
+			'p.body.SetRotationalDragCoefficient( 0.0 )
+			'p.body.SetMass( p.body.GetMass() / 10.0 )
 			stack.AddLast( p )
 		Next
 		count = size
