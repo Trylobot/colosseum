@@ -74,7 +74,7 @@ Function get_all_input()
 			If Not FLAG.paused
 				cmd_show_previous_menu()
 			Else 'paused
-				FLAG.paused = False
+				cmd_unpause_game()
 			End If
 		End If
 		'mouse input

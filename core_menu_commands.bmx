@@ -103,6 +103,7 @@ End Function
 
 Function cmd_quit_level( item:Object = Null )
 	FLAG.in_menu = True
+	FLAG.paused = False
 	main_game = Null
 	game = ai_menu_game
 	cmd_save_profile( item )
