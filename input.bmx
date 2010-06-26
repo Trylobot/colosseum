@@ -36,7 +36,7 @@ Function get_all_input()
 	End If
 	mouse.pos_x = MouseX()
 	mouse.pos_y = MouseY()
-	If Not FLAG.in_menu And game <> Null And game.human_participation And game.player_brain <> Null And profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
+	If Not FLAG.in_menu And game <> Null And game.human_participation And game.player_brain <> Null
 		HideMouse()
 	Else
 		ShowMouse()
@@ -45,24 +45,14 @@ Function get_all_input()
 		FLAG.ignore_mouse_1 = False
 	End If
 	
-	Rem
-	'campaign selection menu (special menu, takes precedence)
-	If show_campaign_chooser 
-		campaign_chooser.upate()
-		If KeyHit( KEY_ESCAPE ) Or KeyHit( KEY_BACKSPACE )
-			show_campaign_chooser = False
-		End If
-	'regular menu mode
-	Else If FLAG.in_menu 'Not show_campaign_chooser
-	EndRem
-	
+	'menu mode
 	If FLAG.in_menu
 		'current menu
 		Local current_menu:TUIObject
 		If Not FLAG.paused
-			current_menu = MENU.get_top()
+			current_menu = MENU_REGISTER.get_top()
 		Else 'paused
-			current_menu = MENU.pause
+			current_menu = MENU_REGISTER.pause
 		End If
 		'keyboard input
 		If KeyHit( KEY_UP )
@@ -94,110 +84,24 @@ Function get_all_input()
 		If mouse_clicked_1()
 			Local action% = current_menu.on_mouse_click( mouse.pos_x, mouse.pos_y )
 			If action
-				If Not FLAG.paused And current_menu <> MENU.get_top()
-					MENU.get_top().on_mouse_move( mouse.pos_x, mouse.pos_y )
+				If Not FLAG.paused And current_menu <> MENU_REGISTER.get_top()
+					MENU_REGISTER.get_top().on_mouse_move( mouse.pos_x, mouse.pos_y )
 				End If
 			Else
 				cmd_show_previous_menu()
 			End If
 		End If
-		
-		Rem
-		Local m:MENU = get_current_menu()
-		'text input controls comes before anything else
-		If m.menu_type = MENU.TEXT_INPUT_DIALOG
-			If KeyHit( KEY_ENTER )
-				'm.execute_current_option()
-				execute_option( m.get_focus() )
-			Else
-				m.input_box = m.input_listener.update( m.input_box )
-				m.update()
-			End If
-		End If
-		'menu navigation controls
-		If KeyHit( KEY_ESCAPE ) Or KeyHit( KEY_BACKSPACE ) ..
-		And (current_menu > 0 And get_current_menu().id <> MENU_ID.PAUSED)
-			menu_command( COMMAND.BACK_TO_PARENT_MENU )
-		End If
-		If KeyHit( KEY_DOWN )' Or MouseZ() < mouse_last_z
-			m.increment_focus()
-		Else If KeyHit( KEY_UP )' Or MouseZ() > mouse_last_z
-			m.decrement_focus()
-		End If
-		If KeyHit( KEY_ENTER )
-			'm.execute_current_option()
-			execute_option( m.get_focus() )
-		End If
-		'mouseover of menu items
-		If mouse_delta.x <> 0 Or mouse_delta.y <> 0
-			m.calculate_bounding_boxes()
-			m.select_by_coords( mouse.pos_x, mouse.pos_y )
-		End If
-		'select option under mouse cursor, if there be one
-		If MouseHit( 1 )
-			m.calculate_bounding_boxes()
-			If m.select_by_coords( mouse.pos_x, mouse.pos_y )
-				execute_option( m.get_focus() )
-				m = get_current_menu()
-				m.calculate_bounding_boxes()
-				m.select_by_coords( mouse.pos_x, mouse.pos_y )
-			Else If (current_menu > 0 And get_current_menu().id <> MENU_ID.PAUSED) ..
-			And mouse_hovering_on_back_button()
-				menu_command( COMMAND.BACK_TO_PARENT_MENU )
-			End If
-		End If
-		'dragging of scrollbar
-		If mouse_clicked_1() And m.hovering_on_scrollbar( mouse.pos_x, mouse.pos_y )
-			dragging_scrollbar = True
-		Else If mouse_released_1()
-			dragging_scrollbar = False
-		End If
-		If dragging_scrollbar
-			'mouse position is already known ... get the scrollbar's bounding box
-			Local bar:BOX = m.get_scrollbar_rect( m.last_x, m.last_y )
-			'determine the number of scrollbar positions
-			Local positions% = m.options.Length - m.static_option_count
-			'determine the y-value for each of the scrollbar positions
-			Local y_val#[] = New Float[positions]
-			For Local i% = 0 Until y_val.Length
-				y_val[i] = Float(i)/Float(positions) * Float(bar.h)
-			Next
-			'compare each of these y-values to the y-value of the mouse (relative to the top of the scrollbar's bounding box)
-			Local mouse_relative_y% = mouse.pos_y - bar.y
-			Local closest_y_val_i% = 0
-			If mouse_relative_y >= 0
-				Local dist_from_mouse_to_closest_y_val# = INFINITY
-				For Local i% = 0 Until y_val.Length
-					If dist_from_mouse_to_closest_y_val = INFINITY ..
-					Or Abs( mouse_relative_y - y_val[i] ) < dist_from_mouse_to_closest_y_val
-						dist_from_mouse_to_closest_y_val = Abs( mouse_relative_y - y_val[i] )
-						closest_y_val_i = i
-					End If
-				Next
-			End If
-			'change the scrollbar offset to the offset corresponding to the nearest y-value with respect to the mouse
-			m.set_focus_by_index( closest_y_val_i + m.static_option_count )
-			'if the focus is out of the window, increment or decrement it until it is once again in the window
-			While m.focus >= m.static_option_count And m.option_above_window( m.focus )
-				m.increment_focus()
-			End While
-			While m.focus < m.options.Length And m.option_below_window( m.focus )
-				m.decrement_focus()
-			End While
-			m.center_scrolling_window()
-		End If
-		EndRem
 	'non-menu input mode (game mode)
 	Else 'Not FLAG_in_menu
 		If game And game.human_participation
-			'/////////////////////////////////////////////
-			'player input
 			If FLAG.chat_mode
 				game.player_brain.human_input_blocked_update()
 			Else
+				'in-game player input forwarded to brain object
+				'/////////////////////////
 				game.player_brain.update()
+				'/////////////////////////
 			End If
-			'/////////////////////////////////////////////
 			'pause game
 			If escape_key_release() 'KeyHit( KEY_ESCAPE )
 				If Not game.paused
@@ -244,14 +148,8 @@ Function get_all_input()
 	
 	'insta-quit
 	escape_key_update()
-	
-End Function
 
-Rem
-Function execute_option( opt:MENU_OPTION )
-	If opt Then menu_command( opt.command_code, opt.argument )
 End Function
-EndRem
 
 '______________________________________________________________________________
 Function get_chat_input()

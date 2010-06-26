@@ -441,5 +441,6 @@
 			alignment: 1
 		}
 	],
-	props: null
+	props: null,
+	player_vehicle: null
 }

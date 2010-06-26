@@ -24,7 +24,7 @@ Const low_speed_waypoint_radius_level_1# = 100.0
 Const low_speed_waypoint_radius_level_2# = 50.0
 
 Function create_player_brain:CONTROL_BRAIN( avatar:COMPLEX_AGENT )
-	Return Create_CONTROL_BRAIN( avatar, CONTROL_BRAIN.CONTROL_TYPE_HUMAN,,,,, profile.input_method )
+	Return Create_CONTROL_BRAIN( avatar, CONTROL_BRAIN.CONTROL_TYPE_HUMAN,,,,, CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID )
 End Function
 
 Function Create_CONTROL_BRAIN:CONTROL_BRAIN( ..
@@ -431,95 +431,40 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		End If
 		Return list
 	End Method
-
+	
 	Method input_control()
-		Select input_type
-			
-			Case INPUT_KEYBOARD
-				'chassis control (only if engine is running)
-				If FLAG.engine_running
-					'velocity
-					If KeyDown( KEY_W )
-						avatar.drive( 1.0 )
-					ElseIf KeyDown( KEY_S )
-						avatar.drive( -1.0 )
-					Else
-						avatar.drive( 0.0 )
-					EndIf
-					'backwards driving turn inversion
-					Local sign% = 1
-					If avatar.driving_force.control_pct < 0 And profile.invert_reverse_steering
-						sign = -1
-					End If
-					'angular velocity
-					If KeyDown( KEY_D )
-						avatar.turn( sign * 1.0 )
-					ElseIf KeyDown( KEY_A )
-						avatar.turn( sign * -1.0 )
-					Else
-						avatar.turn( 0.0 )
-					EndIf
-				Else 'Not game.player_engine_running
-					avatar.drive( 0.0 )
-					avatar.turn( 0.0 )
-				End If
-				'turret(s) angular velocity
-				If KeyDown( KEY_RIGHT ) Or KeyDown( KEY_L )
-					avatar.turn_turret_system( 0, 1.0  )
-				ElseIf KeyDown( KEY_LEFT ) Or KeyDown( KEY_J )
-					avatar.turn_turret_system( 0, -1.0 )
-				Else
-					avatar.turn_turret_system( 0, 0.0 )
-				EndIf
-				'turret(s) fire
-				If KeyDown( KEY_SPACE )
-					avatar.fire_all( TURRET.PRIMARY, True )
-				End If
-				If KeyDown( KEY_LSHIFT ) Or KeyDown( KEY_RSHIFT )
-					avatar.fire_all( TURRET.SECONDARY, True )
-				End If
-
-			Case INPUT_KEYBOARD_MOUSE_HYBRID
-				'chassis control (only if engine is running)
-				If FLAG.engine_running
-					'velocity
-					If KeyDown( KEY_W ) Or KeyDown( KEY_UP )
-						avatar.drive( 1.0 )
-					ElseIf KeyDown( KEY_S ) Or KeyDown( KEY_DOWN )
-						avatar.drive( -1.0 )
-					Else
-						avatar.drive( 0.0 )
-					EndIf
-					'backwards driving turn inversion
-					Local sign% = 1
-					If avatar.driving_force.control_pct < 0 And profile.invert_reverse_steering
-						sign = -1
-					End If
-					'angular velocity
-					If KeyDown( KEY_D ) Or KeyDown( KEY_RIGHT )
-						avatar.turn( sign * 1.0 )
-					ElseIf KeyDown( KEY_A ) Or KeyDown( KEY_LEFT )
-						avatar.turn( sign * -1.0 )
-					Else
-						avatar.turn( 0.0 )
-					EndIf
-				Else 'Not game.player_engine_running
-					avatar.drive( 0.0 )
-					avatar.turn( 0.0 )
-				End If
-				'turret aim control
-				mouse_turret_input()
-				'turret(s) fire
-				If MouseDown( 1 ) And Not FLAG.ignore_mouse_1
-					avatar.fire_all( TURRET.PRIMARY, True )
-				End If
-				If MouseDown( 2 )
-					avatar.fire_all( TURRET.SECONDARY, True )
-				End If
-					
-			'Case INPUT_XBOX_360_CONTROLLER
-			
-		End Select
+		If FLAG.engine_running
+			'velocity
+			Local sign% = 1
+			If KeyDown( KEY_W ) Or KeyDown( KEY_UP )
+				avatar.drive( 1.0 )
+			ElseIf KeyDown( KEY_S ) Or KeyDown( KEY_DOWN )
+				sign = -1 'backwards driving turn inversion
+				avatar.drive( -1.0 )
+			Else
+				avatar.drive( 0.0 )
+			EndIf
+			'angular velocity
+			If KeyDown( KEY_D ) Or KeyDown( KEY_RIGHT )
+				avatar.turn( sign * 1.0 )
+			ElseIf KeyDown( KEY_A ) Or KeyDown( KEY_LEFT )
+				avatar.turn( sign * -1.0 )
+			Else
+				avatar.turn( 0.0 )
+			EndIf
+		Else 'Not game.player_engine_running
+			avatar.drive( 0.0 )
+			avatar.turn( 0.0 )
+		End If
+		'turret aim control
+		mouse_turret_input()
+		'turret(s) fire
+		If MouseDown( 1 ) And Not FLAG.ignore_mouse_1
+			avatar.fire_all( TURRET.PRIMARY, True )
+		End If
+		If MouseDown( 2 )
+			avatar.fire_all( TURRET.SECONDARY, True )
+		End If
 	End Method
 	
 	Method mouse_turret_input()

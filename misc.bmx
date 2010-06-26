@@ -18,6 +18,11 @@ Function now%()
 	Return MilliSecs()
 End Function
 
+Function elapsed_str$( t0% )
+	Local td% = now() - t0
+	Return String.FromInt(td / 1000) + "." + pad( String.FromInt(td Mod 1000), 3, "0", True )
+End Function
+
 '______________________________________________________________________________
 Function FileExists%( path$ )
   Return FileType( path ) = FILETYPE_FILE

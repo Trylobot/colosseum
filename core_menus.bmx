@@ -6,12 +6,12 @@ EndRem
 'This file must be Include'd by core.bmx
 
 '______________________________________________________________________________
-Type MENU
+Type MENU_REGISTER
 	Global stack:TList
 	
 	Global root:TUIList
 	Global play_game:TUIList
-	Global campaign_select:TUIImageGrid
+	Global level_select:TUIImageGrid
 	Global pause:TUIList
 	
 	Function push( m:TUIObject )
@@ -50,25 +50,21 @@ Function initialize_menus()
 	Local menu_small_line_width% = 2
 	Local menu_x% = 10, menu_y% = 70
 	
-	MENU.stack = CreateList()
+	MENU_REGISTER.stack = CreateList()
 	
+	Local pause_menu:TUIList = New TUIList
 	Local root_menu:TUIList = New TUIList
-		Local play_game_menu:TUIList = New TUIList
-			Local campaign_select_menu:TUIImageGrid '= New TUIImageGrid
-			Local custom_level_select_menu:TUIList = New TUIList
+		Local level_select_menu:TUIImageGrid '= New TUIImageGrid
 		Local profile_menu:TUIList = New TUIList
-			Local profile_prefs_menu:TUIList = New TUIList
-				Local controls_menu:TUIList = New TUIList
 		Local settings_menu:TUIList = New TUIList
 			Local video_settings_menu:TUIList = New TUIList
 			Local audio_settings_menu:TUIList = New TUIList
 			Local performance_settings_menu:TUIList = New TUIList
 		Local advanced_menu:TUIList = New TUIList
-	Local pause_menu:TUIList = New TUIList
 	
 	
 	root_menu.Construct( ..
-		"COLOSSEUM", [ "PLAY GAME", "PROFILE", "SETTINGS", "ADVANCED", "QUIT" ], ..
+		"COLOSSEUM", [ "START", "PROFILE", "SETTINGS", "ADVANCED", "QUIT GAME" ], ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
 		menu_header_fg_font, menu_header_bg_font, ..
@@ -76,36 +72,16 @@ Function initialize_menus()
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray )
 	root_menu.set_position( menu_x, menu_y )
-	root_menu.set_item_clicked_event_handler( 0, cmd_show_menu )
-	root_menu.set_item( 0, play_game_menu )
-	root_menu.set_item_clicked_event_handler( 1, cmd_show_menu )
-	root_menu.set_item( 1, profile_menu )
-	root_menu.set_item_clicked_event_handler( 2, cmd_show_menu )
-	root_menu.set_item( 2, settings_menu )
-	root_menu.set_item_clicked_event_handler( 3, cmd_show_menu )
-	root_menu.set_item( 3, advanced_menu )
+	root_menu.set_item_clicked_event_handler( 0, cmd_show_menu, level_select_menu )
+	root_menu.set_item_clicked_event_handler( 1, cmd_show_menu, profile_menu )
+	root_menu.set_item_clicked_event_handler( 2, cmd_show_menu, settings_menu )
+	root_menu.set_item_clicked_event_handler( 3, cmd_show_menu, advanced_menu )
 	root_menu.set_item_clicked_event_handler( 4, cmd_quit_game )
-	MENU.root = root_menu
-	MENU.push( root_menu )
-	
-	play_game_menu.Construct( ..
-		"PLAY GAME", [ "RESUME GAME", "CHOOSE CAMPAIGN", "PLAY CUSTOM" ], ..
-		dark_gray, white, black, white, ..
-		menu_line_width, ..
-		menu_header_fg_font, menu_header_bg_font, ..
-		white, black, ..
-		menu_item_fg_font, menu_item_bg_font, ..
-		white, black, black, light_gray )
-	play_game_menu.set_position( menu_x, menu_y )
-	play_game_menu.set_item_clicked_event_handler( 0, cmd_continue_last_campaign )
-	play_game_menu.set_item_clicked_event_handler( 1, cmd_show_menu )
-	play_game_menu.set_item( 1, campaign_select_menu )
-	play_game_menu.set_item_clicked_event_handler( 2, cmd_show_menu )
-	play_game_menu.set_item( 2, custom_level_select_menu )
-	MENU.play_game = play_game_menu
+	MENU_REGISTER.root = root_menu
+	MENU_REGISTER.push( root_menu )
 	
 	profile_menu.Construct( ..
-		"PROFILE", [ "CREATE NEW", "SAVE PROFILE", "LOAD PROFILE", "PREFERENCES", "CHANGE NAME" ], ..
+		"PROFILE", [ "CREATE NEW", "SAVE PROFILE", "SWITCH PROFILES" ], ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
 		menu_header_fg_font, menu_header_bg_font, ..
@@ -116,11 +92,7 @@ Function initialize_menus()
 	profile_menu.set_item_clicked_event_handler( 0, cmd_create_new_profile )
 	profile_menu.set_item_clicked_event_handler( 1, cmd_save_profile )
 	profile_menu.set_item_clicked_event_handler( 2, cmd_load_profile )
-	profile_menu.set_item_clicked_event_handler( 3, cmd_show_menu )
-	profile_menu.set_item( 3, profile_prefs_menu )
-	'profile_menu.set_item_clicked_event_handler( 4, cmd_modify_profile_pref )
-	'profile_menu.set_item( 4, ? )
-	
+		
 	settings_menu.Construct( ..
 		"SETTINGS", [ "VIDEO SETTINGS", "AUDIO SETTINGS", "PERFORMANCE SETTINGS" ], ..
 		dark_gray, white, black, white, ..
@@ -130,7 +102,7 @@ Function initialize_menus()
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray )
 	settings_menu.set_position( menu_x, menu_y )
-	
+		
 	advanced_menu.Construct( ..
 		"ADVANCED", [ "LEVEL EDITOR", "UNIT EDITOR", "GIBS EDITOR", "RELOAD ASSETS" ], ..
 		dark_gray, white, black, white, ..
@@ -144,21 +116,7 @@ Function initialize_menus()
 	advanced_menu.set_item_clicked_event_handler( 1, cmd_enter_unit_editor )
 	advanced_menu.set_item_clicked_event_handler( 2, cmd_enter_gibs_editor )
 	advanced_menu.set_item_clicked_event_handler( 3, cmd_reload_assets )
-	
-	profile_prefs_menu.Construct( ..
-		"PREFERENCES", [ "CONTROLS", "INVERT REVERSE STEERING" ], ..
-		dark_gray, white, black, white, ..
-		menu_line_width, ..
-		menu_header_fg_font, menu_header_bg_font, ..
-		white, black, ..
-		menu_item_fg_font, menu_item_bg_font, ..
-		white, black, black, light_gray )
-	profile_prefs_menu.set_position( menu_x, menu_y )
-	profile_prefs_menu.set_item_clicked_event_handler( 0, cmd_show_menu )
-	profile_prefs_menu.set_item( 0, controls_menu )
-	'profile_prefs_menu.set_item_clicked_event_handler( 1, cmd_modify_profile_pref )
-	'profile_prefs_menu.set_item( 1, ? )
-	
+		
 	video_settings_menu.Construct( ..
 		"VIDEO SETTINGS", [ "FULL SCREEN", "RESOLUTION", "REFRESH RATE", "BIT DEPTH" ], ..
 		dark_gray, white, black, white, ..
@@ -176,7 +134,7 @@ Function initialize_menus()
 	'video_settings_menu.set_item( 2, ? )
 	'video_settings_menu.set_item_clicked_event_handler( 3, cmd_modify_setting )
 	'video_settings_menu.set_item( 3, ? )
-	
+		
 	audio_settings_menu.Construct( ..
 		"AUDIO SETTINGS", [ "EFFECTS VOLUME", "MUSIC VOLUME", "AUDIO DRIVER" ], ..
 		dark_gray, white, black, white, ..
@@ -192,9 +150,9 @@ Function initialize_menus()
 	'audio_settings_menu.set_item( 1, ? )
 	'audio_settings_menu.set_item_clicked_event_handler( 2, cmd_modify_setting )
 	'audio_settings_menu.set_item( 2, ? )
-
+		
 	pause_menu.Construct( ..
-		"PAUSED", [ "RESUME", "SETTINGS", "PREFERENCES", "QUIT LEVEL", "QUIT GAME" ], ..
+		"PAUSED", [ "RESUME", "SETTINGS", "QUIT LEVEL", "QUIT GAME" ], ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
 		menu_header_fg_font, menu_header_bg_font, ..
@@ -203,13 +161,10 @@ Function initialize_menus()
 		white, black, black, light_gray )
 	pause_menu.set_position( menu_x, menu_y )
 	pause_menu.set_item_clicked_event_handler( 0, cmd_unpause_game )
-	pause_menu.set_item_clicked_event_handler( 1, cmd_show_menu )
-	pause_menu.set_item( 1, settings_menu )
-	pause_menu.set_item_clicked_event_handler( 2, cmd_show_menu )
-	pause_menu.set_item( 2, profile_prefs_menu )
-	pause_menu.set_item_clicked_event_handler( 3, cmd_quit_level )
-	pause_menu.set_item_clicked_event_handler( 4, cmd_quit_game )
-	MENU.pause = pause_menu
+	pause_menu.set_item_clicked_event_handler( 1, cmd_show_menu, settings_menu )
+	pause_menu.set_item_clicked_event_handler( 2, cmd_quit_level )
+	pause_menu.set_item_clicked_event_handler( 3, cmd_quit_game )
+	MENU_REGISTER.pause = pause_menu
 	
 	
 	

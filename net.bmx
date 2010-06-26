@@ -57,10 +57,10 @@ Function update_network()
 					client_id = NETWORK_ID.Create( client.local_ip, client.local_port )
 					DebugLog( " " + client_id.ToString() + " connected" )
 					'send the new client an identity for all players (self + other connected clients)
-					write_net_identity( client.tcp, server.local_ip, server.local_port, profile.name, profile.vehicle_key )
+					write_net_identity( client.tcp, server.local_ip, server.local_port, profile.name )
 					For Local other:CONNECTION = EachIn clients
 						rp = get_remote_player( other.local_ip, other.local_port )
-						write_net_identity( client.tcp, other.local_ip, other.local_port, rp.name, rp.vehicle_key )
+						write_net_identity( client.tcp, other.local_ip, other.local_port, rp.name )
 					Next
 					clients.AddLast( client )
 					client.tcp.WriteByte( NET.READY )
@@ -88,12 +88,13 @@ Function update_network()
 					Select message_type
 						
 						Case NET.IDENTITY 'directive: create remote player from given identity
-							rp_id = NETWORK_ID.Create( client.tcp.ReadInt(), client.tcp.ReadShort() )
+							rp_id = New NETWORK_ID
+							Local name$
+							read_net_identity( client.tcp, rp_id.ip, rp_id.port, name )
 							DebugLog( " " + NET.decode( message_type ) + " from " + rp_id.ToString() )
 							rp = REMOTE_PLAYER.Create( rp_id )
 							add_remote_player( rp )
-							Local data$[] = client.tcp.ReadLine().Split( "~t" )
-							rp.load_net_identity( data[0], data[1] )
+							rp.load_net_identity( name, "light_tank" )
 						
 						Rem
 						Case NET.READY
@@ -225,11 +226,18 @@ Function update_network()
 End Function
 
 '______________________________________________________________________________
-Function write_net_identity( out:TStream, ip%, port:Short, name$, vehicle_key$ )
+Function write_net_identity( out:TStream, ip%, port:Short, name$ )
 	out.WriteByte( NET.IDENTITY )
+	'/////
 	out.WriteInt( ip )
 	out.WriteShort( port )
-	out.WriteLine( name + "~t" + vehicle_key )
+	out.WriteShort( name.Length ); out.WriteString( name )
+End Function
+
+Function read_net_identity( in:TStream, ip% Var, port:Short Var, name$ Var )
+	ip = in.ReadInt()
+	port = in.ReadShort()
+	name = in.ReadString( in.ReadShort() )
 End Function
 
 Function network_game_listen()
@@ -257,7 +265,7 @@ Function network_game_connect%()
 		Local self_id:NETWORK_ID = NETWORK_ID.Create( tcp.GetLocalIP(), tcp.GetLocalPort() )
 		DebugLog( " CONNECTED to " + server_id.ToString() + "~n FROM " + self_id.ToString() )
 		server = CONNECTION.Create( tcp )
-		write_net_identity( server.tcp, server.local_ip, server.local_port, profile.name, profile.vehicle_key )
+		write_net_identity( server.tcp, server.local_ip, server.local_port, profile.name )
 		server.tcp.WriteByte( NET.READY )
 		While server.tcp.SendMsg() ; End While
 		Return True 'connection successfully initiated

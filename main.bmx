@@ -1,5 +1,5 @@
 Rem
-	main.bmx
+	Main.bmx
 	This is a COLOSSEUM project BlitzMax source file.
 	
 	author: Tyler W Cole, aka "Tylerbot"
@@ -32,7 +32,6 @@ Include "audio.bmx"
 Include "base_data.bmx"
 Include "box.bmx"
 Include "bmp_font.bmx"
-Include "campaign_data.bmx"
 Include "cell.bmx"
 Include "collide.bmx"
 Include "color.bmx"
@@ -60,7 +59,6 @@ Include "image_atlas_reference.bmx"
 Include "image_manip.bmx"
 Include "input.bmx"
 Include "instaquit.bmx"
-Include "inventory_data.bmx"
 Include "json.bmx"
 Include "level.bmx"
 Include "level_editor.bmx"
@@ -104,6 +102,8 @@ Include "vehicle_data.bmx"
 Include "widget.bmx"
 Include "debug.bmx"
 
+Local load_start% = now()
+
 Const version_major%    = 0
 Const version_minor%    = 4
 Const version_revision% = 0
@@ -140,42 +140,48 @@ Else
 	cmd_save_profile()
 End If
 
-'window title
-AppTitle = "Colosseum " + version_major + "." + version_minor + "." + version_revision
 ?Debug
-AppTitle :+ " DEBUG"
 debug_init()
 debug_no_graphics()
 ?
 
-'graphical window
-init_graphics()
-'assets
-load_all_assets()
-
-'background automaton-powered menu game
-'does nothing if AI menu game is disabled
-init_ai_menu_game()
-'init_campaign_chooser()
-
+'window title
+AppTitle = "Colosseum " + version_major + "." + version_minor + "." + version_revision
+?Debug
+AppTitle :+ " DEBUG"
+?
+'mouse
 mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
 
-?Debug 'debug routines requiring graphics
+'graphical window
+init_graphics()
+
+'////////////////////////////////
+'LOAD GAME ASSETS; fonts, sounds, images, unit parts, units, props, pickups, levels
+load_all_assets()
+DebugLog "  All assets loaded at " + elapsed_str(load_start) + " sec. since program start-up"
+
+init_level_select_menu( MENU_REGISTER.level_select )
+
+'complex debug routines (modular)
+?Debug
 debug_with_graphics()
 ?
 
+DebugLog "  MAIN GAME LOOP started at " + elapsed_str(load_start) + " sec. since program start-up~n"
+
 '////////////////////////////////////////////////////////////////////////////////
-'MAIN
+'// MAIN GAME LOOP
 Repeat
 	Cls()
-	select_game()
+	select_game() 'points the global reference to the current game environment
 	
 	?Not Debug '////////////////////////////////
   
 	'menu input and misc
 	get_all_input()
-	'multiplayer
-	update_network()
+	''multiplayer
+	'update_network()
 	'physics timescale and update throttling
 	If frame_time_elapsed()
 		calculate_timescale()
@@ -200,8 +206,8 @@ Repeat
 	profiler()
 	'menu input and misc
 	get_all_input(); profiler(0)
-	'multiplayer
-	update_network(); profiler(1)
+	''multiplayer
+	'update_network(); profiler(1)
 	
 	'physics timescale and update throttling
 	If frame_time_elapsed()

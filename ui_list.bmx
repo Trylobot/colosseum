@@ -242,9 +242,12 @@ Type TUIList Extends TUIObject
     End If
 	End Method
   
-  Method set_item_clicked_event_handler( i%, event_handler(item:Object) )
+  Method set_item_clicked_event_handler( i%, event_handler(item:Object), item:Object = ITEM_UNSPECIFIED )
 		If i >= 0 And i < item_count
 			item_clicked_event_handlers[i] = TUIEventHandler.Create( event_handler )
+			If item <> ITEM_UNSPECIFIED
+				items[i] = item
+			End If
 		End If
   End Method
   
@@ -271,4 +274,6 @@ Type TUIList Extends TUIObject
 	End Method
   
 End Type
+
+Const ITEM_UNSPECIFIED:Object = "ITEM_UNSPECIFIED"
 

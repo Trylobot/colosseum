@@ -14,14 +14,14 @@ Global level_editor_requests_resume%
 Function cmd_show_menu( item:Object = Null )
 	Local m:TUIObject = TUIObject(item)
 	If m
-		MENU.push( m )
-		MENU.get_top().on_show()
+		MENU_REGISTER.push( m )
+		MENU_REGISTER.get_top().on_show()
 	End If
 End Function
 
 Function cmd_show_previous_menu( item:Object = Null )
-	MENU.pop()
-	MENU.get_top().on_show()
+	MENU_REGISTER.pop()
+	MENU_REGISTER.get_top().on_show()
 End Function
 
 Function cmd_create_new_profile( item:Object = Null )
@@ -60,40 +60,7 @@ Function cmd_save_profile( item:Object = Null )
 End Function
 
 Function cmd_play_level( item:Object )
-	If Not profile Then Return
-	If Not item Then Return
-	Local lev_path$ = String(item)
-	If Not lev_path Then Return
-	
-	Local player:COMPLEX_AGENT = get_player_vehicle( profile.vehicle_key )
-	If player
-		MENU.push( MENU.pause )
-		'//////////////////////////////
-		play_level( lev_path, player )
-		'//////////////////////////////
-	Else
-		show_info( "critical error: could not find vehicle [" + profile.vehicle_key + "]" )
-	End If
-End Function
-
-Function cmd_continue_last_campaign( item:Object = Null )
-	Local current_campaign_key$ = campaign_ordering[0]
-	If profile.campaign And profile.campaign.Length > 0 Then current_campaign_key = profile.campaign
-	Local cdat:CAMPAIGN_DATA = get_campaign_data( current_campaign_key )
-	Local highest_level_index% = 0
-	Local cdat_level$
-	For Local i% = 0 Until cdat.levels.Length
-		cdat_level = cdat.levels[i]
-		If contained_in( cdat_level, profile.levels_beaten )
-			highest_level_index = i%
-		End If
-	Next
-	highest_level_index :+ 1
-	If highest_level_index >= cdat.levels.Length
-		'beat current campaign
-	End If
-	profile.vehicle_key = cdat.player_vehicle
-	cmd_play_level( cdat.levels[highest_level_index] )
+	main_game = play_level( item )
 End Function
 
 Function cmd_pause_game( item:Object = Null )
@@ -172,10 +139,13 @@ EndRem
 
 Function load_all_assets()
   loading_progress = 0
+	'/////
 	load_texture_atlases()
 	load_assets()
-	'MENU.load_fonts()
+	load_level_grid()
+	'/////
 	initialize_menus()
+	'/////
 	If show_ai_menu_game
 		init_ai_menu_game()
 	End If
@@ -183,19 +153,17 @@ End Function
 
 Function create_new_user_profile:PLAYER_PROFILE()
 	Local p:PLAYER_PROFILE = New PLAYER_PROFILE
-	p.name = "new_profile"
-	p.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-	p.cash = 100
-	p.vehicle_key = "light_tank"
-	p.src_path = p.generate_src_path()
+	Local num% = 1
+	Repeat
+		p.name = "player" + num
+		p.src_path = p.generate_src_path()
+		num :+ 1
+	Until Not FileExists( p.src_path )
 	Return p
 End Function
 
 '______________________________________________________________________________
 Rem
-'command_argument should be an object;
-'  the object gets cast to an appropriate type automatically, a container type with all the information necessary
-'  if the cast fails, the argument is invalid
 Function menu_command( command_code%, argument:Object = Null )
 	Local cmd$ = COMMAND.decode( command_code ).ToLower()
 	Local arg$

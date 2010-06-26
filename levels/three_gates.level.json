@@ -359,5 +359,6 @@
 			alignment: 2
 		}
 	],
-	props: null
+	props: null,
+	player_vehicle: "light_tank"
 }

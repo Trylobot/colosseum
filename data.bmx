@@ -76,6 +76,41 @@ Function load_assets%()
 	Return True
 End Function
 
+'_____________________________________________________________________________
+Function load_level_grid%()
+	Local path$
+	Local file:TStream
+	Local json:TJSON, value:TJSON
+	Local r%, c%
+	Local root:TJSONArray, arr:TJSONArray
+	Local this_level_path$
+	
+	path = data_path + "level_select" + "." + data_file_ext
+	file = ReadFile( path )
+	If file
+		json = TJSON.Create( file )
+    file.Close()
+		If Not json.isNull() And TJSONArray( json.Root ) 'read successful
+			root = TJSONArray( json.root )
+			level_grid = level_grid[.. root.Size()]
+			For r = 0 Until root.Size()
+				arr = TJSONArray( root.GetByIndex( r ))
+				level_grid[r] = level_grid[r][.. arr.Size()]
+				For c = 0 Until arr.Size()
+					value = TJSON.Create( arr.GetByIndex( c ))
+					this_level_path = value.GetString("")
+					'////
+					level_grid[r][c] = this_level_path
+				Next
+			Next
+		End If
+	Else
+		Return False
+	End If
+	loading_progress :+ 1
+	Return True
+End Function
+
 '______________________________________________________________________________
 Function load_objects%( json:TJSON, source_file$ = Null )
 	For Local i% = 0 To TJSONArray( json.Root ).Size() - 1
@@ -146,20 +181,6 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				Case "unit"
 					Local u:COMPLEX_AGENT = Create_COMPLEX_AGENT_from_json( object_json )
 					If u Then unit_map.Insert( key, u ) Else load_error( object_json )
-				Case "campaign"
-					Local c:CAMPAIGN_DATA = Create_CAMPAIGN_DATA_from_json( object_json )
-					If c
-						campaign_data_map.Insert( key, c )
-						'append to global ordered array of all campaigns
-						If Not campaign_ordering
-							campaign_ordering = [ key ]
-						Else 'campaign_ordering <> Null
-							campaign_ordering = campaign_ordering[..campaign_ordering.Length+1]
-							campaign_ordering[campaign_ordering.Length-1] = key
-						End If
-					Else
-						load_error( object_json )
-					End If
 			End Select
 		End If
 	Next
@@ -214,12 +235,14 @@ ENDREM
 '______________________________________________________________________________
 Function load_level:LEVEL( path$ )
 	Local file:TStream, json:TJSON, lev:LEVEL
+	Local load_start% = now()
 	file = ReadFile( path )
 	If file
 		json = TJSON.Create( file )
 		file.Close()
 		lev = Create_LEVEL_from_json( json )
 		lev.src_path = path
+		DebugLog "  Loaded level " + path + " in " + elapsed_str(load_start) + " sec."
 		Return lev
 	Else
 		Return Null

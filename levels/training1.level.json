@@ -275,5 +275,6 @@
 				pos_y: 158
 			}
 		}
-	]
+	],
+	player_vehicle: "light_tank"
 }

@@ -71,37 +71,37 @@ Function select_game()
 End Function
 
 '______________________________________________________________________________
-Function play_level( level_reference:Object, player:COMPLEX_AGENT )
-	If Not level_reference
-		DebugStop
-	End If
-	If Not player
-		DebugStop
-	End If
-	main_game = Create_ENVIRONMENT( True )
+Function play_level:ENVIRONMENT( level_reference:Object, player:COMPLEX_AGENT = Null )
 	Local lev:LEVEL
-	If String( level_reference )
+	If String( level_reference ) 'level load
 		lev = load_level( String( level_reference ))
 	Else If LEVEL( level_reference )
 		lev = LEVEL( level_reference )
 	End If
+	If Not player 'player override behavior
+		player = get_player_vehicle( lev.player_vehicle_key )
+	End If
+	Local human_participation% = True
+	Local env:ENVIRONMENT = Create_ENVIRONMENT( human_participation )
+	Local load_start% = now()
 	Local bg:TImage = generate_sand_image( lev.width, lev.height )
 	Local fg:TImage = generate_level_walls_image( lev )
-	
-	If main_game.bake_level( lev, bg, fg )
-		main_game.game_in_progress = True
-		Local player_brain:CONTROL_BRAIN = create_player_brain( player )
-		main_game.insert_player( player, player_brain )
-		main_game.respawn_player()
+	DebugLog "    Level images generated in " + elapsed_str(load_start) + " sec."
+	If env.bake_level( lev, bg, fg ) 'bake the level, setup the data structures
 		FLAG.in_menu = False
-		main_game.player_in_locker = True
-		main_game.waiting_for_player_to_enter_arena = True
+		env.game_in_progress = True
+		'player stuff
+		Local player_brain:CONTROL_BRAIN = create_player_brain( player )
+		env.insert_player( player, player_brain )
+		env.respawn_player()
+		env.player_in_locker = True
+		env.waiting_for_player_to_enter_arena = True
 		FLAG.engine_ignition = True
 		reset_mouse( player.ang )
-		
 	Else 'Not main_game.load_level()
-		main_game = Null
+		env = Null
 	End If
+	Return env
 End Function
 
 '______________________________________________________________________________
@@ -125,9 +125,10 @@ Function init_ai_menu_game( fit_to_window% = True )
 		Else
 			ai_menu_game.drawing_origin = Create_cVEC( window_w/2 - lev.width/2, window_h/2 - lev.height/2 )
 		End If
+		Local load_start% = now()
 		Local bg:TImage = generate_sand_image( lev.width, lev.height )
 		Local fg:TImage = generate_level_walls_image( lev )
-		
+		DebugLog "    Level images generated in " + elapsed_str(load_start) + " sec."
 		If ai_menu_game.bake_level( lev, bg, fg )
 			ai_menu_game.auto_reset_spawners = True
 			ai_menu_game.game_in_progress = True
@@ -168,10 +169,10 @@ End Function
 Function generate_level_walls_image:TImage( lev:LEVEL )
   'TODO: pad this texture with a static "crowd" image
   '      perhaps as a separate image but would be better if not
-	Const wall_size% = 5
 	Local pixmap:TPixmap = CreatePixmap( lev.width,lev.height, PF_RGBA8888 )
 	pixmap.ClearPixels( encode_ARGB( 0.0, 0,0,0 ))
 	'variables
+	Const wall_size% = 5
 	Local c:CELL
 	Local blocking_cells:TList = lev.get_blocking_cells()
 	Local wall:BOX
@@ -274,7 +275,34 @@ Function generate_level_mini_preview:TImage( lev:LEVEL )
 End Function
 
 '______________________________________________________________________________
-Function init_campaign_chooser()
+Function init_level_select_menu( menu:TUIImageGrid )
+	Local level_file_path$, level_preview_path$
+	Local level_preview_img:TImage
+	
+	For Local r% = 0 Until level_grid.Length
+		For Local c% = 0 Until level_grid[r].Length
+			level_file_path = level_grid[r][c]
+			level_preview_path = level_preview_path_from_level_path( level_file_path )
+			If FileExists( level_preview_path ) And FileTime( level_file_path ) <= FileTime( level_preview_path )
+				'preview file exists and is valid; use it
+				level_preview_img = LoadImage( level_preview_path, FILTEREDIMAGE )
+			Else
+				'preview file needs to be generated or re-generated
+         Local level_object:LEVEL = load_level( level_file_path )
+         If level_object
+           DeleteFile( level_preview_path )
+           level_preview_img = generate_level_mini_preview( level_object )
+           SavePixmapPNG( level_preview_img.pixmaps[0], level_preview_path, 5 )
+         Else
+           DebugLog( " ERROR: level file not found ~q" + level_file_path + "~q" )
+           DebugStop
+         End If
+			End If
+			'do something with the level_preview_img
+			'menu.setimage(level_preview_img) maybe
+		Next
+	Next
+	
 	Rem
 	'prepare data for campaign chooser
 	Local image:TImage[][]
@@ -346,7 +374,7 @@ Function record_level_beaten( level_path$ )
 		And Not contained_in( level_path, profile.levels_beaten )
 			profile.levels_beaten = profile.levels_beaten[..profile.levels_beaten.Length+1]
 			profile.levels_beaten[profile.levels_beaten.Length-1] = level_path
-			init_campaign_chooser()
+			'init_campaign_chooser()
 		Else 'profile.levels_beaten == Null
 			profile.levels_beaten = [ level_path ]
 		End If
@@ -369,20 +397,4 @@ Function get_player_id%()
 		Return -1
 	End If
 End Function
-
-Function bake_item:Object( item:INVENTORY_DATA )
-	If item
-		Select item.item_type
-			Case "player_vehicle"
-				Return get_player_vehicle( item.key )
-			Case "unit"
-				Return get_unit( item.key )
-			Case "turret"
-				Return get_turret( item.key )
-		End Select
-	End If
-	Return Null
-End Function
-
-
 

@@ -164,6 +164,7 @@ Type ENVIRONMENT
 	End Method
 	
 	Method bake_level%( lev:LEVEL, background:TImage, foreground:TImage )
+		Local load_start% = now()
 		If lev
 			Self.lev = lev 'use given level
 		Else
@@ -178,12 +179,14 @@ Type ENVIRONMENT
 		'pathing (AI)
 		pathing = PATHING_STRUCTURE.Create( lev )
 		'walls (Collisions)
+		Local wall_start% = now()
 		For Local cursor:CELL = EachIn lev.get_blocking_cells()
 			Local wall:BOX = lev.get_wall( cursor )
 			walls.AddLast( wall )
 			
 			setup_physics_from_wall( wall, physics )
 		Next
+		DebugLog "    Level walls baked in " + elapsed_str(wall_start) + " sec."
 		'graffiti
 		graffiti = GRAFFITI_MANAGER.Create( background, window_w, window_h )
 		'props
@@ -195,9 +198,12 @@ Type ENVIRONMENT
 			setup_physics_from_agent( prop, physics )
 		Next
 		'spawning system
+		Local spawn_start% = now()
 		initialize_spawning_system()
 		reset_spawners()
+		DebugLog "    Level spawners initialized in " + elapsed_str(spawn_start) + " sec."
 		'success
+		DebugLog "  Level environment " + lev.name + " baked in " + elapsed_str(load_start) + " sec."
 		Return True
 	End Method
 	
@@ -304,6 +310,7 @@ Type ENVIRONMENT
 	End Method
 
 	Method spawn_unit:CONTROL_BRAIN( unit_key$, alignment%, spawn_point:POINT )
+		Local load_start% = now()
 		Local unit:COMPLEX_AGENT = get_unit( unit_key, alignment )
 		Local allied_agent_list:TList, rival_agent_list:TList
 		Select alignment
@@ -339,6 +346,7 @@ Type ENVIRONMENT
 		part.manage( particle_list_foreground )
 		part.parent = pt
 		'///////////////////////////////////////////////////////////////////////////
+		DebugLog "  Spawned unit " + unit_key + " in " + elapsed_str(load_start) + " sec."
 		Return brain
 	End Method
 	

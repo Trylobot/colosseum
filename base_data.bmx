@@ -50,14 +50,14 @@ Global asset_files$[] = [ ..
 	"ai_types", ..
 	"player_vehicles", ..
 	"units", ..
-  "gibs", ..
-	"campaigns" ..
+  "gibs"..
 ]
 
 '______________________________________________________________________________
 Global font_map:TMap = CreateMap() 'deprecated; use BMP_FONT instead
 Global sound_map:TMap = CreateMap()
 'Global image_map:TMap = CreateMap() 'use TEXTURE_MANAGER instead of image map
+Global level_grid$[][]
 
 Function get_font:TImageFont( key$ ) 'returns read-only reference
 	Return TImageFont( font_map.ValueForKey( key.toLower() ))

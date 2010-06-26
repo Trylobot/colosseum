@@ -20,6 +20,25 @@ Const main_screen_y% = 15
 
 Const main_screen_menu_y% = 30
 
+'______________________________________________________________________________
+Global meta_variable_cache:TMap
+
+Function resolve_meta_variables$( str$, argument:Object = Null )
+	Local tokens$[] = str.Split( "%%" )
+	Local result$ = ""
+	For Local i% = 0 To tokens.Length - 1
+		If i Mod 2 = 0 'even; string literal
+			result :+ tokens[i]
+		Else If meta_variable_cache 'odd; inside a meta-variable identifier
+			Local meta_var$ = String( meta_variable_cache.ValueForKey( tokens[i] ))
+			If meta_var
+				result :+ meta_var
+			End If
+		End If
+	Next
+	Return result
+End Function
+
 Rem
 Const border_width% = 1
 Const scrollbar_width% = 20
@@ -743,25 +762,3 @@ Function draw_scrollbar( x%, y%, w%, h%, total_size%, window_offset%, window_siz
 		w-2*border_width - 2, size - 2 )
 End Function
 EndRem
-'______________________________________________________________________________
-Global meta_variable_cache:TMap
-
-Function resolve_meta_variables$( str$, argument:Object = Null )
-	Local tokens$[] = str.Split( "%%" )
-	Local result$ = ""
-	For Local i% = 0 To tokens.Length - 1
-		If i Mod 2 = 0 'even; string literal
-			result :+ tokens[i]
-		Else If meta_variable_cache 'odd; inside a meta-variable identifier
-			Local meta_var$ = String( meta_variable_cache.ValueForKey( tokens[i] ))
-			If meta_var
-				result :+ meta_var
-			Else If tokens[i] = "profile.count_inventory(this)" And profile
-				'This should not exist, really
-				result :+ "x "+format_number( profile.count_inventory( INVENTORY_DATA(argument) ))
-			End If
-		End If
-	Next
-	Return result
-End Function
-

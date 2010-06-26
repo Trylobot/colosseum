@@ -239,7 +239,6 @@ Function update_meta_variable_cache()
 		| update_map( meta_variable_cache, "profile.name", profile.name ) ..
 		| update_map( meta_variable_cache, "profile.cash", format_number( profile.cash )) ..
 		| update_map( meta_variable_cache, "profile.kills", format_number( profile.kills )) ..
-		| update_map( meta_variable_cache, "profile.invert_reverse_steering", boolean_to_string( profile.invert_reverse_steering )) ..
 		| update_map( meta_variable_cache, "level_editor_cache.name", level_editor_cache.name ) ..
 		| update_map( meta_variable_cache, "fullscreen", boolean_to_string( fullscreen )) ..
 		| update_map( meta_variable_cache, "window_w", String.FromInt( window_w )) ..

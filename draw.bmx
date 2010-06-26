@@ -244,8 +244,14 @@ Function draw_main_screen()
 	End If
 	EndRem
 	
-	'/////////////
-	draw_menus()
+	'////////////////////
+	' draw current menu
+	SetAlpha( 1 )
+	If Not FLAG.paused
+		MENU_REGISTER.get_top().draw()
+	Else 'paused
+		MENU_REGISTER.pause.draw()
+	End If
 	'/////////////
 	
 	'credits & copyrights, and info string
@@ -276,15 +282,6 @@ Function draw_main_screen()
 End Function
 
 '______________________________________________________________________________
-Function draw_menus()
-	SetAlpha( 1 )
-	If Not FLAG.paused
-		MENU.get_top().draw()
-	Else 'paused
-		MENU.pause.draw()
-	End If
-End Function
-
 Rem
 Function draw_menus()
 	
@@ -426,23 +423,16 @@ Function draw_reticle()
 			Local tur:TURRET = game.player.turrets[0]
 			Local img_reticle:IMAGE_ATLAS_REFERENCE = get_image( "reticle" )
 			Local img_ghost_reticle:IMAGE_ATLAS_REFERENCE = get_image( "ghost_reticle" )
-			'KEYBOARD/MOUSE
-			If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-				'turret ghost reticle
-				Local distance_from_turret_to_mouse# = tur.dist_to( game_mouse ) 
-				SetRotation( tur.ang )
-				Local ang_diff# = ang_wrap( tur.ang_to( game_mouse ) - tur.ang )
-				SetAlpha( 1 - Abs(ang_diff)/22.5 )
-				DrawImageRef( img_ghost_reticle, tur.pos_x + distance_from_turret_to_mouse * Cos( tur.ang ), tur.pos_y + distance_from_turret_to_mouse * Sin( tur.ang ))
-				'actual mouse reticle
-				SetRotation( tur.ang_to( game_mouse ))
-				SetAlpha( 1.0 )
-				DrawImageRef( img_reticle, game_mouse.x, game_mouse.y )
-			'KEYBOARD ONLY
-			Else If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD
-				SetRotation( tur.ang )
-				DrawImageRef( img_reticle, tur.pos_x + 85*Cos( tur.ang ), tur.pos_y + 85*Sin( tur.ang ))
-			End If
+			'turret ghost reticle
+			Local distance_from_turret_to_mouse# = tur.dist_to( game_mouse ) 
+			SetRotation( tur.ang )
+			Local ang_diff# = ang_wrap( tur.ang_to( game_mouse ) - tur.ang )
+			SetAlpha( 1 - Abs(ang_diff)/22.5 )
+			DrawImageRef( img_ghost_reticle, tur.pos_x + distance_from_turret_to_mouse * Cos( tur.ang ), tur.pos_y + distance_from_turret_to_mouse * Sin( tur.ang ))
+			'actual mouse reticle
+			SetRotation( tur.ang_to( game_mouse ))
+			SetAlpha( 1.0 )
+			DrawImageRef( img_reticle, game_mouse.x, game_mouse.y )
 		End If
 	End If
 End Function
@@ -640,11 +630,7 @@ Function draw_help_stuff()
 	DrawRect( 0, 0, window_w, window_h )
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
-	If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD
-		
-	Else If profile.input_method = CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-		
-	End If
+	'draw help
 End Function
 
 '______________________________________________________________________________

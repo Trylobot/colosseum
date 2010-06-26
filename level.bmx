@@ -34,6 +34,7 @@ Function Create_LEVEL:LEVEL( width%, height% )
 	lev.unit_factories = Null
 	lev.immediate_units = Null
 	lev.props = Null
+	lev.player_vehicle_key = ""
 	Return lev
 End Function
 
@@ -46,7 +47,9 @@ Type LEVEL Extends MANAGED_OBJECT
 	Field unit_factories:UNIT_FACTORY_DATA[] 'gated unit factories
 	Field immediate_units:ENTITY_DATA[] 'units to spawn immediately (like turrets & bosses)
 	Field props:ENTITY_DATA[] 'props, like wooden crates and stuff
-	Field src_path$ 'run-time only
+	Field player_vehicle_key$ 'player vehicle key 
+	
+	Field src_path$ 'run-time only metadata
 	
 	Method resize( new_width%, new_height% )
 		width = new_width
@@ -56,6 +59,10 @@ Type LEVEL Extends MANAGED_OBJECT
 		horizontal_divs = [ 0, height ]
 		vertical_divs = [ 0, width ]
 		path_regions = New Int[ row_count, col_count ]
+	End Method
+	
+	Method set_player_vehicle_key( key$ )
+		player_vehicle_key = key
 	End Method
 	
 	Method add_divider( pos%, line_type% )
@@ -523,6 +530,7 @@ Type LEVEL Extends MANAGED_OBJECT
 		Else
 			this_json.SetByName( "props", TJSON.NIL )
 		End If
+		this_json.SetByName( "player_vehicle", TJSONString.Create( player_vehicle_key ))
 		Return this_json
 	End Method
 	
@@ -562,6 +570,7 @@ Function Create_LEVEL_from_json:LEVEL( json:TJSON )
 			lev.props[index] = Create_ENTITY_DATA_from_json( TJSON.Create( props_json.GetByIndex( index )))
 		Next
 	End If
+	lev.player_vehicle_key = json.GetString( "player_vehicle" )
 	Return lev
 End Function
 

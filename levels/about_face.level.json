@@ -1,0 +1,583 @@
+{
+	name: "about_face",
+	width: 672,
+	height: 660,
+	row_count: 16,
+	col_count: 15,
+	hue: 0,
+	saturation: 0,
+	luminosity: 0.15,
+	horizontal_divs: [
+		0,
+		15,
+		80,
+		150,
+		180,
+		210,
+		220,
+		240,
+		330,
+		410,
+		431,
+		440,
+		470,
+		500,
+		575,
+		645,
+		660
+	],
+	vertical_divs: [
+		0,
+		15,
+		85,
+		160,
+		190,
+		220,
+		250,
+		305,
+		367,
+		427,
+		457,
+		487,
+		517,
+		587,
+		657,
+		672
+	],
+	path_regions: [
+		[
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			false,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true,
+			false,
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			true,
+			true,
+			true,
+			false,
+			true,
+			true,
+			true,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			true,
+			true,
+			false,
+			true,
+			true,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true,
+			false,
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			false,
+			true
+		],
+		[
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true,
+			true
+		]
+	],
+	unit_factories: [
+		{
+			alignment: 1,
+			squads: null,
+			pos: {
+				pos_x: 336,
+				pos_y: 192,
+				ang: -90
+			},
+			delay_time: null,
+			wave_index: null
+		},
+		{
+			alignment: 2,
+			squads: [
+				[
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb",
+					"mini_bomb"
+				],
+				[
+					"machine_gun_quad",
+					"machine_gun_quad"
+				],
+				[
+					"machine_gun_quad",
+					"machine_gun_quad"
+				],
+				[
+					"light_tank",
+					"light_tank"
+				],
+				[
+					"armed_carrier",
+					"armed_carrier"
+				]
+			],
+			pos: {
+				pos_x: 337,
+				pos_y: 459,
+				ang: 90
+			},
+			delay_time: [
+				3000,
+				2000,
+				2000,
+				2000,
+				5000
+			],
+			wave_index: [
+				0,
+				0,
+				0,
+				0,
+				0
+			]
+		}
+	],
+	immediate_units: [
+		{
+			archetype: "rocket_emplacement",
+			pos: {
+				pos_x: 50,
+				pos_y: 275,
+				ang: -45
+			},
+			alignment: 2
+		},
+		{
+			archetype: "machine_gun_emplacement",
+			pos: {
+				pos_x: 95,
+				pos_y: 285,
+				ang: -45
+			},
+			alignment: 2
+		},
+		{
+			archetype: "machine_gun_emplacement",
+			pos: {
+				pos_x: 45,
+				pos_y: 200,
+				ang: -45
+			},
+			alignment: 2
+		},
+		{
+			archetype: "machine_gun_emplacement",
+			pos: {
+				pos_x: 592,
+				pos_y: 195,
+				ang: -135
+			},
+			alignment: 2
+		},
+		{
+			archetype: "cannon_emplacement",
+			pos: {
+				pos_x: 622,
+				pos_y: 165,
+				ang: -135
+			},
+			alignment: 2
+		},
+		{
+			archetype: "cannon_emplacement",
+			pos: {
+				pos_x: 445,
+				pos_y: 485
+			},
+			alignment: 2
+		},
+		{
+			archetype: "cannon_emplacement",
+			pos: {
+				pos_x: 235,
+				pos_y: 485,
+				ang: 180
+			},
+			alignment: 2
+		},
+		{
+			archetype: "machine_gun_emplacement",
+			pos: {
+				pos_x: 205,
+				pos_y: 455,
+				ang: 180
+			},
+			alignment: 2
+		},
+		{
+			archetype: "machine_gun_emplacement",
+			pos: {
+				pos_x: 475,
+				pos_y: 455
+			},
+			alignment: 2
+		}
+	],
+	props: [
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 537,
+				pos_y: 320
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 567,
+				pos_y: 325
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 577,
+				pos_y: 290
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 597,
+				pos_y: 320
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 627,
+				pos_y: 365
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 622,
+				pos_y: 325
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 567,
+				pos_y: 360
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 647,
+				pos_y: 395
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 145,
+				pos_y: 405
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 140,
+				pos_y: 365
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 110,
+				pos_y: 355
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 105,
+				pos_y: 385
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 80,
+				pos_y: 355
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 70,
+				pos_y: 380
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 40,
+				pos_y: 380
+			}
+		},
+		{
+			archetype: "crate",
+			pos: {
+				pos_x: 85,
+				pos_y: 325
+			}
+		},
+		{
+			archetype: "crate_small",
+			pos: {
+				pos_x: 55,
+				pos_y: 345
+			}
+		}
+	],
+	player_vehicle: "light_tank"
+}

@@ -30,7 +30,7 @@ Function debug_with_graphics()
 	'play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
-	'play_debug_level()
+	play_debug_level()
   'test_bmp_fonts()
   'test_ui_list()
 	
@@ -40,17 +40,14 @@ End Function
 
 Function play_debug_level()
 	Local lev:LEVEL = load_level( "levels/debug.level.json" )
-	'Local player:COMPLEX_AGENT = get_player_vehicle( "medium_tank" )
 	Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
-	'Local player:COMPLEX_AGENT = get_player_vehicle( "apc" )
-	'Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
-	play_level( lev, player )
+	main_game = play_level( lev, player )
 	game = main_game
-	game.sandbox = True
-	player.move_to( Create_POINT( 0.48*lev.width, 0.5*lev.height, 0 ))
+	player.move_to( Create_POINT( 0.45*lev.width, 0.5*lev.height, 0 ))
 	player.snap_all_turrets()
 	player_has_entered_arena()
-	game.spawn_unit( "mr_the_box", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.60*lev.width, 0.5*lev.height, 0.0 ))
+	game.spawn_unit( "machine_gun_emplacement", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.55*lev.width, 0.5*lev.height, 0.0 ))
+	game.sandbox = True
 End Function
 
 Function test_draw_rect_lines()
@@ -198,9 +195,6 @@ Function debug_main()
 	End If
 	If KeyHit( KEY_G )
 		FLAG_god_mode = Not FLAG_god_mode
-	End If
-	If KeyHit( KEY_F4 ) And main_game
-		main_game.retained_particle_count = active_particle_limit
 	End If
 	If game <> Null And FLAG_debug_overlay
 		
@@ -496,6 +490,38 @@ Function debug_overlay()
 			
 	End If
 	
+	'projectile owners
+	For Local proj:PROJECTILE = EachIn game.projectile_list
+		'find owner
+		For Local list:TList = EachIn game.agent_lists
+			For Local ag:AGENT = EachIn list
+				If proj.source_id = ag.id
+					DrawLine_awesome( proj.pos_x,proj.pos_y, ag.pos_x,ag.pos_y, True, 3, 1 )
+				End If
+			Next
+		Next
+	Next
+	
+End Function
+
+Function DrawLine_awesome( x1#, y1#, x2#, y2#, balls% = True, outer_width% = 5, inner_width% = 2 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	SetColor( 0, 0, 0 )
+	If balls
+		DrawOval( x1 - 5, y1 - 5, 10, 10 )
+		DrawOval( x2 - 5, y2 - 5, 10, 10 )
+	End If
+	SetLineWidth( outer_width )
+	DrawLine( x1, y1, x2, y2 )
+	SetColor( 255, 255, 255 )
+	If balls
+		DrawOval( x1 - 3, y1 - 3, 6, 6 )
+		DrawOval( x2 - 3, y2 - 3, 6, 6 )
+	End If
+	SetLineWidth( inner_width )
+	DrawLine( x1, y1, x2, y2 )
+	SetLineWidth( 1 )
 End Function
 
 Function debug_fps()

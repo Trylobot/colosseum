@@ -1,0 +1,14 @@
+[
+	[
+		"levels/training1.level.json",
+		"levels/training2.level.json",
+		"levels/training3.level.json"
+	],
+	[
+		"levels/orchard.level.json",
+		"levels/maze.level.json",
+		"levels/blitz.level.json",
+		"levels/about_face.level.json",
+		"levels/three_gates.level.json"
+	]
+]

@@ -77,5 +77,6 @@
 	],
 	unit_factories: null,
 	immediate_units: null,
-	props: null
+	props: null,
+	player_vehicle: "light_tank"
 }
