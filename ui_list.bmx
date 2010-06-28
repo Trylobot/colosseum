@@ -79,6 +79,18 @@ Type TUIList Extends TUIObject
 		Self.item_clicked_event_handlers = New TUIEventHandler[Self.item_count]
   End Method
   
+  Method set_position( x%, y% )
+		If Not rect Then rect = New BOX
+    rect.x = x
+    rect.y = y
+		If Not item_rects Then item_rects = New BOX[item_count]
+		For Local i% = 0 Until item_count
+			If Not item_rects[i] Then item_rects[i] = New BOX
+			item_rects[i].x = rect.x
+			item_rects[i].y = rect.y + margin_y/2 + i*(margin_y + item_font.height)
+		Next
+  End Method
+  
   Method draw()
     SetAlpha( 1 )
 		SetRotation( 0 )
@@ -124,68 +136,6 @@ Type TUIList Extends TUIObject
     'TODO - add intelligent scrollbar support
   End Method
   
-  Method add_item( item:Object, item_display:String )
-    item_count :+ 1
-    items = items[..item_count]
-    items[item_count-1] = item
-    items_display = items_display[..item_count]
-    items_display[item_count-1] = item_display
-		item_rects = item_rects[..item_count]
-		item_rects[item_count-1] = New BOX
-		item_clicked_event_handlers = item_clicked_event_handlers[..item_count]
-		calculate_dimensions()
-  End Method
-	
-	Method set_item( i%, item:Object )
-		If i < 0 Or i >= item_count Then Return
-		items[i] = item
-	End Method
-	
-	Method set_item_display( i%, display$ )
-		If i < 0 Or i >= item_count Then Return
-		items_display[i] = display
-		calculate_dimensions()
-	End Method
-  
-  Method set_position( x%, y% )
-		If Not rect Then rect = New BOX
-    rect.x = x
-    rect.y = y
-		If Not item_rects Then item_rects = New BOX[item_count]
-		For Local i% = 0 Until item_count
-			If Not item_rects[i] Then item_rects[i] = New BOX
-			item_rects[i].x = rect.x
-			item_rects[i].y = rect.y + margin_y/2 + i*(margin_y + item_font.height)
-		Next
-  End Method
-  
-  Method calculate_dimensions()
-    'list panel dimensions
-		If Not rect Then rect = New BOX
-    Local item_width%
-    For Local i% = 0 Until item_count
-      item_width = 2*margin_x + item_font.width( items_display[i] )
-      If item_width > rect.w
-				rect.w = item_width
-			End If
-    Next
-    rect.h = (item_count + 1)*margin_y + item_count*item_font.height
-		'individual item dimensions
-		If Not item_rects Then item_rects = New BOX[item_count]
-		For Local i% = 0 Until item_count
-			If Not item_rects[i] Then item_rects[i] = New BOX
-			item_rects[i].Set( rect.x, rect.y + margin_y/2 + i*(margin_y + item_font.height), rect.w, margin_y + item_font.height )
-		Next
-  End Method
-  
-  Method select_item( i% )
-		If i >= 0 And i < item_count
-			selected_item = i
-		Else
-			selected_item = -1
-		End If
-	End Method
-	
 	Method on_mouse_move%( mx%, my% )
     selected_item = get_item_index_by_screen_coord( mx, my )
 		Return selected_item <> -1
@@ -233,6 +183,56 @@ Type TUIList Extends TUIObject
 	Method on_show()
 		If list_content_refresh_event_handler
 			list_content_refresh_event_handler.invoke( Self )
+		End If
+	End Method
+	
+  Method add_item( item:Object, item_display:String )
+    item_count :+ 1
+    items = items[..item_count]
+    items[item_count-1] = item
+    items_display = items_display[..item_count]
+    items_display[item_count-1] = item_display
+		item_rects = item_rects[..item_count]
+		item_rects[item_count-1] = New BOX
+		item_clicked_event_handlers = item_clicked_event_handlers[..item_count]
+		calculate_dimensions()
+  End Method
+	
+	Method set_item( i%, item:Object )
+		If i < 0 Or i >= item_count Then Return
+		items[i] = item
+	End Method
+	
+	Method set_item_display( i%, display$ )
+		If i < 0 Or i >= item_count Then Return
+		items_display[i] = display
+		calculate_dimensions()
+	End Method
+  
+  Method calculate_dimensions()
+    'list panel dimensions
+		If Not rect Then rect = New BOX
+    Local item_width%
+    For Local i% = 0 Until item_count
+      item_width = 2*margin_x + item_font.width( items_display[i] )
+      If item_width > rect.w
+				rect.w = item_width
+			End If
+    Next
+    rect.h = (item_count + 1)*margin_y + item_count*item_font.height
+		'individual item dimensions
+		If Not item_rects Then item_rects = New BOX[item_count]
+		For Local i% = 0 Until item_count
+			If Not item_rects[i] Then item_rects[i] = New BOX
+			item_rects[i].Set( rect.x, rect.y + margin_y/2 + i*(margin_y + item_font.height), rect.w, margin_y + item_font.height )
+		Next
+  End Method
+  
+  Method select_item( i% )
+		If i >= 0 And i < item_count
+			selected_item = i
+		Else
+			selected_item = -1
 		End If
 	End Method
 	

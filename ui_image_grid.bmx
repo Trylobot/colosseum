@@ -7,9 +7,65 @@ EndRem
 
 '______________________________________________________________________________
 Type TUIImageGrid Extends TUIObject
-	Field image:TImage[][]
-	Field enabled%[][]
-	Field label$[]
+	Field items_display:TImage[][]
+	Field border_color:TColor
+	Field item_panel_selected_color:TColor
+	Field line_width%
+	
+	Field items:Object[][]
+	Field max_rows%
+	Field max_cols%
+	Field selected_item:CELL
+	Field margin_x%
+  Field margin_y%
+	Field rect:BOX
+	Field list_content_refresh_event_handler:TUIEventHandler
+  Field item_clicked_event_handlers:TUIEventHandler[][]
+	
+	
+	Method New()
+	End Method
+	
+	Method Construct()
+	End Method
+	
+  Method set_position( x%, y% )
+		If Not rect Then rect = New BOX
+    rect.x = x
+    rect.y = y
+  End Method
+  
+	Method draw()
+    SetAlpha( 1 )
+		SetRotation( 0 )
+		SetScale( 1, 1 )
+		
+	End Method
+	
+	Method on_mouse_move%( mx%, my% )
+	End Method
+	
+	Method on_mouse_click%( mx%, my% )
+	End Method
+	
+	Method on_keyboard_up()
+	End Method
+	
+	Method on_keyboard_down()
+	End Method
+	
+	Method on_keyboard_left()
+	End Method
+	
+	Method on_keyboard_right()
+	End Method
+	
+	Method on_keyboard_enter()
+	End Method
+	
+	Method on_show()
+	End Method
+	
 	
 	Rem
 	Function Create:TUIImageGrid( image:TImage[][], enabled%[][], label$[] )
