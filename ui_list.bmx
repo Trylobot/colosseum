@@ -46,7 +46,7 @@ Type TUIList Extends TUIObject
 	End Method
 
   Method Construct( ..
-  header:String, items_display:String[], ..
+  header:String, item_count%, ..
   panel_color:Object, border_color:Object, inner_border_color:Object, item_panel_selected_color:Object, ..
 	line_width%, ..
 	header_fg_font:Object, header_bg_font:Object, ..
@@ -57,9 +57,9 @@ Type TUIList Extends TUIObject
 	x% = 0, y% = 0 )
     'initialization
 		Self.header = header
-    Self.items_display = items_display
-    Self.item_count = items_display.Length
-    Self.items = New Object[Self.item_count]
+    Self.item_count = item_count
+    Self.items = New Object[item_count]
+		Self.items_display = New String[item_count]
     Self.panel_color = TColor.Create_by_RGB_object( panel_color )
     Self.border_color = TColor.Create_by_RGB_object( border_color )
     Self.inner_border_color = TColor.Create_by_RGB_object( inner_border_color )
@@ -76,7 +76,7 @@ Type TUIList Extends TUIObject
     Self.margin_x = Self.item_font.width( " " )
     Self.margin_y = Int(0.5 * Float(Self.item_font.height))
     Self.calculate_dimensions()
-		Self.item_clicked_event_handlers = New TUIEventHandler[Self.item_count]
+		Self.item_clicked_event_handlers = New TUIEventHandler[item_count]
   End Method
   
   Method set_position( x%, y% )
@@ -142,13 +142,9 @@ Type TUIList Extends TUIObject
   End Method
   
   Method on_mouse_click%( mx%, my% )
-    Local i% = get_item_index_by_screen_coord( mx, my )
-		If selected_item <> -1
-			invoke( i )
-			Return True
-		Else
-			Return False
-		End If
+    selected_item = get_item_index_by_screen_coord( mx, my )
+		invoke( selected_item )
+		Return selected_item <> -1
   End Method
 	
 	Method on_keyboard_up()
@@ -186,29 +182,27 @@ Type TUIList Extends TUIObject
 		End If
 	End Method
 	
-  Method add_item( item:Object, item_display:String )
-    item_count :+ 1
+	Method set_item( i%, item_display:String, event_handler(item:Object), item:Object = Null )
+		If i < 0 Or i >= item_count Then Return
+		items[i] = item
+    items_display[i] = item_display
+		item_clicked_event_handlers[i] = TUIEventHandler.Create( event_handler )
+		calculate_dimensions()
+	End Method
+	
+  Method add_new_item( item_display:String, event_handler(item:Object), item:Object = Null )
+    Local i% = item_count
+		item_count :+ 1
     items = items[..item_count]
-    items[item_count-1] = item
     items_display = items_display[..item_count]
-    items_display[item_count-1] = item_display
-		item_rects = item_rects[..item_count]
-		item_rects[item_count-1] = New BOX
 		item_clicked_event_handlers = item_clicked_event_handlers[..item_count]
+		item_rects = item_rects[..item_count]
+    items[i] = item
+    items_display[i] = item_display
+		item_clicked_event_handlers[i] = TUIEventHandler.Create( event_handler )
 		calculate_dimensions()
   End Method
 	
-	Method set_item( i%, item:Object )
-		If i < 0 Or i >= item_count Then Return
-		items[i] = item
-	End Method
-	
-	Method set_item_display( i%, display$ )
-		If i < 0 Or i >= item_count Then Return
-		items_display[i] = display
-		calculate_dimensions()
-	End Method
-  
   Method calculate_dimensions()
     'list panel dimensions
 		If Not rect Then rect = New BOX
@@ -242,15 +236,6 @@ Type TUIList Extends TUIObject
     End If
 	End Method
   
-  Method set_item_clicked_event_handler( i%, event_handler(item:Object), item:Object = ITEM_UNSPECIFIED )
-		If i >= 0 And i < item_count
-			item_clicked_event_handlers[i] = TUIEventHandler.Create( event_handler )
-			If item <> ITEM_UNSPECIFIED
-				items[i] = item
-			End If
-		End If
-  End Method
-  
   Method set_list_content_refresh_event_handler( event_handler(item:Object) )
 		list_content_refresh_event_handler = TUIEventHandler.Create( event_handler )
   End Method
@@ -274,6 +259,4 @@ Type TUIList Extends TUIObject
 	End Method
   
 End Type
-
-Const ITEM_UNSPECIFIED:Object = "ITEM_UNSPECIFIED"
 
