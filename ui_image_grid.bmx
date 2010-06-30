@@ -102,7 +102,7 @@ Type TUIImageGrid Extends TUIObject
 				x = margin_x + (c * (img_size + margin_x))
 				y = margin_y + (r * (img_size + margin_y))
 				'selected item switch
-				If( r == selected_item.row And c == selected_item.col )
+				If( r = selected_item.row And c = selected_item.col )
 			    alpha = 1.0
 					border_color = selected_item_border_color
 					font = selected_item_font
@@ -119,7 +119,7 @@ Type TUIImageGrid Extends TUIObject
 				SetScale( scale, scale )
 				DrawImage( img, x, y )
 				SetScale( 1, 1 )
-				text_x = x + margin_x + img_size/2 - font.width( label )/2
+				text_x = x + img_size/2 - font.width( label )/2
 				font.draw_string( label, text_x, y + img_size + line_width )
 			Next
 		Next
