@@ -24,6 +24,10 @@ Function cmd_show_previous_menu( item:Object = Null )
 	MENU_REGISTER.get_top().on_show()
 End Function
 
+Function cmd_play_level( item:Object )
+	main_game = play_level( item )
+End Function
+
 Function cmd_create_new_profile( item:Object = Null )
 	'create the profile
 	profile = create_new_user_profile()
@@ -57,10 +61,6 @@ Function cmd_save_profile( item:Object = Null )
 	Else 'Not profile
 		save_autosave( Null )
 	End If
-End Function
-
-Function cmd_play_level( item:Object )
-	main_game = play_level( item )
 End Function
 
 Function cmd_pause_game( item:Object = Null )

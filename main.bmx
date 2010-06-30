@@ -161,8 +161,6 @@ init_graphics()
 load_all_assets()
 DebugLog "  All assets loaded at " + elapsed_str(load_start) + " sec. since program start-up"
 
-init_level_select_menu( MENU_REGISTER.level_select )
-
 'complex debug routines (modular)
 ?Debug
 debug_with_graphics()

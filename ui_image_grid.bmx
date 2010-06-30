@@ -27,7 +27,6 @@ Type TUIImageGrid Extends TUIObject
 	Field list_content_refresh_event_handler:TUIEventHandler
   Field item_clicked_event_handlers:TUIEventHandler[][]
 	
-	
 	Method New()
 	End Method
 	
@@ -35,8 +34,7 @@ Type TUIImageGrid Extends TUIObject
   dimensions%[], ..
   default_item_border_color:Object, selected_item_border_color:Object, ..
 	line_width%, ..
-	default_item_fg_font:Object, default_item_bg_font:Object, ..
-	selected_item_fg_font:Object, selected_item_bg_font:Object, ..
+	item_fg_font:Object, item_bg_font:Object, ..
 	margin_x% = 0, margin_y% = 0, ..
 	x% = 0, y% = 0, ..
 	w% = 0, h% = 0 )
@@ -45,8 +43,8 @@ Type TUIImageGrid Extends TUIObject
     Self.default_item_border_color = TColor.Create_by_RGB_object( default_item_border_color )
     Self.selected_item_border_color = TColor.Create_by_RGB_object( selected_item_border_color )
 		Self.line_width = line_width
-		Self.default_item_font = FONT_STYLE.Create( default_item_fg_font, default_item_bg_font, selected_item_border_color, default_item_border_color )
-    Self.selected_item_font = FONT_STYLE.Create( selected_item_fg_font, selected_item_bg_font, default_item_border_color, selected_item_border_color )
+		Self.default_item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, selected_item_border_color, default_item_border_color )
+    Self.selected_item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, default_item_border_color, selected_item_border_color )
 		Self.rect = Null
 		Self.margin_x = margin_x
 		Self.margin_y = margin_y

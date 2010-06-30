@@ -31,19 +31,7 @@ Type TUIList Extends TUIObject
 	Field list_content_refresh_event_handler:TUIEventHandler
   Field item_clicked_event_handlers:TUIEventHandler[]
   
-	
 	Method New()
-		Construct( ..
-			"NULL", 1, ..
-			[ 127, 127, 127 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], ..
-			2, ..
-			"arcade_14", "arcade_14_outline", ..
-			[255, 255, 255], [0, 0, 0], ..
-			"arcade_7", "arcade_7_outline", ..
-			[255, 255, 255], [0, 0, 0], ..
-			[0, 0, 0], [205, 205, 205], ..
-			10, 70 )
-		set_item( 0, "NULL", Null, Null )
 	End Method
 
   Method Construct( ..

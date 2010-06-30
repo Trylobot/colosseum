@@ -54,7 +54,7 @@ Function initialize_menus()
 	
 	Local pause_menu:TUIList = New TUIList
 	Local root_menu:TUIList = New TUIList
-		Local level_select_menu:TUIImageGrid '= New TUIImageGrid
+		Local level_select_menu:TUIImageGrid = New TUIImageGrid
 		Local profile_menu:TUIList = New TUIList
 		Local settings_menu:TUIList = New TUIList
 			Local video_settings_menu:TUIList = New TUIList
@@ -81,6 +81,45 @@ Function initialize_menus()
 	MENU_REGISTER.root = root_menu
 	MENU_REGISTER.push( root_menu )
 	
+	Local level_grid_dimensions%[] = New Int[level_grid.Length]
+	For Local d% = 0 Until level_grid_dimensions.Length
+		level_grid_dimensions[d] = level_grid[d].Length
+	Next
+	
+	level_select_menu.Construct( ..
+		level_grid_dimensions, ..
+		dark_gray, white, ..
+		menu_line_width, ..
+		menu_item_fg_font, menu_item_bg_font, ..
+		10, 10, ..
+		0, 0, ..
+		window_w, window_h )
+	
+	Local level_file_path$, level_object:LEVEL, level_preview_path$, level_preview_img:TImage
+	For Local r% = 0 Until level_grid.Length
+		For Local c% = 0 Until level_grid[r].Length
+			level_file_path = level_grid[r][c]
+			level_preview_path = level_preview_path_from_level_path( level_file_path )
+			If FileExists( level_preview_path ) And FileTime( level_file_path ) <= FileTime( level_preview_path )
+				'preview file exists and is valid; use it
+				level_preview_img = LoadImage( level_preview_path, FILTEREDIMAGE )
+			Else
+				'preview file needs to be generated or re-generated
+         level_object = load_level( level_file_path )
+         If level_object
+           DeleteFile( level_preview_path )
+           level_preview_img = generate_level_mini_preview( level_object )
+           SavePixmapPNG( level_preview_img.pixmaps[0], level_preview_path, 5 )
+         Else
+           DebugLog( " ERROR: level file not found ~q" + level_file_path + "~q" )
+           DebugStop
+         End If
+			End If
+			'////
+			level_select_menu.set_item( r, c, level_object.name, level_preview_img, cmd_play_level, level_object )
+		Next
+	Next
+
 	profile_menu.Construct( ..
 		"PROFILE", 3, ..
 		dark_gray, white, black, white, ..
