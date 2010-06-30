@@ -99,21 +99,20 @@ Function initialize_menus()
 	For Local r% = 0 Until level_grid.Length
 		For Local c% = 0 Until level_grid[r].Length
 			level_file_path = level_grid[r][c]
+      level_object = load_level( level_file_path )
+			If Not level_object
+				DebugLog( " ERROR: level file not found ~q" + level_file_path + "~q" )
+				DebugStop
+			End If
 			level_preview_path = level_preview_path_from_level_path( level_file_path )
 			If FileExists( level_preview_path ) And FileTime( level_file_path ) <= FileTime( level_preview_path )
 				'preview file exists and is valid; use it
 				level_preview_img = LoadImage( level_preview_path, FILTEREDIMAGE )
 			Else
 				'preview file needs to be generated or re-generated
-         level_object = load_level( level_file_path )
-         If level_object
-           DeleteFile( level_preview_path )
-           level_preview_img = generate_level_mini_preview( level_object )
-           SavePixmapPNG( level_preview_img.pixmaps[0], level_preview_path, 5 )
-         Else
-           DebugLog( " ERROR: level file not found ~q" + level_file_path + "~q" )
-           DebugStop
-         End If
+         DeleteFile( level_preview_path )
+         level_preview_img = generate_level_mini_preview( level_object )
+         SavePixmapPNG( level_preview_img.pixmaps[0], level_preview_path, 5 )
 			End If
 			'////
 			level_select_menu.set_item( r, c, level_object.name, level_preview_img, cmd_play_level, level_object )
