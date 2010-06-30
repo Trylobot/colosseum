@@ -48,20 +48,25 @@ Type TUIImageGrid Extends TUIObject
 		Self.rect = Null
 		Self.margin_x = margin_x
 		Self.margin_y = margin_y
-		Self.set_position( x, y )
-		Self.set_dimensions( w, h )
     'derived fields
 		Self.selected_item = CELL.Create( 0, 0 )
     Self.items = New Object[][dimensions.Length]
     Self.item_images = New TImage[][dimensions.Length]
     Self.item_labels = New String[][dimensions.Length]
 		Self.item_clicked_event_handlers = New TUIEventHandler[][dimensions.Length]
+		Self.max_rows = dimensions.Length
 		For Local d% = 0 Until dimensions.Length
 			Self.items[d] = New Object[dimensions[d]]
 			Self.item_images[d] = New TImage[dimensions[d]]
 			Self.item_labels[d] = New String[dimensions[d]]
 			Self.item_clicked_event_handlers[d] = New TUIEventHandler[dimensions[d]]
+			If dimensions[d] > Self.max_cols
+				Self.max_cols = dimensions[d]
+			End If
 		Next
+		'last bits
+		Self.set_position( x, y )
+		Self.set_dimensions( w, h )
 	End Method
 	
   Method set_position( x%, y% )
