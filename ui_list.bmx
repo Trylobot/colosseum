@@ -34,7 +34,7 @@ Type TUIList Extends TUIObject
 	
 	Method New()
 		Construct( ..
-			"NULL", [ "NULL" ], ..
+			"NULL", 1, ..
 			[ 127, 127, 127 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], ..
 			2, ..
 			"arcade_14", "arcade_14_outline", ..
@@ -43,6 +43,7 @@ Type TUIList Extends TUIObject
 			[255, 255, 255], [0, 0, 0], ..
 			[0, 0, 0], [205, 205, 205], ..
 			10, 70 )
+		set_item( 0, "NULL", Null, Null )
 	End Method
 
   Method Construct( ..

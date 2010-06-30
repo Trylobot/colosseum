@@ -68,24 +68,19 @@ Function test_ui_list()
   
 	Local list1:TUIList = New TUIList
 	list1.Construct( ..
-    "test", [ "item0", "item1", "item2", "item3", "item4" ], ..
+    "test", 5, ..
 		[ 127, 127, 127 ], [ 255, 255, 255 ], [ 0, 0, 0 ], [ 255, 255, 255 ], ..
 		2, ..
 		"arcade_21", "arcade_21_outline", ..
 		[255, 255, 255], [0, 0, 0], ..
     "arcade_14", "arcade_14_outline", ..
-		[255, 255, 255], [0, 0, 0], [0, 0, 0], [205, 205, 205] )
-	list1.set_position( 10, 10 )
-  list1.set_item_clicked_event_handler( 0, debug_ui_list_item_clicked )
-	list1.set_item( 0, "0" )
-  list1.set_item_clicked_event_handler( 1, debug_ui_list_item_clicked )
-	list1.set_item( 1, "1" )
-  list1.set_item_clicked_event_handler( 2, debug_ui_list_item_clicked )
-	list1.set_item( 2, "2" )
-  list1.set_item_clicked_event_handler( 3, debug_ui_list_item_clicked )
-	list1.set_item( 3, "3" )
-  list1.set_item_clicked_event_handler( 4, debug_ui_list_item_clicked )
-	list1.set_item( 4, "4" )
+		[255, 255, 255], [0, 0, 0], [0, 0, 0], [205, 205, 205], ..
+		10, 10 )
+	list1.set_item( 0, "item1", debug_ui_list_item_clicked, "1" )
+	list1.set_item( 1, "item2", debug_ui_list_item_clicked, "2" )
+	list1.set_item( 2, "item3", debug_ui_list_item_clicked, "3" )
+	list1.set_item( 3, "item4", debug_ui_list_item_clicked, "4" )
+	list1.set_item( 4, "item5", debug_ui_list_item_clicked, "5" )
   
   Repeat
     Cls
