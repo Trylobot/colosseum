@@ -46,6 +46,8 @@ Function initialize_menus()
 	Local menu_item_bg_font:BMP_FONT = get_bmp_font( "arcade_21_outline" )
 	Local menu_small_item_fg_font:BMP_FONT = get_bmp_font( "arcade_14" )
 	Local menu_small_item_bg_font:BMP_FONT = get_bmp_font( "arcade_14_outline" )
+	Local menu_super_small_item_fg_font:BMP_FONT = get_bmp_font( "arcade_7" )
+	Local menu_super_small_item_bg_font:BMP_FONT = get_bmp_font( "arcade_7_outline" )
 	Local menu_line_width% = 3
 	Local menu_small_line_width% = 2
 	Local menu_x% = 10, menu_y% = 70
@@ -90,8 +92,8 @@ Function initialize_menus()
 		level_grid_dimensions, ..
 		dark_gray, white, ..
 		menu_line_width, ..
-		menu_item_fg_font, menu_item_bg_font, ..
-		10, 10, ..
+		menu_super_small_item_fg_font, menu_super_small_item_bg_font, ..
+		25, 25, ..
 		0, 0, ..
 		window_w, window_h )
 	

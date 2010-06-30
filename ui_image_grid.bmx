@@ -84,6 +84,7 @@ Type TUIImageGrid Extends TUIObject
 	Method draw()
 		Local x% = rect.x
 		Local y% = rect.y
+		Local text_x%
 		Local img:TImage
 		Local scale#
 		Local alpha#
@@ -101,14 +102,14 @@ Type TUIImageGrid Extends TUIObject
 				x = margin_x + (c * (img_size + margin_x))
 				y = margin_y + (r * (img_size + margin_y))
 				'selected item switch
-				If( r <> selected_item.row Or c <> selected_item.col )
-					alpha = 0.5
-					border_color = default_item_border_color
-					font = default_item_font
-				Else 'r == selected_item.row And c == selected_item.col
+				If( r == selected_item.row And c == selected_item.col )
 			    alpha = 1.0
 					border_color = selected_item_border_color
 					font = selected_item_font
+				Else 'r <> selected_item.row Or c <> selected_item.col
+					alpha = 0.5
+					border_color = default_item_border_color
+					font = default_item_font
 				End If
 				'draw
 				SetAlpha( alpha )
@@ -118,17 +119,22 @@ Type TUIImageGrid Extends TUIObject
 				SetScale( scale, scale )
 				DrawImage( img, x, y )
 				SetScale( 1, 1 )
-				font.draw_string( label, x + font.width( label ) / 2, y + img_size )
+				text_x = x + margin_x + img_size/2 - font.width( label )/2
+				font.draw_string( label, text_x, y + img_size + line_width )
 			Next
 		Next
 	End Method
 	
 	Method on_mouse_move%( mx%, my% )
+		mx :- rect.x
+		my :- rect.y
 		get_item_index_by_screen_coord( mx, my, selected_item )
 		Return selected_item.is_valid()
 	End Method
 	
 	Method on_mouse_click%( mx%, my% )
+		mx :- rect.x
+		my :- rect.y
 		get_item_index_by_screen_coord( mx, my, selected_item )
 		invoke( selected_item )
 		Return selected_item.is_valid()
@@ -172,8 +178,11 @@ Type TUIImageGrid Extends TUIObject
 	Method get_item_index_by_screen_coord( mx%, my%, item:CELL )
 		item.row = my / (rect.h / max_rows)
 		item.col = mx / (rect.w / max_cols)
-		If item.row < 0 Or item.row >= items.Length Then item.row = CELL.COORDINATE_INVALID
-		If item.col < 0 Or item.col >= items[item.row].Length Then item.col = CELL.COORDINATE_INVALID
+		If item.row < 0 Or item.row >= items.Length ..
+		Or item.col < 0 Or item.col >= items[item.row].Length
+			item.row = CELL.COORDINATE_INVALID
+			item.col = CELL.COORDINATE_INVALID
+		End If
 	End Method
 	
 	Method invoke( item:CELL )
