@@ -55,6 +55,13 @@ Function cmd_save_profile( item:Object = Null )
 	End If
 End Function
 
+Function cmd_toggle_setting( item:Object )
+	Local setting:GLOBAL_SETTING_BOOLEAN = GLOBAL_SETTING_BOOLEAN( item )
+	If setting
+		setting.toggle()
+	End If
+End Function
+
 Function cmd_pause_game( item:Object = Null )
 	FLAG.paused = True
 	FLAG.in_menu = True
@@ -106,12 +113,10 @@ End Function
 
 Function cmd_quit_game( item:Object = Null )
 	cmd_quit_level( item )
-	
 	'/////////////////////
 	'TERMINATE APPLICATION
 	End
 	'/////////////////////
-	
 End Function
 
 '______________________________________________________________________________

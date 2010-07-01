@@ -15,7 +15,7 @@ Function init_graphics()
 	SetGraphicsDriver D3D9Max2DDriver()
 	'SetGraphicsDriver D3D7Max2DDriver()
 	'SetGraphicsDriver GLMax2DDriver()
-	If Not fullscreen
+	If Not SETTINGS_REGISTER.FULL_SCREEN.get()
 		Graphics( window_w, window_h,,, GRAPHICS_BACKBUFFER )
 		?Win32
 		set_window( WS_MINIMIZEBOX )

@@ -313,7 +313,7 @@ Function load_settings%()
 		'success
 		window_w = json.GetNumber( "window_w" )
 		window_h = json.GetNumber( "window_h" )
-		fullscreen = json.GetBoolean( "fullscreen" )
+		SETTINGS_REGISTER.FULL_SCREEN.set( json.GetBoolean( "fullscreen" ))
 		bit_depth = json.GetNumber( "bit_depth" )
 		refresh_rate = json.GetNumber( "refresh_rate" )
 		If AudioDriverExists( json.GetString( "audio_driver" ))
@@ -336,7 +336,7 @@ Function save_settings%()
 	Local this_json:TJSONObject = New TJSONObject
 	this_json.SetByName( "window_w", TJSONNumber.Create( window_w ))
 	this_json.SetByName( "window_h", TJSONNumber.Create( window_h ))
-	this_json.SetByName( "fullscreen", TJSONBoolean.Create( fullscreen ))
+	this_json.SetByName( "fullscreen", TJSONBoolean.Create( SETTINGS_REGISTER.FULL_SCREEN.get() ))
 	this_json.SetByName( "bit_depth", TJSONNumber.Create( bit_depth ))
 	this_json.SetByName( "refresh_rate", TJSONNumber.Create( refresh_rate ))
 	If audio_driver

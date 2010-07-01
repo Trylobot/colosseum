@@ -72,6 +72,10 @@ Function initialize_menus()
 		Local profile_menu:TUIList = New TUIList
 		Local settings_menu:TUIList = New TUIList
 			Local video_settings_menu:TUIList = New TUIList
+				Local screen_mode_menu:TUIList = New TUIList
+				Local screen_resolution_menu:TUIList = New TUIList
+				Local screen_refresh_rate_menu:TUIList = New TUIList
+				Local screen_bit_depth_menu:TUIList = New TUIList
 			Local audio_settings_menu:TUIList = New TUIList
 			Local performance_settings_menu:TUIList = New TUIList
 		Local advanced_menu:TUIList = New TUIList
@@ -187,10 +191,12 @@ Function initialize_menus()
 		white, black, black, light_gray, ..
 		menu_x, menu_y )
 	idx( True )
-	'video_settings_menu.set_item( idx(), "FULL SCREEN", cmd_show_menu, screen_mode_menu )
-	'video_settings_menu.set_item( idx(), "RESOLUTION", cmd_show_menu, screen_resolution_menu )
-	'video_settings_menu.set_item( idx(), "REFRESH RATE", cmd_show_menu, screen_refresh_rate_menu )
-	'video_settings_menu.set_item( idx(), "BIT DEPTH", cmd_show_menu, screen_bit_depth_menu )
+	video_settings_menu.set_item( idx(), "FULL SCREEN", cmd_toggle_setting, SETTINGS_REGISTER.FULL_SCREEN )
+	video_settings_menu.set_item( idx(), "RESOLUTION", cmd_show_menu, screen_resolution_menu )
+	video_settings_menu.set_item( idx(), "REFRESH RATE", cmd_show_menu, screen_refresh_rate_menu )
+	video_settings_menu.set_item( idx(), "BIT DEPTH", cmd_show_menu, screen_bit_depth_menu )
+	
+	
 		
 	audio_settings_menu.Construct( ..
 		"AUDIO SETTINGS", 3, ..
