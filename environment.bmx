@@ -561,16 +561,6 @@ End Type
 Function setup_physics_from_agent( unit:AGENT, physics:TPhysicsSimulator )
 	unit.setup_physics( physics )
 	unit.geom.SetTag( unit )
-	'source id hack
-	Local complex_unit:COMPLEX_AGENT = COMPLEX_AGENT(unit)
-	If complex_unit
-		For Local t:TURRET = EachIn complex_unit.turrets
-			For Local tb:TURRET_BARREL = EachIn t.turret_barrel_array
-				Local pl:PROJECTILE_LAUNCHER = tb.launcher
-				pl.source_id = complex_unit.geom.GetId()
-			Next
-		Next
-	End If
 End Function
 
 Function setup_physics_from_wall( wall:BOX, physics:TPhysicsSimulator )

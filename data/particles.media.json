@@ -248,8 +248,8 @@
 		key: "cash_positive",
 		object: {
 			particle_type: 2,
-			str: "$",
-			font: "consolas_bold_14",
+			str: "$____",
+			font: "small_15",
 			layer: 1,
 			frictional_coefficient: 0.05,
 			red: 84.9915,
@@ -266,8 +266,8 @@
 		key: "cash_negative",
 		object: {
 			particle_type: 2,
-			str: "$",
-			font: "consolas_italic_14",
+			str: "$____",
+			font: "small_15",
 			layer: 1,
 			frictional_coefficient: 0.05,
 			red: 255.0000,

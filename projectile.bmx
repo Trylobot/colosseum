@@ -157,6 +157,10 @@ Type PROJECTILE Extends PARTICLE
 		Local volume# = 0.3333
 		If other <> Null And other_agent_is_player Then volume = 1.00
 		play_sound( impact_sound, volume, 0.25 )
+		'remove
+		If managed()
+			unmanage()
+		End If
 	End Method
 	
 	Method add_emitter:PARTICLE_EMITTER( other_em:PARTICLE_EMITTER, category% )
