@@ -14,8 +14,8 @@ Type PHYSICAL_OBJECT Extends POINT
 	Field physics:TPhysicsSimulator
 	Field body:TBody
 	Field geom:TGeom
+	Field hitbox:BOX
 	
-	Field hitbox:BOX 'collision rectangle
 	Field mass# 'number representing the mass units of this object
 	'this object's center of mass is assumed to be this object's position
 	Field force_list:TList 'all the forces acting on this object
@@ -64,22 +64,6 @@ Type PHYSICAL_OBJECT Extends POINT
 		physics.RemoveGeom( geom )
 	End Method
 
-	Rem
-	Method collide:Object[]( collidemask%, writemask% )
-		If hitbox
-			SetRotation( ang )
-			Return CollideRect( ..
-				pos_x - hitbox.x*Cos(ang), ..
-				pos_y - hitbox.y*Sin(ang), ..
-				hitbox.w, hitbox.h, ..
-				collidemask, writemask, ..
-				Self )
-		Else
-			Return Null
-		End If
-	End Method
-	EndRem
-	
 	Method move_to( argument:Object, dummy1% = False, dummy2% = False )
 		Super.move_to( argument, dummy1, dummy2 )
 		If body
@@ -164,6 +148,20 @@ Type PHYSICAL_OBJECT Extends POINT
 		'f.parent = Self
 		f.combine_ang_with_parent_ang = combine_ang_with_parent_ang
 		Return f
+	End Method
+	
+	Method collide:Object[]( collidemask%, writemask% )
+		If hitbox
+			SetRotation( ang )
+			Return CollideRect( ..
+				pos_x - hitbox.x*Cos(ang), ..
+				pos_y - hitbox.y*Sin(ang), ..
+				hitbox.w, hitbox.h, ..
+				collidemask, writemask, ..
+				Self )
+		Else
+			Return Null
+		End If
 	End Method
 	
 	Rem

@@ -24,67 +24,71 @@ End Function
 Const PROJECTILE_MEMBER_EMITTER_CONSTANT% = 0
 Const PROJECTILE_MEMBER_EMITTER_PAYLOAD% = 1
 
-Type PROJECTILE Extends PHYSICAL_OBJECT
-	Field active% 'whether this projectile is "live"/"armed"; set to false after collision
+
+Function Create_PROJECTILE:PROJECTILE( ..
+img:IMAGE_ATLAS_REFERENCE = Null, ..
+hitbox:BOX = Null, ..
+snd_impact:TSound = Null, ..
+damage# = 0.0, ..
+explosive_force_magnitude# = 0.0, ..
+radius# = 0.0, ..
+max_vel# = INFINITY, ..
+mass# = 1.0, ..
+frictional_coefficient# = 0.0, ..
+ignore_other_projectiles% = False, ..
+source_id% = NULL_ID, ..
+pos_x# = 0.0, pos_y# = 0.0, ..
+vel_x# = 0.0, vel_y# = 0.0, ..
+ang# = 0.0, ..
+ang_vel# = 0.0 )
+	Local p:PROJECTILE = New PROJECTILE
+	
+	'static fields
+	p.img = img
+	p.hitbox = hitbox
+	p.snd_impact = snd_impact
+	p.damage = damage
+	p.radius = radius
+	p.max_vel = max_vel
+	p.mass = mass
+	p.frictional_coefficient = frictional_coefficient
+	p.ignore_other_projectiles = ignore_other_projectiles
+	p.source_id = source_id
+	
+	'dynamic fields
+	p.pos_x = pos_x; p.pos_y = pos_y
+	p.vel_x = vel_x; p.vel_y = vel_y
+	p.ang = ang
+	p.ang_vel = ang_vel
+	
+	Return p
+End Function
+
+Type PROJECTILE Extends PARTICLE
+	
 	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn
+	Field hitbox:BOX 'collision rectangle
+	Field active% 'whether this projectile is "live"/"armed"; set to false after collision
 	Field snd_impact:TSound 'sound to be played on impact
+	Field mass# 'mass (not sure if used anymore)
 	Field damage# 'maximum damage dealt by projectile
 	Field explosive_force_magnitude#
 	Field radius# 'radius of damage spread
 	Field max_vel# 'absolute maximum speed (enforced)
 	Field ignore_other_projectiles% 'DEPRECATED 'whether to ignore collisions with other projectiles {true|false}
+
 	Field source_id% '(private) reference to entity which emitted this projectile; allows for collisions with it to be ignored
 	Field emitter_list_constant:TList
 	Field emitter_list_payload:TList
-	Field source_pool:PROJECTILE_POOL
 	
 	Method New()
 		emitter_list_constant = CreateList()
 		emitter_list_payload = CreateList()
 	End Method
 	
-	Function Create:Object( ..
-	img:IMAGE_ATLAS_REFERENCE = Null, ..
-	hitbox:BOX = Null, ..
-	snd_impact:TSound = Null, ..
-	damage# = 0.0, ..
-	explosive_force_magnitude# = 0.0, ..
-	radius# = 0.0, ..
-	max_vel# = INFINITY, ..
-	mass# = 1.0, ..
-	frictional_coefficient# = 0.0, ..
-	ignore_other_projectiles% = False, ..
-	source_id% = NULL_ID, ..
-	pos_x# = 0.0, pos_y# = 0.0, ..
-	vel_x# = 0.0, vel_y# = 0.0, ..
-	ang# = 0.0, ..
-	ang_vel# = 0.0 )
-		Local p:PROJECTILE = New PROJECTILE
-		
-		'static fields
-		p.img = img
-		p.hitbox = hitbox
-		p.snd_impact = snd_impact
-		p.damage = damage
-		p.radius = radius
-		p.max_vel = max_vel
-		p.mass = mass
-		p.frictional_coefficient = frictional_coefficient
-		p.ignore_other_projectiles = ignore_other_projectiles
-		p.source_id = source_id
-		
-		'dynamic fields
-		p.pos_x = pos_x; p.pos_y = pos_y
-		p.vel_x = vel_x; p.vel_y = vel_y
-		p.ang = ang
-		p.ang_vel = ang_vel
-		
-		Return p
-	End Function
-	
 	Method clone:PROJECTILE( new_source_id% = NULL_ID )
-		Local p:PROJECTILE = PROJECTILE( PROJECTILE.Create( ..
-			img, hitbox, snd_impact, damage, explosive_force_magnitude, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel ))
+		Local p:PROJECTILE = Create_PROJECTILE( ..
+			img, hitbox, snd_impact, damage, explosive_force_magnitude, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel )
 		'emitter lists
 		For Local em:PARTICLE_EMITTER = EachIn emitter_list_constant
 			p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_CONSTANT )
@@ -123,38 +127,16 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		DrawImageRef( img, pos_x, pos_y )
 	End Method
 	
-	'Collision is imminent
-	Method SendMessage:Object( message:Object, context:Object )
-		'early breakout for duplicate collisions
-		If Not active Then Return Null
-		'This method will always return Null, because collisions are always terminal.
-		'However, sometimes my side needs to act on a true collision, and then kill the Geom.
-		Local args:TCollisionEventArgs = TCollisionEventArgs( context )
-		If Not args.isExiting
-			'When the geometry of the projectile is NO LONGER colliding AFTER a collision, THEN process it
-			Return Null
-		End If
-		Local me:TGeom = TGeom( message )
-		Local other:TGeom
-		If      me = args.geom1 Then other = args.geom2 ..
-		Else If me = args.geom2 Then other = args.geom1
-		
-		If other.GetId() = source_id
-			'no collision, this is the parent
-			Return Null
+	Method collide:Object[]( collidemask%, writemask% )
+		If hitbox
+			SetRotation( ang )
+			Return CollideRect( ..
+				pos_x - hitbox.x*Cos(ang), ..
+				pos_y - hitbox.y*Sin(ang), ..
+				hitbox.w, hitbox.h, ..
+				collidemask, writemask, ..
+				Self )
 		Else
-			active = False
-			'COLLISION! Between PROJECTILE and NON-PARENT, NON-PROJECTILE ENTITY
-			Local ag:AGENT = AGENT(other.GetTag())
-			If ag 'Between PROJECTILE and AGENT
-				collision_projectile_agent( Self, ag )
-				Return Null 'done
-			End If
-			Local wall:BOX = BOX(other.GetTag())
-			If wall
-				collision_projectile_wall( Self, wall )
-				Return Null 'done
-			End If
 			Return Null
 		End If
 	End Method
@@ -193,16 +175,12 @@ Type PROJECTILE Extends PHYSICAL_OBJECT
 		End Select
 	End Method
 	
-	Method free()
-		source_pool.free( Self )
-	End Method
-	
 End Type
 
 Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
 	Local p:PROJECTILE
 	'no required fields
-	p = PROJECTILE( PROJECTILE.Create() )
+	p = Create_PROJECTILE()
 	'read and assign optional fields as available
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED                 Then p.img = get_image( json.GetString( "image_key" ))
 	If p.img
@@ -241,58 +219,4 @@ Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
 	Return p
 End Function
 
-
-
-Type PROJECTILE_POOL
-	
-	Field template:PROJECTILE
-	Field stack:TList
-	Field count%
-	
-	Method New() 
-		stack = CreateList() 
-	End Method
-	
-	Method init( size%, template:PROJECTILE ) 
-		Self.template = template
-		Local p:PROJECTILE
-		For Local i% = 0 Until size
-			p = template.clone()
-			p.body = TBodyFactory.CloneBody( Null, template.body )
-			p.geom = TGeomFactory.CloneGeom( Null, p.body, template.geom )
-			'p.setup_physics( p.physics )
-			'p.body.SetLinearDragCoefficient( 0.0 )
-			'p.body.SetRotationalDragCoefficient( 0.0 )
-			'p.body.SetMass( p.body.GetMass() / 10.0 )
-			stack.AddLast( p )
-		Next
-		count = size
-	End Method
-	
-	Method fetch:PROJECTILE( new_source_id%, physics:TPhysicsSimulator )
-		Local p:PROJECTILE
-		If count > 0 Then
-			count :- 1
-			p = PROJECTILE(stack.RemoveLast())
-		Else
-			p = template.clone()
-			p.body = TBodyFactory.CloneBody( Null, template.body )
-			p.geom = TGeomFactory.CloneGeom( Null, p.body, template.geom )
-		End If
-		p.active = True
-		p.source_id = new_source_id
-		p.insert_into_physics( physics )
-		Return p
-	End Method
-	
-	Method free( p:PROJECTILE ) 
-		count :+ 1
-		p.active = False
-		p.unmanage()
-		p.destroy_physics()
-		p.body.ResetDynamics()
-		stack.AddLast( p ) 
-	End Method
-	
-End Type
 

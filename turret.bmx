@@ -182,9 +182,9 @@ Type TURRET Extends POINT
 		If cur_heat < 0 Then cur_heat = 0
 	End Method
 	
-	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null, physics:TPhysicsSimulator )
+	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null )
 		For Local tb:TURRET_BARREL = EachIn turret_barrel_array
-			tb.emit( projectile_manager, background_particle_manager, foreground_particle_manager, physics:TPhysicsSimulator )
+			tb.emit( projectile_manager, background_particle_manager, foreground_particle_manager )
 		Next
 		For Local em:PARTICLE_EMITTER = EachIn emitter_list
 			em.emit( background_particle_manager, foreground_particle_manager )

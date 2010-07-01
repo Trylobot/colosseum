@@ -172,11 +172,13 @@ DebugLog "  MAIN GAME LOOP started at " + elapsed_str(load_start) + " sec. since
 '// MAIN GAME LOOP
 Repeat
 	Cls()
-	select_game() 'points the global reference to the current game environment
+	
+	'points the global reference to the current game environment
+	select_game()
 	
 	?Not Debug '////////////////////////////////
   
-	'menu input and misc
+	'user input
 	get_all_input()
 	''multiplayer
 	'update_network()
@@ -184,9 +186,9 @@ Repeat
 	If frame_time_elapsed()
 		calculate_timescale()
 		reset_frame_timer()
-		''collision detection and resolution
-		'collide_all_objects()
-		'resolve forces and emit particles, and capture player vehicle input
+		'collision detection and resolution
+		collide_all_objects()
+		'update object positions, emit particles
 		update_all_objects()
 	End If
 	'new physics engine (temporary spot)
@@ -206,13 +208,12 @@ Repeat
 	get_all_input(); profiler(0)
 	''multiplayer
 	'update_network(); profiler(1)
-	
 	'physics timescale and update throttling
 	If frame_time_elapsed()
 		calculate_timescale()
 		reset_frame_timer()
-		''collision detection and resolution
-		'collide_all_objects(); profiler(2)
+		'collision detection and resolution
+		collide_all_objects(); profiler(2)
 		'update object positions, emit particles
 		update_all_objects(); profiler(3)
 	End If
@@ -220,7 +221,6 @@ Repeat
 	If game And game.physics
 		game.physics.Update( physics_timestep_in_seconds ); profiler(6)
 	End If
-
 	'music and sound
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress ); profiler(4)
 	'draw everything

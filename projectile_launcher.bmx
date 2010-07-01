@@ -17,30 +17,22 @@ Function get_projectile_launcher:PROJECTILE_LAUNCHER( Key$, Copy% = True )
 	Return lchr
 End Function
 
-Function Create_PROJECTILE_LAUNCHER:PROJECTILE_LAUNCHER( emitter_object:PROJECTILE, pool_size%, source_id% = NULL_ID )
+Function Create_PROJECTILE_LAUNCHER:PROJECTILE_LAUNCHER( emitter_object:PROJECTILE, source_id% = NULL_ID )
 	'the remaining initialization is performed by initialize_generic_EMITTER()
 	Local lchr:PROJECTILE_LAUNCHER = New PROJECTILE_LAUNCHER
 	lchr.emitter_object = emitter_object
-	lchr.pool_size = pool_size
 	lchr.source_id = source_id
 	Return lchr
 End Function
 
-Const vel_mod# = 60.0
-
 Type PROJECTILE_LAUNCHER Extends EMITTER
 	Field emitter_object:PROJECTILE 'template for objects to be emitted
-	Field pool_size%
-	Field pool:PROJECTILE_POOL
 	Field source_id% 'to prevent collisions between emitted projectiles and the emitter parent
 	
-	Method emit:PROJECTILE( list:TList, physics:TPhysicsSimulator )
+	Method emit:PROJECTILE( list:TList )
 		If is_enabled() And ready()
 			'create a new object (particle/projectile) and set it up
-			'Local p:PROJECTILE = emitter_object.clone( source_id )
-			Local p:PROJECTILE = pool.fetch( source_id, physics )
-			p.source_pool = pool
-			p.geom.AddCollisionEventListener( p )
+			Local p:PROJECTILE = emitter_object.clone( source_id )
 			'managers
 			If list
 				p.manage( list )
@@ -52,16 +44,14 @@ Type PROJECTILE_LAUNCHER Extends EMITTER
 			Local dist_ang_actual# = dist_ang.get()
 			p.pos_x = parent.pos_x + offset * Cos( offset_ang + parent.ang ) + dist_actual * Cos( dist_ang_actual + parent.ang )
 			p.pos_y = parent.pos_y + offset * Sin( offset_ang + parent.ang ) + dist_actual * Sin( dist_ang_actual + parent.ang )
-			p.body.SetPosition( Vector2.Create( p.pos_x, p.pos_y ))
 			'orientation
 			If inherit_ang_from_dist_ang
 				p.ang = dist_ang_actual + parent.ang
 			Else
 				p.ang = ang.get() + parent.ang
 			End If
-			p.body.SetRotation( MathHelper.ToRadians( p.ang ))
 			'velocity
-			Local vel_actual# = vel.get() * vel_mod
+			Local vel_actual# = vel.get()
 			Local vel_ang_actual#
 			If inherit_vel_ang_from_ang
 				vel_ang_actual = p.ang
@@ -70,13 +60,14 @@ Type PROJECTILE_LAUNCHER Extends EMITTER
 			End If
 			p.vel_x = vel_actual * Cos( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_x )
 			p.vel_y = vel_actual * Sin( vel_ang_actual + ( combine_vel_ang_with_parent_ang*parent.ang )) + ( combine_vel_with_parent_vel*parent.vel_y )
-			p.body.SetLinearVelocity( Vector2.Create( p.vel_x, p.vel_y ))
 			'angular velocity
 			p.ang_vel = ang_vel.get()
-			p.body.SetAngularVelocity( MathHelper.ToRadians( p.ang_vel ))
-			'p.body.Set
 			'forces
-			p.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, acc.get())), True )
+			'p.add_force( FORCE( FORCE.Create( PHYSICS_FORCE, 0, acc.get())), True )
+			Local acc_actual# = acc.get()
+			Local acc_ang_actual# = vel_ang_actual
+			p.acc_x = acc_actual * Cos( acc_ang_actual )
+			p.acc_y = acc_actual * Sin( acc_ang_actual )
 			'emitter state maintenance
 			'interval
 			last_emit_ts = now()
@@ -90,11 +81,7 @@ Type PROJECTILE_LAUNCHER Extends EMITTER
 End Type
 
 Function Copy_PROJECTILE_LAUNCHER:PROJECTILE_LAUNCHER( other_lchr:PROJECTILE_LAUNCHER, managed_list:TList = Null, new_parent:POINT = Null, source_id% = NULL_ID )
-	Local lchr:PROJECTILE_LAUNCHER = Create_PROJECTILE_LAUNCHER( other_lchr.emitter_object, other_lchr.pool_size, other_lchr.source_id )
-	lchr.emitter_object.setup_physics( Null )
-	lchr.emitter_object.body.SetLinearDragCoefficient( 0.0 )
-	lchr.emitter_object.body.SetRotationalDragCoefficient( 0.0 )
-	lchr.emitter_object.body.SetMass( lchr.emitter_object.body.GetMass() / 10.0 )
+	Local lchr:PROJECTILE_LAUNCHER = Create_PROJECTILE_LAUNCHER( other_lchr.emitter_object, other_lchr.source_id )
 	lchr = PROJECTILE_LAUNCHER( copy_generic_EMITTER( lchr, other_lchr, managed_list, new_parent ))
 	Return lchr
 End Function
@@ -103,15 +90,13 @@ Function Create_PROJECTILE_LAUNCHER_from_json:PROJECTILE_LAUNCHER( json:TJSON )
 	Local e:PROJECTILE_LAUNCHER
 	'required fields
 	Local emitter_object_key$
-	Local pool_size%
 	Local emitter_object:PROJECTILE
 	'read required fields
 	If json.TypeOf( "emitter_object_key" ) <> JSON_UNDEFINED Then emitter_object_key = json.GetString( "emitter_object_key" ) Else Return Null
-	If json.TypeOf( "pool_size" )          <> JSON_UNDEFINED Then pool_size          = json.GetNumber( "pool_size" )          Else Return Null
 	emitter_object = get_projectile( emitter_object_key,, False )
 	If Not emitter_object Then Return Null
 	'create object with only required fields
-	e = Create_PROJECTILE_LAUNCHER( emitter_object, pool_size )
+	e = Create_PROJECTILE_LAUNCHER( emitter_object )
 	'and don't forget the default initialization from the base class
 	initialize_generic_EMITTER( e )
 	'initialize generic emitter fields

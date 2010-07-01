@@ -85,7 +85,7 @@ Function update_all_objects()
 		For Local list:TList = EachIn game.complex_agent_lists
 			For Local ag_cmp:COMPLEX_AGENT = EachIn list
 				ag_cmp.update()
-				ag_cmp.emit( game.projectile_list, game.particle_list_background, game.particle_list_foreground, game.physics )
+				ag_cmp.emit( game.projectile_list, game.particle_list_background, game.particle_list_foreground )
 				'self destruction flag (triggered by mini-bomb's control brain)
 				If ag_cmp.desire_self_destruction
 					agent_self_destruct( ag_cmp )

@@ -4,7 +4,6 @@
 		key: "tank_cannon",
 		object: {
 			emitter_object_key: "tank_cannon",
-      pool_size: 5,
 			combine_vel_with_parent_vel: true,
 			combine_vel_ang_with_parent_ang: false,
 			inherit_ang_from_dist_ang: false,
@@ -17,7 +16,6 @@
 		key: "machine_gun",
 		object: {
 			emitter_object_key: "machine_gun",
-      pool_size: 30,
 			combine_vel_with_parent_vel: true,
 			combine_vel_ang_with_parent_ang: false,
 			inherit_ang_from_dist_ang: false,
@@ -30,7 +28,6 @@
 		key: "energy_pellet_launcher",
 		object: {
 			emitter_object_key: "energy_pellet",
-      pool_size: 40,
 			combine_vel_with_parent_vel: false,
 			combine_vel_ang_with_parent_ang: false,
 			inherit_ang_from_dist_ang: false,
@@ -43,7 +40,6 @@
 		key: "laser_red",
 		object: {
 			emitter_object_key: "laser_red",
-      pool_size: 5,
 			combine_vel_with_parent_vel: false,
 			combine_vel_ang_with_parent_ang: false,
 			inherit_ang_from_dist_ang: false,
@@ -56,7 +52,6 @@
 		key: "laser_big",
 		object: {
 			emitter_object_key: "laser_big",
-      pool_size: 5,
 			combine_vel_with_parent_vel: false,
 			combine_vel_ang_with_parent_ang: false,
 			inherit_ang_from_dist_ang: false,
@@ -69,7 +64,6 @@
 		key: "rocket",
 		object: {
 			emitter_object_key: "rocket",
-      pool_size: 5,
 			combine_vel_with_parent_vel: true,
 			combine_vel_ang_with_parent_ang: false,
 			inherit_ang_from_dist_ang: false,

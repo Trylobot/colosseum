@@ -187,11 +187,6 @@ Type COMPLEX_AGENT Extends AGENT
 		For Local sys_index% = 0 To other.turret_systems.Length-1
 			For Local tur_index% = 0 To other.turret_systems[sys_index].Length-1
 				Local t:TURRET = c.add_turret( other.turrets[other.turret_systems[sys_index][tur_index]], sys_index )
-				For Local tb:TURRET_BARREL = EachIn t.turret_barrel_array
-					Local lchr:PROJECTILE_LAUNCHER = tb.launcher
-					lchr.pool = New PROJECTILE_POOL
-					lchr.pool.init( lchr.pool_size, lchr.emitter_object )
-				Next
 			Next
 		Next
 
@@ -285,10 +280,11 @@ Type COMPLEX_AGENT Extends AGENT
 		'spawn mode
 		If now() - spawn_begin_ts >= spawn_time Then spawning = False
 	End Method
+	
 	'___________________________________________
-	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null, physics:TPhysicsSimulator )
+	Method emit( projectile_manager:TList = Null, background_particle_manager:TList = Null, foreground_particle_manager:TList = Null )
 		For Local t:TURRET = EachIn turrets
-			t.emit( projectile_manager, background_particle_manager, foreground_particle_manager, physics:TPhysicsSimulator )
+			t.emit( projectile_manager, background_particle_manager, foreground_particle_manager )
 		Next
 		For Local list:TList = EachIn all_emitter_lists
 			For Local em:PARTICLE_EMITTER = EachIn list
@@ -406,6 +402,7 @@ Type COMPLEX_AGENT Extends AGENT
 		If snap_turrets Then snap_all_turrets()
 		If perform_update Then update()
 	End Method
+	
 	'___________________________________________
 	Method spawn_at( p:POINT, time% )
 		spawning = True
@@ -427,12 +424,14 @@ Type COMPLEX_AGENT Extends AGENT
 			End If
 		End If
 	End Method
+	
 	'___________________________________________
 	Method turn( pct# )
 		If Not spawning And Not is_deployed
 			turning_force.control_pct = (turning_force.control_pct + pct) / 2.0
 		End If
 	End Method
+	
 	'___________________________________________
 	Method fire( index%, is_player% = False )
 		If Not spawning
@@ -441,6 +440,7 @@ Type COMPLEX_AGENT Extends AGENT
 			End If
 		End If
 	End Method
+	
 	'___________________________________________
 	Method fire_all( priority%, is_player% = False )
 		If Not spawning
@@ -449,24 +449,28 @@ Type COMPLEX_AGENT Extends AGENT
 			Next
 		End If
 	End Method
+	
 	'___________________________________________
 	Method fire_blanks_all()
 		For Local t:TURRET = EachIn turrets
 			t.fire_blanks_all()
 		Next
 	End Method
+	
 	'___________________________________________
 	Method overheated%( index% )
 		If index < turrets.Length
 			Return turrets[index].overheated()
 		End If
 	End Method
+	
 	'___________________________________________
 	Method mostly_cooled%( index% )
 		If index < turrets.Length
 			Return turrets[index].cur_heat <= (0.25 * turrets[index].max_heat)
 		End If
 	End Method
+	
 	'___________________________________________
 	Method turn_turret_system( index%, control_pct# )
 		If Not spawning
@@ -477,12 +481,14 @@ Type COMPLEX_AGENT Extends AGENT
 			End If
 		End If
 	End Method
+	
 	'___________________________________________
 	Method snap_all_turrets()
 		For Local t:TURRET = EachIn turrets
 			t.move_to( Self )
 		Next
 	End Method
+	
 	'___________________________________________
 	Method get_turret_system_ang#( index% )
 		If index < turret_systems.Length
@@ -490,6 +496,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		Return Null
 	End Method
+	
 	'___________________________________________
 	Method get_turret_system_pos:POINT( index% )
 		If index < turret_systems.Length
@@ -497,6 +504,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		Return Null
 	End Method
+	
 	'___________________________________________
 	Method get_turret_system_max_ang_vel#( index% )
 		If index < turret_systems.Length
@@ -514,6 +522,7 @@ Type COMPLEX_AGENT Extends AGENT
 			em.disable()
 		Next
 	End Method
+	
 	'___________________________________________
 	Method enable_only_rear_emitters()
 		For Local em:EMITTER = EachIn drive_forward_emitters
@@ -523,6 +532,7 @@ Type COMPLEX_AGENT Extends AGENT
 			em.enable( EMITTER.MODE_ENABLED_FOREVER )
 		Next
 	End Method
+	
 	'___________________________________________
 	Method disable_all_emitters()
 		For Local em:EMITTER = EachIn drive_forward_emitters
@@ -532,6 +542,7 @@ Type COMPLEX_AGENT Extends AGENT
 			em.disable()
 		Next
 	End Method
+	
 	'___________________________________________
 	Method deploy()
 		drive( 0 )
@@ -541,6 +552,7 @@ Type COMPLEX_AGENT Extends AGENT
 			w.queue_transformation( 1 )
 		Next
 	End Method
+	
 	'___________________________________________
 	Method undeploy()
 		is_deployed = False
@@ -621,6 +633,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End If
 		Return a
 	End Method
+	
 	'___________________________________________
 	Method add_turret:TURRET( other_t:TURRET, anchor_index% )
 		If other_t And anchor_index >= 0 And anchor_index < turret_anchors.Length
@@ -650,11 +663,13 @@ Type COMPLEX_AGENT Extends AGENT
 			Return Null
 		End If
 	End Method
+	
 	'___________________________________________
 	Method remove_all_turrets()
 		turrets = Null
 		turret_systems = New Int[][turret_anchors.Length]
 	End Method
+	
 	'___________________________________________
 	Method add_emitter:PARTICLE_EMITTER( other_em:PARTICLE_EMITTER, evt% )
 		Local em:PARTICLE_EMITTER = Copy_PARTICLE_EMITTER( other_em )
@@ -670,6 +685,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End Select
 		Return em
 	End Method
+	
 	'___________________________________________
 	Method add_widget:WIDGET( other_w:WIDGET, widget_type% )
 		Local w:WIDGET = other_w.clone()
@@ -684,6 +700,7 @@ Type COMPLEX_AGENT Extends AGENT
 		End Select
 		Return w
 	End Method
+	
 	'___________________________________________
 	Method add_sticky:PARTICLE( other_p:PARTICLE )
 		Local p:PARTICLE = other_p.clone()
@@ -691,6 +708,7 @@ Type COMPLEX_AGENT Extends AGENT
 		p.parent = Self
 		Return p
 	End Method
+	
 	'___________________________________________
 	Method add_factory_unit( archetype$, count% = 1 )
 		If count <= 0 Then Return
@@ -707,6 +725,7 @@ Type COMPLEX_AGENT Extends AGENT
 			Next
 		End If
 	End Method
+	
 	'___________________________________________
 	Method add_vehicle_trail_package( particle_key$, ..
 	offset_x#, separation_y#, ..
@@ -721,6 +740,7 @@ Type COMPLEX_AGENT Extends AGENT
 		Self.trail_emit_distance_threshold = trail_emit_distance_threshold
 		Self.trail_emit_angular_threshold = trail_emit_angular_threshold
 	End Method
+	
 	'___________________________________________
 	Method add_dust_cloud_package( offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0, dist_min# = 0.0, dist_max# = 0.0, dist_ang_min# = 0.0, dist_ang_max# = 0.0, vel_min# = 0.0, vel_max# = 0.0 )
 		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
@@ -728,6 +748,7 @@ Type COMPLEX_AGENT Extends AGENT
 		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
 		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
 	End Method
+	
 	'___________________________________________
 	Method add_death_package()
 		add_emitter( get_particle_emitter( "EXPLOSION", False ), EVENT.DEATH ).attach_at( 0, 0 )
