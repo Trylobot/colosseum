@@ -31,6 +31,18 @@ Type MENU_REGISTER
 End Type
 
 '______________________________________________________________________________
+Global g_idx% = 0
+
+Function idx%( reset% = False )
+	If reset
+		g_idx = -1
+	Else
+		g_idx :+ 1
+	End If
+	Return g_idx
+End Function
+
+'______________________________________________________________________________
 Function initialize_menus()
 	Local white:TColor           = TColor.Create_by_RGB( 255, 255, 255 )
 	Local light_gray:TColor      = TColor.Create_by_RGB( 205, 205, 205 )
@@ -75,11 +87,12 @@ Function initialize_menus()
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
 		menu_x, menu_y )
-	root_menu.set_item( 0, "START", cmd_show_menu, level_select_menu )
-	root_menu.set_item( 1, "PROFILE", cmd_show_menu, profile_menu )
-	root_menu.set_item( 2, "SETTINGS", cmd_show_menu, settings_menu )
-	root_menu.set_item( 3, "ADVANCED", cmd_show_menu, advanced_menu )
-	root_menu.set_item( 4, "QUIT GAME", cmd_quit_game )
+	idx( True )
+	root_menu.set_item( idx(), "START", cmd_show_menu, level_select_menu )
+	root_menu.set_item( idx(), "PROFILE", cmd_show_menu, profile_menu )
+	root_menu.set_item( idx(), "SETTINGS", cmd_show_menu, settings_menu )
+	root_menu.set_item( idx(), "ADVANCED", cmd_show_menu, advanced_menu )
+	root_menu.set_item( idx(), "QUIT GAME", cmd_quit_game )
 	MENU_REGISTER.root = root_menu
 	MENU_REGISTER.push( root_menu )
 	
@@ -130,9 +143,10 @@ Function initialize_menus()
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
 		menu_x, menu_y )
-	profile_menu.set_item( 0, "CREATE NEW", cmd_create_new_profile )
-	profile_menu.set_item( 1, "SAVE PROFILE", cmd_save_profile )
-	profile_menu.set_item( 2, "SWITCH PROFILES", cmd_load_profile )
+	idx( True )
+	profile_menu.set_item( idx(), "CREATE NEW", cmd_create_new_profile )
+	profile_menu.set_item( idx(), "SAVE PROFILE", cmd_save_profile )
+	profile_menu.set_item( idx(), "SWITCH PROFILES", cmd_load_profile )
 		
 	settings_menu.Construct( ..
 		"SETTINGS", 3, ..
@@ -143,7 +157,10 @@ Function initialize_menus()
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
 		menu_x, menu_y )
-		'"VIDEO SETTINGS", "AUDIO SETTINGS", "PERFORMANCE SETTINGS"
+	idx( True )
+	settings_menu.set_item( idx(), "GAME PERFORMANCE", cmd_show_menu, video_settings_menu )
+	settings_menu.set_item( idx(), "VIDEO SETTINGS", cmd_show_menu, video_settings_menu )
+	settings_menu.set_item( idx(), "AUDIO SETTINGS", cmd_show_menu, video_settings_menu )
 		
 	advanced_menu.Construct( ..
 		"ADVANCED", 4, ..
@@ -154,10 +171,11 @@ Function initialize_menus()
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
 		menu_x, menu_y )
-	advanced_menu.set_item( 0, "LEVEL EDITOR", cmd_enter_level_editor )
-	advanced_menu.set_item( 1, "UNIT EDITOR", cmd_enter_unit_editor )
-	advanced_menu.set_item( 2, "GIBS EDITOR", cmd_enter_gibs_editor )
-	advanced_menu.set_item( 3, "RELOAD ASSETS", cmd_reload_assets )
+	idx( True )
+	advanced_menu.set_item( idx(), "LEVEL EDITOR", cmd_enter_level_editor )
+	advanced_menu.set_item( idx(), "UNIT EDITOR", cmd_enter_unit_editor )
+	advanced_menu.set_item( idx(), "GIBS EDITOR", cmd_enter_gibs_editor )
+	advanced_menu.set_item( idx(), "RELOAD ASSETS", cmd_reload_assets )
 		
 	video_settings_menu.Construct( ..
 		"VIDEO SETTINGS", 4, ..
@@ -168,11 +186,11 @@ Function initialize_menus()
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
 		menu_x, menu_y )
-	'video_settings_menu.set_item( 0, cmd_modify_setting )
-	'video_settings_menu.set_item( 1, cmd_modify_setting )
-	'video_settings_menu.set_item( 2, cmd_modify_setting )
-	'video_settings_menu.set_item( 3, cmd_modify_setting )
-	'"FULL SCREEN", "RESOLUTION", "REFRESH RATE", "BIT DEPTH"
+	idx( True )
+	'video_settings_menu.set_item( idx(), "FULL SCREEN", cmd_show_menu, screen_mode_menu )
+	'video_settings_menu.set_item( idx(), "RESOLUTION", cmd_show_menu, screen_resolution_menu )
+	'video_settings_menu.set_item( idx(), "REFRESH RATE", cmd_show_menu, screen_refresh_rate_menu )
+	'video_settings_menu.set_item( idx(), "BIT DEPTH", cmd_show_menu, screen_bit_depth_menu )
 		
 	audio_settings_menu.Construct( ..
 		"AUDIO SETTINGS", 3, ..
@@ -183,9 +201,10 @@ Function initialize_menus()
 		menu_small_item_fg_font, menu_small_item_bg_font, ..
 		white, black, black, light_gray, ..
 		menu_x, menu_y )
-	'audio_settings_menu.set_item( 0, cmd_modify_setting )
-	'audio_settings_menu.set_item( 1, cmd_modify_setting )
-	'audio_settings_menu.set_item( 2, cmd_modify_setting )
+	idx( True )
+	'audio_settings_menu.set_item( idx(), cmd_modify_setting )
+	'audio_settings_menu.set_item( idx(), cmd_modify_setting )
+	'audio_settings_menu.set_item( idx(), cmd_modify_setting )
 	'"EFFECTS VOLUME", "MUSIC VOLUME", "AUDIO DRIVER"
 		
 	pause_menu.Construct( ..
@@ -197,10 +216,11 @@ Function initialize_menus()
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
 		menu_x, menu_y )
-	pause_menu.set_item( 0, "RESUME", cmd_unpause_game )
-	pause_menu.set_item( 1, "SETTINGS", cmd_show_menu, settings_menu )
-	pause_menu.set_item( 2, "QUIT LEVEL", cmd_quit_level )
-	pause_menu.set_item( 3, "QUIT GAME", cmd_quit_game )
+	idx( True )
+	pause_menu.set_item( idx(), "RESUME", cmd_unpause_game )
+	pause_menu.set_item( idx(), "SETTINGS", cmd_show_menu, settings_menu )
+	pause_menu.set_item( idx(), "QUIT LEVEL", cmd_quit_level )
+	pause_menu.set_item( idx(), "QUIT GAME", cmd_quit_game )
 	MENU_REGISTER.pause = pause_menu
 	
 	

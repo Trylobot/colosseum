@@ -171,15 +171,15 @@ Type TUIList Extends TUIObject
 		End If
 	End Method
 	
-	Method set_item( i%, item_display:String, event_handler(item:Object), item:Object = Null )
+	Method set_item( i%, item_display:String, item_clicked_event_handler(item:Object), item:Object = Null )
 		If i < 0 Or i >= item_count Then Return
 		items[i] = item
     items_display[i] = item_display
-		item_clicked_event_handlers[i] = TUIEventHandler.Create( event_handler )
+		item_clicked_event_handlers[i] = TUIEventHandler.Create( item_clicked_event_handler )
 		calculate_dimensions()
 	End Method
 	
-  Method add_new_item( item_display:String, event_handler(item:Object), item:Object = Null )
+  Method add_new_item( item_display:String, item_clicked_event_handler(item:Object), item:Object = Null )
     Local i% = item_count
 		item_count :+ 1
     items = items[..item_count]
@@ -188,7 +188,7 @@ Type TUIList Extends TUIObject
 		item_rects = item_rects[..item_count]
     items[i] = item
     items_display[i] = item_display
-		item_clicked_event_handlers[i] = TUIEventHandler.Create( event_handler )
+		item_clicked_event_handlers[i] = TUIEventHandler.Create( item_clicked_event_handler )
 		calculate_dimensions()
   End Method
 	

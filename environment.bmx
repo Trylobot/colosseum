@@ -310,7 +310,6 @@ Type ENVIRONMENT
 	End Method
 
 	Method spawn_unit:CONTROL_BRAIN( unit_key$, alignment%, spawn_point:POINT )
-		Local load_start% = now()
 		Local unit:COMPLEX_AGENT = get_unit( unit_key, alignment )
 		Local allied_agent_list:TList, rival_agent_list:TList
 		Select alignment
@@ -346,7 +345,6 @@ Type ENVIRONMENT
 		part.manage( particle_list_foreground )
 		part.parent = pt
 		'///////////////////////////////////////////////////////////////////////////
-		DebugLog "  Spawned unit " + unit_key + " in " + elapsed_str(load_start) + " sec."
 		Return brain
 	End Method
 	

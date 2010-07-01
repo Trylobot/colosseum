@@ -29,14 +29,8 @@ Function cmd_play_level( item:Object )
 End Function
 
 Function cmd_create_new_profile( item:Object = Null )
-	'create the profile
 	profile = create_new_user_profile()
 	show_info( "new profile created" )
-	'menu_command( COMMAND.BACK_TO_PARENT_MENU )
-	'get_current_menu().update( True )
-	''immediately prompt for a rename
-	'menu_command( COMMAND.SHOW_CHILD_MENU, INTEGER.Create(MENU_ID.INPUT_PROFILE_NAME) )
-	'get_current_menu().update( True )
 End Function
 
 Function cmd_load_profile( item:Object )
@@ -48,8 +42,6 @@ Function cmd_load_profile( item:Object )
 		save_autosave( profile.src_path )
 		show_info( "loaded player data "+profile.name+" from file "+StripAll(profile.src_path) )
 	End If
-	'menu_command( COMMAND.BACK_TO_PARENT_MENU )
-	'get_current_menu().update( True )
 End Function
 
 Function cmd_save_profile( item:Object = Null )
@@ -81,8 +73,6 @@ End Function
 
 Function cmd_new_level_editor_cache( item:Object = Null )
 	level_editor_cache = Create_LEVEL( 300, 300 )
-	'menu_command( COMMAND.BACK_TO_PARENT_MENU )
-	'show_info( "new level loaded" )
 End Function
 
 Function cmd_enter_level_editor( item:Object = Null )
@@ -116,7 +106,12 @@ End Function
 
 Function cmd_quit_game( item:Object = Null )
 	cmd_quit_level( item )
+	
+	'/////////////////////
+	'TERMINATE APPLICATION
 	End
+	'/////////////////////
+	
 End Function
 
 '______________________________________________________________________________

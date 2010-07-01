@@ -15,7 +15,7 @@ Function get_bmp_font:BMP_FONT( key$ )
 End Function
 
 Function get_bmp_font_outline:BMP_FONT( key$ )
-	Return BMP_FONT( bmp_font_map.ValueForKey( key.toLower() + "outline" ))
+	Return BMP_FONT( bmp_font_map.ValueForKey( key.toLower() + "_outline" ))
 End Function
 
 '______________________________________________________________________________

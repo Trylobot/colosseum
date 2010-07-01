@@ -249,7 +249,7 @@
 		object: {
 			particle_type: 2,
 			str: "$____",
-			font: "small_15",
+			font: "small_10",
 			layer: 1,
 			frictional_coefficient: 0.05,
 			red: 84.9915,
@@ -267,7 +267,7 @@
 		object: {
 			particle_type: 2,
 			str: "$____",
-			font: "small_15",
+			font: "small_10",
 			layer: 1,
 			frictional_coefficient: 0.05,
 			red: 255.0000,

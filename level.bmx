@@ -574,3 +574,13 @@ Function Create_LEVEL_from_json:LEVEL( json:TJSON )
 	Return lev
 End Function
 
+'______________________________________________________________________________
+Function generate_level_mini_preview:TImage( lev:LEVEL )
+	Local pixmap:TPixmap = CreatePixmap( lev.width, lev.height, PF_I8 )'PF_RGBA8888 )
+	pixmap.ClearPixels( encode_ARGB( 1.0, 64,64,64 ))
+	For Local w:BOX = EachIn lev.get_walls()
+		pixmap.Window( w.x, w.y, w.w, w.h ).ClearPixels( encode_ARGB( 1.0, 127,127,127 ))
+	Next
+	Return LoadImage( pixmap, FILTEREDIMAGE )
+End Function
+

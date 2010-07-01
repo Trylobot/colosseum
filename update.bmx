@@ -231,38 +231,6 @@ Function player_loses_game()
 End Function
 
 '______________________________________________________________________________
-Function update_meta_variable_cache()
-	If Not meta_variable_cache
-		meta_variable_cache = CreateMap()
-	End If
-	Local changed% = 0 ..
-		| update_map( meta_variable_cache, "profile.name", profile.name ) ..
-		| update_map( meta_variable_cache, "profile.cash", format_number( profile.cash )) ..
-		| update_map( meta_variable_cache, "profile.kills", format_number( profile.kills )) ..
-		| update_map( meta_variable_cache, "level_editor_cache.name", level_editor_cache.name ) ..
-		| update_map( meta_variable_cache, "fullscreen", boolean_to_string( fullscreen )) ..
-		| update_map( meta_variable_cache, "window_w", String.FromInt( window_w )) ..
-		| update_map( meta_variable_cache, "window_h", String.FromInt( window_h )) ..
-		| update_map( meta_variable_cache, "refresh_rate", String.FromInt( refresh_rate )) ..
-		| update_map( meta_variable_cache, "bit_depth", String.FromInt( bit_depth )) ..
-		| update_map( meta_variable_cache, "audio_driver", audio_driver ) ..
-		| update_map( meta_variable_cache, "show_ai_menu_game", boolean_to_string( show_ai_menu_game )) ..
-		| update_map( meta_variable_cache, "active_particle_limit", String.FromInt( active_particle_limit )) ..
-		| update_map( meta_variable_cache, "network_ip_address", network_ip_address ) ..
-		| update_map( meta_variable_cache, "network_port", String.FromInt( network_port )) ..
-		| update_map( meta_variable_cache, "network_level", StripAll( network_level ))
-	'If changed
-	'	get_current_menu().recalculate_dimensions()
-	'End If
-End Function
-
-Function update_map%( map:TMap, key:Object, value:Object )
-	Local changed% = (value <> map.ValueForKey( key ))
-	map.Insert( key, value )
-	Return changed
-End Function
-
-'______________________________________________________________________________
 'this really needs to go somewhere's else.
 Function agent_self_destruct( ag:AGENT )
 	Local nearby_objects:TList = game.near_to( ag, 200.0 ) 'the "radius" argument should come from data

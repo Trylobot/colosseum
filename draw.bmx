@@ -139,13 +139,7 @@ Function draw_game()
 	Next
 	
 	'foreground particles
-	For Local part:PARTICLE = EachIn game.particle_list_foreground
-		part.draw(,zoom)
-	Next
-	SetColor( 255, 255, 255 )
-	SetRotation( 0 )
-	SetScale( 1, 1 )
-	SetAlpha( 1 )
+	'(used to be here)
 	
 	'environmental widgets
 	For Local w:WIDGET = EachIn game.environmental_widget_list
@@ -157,6 +151,15 @@ Function draw_game()
 		d.draw_fg() 'zoom
 	Next
 
+	'foreground particles
+	For Local part:PARTICLE = EachIn game.particle_list_foreground
+		part.draw(,zoom)
+	Next
+	SetColor( 255, 255, 255 )
+	SetRotation( 0 )
+	SetScale( 1, 1 )
+	SetAlpha( 1 )
+	
 	If game.human_participation
 		draw_lighting_and_effects()
 	End If

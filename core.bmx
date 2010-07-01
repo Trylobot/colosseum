@@ -265,91 +265,6 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 End Function
 
 '______________________________________________________________________________
-Function generate_level_mini_preview:TImage( lev:LEVEL )
-	Local pixmap:TPixmap = CreatePixmap( lev.width, lev.height, PF_I8 )'PF_RGBA8888 )
-	pixmap.ClearPixels( encode_ARGB( 1.0, 64,64,64 ))
-	For Local w:BOX = EachIn lev.get_walls()
-		pixmap.Window( w.x, w.y, w.w, w.h ).ClearPixels( encode_ARGB( 1.0, 127,127,127 ))
-	Next
-	Return LoadImage( pixmap, FILTEREDIMAGE )
-End Function
-
-'______________________________________________________________________________
-Function init_level_select_menu( menu:TUIImageGrid )
-	Local level_file_path$, level_preview_path$
-	Local level_preview_img:TImage
-	
-	For Local r% = 0 Until level_grid.Length
-		For Local c% = 0 Until level_grid[r].Length
-			level_file_path = level_grid[r][c]
-			level_preview_path = level_preview_path_from_level_path( level_file_path )
-			If FileExists( level_preview_path ) And FileTime( level_file_path ) <= FileTime( level_preview_path )
-				'preview file exists and is valid; use it
-				level_preview_img = LoadImage( level_preview_path, FILTEREDIMAGE )
-			Else
-				'preview file needs to be generated or re-generated
-         Local level_object:LEVEL = load_level( level_file_path )
-         If level_object
-           DeleteFile( level_preview_path )
-           level_preview_img = generate_level_mini_preview( level_object )
-           SavePixmapPNG( level_preview_img.pixmaps[0], level_preview_path, 5 )
-         Else
-           DebugLog( " ERROR: level file not found ~q" + level_file_path + "~q" )
-           DebugStop
-         End If
-			End If
-			'do something with the level_preview_img
-			'menu.setimage(level_preview_img) maybe
-		Next
-	Next
-	
-	Rem
-	'prepare data for campaign chooser
-	Local image:TImage[][]
-	If campaign_chooser
-		image = campaign_chooser.image
-	Else
-		image = New TImage[][campaign_ordering.Length]
-	End If
-	Local image_label$[][] = New String[][campaign_ordering.Length]
-	Local group_label$[] = New String[campaign_ordering.Length]
-	Local lock%[][] = New Int[][campaign_ordering.Length]
-	Local callback( selected:CELL ) = campaign_chooser_callback
-	
-	For Local c% = 0 Until campaign_ordering.Length
-		Local cpd:CAMPAIGN_DATA = get_campaign_data( campaign_ordering[c] )
-		If cpd
-			image[c] = New TImage[cpd.levels.Length]
-			image_label[c] = New String[cpd.levels.Length]
-			group_label[c] = cpd.name
-			lock[c] = New Int[cpd.levels.Length]
-			For Local L% = 0 Until cpd.levels.Length
-				Local lev_path$ = cpd.levels[L]
-				Local lev_preview_path$ = level_preview_path_from_level_path( lev_path )
-        If FileExists( lev_preview_path ) And FileTime( lev_path ) <= FileTime( lev_preview_path )
-          image[c][L] = LoadImage( lev_preview_path, FILTEREDIMAGE )
-        Else 'preview does not exist, or level file is newer than its preview (needs to be generated from scratch)
-          Local lev:LEVEL = load_level( lev_path )
-          If lev
-            DeleteFile( lev_preview_path )
-            image[c][L] = generate_level_mini_preview( lev )
-            SavePixmapPNG( image[c][L].pixmaps[0], lev_preview_path, 5 )
-          Else
-            DebugLog( " ERROR: level file not found ~q" + lev_path + "~q" )
-            DebugStop
-          End If
-        End If
-        image_label[c][L] = "" 'lev.name
-        lock[c][L] = Not contained_in( lev_path, profile.levels_beaten )
-			Next
-		End If
-	Next
-	'begin updating & drawing the campaign chooser until it calls the given callback
-	campaign_chooser = Create_IMAGE_CHOOSER( image, image_label, group_label, lock, callback )
-	EndRem
-End Function
-
-'______________________________________________________________________________
 Function record_player_kill( cash_value% )
 	If profile
 		last_kill_ts = now()
@@ -396,5 +311,33 @@ Function get_player_id%()
 	Else
 		Return -1
 	End If
+End Function
+
+'______________________________________________________________________________
+Function update_meta_variable_cache()
+	If Not meta_variable_cache
+		meta_variable_cache = CreateMap()
+	End If
+	update_map( meta_variable_cache, "profile.name", profile.name )
+	update_map( meta_variable_cache, "profile.cash", format_number( profile.cash ))
+	update_map( meta_variable_cache, "profile.kills", format_number( profile.kills ))
+	update_map( meta_variable_cache, "level_editor_cache.name", level_editor_cache.name )
+	update_map( meta_variable_cache, "fullscreen", boolean_to_string( fullscreen ))
+	update_map( meta_variable_cache, "window_w", String.FromInt( window_w ))
+	update_map( meta_variable_cache, "window_h", String.FromInt( window_h ))
+	update_map( meta_variable_cache, "refresh_rate", String.FromInt( refresh_rate ))
+	update_map( meta_variable_cache, "bit_depth", String.FromInt( bit_depth ))
+	update_map( meta_variable_cache, "audio_driver", audio_driver )
+	update_map( meta_variable_cache, "show_ai_menu_game", boolean_to_string( show_ai_menu_game ))
+	update_map( meta_variable_cache, "active_particle_limit", String.FromInt( active_particle_limit ))
+	update_map( meta_variable_cache, "network_ip_address", network_ip_address )
+	update_map( meta_variable_cache, "network_port", String.FromInt( network_port ))
+	update_map( meta_variable_cache, "network_level", StripAll( network_level ))
+End Function
+
+Function update_map%( map:TMap, key:Object, value:Object )
+	Local changed% = (value <> map.ValueForKey( key ))
+	map.Insert( key, value )
+	Return changed
 End Function
 

@@ -159,15 +159,10 @@ Type PARTICLE Extends POINT
 				End If
 			Case PARTICLE_TYPE_STR
 				If font <> Null And str <> Null
-					'SetImageFont( font )
 					SetRotation( 0 )
 					If parent
-						'SetRotation( ang + parent.ang )
-						'DrawText_with_outline( str, parent.pos_x + final_scale*offset*Cos( offset_ang + parent.ang ) - text_width/2, parent.pos_y + final_scale*offset*Sin( offset_ang + parent.ang ) - text_height/2 )
 						draw_layered_string( str, parent.pos_x + final_scale*offset*Cos( offset_ang + parent.ang ) - text_width/2, parent.pos_y + final_scale*offset*Sin( offset_ang + parent.ang ) - text_height/2, font, font_outline, red, green, blue, 0, 0, 0 )
 					Else
-						'SetRotation( ang )
-						'DrawText_with_outline( str, pos_x - scale*text_width/2, pos_y - scale*text_height/2 )
 						draw_layered_string( str, pos_x - scale*text_width/2, pos_y - scale*text_height/2, font, font_outline, red, green, blue, 0, 0, 0 )
 					End If
 				End If
@@ -176,9 +171,6 @@ Type PARTICLE Extends POINT
 	
 	Method str_update()
 		If str <> Null And font <> Null
-			'SetImageFont( font )
-			'text_width = TextWidth( str )/2.0
-			'text_height = TextHeight( str )/2.0
 			text_width = font.width( str )/2.0
 			text_height = font.height/2.0
 		End If
