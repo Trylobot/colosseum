@@ -93,7 +93,7 @@ Function initialize_menus()
 		dark_gray, white, ..
 		menu_line_width, ..
 		menu_super_small_item_fg_font, menu_super_small_item_bg_font, ..
-		25, 25, ..
+		30, 30, ..
 		0, 0, ..
 		window_w, window_h )
 	

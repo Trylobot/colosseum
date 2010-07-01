@@ -43,8 +43,8 @@ Type TUIImageGrid Extends TUIObject
     Self.default_item_border_color = TColor.Create_by_RGB_object( default_item_border_color )
     Self.selected_item_border_color = TColor.Create_by_RGB_object( selected_item_border_color )
 		Self.line_width = line_width
-		Self.default_item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, selected_item_border_color, default_item_border_color )
-    Self.selected_item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, default_item_border_color, selected_item_border_color )
+		Self.default_item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, default_item_border_color, selected_item_border_color )
+    Self.selected_item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, selected_item_border_color, default_item_border_color )
 		Self.rect = Null
 		Self.margin_x = margin_x
 		Self.margin_y = margin_y
@@ -82,12 +82,15 @@ Type TUIImageGrid Extends TUIObject
 	End Method
 	
 	Method draw()
-		Local x% = rect.x
-		Local y% = rect.y
+		Local item_rect:BOX = New BOX
+		Local x%, y%
 		Local text_x%
 		Local img:TImage
 		Local scale#
-		Local alpha#
+		Local img_alpha#
+		Local border_alpha#
+		Local text_alpha#
+		Local highlight_alpha#
 		Local border_color:TColor
 		Local font:FONT_STYLE
 		Local label$
@@ -99,28 +102,44 @@ Type TUIImageGrid Extends TUIObject
 				label = item_labels[r][c]
 				scale = Float( img_size ) / Float( Max( img.width, img.height ))
 				'determine image top-left
-				x = margin_x + (c * (img_size + margin_x))
-				y = margin_y + (r * (img_size + margin_y))
-				'selected item switch
+				get_item_rect( r, c, item_rect )
+				x = item_rect.x + margin_x
+				y = item_rect.y + margin_y
+				'set draw styles based on current selection
 				If( r = selected_item.row And c = selected_item.col )
-			    alpha = 1.0
+			    img_alpha = 1.0
+					border_alpha = 0.75 + 0.25*Sin( now()/2 )
+					text_alpha = 1.0
+					highlight_alpha = 0.075 + 0.05*Sin( now()/2 )
 					border_color = selected_item_border_color
 					font = selected_item_font
 				Else 'r <> selected_item.row Or c <> selected_item.col
-					alpha = 0.5
+					img_alpha = 0.5
+					border_alpha = 0.5
+					text_alpha = 0.125
+					highlight_alpha = 0.0
 					border_color = default_item_border_color
 					font = default_item_font
 				End If
-				'draw
-				SetAlpha( alpha )
+				'draw border
+				SetAlpha( border_alpha )
 				SetScale( 1, 1 )
 				border_color.Set()
 				DrawRectLines( x - line_width, y - line_width, img_size + 2*line_width, img_size + 2*line_width, line_width )
+				'draw image content
+				SetAlpha( img_alpha )
 				SetScale( scale, scale )
 				DrawImage( img, x, y )
+				'draw label
+				SetAlpha( text_alpha )
 				SetScale( 1, 1 )
 				text_x = x + img_size/2 - font.width( label )/2
-				font.draw_string( label, text_x, y + img_size + line_width )
+				font.draw_string( label, text_x, y + img_size + 2*line_width )
+				'draw highlight box
+				SetAlpha( highlight_alpha )
+				SetScale( 1, 1 )
+				SetColor( 255, 255, 255 )
+				draw_box( item_rect, True )
 			Next
 		Next
 	End Method
@@ -166,6 +185,14 @@ Type TUIImageGrid Extends TUIObject
 		End If
 	End Method
 	
+	Method invoke( item:CELL )
+    If  item.row >= 0 And item.row < items.Length ..
+		And item.col >= 0 And item.col < items[item.row].Length ..
+		And item_clicked_event_handlers[item.row][item.col]
+      item_clicked_event_handlers[item.row][item.col].invoke( items[item.row][item.col] )
+    End If
+	End Method
+	
 	Method set_item( row%, col%, item_label:String, item_image:TImage, event_handler(item:Object), item:Object = Null )
 		If row < 0 Or row >= dimensions.Length ..
 		Or col < 0 Or col >= dimensions[row] Then Return
@@ -176,8 +203,8 @@ Type TUIImageGrid Extends TUIObject
 	End Method
 	
 	Method get_item_index_by_screen_coord( mx%, my%, item:CELL )
-		item.row = my / (rect.h / max_rows)
-		item.col = mx / (rect.w / max_cols)
+		item.row = (my - rect.y) / (img_size + 2 * margin_y + default_item_font.height)
+		item.col = (mx - rect.x) / (img_size + 2 * margin_x)
 		If item.row < 0 Or item.row >= items.Length ..
 		Or item.col < 0 Or item.col >= items[item.row].Length
 			item.row = CELL.COORDINATE_INVALID
@@ -185,12 +212,11 @@ Type TUIImageGrid Extends TUIObject
 		End If
 	End Method
 	
-	Method invoke( item:CELL )
-    If  item.row >= 0 And item.row < items.Length ..
-		And item.col >= 0 And item.col < items[item.row].Length ..
-		And item_clicked_event_handlers[item.row][item.col]
-      item_clicked_event_handlers[item.row][item.col].invoke( items[item.row][item.col] )
-    End If
+	Method get_item_rect:BOX( row%, col%, item_rect:BOX )
+		item_rect.x = rect.x + (col * (img_size + 2 * margin_x))
+		item_rect.y = rect.y + (row * (img_size + 2 * margin_y + default_item_font.height))
+		item_rect.w = rect.x + ((col + 1) * (img_size + 2 * margin_x)) - 1 - item_rect.x
+		item_rect.h = rect.y + ((row + 1) * (img_size + 2 * margin_y + default_item_font.height)) - 1 - item_rect.y
 	End Method
 	
 End Type
