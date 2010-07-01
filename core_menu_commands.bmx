@@ -62,6 +62,47 @@ Function cmd_toggle_setting( item:Object )
 	End If
 End Function
 
+Function cmd_set_graphics_mode( item:Object )
+	Local mode:TGraphicsMode = TGraphicsMode( item )
+	If mode
+		window_w = mode.width
+		window_h = mode.height
+		bit_depth = mode.depth
+		refresh_rate = mode.hertz
+		save_settings()
+		init_graphics()
+		'////
+		Local environments:TList = get_active_games()
+		For Local env:ENVIRONMENT = EachIn environments
+			If env
+				env.calculate_camera_constraints()
+				If env.graffiti
+					env.graffiti.resize_backbuffer( mode.width, mode.height )
+				End If
+			End If
+		Next
+	End If
+End Function
+
+Function cmd_select_current_screen_resolution( item:Object )
+	Local menu:TUIList = TUIList( item )
+	If menu
+		Local mode:TGraphicsMode
+		For Local i% = 0 Until menu.get_item_count()
+			mode = TGraphicsMode( menu.get_item( i ))
+			If mode
+				If  mode.width = GraphicsWidth() ..
+				And mode.height = GraphicsHeight() ..
+				And mode.depth = GraphicsDepth() ..
+				And mode.hertz = GraphicsHertz()
+					menu.select_item( i )
+					Exit
+				End If
+			End If
+		Next
+	End If
+End Function
+
 Function cmd_pause_game( item:Object = Null )
 	FLAG.paused = True
 	FLAG.in_menu = True

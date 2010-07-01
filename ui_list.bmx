@@ -11,7 +11,7 @@ EndRem
 '______________________________________________________________________________
 Type TUIList Extends TUIObject
 	Field header:String
-  Field items_display:String[]
+  Field item_count%
   Field panel_color:TColor
   Field border_color:TColor
   Field inner_border_color:TColor
@@ -20,15 +20,15 @@ Type TUIList Extends TUIObject
 	Field header_font:FONT_STYLE
   Field item_font:FONT_STYLE
   Field item_selected_font:FONT_STYLE
-
-  Field items:Object[]
-  Field item_count%
-  Field selected_item% '-1 if none
   Field margin_x%
   Field margin_y%
+
+  Field items_display:String[]
+  Field items:Object[]
+  Field selected_item% '-1 if none
 	Field rect:BOX
 	Field item_rects:BOX[]
-	Field list_content_refresh_event_handler:TUIEventHandler
+	Field menu_show_event_handler:TUIEventHandler
   Field item_clicked_event_handlers:TUIEventHandler[]
   
 	Method New()
@@ -166,12 +166,12 @@ Type TUIList Extends TUIObject
 	End Method
 	
 	Method on_show()
-		If list_content_refresh_event_handler
-			list_content_refresh_event_handler.invoke( Self )
+		If menu_show_event_handler
+			menu_show_event_handler.invoke( Self )
 		End If
 	End Method
 	
-	Method set_item( i%, item_display:String, item_clicked_event_handler(item:Object), item:Object = Null )
+	Method set_item( i%, item_display:String, item_clicked_event_handler(item:Object) = Null, item:Object = Null )
 		If i < 0 Or i >= item_count Then Return
 		items[i] = item
     items_display[i] = item_display
@@ -179,7 +179,7 @@ Type TUIList Extends TUIObject
 		calculate_dimensions()
 	End Method
 	
-  Method add_new_item( item_display:String, item_clicked_event_handler(item:Object), item:Object = Null )
+  Method add_new_item( item_display:String, item_clicked_event_handler(item:Object) = Null, item:Object = Null )
     Local i% = item_count
 		item_count :+ 1
     items = items[..item_count]
@@ -191,6 +191,15 @@ Type TUIList Extends TUIObject
 		item_clicked_event_handlers[i] = TUIEventHandler.Create( item_clicked_event_handler )
 		calculate_dimensions()
   End Method
+	
+	Method get_item:Object( i% )
+		If i < 0 Or i >= item_count Then Return Null
+		Return items[i]
+	End Method
+	
+	Method get_item_count%()
+		Return items.Length
+	End Method
 	
   Method calculate_dimensions()
     'list panel dimensions
@@ -225,8 +234,8 @@ Type TUIList Extends TUIObject
     End If
 	End Method
   
-  Method set_list_content_refresh_event_handler( event_handler(item:Object) )
-		list_content_refresh_event_handler = TUIEventHandler.Create( event_handler )
+  Method set_menu_show_event_handler( event_handler(item:Object) )
+		menu_show_event_handler = TUIEventHandler.Create( event_handler )
   End Method
   
   Method get_item_index_by_screen_coord%( sx%, sy% )

@@ -31,7 +31,9 @@ Type TUIEventHandler
 	End Function
 	'handler invocation
 	Method invoke( item:Object = Null )
-		event_handler( item )
+		If event_handler
+			event_handler( item )
+		End If
 	End Method
 End Type
 

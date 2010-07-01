@@ -10,7 +10,6 @@ Type MENU_REGISTER
 	Global stack:TList
 	
 	Global root:TUIList
-	Global play_game:TUIList
 	Global level_select:TUIImageGrid
 	Global pause:TUIList
 	
@@ -61,6 +60,7 @@ Function initialize_menus()
 	Local menu_super_small_item_fg_font:BMP_FONT = get_bmp_font( "arcade_7" )
 	Local menu_super_small_item_bg_font:BMP_FONT = get_bmp_font( "arcade_7_outline" )
 	Local menu_line_width% = 3
+	Local menu_tiny_line_width% = 1
 	Local menu_small_line_width% = 2
 	Local menu_x% = 10, menu_y% = 70
 	
@@ -72,10 +72,7 @@ Function initialize_menus()
 		Local profile_menu:TUIList = New TUIList
 		Local settings_menu:TUIList = New TUIList
 			Local video_settings_menu:TUIList = New TUIList
-				Local screen_mode_menu:TUIList = New TUIList
 				Local screen_resolution_menu:TUIList = New TUIList
-				Local screen_refresh_rate_menu:TUIList = New TUIList
-				Local screen_bit_depth_menu:TUIList = New TUIList
 			Local audio_settings_menu:TUIList = New TUIList
 			Local performance_settings_menu:TUIList = New TUIList
 		Local advanced_menu:TUIList = New TUIList
@@ -104,7 +101,6 @@ Function initialize_menus()
 	For Local d% = 0 Until level_grid_dimensions.Length
 		level_grid_dimensions[d] = level_grid[d].Length
 	Next
-	
 	level_select_menu.Construct( ..
 		level_grid_dimensions, ..
 		dark_gray, white, ..
@@ -113,7 +109,6 @@ Function initialize_menus()
 		30, 30, ..
 		0, 0, ..
 		window_w, window_h )
-	
 	Local level_file_path$, level_object:LEVEL, level_preview_path$, level_preview_img:TImage
 	For Local r% = 0 Until level_grid.Length
 		For Local c% = 0 Until level_grid[r].Length
@@ -137,7 +132,7 @@ Function initialize_menus()
 			level_select_menu.set_item( r, c, level_object.name, level_preview_img, cmd_play_level, level_object )
 		Next
 	Next
-
+	
 	profile_menu.Construct( ..
 		"PROFILE", 3, ..
 		dark_gray, white, black, white, ..
@@ -151,7 +146,7 @@ Function initialize_menus()
 	profile_menu.set_item( idx(), "CREATE NEW", cmd_create_new_profile )
 	profile_menu.set_item( idx(), "SAVE PROFILE", cmd_save_profile )
 	profile_menu.set_item( idx(), "SWITCH PROFILES", cmd_load_profile )
-		
+	
 	settings_menu.Construct( ..
 		"SETTINGS", 3, ..
 		dark_gray, white, black, white, ..
@@ -165,7 +160,7 @@ Function initialize_menus()
 	settings_menu.set_item( idx(), "GAME PERFORMANCE", cmd_show_menu, video_settings_menu )
 	settings_menu.set_item( idx(), "VIDEO SETTINGS", cmd_show_menu, video_settings_menu )
 	settings_menu.set_item( idx(), "AUDIO SETTINGS", cmd_show_menu, video_settings_menu )
-		
+	
 	advanced_menu.Construct( ..
 		"ADVANCED", 4, ..
 		dark_gray, white, black, white, ..
@@ -179,10 +174,10 @@ Function initialize_menus()
 	advanced_menu.set_item( idx(), "LEVEL EDITOR", cmd_enter_level_editor )
 	advanced_menu.set_item( idx(), "UNIT EDITOR", cmd_enter_unit_editor )
 	advanced_menu.set_item( idx(), "GIBS EDITOR", cmd_enter_gibs_editor )
-	advanced_menu.set_item( idx(), "RELOAD ASSETS", cmd_reload_assets )
-		
+	advanced_menu.set_item( idx(), "RELOAD DATA", cmd_reload_assets )
+	
 	video_settings_menu.Construct( ..
-		"VIDEO SETTINGS", 4, ..
+		"VIDEO SETTINGS", 2, ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
 		menu_header_fg_font, menu_header_bg_font, ..
@@ -191,13 +186,27 @@ Function initialize_menus()
 		white, black, black, light_gray, ..
 		menu_x, menu_y )
 	idx( True )
-	video_settings_menu.set_item( idx(), "FULL SCREEN", cmd_toggle_setting, SETTINGS_REGISTER.FULL_SCREEN )
-	video_settings_menu.set_item( idx(), "RESOLUTION", cmd_show_menu, screen_resolution_menu )
-	video_settings_menu.set_item( idx(), "REFRESH RATE", cmd_show_menu, screen_refresh_rate_menu )
-	video_settings_menu.set_item( idx(), "BIT DEPTH", cmd_show_menu, screen_bit_depth_menu )
+	video_settings_menu.set_item( idx(), "FULL SCREEN MODE", cmd_toggle_setting, SETTINGS_REGISTER.FULL_SCREEN )
+	video_settings_menu.set_item( idx(), "DISPLAY RESOLUTION", cmd_show_menu, screen_resolution_menu )
 	
+	Local modes:TGraphicsMode[] = GraphicsModes()
+	screen_resolution_menu.Construct( ..
+		"RESOLUTION", modes.Length, ..
+		dark_gray, white, black, white, ..
+		menu_tiny_line_width, ..
+		menu_header_fg_font, menu_header_bg_font, ..
+		white, black, ..
+		menu_super_small_item_fg_font, menu_super_small_item_bg_font, ..
+		white, black, black, light_gray, ..
+		menu_x, menu_y )
+	For Local i% = 0 Until modes.Length
+		Local mode_str$ = "" + modes[i].width + "x" + modes[i].height + " px"
+		mode_str :+ ", " + modes[i].depth + " bpp"
+		mode_str :+ ", " + modes[i].hertz + " Hz"
+		screen_resolution_menu.set_item( i, mode_str, cmd_set_graphics_mode, modes[i] )
+	Next
+	screen_resolution_menu.set_menu_show_event_handler( cmd_select_current_screen_resolution )
 	
-		
 	audio_settings_menu.Construct( ..
 		"AUDIO SETTINGS", 3, ..
 		dark_gray, white, black, white, ..
@@ -208,10 +217,9 @@ Function initialize_menus()
 		white, black, black, light_gray, ..
 		menu_x, menu_y )
 	idx( True )
-	'audio_settings_menu.set_item( idx(), cmd_modify_setting )
-	'audio_settings_menu.set_item( idx(), cmd_modify_setting )
-	'audio_settings_menu.set_item( idx(), cmd_modify_setting )
-	'"EFFECTS VOLUME", "MUSIC VOLUME", "AUDIO DRIVER"
+	audio_settings_menu.set_item( idx(), "EFFECTS VOLUME" )
+	audio_settings_menu.set_item( idx(), "MUSIC VOLUME" )
+	audio_settings_menu.set_item( idx(), "AUDIO DRIVER" )
 		
 	pause_menu.Construct( ..
 		"PAUSED", 4, ..
@@ -232,6 +240,40 @@ Function initialize_menus()
 	
 	
 End Function
+
+Rem
+	Local resolutions:TList = CreateList()
+	Local modes:TGraphicsMode[] = GraphicsModes()
+	Local w%, h%
+	For Local i% = 0 Until modes.Length
+		w = modes[i].width
+		h = modes[i].height
+		Local unique% = True
+		For Local res%[] = EachIn resolutions
+			If res[0] = w And res[1] = h
+				unique = False
+				Exit
+			End If
+		Next
+		If unique
+			resolutions.AddLast( [w, h] )
+		End If
+	Next
+	screen_resolution_menu.Construct( ..
+		"RESOLUTION", resolutions.Count(), ..
+		dark_gray, white, black, white, ..
+		menu_line_width, ..
+		menu_header_fg_font, menu_header_bg_font, ..
+		white, black, ..
+		menu_super_small_item_fg_font, menu_super_small_item_bg_font, ..
+		white, black, black, light_gray, ..
+		menu_x, menu_y )
+	idx( True )
+	For Local res%[] = EachIn resolutions
+		Local res_str$ = "" + res[0] + " x " + res[1]
+		screen_resolution_menu.set_item( idx(), res_str, cmd_set_screen_resolution, res )
+	Next
+EndRem
 
 '______________________________________________________________________________
 Rem

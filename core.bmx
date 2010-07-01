@@ -70,6 +70,13 @@ Function select_game()
 	End If
 End Function
 
+Function get_active_games:TList()
+	Local list:TList = CreateList()
+	If main_game    Then list.AddLast( main_game )
+	If ai_menu_game Then list.AddLast( ai_menu_game )
+	Return list
+End Function
+
 '______________________________________________________________________________
 Function play_level:ENVIRONMENT( level_reference:Object, player:COMPLEX_AGENT = Null )
 	Local lev:LEVEL

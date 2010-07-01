@@ -160,19 +160,19 @@ Type TUIImageGrid Extends TUIObject
 	End Method
 	
 	Method on_keyboard_up()
-		selected_item.row :- 1
+		move_selection( CELL.DIRECTION_NORTH )
 	End Method
 	
 	Method on_keyboard_down()
-		selected_item.row :+ 1
+		move_selection( CELL.DIRECTION_SOUTH )
 	End Method
 	
 	Method on_keyboard_left()
-		selected_item.col :- 1
+		move_selection( CELL.DIRECTION_WEST )
 	End Method
 	
 	Method on_keyboard_right()
-		selected_item.col :+ 1
+		move_selection( CELL.DIRECTION_EAST )
 	End Method
 	
 	Method on_keyboard_enter()
@@ -186,16 +186,14 @@ Type TUIImageGrid Extends TUIObject
 	End Method
 	
 	Method invoke( item:CELL )
-    If  item.row >= 0 And item.row < items.Length ..
-		And item.col >= 0 And item.col < items[item.row].Length ..
+    If  does_grid_cell_exist( item ) ..
 		And item_clicked_event_handlers[item.row][item.col]
       item_clicked_event_handlers[item.row][item.col].invoke( items[item.row][item.col] )
     End If
 	End Method
 	
 	Method set_item( row%, col%, item_label:String, item_image:TImage, event_handler(item:Object), item:Object = Null )
-		If row < 0 Or row >= dimensions.Length ..
-		Or col < 0 Or col >= dimensions[row] Then Return
+		If Not does_grid_cell_exist( CELL.Create( row, col )) Then Return
 		items[row][col] = item
     item_images[row][col] = item_image
 		item_labels[row][col] = item_label
@@ -205,8 +203,7 @@ Type TUIImageGrid Extends TUIObject
 	Method get_item_index_by_screen_coord( mx%, my%, item:CELL )
 		item.row = (my - rect.y) / (img_size + 2 * margin_y + default_item_font.height)
 		item.col = (mx - rect.x) / (img_size + 2 * margin_x)
-		If item.row < 0 Or item.row >= items.Length ..
-		Or item.col < 0 Or item.col >= items[item.row].Length
+		If Not does_grid_cell_exist( item )
 			item.row = CELL.COORDINATE_INVALID
 			item.col = CELL.COORDINATE_INVALID
 		End If
@@ -217,6 +214,44 @@ Type TUIImageGrid Extends TUIObject
 		item_rect.y = rect.y + (row * (img_size + 2 * margin_y + default_item_font.height))
 		item_rect.w = rect.x + ((col + 1) * (img_size + 2 * margin_x)) - 1 - item_rect.x
 		item_rect.h = rect.y + ((row + 1) * (img_size + 2 * margin_y + default_item_font.height)) - 1 - item_rect.y
+	End Method
+	
+	Method move_selection( dir% )
+		If Not does_grid_cell_exist( selected_item )
+			selected_item.set( 0, 0 )
+			Return
+		End If
+		'selection is currently valid; move it around
+		Local max_n%
+		Local delta:CELL = New CELL
+		Select dir
+			Case CELL.DIRECTION_EAST
+				max_n = max_cols
+				delta.col = +1
+			Case CELL.DIRECTION_WEST
+				max_n = max_cols
+				delta.col = -1
+			Case CELL.DIRECTION_SOUTH
+				max_n = max_rows
+				delta.row = +1
+			Case CELL.DIRECTION_NORTH
+				max_n = max_rows
+				delta.row = -1
+		End Select
+		Local n% = 0
+		Repeat
+			selected_item.add( delta )
+		Until (n > max_n) ..
+		Or does_grid_cell_exist( selected_item )
+	End Method
+	
+	Method does_grid_cell_exist%( c:CELL )
+    If  c.row >= 0 And c.row < items.Length ..
+		And c.col >= 0 And c.col < items[c.row].Length
+			Return True
+		Else
+			Return False
+		End If
 	End Method
 	
 End Type
