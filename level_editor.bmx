@@ -30,12 +30,9 @@ Const EDIT_LEVEL_MODE_UNIT_FACTORY_DETAILS% = 5
 Const EDIT_LEVEL_MODE_IMMEDIATES% = 6
 Const EDIT_LEVEL_MODE_PROPS% = 7
 
-Const LEVEL_EDITOR_EXIT% = 0
-Const LEVEL_EDITOR_REQUESTS_SAVE% = 1
-
 Global wait_for_user_select_option% = False
 
-Function level_editor%()
+Function level_editor()
 	
 	Local lev:LEVEL
 	Local gridsnap_mouse:cVEC = New cVEC
@@ -86,6 +83,14 @@ Function level_editor%()
 		,,,, ..
 		10, 30 )
 	
+	Local input_font:FONT_STYLE = FONT_STYLE.Create( ..
+		"arcade_14", "arcade_14_outline", ..
+		[ 255, 255, 255 ], [ 64, 64, 64 ] )
+	
+	Local input_font_big:FONT_STYLE = FONT_STYLE.Create( ..
+		"arcade_21", "arcade_21_outline", ..
+		[ 255, 255, 255 ], [ 64, 64, 64 ] )
+	
 	Repeat
 		Cls()
 		SetImageFont( normal_font )
@@ -100,7 +105,13 @@ Function level_editor%()
 		
 		'save level
 		If control And KeyHit( KEY_S )
-			Return LEVEL_EDITOR_REQUESTS_SAVE
+			Local suggested_path$ = level_path + file_system_string_filter( lev.name )
+			Local cursor_pos% = suggested_path.Length - 1
+			suggested_path :+ "." + level_file_ext
+			Local path$ = get_input( suggested_path, cursor_pos, 10, 30, input_font, screencap() )
+			If path
+				save_level( path, lev )
+			End If
 		End If
 		
 		'request load level
@@ -117,9 +128,6 @@ Function level_editor%()
 		'mouse position
 		get_mouse_position()
 		
-		'for instaquit
-		escape_key_update()
-
 		SetColor( 255, 255, 255 )
 		SetScale( 1, 1 )
 		SetLineWidth( 1 )
@@ -368,7 +376,7 @@ Function level_editor%()
 					End If
 					If KeyHit( KEY_ENTER )
 						FlushKeys()
-						lev.name = get_input( lev.name,, info_x, title_y, bigger_font, screencap() )
+						lev.name = get_input( lev.name,, info_x, title_y, input_font_big, screencap() )
 					End If
 				
 				'____________________________________________________________________________________________________
@@ -723,7 +731,7 @@ Function level_editor%()
 	
 						If KeyHit( KEY_ENTER ) And cursor >= 0 And cursor < uf.count_squads()
 							FlushKeys()
-							uf.delay_time[cursor] = get_input( uf.delay_time[cursor],, SETTINGS_REGISTER.WINDOW_WIDTH.get() - 50, info_y + cursor*cell_size + line_h/3, normal_font, screencap() ).ToInt()
+							uf.delay_time[cursor] = get_input( uf.delay_time[cursor],, SETTINGS_REGISTER.WINDOW_WIDTH.get() - 50, info_y + cursor*cell_size + line_h/3, input_font, screencap() ).ToInt()
 						End If
 						If cursor >= 0 And cursor < uf.count_squads()
 							SetColor( 127, 127, 127 )
@@ -962,87 +970,21 @@ Function level_editor%()
 			End Select
 		
 		End If
-
+		
+		'mouse buttons
 		mouse_state_update()
 		
-		If KeyHit( KEY_ESCAPE ) And esc_held And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
-			draw_instaquit_progress()
-		End If
-		
-		If AppTerminate() Then End
-		If escape_key_release() Or KeyHit( KEY_BACKSPACE ) Then Exit
+		'instaquit
+		escape_key_update()
+		draw_instaquit_progress()
 		
 		Flip( 1 )
-	Forever
+	Until escape_key_release() Or KeyHit( KEY_BACKSPACE )
 		
 	FlushKeys()
 	FlushMouse()
-	
-	Return LEVEL_EDITOR_EXIT 'normal termination
 End Function
 
-'______________________________________________________________________________
-Function get_input$( initial_value$, initial_cursor_pos% = INFINITY, x%, y%, font:TImageFont, bg:TImage ) 'returns user input
-		Local con:CONSOLE = New CONSOLE
-		Local str$ = initial_value
-		SetImageFont( font )
-		Local cursor% = str.Length
-		Local selection% = 0
-		Local char_width% = TextWidth( "W" )
-		Repeat
-			Cls()
-			If bg
-				draw_fuzzy( bg )
-			End If
-			'instaquit
-			escape_key_update()
-			
-			'cursor/selection move
-			If KeyHit( KEY_LEFT )
-				cursor :- 1
-				If cursor < 0 Then cursor = 0
-			Else If KeyHit( KEY_RIGHT )
-				cursor :+ 1
-				If cursor > str.Length Then cursor = str.Length
-			Else If KeyHit( KEY_HOME )
-				cursor = 0
-			Else If KeyHit( KEY_END )
-				cursor = str.Length
-			End If
-			
-			'erase character immediately before the cursor, and decrement the cursor
-			If KeyHit( KEY_BACKSPACE )
-				str = str[..cursor-1] + str[cursor..]
-				cursor :- 1
-				If cursor < 0 Then cursor = 0
-			Else If KeyHit( KEY_DELETE )
-				str = str[..cursor] + str[cursor+1..]
-			End If
-			
-			Local strlen% = str.length
-			'///////////////////////
-			str = con.update( str )
-			'///////////////////////
-			If str.length > strlen
-				cursor :+ str.length - strlen
-			End If
-			
-			DrawText_with_outline( str, x, y )
-			SetAlpha( 0.5 + Sin(now() Mod 360) )
-			DrawText( "|", x + char_width*cursor - 4, y )
-			
-			'instaquit
-			If KeyDown( KEY_ESCAPE ) And esc_held And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
-				draw_instaquit_progress()
-			End If
-
-			Flip( 1 )
-			If AppTerminate() Then End
-		Until escape_key_release() Or KeyHit( KEY_ENTER )
-
-		Return str
-End Function
-	
 '______________________________________________________________________________
 Function alignment_to_string$( alignment% )
 	Select alignment

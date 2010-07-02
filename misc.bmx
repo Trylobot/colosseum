@@ -188,6 +188,17 @@ Function line_count%( multi_line_str$ )
 	Return multi_line_str.Split( "~n" ).Length
 End Function
 
+Global file_system_chars$[] = ..
+	["<",">",":","~q","/","\","|","?","*","."," "]
+
+Function file_system_string_filter$( str$ )
+	Local str_cpy$ = str[..]
+	For Local i% = 0 Until file_system_chars.Length
+		str_cpy = str_cpy.Replace( file_system_chars[i], "_" )
+	Next
+	Return str_cpy
+End Function
+
 '______________________________________________________________________________
 Function array_append%[]( src%[], value% )
 	If src

@@ -173,7 +173,7 @@ DebugLog "  MAIN GAME LOOP started at " + elapsed_str(load_start) + " sec. since
 Repeat
 	Cls()
 	
-	'points the global reference to the current game environment
+	'auto-selects the global environment reference
 	select_game()
 	
 	?Not Debug '////////////////////////////////
@@ -229,16 +229,13 @@ Repeat
 	debug_main()
 	
   ? '////////////////////////////////
-
-	'insta-quit
-	If esc_held And KeyDown( KEY_ESCAPE ) ..
-	And (now() - esc_press_ts) >= esc_held_progress_bar_show_time_required
-		draw_instaquit_progress()
-	End If
+	
+	'instaquit
+	escape_key_update()
+	draw_instaquit_progress()
+	
 	'screenshot
-	If KeyHit( KEY_F12 )
-		screenshot()
-	End If
+	If KeyHit( KEY_F12 ) Then screenshot()
 	
 	Flip( 1 )
 Until AppTerminate()

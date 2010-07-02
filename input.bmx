@@ -139,9 +139,6 @@ Function get_all_input()
 		save_settings()
 	End If
 	
-	'insta-quit
-	escape_key_update()
-
 End Function
 
 '______________________________________________________________________________
@@ -166,6 +163,7 @@ Function get_chat_input()
 	End If
 End Function
 
+'______________________________________________________________________________
 Function get_mouse_position()
 	mouse_delta.x = MouseX() - mouse.pos_x
 	mouse_delta.y = MouseY() - mouse.pos_y
@@ -223,3 +221,69 @@ Function mouse_hovering_on_back_button%()
 	    And mouse.pos_y >= main_screen_menu_y + breadcrumb_h And mouse.pos_y <= main_screen_menu_y + breadcrumb_h + get_current_menu().height)
 End Function
 EndRem
+
+'______________________________________________________________________________
+Function get_input$( initial_value$, initial_cursor_pos% = INFINITY, x%, y%, font:FONT_STYLE, bg:TImage = Null ) 'returns user input
+	Local str$ = initial_value
+	Local cursor% = str.Length
+	Local selection% = 0
+	Local cin:CONSOLE = New CONSOLE
+	
+	Repeat
+		Cls()
+		
+		If bg
+			draw_fuzzy( bg )
+		End If
+
+		'cursor/selection move
+		If KeyHit( KEY_LEFT )
+			cursor :- 1
+			If cursor < 0 Then cursor = 0
+		Else If KeyHit( KEY_RIGHT )
+			cursor :+ 1
+			If cursor > str.Length Then cursor = str.Length
+		Else If KeyHit( KEY_HOME )
+			cursor = 0
+		Else If KeyHit( KEY_END )
+			cursor = str.Length
+		End If
+		
+		'erase character immediately before the cursor, and decrement the cursor
+		If KeyHit( KEY_BACKSPACE )
+			str = str[..cursor-1] + str[cursor..]
+			cursor :- 1
+			If cursor < 0 Then cursor = 0
+		Else If KeyHit( KEY_DELETE )
+			str = str[..cursor] + str[cursor+1..]
+		End If
+		
+		Local strlen% = str.length
+		'///////////////////////
+		str = cin.update( str )
+		'///////////////////////
+		If str.length > strlen
+			cursor :+ str.length - strlen
+		End If
+		
+		font.draw_string( str, x, y )
+		SetAlpha( 0.5 + Sin(now() Mod 360) )
+		font.draw_string( "|", x + font.width( str, 0, cursor ), y )
+		
+		If escape_key_release()
+			Return Null
+		End If
+		
+		If KeyHit( KEY_ENTER )
+			Return str
+		End If
+		
+		'instaquit
+		escape_key_update()
+		draw_instaquit_progress()
+		
+		Flip( 1 )
+		If AppTerminate() Then End
+	Forever 
+End Function
+

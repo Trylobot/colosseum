@@ -137,15 +137,15 @@ Function cmd_enter_level_editor( item:Object = Null )
 End Function
 
 Function cmd_enter_unit_editor( item:Object = Null )
-	
+	'unit editor()
 End Function
 
 Function cmd_enter_gibs_editor( item:Object = Null )
-	
+	'gibs_editor()
 End Function
 
 Function cmd_reload_assets( item:Object = Null )
-	
+	load_all_assets()
 End Function
 
 Function cmd_quit_level( item:Object = Null )

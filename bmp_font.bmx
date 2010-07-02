@@ -62,6 +62,12 @@ Type FONT_STYLE
 End Type
 
 '______________________________________________________________________________
+Function DrawStr%( str$, x%, y%, fg:BMP_FONT, bg:BMP_FONT )
+	Local r%,g%,b%
+	GetColor( r,g,b )
+	Return draw_layered_string( str, x, y, fg, bg, r,g,b, 0,0,0 )
+End Function
+
 Function draw_layered_string#( str$, x%, y%, fg_font:BMP_FONT = Null, bg_font:BMP_FONT = Null, fg_red% = 255, fg_green% = 255, fg_blue% = 255, bg_red% = 127, bg_green% = 127, bg_blue% = 127 )
 	Local y_delta# = 0.0
 	If bg_font

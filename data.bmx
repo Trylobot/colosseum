@@ -258,6 +258,7 @@ Function save_level%( path$, lev:LEVEL )
 		If file
 			json.Write( file )
 			file.Close()
+			lev.src_path = path
 			Return True
 		Else
 			Return False
