@@ -78,6 +78,7 @@ Type ENVIRONMENT
 	Field doors:TList 'TList<DOOR>
 	
 	Field human_participation% 'flag indicating whether any humans will ever participate in this game
+	Field deaths%
 	Field win% 'flag indicating win state (overrides game_over state)
 	Field game_over% 'flag indicating game over state
 	Field paused% 'pause flag
@@ -201,6 +202,7 @@ Type ENVIRONMENT
 		Local spawn_start% = now()
 		initialize_spawning_system()
 		reset_spawners()
+		deaths = 0
 		DebugLog "    Level spawners initialized in " + elapsed_str(spawn_start) + " sec."
 		'success
 		DebugLog "  Level environment " + lev.name + " baked in " + elapsed_str(load_start) + " sec."

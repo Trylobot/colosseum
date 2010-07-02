@@ -9,29 +9,6 @@ EndRem
 'non-configurable internal settings
 Global zoom# = 1.0
 
-Type SETTINGS_REGISTER
-	Global FULL_SCREEN:GLOBAL_SETTING_BOOLEAN
-	Global WINDOW_WIDTH:GLOBAL_SETTING_INTEGER
-	Global WINDOW_HEIGHT:GLOBAL_SETTING_INTEGER
-	Global BIT_DEPTH:GLOBAL_SETTING_INTEGER
-	Global REFRESH_RATE:GLOBAL_SETTING_INTEGER
-	Global GRAPHICS_MODE:DYNAMIC_STRING
-	
-End Type
-
-'user-configurable settings
-'Global fullscreen%
-'Global window_w%
-'Global window_h%
-'Global bit_depth%
-'Global refresh_rate%
-Global audio_driver$
-Global bg_music_enabled%
-Global show_ai_menu_game%
-Global active_particle_limit%
-Global network_ip_address$
-Global network_port%
-
 Function apply_default_settings()
 	'fullscreen = False
 	SETTINGS_REGISTER.FULL_SCREEN = GLOBAL_SETTING_BOOLEAN.Create( False )
@@ -52,6 +29,9 @@ Function apply_default_settings()
 	SETTINGS_REGISTER.GRAPHICS_MODE.append( " Hz" )
 	SETTINGS_REGISTER.GRAPHICS_MODE.resolve()
 	
+	SETTINGS_REGISTER.PLAYER_PROFILE_NAME = GLOBAL_SETTING_STRING.Create( "" )
+	SETTINGS_REGISTER.LEVEL_EDITOR_CACHE_FILENAME = GLOBAL_SETTING_STRING.Create( "" )
+	
 	audio_driver = "FreeAudio DirectSound"
 	bg_music_enabled = True
 	show_ai_menu_game = True
@@ -59,6 +39,30 @@ Function apply_default_settings()
 	network_ip_address = "127.0.0.1"
 	network_port = 6112
 End Function
+
+Type SETTINGS_REGISTER
+	Global FULL_SCREEN:GLOBAL_SETTING_BOOLEAN
+	Global WINDOW_WIDTH:GLOBAL_SETTING_INTEGER
+	Global WINDOW_HEIGHT:GLOBAL_SETTING_INTEGER
+	Global BIT_DEPTH:GLOBAL_SETTING_INTEGER
+	Global REFRESH_RATE:GLOBAL_SETTING_INTEGER
+	Global GRAPHICS_MODE:DYNAMIC_STRING
+	Global PLAYER_PROFILE_NAME:GLOBAL_SETTING_STRING
+	Global LEVEL_EDITOR_CACHE_FILENAME:GLOBAL_SETTING_STRING
+End Type
+
+'user-configurable settings
+'Global fullscreen%
+'Global window_w%
+'Global window_h%
+'Global bit_depth%
+'Global refresh_rate%
+Global audio_driver$
+Global bg_music_enabled%
+Global show_ai_menu_game%
+Global active_particle_limit%
+Global network_ip_address$
+Global network_port%
 
 '______________________________________________________________________________
 Type DYNAMIC_STRING

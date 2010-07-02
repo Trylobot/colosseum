@@ -374,3 +374,15 @@ Function update_map%( map:TMap, key:Object, value:Object )
 	Return changed
 End Function
 
+'______________________________________________________________________________
+Function populate_menu_with_files( menu:TUIList, target_path$, filter_by_extension$ = Null, item_clicked_event_handler(item:Object), trim_display_string% = False )
+	menu.remove_all_items()
+	Local level_file_list:TList = find_files( level_path, level_file_ext )
+	Local file_display$
+	For Local file$ = EachIn level_file_list
+		'file_display = file.Replace( level_path, "" ).Replace( "." + level_file_ext, "" )
+		file_display = file
+		menu.add_new_item( file_display, cmd_play_level, file )
+	Next
+End Function
+

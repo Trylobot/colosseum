@@ -108,13 +108,7 @@ End Function
 Function cmd_refresh_custom_level_list( item:Object )
 	Local menu:TUIList = TUIList( item )
 	If menu
-		menu.remove_all_items()
-		Local level_file_list:TList = find_files( level_path, level_file_ext )
-		Local file_display$
-		For Local file$ = EachIn level_file_list
-			file_display = file.Replace( level_path, "" ).Replace( "." + level_file_ext, "" )
-			menu.add_new_item( file_display, cmd_play_level, file )
-		Next
+		populate_menu_with_files( menu, level_path, level_file_ext, cmd_play_level, False )
 	End If
 End Function
 
@@ -139,7 +133,7 @@ Function cmd_new_level_editor_cache( item:Object = Null )
 End Function
 
 Function cmd_enter_level_editor( item:Object = Null )
-	
+	level_editor()
 End Function
 
 Function cmd_enter_unit_editor( item:Object = Null )

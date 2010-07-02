@@ -276,6 +276,7 @@ Function load_game:PLAYER_PROFILE( path$ )
 		file.Close()
 		prof = Create_PLAYER_PROFILE_from_json( json )
 		prof.src_path = path
+		SETTINGS_REGISTER.PLAYER_PROFILE_NAME.set( prof.name )
 		Return prof
 	Else
 		Return Null

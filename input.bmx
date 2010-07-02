@@ -20,22 +20,14 @@ EndRem
 '______________________________________________________________________________
 Global chat_input_listener:CONSOLE = New CONSOLE
 Global chat$
-Global mouse_idle%
 
 Function get_all_input()
 		
 	get_chat_input()
 
-	'mouse update
-	mouse_delta.x = MouseX() - mouse.pos_x
-	mouse_delta.y = MouseY() - mouse.pos_y
-	If mouse_delta.x = 0 And mouse_delta.y = 0
-		mouse_idle = True
-	Else
-		mouse_idle = False
-	End If
-	mouse.pos_x = MouseX()
-	mouse.pos_y = MouseY()
+	get_mouse_position()
+	
+	'hide/ignore mouse
 	If Not FLAG.in_menu And game <> Null And game.human_participation And game.player_brain <> Null
 		HideMouse()
 	Else
@@ -54,6 +46,14 @@ Function get_all_input()
 		Else 'paused
 			current_menu = MENU_REGISTER.pause
 		End If
+		'back-up/back-out
+		If KeyHit( KEY_ESCAPE )|KeyHit( KEY_BACKSPACE )
+			If Not FLAG.paused
+				cmd_show_previous_menu()
+			Else 'paused
+				cmd_unpause_game()
+			End If
+		End If
 		'keyboard input
 		If KeyHit( KEY_UP )
 			current_menu.on_keyboard_up()
@@ -69,13 +69,6 @@ Function get_all_input()
 		End If
 		If KeyHit( KEY_ENTER )
 			current_menu.on_keyboard_enter()
-		End If
-		If KeyHit( KEY_ESCAPE )|KeyHit( KEY_BACKSPACE )
-			If Not FLAG.paused
-				cmd_show_previous_menu()
-			Else 'paused
-				cmd_unpause_game()
-			End If
 		End If
 		'mouse input
 		If Not mouse_idle
@@ -121,13 +114,10 @@ Function get_all_input()
 	End If
 	
 	mouse_state_update()
-	mouse_last_z = MouseZ()
 	
-	'win
-	'TODO: this needs to go someplace else
 	If game And game.human_participation
-		If game.win ..
-		And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE ))
+		'wait for player to see post-win count-up (or game-over shame screen) and press a key
+		If game.win And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE ))
 			FLAG.engine_running = False
 			If FLAG.campaign_mode
 				'menu_command( COMMAND.play_level, "levels/debug.level.json" )
@@ -136,13 +126,13 @@ Function get_all_input()
 				'menu_command( COMMAND.QUIT_LEVEL )
 				cmd_quit_level
 			End If
-		Else If game.game_over ..
-		And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE ))
+		Else If game.game_over And (KeyHit( KEY_ENTER ) Or KeyHit( KEY_SPACE ))
 			'menu_command( COMMAND.PLAY_LEVEL, "" )
-			cmd_play_level( "" )
+			'cmd_play_level( "" )
+			'go back to level select
 		End If
 	End If
-	
+
 	'music enable/disable
 	If KeyHit( KEY_M )
 		bg_music_enabled = Not bg_music_enabled
@@ -176,6 +166,19 @@ Function get_chat_input()
 	End If
 End Function
 
+Function get_mouse_position()
+	mouse_delta.x = MouseX() - mouse.pos_x
+	mouse_delta.y = MouseY() - mouse.pos_y
+	If  mouse_delta.x = 0 ..
+	And mouse_delta.y = 0
+		mouse_idle = True
+	Else
+		mouse_idle = False
+	End If
+	mouse.pos_x = MouseX()
+	mouse.pos_y = MouseY()
+End Function
+
 '______________________________________________________________________________
 Function mouse_clicked_1%()
 	Return (Not mouse_down_1 And MouseDown( 1 ))
@@ -204,6 +207,7 @@ Function mouse_state_update()
 	Else
 		mouse_down_2 = False
 	End If
+	mouse_last_z = MouseZ()
 End Function
 
 '______________________________________________________________________________

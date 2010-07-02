@@ -146,8 +146,8 @@ Function initialize_menus()
 		,,,, ..
 		menu_x, menu_y )
 	idx( True )
+	profile_menu.set_item( idx(), "SAVE PROFILE", cmd_save_profile,, SETTINGS_REGISTER.PLAYER_PROFILE_NAME )
 	profile_menu.set_item( idx(), "CREATE NEW", cmd_create_new_profile )
-	profile_menu.set_item( idx(), "SAVE PROFILE", cmd_save_profile )
 	profile_menu.set_item( idx(), "SWITCH PROFILES", cmd_load_profile )
 	
 	settings_menu.Construct( ..
@@ -161,9 +161,9 @@ Function initialize_menus()
 		,,,, ..
 		menu_x, menu_y )
 	idx( True )
-	settings_menu.set_item( idx(), "GAME PERFORMANCE", cmd_show_menu, video_settings_menu )
+	settings_menu.set_item( idx(), "GAME PERFORMANCE", cmd_show_menu )
 	settings_menu.set_item( idx(), "VIDEO SETTINGS", cmd_show_menu, video_settings_menu )
-	settings_menu.set_item( idx(), "AUDIO SETTINGS", cmd_show_menu, video_settings_menu )
+	settings_menu.set_item( idx(), "AUDIO SETTINGS", cmd_show_menu, audio_settings_menu )
 	
 	advanced_menu.Construct( ..
 		"ADVANCED", 4, ..

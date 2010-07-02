@@ -164,7 +164,7 @@ End Function
 '______________________________________________________________________________
 Function update_flags()
 	'global state flag updates
-	If game And game.auto_reset_spawners
+	If game.auto_reset_spawners
 		If game.active_spawners( POLITICAL_ALIGNMENT.FRIENDLY ) <= 0 And game.friendly_agent_list.Count() <= 0
 			game.reset_spawners( POLITICAL_ALIGNMENT.FRIENDLY )
 		End If
@@ -172,7 +172,6 @@ Function update_flags()
 			game.reset_spawners( POLITICAL_ALIGNMENT.HOSTILE )
 		End If
 	End If
-	'flag updates for games with human participation
 	If game.human_participation
 		'waiting on player to start
 		If game.waiting_for_player_to_enter_arena
@@ -187,13 +186,15 @@ Function update_flags()
 		End If
 		If Not game.sandbox ..
 		And Not game.win And Not game.game_over
-			'win
+			'player win
 			If game.battle_in_progress And game.active_spawners( POLITICAL_ALIGNMENT.HOSTILE ) = 0 And game.hostile_agent_list.Count() = 0
 				player_wins_game()
 			End If
 			'game over
 			If Not game.win And game.player.dead() 'player just died? (omgwtf)
-				player_loses_game()
+				game.respawn_player()
+				game.deaths :+ 1
+				'player_loses_game()
 			End If
 		End If
 	End If
