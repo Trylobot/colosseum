@@ -60,8 +60,8 @@ Function initialize_menus()
 	Local menu_super_small_item_fg_font:BMP_FONT = get_bmp_font( "arcade_7" )
 	Local menu_super_small_item_bg_font:BMP_FONT = get_bmp_font( "arcade_7_outline" )
 	Local menu_line_width% = 3
-	Local menu_tiny_line_width% = 1
 	Local menu_small_line_width% = 2
+	Local menu_tiny_line_width% = 1
 	Local menu_x% = 10, menu_y% = 70
 	
 	MENU_REGISTER.stack = CreateList()
@@ -190,20 +190,21 @@ Function initialize_menus()
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
-		menu_small_item_fg_font, menu_small_item_bg_font, light_gray, black, ..
+		menu_small_item_fg_font, menu_small_item_bg_font, ..
+		black, white, ..
 		menu_x, menu_y )
 	idx( True )
-	video_settings_menu.set_item( idx(), "FULL SCREEN MODE", cmd_toggle_setting, SETTINGS_REGISTER.FULL_SCREEN, SETTINGS_REGISTER.FULL_SCREEN )
-	video_settings_menu.set_item( idx(), "DISPLAY RESOLUTION", cmd_show_menu, screen_resolution_menu, SETTINGS_REGISTER.GRAPHICS_MODE )
+	video_settings_menu.set_item( idx(), "FULL-SCREEN", cmd_toggle_setting, SETTINGS_REGISTER.FULL_SCREEN, SETTINGS_REGISTER.FULL_SCREEN )
+	video_settings_menu.set_item( idx(), "RESOLUTION", cmd_show_menu, screen_resolution_menu, SETTINGS_REGISTER.GRAPHICS_MODE )
 	
 	Local modes:TGraphicsMode[] = GraphicsModes()
 	screen_resolution_menu.Construct( ..
 		"RESOLUTION", modes.Length, ..
 		dark_gray, white, black, white, ..
-		menu_line_width, ..
+		menu_tiny_line_width, ..
 		menu_header_fg_font, menu_header_bg_font, ..
 		white, black, ..
-		menu_small_item_fg_font, menu_small_item_bg_font, ..
+		menu_super_small_item_fg_font, menu_super_small_item_bg_font, ..
 		white, black, black, light_gray, ..
 		,,,, ..
 		menu_x, menu_y )

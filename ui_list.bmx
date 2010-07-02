@@ -115,11 +115,7 @@ Type TUIList Extends TUIObject
     iy = rect.y + margin_y
 		Local ir:BOX
     For Local i% = 0 Until items_display.Length
-      If i <> selected_item
-        'draw normal item text
-				item_font.draw_string( items_display[i], ix, iy )
-	      iy :+ item_font.height + margin_y
-      Else 'i == selected_item
+      If i = selected_item
         'draw selected item box
 				item_panel_selected_color.Set()
 				ir = item_rects[i]
@@ -127,25 +123,30 @@ Type TUIList Extends TUIObject
 				draw_box( ir, True )
 				'draw item text
 				item_selected_font.draw_string( items_display[i], ix, iy )
-	      iy :+ item_selected_font.height + margin_y
+      Else 'i <> selected_item
+        'draw normal item text
+				item_font.draw_string( items_display[i], ix, iy )
       End If
+	    iy :+ item_font.height + margin_y
     Next
 		'draw list item tags
     ix = rect.x + rect.w + margin_x
-    iy = rect.y + margin_y
+    iy = rect.y + margin_y + ((item_font.height - item_tag_font.height) / 2)
 		Local tagb:BOX
 		For Local i% = 0 Until item_tags.Length
 			If item_tags[i]
+				rem
 	      'draw item tag box
 				tagb = item_rects[i].clone()
 				tagb.x :+ tagb.w + margin_x
 				SetScale( 1, 1 )
 				border_color.Set()
 	      draw_box( tagb, False, line_width )
+				endrem
 				'draw item tag text
 				item_tag_font.draw_string( item_tags[i].ToString(), ix, iy )
 			End If
-			iy :+ item_selected_font.height + margin_y
+			iy :+ item_font.height + margin_y
 		Next
     'scrollbar
     'TODO - add intelligent scrollbar support

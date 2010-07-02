@@ -14,4 +14,5 @@ Global mouse_delta:cVEC = New cVEC 'mouse per-frame movement
 Global mouse_last_z% = 0 'middle mouse tracking
 Global dragging_scrollbar% = False 'menu hack
 Global mouse_down_1% = False 'menu button state tracking
+Global mouse_down_2% = False 'same
 

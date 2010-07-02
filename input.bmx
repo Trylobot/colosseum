@@ -91,6 +91,9 @@ Function get_all_input()
 				cmd_show_previous_menu()
 			End If
 		End If
+		If mouse_clicked_2()
+			cmd_show_previous_menu()
+		End If
 	'non-menu input mode (game mode)
 	Else 'Not FLAG_in_menu
 		If game And game.human_participation
@@ -182,11 +185,24 @@ Function mouse_released_1%()
 	Return (mouse_down_1 And Not MouseDown( 1 ))
 End Function
 
+Function mouse_clicked_2%()
+	Return (Not mouse_down_2 And MouseDown( 2 ))
+End Function
+
+Function mouse_released_2%()
+	Return (mouse_down_2 And Not MouseDown( 2 ))
+End Function
+
 Function mouse_state_update()
 	If MouseDown( 1 )
 		mouse_down_1 = True
 	Else
 		mouse_down_1 = False
+	End If
+	If MouseDown( 2 )
+		mouse_down_2 = True
+	Else
+		mouse_down_2 = False
 	End If
 End Function
 

@@ -43,7 +43,7 @@ Type FONT_STYLE
 		fs.bg_font = Create_BMP_FONT_from_obj( bg_font )
     fs.fg_color = TColor.Create_by_RGB_object( fg_color )
 		fs.bg_color = TColor.Create_by_RGB_object( bg_color )
-		If fs.fg_font.height
+		If fs.fg_font
 			fs.height = fs.fg_font.height
 		End If
     Return fs
