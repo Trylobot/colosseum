@@ -321,6 +321,32 @@ Function get_player_id%()
 End Function
 
 '______________________________________________________________________________
+'these need to go away, kind of a hack
+Const main_screen_x% = 25
+Const main_screen_y% = 15
+
+Const main_screen_menu_y% = 30
+
+'______________________________________________________________________________
+Global meta_variable_cache:TMap
+
+Function resolve_meta_variables$( str$, argument:Object = Null )
+	Local tokens$[] = str.Split( "%%" )
+	Local result$ = ""
+	For Local i% = 0 To tokens.Length - 1
+		If i Mod 2 = 0 'token index is even; normal string literal
+			result :+ tokens[i]
+		Else If meta_variable_cache 'token index is odd; inside a meta-variable identifier
+			Local meta_var$ = String( meta_variable_cache.ValueForKey( tokens[i] ))
+			If meta_var
+				result :+ meta_var
+			End If
+		End If
+	Next
+	Return result
+End Function
+
+'______________________________________________________________________________
 Function update_meta_variable_cache()
 	If Not meta_variable_cache
 		meta_variable_cache = CreateMap()

@@ -13,31 +13,6 @@ EndRem
 'Import "misc.bmx"
 'Import "draw_misc.bmx"
 
-'______________________________________________________________________________
-'these need to go away, kind of a hack
-Const main_screen_x% = 25
-Const main_screen_y% = 15
-
-Const main_screen_menu_y% = 30
-
-'______________________________________________________________________________
-Global meta_variable_cache:TMap
-
-Function resolve_meta_variables$( str$, argument:Object = Null )
-	Local tokens$[] = str.Split( "%%" )
-	Local result$ = ""
-	For Local i% = 0 To tokens.Length - 1
-		If i Mod 2 = 0 'even; string literal
-			result :+ tokens[i]
-		Else If meta_variable_cache 'odd; inside a meta-variable identifier
-			Local meta_var$ = String( meta_variable_cache.ValueForKey( tokens[i] ))
-			If meta_var
-				result :+ meta_var
-			End If
-		End If
-	Next
-	Return result
-End Function
 
 Rem
 Const border_width% = 1

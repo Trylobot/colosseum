@@ -103,6 +103,19 @@ Function cmd_select_current_screen_resolution( item:Object )
 	End If
 End Function
 
+Function cmd_refresh_custom_level_list( item:Object )
+	Local menu:TUIList = TUIList( item )
+	If menu
+		menu.remove_all_items()
+		Local level_file_list:TList = find_files( level_path, level_file_ext )
+		Local file_display$
+		For Local file$ = EachIn level_file_list
+			file_display = file.Replace( level_path, "" ).Replace( "." + level_file_ext, "" )
+			menu.add_new_item( file_display, cmd_play_level, file )
+		Next
+	End If
+End Function
+
 Function cmd_pause_game( item:Object = Null )
 	FLAG.paused = True
 	FLAG.in_menu = True

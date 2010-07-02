@@ -81,6 +81,8 @@ Type TUIList Extends TUIObject
   End Method
   
   Method draw()
+		If item_count <= 0 Then Return
+		
     SetAlpha( 1 )
 		SetRotation( 0 )
 		SetScale( 1, 1 )
@@ -199,6 +201,14 @@ Type TUIList Extends TUIObject
 	
 	Method get_item_count%()
 		Return items.Length
+	End Method
+	
+	Method remove_all_items()
+		item_count = 0
+		items = Null
+		items_display = Null
+		item_clicked_event_handlers = Null
+		item_rects = Null
 	End Method
 	
   Method calculate_dimensions()

@@ -33,18 +33,19 @@ Function DirExists%( path$ )
 End Function
 
 '______________________________________________________________________________
+'recursive file search starting at a given path with an optional file-extension filter
 Function find_files:TList( path$, ext$ = "", list:TList = Null )
 	If Not list Then list = CreateList()
-	For Local entry$ = EachIn LoadDir( path, True )
-		If entry = ".svn" Then Continue 'source control
+	Local dir_listing$[] = LoadDir( path, True )
+	For Local entry$ = EachIn dir_listing
 		Local entry_full$ = pcat([ path, entry ])
 		Select FileType( entry_full )
-			Case FILETYPE_FILE
-				If ext = "" Or ExtractExt( entry_full ) = ext
-					list.AddLast( entry_full )
-				End If
 			Case FILETYPE_DIR
 				find_files( entry_full, ext, list )
+			Case FILETYPE_FILE
+				If ext = "" Or entry_full.EndsWith( ext )
+					list.AddLast( entry_full )
+				End If
 		End Select
 	Next
 	Return list

@@ -76,6 +76,7 @@ Function initialize_menus()
 			Local audio_settings_menu:TUIList = New TUIList
 			Local performance_settings_menu:TUIList = New TUIList
 		Local advanced_menu:TUIList = New TUIList
+			Local play_custom_level_menu:TUIList = New TUIList
 	
 	'/////////////////
 	
@@ -172,6 +173,7 @@ Function initialize_menus()
 		menu_x, menu_y )
 	idx( True )
 	advanced_menu.set_item( idx(), "LEVEL EDITOR", cmd_enter_level_editor )
+	advanced_menu.set_item( idx(), "PLAY LEVEL", cmd_show_menu, play_custom_level_menu )
 	advanced_menu.set_item( idx(), "UNIT EDITOR", cmd_enter_unit_editor )
 	advanced_menu.set_item( idx(), "GIBS EDITOR", cmd_enter_gibs_editor )
 	advanced_menu.set_item( idx(), "RELOAD DATA", cmd_reload_assets )
@@ -193,10 +195,10 @@ Function initialize_menus()
 	screen_resolution_menu.Construct( ..
 		"RESOLUTION", modes.Length, ..
 		dark_gray, white, black, white, ..
-		menu_tiny_line_width, ..
+		menu_line_width, ..
 		menu_header_fg_font, menu_header_bg_font, ..
 		white, black, ..
-		menu_super_small_item_fg_font, menu_super_small_item_bg_font, ..
+		menu_small_item_fg_font, menu_small_item_bg_font, ..
 		white, black, black, light_gray, ..
 		menu_x, menu_y )
 	For Local i% = 0 Until modes.Length
@@ -220,7 +222,18 @@ Function initialize_menus()
 	audio_settings_menu.set_item( idx(), "EFFECTS VOLUME" )
 	audio_settings_menu.set_item( idx(), "MUSIC VOLUME" )
 	audio_settings_menu.set_item( idx(), "AUDIO DRIVER" )
-		
+	
+	play_custom_level_menu.Construct( ..
+		"PLAY LEVEL", 0, ..
+		dark_gray, white, black, white, ..
+		menu_line_width, ..
+		menu_header_fg_font, menu_header_bg_font, ..
+		white, black, ..
+		menu_small_item_fg_font, menu_small_item_bg_font, ..
+		white, black, black, light_gray, ..
+		menu_x, menu_y )
+	play_custom_level_menu.set_menu_show_event_handler( cmd_refresh_custom_level_list )
+	
 	pause_menu.Construct( ..
 		"PAUSED", 4, ..
 		dark_gray, white, black, white, ..
@@ -236,8 +249,6 @@ Function initialize_menus()
 	pause_menu.set_item( idx(), "QUIT LEVEL", cmd_quit_level )
 	pause_menu.set_item( idx(), "QUIT GAME", cmd_quit_game )
 	MENU_REGISTER.pause = pause_menu
-	
-	
 	
 End Function
 
