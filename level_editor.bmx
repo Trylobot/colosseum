@@ -237,13 +237,13 @@ Function level_editor%( lev:LEVEL )
 		'End If
 		
 		'unconditionally draw level info panel and editor help
-		info_x = round_to_nearest( window_w, gridsnap ) - 300; info_y = 0;
+		info_x = round_to_nearest( SETTINGS_REGISTER.WINDOW_WIDTH.get(), gridsnap ) - 300; info_y = 0;
 		SetAlpha( 0.75 )
 		SetColor( 32, 32, 32 )
-		DrawRect( info_x,info_y, 300,window_h )
+		DrawRect( info_x,info_y, 300,SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 		SetAlpha( 1 )
 		SetColor( 196, 196, 196 )
-		DrawLine( info_x,info_y, info_x,window_h )
+		DrawLine( info_x,info_y, info_x,SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 		SetColor( 255, 255, 255 )
 		info_x :+ 8; info_y :+ 10
 		
@@ -660,21 +660,21 @@ Function level_editor%( lev:LEVEL )
 					For Local r% = 0 To uf.count_squads()-1
 						'wave index
 						SetColor( 255, 255, 255 )
-						DrawText_with_shadow( uf.wave_index[r], window_w - 68, info_y + r*cell_size + line_h/3 )
+						DrawText_with_shadow( uf.wave_index[r], SETTINGS_REGISTER.WINDOW_WIDTH.get() - 68, info_y + r*cell_size + line_h/3 )
 						'draw all delay times except the cursor
 						If r <> cursor
 							SetColor( 127, 127, 127 )
-							DrawText_with_shadow( uf.delay_time[r], window_w - 50, info_y + r*cell_size + line_h/3 )
+							DrawText_with_shadow( uf.delay_time[r], SETTINGS_REGISTER.WINDOW_WIDTH.get() - 50, info_y + r*cell_size + line_h/3 )
 						End If
 					Next
 
 					If KeyHit( KEY_ENTER ) And cursor >= 0 And cursor < uf.count_squads()
 						FlushKeys()
-						uf.delay_time[cursor] = get_input( uf.delay_time[cursor],, window_w - 50, info_y + cursor*cell_size + line_h/3, normal_font, screencap() ).ToInt()
+						uf.delay_time[cursor] = get_input( uf.delay_time[cursor],, SETTINGS_REGISTER.WINDOW_WIDTH.get() - 50, info_y + cursor*cell_size + line_h/3, normal_font, screencap() ).ToInt()
 					End If
 					If cursor >= 0 And cursor < uf.count_squads()
 						SetColor( 127, 127, 127 )
-						DrawText_with_shadow( String.FromInt( uf.delay_time[cursor] ), window_w - 50, info_y + cursor*cell_size + line_h/3 )
+						DrawText_with_shadow( String.FromInt( uf.delay_time[cursor] ), SETTINGS_REGISTER.WINDOW_WIDTH.get() - 50, info_y + cursor*cell_size + line_h/3 )
 					End If
 					Local cursor_squadmembers% = uf.count_squadmembers( cursor )
 					Local ag:COMPLEX_AGENT = get_unit( cursor_archetype )

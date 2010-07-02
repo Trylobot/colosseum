@@ -16,12 +16,24 @@ Function init_graphics()
 	'SetGraphicsDriver D3D7Max2DDriver()
 	'SetGraphicsDriver GLMax2DDriver()
 	If Not SETTINGS_REGISTER.FULL_SCREEN.get()
-		Graphics( window_w, window_h,,, GRAPHICS_BACKBUFFER )
+		
+		Graphics( ..
+			SETTINGS_REGISTER.WINDOW_WIDTH.get(), ..
+			SETTINGS_REGISTER.WINDOW_HEIGHT.get(),,, ..
+			GRAPHICS_BACKBUFFER )
+			
 		?Win32
 		set_window( WS_MINIMIZEBOX )
 		?
 	Else 'fullscreen
-		Graphics( window_w, window_h, bit_depth, refresh_rate, GRAPHICS_BACKBUFFER )
+		
+		Graphics( ..
+			SETTINGS_REGISTER.WINDOW_WIDTH.get(), ..
+			SETTINGS_REGISTER.WINDOW_HEIGHT.get(), ..
+			SETTINGS_REGISTER.BIT_DEPTH.get(), ..
+			SETTINGS_REGISTER.REFRESH_RATE.get(), ..
+			GRAPHICS_BACKBUFFER )
+			
 	End If
 	SetClsColor( 0, 0, 0 )
 	Cls()

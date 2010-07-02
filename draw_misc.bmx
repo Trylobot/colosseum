@@ -17,7 +17,7 @@ End Function
 
 Function screencap:TImage()
 	SetOrigin( 0, 0 )
-	Return LoadImage( GrabPixmap( 0, 0, window_w, window_h ))
+	Return LoadImage( GrabPixmap( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() ))
 End Function
 
 Function DrawRectLines( x%, y%, w%, h%, L% = 1 )
@@ -27,11 +27,11 @@ Function DrawRectLines( x%, y%, w%, h%, L% = 1 )
 	DrawRect( x, y, L, h ) 'left vert
 End Function
 
-Function draw_box( b:BOX, solid% = False )
+Function draw_box( b:BOX, solid% = False, line_width% = 1 )
 	If solid
 		DrawRect( b.x, b.y, b.w, b.h )
 	Else
-		DrawRectLines( b.x, b.y, b.w, b.h )
+		DrawRectLines( b.x, b.y, b.w, b.h, line_width )
 	End If
 End Function
 
@@ -87,7 +87,7 @@ Function draw_fuzzy( img:TImage )
 		SetAlpha( 0.666666 )
 		SetBlend( ALPHABLEND )
 		SetColor( 0, 0, 0 )
-		DrawRect( 0, 0, window_w, window_h )
+		DrawRect( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 		SetAlpha( 1 )
 		SetColor( 255, 255, 255 )
 	End If

@@ -119,18 +119,18 @@ Function init_ai_menu_game( fit_to_window% = True )
 	If lev
 		Local diff%
 		If fit_to_window
-			If window_w > lev.width
-				diff = window_w - lev.width
+			If SETTINGS_REGISTER.WINDOW_WIDTH.get() > lev.width
+				diff = SETTINGS_REGISTER.WINDOW_WIDTH.get() - lev.width
 				lev.set_divider( LINE_TYPE_VERTICAL, 4, diff/2, True )
 				lev.set_divider( LINE_TYPE_VERTICAL, 15, diff/2, True )
 			End If
-			If window_h > lev.height
-				diff = window_h - lev.height
+			If SETTINGS_REGISTER.WINDOW_HEIGHT.get() > lev.height
+				diff = SETTINGS_REGISTER.WINDOW_HEIGHT.get() - lev.height
 				lev.set_divider( LINE_TYPE_HORIZONTAL, 3, diff/2, True )
 				lev.set_divider( LINE_TYPE_HORIZONTAL, 11, diff/2, True )
 			End If
 		Else
-			ai_menu_game.drawing_origin = Create_cVEC( window_w/2 - lev.width/2, window_h/2 - lev.height/2 )
+			ai_menu_game.drawing_origin = Create_cVEC( SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - lev.width/2, SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2 - lev.height/2 )
 		End If
 		Local load_start% = now()
 		Local bg:TImage = generate_sand_image( lev.width, lev.height )
@@ -309,7 +309,7 @@ Function show_info( str$ )
 End Function
 
 Function reset_mouse( ang# )
-	MoveMouse( window_w/2 + 30 * Cos( ang ), window_h/2 + 30 * Sin( ang ))
+	MoveMouse( SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 + 30 * Cos( ang ), SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2 + 30 * Sin( ang ))
 End Function
 
 Function get_player_id%()
@@ -356,10 +356,10 @@ Function update_meta_variable_cache()
 	update_map( meta_variable_cache, "profile.kills", format_number( profile.kills ))
 	update_map( meta_variable_cache, "level_editor_cache.name", level_editor_cache.name )
 	update_map( meta_variable_cache, "fullscreen", SETTINGS_REGISTER.FULL_SCREEN.ToString())
-	update_map( meta_variable_cache, "window_w", String.FromInt( window_w ))
-	update_map( meta_variable_cache, "window_h", String.FromInt( window_h ))
-	update_map( meta_variable_cache, "refresh_rate", String.FromInt( refresh_rate ))
-	update_map( meta_variable_cache, "bit_depth", String.FromInt( bit_depth ))
+	update_map( meta_variable_cache, "window_w", String.FromInt( SETTINGS_REGISTER.WINDOW_WIDTH.get() ))
+	update_map( meta_variable_cache, "window_h", String.FromInt( SETTINGS_REGISTER.WINDOW_HEIGHT.get() ))
+	update_map( meta_variable_cache, "refresh_rate", String.FromInt( SETTINGS_REGISTER.REFRESH_RATE.get() ))
+	update_map( meta_variable_cache, "bit_depth", String.FromInt( SETTINGS_REGISTER.BIT_DEPTH.get() ))
 	update_map( meta_variable_cache, "audio_driver", audio_driver )
 	update_map( meta_variable_cache, "show_ai_menu_game", boolean_to_string( show_ai_menu_game ))
 	update_map( meta_variable_cache, "active_particle_limit", String.FromInt( active_particle_limit ))

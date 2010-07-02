@@ -193,7 +193,7 @@ End Function
 '______________________________________________________________________________
 Function screenshot()
 	SetOrigin( 0, 0 )
-	save_pixmap_to_file( GrabPixmap( 0, 0, window_w, window_h ))
+	save_pixmap_to_file( GrabPixmap( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() ))
 End Function
 
 '______________________________________________________________________________

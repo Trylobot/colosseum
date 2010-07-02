@@ -75,6 +75,7 @@ Function test_ui_list()
 		[255, 255, 255], [0, 0, 0], ..
     "arcade_14", "arcade_14_outline", ..
 		[255, 255, 255], [0, 0, 0], [0, 0, 0], [205, 205, 205], ..
+		,,,, ..
 		10, 10 )
 	list1.set_item( 0, "item1", debug_ui_list_item_clicked, "1" )
 	list1.set_item( 1, "item2", debug_ui_list_item_clicked, "2" )
@@ -527,8 +528,8 @@ Function debug_fps()
 	SetColor( 255, 255, 127 )
 	SetImageFont( get_font( "consolas_bold_12" ))
 	Local fps_str$ = "fps "+fps
-	sx = window_w - TextWidth( fps_str ) - 1
-	sy = window_h - GetImageFont().Height() - 1
+	sx = SETTINGS_REGISTER.WINDOW_WIDTH.get() - TextWidth( fps_str ) - 1
+	sy = SETTINGS_REGISTER.WINDOW_HEIGHT.get() - GetImageFont().Height() - 1
 	DrawText_with_outline( fps_str, sx, sy )
 End Function
 

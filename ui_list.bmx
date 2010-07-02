@@ -20,16 +20,18 @@ Type TUIList Extends TUIObject
 	Field header_font:FONT_STYLE
   Field item_font:FONT_STYLE
   Field item_selected_font:FONT_STYLE
-  Field margin_x%
-  Field margin_y%
+	Field item_tag_font:FONT_STYLE
 
-  Field items_display:String[]
-  Field items:Object[]
   Field selected_item% '-1 if none
 	Field rect:BOX
+  Field items:Object[]
+  Field items_display:String[]
+	Field item_tags:Object[]
 	Field item_rects:BOX[]
-	Field menu_show_event_handler:TUIEventHandler
+  Field margin_x%
+  Field margin_y%
   Field item_clicked_event_handlers:TUIEventHandler[]
+	Field menu_show_event_handler:TUIEventHandler
   
 	Method New()
 	End Method
@@ -43,12 +45,12 @@ Type TUIList Extends TUIObject
 	item_fg_font:Object, item_bg_font:Object, ..
 	item_fg_color:Object, item_bg_color:Object, ..
 	item_selected_fg_color:Object, item_selected_bg_color:Object, ..
+	item_tag_fg_font:Object = Null, item_tag_bg_font:Object = Null, ..
+	item_tag_fg_color:Object = Null, item_tag_bg_color:Object = Null, ..
 	x% = 0, y% = 0 )
     'initialization
 		Self.header = header
     Self.item_count = item_count
-    Self.items = New Object[item_count]
-		Self.items_display = New String[item_count]
     Self.panel_color = TColor.Create_by_RGB_object( panel_color )
     Self.border_color = TColor.Create_by_RGB_object( border_color )
     Self.inner_border_color = TColor.Create_by_RGB_object( inner_border_color )
@@ -57,15 +59,18 @@ Type TUIList Extends TUIObject
 		Self.header_font = FONT_STYLE.Create( header_fg_font, header_bg_font, header_fg_color, header_bg_color )
     Self.item_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_fg_color, item_bg_color )
     Self.item_selected_font = FONT_STYLE.Create( item_fg_font, item_bg_font, item_selected_fg_color, item_selected_bg_color )
-		Self.rect = Null
-		Self.item_rects = Null
+		Self.item_tag_font = FONT_STYLE.Create( item_tag_fg_font, item_tag_bg_font, item_tag_fg_color, item_tag_bg_color )
 		Self.set_position( x, y )
     'derived fields
     Self.selected_item = 0
+    Self.items = New Object[item_count]
+		Self.items_display = New String[item_count]
+		Self.item_tags = New Object[item_count]
+		Self.item_rects = Null
     Self.margin_x = Self.item_font.width( " " )
     Self.margin_y = Int(0.5 * Float(Self.item_font.height))
-    Self.calculate_dimensions()
 		Self.item_clicked_event_handlers = New TUIEventHandler[item_count]
+    Self.calculate_dimensions()
   End Method
   
   Method set_position( x%, y% )
@@ -82,47 +87,66 @@ Type TUIList Extends TUIObject
   
   Method draw()
 		If item_count <= 0 Then Return
-		
     SetAlpha( 1 )
 		SetRotation( 0 )
 		SetScale( 1, 1 )
     'draw panels
     If panel_color
       panel_color.Set()
-      DrawRect( rect.x, rect.y, rect.w, rect.h )
+			draw_box( rect, True )
     End If
     If border_color
       border_color.Set()
-      DrawRectLines( rect.x, rect.y, rect.w, rect.h, line_width )
+			draw_box( rect, False, line_width )
     End If
     If inner_border_color
       inner_border_color.Set()
-      DrawRectLines( rect.x + line_width, rect.y + line_width, rect.w - 2*line_width, rect.h - 2*line_width, line_width )
+			DrawRectLines( rect.x + line_width, rect.y + line_width, rect.w - 2*line_width, rect.h - 2*line_width, line_width )
     End If
 		'draw header
 		If header_font
 			SetScale( 1, 1 )
 			header_font.draw_string( header, rect.x + margin_x/2, rect.y - header_font.height - margin_y/2 )
 		End If
-    'draw list item text
-    Local ix% = rect.x + margin_x
-    Local iy% = rect.y + margin_y
+    'draw list items
+    Local ix%
+    Local iy%
+    ix = rect.x + margin_x
+    iy = rect.y + margin_y
 		Local ir:BOX
     For Local i% = 0 Until items_display.Length
       If i <> selected_item
         'draw normal item text
-				SetScale( 1, 1 )
-				iy :+ item_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
+				item_font.draw_string( items_display[i], ix, iy )
+	      iy :+ item_font.height + margin_y
       Else 'i == selected_item
         'draw selected item box
 				item_panel_selected_color.Set()
 				ir = item_rects[i]
 				SetScale( 1, 1 )
-				DrawRect( ir.x, ir.y, ir.w, ir.h )
+				draw_box( ir, True )
 				'draw item text
-        iy :+ item_selected_font.draw_string( items_display[i], ix, iy ) + item_font.height + margin_y
+				item_selected_font.draw_string( items_display[i], ix, iy )
+	      iy :+ item_selected_font.height + margin_y
       End If
     Next
+		'draw list item tags
+    ix = rect.x + rect.w + margin_x
+    iy = rect.y + margin_y
+		Local tagb:BOX
+		For Local i% = 0 Until item_tags.Length
+			If item_tags[i]
+	      'draw item tag box
+				tagb = item_rects[i].clone()
+				tagb.x :+ tagb.w + margin_x
+				SetScale( 1, 1 )
+				border_color.Set()
+	      draw_box( tagb, False, line_width )
+				'draw item tag text
+				item_tag_font.draw_string( item_tags[i].ToString(), ix, iy )
+			End If
+			iy :+ item_selected_font.height + margin_y
+		Next
     'scrollbar
     'TODO - add intelligent scrollbar support
   End Method
@@ -173,25 +197,24 @@ Type TUIList Extends TUIObject
 		End If
 	End Method
 	
-	Method set_item( i%, item_display:String, item_clicked_event_handler(item:Object) = Null, item:Object = Null )
+	Method set_item( i%, item_display:String, item_clicked_event_handler(item:Object) = Null, item:Object = Null, item_tag:Object = Null )
 		If i < 0 Or i >= item_count Then Return
 		items[i] = item
     items_display[i] = item_display
+		item_tags[i] = item_tag
 		item_clicked_event_handlers[i] = TUIEventHandler.Create( item_clicked_event_handler )
 		calculate_dimensions()
 	End Method
 	
-  Method add_new_item( item_display:String, item_clicked_event_handler(item:Object) = Null, item:Object = Null )
+  Method add_new_item( item_display:String, item_clicked_event_handler(item:Object) = Null, item:Object = Null, item_tag:Object = Null )
     Local i% = item_count
 		item_count :+ 1
     items = items[..item_count]
     items_display = items_display[..item_count]
+		item_tags = item_tags[..item_count]
 		item_clicked_event_handlers = item_clicked_event_handlers[..item_count]
 		item_rects = item_rects[..item_count]
-    items[i] = item
-    items_display[i] = item_display
-		item_clicked_event_handlers[i] = TUIEventHandler.Create( item_clicked_event_handler )
-		calculate_dimensions()
+    set_item( i, item_display, item_clicked_event_handler, item, item_tag )
   End Method
 	
 	Method get_item:Object( i% )
@@ -207,7 +230,10 @@ Type TUIList Extends TUIObject
 		item_count = 0
 		items = Null
 		items_display = Null
+		item_tags = Null
 		item_clicked_event_handlers = Null
+		rect.w = 0
+		rect.h = 0
 		item_rects = Null
 	End Method
 	
@@ -267,4 +293,6 @@ Type TUIList Extends TUIObject
 	End Method
   
 End Type
+
+
 

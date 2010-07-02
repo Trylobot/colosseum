@@ -311,11 +311,11 @@ Function load_settings%()
 	json.GetNumber( "refresh_rate" )) ..
 	Or Not json.GetBoolean( "fullscreen" )
 		'success
-		window_w = json.GetNumber( "window_w" )
-		window_h = json.GetNumber( "window_h" )
 		SETTINGS_REGISTER.FULL_SCREEN.set( json.GetBoolean( "fullscreen" ))
-		bit_depth = json.GetNumber( "bit_depth" )
-		refresh_rate = json.GetNumber( "refresh_rate" )
+		SETTINGS_REGISTER.WINDOW_WIDTH.set( json.GetNumber( "window_w" ))
+		SETTINGS_REGISTER.WINDOW_HEIGHT.set( json.GetNumber( "window_h" ))
+		SETTINGS_REGISTER.BIT_DEPTH.set( json.GetNumber( "bit_depth" ))
+		SETTINGS_REGISTER.REFRESH_RATE.set( json.GetNumber( "refresh_rate" ))
 		If AudioDriverExists( json.GetString( "audio_driver" ))
 			audio_driver = json.GetString( "audio_driver" )
 			SetAudioDriver( audio_driver )
@@ -334,11 +334,11 @@ End Function
 '______________________________________________________________________________
 Function save_settings%()
 	Local this_json:TJSONObject = New TJSONObject
-	this_json.SetByName( "window_w", TJSONNumber.Create( window_w ))
-	this_json.SetByName( "window_h", TJSONNumber.Create( window_h ))
 	this_json.SetByName( "fullscreen", TJSONBoolean.Create( SETTINGS_REGISTER.FULL_SCREEN.get() ))
-	this_json.SetByName( "bit_depth", TJSONNumber.Create( bit_depth ))
-	this_json.SetByName( "refresh_rate", TJSONNumber.Create( refresh_rate ))
+	this_json.SetByName( "window_w", TJSONNumber.Create( SETTINGS_REGISTER.WINDOW_WIDTH.get() ))
+	this_json.SetByName( "window_h", TJSONNumber.Create( SETTINGS_REGISTER.WINDOW_HEIGHT.get() ))
+	this_json.SetByName( "bit_depth", TJSONNumber.Create( SETTINGS_REGISTER.BIT_DEPTH.get() ))
+	this_json.SetByName( "refresh_rate", TJSONNumber.Create( SETTINGS_REGISTER.REFRESH_RATE.get() ))
 	If audio_driver
 		this_json.SetByName( "audio_driver", TJSONString.Create( audio_driver ))
 	Else

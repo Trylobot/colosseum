@@ -260,7 +260,7 @@ Function draw_main_screen()
 	'credits & copyrights, and info string
 	h = fg_font.height
 	x = 10
-	y = window_h - h*colosseum_credits_linecount - 10
+	y = SETTINGS_REGISTER.WINDOW_HEIGHT.get() - h*colosseum_credits_linecount - 10
 	If Not main_game
 		SetRotation( 0 )
 		SetScale( 1, 1 )
@@ -306,7 +306,7 @@ Function draw_menus()
 				If i = current_menu
 					SetColor( 0, 0, 0 )
 					SetAlpha( 0.5 )
-					DrawRect( 0, 0, window_w, window_h )
+					DrawRect( 0, 0, window_w, SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 					'cx :+ 25
 					cy :+ get_menu( menu_stack[i - 1] ).get_focus_offset()
 				Else 'i <> current_menu
@@ -404,7 +404,7 @@ Function draw_lighting_and_effects()
 	SetColor( 0, 0, 0 )
 	SetAlpha( 0.95 * time_alpha_pct( game.battle_state_toggle_ts, arena_lights_fade_time, Not game.battle_in_progress ))
 	
-	Local size% = Max( window_w, window_h)
+	Local size% = Max( SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get())
 	Local x% = Int(game.player.pos_x)
 	Local y% = Int(game.player.pos_y)
 	DrawRect( x - 100 - size, y - 100 - size, size, 2*size )
@@ -452,8 +452,8 @@ Function draw_HUD()
 	Local hud_height% = 2*(GetImageFont().Height() + 3)
 	
 	x = 0
-	y1 = window_h - hud_height
-	y2 = window_h - hud_height/2
+	y1 = SETTINGS_REGISTER.WINDOW_HEIGHT.get() - hud_height
+	y2 = SETTINGS_REGISTER.WINDOW_HEIGHT.get() - hud_height/2
 	w = health_bar_w
 	h = health_bar_h
 	
@@ -461,10 +461,10 @@ Function draw_HUD()
 	y = y1
 	SetAlpha( 0.50 )
 	SetColor( 0, 0, 0 )
-	DrawRect( x,y, window_w,y+hud_height )
+	DrawRect( x,y, SETTINGS_REGISTER.WINDOW_WIDTH.get(),y+hud_height )
 	SetAlpha( 0.75 )
 	SetColor( 255, 255, 255 )
-	DrawLine( x,y-1, x+window_w,y-1 )
+	DrawLine( x,y-1, x+SETTINGS_REGISTER.WINDOW_WIDTH.get(),y-1 )
 	x :+ 2
 	y1 :+ 3; y2 :+ 3
 	
@@ -549,7 +549,7 @@ Function draw_HUD()
 				SetColor( 255, 255, 255 )
 				Local x_offset# = (now()/4) Mod (w+20)
 				DrawImageRef( img_shine, x-10+Abs(x_offset), y + 2 )
-				SetViewport( 0, 0, window_w,window_h )
+				SetViewport( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(),SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 			Else
 				SetColor( 255*heat_pct, 0, 255*(1 - heat_pct) )
 				DrawRect( x + 2, y + 2, (Double(w) - 4.0)*heat_pct, h - 4 )
@@ -564,7 +564,7 @@ Function draw_HUD()
 	Local img_icon_speaker_off:IMAGE_ATLAS_REFERENCE = get_image( "icon_speaker_off" )
 	SetAlpha( 0.5 )
 	Local music_str$ = "[m]usic"
-	x = window_w - 10 - TextWidth( music_str )
+	x = SETTINGS_REGISTER.WINDOW_WIDTH.get() - 10 - TextWidth( music_str )
 	y = y1
 	SetColor( 255, 255, 255 )
 	DrawText_with_outline( music_str, x, y )
@@ -583,7 +583,7 @@ Function draw_HUD()
 	'help
 	SetColor( 232, 232, 232 )
 	SetAlpha( 1 )
-	DrawText_with_outline( "F1 for help", window_w - TextWidth("F1 for help") - 10, window_h - 55 )
+	DrawText_with_outline( "F1 for help", SETTINGS_REGISTER.WINDOW_WIDTH.get() - TextWidth("F1 for help") - 10, SETTINGS_REGISTER.WINDOW_HEIGHT.get() - 55 )
 	
 	'multiplayer chat messages (if applicable)
 	If playing_multiplayer
@@ -599,10 +599,10 @@ Function draw_win()
 	SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 1200 ))
 	SetImageFont( get_font( "consolas_bold_50" ))
 	Local m1$ = "LEVEL COMPLETED!"
-	DrawText_with_outline( m1, window_w/2 - TextWidth(m1)/2, 10 )
+	DrawText_with_outline( m1, SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - TextWidth(m1)/2, 10 )
 	SetImageFont( get_font( "consolas_12" ))
 	Local m2$ = "press enter to continue"
-	DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 50 )
+	DrawText_with_outline( m2, SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - TextWidth(m2)/2, 50 )
 	
 	draw_kill_tally( game.battle_state_toggle_ts, game.player_kills )
 End Function
@@ -613,16 +613,16 @@ Function draw_game_over()
 	SetScale( 1, 1 )
 	SetRotation( 0 )
 	SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 3000 ))
-	DrawRect( 0, 0, window_w, window_h )
+	DrawRect( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 	'message
 	SetColor( 255, 0, 0 )
 	SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 800 ))
 	SetImageFont( get_font( "consolas_bold_100" ))
 	Local m1$ = "GAME OVER."
-	DrawText_with_outline( m1, window_w/2 - TextWidth(m1)/2, 10 )
+	DrawText_with_outline( m1, SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - TextWidth(m1)/2, 10 )
 	SetImageFont( get_font( "consolas_12" ))
 	Local m2$ = "press enter to continue"
-	DrawText_with_outline( m2, window_w/2 - TextWidth(m2)/2, 150 )
+	DrawText_with_outline( m2, SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - TextWidth(m2)/2, 150 )
 End Function
 
 Function draw_help_stuff()
@@ -630,7 +630,7 @@ Function draw_help_stuff()
 	'Local img_help_kb_mouse:IMAGE_ATLAS_REFERENCE = get_image( "help_kb_and_mouse" )
 	SetColor( 0, 0, 0 )
 	SetAlpha( 0.550 )
-	DrawRect( 0, 0, window_w, window_h )
+	DrawRect( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 	SetColor( 255, 255, 255 )
 	SetAlpha( 1 )
 	'draw help
@@ -662,7 +662,7 @@ Function fade_out()
 	SetAlpha( 0.08 )
 	Local begin_ts% = now()
 	While (now() - begin_ts) < 1500
-		DrawRect( 0, 0, window_w, window_h )
+		DrawRect( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 		Flip()
 	End While
 	Return
@@ -671,7 +671,7 @@ End Function
 '______________________________________________________________________________
 Function draw_chats()
 	Local x_start% = 5
-	Local y_start% = window_h - 53
+	Local y_start% = SETTINGS_REGISTER.WINDOW_HEIGHT.get() - 53
 	Local y_current% = y_start
 	Local line_h% = 14
 	SetImageFont( get_font( "consolas_14" ))
@@ -736,7 +736,7 @@ Function draw_kill_tally( start_ts%, count% )
 	Local sk_h# = skull_1x.height()
 	Local skulls_per_row% = 10
 	Local area_width% = skulls_per_row * sk_w
-	Local tally_x% = (window_w - area_width)/2
+	Local tally_x% = (SETTINGS_REGISTER.WINDOW_WIDTH.get() - area_width)/2
 	Local elapsed% = now() - start_ts
 	Local s% = elapsed / fade_in_time 'current skull fading in
 	Local cursor:CELL = New CELL

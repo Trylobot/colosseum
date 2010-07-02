@@ -88,6 +88,7 @@ Function initialize_menus()
 		bright_yellow, dark_yellow, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
+		,,,, ..
 		menu_x, menu_y )
 	idx( True )
 	root_menu.set_item( idx(), "START", cmd_show_menu, level_select_menu )
@@ -109,7 +110,7 @@ Function initialize_menus()
 		menu_super_small_item_fg_font, menu_super_small_item_bg_font, ..
 		30, 30, ..
 		0, 0, ..
-		window_w, window_h )
+		SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 	Local level_file_path$, level_object:LEVEL, level_preview_path$, level_preview_img:TImage
 	For Local r% = 0 Until level_grid.Length
 		For Local c% = 0 Until level_grid[r].Length
@@ -142,6 +143,7 @@ Function initialize_menus()
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
+		,,,, ..
 		menu_x, menu_y )
 	idx( True )
 	profile_menu.set_item( idx(), "CREATE NEW", cmd_create_new_profile )
@@ -156,6 +158,7 @@ Function initialize_menus()
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
+		,,,, ..
 		menu_x, menu_y )
 	idx( True )
 	settings_menu.set_item( idx(), "GAME PERFORMANCE", cmd_show_menu, video_settings_menu )
@@ -170,6 +173,7 @@ Function initialize_menus()
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
+		,,,, ..
 		menu_x, menu_y )
 	idx( True )
 	advanced_menu.set_item( idx(), "LEVEL EDITOR", cmd_enter_level_editor )
@@ -186,10 +190,11 @@ Function initialize_menus()
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
+		menu_small_item_fg_font, menu_small_item_bg_font, light_gray, black, ..
 		menu_x, menu_y )
 	idx( True )
-	video_settings_menu.set_item( idx(), "FULL SCREEN MODE", cmd_toggle_setting, SETTINGS_REGISTER.FULL_SCREEN )
-	video_settings_menu.set_item( idx(), "DISPLAY RESOLUTION", cmd_show_menu, screen_resolution_menu )
+	video_settings_menu.set_item( idx(), "FULL SCREEN MODE", cmd_toggle_setting, SETTINGS_REGISTER.FULL_SCREEN, SETTINGS_REGISTER.FULL_SCREEN )
+	video_settings_menu.set_item( idx(), "DISPLAY RESOLUTION", cmd_show_menu, screen_resolution_menu, SETTINGS_REGISTER.GRAPHICS_MODE )
 	
 	Local modes:TGraphicsMode[] = GraphicsModes()
 	screen_resolution_menu.Construct( ..
@@ -200,11 +205,10 @@ Function initialize_menus()
 		white, black, ..
 		menu_small_item_fg_font, menu_small_item_bg_font, ..
 		white, black, black, light_gray, ..
+		,,,, ..
 		menu_x, menu_y )
 	For Local i% = 0 Until modes.Length
-		Local mode_str$ = "" + modes[i].width + "x" + modes[i].height + " px"
-		mode_str :+ ", " + modes[i].depth + " bpp"
-		mode_str :+ ", " + modes[i].hertz + " Hz"
+		Local mode_str$ = "" + modes[i].width + "x" + modes[i].height + " px, " + modes[i].depth + " bpp, " + modes[i].hertz + " Hz"
 		screen_resolution_menu.set_item( i, mode_str, cmd_set_graphics_mode, modes[i] )
 	Next
 	screen_resolution_menu.set_menu_show_event_handler( cmd_select_current_screen_resolution )
@@ -217,6 +221,7 @@ Function initialize_menus()
 		white, black, ..
 		menu_small_item_fg_font, menu_small_item_bg_font, ..
 		white, black, black, light_gray, ..
+		,,,, ..
 		menu_x, menu_y )
 	idx( True )
 	audio_settings_menu.set_item( idx(), "EFFECTS VOLUME" )
@@ -231,6 +236,7 @@ Function initialize_menus()
 		white, black, ..
 		menu_small_item_fg_font, menu_small_item_bg_font, ..
 		white, black, black, light_gray, ..
+		,,,, ..
 		menu_x, menu_y )
 	play_custom_level_menu.set_menu_show_event_handler( cmd_refresh_custom_level_list )
 	
@@ -242,6 +248,7 @@ Function initialize_menus()
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
+		,,,, ..
 		menu_x, menu_y )
 	idx( True )
 	pause_menu.set_item( idx(), "RESUME", cmd_unpause_game )

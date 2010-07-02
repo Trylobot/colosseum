@@ -65,11 +65,13 @@ End Function
 Function cmd_set_graphics_mode( item:Object )
 	Local mode:TGraphicsMode = TGraphicsMode( item )
 	If mode
-		window_w = mode.width
-		window_h = mode.height
-		bit_depth = mode.depth
-		refresh_rate = mode.hertz
+		SETTINGS_REGISTER.WINDOW_WIDTH.set( mode.width )
+		SETTINGS_REGISTER.WINDOW_HEIGHT.set( mode.height )
+		SETTINGS_REGISTER.BIT_DEPTH.set( mode.depth )
+		SETTINGS_REGISTER.REFRESH_RATE.set( mode.hertz )
+		SETTINGS_REGISTER.GRAPHICS_MODE.resolve()
 		save_settings()
+		'////
 		init_graphics()
 		'////
 		Local environments:TList = get_active_games()

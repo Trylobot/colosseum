@@ -188,7 +188,7 @@ Type ENVIRONMENT
 		Next
 		DebugLog "    Level walls baked in " + elapsed_str(wall_start) + " sec."
 		'graffiti
-		graffiti = GRAFFITI_MANAGER.Create( background, window_w, window_h )
+		graffiti = GRAFFITI_MANAGER.Create( background, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 		'props
 		For Local pd:ENTITY_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )
@@ -208,18 +208,18 @@ Type ENVIRONMENT
 	End Method
 	
 	Method calculate_camera_constraints()
-		If lev.width <= window_w 'level not as wide as window
-			origin_min_x = window_w/2 - lev.width/2
+		If lev.width <= SETTINGS_REGISTER.WINDOW_WIDTH.get() 'level not as wide as window
+			origin_min_x = SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - lev.width/2
 			origin_max_x = origin_min_x
-		Else 'lev.width > window_w 'level wider than window
-			origin_min_x = -(lev.width + 2*20 - window_w)
+		Else 'lev.width > SETTINGS_REGISTER.WINDOW_WIDTH.get() 'level wider than window
+			origin_min_x = -(lev.width + 2*20 - SETTINGS_REGISTER.WINDOW_WIDTH.get())
 			origin_max_x = 20
 		End If
-		If lev.height <= window_h 'level not as tall as window
-			origin_min_y = window_h/2 - lev.height/2
+		If lev.height <= SETTINGS_REGISTER.WINDOW_HEIGHT.get() 'level not as tall as window
+			origin_min_y = SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2 - lev.height/2
 			origin_max_y = origin_min_y
-		Else 'lev.height > window_h 'level taller than window
-			origin_min_y = -(lev.height + 2*20 - window_h)
+		Else 'lev.height > SETTINGS_REGISTER.WINDOW_HEIGHT.get() 'level taller than window
+			origin_min_y = -(lev.height + 2*20 - SETTINGS_REGISTER.WINDOW_HEIGHT.get())
 			origin_max_y = 20
 		End If
 	End Method

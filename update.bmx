@@ -140,15 +140,15 @@ End Function
 '______________________________________________________________________________
 Function update_drawing_origin()
 	If game.human_participation And game.player <> Null
-		game_mouse.x = game.player.pos_x + (2.0 * (mouse.pos_x - window_w/2.0))
-		game_mouse.y = game.player.pos_y + (2.0 * (mouse.pos_y - window_h/2.0))
+		game_mouse.x = game.player.pos_x + (2.0 * (mouse.pos_x - SETTINGS_REGISTER.WINDOW_WIDTH.get()/2.0))
+		game_mouse.y = game.player.pos_y + (2.0 * (mouse.pos_y - SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2.0))
 		Select game.player_brain.input_type
 			Case CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-				game.drawing_origin.x = window_w/2.0 - (game.player.pos_x + game_mouse.x)/2.0
-				game.drawing_origin.y = window_h/2.0 - (game.player.pos_y + game_mouse.y)/2.0
+				game.drawing_origin.x = SETTINGS_REGISTER.WINDOW_WIDTH.get()/2.0 - (game.player.pos_x + game_mouse.x)/2.0
+				game.drawing_origin.y = SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2.0 - (game.player.pos_y + game_mouse.y)/2.0
 			Case CONTROL_BRAIN.INPUT_KEYBOARD
-				game.drawing_origin.x = window_w/2 - game.player.pos_x
-				game.drawing_origin.y = window_h/2 - game.player.pos_y
+				game.drawing_origin.x = SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - game.player.pos_x
+				game.drawing_origin.y = SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2 - game.player.pos_y
 		End Select
 		'camera constraints; enforce
 		If      game.drawing_origin.x < game.origin_min_x Then game.drawing_origin.x = game.origin_min_x ..
