@@ -30,12 +30,14 @@ Function apply_default_settings()
 	SETTINGS_REGISTER.GRAPHICS_MODE.resolve()
 	
 	SETTINGS_REGISTER.PLAYER_PROFILE_NAME = GLOBAL_SETTING_STRING.Create( "" )
+	
 	SETTINGS_REGISTER.LEVEL_EDITOR_CACHE_FILENAME = GLOBAL_SETTING_STRING.Create( "" )
+	
+	SETTINGS_REGISTER.SHOW_AI_MENU_GAME = GLOBAL_SETTING_BOOLEAN.Create( True )
+	SETTINGS_REGISTER.ACTIVE_PARTICLE_LIMIT = GLOBAL_SETTING_INTEGER.Create( 1000 )
 	
 	audio_driver = "FreeAudio DirectSound"
 	bg_music_enabled = True
-	show_ai_menu_game = True
-	active_particle_limit = 1000
 	network_ip_address = "127.0.0.1"
 	network_port = 6112
 End Function
@@ -49,6 +51,8 @@ Type SETTINGS_REGISTER
 	Global GRAPHICS_MODE:DYNAMIC_STRING
 	Global PLAYER_PROFILE_NAME:GLOBAL_SETTING_STRING
 	Global LEVEL_EDITOR_CACHE_FILENAME:GLOBAL_SETTING_STRING
+	Global SHOW_AI_MENU_GAME:GLOBAL_SETTING_BOOLEAN
+	Global ACTIVE_PARTICLE_LIMIT:GLOBAL_SETTING_INTEGER
 End Type
 
 'user-configurable settings
@@ -59,10 +63,17 @@ End Type
 'Global refresh_rate%
 Global audio_driver$
 Global bg_music_enabled%
-Global show_ai_menu_game%
-Global active_particle_limit%
+'Global show_ai_menu_game%
+'Global active_particle_limit%
 Global network_ip_address$
 Global network_port%
+
+'______________________________________________________________________________
+Type REQUEST_INPUT_FOR_SETTING_POPUP
+	Field x%, y%
+	Field font:FONT_STYLE
+	Field setting:GLOBAL_SETTING
+End Type
 
 '______________________________________________________________________________
 Type DYNAMIC_STRING

@@ -62,6 +62,18 @@ Function cmd_toggle_setting( item:Object )
 	End If
 End Function
 
+Function cmd_change_setting_integer( item:Object )
+	Local popup:REQUEST_INPUT_FOR_SETTING_POPUP = REQUEST_INPUT_FOR_SETTING_POPUP(item)
+	If popup
+		Local setting:GLOBAL_SETTING_INTEGER = GLOBAL_SETTING_INTEGER(popup.setting)
+		If setting
+			Local setting_value$ = popup.setting.ToString()
+			Local raw_input$ = get_input( setting_value,, popup.x, popup.y, popup.font, screencap() )
+			setting.set( raw_input.ToInt() )
+		End If
+	End If
+End Function
+
 Function cmd_set_graphics_mode( item:Object )
 	Local mode:TGraphicsMode = TGraphicsMode( item )
 	If mode
@@ -197,7 +209,7 @@ Function load_all_assets()
 	'/////
 	initialize_menus()
 	'/////
-	If show_ai_menu_game
+	If SETTINGS_REGISTER.SHOW_AI_MENU_GAME.get()
 		init_ai_menu_game()
 	End If
 End Function

@@ -67,7 +67,7 @@ End Function
 'In-game stuff
 Function draw_game()
 	'update graffiti manager (for particles that wish to be retained)
-	If game.retained_particle_count >= active_particle_limit
+	If game.retained_particle_count >= SETTINGS_REGISTER.ACTIVE_PARTICLE_LIMIT.get()
 		game.graffiti.add_graffiti( game.retained_particle_list )
 		Cls()
 		game.retained_particle_list.Clear()

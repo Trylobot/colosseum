@@ -323,8 +323,8 @@ Function load_settings%()
 			SetAudioDriver( audio_driver )
 		End If
 		bg_music_enabled = json.GetBoolean( "bg_music_enabled" )
-		show_ai_menu_game = json.GetBoolean( "show_ai_menu_game" )
-		active_particle_limit = json.GetNumber( "active_particle_limit" )
+		SETTINGS_REGISTER.SHOW_AI_MENU_GAME.set( json.GetBoolean( "show_ai_menu_game" ))
+		SETTINGS_REGISTER.ACTIVE_PARTICLE_LIMIT.set( json.GetNumber( "active_particle_limit" ))
 		network_ip_address = json.getString( "network_ip_address" )
 		network_port = json.GetNumber( "network_port" )
 		Return True
@@ -347,8 +347,8 @@ Function save_settings%()
 		this_json.SetByName( "audio_driver", TJSON.NIL )
 	End If
 	this_json.SetByName( "bg_music_enabled", TJSONBoolean.Create( bg_music_enabled ))
-	this_json.SetByName( "show_ai_menu_game", TJSONBoolean.Create( show_ai_menu_game ))
-	this_json.SetByName( "active_particle_limit", TJSONNumber.Create( active_particle_limit ))
+	this_json.SetByName( "show_ai_menu_game", TJSONBoolean.Create( SETTINGS_REGISTER.SHOW_AI_MENU_GAME.get() ))
+	this_json.SetByName( "active_particle_limit", TJSONNumber.Create( SETTINGS_REGISTER.ACTIVE_PARTICLE_LIMIT.get() ))
 	this_json.SetByName( "network_ip_address", TJSONString.Create( network_ip_address ))
 	this_json.SetByName( "network_port", TJSONNumber.Create( network_port ))
 	'output json data

@@ -90,6 +90,8 @@ Type TUIList Extends TUIObject
     SetAlpha( 1 )
 		SetRotation( 0 )
 		SetScale( 1, 1 )
+		Local b:BOX
+		Local t:cVEC
     'draw panels
     If panel_color
       panel_color.Set()
@@ -109,44 +111,31 @@ Type TUIList Extends TUIObject
 			header_font.draw_string( header, rect.x + margin_x/2, rect.y - header_font.height - margin_y/2 )
 		End If
     'draw list items
-    Local ix%
-    Local iy%
-    ix = rect.x + margin_x
-    iy = rect.y + margin_y
-		Local ir:BOX
     For Local i% = 0 Until items_display.Length
+			b = get_item_rect( i )
+			t = b.auto_margin( item_font.height )
+			t.x :+ rect.x
       If i = selected_item
         'draw selected item box
 				item_panel_selected_color.Set()
-				ir = item_rects[i]
 				SetScale( 1, 1 )
-				draw_box( ir, True )
+				draw_box( b, True )
 				'draw item text
-				item_selected_font.draw_string( items_display[i], ix, iy )
+				item_selected_font.draw_string( items_display[i], t.x, t.y )
       Else 'i <> selected_item
         'draw normal item text
-				item_font.draw_string( items_display[i], ix, iy )
+				item_font.draw_string( items_display[i], t.x, t.y )
       End If
-	    iy :+ item_font.height + margin_y
     Next
 		'draw list item tags
-    ix = rect.x + rect.w + margin_x
-    iy = rect.y + margin_y + ((item_font.height - item_tag_font.height) / 2)
-		Local tagb:BOX
 		For Local i% = 0 Until item_tags.Length
 			If item_tags[i]
-				rem
-	      'draw item tag box
-				tagb = item_rects[i].clone()
-				tagb.x :+ tagb.w + margin_x
-				SetScale( 1, 1 )
-				border_color.Set()
-	      draw_box( tagb, False, line_width )
-				endrem
+				b = get_item_tag_rect( i )
+				t = b.auto_margin( item_tag_font.height )
+				t.x :+ rect.x
 				'draw item tag text
-				item_tag_font.draw_string( item_tags[i].ToString(), ix, iy )
+				item_tag_font.draw_string( item_tags[i].ToString(), t.x, t.y )
 			End If
-			iy :+ item_font.height + margin_y
 		Next
     'scrollbar
     'TODO - add intelligent scrollbar support
@@ -290,7 +279,22 @@ Type TUIList Extends TUIObject
   End Method
 	
 	Method get_item_rect:BOX( i% )
-		If i >= 0 And i < item_count Then Return item_rects[i] Else Return Null
+		If i >= 0 And i < item_count
+			Return item_rects[i]
+		Else
+			Return Null
+		End If
+	End Method
+	
+	Method get_item_tag_rect:BOX( i% )
+		Local b:BOX = get_item_rect( i )
+		If b
+			b = b.clone()
+			b.x :+ rect.w + margin_x
+			Return b
+		Else
+			Return Null
+		End If
 	End Method
   
 End Type

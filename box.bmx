@@ -34,4 +34,10 @@ Type BOX
 		Return Not( x > (b.x+b.w) Or b.x > (x+w) Or y > (b.y+b.h) Or b.y > (y+h) )
 	End Method
 	
+	Method auto_margin:cVEC( hn# )
+		Local yn# = y + ((h - hn) / 2.0)
+		Local xn# = x + (yn - y)
+		Return Create_cVEC( xn, yn )
+	End Method
+	
 End Type

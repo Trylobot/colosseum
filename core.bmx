@@ -113,7 +113,7 @@ End Function
 
 '______________________________________________________________________________
 Function init_ai_menu_game( fit_to_window% = True )
-	If Not show_ai_menu_game Then Return
+	If Not SETTINGS_REGISTER.SHOW_AI_MENU_GAME Then Return
 	ai_menu_game = Create_ENVIRONMENT()
 	Local lev:LEVEL = load_level( level_path + "menu/" + "ai_menu_game" + "." + level_file_ext )
 	If lev
@@ -361,8 +361,8 @@ Function update_meta_variable_cache()
 	update_map( meta_variable_cache, "refresh_rate", String.FromInt( SETTINGS_REGISTER.REFRESH_RATE.get() ))
 	update_map( meta_variable_cache, "bit_depth", String.FromInt( SETTINGS_REGISTER.BIT_DEPTH.get() ))
 	update_map( meta_variable_cache, "audio_driver", audio_driver )
-	update_map( meta_variable_cache, "show_ai_menu_game", boolean_to_string( show_ai_menu_game ))
-	update_map( meta_variable_cache, "active_particle_limit", String.FromInt( active_particle_limit ))
+	update_map( meta_variable_cache, "show_ai_menu_game", boolean_to_string( SETTINGS_REGISTER.SHOW_AI_MENU_GAME.get() ))
+	update_map( meta_variable_cache, "active_particle_limit", String.FromInt( SETTINGS_REGISTER.ACTIVE_PARTICLE_LIMIT.get() ))
 	update_map( meta_variable_cache, "network_ip_address", network_ip_address )
 	update_map( meta_variable_cache, "network_port", String.FromInt( network_port ))
 	update_map( meta_variable_cache, "network_level", StripAll( network_level ))

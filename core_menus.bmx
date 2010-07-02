@@ -66,17 +66,17 @@ Function initialize_menus()
 	
 	MENU_REGISTER.stack = CreateList()
 	
-	Local pause_menu:TUIList = New TUIList
 	Local root_menu:TUIList = New TUIList
 		Local level_select_menu:TUIImageGrid = New TUIImageGrid
 		Local profile_menu:TUIList = New TUIList
 		Local settings_menu:TUIList = New TUIList
+			Local performance_settings_menu:TUIList = New TUIList
 			Local video_settings_menu:TUIList = New TUIList
 				Local screen_resolution_menu:TUIList = New TUIList
 			Local audio_settings_menu:TUIList = New TUIList
-			Local performance_settings_menu:TUIList = New TUIList
 		Local advanced_menu:TUIList = New TUIList
 			Local play_custom_level_menu:TUIList = New TUIList
+	Local pause_menu:TUIList = New TUIList
 	
 	'/////////////////
 	
@@ -161,26 +161,32 @@ Function initialize_menus()
 		,,,, ..
 		menu_x, menu_y )
 	idx( True )
-	settings_menu.set_item( idx(), "GAME PERFORMANCE", cmd_show_menu )
+	settings_menu.set_item( idx(), "GAME PERFORMANCE", cmd_show_menu, performance_settings_menu )
 	settings_menu.set_item( idx(), "VIDEO SETTINGS", cmd_show_menu, video_settings_menu )
 	settings_menu.set_item( idx(), "AUDIO SETTINGS", cmd_show_menu, audio_settings_menu )
 	
-	advanced_menu.Construct( ..
-		"ADVANCED", 4, ..
+	performance_settings_menu.Construct( ..
+		"GAME PERFORMANCE", 2, ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
 		menu_header_fg_font, menu_header_bg_font, ..
 		white, black, ..
 		menu_item_fg_font, menu_item_bg_font, ..
 		white, black, black, light_gray, ..
-		,,,, ..
+		menu_small_item_fg_font, menu_small_item_bg_font, ..
+		black, white, ..
 		menu_x, menu_y )
 	idx( True )
-	advanced_menu.set_item( idx(), "LEVEL EDITOR", cmd_enter_level_editor )
-	advanced_menu.set_item( idx(), "PLAY LEVEL", cmd_show_menu, play_custom_level_menu )
-	advanced_menu.set_item( idx(), "UNIT EDITOR", cmd_enter_unit_editor )
-	advanced_menu.set_item( idx(), "GIBS EDITOR", cmd_enter_gibs_editor )
-	advanced_menu.set_item( idx(), "RELOAD DATA", cmd_reload_assets )
+	video_settings_menu.set_item( idx(), "AI MENU GAME", cmd_toggle_setting, SETTINGS_REGISTER.SHOW_AI_MENU_GAME, SETTINGS_REGISTER.SHOW_AI_MENU_GAME )
+	Local popup:REQUEST_INPUT_FOR_SETTING_POPUP = New REQUEST_INPUT_FOR_SETTING_POPUP
+	popup.setting = SETTINGS_REGISTER.ACTIVE_PARTICLE_LIMIT
+	popup.font = performance_settings_menu.item_tag_font
+	Local b:BOX = performance_settings_menu.get_item_tag_rect( g_idx )
+	Local pos:cVEC = b.auto_margin( popup.font.height )
+	pos.x :+ performance_settings_menu.margin_x
+	popup.x = pos.x
+	popup.y = pos.y
+	video_settings_menu.set_item( idx(), "MAX PARTICLES", cmd_change_setting_integer, popup, SETTINGS_REGISTER.ACTIVE_PARTICLE_LIMIT )
 	
 	video_settings_menu.Construct( ..
 		"VIDEO SETTINGS", 2, ..
@@ -228,6 +234,23 @@ Function initialize_menus()
 	audio_settings_menu.set_item( idx(), "EFFECTS VOLUME" )
 	audio_settings_menu.set_item( idx(), "MUSIC VOLUME" )
 	audio_settings_menu.set_item( idx(), "AUDIO DRIVER" )
+	
+	advanced_menu.Construct( ..
+		"ADVANCED", 4, ..
+		dark_gray, white, black, white, ..
+		menu_line_width, ..
+		menu_header_fg_font, menu_header_bg_font, ..
+		white, black, ..
+		menu_item_fg_font, menu_item_bg_font, ..
+		white, black, black, light_gray, ..
+		,,,, ..
+		menu_x, menu_y )
+	idx( True )
+	advanced_menu.set_item( idx(), "LEVEL EDITOR", cmd_enter_level_editor )
+	advanced_menu.set_item( idx(), "PLAY LEVEL", cmd_show_menu, play_custom_level_menu )
+	advanced_menu.set_item( idx(), "UNIT EDITOR", cmd_enter_unit_editor )
+	advanced_menu.set_item( idx(), "GIBS EDITOR", cmd_enter_gibs_editor )
+	advanced_menu.set_item( idx(), "RELOAD DATA", cmd_reload_assets )
 	
 	play_custom_level_menu.Construct( ..
 		"PLAY LEVEL", 0, ..
