@@ -180,7 +180,7 @@ End Function
 
 Function collision_player_pickup( cmp_ag:COMPLEX_AGENT, pkp:PICKUP )
 	cmp_ag.grant_pickup( pkp ) 'i can has lewts?!
-	pkp.play_categorical_sound()
+	pkp.play()
 	pkp.unmanage()
 End Function
 

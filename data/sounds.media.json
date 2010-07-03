@@ -33,17 +33,17 @@
 	},
 	{
 		class: "sound",
-		key: "{path}",
+		key: "cannon",
 		object: {
-			path: "sound/cannon.ogg",
+			path: "sound/shoot1.ogg",
 			looping: false
 		}
 	},
 	{
 		class: "sound",
-		key: "{path}",
+		key: "mgun",
 		object: {
-			path: "sound/mgun.ogg",
+			path: "sound/laser3.ogg",
 			looping: false
 		}
 	},
@@ -105,7 +105,7 @@
 	},
 	{
 		class: "sound",
-		key: "{path}",
+		key: "ammo_pickup_sound",
 		object: {
 			path: "sound/reload.ogg",
 			looping: false
@@ -113,7 +113,7 @@
 	},
 	{
 		class: "sound",
-		key: "{path}",
+		key: "repair_pickup_sound",
 		object: {
 			path: "sound/drill.ogg",
 			looping: false
@@ -121,7 +121,7 @@
 	},
 	{
 		class: "sound",
-		key: "{path}",
+		key: "cooling_pickup_sound",
 		object: {
 			path: "sound/air_release.ogg",
 			looping: false

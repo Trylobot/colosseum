@@ -26,6 +26,7 @@ Type PICKUP Extends MANAGED_OBJECT
 	Const COOLDOWN% = 3
 
 	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn
+	Field snd:TSound
 	Field pickup_type% 'pickup type indicator
 	Field pickup_amount% 'magnitude of pickup
 	Field life_time% 'time until object is deleted
@@ -40,31 +41,30 @@ Type PICKUP Extends MANAGED_OBJECT
 	
 	Function Create:Object( ..
 	img:IMAGE_ATLAS_REFERENCE = Null, ..
+	snd:TSound = Null, ..
 	pickup_type% = 0, ..
 	pickup_amount% = 0, ..
 	life_time% = 0, ..
 	pos_x# = 0.0, pos_y# = 0.0, ..
 	alpha# = 1.0 )
 		Local p:PICKUP = New PICKUP
-		
 		'static fields
 		p.img = img
+		p.snd = snd
 		p.pickup_type = pickup_type
 		p.pickup_amount = pickup_amount
 		p.life_time = life_time
-		
 		'dynamic fields
 		p.pos_x = pos_x
 		p.pos_y = pos_y
 		p.alpha = alpha
 		p.created_ts = now()
-		
 		Return p
 	End Function
 
 	Method clone:PICKUP()
 		Return PICKUP( PICKUP.Create( ..
-			img, pickup_type, pickup_amount, life_time, pos_x, pos_y, alpha ))
+			img, snd, pickup_type, pickup_amount, life_time, pos_x, pos_y, alpha ))
 	End Method
 
 	Method update()
@@ -84,15 +84,8 @@ Type PICKUP Extends MANAGED_OBJECT
 		DrawImageRef( img, pos_x, pos_y )
 	End Method
 	
-	Method play_categorical_sound()
-		Select pickup_type
-			Case PICKUP.AMMO
-				play_sound( get_sound( "reload" ))
-			Case PICKUP.HEALTH
-				play_sound( get_sound( "drill" ))
-			Case PICKUP.COOLDOWN
-				play_sound( get_sound( "air_release" ))
-		End Select
+	Method play()
+		If snd Then play_sound( snd )
 	End Method
 	
 	Method dead%()
@@ -121,6 +114,7 @@ Function Create_PICKUP_from_json:PICKUP( json:TJSON )
 	p = PICKUP( PICKUP.Create() )
 	'optional fields
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED     Then p.img = get_image( json.GetString( "image_key" ))
+	If json.TypeOf( "sound_key" ) <> JSON_UNDEFINED     Then p.snd = get_sound( json.GetString( "sound_key" ))
 	If json.TypeOf( "pickup_type" ) <> JSON_UNDEFINED   Then p.pickup_type = json.GetNumber( "pickup_type" )
 	If json.TypeOf( "pickup_amount" ) <> JSON_UNDEFINED Then p.pickup_amount = json.GetNumber( "pickup_amount" )
 	If json.TypeOf( "life_time" ) <> JSON_UNDEFINED     Then p.life_time = json.GetNumber( "life_time" )
