@@ -49,6 +49,7 @@ Type GRAFFITI_MANAGER
 	End Method
 	
 	Method add_graffiti( particle_list:TList )
+		Local start% = now()
 		If particle_list.IsEmpty() Then Return
 		For Local r% = 0 Until rows
 			For Local c% = 0 Until cols
@@ -78,6 +79,7 @@ Type GRAFFITI_MANAGER
 				End If
 			Next
 		Next
+		DebugLog "  Particle Graffiti integrated in " + elapsed_str(start) + " sec."
 	End Method
 	
 	Method draw()
