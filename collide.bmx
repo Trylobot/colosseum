@@ -33,7 +33,8 @@ Function collide_all_objects()
 	
 	'collision detection & resolution body
 	If game <> Null And Not game.paused
-	
+		ResetCollisions()
+		
 		Local list:TList
 		Local ag:AGENT, other:AGENT
 		Local proj:PROJECTILE
@@ -42,16 +43,12 @@ Function collide_all_objects()
 		Local result:Object[]
 		Local w#, h#
 		
-		ResetCollisions()
-		
 		'collisions between {projectiles} and {agents|walls|doors}
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
 				ag.collide( 0, AGENT_COLLISION_LAYER )
 			Next
 		Next
-		SetRotation( 0 )
-		SetHandle( 0, 0 )
 		For wall = EachIn game.walls
 			CollideRect( wall.x,wall.y, wall.w,wall.h, 0, WALL_COLLISION_LAYER, wall )
 		Next
@@ -59,10 +56,9 @@ Function collide_all_objects()
 			'check for projectile/agent
 			result = proj.collide( AGENT_COLLISION_LAYER, 0 )
 			For ag = EachIn result
-				'examine id's; projectiles should not collide with their owners
+				'do not collide with source
 				If proj.source_id <> ag.id
-					'DebugLog "collision: agent("+ag.id+") / projectile.source("+proj.source_id+")"
-					'COLLISION! between {proj} & {ag}
+					'COLLISION! between {projectile} & {agent}
 					collision_projectile_agent( proj, ag )
 					ag.flash = True
 				End If
@@ -70,18 +66,18 @@ Function collide_all_objects()
 			'check for projectile/wall
 			result = proj.collide( WALL_COLLISION_LAYER, 0 )
 			For wall = EachIn result
+				'COLLISION! between {projectile} and {wall}
 				collision_projectile_wall( proj, wall )
 			Next
 		Next
 		For Local d:DOOR = EachIn game.doors
 			For Local slider:WIDGET = EachIn d.all_sliders
 				SetRotation( slider.get_ang() )
-				SetHandle( slider.img.handle_x, slider.img.handle_y )
 				w = slider.img.width()
 				h = slider.img.height()
 				result = CollideRect( slider.get_x(), slider.get_y(), w, h, PROJECTILE_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
 				For proj = EachIn result
-					'COLLISION! between {proj} and {door}
+					'COLLISION! between {projectile} and {door}
 					collision_projectile_door( proj, slider )
 				Next
 			Next
@@ -91,7 +87,6 @@ Function collide_all_objects()
 		If game.human_participation And game.player And Not game.player.dead()
 			For pkp = EachIn game.pickup_list
 				SetRotation( 0 )
-				SetHandle( pkp.img.handle_x, pkp.img.handle_y )
 				CollideRect( pkp.pos_x, pkp.pos_y, pkp.img.width(), pkp.img.height(), 0, PICKUP_COLLISION_LAYER, pkp )
 			Next
 			result = game.player.collide( PICKUP_COLLISION_LAYER, 0 )
@@ -101,9 +96,6 @@ Function collide_all_objects()
 			Next
 		End If
 		
-		SetRotation( 0 )
-		SetHandle( 0, 0 )
-
 	End If
 End Function
 

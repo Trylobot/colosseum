@@ -28,6 +28,7 @@ Const PROJECTILE_MEMBER_EMITTER_PAYLOAD% = 1
 Function Create_PROJECTILE:PROJECTILE( ..
 img:IMAGE_ATLAS_REFERENCE = Null, ..
 hitbox:BOX = Null, ..
+handle:pVEC = Null, ..
 snd_impact:TSound = Null, ..
 damage# = 0.0, ..
 explosive_force_magnitude# = 0.0, ..
@@ -46,6 +47,7 @@ ang_vel# = 0.0 )
 	'static fields
 	p.img = img
 	p.hitbox = hitbox
+	p.handle = handle
 	p.snd_impact = snd_impact
 	p.damage = damage
 	p.radius = radius
@@ -65,9 +67,9 @@ ang_vel# = 0.0 )
 End Function
 
 Type PROJECTILE Extends PARTICLE
-	
 	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn
 	Field hitbox:BOX 'collision rectangle
+	Field handle:pVEC
 	Field active% 'whether this projectile is "live"/"armed"; set to false after collision
 	Field snd_impact:TSound 'sound to be played on impact
 	Field mass# 'mass (not sure if used anymore)
@@ -88,7 +90,7 @@ Type PROJECTILE Extends PARTICLE
 	
 	Method clone:PROJECTILE( new_source_id% = NULL_ID )
 		Local p:PROJECTILE = Create_PROJECTILE( ..
-			img, hitbox, snd_impact, damage, explosive_force_magnitude, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel )
+			img, hitbox, handle, snd_impact, damage, explosive_force_magnitude, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel )
 		'emitter lists
 		For Local em:PARTICLE_EMITTER = EachIn emitter_list_constant
 			p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_CONSTANT )
@@ -130,9 +132,10 @@ Type PROJECTILE Extends PARTICLE
 	Method collide:Object[]( collidemask%, writemask% )
 		If hitbox
 			SetRotation( ang )
+			SetScale( 1, 1 )
 			Return CollideRect( ..
-				pos_x - hitbox.x*Cos(ang), ..
-				pos_y - hitbox.y*Sin(ang), ..
+				pos_x - handle.x(), ..
+				pos_y - handle.y(), ..
 				hitbox.w, hitbox.h, ..
 				collidemask, writemask, ..
 				Self )
@@ -189,11 +192,11 @@ Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED                 Then p.img = get_image( json.GetString( "image_key" ))
 	If p.img
 		'p.hitbox = Create_BOX( p.img.handle_x, p.img.handle_y, p.img.width(), p.img.height() )
-		Local x# = -(p.img.handle_x - p.img.width()/2.0)
-		Local y# = -(p.img.handle_y - p.img.height()/2.0)
 		Local w# = json.GetNumber( "geometry.width" )
 		Local h# = json.GetNumber( "geometry.height" )
-		p.hitbox = Create_BOX( x, y, w, h )
+		p.hitbox = Create_BOX( 0, 0, w, h )
+		Local handle:cVEC = Create_cVEC( p.img.handle_x, p.img.handle_y )
+		p.handle = Create_pVEC( handle.r(), handle.a() )
 	End If
 	If json.TypeOf( "impact_sound_key" ) <> JSON_UNDEFINED          Then p.snd_impact = get_sound( json.GetString( "impact_sound_key" ))
 	If json.TypeOf( "damage" ) <> JSON_UNDEFINED                    Then p.damage = json.GetNumber( "damage" )

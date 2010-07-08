@@ -35,7 +35,9 @@ destruct_on_contact% = False )
 	Local ag:AGENT = New AGENT
 	ag.img = img
 	If ag.img
-		ag.hitbox = Create_BOX( ag.img.handle_x, ag.img.handle_y, ag.img.width(), ag.img.height() )
+		ag.hitbox = Create_BOX( 0, 0, ag.img.width(), ag.img.height() )
+		Local handle:cVEC = Create_cVEC( ag.img.handle_x, ag.img.handle_y )
+		ag.handle = Create_pVEC( handle.r(), handle.a() )
 	End If
 	ag.gibs = gibs
 	ag.max_health = max_health
@@ -179,7 +181,9 @@ Function Create_AGENT_from_json:AGENT( json:TJSON )
 	'read and assign optional fields as available
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED              Then a.img = get_image( json.GetString( "image_key" ))
 	If a.img
-		a.hitbox = Create_BOX( -(a.img.handle_x - a.img.width()/2.0), -(a.img.handle_y - a.img.height()/2.0), a.img.width(), a.img.height() )
+		a.hitbox = Create_BOX( 0, 0, a.img.width(), a.img.height() )
+		Local handle:cVEC = Create_cVEC( a.img.handle_x, a.img.handle_y )
+		a.handle = Create_pVEC( handle.r(), handle.a() )
 	End If
 	If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED         Then a.gibs = get_image( json.GetString( "gibs_image_key" ))
 	If json.TypeOf( "max_health" ) <> JSON_UNDEFINED             Then a.max_health = json.GetNumber( "max_health" )
