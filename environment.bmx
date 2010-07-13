@@ -184,12 +184,14 @@ Type ENVIRONMENT
 		For Local cursor:CELL = EachIn lev.get_blocking_cells()
 			Local wall:BOX = lev.get_wall( cursor )
 			walls.AddLast( wall )
-			
+		Next
+		walls = merge_walls( walls )
+		For Local wall:BOX = EachIn walls
 			setup_physics_from_wall( wall, physics )
 		Next
 		DebugLog "    Level walls baked in " + elapsed_str(wall_start) + " sec."
 		'graffiti
-		graffiti = GRAFFITI_MANAGER.Create( background, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
+		graffiti = GRAFFITI_MANAGER.Create( background.pixmaps[0] )
 		'props
 		For Local pd:ENTITY_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )
@@ -554,6 +556,10 @@ Type ENVIRONMENT
 			Next
 		Next
 		Return proximal
+	End Method
+	
+	Method merge_walls:TList( wall_list:TList )
+		Return wall_list
 	End Method
 	
 End Type

@@ -20,8 +20,9 @@ Import brl.OGGLoader
 Import brl.PNGLoader
 Import brl.Random
 Import brl.Max2D
-Import vertex.BNetEx
+Import bah.cairo
 Import aco.FarseerPhysics
+Import vertex.BNetEx
 ?Win32
 Import pub.Win32
 Import "icon/icon.o"

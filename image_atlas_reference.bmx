@@ -55,6 +55,16 @@ Type IMAGE_ATLAS_REFERENCE
 		atlas.Frame(0).Draw( x0,y0, x1,y1, tx,ty, sx,sy,sw,sh )
 		'///////////////////////////////////////////////////////
 	End Method
+	
+	Method Pixmap:TPixmap( f% = 0 )
+		Local r:BOX
+		If multi_cell
+			r = cell_rect[f]
+		Else
+			r = src_rect
+		End If
+		Return atlas.pixmaps[0].Window( r.x, r.y, r.w, r.h )
+	End Method
 
 	Method LoadAtlasRect( atlas:TImage, rect:BOX )
 		Self.atlas = atlas

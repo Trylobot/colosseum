@@ -63,8 +63,9 @@ Function update_all_objects()
 			For Local part:PARTICLE = EachIn list
 				part.update()
 				If part.prune() And part.retain
-					part.manage( game.retained_particle_list )
-					game.retained_particle_count :+ 1
+					game.graffiti.add_graffiti( part )
+					'part.manage( game.retained_particle_list )
+					'game.retained_particle_count :+ 1
 				End If
 			Next
 		Next

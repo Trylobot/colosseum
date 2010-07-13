@@ -218,6 +218,10 @@ Type PARTICLE Extends POINT
 		Return Create_BOX( pos_x - size/2.0, pos_y - size/2.0, size, size )
 	End Method
 	
+	Method get_pixmap:TPixmap()
+		Return img.Pixmap( frame )
+	End Method
+	
 End Type
 
 Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
