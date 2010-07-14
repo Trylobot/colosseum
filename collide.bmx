@@ -44,6 +44,7 @@ Function collide_all_objects()
 		Local w#, h#
 		
 		'collisions between {projectiles} and {agents|walls|doors}
+		SetScale( 1, 1 )
 		For list = EachIn game.agent_lists
 			For ag = EachIn list
 				ag.collide( 0, AGENT_COLLISION_LAYER )

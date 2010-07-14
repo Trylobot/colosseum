@@ -36,8 +36,6 @@ Function update_all_objects()
 		'menu_command( COMMAND.QUIT_GAME )
 		cmd_quit_game()
 	End If
-	'meta-variables used for dynamic menu information
-	update_meta_variable_cache()
 	'update body
 	If game And Not game.paused
 		'set drawing origin
@@ -64,8 +62,6 @@ Function update_all_objects()
 				part.update()
 				If part.prune() And part.retain
 					game.graffiti.add_graffiti( part )
-					'part.manage( game.retained_particle_list )
-					'game.retained_particle_count :+ 1
 				End If
 			Next
 		Next

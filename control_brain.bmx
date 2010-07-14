@@ -57,7 +57,6 @@ End Function
 Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Const CONTROL_TYPE_HUMAN% = 1
 	Const CONTROL_TYPE_AI% = 2
-	Const CONTROL_TYPE_REMOTE% = 3
 	Const INPUT_KEYBOARD% = 1
 	Const INPUT_KEYBOARD_MOUSE_HYBRID% = 2
 	Const INPUT_XBOX_360_CONTROLLER% = 3
@@ -105,8 +104,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				input_control()
 			Case CONTROL_TYPE_AI
 				AI_control()
-			Case CONTROL_TYPE_REMOTE
-				remote_control()
 		End Select
 	End Method
 	
@@ -479,18 +476,6 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 				avatar.turn_turret_system( index, -diff/threshold )
 			End If
 		Next
-	End Method
-	
-	Method human_input_blocked_update()
-		avatar.drive( 0.0 )
-		avatar.turn( 0.0 )
-		If input_type = INPUT_KEYBOARD_MOUSE_HYBRID
-			mouse_turret_input()
-		End If
-	End Method
-	
-	Method remote_control() 'used for networked multiplayer
-		
 	End Method
 	
 End Type

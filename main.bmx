@@ -64,11 +64,8 @@ Include "json.bmx"
 Include "level.bmx"
 Include "level_editor.bmx"
 Include "managed_object.bmx"
-Include "menu.bmx"
-Include "menu_option.bmx"
 Include "misc.bmx"
 Include "mouse.bmx"
-Include "net.bmx"
 Include "os-windows.bmx"
 Include "particle.bmx"
 Include "particle_emitter.bmx"
@@ -181,8 +178,6 @@ Repeat
   
 	'user input
 	get_all_input()
-	''multiplayer
-	'update_network()
 	'physics timescale and update throttling
 	If frame_time_elapsed()
 		calculate_timescale()
@@ -207,8 +202,6 @@ Repeat
 	profiler()
 	'menu input and misc
 	get_all_input(); profiler(0)
-	''multiplayer
-	'update_network(); profiler(1)
 	'physics timescale and update throttling
 	If frame_time_elapsed()
 		calculate_timescale()

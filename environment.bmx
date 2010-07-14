@@ -62,8 +62,6 @@ Type ENVIRONMENT
 	Field particle_list_background:TList 'TList<PARTICLE>
 	Field particle_list_foreground:TList 'TList<PARTICLE>
 	Field particle_lists:TList 'TList<TList<PARTICLE>>
-	Field retained_particle_list:TList 'TList<PARTICLE>
-	Field retained_particle_count% 'number of particles currently retained, cached for speed
 	Field environmental_emitter_list:TList 'TList<PARTICLE_EMITTER>
 	Field environmental_widget_list:TList 'TList<WIDGET>
 	Field projectile_list:TList 'TList<PROJECTILE>
@@ -114,7 +112,6 @@ Type ENVIRONMENT
 		particle_lists = CreateList()
 			particle_lists.AddLast( particle_list_background )
 			particle_lists.AddLast( particle_list_foreground )
-		retained_particle_list = CreateList()
 		environmental_emitter_list = CreateList()
 		environmental_widget_list = CreateList()
 		projectile_list = CreateList()
@@ -140,11 +137,9 @@ Type ENVIRONMENT
 		all_spawners.Clear()
 		particle_list_background.Clear()
 		particle_list_foreground.Clear()
-		retained_particle_list.Clear()
-		retained_particle_count = 0
 		environmental_widget_list.Clear()
 		projectile_list.Clear()
-		friendly_agent_list.Clear()
+		friendly_agent_list.clear()
 		hostile_agent_list.Clear()
 		prop_list.Clear()
 		pickup_list.Clear()

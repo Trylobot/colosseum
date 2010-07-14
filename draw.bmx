@@ -85,9 +85,6 @@ Function draw_game()
 	game.graffiti.draw() 'zoom
 
 	'background particles
-	For Local part:PARTICLE = EachIn game.retained_particle_list
-		part.draw(,zoom)
-	Next
 	For Local part:PARTICLE = EachIn game.particle_list_background
 		part.draw(,zoom)
 	Next
@@ -194,14 +191,8 @@ Function draw_game()
 	draw_reticle()
 	SetRotation( 0 )
 	
-	If game.human_participation And playing_multiplayer
-		'multiplayer name tags
+	If game.human_participation
 		draw_nametag( profile.name, game.player.to_cvec() )
-		For Local rp:REMOTE_PLAYER = EachIn remote_players.Values()
-			If rp And rp.loaded
-				draw_nametag( rp.name, rp.avatar.to_cvec() )
-			End If
-		Next
 	End If
 
 	SetOrigin( 0, 0 )
@@ -585,11 +576,6 @@ Function draw_HUD()
 	SetAlpha( 1 )
 	DrawText_with_outline( "F1 for help", SETTINGS_REGISTER.WINDOW_WIDTH.get() - TextWidth("F1 for help") - 10, SETTINGS_REGISTER.WINDOW_HEIGHT.get() - 55 )
 	
-	'multiplayer chat messages (if applicable)
-	If playing_multiplayer
-		draw_chats()
-	End If
-	
 End Function
 
 Function draw_win()
@@ -666,43 +652,6 @@ Function fade_out()
 		Flip()
 	End While
 	Return
-End Function
-
-'______________________________________________________________________________
-Function draw_chats()
-	Local x_start% = 5
-	Local y_start% = SETTINGS_REGISTER.WINDOW_HEIGHT.get() - 53
-	Local y_current% = y_start
-	Local line_h% = 14
-	SetImageFont( get_font( "consolas_14" ))
-	Local prefix$
-	'draw chat being entered
-	If FLAG.chat_mode
-		SetAlpha( 1 )
-		SetColor( 255, 255, 255 )
-		DrawText_with_outline( chat, x_start, y_current )
-		SetColor( 255, 255, 255 )
-		SetAlpha( 0.5 + Sin(now() Mod 360) )
-		DrawText_with_outline( "|", x_start + TextWidth( chat ) - Int(TextWidth( "|" )/3), y_current )
-		y_current :- line_h
-	End If
-	'draw chat log
-	For Local cm:CHAT_MESSAGE = EachIn chat_message_list
-		SetAlpha( time_alpha_pct( cm.added_ts + chat_stay_time, chat_fade_time, False ))
-		If cm.from_self
-			SetColor( 255, 233,   0 ) 'gold
-		Else
-			SetColor( 226, 226, 226 ) 'light gray
-		End If
-		DrawText_with_outline( cm.username+" ", x_start, y_current )
-		If cm.from_self
-			SetColor( 255, 255, 255 ) 'white
-		Else
-			SetColor( 170, 170, 170 ) 'gray
-		End If
-		DrawText_with_outline( cm.message, x_start + TextWidth( cm.username+" " ), y_current )
-		y_current :- line_h
-	Next
 End Function
 
 '______________________________________________________________________________

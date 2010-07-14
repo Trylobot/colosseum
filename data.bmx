@@ -325,8 +325,6 @@ Function load_settings%()
 		bg_music_enabled = json.GetBoolean( "bg_music_enabled" )
 		SETTINGS_REGISTER.SHOW_AI_MENU_GAME.set( json.GetBoolean( "show_ai_menu_game" ))
 		SETTINGS_REGISTER.ACTIVE_PARTICLE_LIMIT.set( json.GetNumber( "active_particle_limit" ))
-		network_ip_address = json.getString( "network_ip_address" )
-		network_port = json.GetNumber( "network_port" )
 		Return True
 	End If
 	'bad graphics mode
@@ -349,8 +347,6 @@ Function save_settings%()
 	this_json.SetByName( "bg_music_enabled", TJSONBoolean.Create( bg_music_enabled ))
 	this_json.SetByName( "show_ai_menu_game", TJSONBoolean.Create( SETTINGS_REGISTER.SHOW_AI_MENU_GAME.get() ))
 	this_json.SetByName( "active_particle_limit", TJSONNumber.Create( SETTINGS_REGISTER.ACTIVE_PARTICLE_LIMIT.get() ))
-	this_json.SetByName( "network_ip_address", TJSONString.Create( network_ip_address ))
-	this_json.SetByName( "network_port", TJSONNumber.Create( network_port ))
 	'output json data
 	Local json:TJSON = TJSON.Create( this_json )
 	Local file:TStream = WriteFile( settings_path )

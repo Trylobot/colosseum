@@ -72,13 +72,10 @@ Type PHYSICAL_OBJECT Extends POINT
 	Method collide:Object[]( collidemask%, writemask% )
 		If hitbox
 			SetRotation( ang )
-			SetScale( 1, 1 )
 			Return CollideRect( ..
-				pos_x - handle.x(), ..
-				pos_y - handle.y(), ..
-				hitbox.w, hitbox.h, ..
-				collidemask, writemask, ..
-				Self )
+				pos_x - handle.r*Cos(handle.a + ang), ..
+				pos_y - handle.r*Sin(handle.a + ang), ..
+				hitbox.w, hitbox.h, collidemask, writemask, Self )
 		Else
 			Return Null
 		End If

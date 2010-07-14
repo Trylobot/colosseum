@@ -18,13 +18,8 @@ EndRem
 'Import "data.bmx"
 
 '______________________________________________________________________________
-Global chat_input_listener:CONSOLE = New CONSOLE
-Global chat$
-
 Function get_all_input()
 		
-	get_chat_input()
-
 	get_mouse_position()
 	
 	'hide/ignore mouse
@@ -90,14 +85,10 @@ Function get_all_input()
 	'non-menu input mode (game mode)
 	Else 'Not FLAG_in_menu
 		If game And game.human_participation
-			If FLAG.chat_mode
-				game.player_brain.human_input_blocked_update()
-			Else
-				'in-game player input forwarded to brain object
-				'/////////////////////////
-				game.player_brain.update()
-				'/////////////////////////
-			End If
+			'in-game player input forwarded to brain object
+			'/////////////////////////
+			game.player_brain.update()
+			'/////////////////////////
 			'pause game
 			If escape_key_release() 'KeyHit( KEY_ESCAPE )
 				If Not game.paused
@@ -139,28 +130,6 @@ Function get_all_input()
 		save_settings()
 	End If
 	
-End Function
-
-'______________________________________________________________________________
-Function get_chat_input()
-	If Not FLAG.in_menu And game And game.human_participation And FLAG.playing_multiplayer
-		If Not FLAG.chat_mode
-			If KeyHit( KEY_ENTER )
-				FLAG.chat_mode = True
-				chat = ""
-				chat_input_listener.flush_all()
-			End If
-		Else 'FLAG.chat_mode
-			If Not KeyHit( KEY_ENTER )
-				chat = chat_input_listener.update( chat )
-			Else 'KeyHit( KEY_ENTER )
-				FLAG.chat_mode = False
-				If chat.Length > 0
-					send_chat( chat )
-				End If
-			End If
-		End If
-	End If
 End Function
 
 '______________________________________________________________________________

@@ -42,8 +42,6 @@ Global info_change_ts% = now()
 'player events
 Global last_kill_ts%
 Const FRIENDLY_FIRE_PUNISHMENT_AMOUNT% = 75
-'multiplayer
-Global playing_multiplayer% = False
 
 'app state flags
 'Global FLAG_in_menu% = True
@@ -328,46 +326,6 @@ Const main_screen_y% = 15
 Const main_screen_menu_y% = 30
 
 '______________________________________________________________________________
-Global meta_variable_cache:TMap
-
-Function resolve_meta_variables$( str$, argument:Object = Null )
-	Local tokens$[] = str.Split( "%%" )
-	Local result$ = ""
-	For Local i% = 0 To tokens.Length - 1
-		If i Mod 2 = 0 'token index is even; normal string literal
-			result :+ tokens[i]
-		Else If meta_variable_cache 'token index is odd; inside a meta-variable identifier
-			Local meta_var$ = String( meta_variable_cache.ValueForKey( tokens[i] ))
-			If meta_var
-				result :+ meta_var
-			End If
-		End If
-	Next
-	Return result
-End Function
-
-'______________________________________________________________________________
-Function update_meta_variable_cache()
-	If Not meta_variable_cache
-		meta_variable_cache = CreateMap()
-	End If
-	update_map( meta_variable_cache, "profile.name", profile.name )
-	update_map( meta_variable_cache, "profile.cash", format_number( profile.cash ))
-	update_map( meta_variable_cache, "profile.kills", format_number( profile.kills ))
-	update_map( meta_variable_cache, "level_editor_cache.name", level_editor_cache.name )
-	update_map( meta_variable_cache, "fullscreen", SETTINGS_REGISTER.FULL_SCREEN.ToString())
-	update_map( meta_variable_cache, "window_w", String.FromInt( SETTINGS_REGISTER.WINDOW_WIDTH.get() ))
-	update_map( meta_variable_cache, "window_h", String.FromInt( SETTINGS_REGISTER.WINDOW_HEIGHT.get() ))
-	update_map( meta_variable_cache, "refresh_rate", String.FromInt( SETTINGS_REGISTER.REFRESH_RATE.get() ))
-	update_map( meta_variable_cache, "bit_depth", String.FromInt( SETTINGS_REGISTER.BIT_DEPTH.get() ))
-	update_map( meta_variable_cache, "audio_driver", audio_driver )
-	update_map( meta_variable_cache, "show_ai_menu_game", boolean_to_string( SETTINGS_REGISTER.SHOW_AI_MENU_GAME.get() ))
-	update_map( meta_variable_cache, "active_particle_limit", String.FromInt( SETTINGS_REGISTER.ACTIVE_PARTICLE_LIMIT.get() ))
-	update_map( meta_variable_cache, "network_ip_address", network_ip_address )
-	update_map( meta_variable_cache, "network_port", String.FromInt( network_port ))
-	update_map( meta_variable_cache, "network_level", StripAll( network_level ))
-End Function
-
 Function update_map%( map:TMap, key:Object, value:Object )
 	Local changed% = (value <> map.ValueForKey( key ))
 	map.Insert( key, value )

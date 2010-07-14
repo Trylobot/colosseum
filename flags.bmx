@@ -10,9 +10,7 @@ Type FLAG
 	'game state
 	Global in_menu%
 	Global paused%
-	Global playing_multiplayer%
 	Global campaign_mode%
-	Global chat_mode%
 	Global instaquit_plz%
 	'audio
 	Global engine_ignition%

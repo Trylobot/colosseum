@@ -39,6 +39,7 @@ Type PARTICLE Extends POINT
 
 	Field particle_type% '{single_image|animated|string}
 	Field img:IMAGE_ATLAS_REFERENCE, frame% 'image to be drawn, and the current frame index for animation and randomly varied particle sets
+	Field handle:pVEC 'handle (polar)
 	Field frame_delay% 'actual delay until next frame, can be INFINITE
 	Field str$, font:BMP_FONT, font_outline:BMP_FONT 'text string and font for STR particles
 	Field layer% 'layer {foreground|background}
@@ -88,6 +89,12 @@ Type PARTICLE Extends POINT
 		'static fields
 		p.particle_type = particle_type
 		p.img = img; p.frame = frame
+		If img
+			Local handle:cVEC = Create_cVEC( img.handle_x, img.handle_y )
+			p.handle = Create_pVEC( handle.r(), handle.a() )
+		Else
+			p.handle = Create_pVEC( 0, 0 )
+		End If
 		p.str = str; p.font = font; p.font_outline = font_outline
 		p.str_update()
 		p.layer = layer
@@ -234,6 +241,10 @@ Function Create_PARTICLE_from_json:PARTICLE( json:TJSON )
 	p = PARTICLE( PARTICLE.Create( particle_type ))
 	'read and assign optional fields as available
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED              Then p.img = get_image( json.GetString( "image_key" ))
+	If p.img
+		Local handle:cVEC = Create_cVEC( p.img.handle_x, p.img.handle_y )
+		p.handle = Create_pVEC( handle.r(), handle.a() )
+	End If
 	If json.TypeOf( "frame" ) <> JSON_UNDEFINED                  Then p.frame = json.GetNumber( "frame" )
 	If json.TypeOf( "frame_delay" ) <> JSON_UNDEFINED            Then p.frame_delay = json.GetNumber( "frame_delay" )
 	If json.TypeOf( "str" ) <> JSON_UNDEFINED                    Then p.str = json.GetString( "str" )

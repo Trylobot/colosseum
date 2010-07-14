@@ -38,8 +38,6 @@ Function apply_default_settings()
 	
 	audio_driver = "FreeAudio DirectSound"
 	bg_music_enabled = True
-	network_ip_address = "127.0.0.1"
-	network_port = 6112
 End Function
 
 Type SETTINGS_REGISTER
@@ -65,8 +63,6 @@ Global audio_driver$
 Global bg_music_enabled%
 'Global show_ai_menu_game%
 'Global active_particle_limit%
-Global network_ip_address$
-Global network_port%
 
 '______________________________________________________________________________
 Type REQUEST_INPUT_FOR_SETTING_POPUP
