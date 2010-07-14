@@ -175,16 +175,10 @@ Type ENVIRONMENT
 		'pathing (AI)
 		pathing = PATHING_STRUCTURE.Create( lev )
 		'walls (Collisions)
-		Local wall_start% = now()
-		For Local cursor:CELL = EachIn lev.get_blocking_cells()
-			Local wall:BOX = lev.get_wall( cursor )
-			walls.AddLast( wall )
-		Next
-		walls = merge_walls( walls )
+		walls = merge_walls( lev )
 		For Local wall:BOX = EachIn walls
 			setup_physics_from_wall( wall, physics )
 		Next
-		DebugLog "    Level walls baked in " + elapsed_str(wall_start) + " sec."
 		'graffiti
 		graffiti = GRAFFITI_MANAGER.Create( background.pixmaps[0] )
 		'props
@@ -200,7 +194,6 @@ Type ENVIRONMENT
 		initialize_spawning_system()
 		reset_spawners()
 		deaths = 0
-		DebugLog "    Level spawners initialized in " + elapsed_str(spawn_start) + " sec."
 		'success
 		DebugLog "  Level environment " + lev.name + " baked in " + elapsed_str(load_start) + " sec."
 		Return True
@@ -553,7 +546,12 @@ Type ENVIRONMENT
 		Return proximal
 	End Method
 	
-	Method merge_walls:TList( wall_list:TList )
+	Method merge_walls:TList( lev:LEVEL )
+		Local wall_list:TList = CreateList()
+		For Local cursor:CELL = EachIn lev.get_blocking_cells()
+			Local wall:BOX = lev.get_wall( cursor )
+			wall_list.AddLast( wall )
+		Next
 		Return wall_list
 	End Method
 	

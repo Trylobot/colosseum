@@ -15,6 +15,12 @@ Type GRAFFITI_MANAGER
 	Field brush:TCairoSurface
 	Field brush_px:TPixmap
 	Field ox#, oy#
+	Field x%, y%
+	Field t:BOX
+	
+	Method New()
+		t = New BOX
+	End Method
 	
 	Function Create:GRAFFITI_MANAGER( pixmap:TPixmap ) 'background_clean:TImage, backbuffer_width%, backbuffer_height% )
 		Local g:GRAFFITI_MANAGER = New GRAFFITI_MANAGER
@@ -28,7 +34,16 @@ Type GRAFFITI_MANAGER
 	
 	Method draw()
 		GetOrigin( ox, oy )
-		DrawPixmap( pixmap, ox, oy )
+		x = Max( 0, ox )
+		y = Max( 0, oy )
+		t.x = Max( 0, -ox )
+		t.y = Max( 0, -oy )
+		t.w = Min( pixmap.width - t.x, SETTINGS_REGISTER.WINDOW_WIDTH.get() - x )
+		t.h = Min( pixmap.height - t.y, SETTINGS_REGISTER.WINDOW_HEIGHT.get() - y )
+		If t.w <= 0 Or t.h <= 0
+			Return
+		End If
+		DrawPixmap( pixmap.Window( t.x, t.y, t.w, t.h ), x, y )
 	End Method
 	
 	Method add_graffiti( p:PARTICLE )

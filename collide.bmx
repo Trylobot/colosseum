@@ -33,6 +33,7 @@ Function collide_all_objects()
 	
 	'collision detection & resolution body
 	If game <> Null And Not game.paused
+		SetOrigin( 0, 0 )
 		ResetCollisions()
 		
 		Local list:TList
