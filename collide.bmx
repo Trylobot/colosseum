@@ -33,7 +33,6 @@ Function collide_all_objects()
 	
 	'collision detection & resolution body
 	If game <> Null And Not game.paused
-		SetOrigin( 0, 0 )
 		ResetCollisions()
 		
 		Local list:TList
@@ -51,8 +50,21 @@ Function collide_all_objects()
 				ag.collide( 0, AGENT_COLLISION_LAYER )
 			Next
 		Next
+		SetRotation( 0 )
 		For wall = EachIn game.walls
 			CollideRect( wall.x,wall.y, wall.w,wall.h, 0, WALL_COLLISION_LAYER, wall )
+		Next
+		For Local d:DOOR = EachIn game.doors
+			For Local slider:WIDGET = EachIn d.all_sliders
+				SetRotation( slider.get_ang() )
+				w = slider.img.width()
+				h = slider.img.height()
+				result = CollideRect( slider.get_x(), slider.get_y(), w, h, PROJECTILE_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
+				For proj = EachIn result
+					'COLLISION! between {projectile} and {door}
+					collision_projectile_door( proj, slider )
+				Next
+			Next
 		Next
 		For proj = EachIn game.projectile_list
 			'check for projectile/agent
@@ -70,18 +82,6 @@ Function collide_all_objects()
 			For wall = EachIn result
 				'COLLISION! between {projectile} and {wall}
 				collision_projectile_wall( proj, wall )
-			Next
-		Next
-		For Local d:DOOR = EachIn game.doors
-			For Local slider:WIDGET = EachIn d.all_sliders
-				SetRotation( slider.get_ang() )
-				w = slider.img.width()
-				h = slider.img.height()
-				result = CollideRect( slider.get_x(), slider.get_y(), w, h, PROJECTILE_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
-				For proj = EachIn result
-					'COLLISION! between {projectile} and {door}
-					collision_projectile_door( proj, slider )
-				Next
 			Next
 		Next
 		
@@ -102,6 +102,7 @@ Function collide_all_objects()
 End Function
 
 Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
+	'DebugLog( "projectile("+proj.id+") agent("+ag.id+")" )
 	'activate collision response for affected entity(ies)
 	Local offset#, offset_ang#
 	cartesian_to_polar( ag.pos_x - proj.pos_x, ag.pos_y - proj.pos_y, offset, offset_ang )
@@ -165,14 +166,20 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 End Function
 
 Function collision_projectile_door( proj:PROJECTILE, door:WIDGET )
+	'DebugLog( "projectile("+proj.id+") door("+door.id+")" )
 	proj.impact( ,, proj.snd_impact, game.particle_list_background, game.particle_list_foreground )
 End Function
 
 Function collision_projectile_wall( proj:PROJECTILE, wall:BOX )
+	'DebugLog( "projectile("+proj.id+") wall()" )
 	proj.impact( ,, proj.snd_impact, game.particle_list_background, game.particle_list_foreground )
+	?Debug
+	debug_wall_flashes.AddLast( wall )
+	?
 End Function
 
 Function collision_player_pickup( cmp_ag:COMPLEX_AGENT, pkp:PICKUP )
+	'DebugLog( "player pickup("+pkp.id+")" )
 	cmp_ag.grant_pickup( pkp ) 'i can has lewts?!
 	pkp.play()
 	pkp.unmanage()

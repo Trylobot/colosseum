@@ -192,15 +192,13 @@ Function debug_main()
 	If KeyHit( KEY_G )
 		FLAG_god_mode = Not FLAG_god_mode
 	End If
-	If game <> Null And FLAG_debug_overlay
-		
+	If game And FLAG_debug_overlay
 		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
-		game.physics_viewer.Draw()
+		'game.physics_viewer.Draw()
+		debug_draw_wall_flashes()
 		SetOrigin( 0, 0 )
-		
 		debug_overlay()
 		debug_fps()
-		
 	End If
 	If profile
 		If KeyDown( KEY_NUMADD )
@@ -215,6 +213,17 @@ Function debug_main()
 	End If
 	'If KeyDown( KEY_F4 ) Then DebugStop
 End Function
+
+Function debug_draw_wall_flashes()
+	SetScale( 1, 1 )
+	SetColor( 255, 255, 255 )
+	SetAlpha( 1 )
+	For Local wall:BOX = EachIn debug_wall_flashes
+		draw_box( wall, True )
+	Next
+	debug_wall_flashes.Clear()
+End Function
+Global debug_wall_flashes:TList = CreateList()
 
 Function debug_overlay()
 	'ShowMouse()
@@ -486,17 +495,17 @@ Function debug_overlay()
 			
 	End If
 	
-	'projectile owners
-	For Local proj:PROJECTILE = EachIn game.projectile_list
-		'find owner
-		For Local list:TList = EachIn game.agent_lists
-			For Local ag:AGENT = EachIn list
-				If proj.source_id = ag.id
-					DrawLine_awesome( proj.pos_x,proj.pos_y, ag.pos_x,ag.pos_y, True, 3, 1 )
-				End If
-			Next
-		Next
-	Next
+'	'projectile owners
+'	For Local proj:PROJECTILE = EachIn game.projectile_list
+'		find owner
+'		For Local list:TList = EachIn game.agent_lists
+'			For Local ag:AGENT = EachIn list
+'				If proj.source_id = ag.id
+'					DrawLine_awesome( proj.pos_x,proj.pos_y, ag.pos_x,ag.pos_y, True, 3, 1 )
+'				End If
+'			Next
+'		Next
+'	Next
 	
 End Function
 
