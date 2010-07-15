@@ -22,7 +22,6 @@ Import brl.Random
 Import brl.Max2D
 Import bah.cairo
 Import aco.FarseerPhysics
-Import vertex.BNetEx
 ?Win32
 Import pub.Win32
 Import "icon/icon.o"
@@ -186,10 +185,10 @@ Repeat
 		collide_all_objects()
 		'update object positions, emit particles
 		update_all_objects()
-	End If
-	'new physics engine (temporary spot)
-	If game And game.physics
-		game.physics.Update( physics_timestep_in_seconds )
+		'new physics engine
+		If game And game.physics
+			game.physics.Update( physics_timestep_in_seconds )
+		End If
 	End If
 	'music and sound
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress )
@@ -210,10 +209,10 @@ Repeat
 		collide_all_objects(); profiler(2)
 		'update object positions, emit particles
 		update_all_objects(); profiler(3)
-	End If
-	'new physics engine (temporary spot)
-	If game And game.physics
-		game.physics.Update( physics_timestep_in_seconds ); profiler(6)
+		'new physics engine
+		If game And game.physics
+			game.physics.Update( physics_timestep_in_seconds ); profiler(6)
+		End If
 	End If
 	'music and sound
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress ); profiler(4)

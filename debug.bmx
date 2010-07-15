@@ -158,7 +158,7 @@ Global real_origin:cVEC = Create_cVEC( 0, 0 )
 Global global_start:CELL
 Global global_goal:CELL
 
-Global FLAG_debug_overlay% = False
+Global FLAG_debug_overlay% = True
 Global FLAG_god_mode% = False
 Global fps%, last_frame_ts%, time_count%, frame_count%
 Global f12_down%
@@ -193,11 +193,11 @@ Function debug_main()
 		FLAG_god_mode = Not FLAG_god_mode
 	End If
 	If game And FLAG_debug_overlay
-		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+		'SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
 		'game.physics_viewer.Draw()
-		debug_draw_wall_flashes()
+		'debug_draw_wall_flashes()
 		SetOrigin( 0, 0 )
-		debug_overlay()
+		'debug_overlay()
 		debug_fps()
 	End If
 	If profile
@@ -226,11 +226,6 @@ End Function
 Global debug_wall_flashes:TList = CreateList()
 
 Function debug_overlay()
-	'ShowMouse()
-	If game And game.player
-		game.player.cur_health = game.player.max_health
-	End If
-	
 	SetRotation( 0 )
 	SetScale( 1, 1 )
 	SetAlpha( 1 )
@@ -537,8 +532,8 @@ Function debug_fps()
 	SetColor( 255, 255, 127 )
 	SetImageFont( get_font( "consolas_bold_12" ))
 	Local fps_str$ = "fps "+fps
-	sx = SETTINGS_REGISTER.WINDOW_WIDTH.get() - TextWidth( fps_str ) - 1
-	sy = SETTINGS_REGISTER.WINDOW_HEIGHT.get() - GetImageFont().Height() - 1
+	sx = 2
+	sy = 2
 	DrawText_with_outline( fps_str, sx, sy )
 End Function
 
