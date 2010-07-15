@@ -1094,4 +1094,46 @@
 			frames: 1
 		}
 	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/units/mini_tank/mini_tank_chassis.png",
+			handle_x: 8.0,
+			handle_y: 4.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/units/mini_tank/mini_tank_track.png",
+			handle_x: 6.5,
+			handle_y: 2.5,
+			frames: 8,
+			frame_width: 13,
+			frame_height: 5
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/units/mini_tank/mini_tank_turret.png",
+			handle_x: 2.5,
+			handle_y: 2.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/units/mini_tank/mini_tank_trail.png",
+			handle_x: 6.5,
+			handle_y: 2.5,
+			frames: 1,
+		}
+	},
 ]

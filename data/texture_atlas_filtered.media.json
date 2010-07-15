@@ -34,7 +34,7 @@
 			},
 			{
 				source_path: "art/effects/discarded_energy_core_big.png",
-				x: 1004,
+				x: 1017,
 				y: 32,
 				w: 7,
 				h: 5
@@ -42,7 +42,7 @@
 			{
 				source_path: "art/effects/discarded_energy_core_red.png",
 				x: 1018,
-				y: 32,
+				y: 161,
 				w: 6,
 				h: 5
 			},
@@ -55,21 +55,21 @@
 			},
 			{
 				source_path: "art/effects/energy_pellet.png",
-				x: 937,
-				y: 161,
+				x: 800,
+				y: 166,
 				w: 5,
 				h: 5
 			},
 			{
 				source_path: "art/effects/laser.png",
-				x: 931,
-				y: 32,
+				x: 949,
+				y: 161,
 				w: 15,
 				h: 5
 			},
 			{
 				source_path: "art/effects/laser_big.png",
-				x: 805,
+				x: 823,
 				y: 171,
 				w: 17,
 				h: 7
@@ -83,8 +83,8 @@
 			},
 			{
 				source_path: "art/effects/laser_red.png",
-				x: 946,
-				y: 32,
+				x: 964,
+				y: 161,
 				w: 15,
 				h: 5
 			},
@@ -125,8 +125,8 @@
 			},
 			{
 				source_path: "art/effects/mgun_shell_casing.png",
-				x: 1011,
-				y: 32,
+				x: 787,
+				y: 166,
 				w: 7,
 				h: 5
 			},
@@ -146,28 +146,28 @@
 			},
 			{
 				source_path: "art/effects/projectile.png",
-				x: 874,
-				y: 171,
+				x: 1015,
+				y: 131,
 				w: 9,
 				h: 7
 			},
 			{
 				source_path: "art/effects/projectile_shell_casing.png",
-				x: 863,
+				x: 881,
 				y: 171,
 				w: 11,
 				h: 7
 			},
 			{
 				source_path: "art/effects/rocket.png",
-				x: 837,
+				x: 855,
 				y: 171,
 				w: 13,
 				h: 7
 			},
 			{
 				source_path: "art/effects/rocket_casing.png",
-				x: 850,
+				x: 868,
 				y: 171,
 				w: 13,
 				h: 7
@@ -188,7 +188,7 @@
 			},
 			{
 				source_path: "art/effects/spark.png",
-				x: 839,
+				x: 943,
 				y: 32,
 				w: 30,
 				h: 5
@@ -307,8 +307,8 @@
 			},
 			{
 				source_path: "art/ui/ghost_reticle.png",
-				x: 1017,
-				y: 131,
+				x: 892,
+				y: 171,
 				w: 7,
 				h: 7
 			},
@@ -433,14 +433,14 @@
 			},
 			{
 				source_path: "art/ui/reload_marker.png",
-				x: 771,
+				x: 789,
 				y: 171,
 				w: 10,
 				h: 8
 			},
 			{
 				source_path: "art/ui/reticle.png",
-				x: 869,
+				x: 973,
 				y: 32,
 				w: 25,
 				h: 5
@@ -468,8 +468,8 @@
 			},
 			{
 				source_path: "art/units/apc/apc_turret_barrel.png",
-				x: 987,
-				y: 32,
+				x: 770,
+				y: 166,
 				w: 9,
 				h: 5
 			},
@@ -538,7 +538,7 @@
 			},
 			{
 				source_path: "art/units/carrier/ramp.png",
-				x: 757,
+				x: 775,
 				y: 171,
 				w: 14,
 				h: 8
@@ -566,14 +566,14 @@
 			},
 			{
 				source_path: "art/units/light_tank/light_tank_track_trail.png",
-				x: 883,
+				x: 899,
 				y: 171,
 				w: 25,
 				h: 6
 			},
 			{
 				source_path: "art/units/light_tank/pellet_turret_base.png",
-				x: 908,
+				x: 924,
 				y: 171,
 				w: 8,
 				h: 6
@@ -594,14 +594,14 @@
 			},
 			{
 				source_path: "art/units/light_tank/player_tank_mgun_turret.png",
-				x: 999,
-				y: 131,
+				x: 757,
+				y: 171,
 				w: 18,
 				h: 8
 			},
 			{
 				source_path: "art/units/light_tank/player_tank_turret_barrel.png",
-				x: 781,
+				x: 799,
 				y: 171,
 				w: 24,
 				h: 7
@@ -678,8 +678,8 @@
 			},
 			{
 				source_path: "art/units/medium_tank/ripper_machine_gun_turret_barrel.png",
-				x: 975,
-				y: 32,
+				x: 1006,
+				y: 161,
 				w: 12,
 				h: 5
 			},
@@ -691,16 +691,44 @@
 				h: 13
 			},
 			{
-				source_path: "art/units/quad/enemy_light_mgun_turret_barrel.png",
-				x: 961,
+				source_path: "art/units/mini_tank/mini_tank_chassis.png",
+				x: 999,
+				y: 131,
+				w: 16,
+				h: 9
+			},
+			{
+				source_path: "art/units/mini_tank/mini_tank_track.png",
+				x: 839,
 				y: 32,
+				w: 104,
+				h: 5
+			},
+			{
+				source_path: "art/units/mini_tank/mini_tank_trail.png",
+				x: 993,
+				y: 161,
+				w: 13,
+				h: 5
+			},
+			{
+				source_path: "art/units/mini_tank/mini_tank_turret.png",
+				x: 760,
+				y: 166,
+				w: 10,
+				h: 5
+			},
+			{
+				source_path: "art/units/quad/enemy_light_mgun_turret_barrel.png",
+				x: 979,
+				y: 161,
 				w: 14,
 				h: 5
 			},
 			{
 				source_path: "art/units/quad/enemy_light_mgun_turret_base.png",
-				x: 931,
-				y: 161,
+				x: 794,
+				y: 166,
 				w: 6,
 				h: 5
 			},
@@ -713,8 +741,8 @@
 			},
 			{
 				source_path: "art/units/quad/light_quad_trail.png",
-				x: 913,
-				y: 32,
+				x: 931,
+				y: 161,
 				w: 18,
 				h: 5
 			},
@@ -727,21 +755,21 @@
 			},
 			{
 				source_path: "art/units/quad/small_wheel.png",
-				x: 996,
-				y: 32,
+				x: 779,
+				y: 166,
 				w: 8,
 				h: 5
 			},
 			{
 				source_path: "art/units/spider/limb.png",
-				x: 822,
+				x: 840,
 				y: 171,
 				w: 15,
 				h: 7
 			},
 			{
 				source_path: "art/units/stationary/enemy_machine-gun_emplacement_turret-barrel.png",
-				x: 894,
+				x: 998,
 				y: 32,
 				w: 19,
 				h: 5

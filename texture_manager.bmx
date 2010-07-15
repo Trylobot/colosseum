@@ -83,24 +83,28 @@ Type TEXTURE_MANAGER
 	Function load_image_data( json:TJSON, image_key$ )
 		Local path$, handle_x#, handle_y#, frames%, frame_width#, frame_height#, flip_x%, flip_y%
 		Local ref:IMAGE_ATLAS_REFERENCE
-		
 		path = json.GetString( "path" ).Trim()
 		image_key_map.Insert( image_key, path )
 		ref = GetImageRef( image_key )
-		frames = json.GetNumber( "frames" )
-		flip_x = json.GetBoolean( "flip_horizontal" )
-		flip_y = json.GetBoolean( "flip_vertical" )
-		handle_x = json.GetNumber( "handle_x" )
-		handle_y = json.GetNumber( "handle_y" )
-		'////////////////////////////////////////////////////////////
-		ref.LoadImageModifiers( handle_x, handle_y, flip_x, flip_y )
-		'////////////////////////////////////////////////////////////
-		If frames > 1
-			frame_width = json.GetNumber( "frame_width" )
-			frame_height = json.GetNumber( "frame_height" )
-			'////////////////////////////////////////////////////////////////
-			ref.LoadMultiCellAnimation( frames, frame_width, frame_height )
-			'////////////////////////////////////////////////////////////////
+		If ref
+			frames = json.GetNumber( "frames" )
+			flip_x = json.GetBoolean( "flip_horizontal" )
+			flip_y = json.GetBoolean( "flip_vertical" )
+			handle_x = json.GetNumber( "handle_x" )
+			handle_y = json.GetNumber( "handle_y" )
+			'////////////////////////////////////////////////////////////
+			ref.LoadImageModifiers( handle_x, handle_y, flip_x, flip_y )
+			'////////////////////////////////////////////////////////////
+			If frames > 1
+				frame_width = json.GetNumber( "frame_width" )
+				frame_height = json.GetNumber( "frame_height" )
+				'////////////////////////////////////////////////////////////////
+				ref.LoadMultiCellAnimation( frames, frame_width, frame_height )
+				'////////////////////////////////////////////////////////////////
+			End If
+		Else
+			DebugLog( "  ImageAtlasReference "+image_key+" not found. Did you forget to run compose_texture_atlases.bat?" )
+			DebugStop
 		End If
 	End Function
 	
