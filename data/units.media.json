@@ -100,6 +100,67 @@
 	},
 	{
 		class: "unit",
+		key: "mini_tank",
+		object: {
+			name: "mini tank",
+			image_key: "mini_tank_chassis",
+			gibs_image_key: "quad_gibs",
+			ai_name: "vehicle",
+			cash_value: 100,
+			max_health: 50,
+			mass: 400,
+			frictional_coefficient: 25,
+			driving_force_magnitude: 35,
+			turning_force_magnitude: 55,
+			death_package: true,
+			tank_tracks: [
+				{
+					particle_key: "mini_tank_track",
+					offset_x: 0,
+					offset_y: 7.5,
+					orientation: 2
+				},
+				{
+					particle_key: "mini_tank_track",
+					offset_x: 0,
+					offset_y: -7.5,
+					orientation: 1
+				}
+			],
+			dust_cloud_package: {
+				offset_x: 0,
+				separation_x: 8,
+				separation_y: 5,
+				dist_min: 0,
+				dist_max: 2,
+				dist_ang_min: -45,
+				dist_ang_max: 45,
+				vel_min: 0.2,
+				vel_max: 0.8
+			},
+			vehicle_trail_package: {
+				particle_key: "mini_tank_trail",
+				offset_x: 0,
+				separation_y: 5,
+				trail_emit_distance_threshold: 5,
+				trail_emit_angular_threshold: 5
+			}
+			turret_anchors: [
+				{
+					offset_x: -6,
+					offset_y: 0
+				}
+			],
+			turrets: [
+				{
+					turret_key: "mini_tank_turret",
+					anchor: 0
+				}
+			]
+		}
+	},
+	{
+		class: "unit",
 		key: "light_tank",
 		object: {
 			name: "light tank",

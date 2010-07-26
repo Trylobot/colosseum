@@ -328,5 +328,24 @@
 			layer: 2,
 			retain: false,
 		}
+	},
+	{
+		class: "particle",
+		key: "mini_tank_track",
+		object: {
+			particle_type: 1,
+			image_key: "mini_tank_track",
+		}
+	},
+	{
+		class: "particle",
+		key: "mini_tank_trail",
+		object: {
+			particle_type: 0,
+			image_key: "mini_tank_trail",
+			layer: 2,
+			retain: true,
+			life_time: 0
+		}
 	}
 ]

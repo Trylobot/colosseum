@@ -49,6 +49,32 @@
 	},
 	{
 		class: "turret",
+		key: "mini_tank_turret",
+		object: {
+			name: "light machine-gun",
+			class: 2,
+			priority: 2,
+			image_key: "mini_tank_turret",
+			firing_sound_key: "mgun",
+			turret_barrel_count: 1,
+			firing_sequence: [[0]],
+			max_ang_vel: 2.25,
+			heat_based: true,
+			heat_per_shot_min: 0.0400,
+			heat_per_shot_max: 0.0400,
+			cooling_rate: 0.0050,
+			overheat_delay: 1500,
+			effective_range: 250.0,
+			turret_barrels: [
+				{
+					turret_barrel_key: "light_co_axial_machine_gun",
+					attach_at: null
+				}
+			]
+		}
+	},
+	{
+		class: "turret",
 		key: "light_energy_mgun",
 		object: {
 			name: "light plasma sprayer",
