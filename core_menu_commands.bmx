@@ -74,7 +74,7 @@ Function cmd_change_setting_integer( item:Object )
 	End If
 End Function
 
-Function cmd_set_graphics_mode( item:Object )
+Function cmd_set_screen_resolution( item:Object )
 	Local mode:TGraphicsMode = TGraphicsMode( item )
 	If mode
 		SETTINGS_REGISTER.WINDOW_WIDTH.set( mode.width )
@@ -89,6 +89,7 @@ Function cmd_set_graphics_mode( item:Object )
 	End If
 End Function
 
+Rem
 Function cmd_select_current_screen_resolution( item:Object )
 	Local menu:TUIList = TUIList( item )
 	If menu
@@ -107,6 +108,7 @@ Function cmd_select_current_screen_resolution( item:Object )
 		Next
 	End If
 End Function
+EndRem
 
 Function cmd_refresh_custom_level_list( item:Object )
 	Local menu:TUIList = TUIList( item )

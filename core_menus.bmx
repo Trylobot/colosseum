@@ -204,6 +204,64 @@ Function initialize_menus()
 	video_settings_menu.set_item( idx(), "RESOLUTION", cmd_show_menu, screen_resolution_menu, SETTINGS_REGISTER.GRAPHICS_MODE )
 	
 	Local modes:TGraphicsMode[] = GraphicsModes()
+	Local resolutions:TList = CreateList()
+	Local refresh_rates:TList = CreateList()
+	Local bit_depths:TList = CreateList()
+	Local unique%
+	For Local i% = 0 Until modes.Length
+		'resolution
+		unique = True
+		For Local res%[] = EachIn resolutions
+			If res[0] = modes[i].width And res[1] = modes[i].height
+				unique = False
+				Exit
+			End If
+		Next
+		If unique
+			resolutions.AddLast( [modes[i].width, modes[i].height] )
+		End If
+		'refresh rate
+		unique = True
+		For Local res%[] = EachIn refresh_rates
+			If res[0] = modes[i].hertz
+				unique = False
+				Exit
+			End If
+		Next
+		If unique
+			refresh_rates.AddLast( [modes[i].hertz] )
+		End If
+		'bit depth
+		unique = True
+		For Local res%[] = EachIn bit_depths
+			If res[0] = modes[i].depth
+				unique = False
+				Exit
+			End If
+		Next
+		If unique
+			bit_depths.AddLast( [modes[i].depth] )
+		End If
+	Next
+	screen_resolution_menu.Construct( ..
+		"RESOLUTION", resolutions.Count(), ..
+		dark_gray, white, black, white, ..
+		menu_line_width, ..
+		menu_header_fg_font, menu_header_bg_font, ..
+		white, black, ..
+		menu_small_item_fg_font, menu_small_item_bg_font, ..
+		white, black, black, light_gray, ..
+		,,,, ..
+		menu_x, menu_y )
+	idx( True )
+	For Local res%[] = EachIn resolutions
+		Local res_str$ = "" + res[0] + " x " + res[1]
+		screen_resolution_menu.set_item( idx(), res_str, cmd_set_screen_resolution, res )
+	Next
+	'screen_resolution_menu.set_menu_show_event_handler( cmd_select_current_screen_resolution )
+
+	Rem
+	Local modes:TGraphicsMode[] = GraphicsModes()
 	screen_resolution_menu.Construct( ..
 		"RESOLUTION", modes.Length, ..
 		dark_gray, white, black, white, ..
@@ -219,6 +277,7 @@ Function initialize_menus()
 		screen_resolution_menu.set_item( i, mode_str, cmd_set_graphics_mode, modes[i] )
 	Next
 	screen_resolution_menu.set_menu_show_event_handler( cmd_select_current_screen_resolution )
+	EndRem
 	
 	audio_settings_menu.Construct( ..
 		"AUDIO SETTINGS", 3, ..
@@ -282,38 +341,4 @@ Function initialize_menus()
 	MENU_REGISTER.pause = pause_menu
 	
 End Function
-
-Rem
-	Local resolutions:TList = CreateList()
-	Local modes:TGraphicsMode[] = GraphicsModes()
-	Local w%, h%
-	For Local i% = 0 Until modes.Length
-		w = modes[i].width
-		h = modes[i].height
-		Local unique% = True
-		For Local res%[] = EachIn resolutions
-			If res[0] = w And res[1] = h
-				unique = False
-				Exit
-			End If
-		Next
-		If unique
-			resolutions.AddLast( [w, h] )
-		End If
-	Next
-	screen_resolution_menu.Construct( ..
-		"RESOLUTION", resolutions.Count(), ..
-		dark_gray, white, black, white, ..
-		menu_line_width, ..
-		menu_header_fg_font, menu_header_bg_font, ..
-		white, black, ..
-		menu_super_small_item_fg_font, menu_super_small_item_bg_font, ..
-		white, black, black, light_gray, ..
-		menu_x, menu_y )
-	idx( True )
-	For Local res%[] = EachIn resolutions
-		Local res_str$ = "" + res[0] + " x " + res[1]
-		screen_resolution_menu.set_item( idx(), res_str, cmd_set_screen_resolution, res )
-	Next
-EndRem
 
