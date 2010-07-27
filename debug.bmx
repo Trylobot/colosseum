@@ -134,24 +134,6 @@ Function test_bmp_fonts()
 	End
 End Function
 
-Global profiler_label$[] = [ ..
-	"get_all_input", ..
-	"update_network", ..
-	"collide_all_objects", ..
-	"update_all_objects", ..
-	"play_all_audio", ..
-	"draw_all_graphics", ..
-	"farseer physics" ]
-Global profiler_value:Long[] = New Long[ profiler_label.Length ]
-Global profiler_ts%
-
-Function profiler( i% = -1 )
-	If i >= 0
-		profiler_value[i] :+ now() - profiler_ts
-	End If
-	profiler_ts = now()
-End Function
-
 'debug system infrastructure & hooks
 Global debug_origin:cVEC = Create_cVEC( 0, 0 )
 Global real_origin:cVEC = Create_cVEC( 0, 0 )
@@ -236,10 +218,10 @@ Function debug_overlay()
 	SetColor( 255, 255, 255 )
 	'debug_drawtext( "wave " + game.hostile_spawner.current_wave )
 	
-	'profiler
-	For Local i% = 0 Until profiler_label.Length
-		debug_drawtext( pad( profiler_label[i], 19,, True ) + pad( String.FromLong( profiler_value[i] ), 15,, True ))
-	Next
+	''profiler
+	'For Local i% = 0 Until profiler_label.Length
+	'	debug_drawtext( pad( profiler_label[i], 19,, True ) + pad( String.FromLong( profiler_value[i] ), 15,, True ))
+	'Next
 	
 	If game <> Null
 		SetOrigin( game.drawing_origin.x, game.drawing_origin.y )

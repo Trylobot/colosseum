@@ -163,18 +163,15 @@ DebugLog "  All assets loaded at " + elapsed_str(load_start) + " sec. since prog
 debug_with_graphics()
 ?
 
-DebugLog "  MAIN GAME LOOP started at " + elapsed_str(load_start) + " sec. since program start-up~n"
-
 '////////////////////////////////////////////////////////////////////////////////
-'// MAIN GAME LOOP
+'///// main game loop
+DebugLog "  MAIN GAME LOOP started at " + elapsed_str(load_start) + " sec. since program start-up~n"
 Repeat
 	Cls()
 	
 	'auto-selects the global environment reference
 	select_game()
 	
-	?Not Debug '////////////////////////////////
-  
 	'user input
 	get_all_input()
 	'physics timescale and update throttling
@@ -195,33 +192,9 @@ Repeat
 	'draw everything
 	draw_all_graphics()
 	
-  ?Debug  '////////////////////////////////
-	
-  'begin new profiling cycle
-	profiler()
-	'menu input and misc
-	get_all_input(); profiler(0)
-	'physics timescale and update throttling
-	If frame_time_elapsed()
-		calculate_timescale()
-		reset_frame_timer()
-		'collision detection and resolution
-		collide_all_objects(); profiler(2)
-		'update object positions, emit particles
-		update_all_objects(); profiler(3)
-		'new physics engine
-		If game And game.physics
-			game.physics.Update( physics_timestep_in_seconds ); profiler(6)
-		End If
-	End If
-	'music and sound
-	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress ); profiler(4)
-	'draw everything
-	draw_all_graphics(); profiler(5)
-	'debug
+  ?Debug
 	debug_main()
-	
-  ? '////////////////////////////////
+  ?
 	
 	'instaquit
 	escape_key_update()
@@ -232,5 +205,4 @@ Repeat
 	
 	Flip( 1 )
 Until AppTerminate()
-'////////////////////////////////////////////////////////////////////////////////
 
