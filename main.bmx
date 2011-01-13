@@ -8,9 +8,9 @@ Rem
 EndRem
 SuperStrict
 
-Framework brl.D3D9Max2D
+'Framework brl.D3D9Max2D
 'Framework brl.D3D7Max2D
-'Framework brl.GLMax2D
+Framework brl.GLMax2D
 
 Import brl.LinkedList
 Import brl.Map
