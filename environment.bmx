@@ -42,9 +42,6 @@ Type ENVIRONMENT
 	Field origin_max_x% 'camera constraint
 	Field origin_max_y% 'camera constraint
 	
-	Field physics:TPhysicsSimulator
-	Field physics_viewer:TPhysicsSimulatorView
-	
 	Field background:TImage
 	Field graffiti:GRAFFITI_MANAGER
 	Field foreground:TImage
@@ -98,11 +95,6 @@ Type ENVIRONMENT
 	Field player:COMPLEX_AGENT
 	
 	Method New()
-		physics = TPhysicsSimulator.Create( Vector2.Create( 0, 0 ))
-		
-		physics_viewer = TPhysicsSimulatorView.Create( physics )
-		physics_viewer._enablePerformancePanelView = False
-		
 		game_mouse = Create_cVEC( 0, 0 )
 		drawing_origin = Create_cVEC( 0, 0 )
 		walls = CreateList()
@@ -176,9 +168,6 @@ Type ENVIRONMENT
 		pathing = PATHING_STRUCTURE.Create( lev )
 		'walls (Collisions)
 		walls = merge_walls( lev )
-		For Local wall:BOX = EachIn walls
-			setup_physics_from_wall( wall, physics )
-		Next
 		'graffiti
 		graffiti = GRAFFITI_MANAGER.Create( background.pixmaps[0] )
 		'props
@@ -186,8 +175,6 @@ Type ENVIRONMENT
 			Local prop:AGENT = get_prop( pd.archetype )
 			prop.manage( prop_list )
 			prop.move_to( pd.pos )
-			
-			setup_physics_from_agent( prop, physics )
 		Next
 		'spawning system
 		Local spawn_start% = now()
@@ -315,8 +302,6 @@ Type ENVIRONMENT
 		unit.manage( allied_agent_list )
 		unit.spawn_at( spawn_point, 800 )
 		
-		setup_physics_from_agent( unit, physics )
-		
 		unit.snap_all_turrets()
 		Local brain:CONTROL_BRAIN = Create_CONTROL_BRAIN( ..
 			unit, CONTROL_BRAIN.CONTROL_TYPE_AI, ..
@@ -371,8 +356,6 @@ Type ENVIRONMENT
 		'add new player
 		player = new_player
 		player.manage( friendly_agent_list )
-
-		setup_physics_from_agent( player, physics )
 
 		player_brain = new_player_brain
 		player_brain.manage( control_brain_list )

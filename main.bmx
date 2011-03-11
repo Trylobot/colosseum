@@ -182,10 +182,6 @@ Repeat
 		collide_all_objects()
 		'update object positions, emit particles
 		update_all_objects()
-		'new physics engine
-		If game And game.physics
-			game.physics.Update( physics_timestep_in_seconds )
-		End If
 	End If
 	'music and sound
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress )
