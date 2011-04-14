@@ -8,8 +8,6 @@ Rem
 EndRem
 SuperStrict
 
-'Framework brl.D3D9Max2D
-'Framework brl.D3D7Max2D
 Framework brl.GLMax2D
 
 Import brl.LinkedList
@@ -22,10 +20,14 @@ Import brl.Random
 Import brl.Max2D
 Import bah.cairo
 Import aco.FarseerPhysics
+Import BRL.GLMax2D
+Import Pub.Glew
+Import BRL.StandardIO
 ?Win32
 Import pub.Win32
 Import "icon/icon.o"
 ?
+Include "TImageBuffer.bmx"
 Include "agent.bmx"
 Include "ai_type.bmx"
 Include "audio.bmx"

@@ -147,7 +147,6 @@ Type AGENT Extends PHYSICAL_OBJECT
 		Next
 		'delete self
 		cur_health = 0
-		destroy_physics()
 		unmanage()
 	End Method
 	

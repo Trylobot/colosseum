@@ -540,21 +540,3 @@ Type ENVIRONMENT
 	
 End Type
 
-Function setup_physics_from_agent( unit:AGENT, physics:TPhysicsSimulator )
-	unit.setup_physics( physics )
-	unit.geom.SetTag( unit )
-End Function
-
-Function setup_physics_from_wall( wall:BOX, physics:TPhysicsSimulator )
-	Local body:TBody = New TBody
-	body.SetStatic( True )
-	body.SetPosition( Vector2.Create( wall.x, wall.y ))
-	Local verts:TVertices = TVertices.CreateRectangle( wall.w, wall.h )
-	Local collisionGridCellSize# = TGeomFactory.CalculateGridCellSizeFromAABB( verts )
-	Local offset:Vector2 = Vector2.Create( wall.w / 2, wall.h / 2 )
-	Local geom:TGeom = TGeom.Create( body, verts, collisionGridCellSize, offset )
-	physics.AddBody( body )
-	physics.AddGeom( geom )
-	geom.SetTag( wall )
-End Function
-
