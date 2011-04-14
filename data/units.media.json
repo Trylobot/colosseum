@@ -117,13 +117,13 @@
 				{
 					particle_key: "mini_tank_track",
 					offset_x: 0,
-					offset_y: 7.5,
+					offset_y: 5.5,
 					orientation: 2
 				},
 				{
 					particle_key: "mini_tank_track",
 					offset_x: 0,
-					offset_y: -7.5,
+					offset_y: -5.5,
 					orientation: 1
 				}
 			],
