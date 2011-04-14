@@ -432,16 +432,19 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Method input_control()
 		If FLAG.engine_running
 			'velocity
-			Local sign% = 1
 			If KeyDown( KEY_W ) Or KeyDown( KEY_UP )
 				avatar.drive( 1.0 )
 			ElseIf KeyDown( KEY_S ) Or KeyDown( KEY_DOWN )
-				sign = -1 'backwards driving turn inversion
 				avatar.drive( -1.0 )
 			Else
 				avatar.drive( 0.0 )
 			EndIf
 			'angular velocity
+			Local sign% = 1
+			'Check avatar velocity
+			'If (it's moving "backwards")
+			'  sign :* -1
+			'EndIf
 			If KeyDown( KEY_D ) Or KeyDown( KEY_RIGHT )
 				avatar.turn( sign * 1.0 )
 			ElseIf KeyDown( KEY_A ) Or KeyDown( KEY_LEFT )
