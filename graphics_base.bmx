@@ -12,8 +12,6 @@ EndRem
 '______________________________________________________________________________
 Function init_graphics()
 	EndGraphics()
-	'SetGraphicsDriver D3D9Max2DDriver()
-	'SetGraphicsDriver D3D7Max2DDriver()
 	SetGraphicsDriver GLMax2DDriver()
 	If Not SETTINGS_REGISTER.FULL_SCREEN.get()
 		
@@ -35,6 +33,9 @@ Function init_graphics()
 			GRAPHICS_BACKBUFFER )
 			
 	End If
+
+	glewInit() 'GL extension library
+
 	SetClsColor( 0, 0, 0 )
 	Cls()
 	SetBlend( ALPHABLEND )

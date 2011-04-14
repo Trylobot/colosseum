@@ -4,7 +4,10 @@ Import "../TImageBuffer.bmx"
 Local screen_width% = 640
 Local screen_height% = 480
 
-TImageBuffer.Init( screen_width, screen_height )
+
+SetGraphicsDriver(GLMax2DDriver())
+Graphics screen_width , screen_height
+glewInit()
 Local dynamic_background_image:TImage = CreateImage( screen_width, screen_height )
 Local rtt_buffer:TImageBuffer = TImageBuffer.CreateFromImage( dynamic_background_image )
 

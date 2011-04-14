@@ -169,7 +169,7 @@ Type ENVIRONMENT
 		'walls (Collisions)
 		walls = merge_walls( lev )
 		'graffiti
-		graffiti = GRAFFITI_MANAGER.Create( background.pixmaps[0] )
+		graffiti = GRAFFITI_MANAGER.Create( background )
 		'props
 		For Local pd:ENTITY_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )

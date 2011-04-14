@@ -58,12 +58,18 @@ Function update_all_objects()
 		Next
 		'particles
 		For Local list:TList = EachIn game.particle_lists
+			'for the duration of the loop, 
+			'redirect all draw calls to the graffiti texture
+			game.graffiti.BindBuffer()
+			'check each particle
 			For Local part:PARTICLE = EachIn list
 				part.update()
 				If part.prune() And part.retain
-					game.graffiti.add_graffiti( part )
+					part.draw()
 				End If
 			Next
+			'resume normal draw behavior
+			game.graffiti.UnBindBuffer()
 		Next
 		'control brains
 		For Local cb:CONTROL_BRAIN = EachIn game.control_brain_list

@@ -18,8 +18,8 @@ Import brl.OGGLoader
 Import brl.PNGLoader
 Import brl.Random
 Import brl.Max2D
-Import bah.cairo
-Import aco.FarseerPhysics
+'Import bah.cairo
+'Import aco.FarseerPhysics
 Import BRL.GLMax2D
 Import Pub.Glew
 Import BRL.StandardIO

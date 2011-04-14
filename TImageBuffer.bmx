@@ -2,7 +2,7 @@ Rem
 
 
 'initialization:
-TImageBuffer.Init( {screen_width}, {screen_height} )
+'TImageBuffer.Init( {screen_width}, {screen_height} )
 ...
 Local img:TImage = ...
 ...
@@ -40,11 +40,11 @@ Type TImageBuffer
 		Return IB
 	End Function
 	
-	Function Init(Width:Int,Height:Int,Bit:Int=0,Mode:Int=60)
-		SetGraphicsDriver(GLMax2DDriver())
-		Graphics Width , Height,bit,Mode
-		glewInit()
-	End Function
+	'Function Init(Width:Int,Height:Int,Bit:Int=0,Mode:Int=60)
+	'	SetGraphicsDriver(GLMax2DDriver())
+	'	Graphics Width , Height,bit,Mode
+	'	glewInit()
+	'End Function
 	
 	Method GenerateFBO()
 		ImageFrame = TGLImageFrame(Image.frame(Frame) )
