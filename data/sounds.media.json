@@ -33,17 +33,17 @@
 	},
 	{
 		class: "sound",
-		key: "cannon",
+		key: "{path}",
 		object: {
-			path: "sound/shoot1.ogg",
+			path: "sound/cannon.ogg",
 			looping: false
 		}
 	},
 	{
 		class: "sound",
-		key: "mgun",
+		key: "{path}",
 		object: {
-			path: "sound/laser3.ogg",
+			path: "sound/mgun.ogg",
 			looping: false
 		}
 	},
