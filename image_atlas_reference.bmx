@@ -53,6 +53,20 @@ Type IMAGE_ATLAS_REFERENCE
 		End If
 		'///////////////////////////////////////////////////////
 		atlas.Frame(0).Draw( x0,y0, x1,y1, tx,ty, sx,sy,sw,sh )
+		'If Not flip_x
+		'	If Not flip_y
+		'		atlas.Frame(0).Draw( x0,y0, x1,y1, tx,ty, sx,sy,sw,sh )
+		'	Else  'flip_y
+		'		atlas.Frame(0).Draw( x0,y1, x1,y0, tx,ty, sx,sy,sw,sh )
+		'	End If
+		'Else  'flip_x
+		'	If Not flip_y
+		'		atlas.Frame(0).Draw( x1,y0, x0,y1, tx,ty, sx,sy,sw,sh )
+		'	Else  'flip_y
+		'		atlas.Frame(0).Draw( x1,y1, x0,y0, tx,ty, sx,sy,sw,sh )
+		'	End If
+		'End If
+		
 		'///////////////////////////////////////////////////////
 	End Method
 	

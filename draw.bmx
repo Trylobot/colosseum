@@ -190,9 +190,10 @@ Function draw_game()
 	draw_reticle()
 	SetRotation( 0 )
 	
-	If game.human_participation
-		draw_nametag( profile.name, game.player.to_cvec() )
-	End If
+	'nametag disabled
+	'If game.human_participation
+	'	draw_nametag( profile.name, game.player.to_cvec() )
+	'End If
 
 	SetOrigin( 0, 0 )
 	
