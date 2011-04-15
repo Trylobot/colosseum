@@ -508,8 +508,8 @@
 			launcher: {
 				projectile_launcher_key: "rocket",
 				attach_at: {
-					acc_min: 0.0020,
-					acc_max: 0.0020
+					acc_min: 0.0320,
+					acc_max: 0.0320
 				}
 			},
 			launch_emitters: [

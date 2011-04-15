@@ -145,8 +145,8 @@ Function update_drawing_origin()
 	If game.human_participation And game.player <> Null
 		game_mouse.x = game.player.pos_x + (2.0 * (mouse.pos_x - SETTINGS_REGISTER.WINDOW_WIDTH.get()/2.0))
 		game_mouse.y = game.player.pos_y + (2.0 * (mouse.pos_y - SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2.0))
-'		game.drawing_origin.x = 0
-'		game.drawing_origin.y = 0
+		'game.drawing_origin.x = 0
+		'game.drawing_origin.y = 0
 		Select game.player_brain.input_type
 			Case CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
 				game.drawing_origin.x = SETTINGS_REGISTER.WINDOW_WIDTH.get()/2.0 - (game.player.pos_x + game_mouse.x)/2.0

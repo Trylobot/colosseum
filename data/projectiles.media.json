@@ -175,7 +175,7 @@
 			damage: 100,
 			explosive_force_magnitude: 2000,
 			radius: 50,
-			max_vel: 4,
+			max_vel: 16,
 			mass: 0.04,
 			frictional_coefficient: 0.00025,
 			constant_emitters: [
@@ -192,7 +192,7 @@
 						offset_x: -11,
 						offset_y: 0,
 						dist_min: 0,
-						dist_max: 10,
+						dist_max: 11,
 						dist_ang_min: -30,
 						dist_ang_max: 30
 					}
