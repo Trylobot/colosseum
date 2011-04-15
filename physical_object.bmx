@@ -11,7 +11,7 @@ EndRem
 '______________________________________________________________________________
 Type PHYSICAL_OBJECT Extends POINT
 	Field mass# 'number representing the mass units of this object
-	Field hitbox:BOX
+	Field hitbox_img:TImage
 	Field handle:pVEC
 	Field force_list:TList 'all the forces acting on this object
 	Field frictional_coefficient# 'frictional coefficient
@@ -69,12 +69,9 @@ Type PHYSICAL_OBJECT Extends POINT
 	End Method
 	
 	Method collide:Object[]( collidemask%, writemask% )
-		If hitbox
+		If hitbox_img
 			SetRotation( ang )
-			Return CollideRect( ..
-				pos_x - handle.r*Cos(handle.a + ang), ..
-				pos_y - handle.r*Sin(handle.a + ang), ..
-				hitbox.w, hitbox.h, collidemask, writemask, Self )
+			Return CollideImage( hitbox_img, pos_x, pos_y, 0, collidemask, writemask, Self )
 		Else
 			Return Null
 		End If

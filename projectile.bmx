@@ -27,7 +27,7 @@ Const PROJECTILE_MEMBER_EMITTER_PAYLOAD% = 1
 
 Function Create_PROJECTILE:PROJECTILE( ..
 img:TImage = Null, ..
-hitbox:BOX = Null, ..
+hitbox_img:TImage = Null, ..
 handle:pVEC = Null, ..
 snd_impact:TSound = Null, ..
 damage# = 0.0, ..
@@ -46,7 +46,8 @@ ang_vel# = 0.0 )
 	
 	'static fields
 	p.img = img
-	p.hitbox = hitbox
+	p.hitbox_img = hitbox_img
+	If Not p.hitbox_img Then p.hitbox_img = p.img
 	p.handle = handle
 	p.snd_impact = snd_impact
 	p.damage = damage
@@ -68,7 +69,7 @@ End Function
 
 Type PROJECTILE Extends PARTICLE
 	Field img:TImage 'image to be drawn
-	Field hitbox:BOX 'collision rectangle
+	Field hitbox_img:TImage 'collision rectangle
 	Field handle:pVEC
 	Field active% 'whether this projectile is "live"/"armed"; set to false after collision
 	Field snd_impact:TSound 'sound to be played on impact
@@ -90,7 +91,7 @@ Type PROJECTILE Extends PARTICLE
 	
 	Method clone:PROJECTILE( new_source_id% = NULL_ID )
 		Local p:PROJECTILE = Create_PROJECTILE( ..
-			img, hitbox, handle, snd_impact, damage, explosive_force_magnitude, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel )
+			img, hitbox_img, handle, snd_impact, damage, explosive_force_magnitude, radius, max_vel, mass, frictional_coefficient, ignore_other_projectiles, new_source_id, pos_x, pos_y, vel_x, vel_y, ang, ang_vel )
 		'emitter lists
 		For Local em:PARTICLE_EMITTER = EachIn emitter_list_constant
 			p.add_emitter( em, PROJECTILE_MEMBER_EMITTER_CONSTANT )
@@ -130,16 +131,14 @@ Type PROJECTILE Extends PARTICLE
 	End Method
 	
 	Method collide:Object[]( collidemask%, writemask% )
-		If hitbox
+		If hitbox_img
 			SetRotation( ang )
-			Return CollideRect( ..
-				pos_x - handle.r*Cos(handle.a + ang), ..
-				pos_y - handle.r*Sin(handle.a + ang), ..
-				hitbox.w, hitbox.h, collidemask, writemask, Self )
+			Return CollideImage( hitbox_img, pos_x, pos_y, 0, collidemask, writemask, Self )
 		Else
 			Return Null
 		End If
 	End Method
+	
 	
 	'Method impact( material%, hit_player% = False )
 	Method impact( ..
@@ -186,15 +185,8 @@ Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
 	'no required fields
 	p = Create_PROJECTILE()
 	'read and assign optional fields as available
-	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED                 Then p.img = get_image( json.GetString( "image_key" ))
-	If p.img
-		'p.hitbox = Create_BOX( p.img.handle_x, p.img.handle_y, p.img.width(), p.img.height() )
-		Local w# = json.GetNumber( "geometry.width" )
-		Local h# = json.GetNumber( "geometry.height" )
-		p.hitbox = Create_BOX( 0, 0, w, h )
-		Local handle:cVEC = Create_cVEC( p.img.handle_x, p.img.handle_y )
-		p.handle = Create_pVEC( handle.r(), handle.a() )
-	End If
+	If JSON.TypeOf( "image_key" ) <> JSON_UNDEFINED                 Then p.img = get_image( JSON.GetString( "image_key" ))
+	p.hitbox_img = p.img
 	If json.TypeOf( "impact_sound_key" ) <> JSON_UNDEFINED          Then p.snd_impact = get_sound( json.GetString( "impact_sound_key" ))
 	If json.TypeOf( "damage" ) <> JSON_UNDEFINED                    Then p.damage = json.GetNumber( "damage" )
 	If json.TypeOf( "explosive_force_magnitude" ) <> JSON_UNDEFINED Then p.explosive_force_magnitude = json.GetNumber( "explosive_force_magnitude" )

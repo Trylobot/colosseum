@@ -81,7 +81,7 @@ Function collide_all_objects()
 		If game.human_participation And game.player And Not game.player.dead()
 			For pkp = EachIn game.pickup_list
 				SetRotation( 0 )
-				CollideRect( pkp.pos_x, pkp.pos_y, pkp.img.width, pkp.img.height, 0, PICKUP_COLLISION_LAYER, pkp )
+				CollideImage( pkp.img, pkp.pos_x, pkp.pos_y, 0, 0, PICKUP_COLLISION_LAYER, pkp )
 			Next
 			result = game.player.collide( PICKUP_COLLISION_LAYER, 0 )
 			For pkp = EachIn result
@@ -89,7 +89,6 @@ Function collide_all_objects()
 				collision_player_pickup( game.player, pkp )
 			Next
 		End If
-		
 		
 		'collisions between agents and other agents
 		For list = EachIn game.agent_lists
@@ -104,7 +103,7 @@ Function collide_all_objects()
 			Next
 		Next
 		
-		'collisions between {walls} and {agents|projectiles}
+		'collisions between {walls} and {agents}
 		For Local wall:BOX = EachIn game.walls
 			SetRotation( 0 )
 			SetHandle( 0, 0 )
@@ -112,11 +111,6 @@ Function collide_all_objects()
 			For ag = EachIn result
 				'COLLISION! between {ag} and {wall}
 				collision_agent_wall( ag, wall )
-			Next
-			result = CollideRect( wall.x,wall.y, wall.w,wall.h, PROJECTILE_COLLISION_LAYER, 0, wall )
-			For proj = EachIn result
-				'COLLISION! between {proj} and {wall}
-				collision_projectile_wall( proj, wall )
 			Next
 		Next
 		
@@ -139,7 +133,6 @@ Function collide_all_objects()
 				Next
 			Next
 		Next
-		
 		
 		SetRotation( 0 )
 		SetHandle( 0, 0 )

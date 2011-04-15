@@ -34,11 +34,7 @@ physics_disabled% = False, ..
 destruct_on_contact% = False )
 	Local ag:AGENT = New AGENT
 	ag.img = img
-	If ag.img
-		ag.hitbox = Create_BOX( 0, 0, ag.img.width, ag.img.height )
-		Local handle:cVEC = Create_cVEC( ag.img.handle_x, ag.img.handle_y )
-		ag.handle = Create_pVEC( handle.r(), handle.a() )
-	End If
+	ag.hitbox_img = ag.img
 	ag.gibs = gibs
 	ag.max_health = max_health
 	ag.mass = mass
@@ -180,18 +176,14 @@ Function Create_AGENT_from_json:AGENT( json:TJSON )
 	'no required fields
 	a = Create_AGENT()
 	'read and assign optional fields as available
-	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED              Then a.img = get_image( json.GetString( "image_key" ))
-	If a.img
-		a.hitbox = Create_BOX( 0, 0, a.img.width, a.img.height )
-		Local handle:cVEC = Create_cVEC( a.img.handle_x, a.img.handle_y )
-		a.handle = Create_pVEC( handle.r(), handle.a() )
-	End If
+	If JSON.TypeOf( "image_key" ) <> JSON_UNDEFINED              Then a.img = get_image( JSON.GetString( "image_key" ))
+	a.hitbox_img = a.img
 	'If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED         Then a.gibs = get_image( json.GetString( "gibs_image_key" ))
 	If json.TypeOf( "max_health" ) <> JSON_UNDEFINED             Then a.max_health = json.GetNumber( "max_health" )
 	If json.TypeOf( "mass" ) <> JSON_UNDEFINED                   Then a.mass = json.GetNumber( "mass" )
 	If json.TypeOf( "frictional_coefficient" ) <> JSON_UNDEFINED Then a.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
 	If json.TypeOf( "physics_disabled" ) <> JSON_UNDEFINED       Then a.physics_disabled = json.GetBoolean( "physics_disabled" )
-	If json.TypeOf( "destruct_on_contact" ) <> JSON_UNDEFINED    Then a.destruct_on_contact = json.GetBoolean( "destruct_on_contact" )
+	If JSON.TypeOf( "destruct_on_contact" ) <> JSON_UNDEFINED    Then a.destruct_on_contact = JSON.GetBoolean( "destruct_on_contact" )
 	Return a
 End Function
 

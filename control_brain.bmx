@@ -288,8 +288,8 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 	Method create_spawn_point:POINT()
 		Local p:POINT = Copy_POINT( avatar )
 		p.ang = avatar.ang + 180
-		p.pos_x :+ ( avatar.hitbox.w/2 + 15 )*Cos( 180 + avatar.ang )
-		p.pos_y :+ ( avatar.hitbox.w/2 + 15 )*Sin( 180 + avatar.ang )
+		p.pos_x :+ ( avatar.hitbox_img.width/2 + 15 )*Cos( 180 + avatar.ang )
+		p.pos_y :+ ( avatar.hitbox_img.width/2 + 15 )*Sin( 180 + avatar.ang )
 		Return p
 	End Method
 	
@@ -307,7 +307,7 @@ Type CONTROL_BRAIN Extends MANAGED_OBJECT
 		Local waypoint_cell:CELL = pathing.containing_cell( waypoint.x, waypoint.y )
 		'If waypoint <> Null And avatar.dist_to( waypoint ) <= waypoint_radius
 		'If current_cell.eq( waypoint_cell )
-		If waypoint And (avatar.dist_to( waypoint ) < ((avatar.hitbox.w+avatar.hitbox.h)/2))
+		If waypoint And (avatar.dist_to( waypoint ) < ((avatar.hitbox_img.width+avatar.hitbox_img.height)/2))
 			Return True
 		Else
 			Return False 'sir, where are we going? LOL :D
