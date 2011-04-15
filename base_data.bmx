@@ -38,7 +38,7 @@ Global asset_files$[] = [ ..
 	"bmp_fonts", ..
 	"sounds", ..
 	"images", ..
-	"image_atlases", ..
+	..'"image_atlases", ..
 	"props", ..
 	"particles", ..
 	"particle_emitters", ..
