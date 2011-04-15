@@ -31,12 +31,14 @@ Type TImageBuffer
 	Field OrigW:Int
 	Field OrigH:Int
 
-	Function CreateFromImage:TImageBuffer(Image:TImage,Frame:Int = 0 )
+	Function CreateFromImage:TImageBuffer( Image:TImage, Frame:Int = 0 )
 		Local IB:TImageBuffer = New TImageBuffer
 		IB.Image = Image
 		IB.Frame = Frame
 		IB.GenerateFBO()
 		IB.BindBuffer()
+		DrawImage( Image, 0, 0 )
+		IB.UnBindBuffer()
 		Return IB
 	End Function
 	
@@ -74,9 +76,9 @@ Type TImageBuffer
 	   
 		Select status
 			Case GL_FRAMEBUFFER_COMPLETE_EXT 
-				Print "all right" + " : " + Status
+				DebugLog "all right" + " : " + status
 			Case GL_FRAMEBUFFER_UNSUPPORTED_EXT
-				Print "choose different formats"
+				DebugLog "choose different formats"
 			Default
 				End 
 		EndSelect 

@@ -12,17 +12,13 @@ Framework brl.GLMax2D
 
 Import brl.LinkedList
 Import brl.Map
+Import brl.Max2D
+Import pub.Glew
 Import brl.FreeTypeFont
 Import brl.FreeAudioAudio
 Import brl.OGGLoader
 Import brl.PNGLoader
 Import brl.Random
-Import brl.Max2D
-'Import bah.cairo
-'Import aco.FarseerPhysics
-Import BRL.GLMax2D
-Import Pub.Glew
-Import BRL.StandardIO
 ?Win32
 Import pub.Win32
 Import "icon/icon.o"
