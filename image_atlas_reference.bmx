@@ -98,7 +98,7 @@ Type IMAGE_ATLAS_REFERENCE
 			x1 = -handle_x
 			x0 = x1 + sw
 		End If
-		If Not Not flip_y
+		If Not flip_y
 			y0 = -handle_y
 			y1 = y0 + sh
 		Else 'flip_y
