@@ -141,10 +141,11 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				Case "sound"
 					Local s:TSound = Create_TSound_from_json( object_json )
 					If s Then sound_map.Insert( key, s ) Else load_error( object_json )
-				Case "image"
+				Case "image_atlas"
 					TEXTURE_MANAGER.load_image_data( object_json, key )
-					'Local i:TImage = Create_TImage_from_json( object_json )
-					'If i Then image_map.Insert( key, i ) Else load_error( object_json )
+				Case "image"
+					Local i:TImage = Create_TImage_from_json( object_json )
+					If i Then image_map.Insert( key, i ) Else load_error( object_json )
 				Case "prop"
 					Local p:AGENT = Create_AGENT_from_json( object_json )
 					If p Then prop_map.Insert( key, p ) Else load_error( object_json )
@@ -203,8 +204,6 @@ Function Create_TSound_from_json:TSound( json:TJSON )
 End Function
 
 '______________________________________________________________________________
-'Deprecated
-Rem
 Function Create_TImage_from_json:TImage( json:TJSON )
 	Local img:TImage
 	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
@@ -230,7 +229,6 @@ Function Create_TImage_from_json:TImage( json:TJSON )
 	End If
 	Return Null
 End Function
-ENDREM
 
 '______________________________________________________________________________
 Function load_level:LEVEL( path$ )

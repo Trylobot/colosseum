@@ -37,8 +37,6 @@ Function create_rect_img:TIMage( w%, h%, hx% = 0, hy% = 0 )
 End Function
 
 '______________________________________________________________________________
-'Deprecated
-REM
 Function pixel_transform:TImage( img_src:TImage, flip_horizontal% = False, flip_vertical% = False )
 	If Not flip_horizontal And Not flip_vertical
 		Return img_src;
@@ -74,18 +72,14 @@ Function pixel_transform:TImage( img_src:TImage, flip_horizontal% = False, flip_
 	End If
 	Return img_new
 End Function
-ENDREM
 
 '______________________________________________________________________________
-'Deprecated
-REM
 Function unfilter_image:TImage( img:TImage )
 	If Not img Then Return Null
 	Local new_img:TImage = LoadImage( img.pixmaps[0], 0 )'img.flags&(~MIPMAPPEDIMAGE) )
 	SetImageHandle( new_img, img.handle_x, img.handle_y )
 	Return new_img
 End Function
-ENDREM
 
 
 

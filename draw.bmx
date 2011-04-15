@@ -401,7 +401,7 @@ Function draw_lighting_and_effects()
 	DrawRect( x - 100,        y - 100 - size,  200,   size )
 	DrawRect( x - 100,        y + 100,         200,   size )
 
-	DrawImageRef( get_image( "spotlight" ), x, y )
+	DrawImage( get_image( "spotlight" ), x, y )
 End Function
 
 '______________________________________________________________________________
@@ -413,18 +413,18 @@ Function draw_reticle()
 	If game.human_participation
 		If game.player.turrets <> Null
 			Local tur:TURRET = game.player.turrets[0]
-			Local img_reticle:IMAGE_ATLAS_REFERENCE = get_image( "reticle" )
-			Local img_ghost_reticle:IMAGE_ATLAS_REFERENCE = get_image( "ghost_reticle" )
+			Local img_reticle:TImage = get_image( "reticle" )
+			Local img_ghost_reticle:TImage = get_image( "ghost_reticle" )
 			'turret ghost reticle
 			Local distance_from_turret_to_mouse# = tur.dist_to( game_mouse ) 
 			SetRotation( tur.ang )
 			Local ang_diff# = ang_wrap( tur.ang_to( game_mouse ) - tur.ang )
 			SetAlpha( 1 - Abs(ang_diff)/22.5 )
-			DrawImageRef( img_ghost_reticle, tur.pos_x + distance_from_turret_to_mouse * Cos( tur.ang ), tur.pos_y + distance_from_turret_to_mouse * Sin( tur.ang ))
+			DrawImage( img_ghost_reticle, tur.pos_x + distance_from_turret_to_mouse * Cos( tur.ang ), tur.pos_y + distance_from_turret_to_mouse * Sin( tur.ang ))
 			'actual mouse reticle
 			SetRotation( tur.ang_to( game_mouse ))
 			SetAlpha( 1.0 )
-			DrawImageRef( img_reticle, game_mouse.x, game_mouse.y )
+			DrawImage( img_reticle, game_mouse.x, game_mouse.y )
 		End If
 	End If
 End Function
@@ -459,12 +459,12 @@ Function draw_HUD()
 	
 	y = y1
 	'player health
-	Local img_health_mini:IMAGE_ATLAS_REFERENCE = get_image( "health_mini" )
-	DrawImageRef( img_health_mini, x, y )
+	Local img_health_mini:TImage = get_image( "health_mini" )
+	DrawImage( img_health_mini, x, y )
 	Local pct# = game.player.cur_health/game.player.max_health
 	Local c% = 255
 	If pct <= 0.33333 Then c = 255 * Sin( now() Mod 180 )
-	draw_percentage_bar( x + img_health_mini.width() + 3,y, w,h, pct, 1.0, 255, c, c ) ', (1 - (0.5*pct)) )
+	draw_percentage_bar( x + img_health_mini.width + 3,y, w,h, pct, 1.0, 255, c, c ) ', (1 - (0.5*pct)) )
 	
 	y = y2
 	'player cash
@@ -476,16 +476,16 @@ Function draw_HUD()
 		SetAlpha( time_alpha_pct( last_kill_ts, 1250, False ))
 		DrawText_with_glow( str, x, y+1-3 )
 		SetAlpha( 0.3333*GetAlpha() )
-		DrawImageRef( get_image( "halo" ), x + TextWidth(str)/2.0, y+1-3 + TextHeight(str)/2.0 )
+		DrawImage( get_image( "halo" ), x + TextWidth(str)/2.0, y+1-3 + TextHeight(str)/2.0 )
 	End If
 	x :+ w + HORIZONTAL_HUD_MARGIN
 	SetImageFont( get_font( "consolas_10" ))
 	SetAlpha( 1 )
 	
 	'player ammo, overheat & charge indicators
-	Local img_icon_player_cannon_ammo:IMAGE_ATLAS_REFERENCE = get_image( "icon_player_cannon_ammo" )
-	Local img_shine:IMAGE_ATLAS_REFERENCE = get_image( "bar_shine" )
-	Local ammo_row_len% = w / img_icon_player_cannon_ammo.width()
+	Local img_icon_player_cannon_ammo:TImage = get_image( "icon_player_cannon_ammo" )
+	Local img_shine:TImage = get_image( "bar_shine" )
+	Local ammo_row_len% = w / img_icon_player_cannon_ammo.width
 	Local temp_x%, temp_y%
 	For Local t:TURRET = EachIn game.player.turrets
 		y = y1
@@ -497,11 +497,11 @@ Function draw_HUD()
 		'reloading/recharging bar
 		If t.class = TURRET.AMMUNITION
 			SetColor( 255, 255, 255 )
-			DrawImageRef( get_image( "reload_bar" ), x, y+7 )
-			DrawImageRef( get_image( "reload_marker" ), x + t.reloaded_pct()*50, y + 7 )
+			DrawImage( get_image( "reload_bar" ), x, y+7 )
+			DrawImage( get_image( "reload_marker" ), x + t.reloaded_pct()*50, y + 7 )
 		Else If t.class = TURRET.ENERGY
 			SetColor( 255, 255, 255 )
-			DrawImageRef( get_image( "recharge_bar" ), x, y+7 )
+			DrawImage( get_image( "recharge_bar" ), x, y+7 )
 			Local charge_units% = 19 * t.reloaded_pct()
 			SetAlpha( 0.5 )
 			For Local i% = 0 Until charge_units
@@ -516,11 +516,11 @@ Function draw_HUD()
 			For Local i% = 0 To t.cur_ammo - 1
 				If ((i Mod ammo_row_len) = 0) And (i > 0)
 					temp_x = x
-					If ((i / ammo_row_len) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width() / 2
-					temp_y :+ img_icon_player_cannon_ammo.height() / 2
+					If ((i / ammo_row_len) Mod 2) = 1 Then temp_x :+ img_icon_player_cannon_ammo.width / 2
+					temp_y :+ img_icon_player_cannon_ammo.height / 2
 				End If
-				DrawImageRef( img_icon_player_cannon_ammo, temp_x, temp_y )
-				temp_x :+ img_icon_player_cannon_ammo.width()
+				DrawImage( img_icon_player_cannon_ammo, temp_x, temp_y )
+				temp_x :+ img_icon_player_cannon_ammo.width
 			Next
 			x :+ w + HORIZONTAL_HUD_MARGIN
 		End If
@@ -537,7 +537,7 @@ Function draw_HUD()
 				SetViewport( x + 2, y + 2, w - 4, h - 4 )
 				SetColor( 255, 255, 255 )
 				Local x_offset# = (now()/4) Mod (w+20)
-				DrawImageRef( img_shine, x-10+Abs(x_offset), y + 2 )
+				DrawImage( img_shine, x-10+Abs(x_offset), y + 2 )
 				SetViewport( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(),SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 			Else
 				SetColor( 255*heat_pct, 0, 255*(1 - heat_pct) )
@@ -548,9 +548,9 @@ Function draw_HUD()
 	Next
 	
 	'music icon
-	Local img_icon_music_note:IMAGE_ATLAS_REFERENCE = get_image( "icon_music_note" )
-	Local img_icon_speaker_on:IMAGE_ATLAS_REFERENCE = get_image( "icon_speaker_on" )
-	Local img_icon_speaker_off:IMAGE_ATLAS_REFERENCE = get_image( "icon_speaker_off" )
+	Local img_icon_music_note:TImage = get_image( "icon_music_note" )
+	Local img_icon_speaker_on:TImage = get_image( "icon_speaker_on" )
+	Local img_icon_speaker_off:TImage = get_image( "icon_speaker_off" )
 	SetAlpha( 0.5 )
 	Local music_str$ = "[m]usic"
 	x = SETTINGS_REGISTER.WINDOW_WIDTH.get() - 10 - TextWidth( music_str )
@@ -558,7 +558,7 @@ Function draw_HUD()
 	SetColor( 255, 255, 255 )
 	DrawText_with_outline( music_str, x, y )
 	y = y2
-	Local img_spkr:IMAGE_ATLAS_REFERENCE
+	Local img_spkr:TImage
 	If bg_music_enabled
 		SetAlpha( 1 )
 		img_spkr = img_icon_speaker_on
@@ -566,8 +566,8 @@ Function draw_HUD()
 		SetAlpha( 0.5 )
 		img_spkr = img_icon_speaker_off
 	End If
-	DrawImageRef( img_icon_music_note, x, y ); x :+ img_icon_music_note.width() + 5
-	DrawImageRef( img_spkr, x, y )
+	DrawImage( img_icon_music_note, x, y ); x :+ img_icon_music_note.width + 5
+	DrawImage( img_spkr, x, y )
 	
 	'help
 	SetColor( 232, 232, 232 )
@@ -610,8 +610,8 @@ Function draw_game_over()
 End Function
 
 Function draw_help_stuff()
-	'Local img_help_kb:IMAGE_ATLAS_REFERENCE = get_image( "help_kb" )
-	'Local img_help_kb_mouse:IMAGE_ATLAS_REFERENCE = get_image( "help_kb_and_mouse" )
+	'Local img_help_kb:TImage = get_image( "help_kb" )
+	'Local img_help_kb_mouse:TImage = get_image( "help_kb_and_mouse" )
 	SetColor( 0, 0, 0 )
 	SetAlpha( 0.550 )
 	DrawRect( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
@@ -678,9 +678,9 @@ Function draw_kill_tally( start_ts%, count% )
 	Const tally_y% = 100
 	Const fade_in_time% = 250
 	
-	Local skull_1x:IMAGE_ATLAS_REFERENCE = get_image( "skull_1x" )
-	Local sk_w# = skull_1x.width()
-	Local sk_h# = skull_1x.height()
+	Local skull_1x:TImage = get_image( "skull_1x" )
+	Local sk_w# = skull_1x.width
+	Local sk_h# = skull_1x.height
 	Local skulls_per_row% = 10
 	Local area_width% = skulls_per_row * sk_w
 	Local tally_x% = (SETTINGS_REGISTER.WINDOW_WIDTH.get() - area_width)/2
@@ -700,7 +700,7 @@ Function draw_kill_tally( start_ts%, count% )
 			Continue 'skip this iteration entirely, nothing to draw
 		End If
 
-		DrawImageRef( skull_1x, tally_x + sk_w * cursor.col, tally_y + sk_h * cursor.row )
+		DrawImage( skull_1x, tally_x + sk_w * cursor.col, tally_y + sk_h * cursor.row )
 
 		cursor.col :+ 1
 		If cursor.col >= skulls_per_row

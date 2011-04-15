@@ -38,7 +38,7 @@ Const ANIMATION_DIRECTION_BACKWARDS% = 1
 Type PARTICLE Extends POINT
 
 	Field particle_type% '{single_image|animated|string}
-	Field img:IMAGE_ATLAS_REFERENCE, frame% 'image to be drawn, and the current frame index for animation and randomly varied particle sets
+	Field img:TImage, frame% 'image to be drawn, and the current frame index for animation and randomly varied particle sets
 	Field handle:pVEC 'handle (polar)
 	Field frame_delay% 'actual delay until next frame, can be INFINITE
 	Field str$, font:BMP_FONT, font_outline:BMP_FONT 'text string and font for STR particles
@@ -67,7 +67,7 @@ Type PARTICLE Extends POINT
 	
 	Function Create:Object( ..
 	particle_type%, ..
-	img:IMAGE_ATLAS_REFERENCE = Null, frame% = 0, ..
+	img:TImage = Null, frame% = 0, ..
 	frame_delay% = INFINITY, ..
 	str$ = Null, font:BMP_FONT = Null, font_outline:BMP_FONT = Null, ..
 	layer% = LAYER_UNSPECIFIED, ..
@@ -120,7 +120,7 @@ Type PARTICLE Extends POINT
 	
 	Method clone:PARTICLE( new_frame% = 0 )
 		If new_frame = PARTICLE_FRAME_RANDOM And img
-			new_frame = Rand( 0, img.cell_count - 1 )
+			new_frame = Rand( 0, img.frames.Length - 1 )
 		Else
 			new_frame = 0
 		End If
@@ -158,10 +158,10 @@ Type PARTICLE Extends POINT
 				If img <> Null
 					If parent
 						SetRotation( ang + parent.ang )
-						DrawImageRef( img, parent.pos_x + final_scale*offset*Cos( offset_ang + parent.ang ), parent.pos_y + final_scale*offset*Sin( offset_ang + parent.ang ), frame )
+						DrawImage( img, parent.pos_x + final_scale*offset*Cos( offset_ang + parent.ang ), parent.pos_y + final_scale*offset*Sin( offset_ang + parent.ang ), frame )
 					Else
 						SetRotation( ang )
-						DrawImageRef( img, pos_x, pos_y, frame )
+						DrawImage( img, pos_x, pos_y, frame )
 					End If
 				End If
 			Case PARTICLE_TYPE_STR
@@ -187,10 +187,10 @@ Type PARTICLE Extends POINT
 		last_frame_advance_ts = now()
 		If animation_direction = ANIMATION_DIRECTION_FORWARDS
 			frame :+ 1
-			If frame >= img.cell_count - 1 Then frame = 0
+			If frame >= img.frames.Length - 1 Then frame = 0
 		Else If animation_direction = ANIMATION_DIRECTION_BACKWARDS
 			frame :- 1
-			If frame < 0 Then frame = img.cell_count - 1
+			If frame < 0 Then frame = img.frames.Length - 1
 		End If
 	End Method
 	
@@ -221,12 +221,12 @@ Type PARTICLE Extends POINT
 	End Method
 	
 	Method get_bounding_box:BOX()
-		Local size# = Max( img.width( frame ), img.height( frame ) )
+		Local size# = Max( img.width, img.height )
 		Return Create_BOX( pos_x - size/2.0, pos_y - size/2.0, size, size )
 	End Method
 	
 	Method get_pixmap:TPixmap()
-		Return img.Pixmap( frame )
+		Return img.pixmaps[frame]
 	End Method
 	
 End Type

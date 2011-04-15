@@ -81,7 +81,7 @@ Function collide_all_objects()
 		If game.human_participation And game.player And Not game.player.dead()
 			For pkp = EachIn game.pickup_list
 				SetRotation( 0 )
-				CollideRect( pkp.pos_x, pkp.pos_y, pkp.img.width(), pkp.img.height(), 0, PICKUP_COLLISION_LAYER, pkp )
+				CollideRect( pkp.pos_x, pkp.pos_y, pkp.img.width, pkp.img.height, 0, PICKUP_COLLISION_LAYER, pkp )
 			Next
 			result = game.player.collide( PICKUP_COLLISION_LAYER, 0 )
 			For pkp = EachIn result
@@ -125,8 +125,8 @@ Function collide_all_objects()
 			For Local slider:WIDGET = EachIn d.all_sliders
 				SetRotation( slider.get_ang() )
 				SetHandle( slider.img.handle_x, slider.img.handle_y )
-				w = slider.img.width()
-				h = slider.img.height()
+				w = slider.img.width
+				h = slider.img.height
 				result = CollideRect( slider.get_x(), slider.get_y(), w, h, AGENT_COLLISION_LAYER, DOOR_COLLISION_LAYER, slider )
 				For ag = EachIn result
 					'COLLISION! between {ag} and {door}

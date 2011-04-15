@@ -38,6 +38,7 @@ Global asset_files$[] = [ ..
 	"bmp_fonts", ..
 	"sounds", ..
 	"images", ..
+	"image_atlases", ..
 	"props", ..
 	"particles", ..
 	"particle_emitters", ..
@@ -54,9 +55,9 @@ Global asset_files$[] = [ ..
 ]
 
 '______________________________________________________________________________
-Global font_map:TMap = CreateMap() 'deprecated; use BMP_FONT instead
+Global font_map:TMap = CreateMap() 'deprecated; moving to use BMP_FONT instead
 Global sound_map:TMap = CreateMap()
-'Global image_map:TMap = CreateMap() 'use TEXTURE_MANAGER instead of image map
+Global image_map:TMap = CreateMap()
 Global level_grid$[][]
 
 Function get_font:TImageFont( key$ ) 'returns read-only reference
@@ -67,12 +68,10 @@ Function get_sound:TSound( key$ ) 'returns read-only reference
 	Return TSound( sound_map.ValueForKey( key.toLower() ))
 End Function
 
-'Function get_image:TImage( key$ ) 'returns read-only reference
-'	Return TImage( image_map.ValueForKey( key.toLower() ))
-'End Function
-Function get_image:IMAGE_ATLAS_REFERENCE( key$ )
-	Return TEXTURE_MANAGER.GetImageRef( key )
+Function get_image:TImage( key$ ) 'returns read-only reference
+	Return TImage( image_map.ValueForKey( key.toLower() ))
 End Function
+
 
 '______________________________________________________________________________
 Function level_preview_path_from_level_path$( lev_path$ )

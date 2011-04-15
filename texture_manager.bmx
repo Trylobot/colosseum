@@ -12,6 +12,11 @@ EndRem
 'Import "image_atlas_reference.bmx"
 
 '______________________________________________________________________________
+Function get_atlas_ref:IMAGE_ATLAS_REFERENCE( key$ )
+	Return TEXTURE_MANAGER.GetImageRef( key )
+End Function
+
+
 Type TEXTURE_MANAGER
 	Global image_atlases:TImage[]
 	Global reference_map:TMap 'map[source_path:String] --> ref:IMAGE_ATLAS_REFERENCE

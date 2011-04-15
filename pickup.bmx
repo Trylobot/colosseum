@@ -25,7 +25,7 @@ Type PICKUP Extends MANAGED_OBJECT
 	Const HEALTH% = 2
 	Const COOLDOWN% = 3
 
-	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn
+	Field img:TImage 'image to be drawn
 	Field snd:TSound
 	Field pickup_type% 'pickup type indicator
 	Field pickup_amount% 'magnitude of pickup
@@ -40,7 +40,7 @@ Type PICKUP Extends MANAGED_OBJECT
 	End Method
 	
 	Function Create:Object( ..
-	img:IMAGE_ATLAS_REFERENCE = Null, ..
+	img:TImage = Null, ..
 	snd:TSound = Null, ..
 	pickup_type% = 0, ..
 	pickup_amount% = 0, ..
@@ -81,7 +81,7 @@ Type PICKUP Extends MANAGED_OBJECT
 		SetRotation( 0 )
 		SetAlpha( alpha )
 		SetScale( 1, 1 )
-		DrawImageRef( img, pos_x, pos_y )
+		DrawImage( img, pos_x, pos_y )
 	End Method
 	
 	Method play()

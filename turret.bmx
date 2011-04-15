@@ -31,7 +31,7 @@ Type TURRET Extends POINT
 	Field parent:POINT 'parental anchor (complex agent) this turret is attached to
 	Field class% '{ammunition|energy}
 	Field priority% '{primary|secondary}
-	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn for the "base" of the turret
+	Field img:TImage 'image to be drawn for the "base" of the turret
 	Field cash_value%
 	Field snd_fire:TSound 'sound to be played when the turret is fired
 '	Field snd_turn:TSound 'sound to be played when the turret is turned
@@ -67,7 +67,7 @@ Type TURRET Extends POINT
 	Function Create:Object( ..
 	name$ = Null, ..
 	class%, priority%, ..
-	img:IMAGE_ATLAS_REFERENCE = Null, ..
+	img:TImage = Null, ..
 	cash_value% = 0, ..
 	snd_fire:TSound = Null, ..
 	turret_barrel_count%, ..
@@ -200,7 +200,7 @@ Type TURRET Extends POINT
 			tb.draw( alpha_override, scale_override )
 		Next
 		If img
-			DrawImageRef( img, pos_x, pos_y )
+			DrawImage( img, pos_x, pos_y )
 		End If
 	End Method
 	

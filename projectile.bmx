@@ -26,7 +26,7 @@ Const PROJECTILE_MEMBER_EMITTER_PAYLOAD% = 1
 
 
 Function Create_PROJECTILE:PROJECTILE( ..
-img:IMAGE_ATLAS_REFERENCE = Null, ..
+img:TImage = Null, ..
 hitbox:BOX = Null, ..
 handle:pVEC = Null, ..
 snd_impact:TSound = Null, ..
@@ -67,7 +67,7 @@ ang_vel# = 0.0 )
 End Function
 
 Type PROJECTILE Extends PARTICLE
-	Field img:IMAGE_ATLAS_REFERENCE 'image to be drawn
+	Field img:TImage 'image to be drawn
 	Field hitbox:BOX 'collision rectangle
 	Field handle:pVEC
 	Field active% 'whether this projectile is "live"/"armed"; set to false after collision
@@ -126,7 +126,7 @@ Type PROJECTILE Extends PARTICLE
 	
 	Method draw( alpha_override# = 1.0, scale_override# = 1.0 )
 		SetRotation( ang )
-		DrawImageRef( img, pos_x, pos_y )
+		DrawImage( img, pos_x, pos_y )
 	End Method
 	
 	Method collide:Object[]( collidemask%, writemask% )

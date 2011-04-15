@@ -117,9 +117,9 @@ Type COMPLEX_AGENT Extends AGENT
 	'___________________________________________
 	Function Archetype:Object( ..
 	name$ = Null, ..
-	img:IMAGE_ATLAS_REFERENCE = Null, ..
-	hitbox_img:IMAGE_ATLAS_REFERENCE = Null, ..
-	gibs:IMAGE_ATLAS_REFERENCE = Null, ..
+	img:TImage = Null, ..
+	hitbox_img:TImage = Null, ..
+	gibs:GIB_SYSTEM = Null, ..
 	ai_name$ = Null, ..
 	cash_value% = 0, ..
 	max_health# = 100.0, ..
@@ -135,7 +135,7 @@ Type COMPLEX_AGENT Extends AGENT
 		c.img = img
 		If c.img
 			If Not hitbox_img Then hitbox_img = c.img
-			c.hitbox = Create_BOX( 0, 0, hitbox_img.width(), hitbox_img.height() )
+			c.hitbox = Create_BOX( 0, 0, hitbox_img.width, hitbox_img.height )
 			Local handle:cVEC = Create_cVEC( hitbox_img.handle_x, hitbox_img.handle_y )
 			c.handle = Create_pVEC( handle.r(), handle.a() )
 		End If
@@ -325,9 +325,9 @@ Type COMPLEX_AGENT Extends AGENT
 					SetColor( 255, 255, 255 )
 			End Select
 			SetAlpha( 0.15*alpha_override )
-			Local glow_scale# = 0.3*scale_override*(img.width()-2)/17.0
+			Local glow_scale# = 0.3*scale_override*(img.width-2)/17.0
 			SetScale( glow_scale, glow_scale )
-			DrawImageRef( get_image( "halo" ), pos_x, pos_y )
+			DrawImage( get_image( "halo" ), pos_x, pos_y )
 		End If
 		'widgets behind
 		For Local widget_list:TList = EachIn all_widget_lists
@@ -355,7 +355,7 @@ Type COMPLEX_AGENT Extends AGENT
 			SetAlpha( alpha_override )
 			SetScale( scale_override, scale_override )
 			SetRotation( ang )
-			DrawImageRef( img, pos_x, pos_y )
+			DrawImage( img, pos_x, pos_y )
 			'chassis lighting effect
 			'If lightmap
 			'	SetBlend( LIGHTBLEND )
@@ -394,7 +394,7 @@ Type COMPLEX_AGENT Extends AGENT
 			SetAlpha( alpha_override )
 			SetScale( scale_override, scale_override )
 			SetRotation( ang )
-			DrawImageRef( img, pos_x, pos_y )
+			DrawImage( img, pos_x, pos_y )
 			SetBlend( ALPHABLEND )
 		End If
 	End Method
@@ -797,7 +797,7 @@ End Type
 
 Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	Local cmp_ag:COMPLEX_AGENT
-	Local hitbox_img:IMAGE_ATLAS_REFERENCE
+	Local hitbox_img:TImage
 	'no required fields
 	cmp_ag = COMPLEX_AGENT( COMPLEX_AGENT.Archetype() )
 	'optional fields
@@ -806,11 +806,11 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	If json.TypeOf( "hitbox_image_key" ) <> JSON_UNDEFINED        Then hitbox_img = get_image( json.GetString( "hitbox_image_key" ))
 	If cmp_ag.img
 		If Not hitbox_img Then hitbox_img = cmp_ag.img
-		cmp_ag.hitbox = Create_BOX( 0, 0, hitbox_img.width(), hitbox_img.height() )
+		cmp_ag.hitbox = Create_BOX( 0, 0, hitbox_img.width, hitbox_img.height )
 		Local handle:cVEC = Create_cVEC( hitbox_img.handle_x, hitbox_img.handle_y )
 		cmp_ag.handle = Create_pVEC( handle.r(), handle.a() )
 	End If
-	If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED          Then cmp_ag.gibs = get_image( json.GetString( "gibs_image_key" ))
+	'If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED          Then cmp_ag.gibs = get_image( json.GetString( "gibs_image_key" ))
 	'If json.TypeOf( "lightmap_image_key" ) <> JSON_UNDEFINED      Then cmp_ag.lightmap = get_image( json.GetString( "lightmap_image_key" ))
 	If json.TypeOf( "ai_name" ) <> JSON_UNDEFINED                 Then cmp_ag.ai_name = json.GetString( "ai_name" )
 	If json.TypeOf( "cash_value" ) <> JSON_UNDEFINED              Then cmp_ag.cash_value = json.GetNumber( "cash_value" )

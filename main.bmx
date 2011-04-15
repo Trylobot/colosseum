@@ -23,6 +23,7 @@ Import brl.Random
 Import pub.Win32
 Import "icon/icon.o"
 ?
+
 Include "TImageBuffer.bmx"
 Include "agent.bmx"
 Include "ai_type.bmx"
@@ -49,7 +50,7 @@ Include "entity_data.bmx"
 Include "environment.bmx"
 Include "flags.bmx"
 Include "force.bmx"
-Include "gibs.bmx"
+Include "gib_system.bmx"
 Include "graffiti_manager.bmx"
 Include "graphics_base.bmx"
 Include "hud.bmx"
