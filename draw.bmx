@@ -74,7 +74,9 @@ Function draw_game()
 	'	game.retained_particle_count = 0
 	'End If
 
-	SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+	Local ox% = game.drawing_origin.x 
+	Local oy% = game.drawing_origin.y
+	SetOrigin( ox, oy )
 	
 	SetColor( 255, 255, 255 )
 	SetRotation( 0 )

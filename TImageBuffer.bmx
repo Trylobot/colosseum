@@ -74,14 +74,14 @@ Type TImageBuffer
 	   
 		Local status:Int =  glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT)
 	   
-		Select status
-			Case GL_FRAMEBUFFER_COMPLETE_EXT 
-				DebugLog "all right" + " : " + status
-			Case GL_FRAMEBUFFER_UNSUPPORTED_EXT
-				DebugLog "choose different formats"
-			Default
-				End 
-		EndSelect 
+		'Select status
+		'	Case GL_FRAMEBUFFER_COMPLETE_EXT 
+		'		DebugLog "all right" + " : " + status
+		'	Case GL_FRAMEBUFFER_UNSUPPORTED_EXT
+		'		DebugLog "choose different formats"
+		'	Default
+		'		End 
+		'EndSelect 
    
 	End Method
 	
