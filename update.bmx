@@ -145,6 +145,8 @@ Function update_drawing_origin()
 	If game.human_participation And game.player <> Null
 		game_mouse.x = game.player.pos_x + (2.0 * (mouse.pos_x - SETTINGS_REGISTER.WINDOW_WIDTH.get()/2.0))
 		game_mouse.y = game.player.pos_y + (2.0 * (mouse.pos_y - SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2.0))
+		
+		'calculate position of camera based on position of player's avatar and the mouse (or keyboard)
 		'game.drawing_origin.x = 0
 		'game.drawing_origin.y = 0
 		Select game.player_brain.input_type
@@ -155,11 +157,12 @@ Function update_drawing_origin()
 				game.drawing_origin.x = SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - game.player.pos_x
 				game.drawing_origin.y = SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2 - game.player.pos_y
 		End Select
-		'camera constraints; enforce
+		'enforce camera bounds
 		If      game.drawing_origin.x < game.origin_min_x Then game.drawing_origin.x = game.origin_min_x ..
 		Else If game.drawing_origin.x > game.origin_max_x Then game.drawing_origin.x = game.origin_max_x
 		If      game.drawing_origin.y < game.origin_min_y Then game.drawing_origin.y = game.origin_min_y ..
 		Else If game.drawing_origin.y > game.origin_max_y Then game.drawing_origin.y = game.origin_max_y
+		
 	Else 'for debug? I guess?
 		game_mouse.x = mouse.pos_x
 		game_mouse.y = mouse.pos_y

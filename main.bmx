@@ -197,6 +197,6 @@ Repeat
 	'screenshot
 	If KeyHit( KEY_F12 ) Then screenshot()
 	
-	Flip( 1 )
+	Flip( -1 )
 Until AppTerminate()
 
