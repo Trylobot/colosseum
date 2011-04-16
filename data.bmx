@@ -205,18 +205,25 @@ End Function
 
 '______________________________________________________________________________
 Function Create_TImage_from_json:TImage( json:TJSON )
+	Local flags% = 0
 	Local img:TImage
 	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
 	path = json.GetString( "path" )
 	frames = json.GetNumber( "frames" )
+	'default true
+	If json.TypeOf( "filtered" ) = JSON_UNDEFINED Or json.GetBoolean( "filtered" ) Then flags = flags|FILTEREDIMAGE
+	'default false
+	If json.GetBoolean( "mipmapped" ) Then flags = flags|MIPMAPPEDIMAGE
 	If frames >= 1
+		'load either regular image or primitive animated image
 		If frames = 1
-			img = LoadImage( path )
+			img = LoadImage( path, flags )
 		Else 'frames > 1
 			frame_width = json.GetNumber( "frame_width" )
 			frame_height = json.GetNumber( "frame_height" )
-			img = LoadAnimImage( path, frame_width, frame_height, 0, frames )
+			img = LoadAnimImage( path, frame_width, frame_height, 0, frames, flags )
 		End If
+		'mod the basic image properties
 		If img
 			flip_horizontal = json.GetBoolean( "flip_horizontal" )
 			flip_vertical = json.GetBoolean( "flip_vertical" )
