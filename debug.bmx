@@ -40,7 +40,8 @@ End Function
 
 Function play_debug_level()
 	Local lev:LEVEL = load_level( "levels/debug.level.json" )
-	Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
+	'Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
+	Local player:COMPLEX_AGENT = get_player_vehicle( "quad" )
 	main_game = play_level( lev, player )
 	game = main_game
 	player.move_to( Create_POINT( 0.45*lev.width, 0.5*lev.height, 0 ))
