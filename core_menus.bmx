@@ -9,22 +9,23 @@ EndRem
 Type MENU_REGISTER
 	Global stack:TList
 	
-	Global root:TUIList
-	Global level_select:TUIImageGrid
-	Global pause:TUIList
+	Global root:TUIObject
+	Global level_select:TUIObject
+	Global pause:TUIObject
 	
 	Function push( m:TUIObject )
+		If Not stack Then stack = CreateList()
 		stack.AddLast( m )
 	End Function
 	
 	Function pop()
-		If stack.Last() <> root
+		If stack And stack.Last() <> root
 			stack.RemoveLast()
 		End If
 	End Function
 	
 	Function get_top:TUIObject()
-		Return TUIObject(stack.Last())
+		If stack Then Return TUIObject( stack.Last() ) Else Return Null
 	End Function
 	
 End Type
@@ -64,9 +65,8 @@ Function initialize_menus()
 	Local menu_tiny_line_width% = 1
 	Local menu_x% = 10, menu_y% = 70
 	
-	MENU_REGISTER.stack = CreateList()
-	
-	Local root_menu:TUIList = New TUIList
+	Local splash_screen:TUISplash = New TUISplash
+	Local main_menu:TUIList = New TUIList
 		Local level_select_menu:TUIImageGrid = New TUIImageGrid
 		Local profile_menu:TUIList = New TUIList
 		Local settings_menu:TUIList = New TUIList
@@ -77,10 +77,18 @@ Function initialize_menus()
 		Local advanced_menu:TUIList = New TUIList
 			Local play_custom_level_menu:TUIList = New TUIList
 	Local pause_menu:TUIList = New TUIList
+
+	MENU_REGISTER.root = splash_screen
+	MENU_REGISTER.push( MENU_REGISTER.root )
 	
 	'/////////////////
 	
-	root_menu.Construct( ..
+	splash_screen.Construct( ..
+		get_image( "title_image" ), (SETTINGS_REGISTER.WINDOW_WIDTH.get() / 2), 0, ..
+		get_sound( "title_intro" ), ..
+		cmd_show_menu, level_select_menu )
+
+	main_menu.Construct( ..
 		"COLOSSEUM", 5, ..
 		dark_gray, white, black, white, ..
 		menu_line_width, ..
@@ -91,13 +99,11 @@ Function initialize_menus()
 		,,,, ..
 		menu_x, menu_y )
 	idx( True )
-	root_menu.set_item( idx(), "START", cmd_show_menu, level_select_menu )
-	root_menu.set_item( idx(), "PROFILE", cmd_show_menu, profile_menu )
-	root_menu.set_item( idx(), "SETTINGS", cmd_show_menu, settings_menu )
-	root_menu.set_item( idx(), "ADVANCED", cmd_show_menu, advanced_menu )
-	root_menu.set_item( idx(), "QUIT GAME", cmd_quit_game )
-	MENU_REGISTER.root = root_menu
-	MENU_REGISTER.push( root_menu )
+	main_menu.set_item( idx(), "START", cmd_show_menu, level_select_menu )
+	main_menu.set_item( idx(), "PROFILE", cmd_show_menu, profile_menu )
+	main_menu.set_item( idx(), "SETTINGS", cmd_show_menu, settings_menu )
+	main_menu.set_item( idx(), "ADVANCED", cmd_show_menu, advanced_menu )
+	main_menu.set_item( idx(), "QUIT GAME", cmd_quit_game )
 	
 	Local level_grid_dimensions%[] = New Int[level_grid.Length]
 	For Local d% = 0 Until level_grid_dimensions.Length
@@ -134,6 +140,7 @@ Function initialize_menus()
 			level_select_menu.set_item( r, c, level_object.name, level_preview_img, cmd_play_level, level_object )
 		Next
 	Next
+	MENU_REGISTER.level_select = level_select_menu
 	
 	profile_menu.Construct( ..
 		"PROFILE", 3, ..

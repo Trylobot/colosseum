@@ -7,16 +7,16 @@ EndRem
 
 '______________________________________________________________________________
 Type TUIObject Abstract
-	Method set_position( x%, y% ) Abstract
-	Method draw() Abstract
-	Method on_mouse_move%( mx%, my% ) Abstract
-	Method on_mouse_click%( mx%, my% ) Abstract
-	Method on_keyboard_up() Abstract
-	Method on_keyboard_down() Abstract
-	Method on_keyboard_left() Abstract
-	Method on_keyboard_right() Abstract
-	Method on_keyboard_enter() Abstract
-	Method on_show() Abstract
+	Method set_position( x%, y% ) End Method
+	Method draw() End Method
+	Method on_mouse_move%( mx%, my% ) End Method
+	Method on_mouse_click%( mx%, my% ) End Method
+	Method on_keyboard_up() End Method
+	Method on_keyboard_down() End Method
+	Method on_keyboard_left() End Method
+	Method on_keyboard_right() End Method
+	Method on_keyboard_enter() End Method
+	Method on_show() End Method
 End Type
 
 '______________________________________________________________________________

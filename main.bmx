@@ -81,7 +81,6 @@ Include "spawn_controller.bmx"
 Include "spawn_request.bmx"
 Include "steering_wheel.bmx"
 Include "tank_track.bmx"
-'Include "texture_manager.bmx"
 Include "timescale.bmx"
 Include "transform_state.bmx"
 Include "turret.bmx"
@@ -90,6 +89,7 @@ Include "ui_image_grid.bmx"
 Include "ui_input.bmx"
 Include "ui_interface.bmx"
 Include "ui_list.bmx"
+Include "ui_splash.bmx"
 Include "unit_factory_data.bmx"
 Include "update.bmx"
 Include "vec.bmx"
@@ -101,14 +101,13 @@ Include "debug.bmx"
 Local load_start% = now()
 
 Const version_major%    = 0
-Const version_minor%    = 4
+Const version_minor%    = 5
 Const version_revision% = 0
 
 Global colosseum_credits$ = ..
-	"COLOSSEUM (c)2008 Tyler W.R. Cole, written in BlitzMax~n" + ..
-	"Physics by Jeff Weber & Alex Okafor, JSON by grable, TCP/UDP by Vertex~n" + ..
-	"Music by NickPerrin & Yoshi-1up, Fonts by codeman38 & Yuji Oshimoto~n" + ..
-	"also thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, Firelord88"
+	"COLOSSEUM (c)2011 Tyler W.R. Cole, built with BlitzMax~n" + ..
+	"Music by NickPerrin, Yoshi-1up, Fonts by codeman38, Yuji Oshimoto~n" + ..
+	"Thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, Firelord88"
 Global colosseum_credits_linecount% = line_count( colosseum_credits )
 
 'defaults

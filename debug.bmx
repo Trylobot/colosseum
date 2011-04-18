@@ -141,7 +141,7 @@ Global real_origin:cVEC = Create_cVEC( 0, 0 )
 Global global_start:CELL
 Global global_goal:CELL
 
-Global FLAG_debug_overlay% = True
+Global FLAG_debug_overlay% = False
 Global FLAG_god_mode% = False
 Global fps%, last_frame_ts%, time_count%, frame_count%
 Global f12_down%

@@ -182,7 +182,7 @@ Function Create_TImage_from_json:TImage( json:TJSON )
 	path = json.GetString( "path" )
 	frames = json.GetNumber( "frames" )
 	'default true
-	If json.TypeOf( "filtered" ) = JSON_UNDEFINED Or json.GetBoolean( "filtered" ) Then flags = flags|FILTEREDIMAGE
+	If JSON.TypeOf( "filtered" ) = JSON_UNDEFINED Or JSON.GetBoolean( "filtered" ) Then flags = flags|FILTEREDIMAGE
 	'default false
 	If json.GetBoolean( "mipmapped" ) Then flags = flags|MIPMAPPEDIMAGE
 	If frames >= 1
