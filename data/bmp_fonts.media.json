@@ -3,7 +3,7 @@
 		class: "bmp_font",
 		key: "small_5",
 		object: {
-			path: "art/fonts/04b11_6pt.png",
+			image_key: "04b11_6pt",
       offset_x: 0,
       offset_y: 0,
       baseline_y: 6,
@@ -128,7 +128,7 @@
 		class: "bmp_font",
 		key: "small_5_outline",
 		object: {
-			path: "art/fonts/04b11_6pt_outline.png",
+			image_key: "04b11_6pt_outline",
       offset_x: 1,
       offset_y: 1,
       baseline_y: 7,
@@ -253,7 +253,7 @@
     class: "bmp_font",
     key: "arcade_7",
     object: {
-      path: "art/fonts/PressStartK_6pt.png",
+      image_key: "PressStartK_6pt",
       offset_x: 0,
       offset_y: 0,
       baseline_y: 8,
@@ -386,7 +386,7 @@
     class: "bmp_font",
     key: "arcade_7_outline",
     object: {
-      path: "art/fonts/PressStartK_6pt_outline.png",
+      image_key: "PressStartK_6pt_outline",
       offset_x: 1,
       offset_y: 1,
       baseline_y: 9,

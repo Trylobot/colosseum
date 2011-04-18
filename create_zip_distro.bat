@@ -10,7 +10,7 @@ mkdir %TEMPDIR%\levels
 mkdir %TEMPDIR%\sound
 
 copy  colosseum.exe              %TEMPDIR%        
-xcopy art\texture_atlas_*.png    %TEMPDIR%\art    %FLAGS%
+xcopy art\*.png                  %TEMPDIR%\art    %FLAGS%
 xcopy data\*.media.json          %TEMPDIR%\data   %FLAGS%
 xcopy levels\*.level.json        %TEMPDIR%\levels %FLAGS%
 xcopy levels\*.preview.png       %TEMPDIR%\levels %FLAGS%

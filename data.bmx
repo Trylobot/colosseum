@@ -26,33 +26,6 @@ EndRem
 Global loading_progress%
 
 '_____________________________________________________________________________
-Function load_texture_atlases%()
-  Local path$
-	Local file:TStream
-	Local json:TJSON
-  DebugLog( "  " + "texture_atlases" )
-	TEXTURE_MANAGER.init( texture_atlas_files.Length )
-  For Local a% = 0 Until texture_atlas_files.Length
-    path = data_path + texture_atlas_files[a] + "." + data_file_ext
-		DebugLog( "    " + path )
-    file = ReadFile( path )
-    If file
-      json = TJSON.Create( file )
-      file.Close()
-      If Not json.isNull() 'read successful
-        TEXTURE_MANAGER.load_texture_from_json( json )
-      Else
-        Return False
-      End If
-    Else
-      Return False
-    End If
-		loading_progress :+ 1
-	Next
-	Return True
-End Function
-
-'_____________________________________________________________________________
 Function load_assets%()
 	Local path$
 	Local file:TStream
@@ -141,8 +114,6 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				Case "sound"
 					Local s:TSound = Create_TSound_from_json( object_json )
 					If s Then sound_map.Insert( key, s ) Else load_error( object_json )
-				Case "image_atlas"
-					TEXTURE_MANAGER.load_image_data( object_json, key )
 				Case "image"
 					Local i:TImage = Create_TImage_from_json( object_json )
 					If i Then image_map.Insert( key, i ) Else load_error( object_json )

@@ -10,11 +10,11 @@ EndRem
 
 '______________________________________________________________________________
 Type GRAFFITI_MANAGER
-	Field img_buf:TImageBuffer
+	Field img_buf:IMAGE_BUFFER
 	
 	Function Create:GRAFFITI_MANAGER( bg_clean:TImage )', backbuffer_width%, backbuffer_height% )
 		Local g:GRAFFITI_MANAGER = New GRAFFITI_MANAGER
-		g.img_buf = TImageBuffer.CreateFromImage( bg_clean )
+		g.img_buf = IMAGE_BUFFER.CreateFromImage( bg_clean )
 		Return g
 	End Function
 	

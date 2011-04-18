@@ -1136,4 +1136,48 @@
 			frames: 1,
 		}
 	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/fonts/04b11_6pt.png",
+			handle_x: 0.0,
+			handle_y: 0.0,
+			frames: 1,
+      filtered: false,
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/fonts/04b11_6pt_outline.png",
+			handle_x: 0.0,
+			handle_y: 0.0,
+			frames: 1,
+      filtered: false,
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/fonts/PressStartK_6pt.png",
+			handle_x: 0.0,
+			handle_y: 0.0,
+			frames: 1,
+      filtered: false,
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
+			path: "art/fonts/PressStartK_6pt_outline.png",
+			handle_x: 0.0,
+			handle_y: 0.0,
+			frames: 1,
+      filtered: false,
+		}
+	},
 ]

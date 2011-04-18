@@ -170,7 +170,6 @@ End Function
 Function load_all_assets()
   loading_progress = 0
 	'/////
-	load_texture_atlases()
 	load_assets()
 	load_level_grid()
 	'/////

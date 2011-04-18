@@ -149,17 +149,18 @@ Type BMP_FONT
 	End Method
 	
 	Function Create_from_json:BMP_FONT( json:TJSON )
-		Local path$
+		Local image_key$
     Local offset_x%
 		Local offset_y%
 		Local baseline_y%
 		Local char_spacing%
 		Local line_spacing%
 		Local char_width%[]
+		Local raw_img:TImage
 		Local img:IMAGE_ATLAS_REFERENCE
 		Local f:BMP_FONT
 		
-    path = json.GetString( "path" )
+    image_key = json.GetString( "image_key" )
     offset_x = json.GetNumber( "offset_x" )
 		offset_y = json.GetNumber( "offset_y" )
 		baseline_y = json.GetNumber( "baseline_y" )
@@ -170,10 +171,8 @@ Type BMP_FONT
 			DebugStop
 			Return Null
 		End If
-		img = IMAGE_ATLAS_REFERENCE( TEXTURE_MANAGER.reference_map.ValueForKey( path ))
-		If Not img
-			DebugStop
-		End If
+		raw_img = get_image( image_key )
+		img = CreateImageRef( raw_img, Create_BOX( 0, 0, raw_img.width, raw_img.height ))
 		img.LoadVariableWidthBMPFont( char_count, char_width, 0, 0 )
 		f = New BMP_FONT
 		f.font_img = img

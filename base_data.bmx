@@ -35,10 +35,9 @@ Global texture_atlas_files$[] = [ ..
 
 Global asset_files$[] = [ ..
 	"fonts", ..
-	"bmp_fonts", ..
 	"sounds", ..
 	"images", ..
-	..'"image_atlases", ..
+	"bmp_fonts", ..
 	"props", ..
 	"particles", ..
 	"particle_emitters", ..
@@ -55,7 +54,7 @@ Global asset_files$[] = [ ..
 ]
 
 '______________________________________________________________________________
-Global font_map:TMap = CreateMap() 'deprecated; moving to use BMP_FONT instead
+Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
 Global image_map:TMap = CreateMap()
 Global level_grid$[][]

@@ -27,8 +27,6 @@ Type IMAGE_ATLAS_REFERENCE
 	'legacy image
 	Field handle_x# 'local origin
 	Field handle_y# 'local origin
-	Field flip_x% 'boolean
-	Field flip_y% 'boolean
 	'sprite animation
 	Field multi_cell% 'boolean
 	Field variable_width% 'boolean
@@ -46,27 +44,12 @@ Type IMAGE_ATLAS_REFERENCE
 			sx = cell_rect[f].x
 			sy = cell_rect[f].y
 			If variable_width
-				'ignores flip_x and flip_y
 				sw = cell_rect[f].w
 				x1 = x0 + sw
 			End If
 		End If
 		'///////////////////////////////////////////////////////
 		atlas.Frame(0).Draw( x0,y0, x1,y1, tx,ty, sx,sy,sw,sh )
-		'If Not flip_x
-		'	If Not flip_y
-		'		atlas.Frame(0).Draw( x0,y0, x1,y1, tx,ty, sx,sy,sw,sh )
-		'	Else  'flip_y
-		'		atlas.Frame(0).Draw( x0,y1, x1,y0, tx,ty, sx,sy,sw,sh )
-		'	End If
-		'Else  'flip_x
-		'	If Not flip_y
-		'		atlas.Frame(0).Draw( x1,y0, x0,y1, tx,ty, sx,sy,sw,sh )
-		'	Else  'flip_y
-		'		atlas.Frame(0).Draw( x1,y1, x0,y0, tx,ty, sx,sy,sw,sh )
-		'	End If
-		'End If
-		
 		'///////////////////////////////////////////////////////
 	End Method
 	
@@ -88,37 +71,17 @@ Type IMAGE_ATLAS_REFERENCE
 		cell_rect = Null
 	End Method
 	
-	Method LoadImageModifiers( handle_x#, handle_y#, flip_x% = False, flip_y% = False )
-		Self.flip_x = flip_x
-		Self.flip_y = flip_y
-		If Not flip_x
-			Self.handle_x = handle_x
-		Else 'flip_x
-			Self.handle_x = src_rect.w - handle_x
-		End If
-		If Not flip_y
-			Self.handle_y = handle_y
-		Else 'flip_y
-			Self.handle_y = src_rect.y - handle_y
-		End If
+	Method LoadImageModifiers( handle_x#, handle_y# )
+		Self.handle_x = handle_x
+		Self.handle_y = handle_y
 		sx = src_rect.x
 		sy = src_rect.y
 		sw = src_rect.w
 		sh = src_rect.h
-		If Not flip_x
-			x0 = -handle_x
-			x1 = x0 + sw
-		Else 'flip_x
-			x1 = -handle_x
-			x0 = x1 + sw
-		End If
-		If Not flip_y
-			y0 = -handle_y
-			y1 = y0 + sh
-		Else 'flip_y
-			y1 = -handle_y
-			y0 = y1 + sh
-		End If
+		x0 = -handle_x
+		x1 = x0 + sw
+		y0 = -handle_y
+		y1 = y0 + sh
 	End Method
 	
 	Method LoadMultiCellAnimation( count%, cell_width#, cell_height# )
@@ -152,20 +115,10 @@ Type IMAGE_ATLAS_REFERENCE
 		'sy  determined at draw-time
 		sw = cell_width
 		sh = cell_height
-		If Not flip_x
-			x0 = -handle_x
-			x1 = x0 + sw
-		Else 'flip_x
-			x1 = -handle_x
-			x0 = x1 + sw
-		End If
-		If Not flip_y
-			y0 = -handle_y
-			y1 = y0 + sh
-		Else 'flip_y
-			y1 = -handle_y
-			y0 = y1 + sh
-		End If
+		x0 = -handle_x
+		x1 = x0 + sw
+		y0 = -handle_y
+		y1 = y0 + sh
 	End Method
 	
 	Method LoadVariableWidthBMPFont( count%, char_width%[], offset_x%, baseline_y% )
@@ -185,8 +138,6 @@ Type IMAGE_ATLAS_REFERENCE
 			'x-coordinate advancement per-character
 			current_x :+ char_width[current_char]
 		Next
-		'flip_x  ignored
-		'flip_y  ignored
 		handle_x = offset_x
 		handle_y = baseline_y
 		'sx  determined at draw-time
@@ -223,8 +174,6 @@ Function CopyImageRef:IMAGE_ATLAS_REFERENCE( other:IMAGE_ATLAS_REFERENCE )
   ref.src_rect = other.src_rect.clone()
   ref.handle_x = other.handle_x
   ref.handle_y = other.handle_y
-  ref.flip_x = other.flip_x
-  ref.flip_y = other.flip_y
   ref.multi_cell = other.multi_cell
   ref.variable_width = other.variable_width
   ref.cell_count = other.cell_count

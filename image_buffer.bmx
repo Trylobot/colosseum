@@ -2,11 +2,11 @@ Rem
 
 
 'initialization:
-'TImageBuffer.Init( {screen_width}, {screen_height} )
+'IMAGE_BUFFER.Init( {screen_width}, {screen_height} )
 ...
 Local img:TImage = ...
 ...
-Local buffer:TImageBuffer = TImageBuffer.CreateFromImage( img ) 
+Local buffer:IMAGE_BUFFER = IMAGE_BUFFER.CreateFromImage( img ) 
 
 
 'normal usage:
@@ -19,7 +19,7 @@ buffer.UnBindBuffer()
 
 EndRem
 
-Type TImageBuffer
+Type IMAGE_BUFFER
 	
 	Field Image:TImage
 	Field rb:Int[1]
@@ -31,8 +31,8 @@ Type TImageBuffer
 	Field OrigW:Int
 	Field OrigH:Int
 
-	Function CreateFromImage:TImageBuffer( Image:TImage, Frame:Int = 0 )
-		Local IB:TImageBuffer = New TImageBuffer
+	Function CreateFromImage:IMAGE_BUFFER( Image:TImage, Frame:Int = 0 )
+		Local IB:IMAGE_BUFFER = New IMAGE_BUFFER
 		IB.Image = Image
 		IB.Frame = Frame
 		IB.GenerateFBO()
@@ -146,3 +146,4 @@ Type TImageBuffer
 	End Function
 	
 End Type
+
