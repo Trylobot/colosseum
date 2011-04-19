@@ -169,15 +169,12 @@ End Function
 
 Function load_all_assets()
   loading_progress = 0
-	'/////
 	load_assets()
 	load_level_grid()
-	'/////
-	initialize_menus()
-	'/////
 	If SETTINGS_REGISTER.SHOW_AI_MENU_GAME.get()
 		init_ai_menu_game()
 	End If
+	initialize_menus()
 End Function
 
 Function create_new_user_profile:PLAYER_PROFILE()

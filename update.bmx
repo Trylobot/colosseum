@@ -139,6 +139,7 @@ Function update_all_objects()
 			If w.state_index_cur = 1 Then w.unmanage()
 		Next
 	End If
+	
 End Function
 '______________________________________________________________________________
 Function update_drawing_origin()

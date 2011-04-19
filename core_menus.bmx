@@ -78,13 +78,10 @@ Function initialize_menus()
 			Local play_custom_level_menu:TUIList = New TUIList
 	Local pause_menu:TUIList = New TUIList
 
-	MENU_REGISTER.root = splash_screen
-	MENU_REGISTER.push( MENU_REGISTER.root )
-	
 	'/////////////////
 	
 	splash_screen.Construct( ..
-		get_image( "title_image" ), (SETTINGS_REGISTER.WINDOW_WIDTH.get() / 2), 0, ..
+		get_image( "col_title" ), ..
 		get_sound( "title_intro" ), ..
 		cmd_show_menu, level_select_menu )
 
@@ -347,5 +344,11 @@ Function initialize_menus()
 	pause_menu.set_item( idx(), "QUIT GAME", cmd_quit_game )
 	MENU_REGISTER.pause = pause_menu
 	
+	'/////////////////
+
+	MENU_REGISTER.root = splash_screen
+	MENU_REGISTER.push( MENU_REGISTER.root )
+	MENU_REGISTER.root.on_show()
+
 End Function
 

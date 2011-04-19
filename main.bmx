@@ -85,6 +85,7 @@ Include "timescale.bmx"
 Include "transform_state.bmx"
 Include "turret.bmx"
 Include "turret_barrel.bmx"
+Include "tween.bmx"
 Include "ui_image_grid.bmx"
 Include "ui_input.bmx"
 Include "ui_interface.bmx"
@@ -106,7 +107,7 @@ Const version_revision% = 0
 
 Global colosseum_credits$ = ..
 	"COLOSSEUM (c)2011 Tyler W.R. Cole, built with BlitzMax~n" + ..
-	"Music by NickPerrin, Yoshi-1up, Fonts by codeman38, Yuji Oshimoto~n" + ..
+	"Music by NickPerrin, Yoshi-1up, Fonts by John Alexander, codeman38, Yuji Oshimoto~n" + ..
 	"Thanks to Kaze, SniperAceX, A.E.Mac, ZieramsFolly, Firelord88"
 Global colosseum_credits_linecount% = line_count( colosseum_credits )
 
@@ -136,8 +137,7 @@ Else
 End If
 
 ?Debug
-debug_init()
-debug_no_graphics()
+debug_pre_load()
 ?
 
 'window title
@@ -158,12 +158,13 @@ DebugLog "  All assets loaded at " + elapsed_str(load_start) + " sec. since prog
 
 'complex debug routines (modular)
 ?Debug
-debug_with_graphics()
+debug_pre_main()
 ?
 
+DebugLog "  MAIN GAME LOOP started at " + elapsed_str(load_start) + " sec. since program start-up~n"
+reset_frame_timer()
 '////////////////////////////////////////////////////////////////////////////////
 '///// main game loop
-DebugLog "  MAIN GAME LOOP started at " + elapsed_str(load_start) + " sec. since program start-up~n"
 Repeat
 	Cls()
 	

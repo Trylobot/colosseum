@@ -1180,4 +1180,14 @@
       filtered: false,
 		}
 	},
+  {
+    class: "image",
+    key: "{path}",
+    object: {
+      path: "art/ui/col_title.png",
+      handle_x: 500.0,
+      handle_y: 0.0,
+      frames: 1,
+    }
+  },
 ]

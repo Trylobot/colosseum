@@ -17,6 +17,7 @@ Type TUIObject Abstract
 	Method on_keyboard_right() End Method
 	Method on_keyboard_enter() End Method
 	Method on_show() End Method
+	Method service( time_elapsed! ) End Method
 End Type
 
 '______________________________________________________________________________

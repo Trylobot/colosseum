@@ -41,10 +41,14 @@ Function get_all_input()
 		Else 'paused
 			current_menu = MENU_REGISTER.pause
 		End If
+		'service menu
+		current_menu.service( (now() - before) )
 		'back-up/back-out
 		If KeyHit( KEY_ESCAPE )|KeyHit( KEY_BACKSPACE )
 			If Not FLAG.paused
-				cmd_show_previous_menu()
+				If current_menu <> MENU_REGISTER.root 'not at root menu
+					cmd_show_previous_menu()
+				End If
 			Else 'paused
 				cmd_unpause_game()
 			End If

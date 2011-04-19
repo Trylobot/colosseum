@@ -9,13 +9,9 @@ EndRem
 
 '//////////////////////////////////////////////////////////////////////////////
 
-Function debug_init()
+Function debug_pre_load()
 	'debug_audio_drivers()
 	'debug_get_keys()
-	
-End Function
-
-Function debug_no_graphics()
 	'debug_set_range()
 	'debug_remove_from_array()
 	'debug_insert_into_array()
@@ -24,7 +20,7 @@ Function debug_no_graphics()
 	
 End Function
 
-Function debug_with_graphics()
+Function debug_pre_main()
 	'test_draw_rect_lines()
 	'show_me()
 	'play_debug_level()
@@ -36,7 +32,57 @@ Function debug_with_graphics()
 	
 End Function
 
+Function debug_main()
+	'enable/disable debug overlays
+	If KeyHit( KEY_TILDE )
+		FLAG_debug_overlay = Not FLAG_debug_overlay
+		'FlushKeys()
+	End If
+	If KeyHit( KEY_G )
+		FLAG_god_mode = Not FLAG_god_mode
+	End If
+	If game And FLAG_debug_overlay
+		'SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
+		'game.physics_viewer.Draw()
+		'debug_draw_wall_flashes()
+		SetOrigin( 0, 0 )
+		'debug_overlay()
+		debug_fps()
+	End If
+	If profile
+		If KeyDown( KEY_NUMADD )
+			profile.cash :+ 1
+		Else If KeyDown( KEY_NUMSUBTRACT )
+			If profile.cash > 0 Then profile.cash :- 1
+		End If
+		'get_current_menu().update()
+	End If
+	If game And game.player And FLAG_god_mode
+		game.player.cur_health = game.player.max_health
+	End If
+	'If KeyDown( KEY_F4 ) Then DebugStop
+End Function
+
 '//////////////////////////////////////////////////////////////////////////////
+
+'debug system infrastructure & hooks
+Global FLAG_debug_overlay% = True
+
+Global debug_origin:cVEC = Create_cVEC( 0, 0 )
+Global real_origin:cVEC = Create_cVEC( 0, 0 )
+Global global_start:CELL
+Global global_goal:CELL
+
+Global FLAG_god_mode% = False
+Global fps%, last_frame_ts%, time_count%, frame_count%
+Global f12_down%
+
+Global spawn_archetype_index% = 0
+Global spawn_archetype$ = ""
+Global spawn_alignment% = POLITICAL_ALIGNMENT.NONE
+Global spawn_agent:COMPLEX_AGENT
+Global cb:CONTROL_BRAIN = Null
+
 
 Function play_debug_level()
 	Local lev:LEVEL = load_level( "levels/debug.level.json" )
@@ -135,66 +181,11 @@ Function test_bmp_fonts()
 	End
 End Function
 
-'debug system infrastructure & hooks
-Global debug_origin:cVEC = Create_cVEC( 0, 0 )
-Global real_origin:cVEC = Create_cVEC( 0, 0 )
-Global global_start:CELL
-Global global_goal:CELL
-
-Global FLAG_debug_overlay% = False
-Global FLAG_god_mode% = False
-Global fps%, last_frame_ts%, time_count%, frame_count%
-Global f12_down%
-
-Global spawn_archetype_index% = 0
-Global spawn_archetype$ = ""
-Global spawn_alignment% = POLITICAL_ALIGNMENT.NONE
-Global spawn_agent:COMPLEX_AGENT
-Global cb:CONTROL_BRAIN = Null
-
 Function show_me()
 	Local veh:PAIR[] = map_to_array( player_vehicle_map )
 	For Local p:PAIR = EachIn veh
 		Local obj:Object = player_vehicle_map.ValueForKey( p.key )
 	Next
-End Function
-
-Function debug_main()
-	frame_count :+ 1
-	time_count :+ (now() - last_frame_ts)
-	last_frame_ts = now()
-	If time_count >= 1000
-		fps = frame_count
-		frame_count = 0
-		time_count = 0
-	End If
-	If KeyHit( KEY_TILDE )
-		FLAG_debug_overlay = Not FLAG_debug_overlay
-		'FlushKeys()
-	End If
-	If KeyHit( KEY_G )
-		FLAG_god_mode = Not FLAG_god_mode
-	End If
-	If game And FLAG_debug_overlay
-		'SetOrigin( game.drawing_origin.x, game.drawing_origin.y )
-		'game.physics_viewer.Draw()
-		'debug_draw_wall_flashes()
-		SetOrigin( 0, 0 )
-		'debug_overlay()
-		debug_fps()
-	End If
-	If profile
-		If KeyDown( KEY_NUMADD )
-			profile.cash :+ 1
-		Else If KeyDown( KEY_NUMSUBTRACT )
-			If profile.cash > 0 Then profile.cash :- 1
-		End If
-		'get_current_menu().update()
-	End If
-	If game And game.player And FLAG_god_mode
-		game.player.cur_health = game.player.max_health
-	End If
-	'If KeyDown( KEY_F4 ) Then DebugStop
 End Function
 
 Function debug_draw_wall_flashes()
@@ -508,6 +499,15 @@ Function DrawLine_awesome( x1#, y1#, x2#, y2#, balls% = True, outer_width% = 5, 
 End Function
 
 Function debug_fps()
+	frame_count :+ 1
+	time_count :+ (now() - last_frame_ts)
+	last_frame_ts = now()
+	If time_count >= 1000
+		fps = frame_count
+		frame_count = 0
+		time_count = 0
+	End If
+
 	SetOrigin( 0, 0 )
 	SetScale( 1, 1 )
 	SetRotation( 0 )
