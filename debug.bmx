@@ -26,7 +26,7 @@ Function debug_pre_main()
 	'play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
-	'play_debug_level()
+	play_debug_level()
   'test_bmp_fonts()
   'test_ui_list()
 	
@@ -46,8 +46,11 @@ Function debug_main()
 		'game.physics_viewer.Draw()
 		'debug_draw_wall_flashes()
 		SetOrigin( 0, 0 )
-		'debug_overlay()
+		debug_overlay()
 		debug_fps()
+		If KeyHit( KEY_R )
+			game.respawn_player()
+		End If
 	End If
 	If profile
 		If KeyDown( KEY_NUMADD )
@@ -87,7 +90,7 @@ Global cb:CONTROL_BRAIN = Null
 Function play_debug_level()
 	Local lev:LEVEL = load_level( "levels/debug.level.json" )
 	'Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
-	Local player:COMPLEX_AGENT = get_player_vehicle( "quad" )
+	Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
 	main_game = play_level( lev, player )
 	game = main_game
 	player.move_to( Create_POINT( 0.45*lev.width, 0.5*lev.height, 0 ))

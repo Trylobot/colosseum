@@ -393,12 +393,12 @@ Type ENVIRONMENT
 		End If
 	End Method
 	
-	Method respawn_network_player( network_player:COMPLEX_AGENT )
-		If network_player <> Null And network_player.managed()
-			network_player.move_to( random_spawn_point( POLITICAL_ALIGNMENT.FRIENDLY ))
-			network_player.snap_all_turrets()
-		End If
-	End Method
+	'Method respawn_network_player( network_player:COMPLEX_AGENT )
+	'	If network_player <> Null And network_player.managed()
+	'		network_player.move_to( random_spawn_point( POLITICAL_ALIGNMENT.FRIENDLY ))
+	'		network_player.snap_all_turrets()
+	'	End If
+	'End Method
 	
 	Method spawn_pickup( x%, y%, probability_override# = -1.0, omit_ammunition% = False ) 'request; depends on probability
 		Local threshold#

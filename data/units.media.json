@@ -81,8 +81,8 @@
 				particle_key: "light_quad_trail",
 				offset_x: 0,
 				separation_y: 5,
-				trail_emit_distance_threshold: 5,
-				trail_emit_angular_threshold: 5
+				trail_emit_distance_threshold: 2.0,
+				trail_emit_angular_threshold: 5.0
 			}
 			turret_anchors: [
 				{
