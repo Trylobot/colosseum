@@ -1,19 +1,63 @@
 [
   {
 		class: "gibs",
-		key: "light_tank",
+		key: "quad",
 		object: {
       gibs: [
         {
-          image: "light_tank_gib_0",
+          image_path: "art/units/quad/quad_gib_0.png",
+          offset_x: 5.5,
+          offset_y: 0.0,
           speed: 1.0,
-          direction: 45
         },
         {
-          image: "light_tank_gib_1",
-          speed: 1.2,
-          direction: 315
-        }
+          image_path: "art/units/quad/quad_gib_1.png",
+          offset_x: -4.5,
+          offset_y: 0.0,
+          speed: 1.1,
+        },
+        {
+          image_path: "art/units/quad/quad_gib_2.png",
+          offset_x: -0.5,
+          offset_y: 0.0,
+          speed: 0.6,
+        },
+        {
+          image_path: "art/units/quad/quad_gib_3.png",
+          offset_x: -6.0,
+          offset_y: -4.5,
+          speed: 2.0,
+        },
+        {
+          image_path: "art/units/quad/quad_gib_4.png",
+          offset_x: -6.0,
+          offset_y: 4.5,
+          speed: 2.0,
+        },
+        {
+          image_path: "art/units/quad/quad_gib_5.png",
+          offset_x: 6.0,
+          offset_y: -5.0,
+          speed: 2.1,
+        },
+        {
+          image_path: "art/units/quad/quad_gib_6.png",
+          offset_x: 6.0,
+          offset_y: 5.0,
+          speed: 2.2,
+        },
+        {
+          image_path: "art/units/quad/quad_gib_7.png",
+          offset_x: 0.0,
+          offset_y: 0.0,
+          speed: 0.0,
+        },
+        {
+          image_path: "art/units/quad/quad_gib_8.png",
+          offset_x: -2.5,
+          offset_y: 0.0,
+          speed: 1.3,
+        },
       ]
     }
   }

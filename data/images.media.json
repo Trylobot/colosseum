@@ -575,18 +575,6 @@
 		class: "image",
 		key: "{path}",
 		object: {
-			path: "art/units/quad/quad_gibs.png",
-			handle_x: 9.5,
-			handle_y: 7.5,
-			frames: 9,
-			frame_width: 19,
-			frame_height: 15
-		}
-	},
-	{
-		class: "image",
-		key: "{path}",
-		object: {
 			path: "art/props/crate_gibs.png",
 			handle_x: 16.0,
 			handle_y: 16.0,

@@ -162,7 +162,6 @@ debug_pre_main()
 ?
 
 DebugLog "  MAIN GAME LOOP started at " + elapsed_str(load_start) + " sec. since program start-up~n"
-reset_frame_timer()
 '////////////////////////////////////////////////////////////////////////////////
 '///// main game loop
 Repeat

@@ -167,6 +167,7 @@ Function generate_sand_image:TImage( w%, h% )
 			pixmap.WritePixel( px,py, encode_ARGB( 1.0, color.R,color.G,color.B ))
 		Next
 	Next
+	AutoMidHandle( False )
 	Return LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
 End Function
 
@@ -266,6 +267,7 @@ Function generate_level_walls_image:TImage( lev:LEVEL )
 			Next
 		Next
 	Next
+	AutoMidHandle( False )
 	Return LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
 End Function
 

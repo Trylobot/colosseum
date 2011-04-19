@@ -18,8 +18,10 @@ EndRem
 'Import "data.bmx"
 
 '______________________________________________________________________________
+Global last_menu_service_ts%
+
+
 Function get_all_input()
-		
 	get_mouse_position()
 	
 	'hide/ignore mouse
@@ -42,7 +44,8 @@ Function get_all_input()
 			current_menu = MENU_REGISTER.pause
 		End If
 		'service menu
-		current_menu.service( (now() - before) )
+		current_menu.service( (now() - last_menu_service_ts) ) 'revisit this; possible repeat
+		last_menu_service_ts = now()
 		'back-up/back-out
 		If KeyHit( KEY_ESCAPE )|KeyHit( KEY_BACKSPACE )
 			If Not FLAG.paused

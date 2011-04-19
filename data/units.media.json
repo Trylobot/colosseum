@@ -45,7 +45,6 @@
 		object: {
 			name: "light quad",
 			image_key: "enemy_quad_chassis",
-			gibs_image_key: "quad_gibs",
 			ai_name: "vehicle",
 			cash_value: 100,
 			max_health: 50,

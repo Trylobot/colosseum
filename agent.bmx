@@ -106,30 +106,8 @@ Type AGENT Extends PHYSICAL_OBJECT
 			halo.manage( background_particle_manager )
 		End If
 		'gibby bits
-		If show_gibs
-			'this should also be controlled by a death emitter, albeit a more complex one.
-			'perhaps a special type of emitter that takes a multi-frame image and a series of data to specify initial conditions for each of the gibs.
-			Rem
-			If gibs <> Null
-				For Local i% = 0 To gibs.cell_count - 1
-					Local gib:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, gibs, i,,,,, LAYER_BACKGROUND, True, 0.100,,,,,,, 750 ))
-					Local gib_offset#, gib_offset_ang#
-					cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
-					gib.pos_x = pos_x + gib_offset*Cos( gib_offset_ang + ang )
-					gib.pos_y = pos_y + gib_offset*Sin( gib_offset_ang + ang )
-					Local gib_vel#, gib_vel_ang#
-					gib_vel = Rnd( -2.0, 2.0 )
-					gib_vel_ang = Rnd( 0.0, 359.9999 )
-					gib.vel_x = vel_x + gib_vel*Cos( gib_vel_ang + ang )
-					gib.vel_y = vel_y + gib_vel*Sin( gib_vel_ang + ang )
-					gib.ang = ang + Rand( -30, 30 )
-					gib.ang_vel = Rnd( -3.0, 3.0 )
-					gib.update()
-					gib.created_ts = now()
-					gib.manage( background_particle_manager )
-				Next
-			End If
-			EndRem
+		If show_gibs And gibs <> Null
+			gibs.show( Self, background_particle_manager )
 		End If
 		'sound
 		If audible

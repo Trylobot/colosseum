@@ -150,6 +150,9 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 				Case "player_vehicle"
 					Local p_veh:COMPLEX_AGENT = Create_COMPLEX_AGENT_from_json( object_json )
 					If p_veh Then player_vehicle_map.Insert( key, p_veh ) Else load_error( object_json )
+				Case "gibs"
+					Local g:GIB_SYSTEM = Create_GIB_SYSTEM_from_json( object_json )
+					If g Then gibs_map.Insert( key, g ) Else load_error( object_json )
 				Case "unit"
 					Local u:COMPLEX_AGENT = Create_COMPLEX_AGENT_from_json( object_json )
 					If u Then unit_map.Insert( key, u ) Else load_error( object_json )
@@ -177,6 +180,7 @@ End Function
 '______________________________________________________________________________
 Function Create_TImage_from_json:TImage( json:TJSON )
 	Local flags% = 0
+	AutoMidHandle( True )
 	Local img:TImage
 	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
 	path = json.GetString( "path" )
@@ -199,9 +203,12 @@ Function Create_TImage_from_json:TImage( json:TJSON )
 			flip_horizontal = json.GetBoolean( "flip_horizontal" )
 			flip_vertical = json.GetBoolean( "flip_vertical" )
 			img = pixel_transform( img, flip_horizontal, flip_vertical ) 'does nothing if both are false
-			handle_x = json.GetNumber( "handle_x" )
-			handle_y = json.GetNumber( "handle_y" )
-			SetImageHandle( img, handle_x, handle_y )
+			If json.TypeOf( "handle_x" ) <> JSON_UNDEFINED Or json.TypeOf( "handle_y" ) <> JSON_UNDEFINED
+				'override center as handle
+				handle_x = json.GetNumber( "handle_x" )
+				handle_y = json.GetNumber( "handle_y" )
+				SetImageHandle( img, handle_x, handle_y )
+			End If
 			Return img
 		End If
 	End If
