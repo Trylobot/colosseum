@@ -27,7 +27,6 @@ Global player_vehicle_map:TMap = CreateMap()
 
 Function get_player_vehicle:COMPLEX_AGENT( key$, copy% = True ) 'returns a new instance, which is a copy of the global archetype
 	Local comp_ag:COMPLEX_AGENT = COMPLEX_AGENT( player_vehicle_map.ValueForKey( key.toLower() ))
-  'TODO: attach gibs if available
 	If copy And comp_ag Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( comp_ag, POLITICAL_ALIGNMENT.FRIENDLY ))
 	Return comp_ag
 End Function
@@ -36,7 +35,6 @@ Global unit_map:TMap = CreateMap()
 
 Function get_unit:COMPLEX_AGENT( key$, alignment% = POLITICAL_ALIGNMENT.NONE, copy% = True ) 'returns a new instance, which is a copy of the global archetype
 	Local unit:COMPLEX_AGENT = COMPLEX_AGENT( unit_map.ValueForKey( key.toLower() ))
-  'TODO: attach gibs if available
 	If copy And unit Then Return COMPLEX_AGENT( COMPLEX_AGENT.Copy( unit, alignment ))
 	Return unit
 End Function
@@ -168,7 +166,7 @@ Type COMPLEX_AGENT Extends AGENT
 		c.hitbox_img = other.hitbox_img
 		If Not c.hitbox_img Then c.hitbox_img = c.img
 		c.handle = other.handle
-		c.gibs = other.gibs
+		If other.gibs Then c.gibs = other.gibs.clone()
 		'c.lightmap = other.lightmap
 		c.ai_name = other.ai_name
 		c.cash_value = other.cash_value
@@ -802,7 +800,7 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED               Then cmp_ag.img = get_image( json.GetString( "image_key" ))
 	If json.TypeOf( "hitbox_image_key" ) <> JSON_UNDEFINED        Then cmp_ag.hitbox_img = get_image( json.GetString( "hitbox_image_key" ))
 	If cmp_ag.img And Not cmp_ag.hitbox_img Then hitbox_img = cmp_ag.img
-	'If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED          Then cmp_ag.gibs = get_image( json.GetString( "gibs_image_key" ))
+	If JSON.TypeOf( "gibs_key" ) <> JSON_UNDEFINED                Then cmp_ag.gibs = get_gibs( JSON.GetString( "gibs_key" ))
 	'If json.TypeOf( "lightmap_image_key" ) <> JSON_UNDEFINED      Then cmp_ag.lightmap = get_image( json.GetString( "lightmap_image_key" ))
 	If json.TypeOf( "ai_name" ) <> JSON_UNDEFINED                 Then cmp_ag.ai_name = json.GetString( "ai_name" )
 	If json.TypeOf( "cash_value" ) <> JSON_UNDEFINED              Then cmp_ag.cash_value = json.GetNumber( "cash_value" )
