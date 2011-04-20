@@ -167,7 +167,6 @@ Repeat
 	
 	'auto-selects the global environment reference
 	select_game()
-	
 	'user input
 	get_all_input()
 	'physics timescale and update throttling
@@ -183,7 +182,7 @@ Repeat
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress )
 	'draw everything
 	draw_all_graphics()
-	
+
 	Flip( -1 )
 Until AppTerminate()
 
