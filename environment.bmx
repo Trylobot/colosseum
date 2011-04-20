@@ -330,10 +330,12 @@ Type ENVIRONMENT
 		ag.receive_damage( damage )
 		'potential resulting death
 		If ag.dead() 'some agent was killed
-			'agent death animations and sounds, and memory cleanup
 			ag.die( particle_list_background, particle_list_foreground )
-			'shalt we spawneth teh phat lewts?! perhaps! perhaps.
-			If human_participation
+			If human_participation And ag = player
+				respawn_player()
+			Else If human_participation 'ag <> player
+				'agent death animations and sounds, and memory cleanup
+				'shalt we spawneth teh phat lewts?! perhaps! perhaps.
 				spawn_pickup( ag.pos_x, ag.pos_y,, (Not player_has_munitions_based_turrets) )
 			End If
 		End If
@@ -371,14 +373,14 @@ Type ENVIRONMENT
 		Next
 	End Method
 	
-	Method insert_network_player( network_player:COMPLEX_AGENT, network_player_brain:CONTROL_BRAIN )
-		'if player already exists in this environment, it must be removed
-		network_player.manage( friendly_agent_list )
-		network_player_brain.manage( control_brain_list )
-	End Method
+	'Method insert_network_player( network_player:COMPLEX_AGENT, network_player_brain:CONTROL_BRAIN )
+	'	'if player already exists in this environment, it must be removed
+	'	network_player.manage( friendly_agent_list )
+	'	network_player_brain.manage( control_brain_list )
+	'End Method
 	
 	Method respawn_player()
-		If player <> Null And player_brain <> Null And player.managed() And player_brain.managed()
+		If player <> Null And player_brain <> Null
 			player_spawn_point = random_spawn_point( POLITICAL_ALIGNMENT.FRIENDLY )
 			If player_spawn_point
 				player.move_to( player_spawn_point )
@@ -390,7 +392,10 @@ Type ENVIRONMENT
 				battle_in_progress = True
 				battle_state_toggle_ts = now()
 			End If
+			player.cur_health = player.max_health
 		End If
+		player.manage( friendly_agent_list )
+		player_brain.manage( control_brain_list )
 	End Method
 	
 	'Method respawn_network_player( network_player:COMPLEX_AGENT )

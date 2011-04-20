@@ -8,7 +8,7 @@ EndRem
 'Import "vec.bmx"
 
 '______________________________________________________________________________
-Global mouse:POINT = Create_POINT( MouseX(), MouseY() ) 'mouse position relative to window top-left
+Global mouse:POINT = Create_POINT( 0, 0 ) 'mouse position relative to window top-left
 Global mouse_delta:cVEC = New cVEC 'mouse per-frame movement
 Global game_mouse:cVEC = New cVEC 'mouse position relative to an ENVIRONMENT's origin
 Global mouse_last_z% = 0 'middle mouse tracking

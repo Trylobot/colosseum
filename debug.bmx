@@ -7,6 +7,8 @@ EndRem
 
 ?Debug
 
+Global FLAG_debug_overlay% = False
+
 '//////////////////////////////////////////////////////////////////////////////
 
 Function debug_pre_load()
@@ -29,7 +31,7 @@ Function debug_pre_main()
 	'play_debug_level()
   'test_bmp_fonts()
   'test_ui_list()
-	
+	'test_tweens
 End Function
 
 Function debug_main()
@@ -69,8 +71,6 @@ End Function
 '//////////////////////////////////////////////////////////////////////////////
 
 'debug system infrastructure & hooks
-Global FLAG_debug_overlay% = True
-
 Global debug_origin:cVEC = Create_cVEC( 0, 0 )
 Global real_origin:cVEC = Create_cVEC( 0, 0 )
 Global global_start:CELL
@@ -86,7 +86,6 @@ Global spawn_alignment% = POLITICAL_ALIGNMENT.NONE
 Global spawn_agent:COMPLEX_AGENT
 Global cb:CONTROL_BRAIN = Null
 
-
 Function play_debug_level()
 	Local lev:LEVEL = load_level( "levels/debug.level.json" )
 	'Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
@@ -98,6 +97,57 @@ Function play_debug_level()
 	player_has_entered_arena()
 	game.spawn_unit( "machine_gun_emplacement", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.55*lev.width, 0.5*lev.height, 0.0 ))
 	game.sandbox = True
+End Function
+
+Function test_tweens()
+	Cls
+	Local tw:TWEEN[] = New TWEEN[9]
+	Local i% = 0
+	'linear
+	tw[i] = TWEEN.Create( 0.0, 1.0, 1.0, TWEEN.linear_ease ); i :+ 1
+	tw[i] = Null; i :+ 1
+	tw[i] = Null; i :+ 1
+	'quadratic
+	tw[i] = TWEEN.Create( 0.0, 1.0, 1.0, TWEEN.quadratic_ease_in ); i :+ 1
+	tw[i] = TWEEN.Create( 0.0, 1.0, 1.0, TWEEN.quadratic_ease_out ); i :+ 1
+	tw[i] = TWEEN.Create( 0.0, 1.0, 1.0, TWEEN.quadratic_ease_in_out ); i :+ 1
+	'sinusoidal
+	tw[i] = TWEEN.Create( 0.0, 1.0, 1.0, TWEEN.sinusoidal_ease_in ); i :+ 1
+	tw[i] = TWEEN.Create( 0.0, 1.0, 1.0, TWEEN.sinusoidal_ease_out ); i :+ 1
+	tw[i] = TWEEN.Create( 0.0, 1.0, 1.0, TWEEN.sinusoidal_ease_in_out ); i :+ 1
+	Local cols% = Int( Ceil( Sqr( Double( tw.Length ))))
+	Local rows% = cols
+	Local margin% = 3
+	Local width% = SETTINGS_REGISTER.WINDOW_WIDTH.get()/cols
+	Local height% = SETTINGS_REGISTER.WINDOW_HEIGHT.get()/rows
+	Local width_inset% = width - margin
+	Local height_inset% = height - margin
+	i = 0
+	For Local row% = 0 Until rows
+		For Local col% = 0 Until cols
+			If tw[i]
+				Local x_left% = col*width + margin
+				Local y_top% = row*height + margin
+				SetViewport( x_left - 1, y_top - 1, width, height )
+				SetColor( 127, 127, 127 )
+				DrawRect( x_left, y_top, width_inset, height_inset )
+				SetColor( 255, 255, 255 ) 
+				DrawRectLines( x_left, y_top, width_inset, height_inset, 1 )
+				SetColor( 0, 0, 0 )
+				For Local t! = 0.0 To 1.0 Step 0.0025
+					Local x# = x_left + t*width_inset
+					Local y# = y_top + (height_inset - tw[i].get( t )*height_inset)
+					DrawOval( x-1.5, y-1.5, 3, 3 )
+				Next
+			End If
+			i :+ 1
+			If i >= tw.Length Then Exit
+		Next
+		If i >= tw.Length Then Exit
+	Next
+	Flip
+	WaitMouse
+	End
 End Function
 
 Function test_draw_rect_lines()

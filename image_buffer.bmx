@@ -137,13 +137,5 @@ Type IMAGE_BUFFER
 		Forever
 	End Function
 	
-	Function Pow2Size:Int( n:Int )
-		Local t:Int=1
-		While t<n
-			t:*2
-		Wend
-		Return t
-	End Function
-	
 End Type
 

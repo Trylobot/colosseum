@@ -145,8 +145,6 @@ AppTitle = "Colosseum " + version_major + "." + version_minor + "." + version_re
 ?Debug
 AppTitle :+ " DEBUG"
 ?
-'mouse
-mouse.pos_x = MouseX(); mouse.pos_y = MouseY()
 
 'graphical window
 init_graphics()
@@ -185,17 +183,6 @@ Repeat
 	play_all_audio( (Not FLAG.in_menu) And (main_game <> Null) And main_game.game_in_progress )
 	'draw everything
 	draw_all_graphics()
-	
-  ?Debug
-	debug_main()
-  ?
-	
-	'instaquit
-	escape_key_update()
-	draw_instaquit_progress()
-	
-	'screenshot
-	If KeyHit( KEY_F12 ) Then screenshot()
 	
 	Flip( -1 )
 Until AppTerminate()

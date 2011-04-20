@@ -7,6 +7,8 @@ EndRem
 
 '______________________________________________________________________________
 Type FLAG
+	'render mode
+	Global upscale%
 	'game state
 	Global in_menu%
 	Global paused%

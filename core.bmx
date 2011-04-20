@@ -168,7 +168,7 @@ Function generate_sand_image:TImage( w%, h% )
 		Next
 	Next
 	AutoMidHandle( False )
-	Return LoadImage( pixmap, FILTEREDIMAGE|DYNAMICIMAGE )
+	Return LoadImage( pixmap, 0 )
 End Function
 
 '______________________________________________________________________________

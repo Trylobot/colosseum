@@ -47,13 +47,12 @@ Type TWEEN
   End Method
   
   
-  'easing functions: credit to Robbert Penner, 2003
-  
+  '__________________________________________________________
   Function linear_ease!( t!, b!, c!, d! )
     t :/ d
     Return c*t + b
   End Function
-  
+  '__________________________________________________________
   Function quadratic_ease_in!( t!, b!, c!, d! )
     t :/ d
     Return c*t*t + b
@@ -65,29 +64,30 @@ Type TWEEN
   End Function
   
   Function quadratic_ease_in_out!( t!, b!, c!, d! )
-    t :/ d
-    If( t/2.0 < 1.0 )
+    t :/ (d/2.0)
+    If( t < 1.0 )
       Return c/2.0*t*t + b
-    Else
+    Else 't >= 1.0
       t :- 1.0
       Return -c/2.0*(t*(t - 2.0) - 1.0) + b
     End If
   End Function
-  
+  '__________________________________________________________
   Function sinusoidal_ease_in!( t!, b!, c!, d! )
+		'return -c * cos(t/d * (RadixMath::dPi/2.0)) + c + b;
     t :/ d
-    Return -c*Cos(t*(Pi/2.0)) + c + b
+    Return -c*Cos(t*90.0) + c + b
   End Function
   
   Function sinusoidal_ease_out!( t!, b!, c!, d! )
     t :/ d
-    Return c*Sin(t*(Pi/2.0)) + b
+    Return c*Sin(t*90.0) + b
   End Function
   
   Function sinusoidal_ease_in_out!( t!, b!, c!, d! )
     t :/ d
-    return -c/2.0*(Cos(t*Pi) - 1.0) + b
+    Return -c/2.0*(Cos(t*180.0) - 1.0) + b
   End Function
-  
+  '__________________________________________________________
 End Type
 

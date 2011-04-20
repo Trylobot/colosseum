@@ -9,8 +9,8 @@ Type TUISplash Extends TUIObject
 	'assets
 	Field logo:PARTICLE
 	Field logo_tween_pos_y:TWEEN
-	Field logo_tween_scale:TWEEN
-	Field logo_tween_ang:TWEEN
+	Field logo_tween_alpha:TWEEN
+	Field reveal_tween_alpha:TWEEN
 	Field intro:TSound
 	'menu system
 	Field item:Object
@@ -20,13 +20,13 @@ Type TUISplash Extends TUIObject
 	End Method
 	
   Method Construct( ..
-	logo:TImage, ..
+	logo_img:TImage, ..
 	intro:TSound, ..
 	handler(item:Object) = Null, item:Object = Null )
-		Self.logo = PARTICLE(PARTICLE.Create( PARTICLE_TYPE_IMG, logo,,,,,,,,,,,,,,,, (SETTINGS_REGISTER.WINDOW_WIDTH.get() / 2), 0 ))
-		Self.logo_tween_pos_y = TWEEN.Create( 300.0, -300.0, 500.0, TWEEN.quadratic_ease_out )
-		Self.logo_tween_scale = TWEEN.Create(   4.0,   -3.0, 500.0, TWEEN.quadratic_ease_out )
-		Self.logo_tween_ang   = TWEEN.Create(  25.0,  -25.0, 500.0, TWEEN.quadratic_ease_out )
+		logo = PARTICLE(PARTICLE.Create( PARTICLE_TYPE_IMG, logo_img,,,,,,,,,,,,,,,, (SETTINGS_REGISTER.WINDOW_WIDTH.get() / 2), 0 ))
+		logo_tween_pos_y = TWEEN.Create( -logo_img.height/2, +logo_img.height/2, 500.0, TWEEN.quadratic_ease_out )
+		logo_tween_alpha = TWEEN.Create( 0.0, +1.0, 500.0, TWEEN.quadratic_ease_out )
+		reveal_tween_alpha = TWEEN.Create( 1.0, -1.0, 750.0, TWEEN.quadratic_ease_in_out )
 		Self.intro = intro
 		Self.item = item
 		Self.handler = TUIEventHandler.Create( handler )
@@ -35,22 +35,33 @@ Type TUISplash Extends TUIObject
 	Method on_show()
 		play_sound( intro )
 		logo_tween_pos_y.rewind()
-		logo_tween_scale.rewind()
-		logo_tween_ang.rewind()
+		logo_tween_alpha.rewind()
+		reveal_tween_alpha.rewind()
 	End Method
 
   Method draw()
-		Local base_scale# = Float(SETTINGS_REGISTER.WINDOW_WIDTH.get()) / Float(logo.img.width)
-		logo.scale = base_scale * logo_tween_scale.get()
+		'reveal cover
+		If Not logo_tween_pos_y.is_finished()
+			SetAlpha( 1 )
+		Else
+			SetAlpha( reveal_tween_alpha.get() )
+		End If
+		SetColor( 255, 255, 255 )
+		DrawRect( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
+		'logo
+		SetAlpha( 1 )
 		logo.pos_y = logo_tween_pos_y.get()
-		logo.ang = logo_tween_ang.get()
+		logo.alpha = logo_tween_alpha.get()
+		logo.scale = Float(SETTINGS_REGISTER.WINDOW_WIDTH.get()) / Float(logo.img.width)
 		logo.draw()
   End Method
 	
 	Method service( time_elapsed! )
+		If logo_tween_pos_y.is_finished()
+			reveal_tween_alpha.service( time_elapsed )
+		End If
 		logo_tween_pos_y.service( time_elapsed )
-		logo_tween_scale.service( time_elapsed )
-		logo_tween_ang.service( time_elapsed )
+		logo_tween_alpha.service( time_elapsed )
 	End Method
   
   Method on_mouse_click%( mx%, my% )

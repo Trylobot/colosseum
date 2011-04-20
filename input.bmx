@@ -83,11 +83,15 @@ Function get_all_input()
 					MENU_REGISTER.get_top().on_mouse_move( mouse.pos_x, mouse.pos_y )
 				End If
 			Else
-				cmd_show_previous_menu()
+				If current_menu <> MENU_REGISTER.root 'not at root menu
+					cmd_show_previous_menu()
+				End If
 			End If
 		End If
 		If mouse_clicked_2()
-			cmd_show_previous_menu()
+			If current_menu <> MENU_REGISTER.root 'not at root menu
+				cmd_show_previous_menu()
+			End If
 		End If
 	'non-menu input mode (game mode)
 	Else 'Not FLAG_in_menu
@@ -141,16 +145,16 @@ End Function
 
 '______________________________________________________________________________
 Function get_mouse_position()
-	mouse_delta.x = MouseX() - mouse.pos_x
-	mouse_delta.y = MouseY() - mouse.pos_y
+	mouse_delta.x = Float(MouseX())/global_scale - mouse.pos_x
+	mouse_delta.y = Float(MouseY())/global_scale - mouse.pos_y
 	If  mouse_delta.x = 0 ..
 	And mouse_delta.y = 0
 		mouse_idle = True
 	Else
 		mouse_idle = False
 	End If
-	mouse.pos_x = MouseX()
-	mouse.pos_y = MouseY()
+	mouse.pos_x = Float(MouseX())/global_scale
+	mouse.pos_y = Float(MouseY())/global_scale
 End Function
 
 '______________________________________________________________________________

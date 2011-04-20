@@ -73,6 +73,14 @@ Function Pow#( x#, p% )
 	Return x
 End Function
 
+Function Pow2Size:Int( n:Int )
+	Local t:Int=1
+	While t<n
+		t:*2
+	Wend
+	Return t
+End Function
+
 Function average#( n#[] ) 'returns the average value of a given list of numbers
 	If n <> Null And n.Length > 0
 		Local sum# = 0

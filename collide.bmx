@@ -171,7 +171,6 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 	'/////////
 	'if the player killed an enemy with this projectile, reward player
 	If ag.dead() ..
-	And profile ..
 	And game.human_participation ..
 	And proj.source_id = get_player_id() ..
 	And COMPLEX_AGENT( ag ) 'ding! cash popup near splodey

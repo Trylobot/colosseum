@@ -15,13 +15,11 @@ Function cmd_show_menu( item:Object = Null )
 	Local m:TUIObject = TUIObject(item)
 	If m
 		MENU_REGISTER.push( m )
-		MENU_REGISTER.get_top().on_show()
 	End If
 End Function
 
 Function cmd_show_previous_menu( item:Object = Null )
 	MENU_REGISTER.pop()
-	MENU_REGISTER.get_top().on_show()
 End Function
 
 Function cmd_play_level( item:Object )
@@ -77,8 +75,8 @@ End Function
 Function cmd_set_screen_resolution( item:Object )
 	Local mode:TGraphicsMode = TGraphicsMode( item )
 	If mode
-		SETTINGS_REGISTER.WINDOW_WIDTH.set( mode.width )
-		SETTINGS_REGISTER.WINDOW_HEIGHT.set( mode.height )
+		SETTINGS_REGISTER.ACTUAL_WINDOW_WIDTH.set( mode.width )
+		SETTINGS_REGISTER.ACTUAL_WINDOW_HEIGHT.set( mode.height )
 		SETTINGS_REGISTER.BIT_DEPTH.set( mode.depth )
 		SETTINGS_REGISTER.REFRESH_RATE.set( mode.hertz )
 		SETTINGS_REGISTER.GRAPHICS_MODE.resolve()

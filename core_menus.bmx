@@ -16,11 +16,13 @@ Type MENU_REGISTER
 	Function push( m:TUIObject )
 		If Not stack Then stack = CreateList()
 		stack.AddLast( m )
+		get_top().on_show()
 	End Function
 	
 	Function pop()
 		If stack And stack.Last() <> root
 			stack.RemoveLast()
+			get_top().on_show()
 		End If
 	End Function
 	
