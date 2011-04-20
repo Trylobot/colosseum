@@ -82,6 +82,13 @@ Type TUIImageGrid Extends TUIObject
 	End Method
 	
 	Method draw()
+		SetRotation( 0 )
+		SetAlpha( 0.775 )
+		SetColor( 0, 0, 0 )	
+		DrawRect( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
+		
+		SetAlpha( 1.0 )
+		SetColor( 255, 255, 255 )	
 		Local item_rect:BOX = New BOX
 		Local x%, y%
 		Local text_x%
@@ -94,7 +101,6 @@ Type TUIImageGrid Extends TUIObject
 		Local border_color:TColor
 		Local font:FONT_STYLE
 		Local label$
-		SetRotation( 0 )
 		
 		For Local r% = 0 Until item_images.Length
 			For Local c% = 0 Until item_images[r].Length

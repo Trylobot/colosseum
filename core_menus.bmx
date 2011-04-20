@@ -68,6 +68,10 @@ Function initialize_menus()
 	Local menu_x% = 10, menu_y% = 70
 	
 	Local splash_screen:TUISplash = New TUISplash
+	Local level_select_menu:TUIImageGrid = New TUIImageGrid
+	Local pause_menu:TUIList = New TUIList
+
+	Rem
 	Local main_menu:TUIList = New TUIList
 		Local level_select_menu:TUIImageGrid = New TUIImageGrid
 		Local profile_menu:TUIList = New TUIList
@@ -79,6 +83,7 @@ Function initialize_menus()
 		Local advanced_menu:TUIList = New TUIList
 			Local play_custom_level_menu:TUIList = New TUIList
 	Local pause_menu:TUIList = New TUIList
+	EndRem
 
 	'/////////////////
 	
@@ -87,6 +92,7 @@ Function initialize_menus()
 		get_sound( "title_intro" ), ..
 		cmd_show_menu, level_select_menu )
 
+	Rem
 	main_menu.Construct( ..
 		"COLOSSEUM", 5, ..
 		dark_gray, white, black, white, ..
@@ -103,6 +109,7 @@ Function initialize_menus()
 	main_menu.set_item( idx(), "SETTINGS", cmd_show_menu, settings_menu )
 	main_menu.set_item( idx(), "ADVANCED", cmd_show_menu, advanced_menu )
 	main_menu.set_item( idx(), "QUIT GAME", cmd_quit_game )
+	EndRem
 	
 	Local level_grid_dimensions%[] = New Int[level_grid.Length]
 	For Local d% = 0 Until level_grid_dimensions.Length
@@ -141,6 +148,7 @@ Function initialize_menus()
 	Next
 	MENU_REGISTER.level_select = level_select_menu
 	
+	Rem
 	profile_menu.Construct( ..
 		"PROFILE", 3, ..
 		dark_gray, white, black, white, ..
@@ -155,7 +163,9 @@ Function initialize_menus()
 	profile_menu.set_item( idx(), "SAVE PROFILE", cmd_save_profile,, SETTINGS_REGISTER.PLAYER_PROFILE_NAME )
 	profile_menu.set_item( idx(), "CREATE NEW", cmd_create_new_profile )
 	profile_menu.set_item( idx(), "SWITCH PROFILES", cmd_load_profile )
+	EndRem
 	
+	Rem
 	settings_menu.Construct( ..
 		"SETTINGS", 3, ..
 		dark_gray, white, black, white, ..
@@ -170,7 +180,9 @@ Function initialize_menus()
 	settings_menu.set_item( idx(), "GAME PERFORMANCE", cmd_show_menu, performance_settings_menu )
 	settings_menu.set_item( idx(), "VIDEO SETTINGS", cmd_show_menu, video_settings_menu )
 	settings_menu.set_item( idx(), "AUDIO SETTINGS", cmd_show_menu, audio_settings_menu )
+	EndRem
 	
+	Rem
 	performance_settings_menu.Construct( ..
 		"GAME PERFORMANCE", 2, ..
 		dark_gray, white, black, white, ..
@@ -193,7 +205,9 @@ Function initialize_menus()
 	popup.x = pos.x
 	popup.y = pos.y
 	video_settings_menu.set_item( idx(), "MAX PARTICLES", cmd_change_setting_integer, popup, SETTINGS_REGISTER.ACTIVE_PARTICLE_LIMIT )
+	EndRem
 	
+	Rem
 	video_settings_menu.Construct( ..
 		"VIDEO SETTINGS", 2, ..
 		dark_gray, white, black, white, ..
@@ -208,7 +222,9 @@ Function initialize_menus()
 	idx( True )
 	video_settings_menu.set_item( idx(), "FULL-SCREEN", cmd_toggle_setting, SETTINGS_REGISTER.FULL_SCREEN, SETTINGS_REGISTER.FULL_SCREEN )
 	video_settings_menu.set_item( idx(), "RESOLUTION", cmd_show_menu, screen_resolution_menu, SETTINGS_REGISTER.GRAPHICS_MODE )
+	EndRem
 	
+	Rem
 	Local modes:TGraphicsMode[] = GraphicsModes()
 	Local resolutions:TList = CreateList()
 	Local refresh_rates:TList = CreateList()
@@ -265,7 +281,8 @@ Function initialize_menus()
 		screen_resolution_menu.set_item( idx(), res_str, cmd_set_screen_resolution, res )
 	Next
 	'screen_resolution_menu.set_menu_show_event_handler( cmd_select_current_screen_resolution )
-
+	EndRem
+	
 	Rem
 	Local modes:TGraphicsMode[] = GraphicsModes()
 	screen_resolution_menu.Construct( ..
@@ -285,6 +302,7 @@ Function initialize_menus()
 	screen_resolution_menu.set_menu_show_event_handler( cmd_select_current_screen_resolution )
 	EndRem
 	
+	Rem
 	audio_settings_menu.Construct( ..
 		"AUDIO SETTINGS", 3, ..
 		dark_gray, white, black, white, ..
@@ -299,7 +317,9 @@ Function initialize_menus()
 	audio_settings_menu.set_item( idx(), "EFFECTS VOLUME" )
 	audio_settings_menu.set_item( idx(), "MUSIC VOLUME" )
 	audio_settings_menu.set_item( idx(), "AUDIO DRIVER" )
+	EndRem
 	
+	Rem
 	advanced_menu.Construct( ..
 		"ADVANCED", 4, ..
 		dark_gray, white, black, white, ..
@@ -316,7 +336,9 @@ Function initialize_menus()
 	advanced_menu.set_item( idx(), "UNIT EDITOR", cmd_enter_unit_editor )
 	advanced_menu.set_item( idx(), "GIBS EDITOR", cmd_enter_gibs_editor )
 	advanced_menu.set_item( idx(), "RELOAD DATA", cmd_reload_assets )
+	EndRem
 	
+	Rem
 	play_custom_level_menu.Construct( ..
 		"PLAY LEVEL", 0, ..
 		dark_gray, white, black, white, ..
@@ -328,6 +350,7 @@ Function initialize_menus()
 		,,,, ..
 		menu_x, menu_y )
 	play_custom_level_menu.set_menu_show_event_handler( cmd_refresh_custom_level_list )
+	EndRem
 	
 	pause_menu.Construct( ..
 		"PAUSED", 4, ..
@@ -341,9 +364,9 @@ Function initialize_menus()
 		menu_x, menu_y )
 	idx( True )
 	pause_menu.set_item( idx(), "RESUME", cmd_unpause_game )
-	pause_menu.set_item( idx(), "SETTINGS", cmd_show_menu, settings_menu )
-	pause_menu.set_item( idx(), "QUIT LEVEL", cmd_quit_level )
-	pause_menu.set_item( idx(), "QUIT GAME", cmd_quit_game )
+	pause_menu.set_item( idx(), "SETTINGS", Null, Null )
+	pause_menu.set_item( idx(), "ABORT LEVEL", cmd_quit_level )
+	pause_menu.set_item( idx(), "EXIT GAME", cmd_quit_game )
 	MENU_REGISTER.pause = pause_menu
 	
 	'/////////////////

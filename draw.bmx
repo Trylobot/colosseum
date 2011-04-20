@@ -249,9 +249,11 @@ End Function
 '______________________________________________________________________________
 'Menu and GUI
 Function draw_main_screen()
+	Rem
 	Local x%, y%, h%
 	Local fg_font:BMP_FONT = get_bmp_font( "arcade_7" )
 	Local bg_font:BMP_FONT = get_bmp_font( "arcade_7_outline" )
+	EndRem
 
 	Rem
 	'menu options
@@ -272,6 +274,7 @@ Function draw_main_screen()
 	End If
 	'/////////////
 	
+	Rem
 	'credits & copyrights, and info string
 	h = fg_font.height
 	x = 10
@@ -285,7 +288,9 @@ Function draw_main_screen()
 		SetColor( 20, 20, 20 )
 		bg_font.draw_string( colosseum_credits, x, y )
 	End If
+	EndRem
 	
+	Rem
 	'info
 	y :- h*2
 	'SetImageFont( get_font( "consolas_italic_12" ))
@@ -296,6 +301,7 @@ Function draw_main_screen()
 	fg_font.draw_string( info, x, y )
 	SetColor( 20, 20, 20 )
 	bg_font.draw_string( info, x, y )
+	EndRem
 	
 End Function
 
