@@ -26,7 +26,7 @@ Function debug_pre_main()
 	'play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
-	play_debug_level()
+	'play_debug_level()
   'test_bmp_fonts()
   'test_ui_list()
 	

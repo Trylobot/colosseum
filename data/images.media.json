@@ -71,7 +71,6 @@
 			handle_x: 12.5,
 			handle_y: 3.0,
 			frames: 1,
-      filtered: false,
 		}
 	},
 	{
@@ -134,7 +133,6 @@
 			handle_x: 16.5,
 			handle_y: 4.0,
 			frames: 1,
-      filtered: false,
 		}
 	},
 	{
