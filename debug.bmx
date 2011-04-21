@@ -32,7 +32,8 @@ Function debug_pre_main()
   'test_bmp_fonts()
   'test_ui_list()
 	'test_tweens
-	level_editor()
+	'level_editor()
+	
 End Function
 
 Function debug_main()
