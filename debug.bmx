@@ -32,6 +32,7 @@ Function debug_pre_main()
   'test_bmp_fonts()
   'test_ui_list()
 	'test_tweens
+	level_editor()
 End Function
 
 Function debug_main()
@@ -566,7 +567,7 @@ Function debug_fps()
 	SetRotation( 0 )
 	SetAlpha( 1 )
 	SetColor( 255, 255, 127 )
-	SetImageFont( get_font( "consolas_bold_12" ))
+	'SetImageFont( get_font( "consolas_bold_12" ))
 	Local fps_str$ = "fps "+fps
 	sx = 2
 	sy = 2
@@ -581,7 +582,7 @@ Function debug_drawtext( message$, h% = 10 )
 	GetColor( r%, g%, b% )
 	SetColor( 0, 0, 0 )
 	SetAlpha( 0.65 )
-	SetImageFont( get_font( "consolas_10" ))
+	'SetImageFont( get_font( "consolas_10" ))
 	DrawRect( sx, sy, TextWidth( message + " " ) + 1, h)
 	SetAlpha( 1 )
 	SetColor( r, g, b )
@@ -621,7 +622,7 @@ Function debug_drawline( arg1:Object, arg2:Object, a_msg$ = Null, b_msg$ = Null,
 	'DrawOval( b.x-2,b.y-2, 5,5 )
 	'DrawOval( m.x-2,m.y-2, 5,5 )
 	''messages
-	'SetImageFont( get_font( "consolas_10" ))
+	''SetImageFont( get_font( "consolas_10" ))
 	'DrawText( a_msg, Int(a.x+2),Int(a.y+2) )
 	'DrawText( b_msg, Int(b.x+2),Int(b.y+2) )
 	'DrawText( m_msg, Int(m.x+2),Int(m.y+2) )

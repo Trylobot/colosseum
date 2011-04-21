@@ -14,7 +14,6 @@ EndRem
 '______________________________________________________________________________
 Const art_path$ = "art/"
 Const data_path$ = "data/"
-Const font_path$ = "fonts/"
 Const level_path$ = "levels/"
 Const sound_path$ = "sound/"
 Const user_path$ = "user/"
@@ -29,7 +28,6 @@ Const autosave_path$ = user_path + "autosave" + "." + settings_file_ext
 Const settings_path$ = user_path + "settings" + "." + settings_file_ext
 
 Global asset_files$[] = [ ..
-	"fonts", ..
 	"sounds", ..
 	"images", ..
 	"bmp_fonts", ..
@@ -50,14 +48,9 @@ Global asset_files$[] = [ ..
 ]
 
 '______________________________________________________________________________
-Global font_map:TMap = CreateMap()
 Global sound_map:TMap = CreateMap()
 Global image_map:TMap = CreateMap()
 Global level_grid$[][]
-
-Function get_font:TImageFont( key$ ) 'returns read-only reference
-	Return TImageFont( font_map.ValueForKey( key.toLower() ))
-End Function
 
 Function get_sound:TSound( key$ ) 'returns read-only reference
 	Return TSound( sound_map.ValueForKey( key.toLower() ))

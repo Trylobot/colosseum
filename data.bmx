@@ -102,9 +102,6 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 			DebugLog( "    " + key )
 			Local object_json:TJSON = TJSON.Create( item.GetObject( "object" ))
 			Select item.GetString( "class" ).Trim()
-				Case "font"
-					Local f:TImageFont = Create_TImageFont_from_json( object_json )
-					If f Then font_map.Insert( key, f ) Else load_error( object_json )
 				Case "bmp_font"
 					Local f:BMP_FONT = BMP_FONT.Create_from_json( object_json )
 					If f Then bmp_font_map.Insert( key, f ) Else load_error( object_json )
@@ -162,14 +159,6 @@ Function load_objects%( json:TJSON, source_file$ = Null )
 			End Select
 		End If
 	Next
-End Function
-
-'_____________________________________________________________________________
-Function Create_TImageFont_from_json:TImageFont( json:TJSON )
-	Local path$, size%
-	path = json.GetString( "path" )
-	size = json.GetNumber( "size" )
-	Return LoadImageFont( path, size )
 End Function
 
 '______________________________________________________________________________
@@ -387,7 +376,6 @@ End Function
 Function create_dirs()
 	CreateDir( art_path )
 	CreateDir( data_path )
-	CreateDir( font_path )
 	CreateDir( level_path )
 	CreateDir( sound_path )
 	CreateDir( user_path )

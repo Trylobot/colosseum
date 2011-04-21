@@ -67,8 +67,8 @@ Function level_editor()
 	Local cursor_archetype$ = unit_keys[cursor_archetype_index]
 	Local sp_delay_time$
 	
-	Local normal_font:TImageFont = get_font( "consolas_12" )
-	Local bigger_font:TImageFont = get_font( "consolas_bold_24" )
+	'Local normal_font:TImageFont = get_font( "consolas_12" )
+	'Local bigger_font:TImageFont = get_font( "consolas_bold_24" )
 	Local line_h% = 10
 	
 	Local choose_level_file_menu:TUIList = New TUIList
@@ -93,7 +93,7 @@ Function level_editor()
 	
 	Repeat
 		Cls()
-		SetImageFont( normal_font )
+		'SetImageFont( normal_font )
 		
 		lev = level_editor_cache
 		
@@ -282,7 +282,7 @@ Function level_editor()
 		SetColor( 255, 255, 255 )
 		info_x :+ 8; info_y :+ 10
 		
-		SetImageFont( normal_font )
+		'SetImageFont( normal_font )
 
 		'mode help
 		DrawText_with_shadow( ""+..
@@ -315,13 +315,13 @@ Function level_editor()
 		End Select; info_y :+ 1.5*line_h
 		
 		'level name/title
-		SetImageFont( bigger_font )
+		'SetImageFont( bigger_font )
 		DrawText_with_outline( lev.name, info_x, info_y )
 		Local title_y% = info_y
 		info_y :+ GetImageFont().Height() - 1
 		
 		'level info
-		SetImageFont( normal_font )
+		'SetImageFont( normal_font )
 		DrawText_with_shadow( "size: "+lev.width+" x "+lev.height, info_x,info_y ); info_y :+ 1.5*line_h
 		DrawText_with_shadow( "pathing regions: "+lev.row_count*lev.col_count, info_x,info_y ); info_y :+ line_h
 		DrawText_with_shadow( "unit factories: "+lev.unit_factories.Length, info_x,info_y ); info_y :+ line_h
@@ -386,7 +386,7 @@ Function level_editor()
 					DrawText_with_shadow( "ctrl+click to drag", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 					DrawText_with_shadow( "alt+click to join", mouse.pos_x+10,mouse.pos_y+h ); h :+ line_h
 					Local pos_str$ = ""
-					SetImageFont( get_font( "consolas_bold_14" ))
+					'SetImageFont( get_font( "consolas_bold_14" ))
 					gridsnap_mouse.x = round_to_nearest( mouse.pos_x, gridsnap )
 					gridsnap_mouse.y = round_to_nearest( mouse.pos_y, gridsnap )
 					SetColor( 255, 255, 255 )

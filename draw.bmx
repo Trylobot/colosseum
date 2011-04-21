@@ -515,10 +515,10 @@ Function draw_win()
 	SetScale( 1, 1 )
 	SetRotation( 0 )
 	SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 1200 ))
-	SetImageFont( get_font( "consolas_bold_50" ))
+	'SetImageFont( get_font( "consolas_bold_50" ))
 	Local m1$ = "LEVEL COMPLETED!"
 	DrawText_with_outline( m1, SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - TextWidth(m1)/2, 10 )
-	SetImageFont( get_font( "consolas_12" ))
+	'SetImageFont( get_font( "consolas_12" ))
 	Local m2$ = "press enter to continue"
 	DrawText_with_outline( m2, SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - TextWidth(m2)/2, 50 )
 	
@@ -535,10 +535,10 @@ Function draw_game_over()
 	'message
 	SetColor( 255, 0, 0 )
 	SetAlpha( 1.0*time_alpha_pct( game.battle_state_toggle_ts, 800 ))
-	SetImageFont( get_font( "consolas_bold_100" ))
+	'SetImageFont( get_font( "consolas_bold_100" ))
 	Local m1$ = "GAME OVER."
 	DrawText_with_outline( m1, SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - TextWidth(m1)/2, 10 )
-	SetImageFont( get_font( "consolas_12" ))
+	'SetImageFont( get_font( "consolas_12" ))
 	Local m2$ = "press enter to continue"
 	DrawText_with_outline( m2, SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - TextWidth(m2)/2, 150 )
 End Function
@@ -590,7 +590,7 @@ End Function
 Function draw_nametag( name$, anchor:cVEC, y_offset% = 27 )
 	anchor = anchor.clone()
 	anchor.y :+ y_offset
-	SetImageFont( get_font( "consolas_bold_10" ))
+	'SetImageFont( get_font( "consolas_bold_10" ))
 	Local tw% = TextWidth( name )
 	Local h% = 10
 	SetAlpha( 1 )
