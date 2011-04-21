@@ -500,6 +500,16 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/effects/projectile_hitbox.png",
+			handle_x: 6.5,
+			handle_y: 3.5,
+			frames: 1
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/effects/mgun.png",
 			handle_x: 4.5,
 			handle_y: 1.5,

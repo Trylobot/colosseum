@@ -185,8 +185,9 @@ Function Create_PROJECTILE_from_json:PROJECTILE( json:TJSON )
 	'no required fields
 	p = Create_PROJECTILE()
 	'read and assign optional fields as available
-	If JSON.TypeOf( "image_key" ) <> JSON_UNDEFINED                 Then p.img = get_image( JSON.GetString( "image_key" ))
-	p.hitbox_img = p.img
+	If json.TypeOf( "image_key" ) <> JSON_UNDEFINED                 Then p.img = get_image( json.GetString( "image_key" ))
+	If json.TypeOf( "hitbox_image_key" ) <> JSON_UNDEFINED          Then p.hitbox_img = get_image( json.GetString( "hitbox_image_key" ))
+	If Not p.hitbox_img Then p.hitbox_img = p.img
 	If json.TypeOf( "impact_sound_key" ) <> JSON_UNDEFINED          Then p.snd_impact = get_sound( json.GetString( "impact_sound_key" ))
 	If json.TypeOf( "damage" ) <> JSON_UNDEFINED                    Then p.damage = json.GetNumber( "damage" )
 	If json.TypeOf( "explosive_force_magnitude" ) <> JSON_UNDEFINED Then p.explosive_force_magnitude = json.GetNumber( "explosive_force_magnitude" )

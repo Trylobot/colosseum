@@ -3,12 +3,8 @@
 		class: "projectile",
 		key: "tank_cannon",
 		object: {
-      geometry: {
-        primitive: "rectangle",
-        width: 5,
-        height: 3,
-      },
-			image_key: "projectile",
+      image_key: "projectile",
+      hitbox_image_key: "projectile_hitbox"
 			impact_sound_key: "cannon_hit",
 			damage: 50,
 			explosive_force_magnitude: 1000,
