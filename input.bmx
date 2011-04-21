@@ -22,7 +22,7 @@ Global last_menu_service_ts%
 
 
 Function get_all_input()
-	get_mouse_position()
+	get_mouse_position( global_scale )
 	
 	'hide/ignore mouse
 	If Not FLAG.in_menu And game <> Null And game.human_participation And game.player_brain <> Null
@@ -144,17 +144,17 @@ Function get_all_input()
 End Function
 
 '______________________________________________________________________________
-Function get_mouse_position()
-	mouse_delta.x = Float(MouseX())/global_scale - mouse.pos_x
-	mouse_delta.y = Float(MouseY())/global_scale - mouse.pos_y
+Function get_mouse_position( scale# = 1.0 )
+	mouse_delta.x = Float(MouseX())/scale - mouse.pos_x
+	mouse_delta.y = Float(MouseY())/scale - mouse.pos_y
 	If  mouse_delta.x = 0 ..
 	And mouse_delta.y = 0
 		mouse_idle = True
 	Else
 		mouse_idle = False
 	End If
-	mouse.pos_x = Float(MouseX())/global_scale
-	mouse.pos_y = Float(MouseY())/global_scale
+	mouse.pos_x = Float(MouseX())/scale
+	mouse.pos_y = Float(MouseY())/scale
 End Function
 
 '______________________________________________________________________________
