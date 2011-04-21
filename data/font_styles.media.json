@@ -1,0 +1,38 @@
+[
+	{
+		class: "font_style",
+		key: "cash_green",
+		object: {
+			foreground: {
+        font_key: "arcade_7",
+        red: 85,
+        green: 255,
+        blue: 85
+      },
+      background: {
+        font_key: "arcade_7_outline",
+        red: 10,
+        green: 75,
+        blue: 10
+      }
+		}
+	},
+	{
+		class: "font_style",
+		key: "cash_red",
+		object: {
+			foreground: {
+        font_key: "arcade_7",
+        red: 255,
+        green: 85,
+        blue: 85
+      },
+      background: {
+        font_key: "arcade_7_outline",
+        red: 75,
+        green: 10,
+        blue: 10
+      }
+		}
+	},
+]

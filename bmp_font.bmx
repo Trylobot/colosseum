@@ -8,7 +8,8 @@ EndRem
 'Import "json.bmx"
 
 '______________________________________________________________________________
-Global bmp_font_map:TMap = CreateMap() 
+Global bmp_font_map:TMap = CreateMap()
+Global font_style_map:TMap = CreateMap()
 
 Function get_bmp_font:BMP_FONT( key$ )
 	Return BMP_FONT( bmp_font_map.ValueForKey( key.toLower() ))
@@ -16,6 +17,10 @@ End Function
 
 Function get_bmp_font_outline:BMP_FONT( key$ )
 	Return BMP_FONT( bmp_font_map.ValueForKey( key.toLower() + "_outline" ))
+End Function
+
+Function get_font_style:FONT_STYLE( key$ )
+	Return FONT_STYLE( font_style_map.ValueForKey( key.ToLower() ))
 End Function
 
 '______________________________________________________________________________
@@ -48,6 +53,20 @@ Type FONT_STYLE
 		End If
     Return fs
   End Function
+	
+	Function Create_from_JSON:FONT_STYLE( json:TJSON )
+		Return FONT_STYLE.Create( ..
+			get_bmp_font( json.GetString( "foreground.font_key" )), ..
+			get_bmp_font( json.GetString( "background.font_key" )), ..
+			TColor.Create_by_RGB( ..
+				json.GetNumber( "foreground.red" ), ..
+				json.GetNumber( "foreground.green" ), ..
+				json.GetNumber( "foreground.blue" )), ..
+			TColor.Create_by_RGB( ..
+				json.GetNumber( "background.red" ), ..
+				json.GetNumber( "background.green" ), ..
+				json.GetNumber( "background.blue" )) )
+	End Function
   
 	Function Create_BMP_FONT_from_obj:BMP_FONT( obj:Object )
 		If String(obj)

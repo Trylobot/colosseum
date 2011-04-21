@@ -28,16 +28,12 @@ Const level_preview_ext$ = "preview.png"
 Const autosave_path$ = user_path + "autosave" + "." + settings_file_ext
 Const settings_path$ = user_path + "settings" + "." + settings_file_ext
 
-Global texture_atlas_files$[] = [ ..
-  "texture_atlas_filtered", ..
-  "texture_atlas_raw" ..
-]
-
 Global asset_files$[] = [ ..
 	"fonts", ..
 	"sounds", ..
 	"images", ..
 	"bmp_fonts", ..
+	"font_styles", ..
 	"props", ..
 	"particles", ..
 	"particle_emitters", ..

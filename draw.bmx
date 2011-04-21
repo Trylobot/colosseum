@@ -356,8 +356,11 @@ Function draw_HUD()
 	Local x%, y%, y1%, y2%, w%, h%
 	Local str$
 	
-	SetImageFont( get_font( "consolas_bold_12" ))
-	Local hud_height% = 2*(GetImageFont().Height() + 3)
+	'SetImageFont( get_font( "consolas_bold_12" ))
+	'Local hud_height% = 2*(GetImageFont().Height() + 3)
+	Local fg_font:BMP_FONT = get_bmp_font( "arcade_7" )
+	Local bg_font:BMP_FONT = get_bmp_font( "arcade_7_outline" )
+	Local hud_height% = 2*bg_font.height + 3
 	
 	x = 0
 	y1 = SETTINGS_REGISTER.WINDOW_HEIGHT.get() - hud_height
@@ -387,18 +390,22 @@ Function draw_HUD()
 	
 	y = y2
 	'player cash
-	SetColor( 85, 255, 85 ) 'Cash Green
-	SetImageFont( get_font( "consolas_bold_14" ))
 	str = "$" + format_number( profile.cash )
-	DrawText_with_outline( str, x, y+1-3 )
-	If now() - last_kill_ts <= 1250
-		SetAlpha( time_alpha_pct( last_kill_ts, 1250, False ))
-		DrawText_with_glow( str, x, y+1-3 )
+	SetAlpha( 1 )
+	SetColor( 255, 255, 255 )
+	draw_layered_string( str, x, y, fg_font, bg_font, 85,255,85, 10,75,10 )
+	Local life_time% = (get_particle("cash_positive",,False).life_time)
+	If now() - last_kill_ts <= life_time
+		SetAlpha( time_alpha_pct( last_kill_ts, life_time, False ))
+		SetColor( 85, 255, 85 ) 'Cash Green
+		SetScale( 1, 0.65 )
+		DrawImage( get_image( "halo" ), x + fg_font.width(str)/2.0, y + fg_font.height )
 		SetAlpha( 0.3333*GetAlpha() )
-		DrawImage( get_image( "halo" ), x + TextWidth(str)/2.0, y+1-3 + TextHeight(str)/2.0 )
+		SetColor( 255, 255, 255 )
+		SetScale( 1, 1 )
+		draw_layered_string( str, x, y, fg_font,, 255,255,255 )
 	End If
 	x :+ w + HORIZONTAL_HUD_MARGIN
-	SetImageFont( get_font( "consolas_10" ))
 	SetAlpha( 1 )
 	
 	'player ammo, overheat & charge indicators
@@ -411,7 +418,7 @@ Function draw_HUD()
 		'turret name
 		If t.name <> Null And t.name <> ""
 			SetColor( 196, 196, 196 );
-			DrawText_with_outline( t.name, x, y-3 ); 'x :+ TextWidth( t.name ) + 3
+			'DrawText_with_outline( t.name, x, y-3 ); 'x :+ TextWidth( t.name ) + 3
 		End If
 		'reloading/recharging bar
 		If t.class = TURRET.AMMUNITION
@@ -475,7 +482,7 @@ Function draw_HUD()
 	x = SETTINGS_REGISTER.WINDOW_WIDTH.get() - 10 - TextWidth( music_str )
 	y = y1
 	SetColor( 255, 255, 255 )
-	DrawText_with_outline( music_str, x, y )
+	'DrawText_with_outline( music_str, x, y )
 	y = y2
 	Local img_spkr:TImage
 	If bg_music_enabled
@@ -491,7 +498,7 @@ Function draw_HUD()
 	'help
 	SetColor( 232, 232, 232 )
 	SetAlpha( 1 )
-	DrawText_with_outline( "F1 for help", SETTINGS_REGISTER.WINDOW_WIDTH.get() - TextWidth("F1 for help") - 10, SETTINGS_REGISTER.WINDOW_HEIGHT.get() - 55 )
+	'DrawText_with_outline( "F1 for help", SETTINGS_REGISTER.WINDOW_WIDTH.get() - TextWidth("F1 for help") - 10, SETTINGS_REGISTER.WINDOW_HEIGHT.get() - 55 )
 	
 End Function
 

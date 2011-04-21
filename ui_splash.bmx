@@ -23,7 +23,7 @@ Type TUISplash Extends TUIObject
 	logo_img:TImage, ..
 	intro:TSound, ..
 	handler(item:Object) = Null, item:Object = Null )
-		logo = PARTICLE(PARTICLE.Create( PARTICLE_TYPE_IMG, logo_img,,,,,,,,,,,,,,,, (SETTINGS_REGISTER.WINDOW_WIDTH.get() / 2), 0 ))
+		logo = PARTICLE(PARTICLE.Create( PARTICLE_TYPE_IMG, logo_img,,,,,,,,,,,,,,, (SETTINGS_REGISTER.WINDOW_WIDTH.get() / 2), 0 ))
 		logo_tween_pos_y = TWEEN.Create( -logo_img.height/2, +logo_img.height/2, 500.0, TWEEN.quadratic_ease_out )
 		logo_tween_alpha = TWEEN.Create( 0.0, +1.0, 500.0, TWEEN.quadratic_ease_out )
 		reveal_tween_alpha = TWEEN.Create( 1.0, -1.0, 750.0, TWEEN.quadratic_ease_in_out )

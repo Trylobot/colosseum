@@ -164,7 +164,7 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 		Next
 	Next
 	''add damage sticky to agent
-	'ag.add_sticky( PARTICLE( PARTICLE.Create( img_stickies, Rand( 0, img_stickies.frames.Length - 1 ), LAYER_FOREGROUND, False, 0.0, 255, 255, 255, INFINITY, 0.0, 0.0, 0.0, 0.0, proj.ang, 0.0, 0.5, 0.0, 1.0, 0.0 ))).attach_at( proj.pos_x - ag.pos_x, proj.pos_y - ag.pos_y )
+	'ag.add_sticky( ? )
 	'/////////
 	'process damage, death, cash and pickups resulting from it
 	game.deal_damage( ag, proj.damage )
@@ -186,7 +186,7 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 			record_player_friendly_fire_kill( FRIENDLY_FIRE_PUNISHMENT_AMOUNT )
 			p.str = "$-" + FRIENDLY_FIRE_PUNISHMENT_AMOUNT
 		End If
-		p.pos_x = ag.pos_x
+		p.pos_x = ag.pos_x - p.font.width( p.str )/2
 		p.pos_y = ag.pos_y - 20.0
 		p.manage( game.particle_list_foreground ) 'cash is always a foreground particle
 	End If

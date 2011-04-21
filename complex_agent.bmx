@@ -309,6 +309,7 @@ Type COMPLEX_AGENT Extends AGENT
 		If spawning
 			alpha_override :* time_alpha_pct( spawn_begin_ts, spawn_time, True )
 		End If
+		Rem
 		'colored glow/shadow to display political alignment
 		If img
 			Select alignment
@@ -324,6 +325,7 @@ Type COMPLEX_AGENT Extends AGENT
 			SetScale( glow_scale, glow_scale )
 			DrawImage( get_image( "halo" ), pos_x, pos_y )
 		End If
+		EndRem
 		'widgets behind
 		For Local widget_list:TList = EachIn all_widget_lists
 			For Local w:WIDGET = EachIn widget_list
@@ -351,19 +353,21 @@ Type COMPLEX_AGENT Extends AGENT
 			SetScale( scale_override, scale_override )
 			SetRotation( ang )
 			DrawImage( img, pos_x, pos_y )
+			Rem
 			'chassis lighting effect
-			'If lightmap
-			'	SetBlend( LIGHTBLEND )
-			'	Local separation# = 360.0 / lightmap.cell_count
-			'	For Local i% = 0 Until lightmap.cell_count
-			'		Local diff# = Abs( ang_wrap( ang - ((i - 1) * separation )))
-			'		If diff < 90.0
-			'			SetAlpha( alpha_override * 0.5 * (90.0 - diff)/90.0 )
-			'			DrawImageRef( lightmap, pos_x, pos_y, i )
-			'		End If
-			'	Next
-			'	SetBlend( ALPHABLEND )
-			'End If
+			If lightmap
+				SetBlend( LIGHTBLEND )
+				Local separation# = 360.0 / lightmap.cell_count
+				For Local i% = 0 Until lightmap.cell_count
+					Local diff# = Abs( ang_wrap( ang - ((i - 1) * separation )))
+					If diff < 90.0
+						SetAlpha( alpha_override * 0.5 * (90.0 - diff)/90.0 )
+						DrawImageRef( lightmap, pos_x, pos_y, i )
+					End If
+				Next
+				SetBlend( ALPHABLEND )
+			End If
+			EndRem
 		End If
 		'widgets in front of
 		For Local widget_list:TList = EachIn all_widget_lists

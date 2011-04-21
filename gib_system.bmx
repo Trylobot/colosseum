@@ -34,7 +34,7 @@ Type GIB_SYSTEM
 		Rem
 		If gibs <> Null
 			For Local i% = 0 To gibs.cell_count - 1
-				Local gib:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, gibs, i,,,,, LAYER_BACKGROUND, True, 0.100,,,,,,, 750 ))
+				Local gib:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, gibs, i,,,, LAYER_BACKGROUND, True, 0.100,,,,,,, 750 ))
 				Local gib_offset#, gib_offset_ang#
 				cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
 				gib.pos_x = pos_x + gib_offset*Cos( gib_offset_ang + ang )
@@ -87,7 +87,7 @@ Function Create_GIB_SYSTEM_from_json:GIB_SYSTEM( json:TJSON )
 			img = LoadImage( image_path )
 			offset_x = gib_json.GetNumber( "offset_x" )
 			offset_y = gib_json.GetNumber( "offset_y" )
-			Local p:PARTICLE = PARTICLE(PARTICLE.Create( PARTICLE_TYPE_IMG, img,,,,,, LAYER_BACKGROUND, True, 0.100,,,,,,, 750 ))
+			Local p:PARTICLE = PARTICLE(PARTICLE.Create( PARTICLE_TYPE_IMG, img,,,,, LAYER_BACKGROUND, True, 0.100,,,,,,, 750 ))
 			p.attach_at( offset_x, offset_y )
 			g.gibs[i] = p
 			speed = gib_json.GetNumber( "speed" )

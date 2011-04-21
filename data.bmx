@@ -111,6 +111,9 @@ Function load_objects%( json:TJSON, source_file$ = Null )
         Case "bmp_font_copy"
           Local f:BMP_FONT = BMP_FONT.Create_copy_from_json( object_json )
           If f Then bmp_font_map.Insert( key, f ) Else load_error( object_json )
+        Case "font_style"
+          Local s:FONT_STYLE = FONT_STYLE.Create_from_json( object_json )
+          If s Then font_style_map.Insert( key, s ) Else load_error( object_json )
 				Case "sound"
 					Local s:TSound = Create_TSound_from_json( object_json )
 					If s Then sound_map.Insert( key, s ) Else load_error( object_json )
