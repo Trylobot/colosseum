@@ -327,24 +327,32 @@ End Function
 Global last_pos:POINT
 Global cur_alpha#, last_alpha#
 Global lag_aimer:cVEC
+Global epileptic_blink%
 
 Function draw_reticle()
 	If game.human_participation
+		SetScale( 1, 1 )
+		SetRotation( 0 )
+		SetAlpha( 1 )
+		SetColor( 255, 255, 255 )
+		DrawImage( get_image( "reticle_simple" ), Floor(game_mouse.x) + 0.5, Floor(game_mouse.y) + 0.5 )
+		Rem
 		If game.player.turrets <> Null
 			Local tur:TURRET = game.player.turrets[0]
-			Local img_reticle:TImage = get_image( "reticle" )
-			Local img_ghost_reticle:TImage = get_image( "ghost_reticle" )
 			'turret ghost reticle
+			Local img_ghost_reticle:TImage = get_image( "ghost_reticle" )
 			Local distance_from_turret_to_mouse# = tur.dist_to( game_mouse ) 
 			SetRotation( tur.ang )
 			Local ang_diff# = ang_wrap( tur.ang_to( game_mouse ) - tur.ang )
 			SetAlpha( 1 - Abs(ang_diff)/22.5 )
 			DrawImage( img_ghost_reticle, tur.pos_x + distance_from_turret_to_mouse * Cos( tur.ang ), tur.pos_y + distance_from_turret_to_mouse * Sin( tur.ang ))
 			'actual mouse reticle
+			Local img_reticle:TImage = get_image( "reticle" )
 			SetRotation( tur.ang_to( game_mouse ))
-			SetAlpha( 1.0 )
+			SetAlpha( 1 )
 			DrawImage( img_reticle, game_mouse.x, game_mouse.y )
 		End If
+		EndRem
 	End If
 End Function
 

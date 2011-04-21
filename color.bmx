@@ -22,8 +22,7 @@ Type TColor
     SetColor( R, G, B )
   End Method
 	
-	'( H [0.0,360.0] ), ( S,L [0.0,1.0] )
-	Function Create_by_HSL:TColor( H#, S#, L#, auto_calc_RGB% = False )
+	Function Create_by_HSL:TColor( H#, S#, L#, auto_calc_RGB% = False )' H[0,360] S[0,1] L[0,1]
 		Local c:TColor = New TColor
 		c.H = H
 		c.S = S

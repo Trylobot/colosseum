@@ -12,7 +12,7 @@
 			mass: 800,
 			frictional_coefficient: 75,
 			driving_force_magnitude: 75,
-			turning_force_magnitude: 100,
+			turning_force_magnitude: 115,
 			death_package: true,
 			tank_tracks: [
 				{

@@ -802,6 +802,14 @@
 		class: "image",
 		key: "{path}",
 		object: {
+			path: "art/ui/reticle_simple.png",
+      filtered: false,
+		}
+	},
+	{
+		class: "image",
+		key: "{path}",
+		object: {
 			path: "art/door/door_bg.png",
 			handle_x: 35.0,
 			handle_y: 74.0,

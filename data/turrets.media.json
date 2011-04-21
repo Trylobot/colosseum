@@ -10,7 +10,7 @@
 			firing_sound_key: "cannon",
 			turret_barrel_count: 1,
 			firing_sequence: [[0]],
-			max_ang_vel: 2.25,
+			max_ang_vel: 2.75,
 			max_ammo: 40,
 			effective_range: 500.0,
 			turret_barrels: [

@@ -187,10 +187,9 @@ Function Create_TImage_from_json:TImage( json:TJSON )
 	Local img:TImage
 	Local path$, handle_x#, handle_y#, frames%, frame_width%, frame_height%, flip_horizontal%, flip_vertical%
 	path = json.GetString( "path" )
-	frames = json.GetNumber( "frames" )
-	'default true
+	frames = 1
+	If JSON.TypeOf( "frames" ) = JSON_NUMBER Then frames = JSON.GetNumber( "frames" )
 	If JSON.TypeOf( "filtered" ) = JSON_UNDEFINED Or JSON.GetBoolean( "filtered" ) Then flags = flags|FILTEREDIMAGE
-	'default false
 	If json.GetBoolean( "mipmapped" ) Then flags = flags|MIPMAPPEDIMAGE
 	If frames >= 1
 		'load either regular image or primitive animated image
@@ -206,8 +205,9 @@ Function Create_TImage_from_json:TImage( json:TJSON )
 			flip_horizontal = json.GetBoolean( "flip_horizontal" )
 			flip_vertical = json.GetBoolean( "flip_vertical" )
 			img = pixel_transform( img, flip_horizontal, flip_vertical ) 'does nothing if both are false
+			'default handle is set by "AutoMidHandle"
 			If json.TypeOf( "handle_x" ) <> JSON_UNDEFINED Or json.TypeOf( "handle_y" ) <> JSON_UNDEFINED
-				'override center as handle
+				'override
 				handle_x = json.GetNumber( "handle_x" )
 				handle_y = json.GetNumber( "handle_y" )
 				SetImageHandle( img, handle_x, handle_y )
