@@ -9,6 +9,8 @@ EndRem
 Type TUIObject Abstract
 	Method set_position( x%, y% ) End Method
 	Method draw() End Method
+	Method on_keydown( keycode% ) End Method
+	Method on_keyup( keycode% ) End Method
 	Method on_mouse_move%( mx%, my% ) End Method
 	Method on_mouse_click%( mx%, my% ) End Method
 	Method on_keyboard_up() End Method

@@ -376,7 +376,7 @@ Function level_editor()
 					End If
 					If KeyHit( KEY_ENTER )
 						FlushKeys()
-						lev.name = get_input( lev.name,, info_x, title_y, input_font_big, screencap() )
+						lev.name = get_input( lev.name,, info_x, title_y, input_font_big, screencap( SETTINGS_REGISTER.ACTUAL_WINDOW_WIDTH.get(), SETTINGS_REGISTER.ACTUAL_WINDOW_HEIGHT.get() ) )
 					End If
 				
 				'____________________________________________________________________________________________________
@@ -979,7 +979,7 @@ Function level_editor()
 		'draw_instaquit_progress() 'allow functionality but don't draw it
 		
 		Flip( 1 )
-	Until escape_key_release() Or KeyHit( KEY_BACKSPACE )
+	Until escape_key_release() Or KeyHit( KEY_BACKSPACE ) Or AppTerminate()
 		
 	FlushKeys()
 	FlushMouse()

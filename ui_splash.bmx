@@ -68,8 +68,10 @@ Type TUISplash Extends TUIObject
 		activate()
   End Method
 	
-	Method on_keyboard_enter%()
-		activate()
+  Method on_keydown( keycode% )
+		If (keycode >= KEY_0 And keycode <= KEY_Z) Or keycode = KEY_SPACE Or keycode = KEY_ENTER
+			activate()
+		End If
 	End Method
 	
 	Method activate()

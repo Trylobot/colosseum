@@ -15,9 +15,11 @@ Function reset_draw_state()
 	SetRotation( 0 )
 End Function
 
-Function screencap:TImage()
+Function screencap:TImage( w% = -1, h% = -1 )
 	SetOrigin( 0, 0 )
-	Return LoadImage( GrabPixmap( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() ))
+	If w = -1 Then w = SETTINGS_REGISTER.WINDOW_WIDTH.get()
+	If h = -1 Then h = SETTINGS_REGISTER.WINDOW_HEIGHT.get()
+	Return LoadImage( GrabPixmap( 0, 0, w, h ))
 End Function
 
 Function DrawRectLines( x%, y%, w%, h%, L% = 1 )
@@ -87,7 +89,7 @@ Function draw_fuzzy( img:TImage )
 		SetAlpha( 0.666666 )
 		SetBlend( ALPHABLEND )
 		SetColor( 0, 0, 0 )
-		DrawRect( 0, 0, SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
+		DrawRect( 0, 0, img.width, img.height )
 		SetAlpha( 1 )
 		SetColor( 255, 255, 255 )
 	End If

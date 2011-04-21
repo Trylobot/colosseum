@@ -144,6 +144,26 @@ Function get_all_input()
 End Function
 
 '______________________________________________________________________________
+Function on_key_hit:Object( id%, data:Object, context:Object )
+	If FLAG.in_menu
+		'current menu
+		Local current_menu:TUIObject
+		If Not FLAG.paused
+			current_menu = MENU_REGISTER.get_top()
+		Else 'paused
+			current_menu = MENU_REGISTER.pause
+		End If
+		'///
+		Local event:TEvent = TEvent( data )
+		If event.id = EVENT_KEYDOWN
+			current_menu.on_keydown( event.data )
+		Else If event.id = EVENT_KEYUP
+			current_menu.on_keyup( event.data )
+		End If
+	End If
+End Function
+
+'______________________________________________________________________________
 Function get_mouse_position( scale# = 1.0 )
 	mouse_delta.x = Float(MouseX())/scale - mouse.pos_x
 	mouse_delta.y = Float(MouseY())/scale - mouse.pos_y
