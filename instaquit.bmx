@@ -51,14 +51,12 @@ Function draw_instaquit_progress()
 		SetAlpha( 1.0 * alpha_multiplier )
 		SetColor( 255, 255, 255 )
 		Local margin% = 50
-		draw_percentage_bar( margin,SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2-25, SETTINGS_REGISTER.WINDOW_WIDTH.get()-2*margin,50, Float( now() - esc_press_ts ) / Float( instaquit_time_required - 50 ),,,,,,, 2 )
-		Local str$ = "Continue holding ESC to quit"
-		'SetImageFont( get_font( "consolas_bold_24" ))
 		Local fg:BMP_FONT = get_bmp_font( "arcade_7" )
 		Local bg:BMP_FONT = get_bmp_font( "arcade_7_outline" )
-		'DrawText_with_outline( str, SETTINGS_REGISTER.WINDOW_WIDTH.get()/2-TextWidth( str )/2, window_h/2+30 )
+		draw_percentage_bar( margin, SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2 - bg.height - 5, SETTINGS_REGISTER.WINDOW_WIDTH.get() - 2*margin, 25, Float( now() - esc_press_ts ) / Float( instaquit_time_required - 50 ),,,,,,, 1 )
+		Local str$ = "Continue holding ESC to quit"
 		Local x% = SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - fg.width( str )/2
-		Local y% = SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2 + 35
+		Local y% = SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2 + bg.height
 		draw_layered_string( str, x, y, fg, bg, 0,0,0, 255,255,255 )
 	End If
 End Function

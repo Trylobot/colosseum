@@ -9,6 +9,7 @@ EndRem
 Type TUIImageGrid Extends TUIObject
 	Field item_images:TImage[][]
 	Field item_labels:String[][]
+	Const max_item_label_length% = 11
 	Field default_item_border_color:TColor
 	Field selected_item_border_color:TColor
 	Field line_width%
@@ -198,10 +199,12 @@ Type TUIImageGrid Extends TUIObject
     End If
 	End Method
 	
-	Method set_item( row%, col%, item_label:String, item_image:TImage, event_handler(item:Object), item:Object = Null )
+	Method set_item( row%, col%, item_label:String, uppercase% = True, item_image:TImage, event_handler(item:Object), item:Object = Null )
 		If Not does_grid_cell_exist( CELL.Create( row, col )) Then Return
 		items[row][col] = item
     item_images[row][col] = item_image
+		If item_label.Length > max_item_label_length Then item_label = Left( item_label, max_item_label_length )
+		If uppercase Then item_label = Upper( item_label )
 		item_labels[row][col] = item_label
 		item_clicked_event_handlers[row][col] = TUIEventHandler.Create( event_handler )
 	End Method

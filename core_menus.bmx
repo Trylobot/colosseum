@@ -60,8 +60,8 @@ Function initialize_menus()
 	Local menu_item_bg_font:BMP_FONT = get_bmp_font( "arcade_21_outline" )
 	Local menu_small_item_fg_font:BMP_FONT = get_bmp_font( "arcade_14" )
 	Local menu_small_item_bg_font:BMP_FONT = get_bmp_font( "arcade_14_outline" )
-	Local menu_super_small_item_fg_font:BMP_FONT = get_bmp_font( "arcade_7" )
-	Local menu_super_small_item_bg_font:BMP_FONT = get_bmp_font( "arcade_7_outline" )
+	Local menu_super_small_item_fg_font:BMP_FONT = get_bmp_font( "small_5" )
+	Local menu_super_small_item_bg_font:BMP_FONT = get_bmp_font( "small_5_outline" )
 	Local menu_line_width% = 3
 	Local menu_small_line_width% = 2
 	Local menu_tiny_line_width% = 1
@@ -118,9 +118,9 @@ Function initialize_menus()
 	level_select_menu.Construct( ..
 		level_grid_dimensions, ..
 		dark_gray, white, ..
-		menu_line_width, ..
+		1, ..
 		menu_super_small_item_fg_font, menu_super_small_item_bg_font, ..
-		30, 30, ..
+		5, 5, ..
 		0, 0, ..
 		SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
 	Local level_file_path$, level_object:LEVEL, level_preview_path$, level_preview_img:TImage
@@ -143,7 +143,7 @@ Function initialize_menus()
          SavePixmapPNG( level_preview_img.pixmaps[0], level_preview_path, 5 )
 			End If
 			'////
-			level_select_menu.set_item( r, c, level_object.name, level_preview_img, cmd_play_level, level_object )
+			level_select_menu.set_item( r, c, level_object.name, True, level_preview_img, cmd_play_level, level_object )
 		Next
 	Next
 	MENU_REGISTER.level_select = level_select_menu

@@ -13,6 +13,7 @@ Framework brl.GLMax2D
 Import brl.LinkedList
 Import brl.Map
 Import brl.Max2D
+Import brl.Retro
 Import pub.Glew
 Import brl.FreeTypeFont
 Import brl.FreeAudioAudio

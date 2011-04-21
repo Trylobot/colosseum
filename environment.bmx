@@ -392,10 +392,10 @@ Type ENVIRONMENT
 				battle_in_progress = True
 				battle_state_toggle_ts = now()
 			End If
-			player.cur_health = player.max_health
+			player.refill_health_and_ammo()
+			player.manage( friendly_agent_list )
+			player_brain.manage( control_brain_list )
 		End If
-		player.manage( friendly_agent_list )
-		player_brain.manage( control_brain_list )
 	End Method
 	
 	'Method respawn_network_player( network_player:COMPLEX_AGENT )

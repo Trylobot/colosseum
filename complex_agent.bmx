@@ -603,6 +603,18 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
+	Method refill_health_and_ammo()
+		'health
+		cur_health = max_health
+		'ammo
+		For Local t:TURRET = EachIn turrets
+			If t.class = TURRET.AMMUNITION And t.max_ammo <> INFINITY
+				t.cur_ammo = t.max_ammo
+			End If
+		Next
+	End Method
+	
+	'___________________________________________
 	Method ai_lightbulb( enable% = True )
 		For Local w:WIDGET = EachIn ai_lightbulb_widgets
 			If enable And Not w.transforming

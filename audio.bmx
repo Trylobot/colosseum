@@ -15,7 +15,7 @@ Global audio_channels:TList = CreateList()
 Global bg_music:TChannel
 Global engine_start:TChannel
 Global engine_idle:TChannel
-Global engine_start_ts%
+'Global engine_start_ts%
 Global last_known_player_speed#
 
 Function play_sound( sound:TSound, volume# = 1.0, pitch_variance# = 0.0 )
@@ -95,8 +95,9 @@ Function tweak_engine_idle( entity_speed# )
 				engine_idle = AllocChannel()
 				CueSound( get_sound( "engine_idle_loop" ), engine_idle )
 				SetChannelVolume( engine_idle, 0.5 )
+				SetChannelRate( engine_idle, 0.5 )
 				ResumeChannel( engine_idle )
-				engine_start_ts = now()
+				'engine_start_ts = now()
 			End If
 		End If
 		If engine_start = Null
@@ -105,11 +106,11 @@ Function tweak_engine_idle( entity_speed# )
 				engine_idle = AllocChannel()
 				CueSound( get_sound( "engine_idle_loop" ), engine_idle )
 				ResumeChannel( engine_idle )
-				engine_start_ts = now()
+				'engine_start_ts = now()
 			End If
-			Local factor# = 10000.0/(Float(now() - engine_start_ts) + 10000.0)
+			Local factor# = 1.0 '10000.0/(Float(now() - engine_start_ts) + 10000.0)
 			SetChannelVolume( engine_idle, factor * (0.5 + ( 0.5 * (entity_speed / 2.0))) )
-			SetChannelRate( engine_idle, 1.0 + (entity_speed / 2.0) )
+			SetChannelRate( engine_idle, (1.0 + (entity_speed / 2.0)) / 2.0 )
 		End If
 	End If
 End Function
