@@ -10,10 +10,10 @@
 				projectile_launcher_key: "tank_cannon",
 				attach_at: {
 					offset_x: 20,
-					vel_min: 4.00,
-					vel_max: 4.40,
-					ang_min: -1.0,
-					ang_max: 1.0
+					vel_min: 8.00,
+					vel_max: 8.00,
+					ang_min: -0.85,
+					ang_max: 0.85
 				}
 			},
 			launch_emitters: [
