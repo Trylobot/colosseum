@@ -130,9 +130,9 @@ Type PARTICLE Extends POINT
 	
 	Method update()
 		'friction
-		vel_x :- vel_x * frictional_coefficient
-		vel_y :- vel_y * frictional_coefficient
-		ang_vel :- ang_vel * frictional_coefficient
+		vel_x :- timescale * vel_x * frictional_coefficient
+		vel_y :- timescale * vel_y * frictional_coefficient
+		ang_vel :- timescale * ang_vel * frictional_coefficient
 		'update velocity, position, angular velocity and orientation
 		Super.update()
 		'update alpha

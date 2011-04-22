@@ -756,11 +756,24 @@ Type COMPLEX_AGENT Extends AGENT
 	End Method
 	
 	'___________________________________________
-	Method add_dust_cloud_package( offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0, dist_min# = 0.0, dist_max# = 0.0, dist_ang_min# = 0.0, dist_ang_max# = 0.0, vel_min# = 0.0, vel_max# = 0.0 )
-		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, -separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
-		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_FORWARD ).attach_at( offset_x + separation_x, separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
-		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, -separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
-		add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_BACKWARD ).attach_at( offset_x - separation_x, separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
+	Method add_dust_cloud_package( offset_x# = 0.0, separation_x# = 0.0, separation_y# = 0.0, dist_min# = 0.0, dist_max# = 0.0, dist_ang_min# = 0.0, dist_ang_max# = 0.0, vel_min# = 0.0, vel_max# = 0.0, interval_min% = -1, interval_max% = -1 )
+		Local em:PARTICLE_EMITTER
+		em = add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_FORWARD )
+		If interval_min <> -1 Then em.interval.low = interval_min
+		If interval_max <> -1 Then em.interval.high = interval_max
+		em.attach_at( offset_x + separation_x, -separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
+		em = add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_FORWARD )
+		If interval_min <> -1 Then em.interval.low = interval_min
+		If interval_max <> -1 Then em.interval.high = interval_max
+		em.attach_at( offset_x + separation_x, separation_y, dist_min, dist_max, dist_ang_min, dist_ang_max, vel_min, vel_max )
+		em = add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_BACKWARD )
+		If interval_min <> -1 Then em.interval.low = interval_min
+		If interval_max <> -1 Then em.interval.high = interval_max
+		em.attach_at( offset_x - separation_x, -separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
+		em = add_emitter( get_particle_emitter( "TANK_TREAD_DUST_CLOUD", False ), EVENT.DRIVE_BACKWARD )
+		If interval_min <> -1 Then em.interval.low = interval_min
+		If interval_max <> -1 Then em.interval.high = interval_max
+		em.attach_at( offset_x - separation_x, separation_y, dist_min, dist_max, 180 + dist_ang_min, 180 + dist_ang_max, vel_min, vel_max )
 	End Method
 	
 	'___________________________________________
@@ -881,7 +894,9 @@ Function Create_COMPLEX_AGENT_from_json:COMPLEX_AGENT( json:TJSON )
 				dust_cloud_json.GetNumber( "dist_ang_min" ), ..
 				dust_cloud_json.GetNumber( "dist_ang_max" ), ..
 				dust_cloud_json.GetNumber( "vel_min" ), ..
-				dust_cloud_json.GetNumber( "vel_max" ))
+				dust_cloud_json.GetNumber( "vel_max" ), ..
+				dust_cloud_json.GetNumber( "interval_min" ), ..
+				dust_cloud_json.GetNumber( "interval_max" ))
 		End If
 	End If
 	'vehicle trail package
