@@ -17,19 +17,26 @@ Type GIB_SYSTEM
 	Field gibs:PARTICLE[]
 	Field gib_speed#[]
 	
-	Method show( spawn:POINT, background_particle_manager:TList )
+	Method show( spawn:POINT, background_particle_manager:TList, variance# = 0.15 )
 		For Local i% = 0 Until gibs.Length
 			Local gib:PARTICLE = gibs[i]
+			Local speed# = gib_speed[i]
+			gib.offset = vary( gib.offset, variance )
+			gib.offset_ang = vary( gib.offset_ang, variance )
+			speed = vary( speed, variance )
 			gib.pos_x = spawn.pos_x + gib.offset*Cos( gib.offset_ang + spawn.ang )
 			gib.pos_y = spawn.pos_y + gib.offset*Sin( gib.offset_ang + spawn.ang )
 			gib.ang = spawn.ang
-			Local speed# = gib_speed[i]
 			gib.vel_x = spawn.vel_x + speed*Cos( gib.offset_ang + spawn.ang )
 			gib.vel_y = spawn.vel_y + speed*Sin( gib.offset_ang + spawn.ang )
 			gib.ang_vel = spawn.ang_vel
 			gib.created_ts = now()
 			gib.manage( background_particle_manager )
 		Next
+	End Method
+	
+	Method vary#( scalar#, variance# )
+		Return scalar - 0.5*scalar*variance + Rnd( scalar*variance )
 	End Method
 	
 	Method clone:GIB_SYSTEM()
