@@ -83,7 +83,9 @@ Type PARTICLE Extends POINT
 	alpha# = 1.0, ..
 	alpha_delta# = 0.0, ..
 	scale# = 1.0, ..
-	scale_delta# = 0.0 )
+	scale_delta# = 0.0, ..
+	offset# = 0.0, ..
+	offset_ang# = 0.0 )
 		Local p:PARTICLE = New PARTICLE
 
 		'static fields
@@ -114,18 +116,23 @@ Type PARTICLE Extends POINT
 		p.alpha_delta = alpha_delta
 		p.scale = scale
 		p.scale_delta = scale_delta
+		p.offset = offset
+		p.offset_ang = offset_ang
 
 		Return p
 	End Function
 	
 	Method clone:PARTICLE( new_frame% = 0 )
+		'frame (for multi-frame particles)
 		If new_frame = PARTICLE_FRAME_RANDOM And img
 			new_frame = Rand( 0, img.frames.Length - 1 )
 		Else
 			new_frame = 0
 		End If
+		'main fields
 		Return PARTICLE( PARTICLE.Create( ..
-			particle_type, img, new_frame, frame_delay, str, font, layer, retain, frictional_coefficient, red, green, blue, red_delta, green_delta, blue_delta, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta ))
+			particle_type, img, new_frame, frame_delay, str, font, layer, retain, frictional_coefficient, red, green, blue, red_delta, green_delta, blue_delta, life_time, pos_x, pos_y, vel_x, vel_y, ang, ang_vel, alpha, alpha_delta, scale, scale_delta, offset, offset_ang ))
+		
 	End Method
 	
 	Method update()

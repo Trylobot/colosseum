@@ -23,35 +23,13 @@ Type GIB_SYSTEM
 			gib.pos_x = spawn.pos_x + gib.offset*Cos( gib.offset_ang + spawn.ang )
 			gib.pos_y = spawn.pos_y + gib.offset*Sin( gib.offset_ang + spawn.ang )
 			gib.ang = spawn.ang
-			'Local speed# = gib_speed[i]
-			'gib.vel_x = spawn.vel_x + speed*Cos( gib.offset_ang + spawn.ang )
-			'gib.vel_y = spawn.vel_y + speed*Sin( gib.offset_ang + spawn.ang )
-			'gib.ang_vel = spawn.ang_vel
-			gib.update()
+			Local speed# = gib_speed[i]
+			gib.vel_x = spawn.vel_x + speed*Cos( gib.offset_ang + spawn.ang )
+			gib.vel_y = spawn.vel_y + speed*Sin( gib.offset_ang + spawn.ang )
+			gib.ang_vel = spawn.ang_vel
 			gib.created_ts = now()
 			gib.manage( background_particle_manager )
 		Next
-		Rem
-		If gibs <> Null
-			For Local i% = 0 To gibs.cell_count - 1
-				Local gib:PARTICLE = PARTICLE( PARTICLE.Create( PARTICLE_TYPE_IMG, gibs, i,,,, LAYER_BACKGROUND, True, 0.100,,,,,,, 750 ))
-				Local gib_offset#, gib_offset_ang#
-				cartesian_to_polar( gib.pos_x, gib.pos_y, gib_offset, gib_offset_ang )
-				gib.pos_x = pos_x + gib_offset*Cos( gib_offset_ang + ang )
-				gib.pos_y = pos_y + gib_offset*Sin( gib_offset_ang + ang )
-				Local gib_vel#, gib_vel_ang#
-				gib_vel = Rnd( -2.0, 2.0 )
-				gib_vel_ang = Rnd( 0.0, 359.9999 )
-				gib.vel_x = vel_x + gib_vel*Cos( gib_vel_ang + ang )
-				gib.vel_y = vel_y + gib_vel*Sin( gib_vel_ang + ang )
-				gib.ang = ang + Rand( -30, 30 )
-				gib.ang_vel = Rnd( -3.0, 3.0 )
-				gib.update()
-				gib.created_ts = now()
-				gib.manage( background_particle_manager )
-			Next
-		End If
-		EndRem
 	End Method
 	
 	Method clone:GIB_SYSTEM()
@@ -91,7 +69,7 @@ Function Create_GIB_SYSTEM_from_json:GIB_SYSTEM( json:TJSON )
 			p.attach_at( offset_x, offset_y )
 			g.gibs[i] = p
 			speed = gib_json.GetNumber( "speed" )
-			g.gib_speed[i] = speed
+			g.gib_speed[i] = -speed
 		Next
 	End If
 	Return g
