@@ -151,6 +151,19 @@ Function init_ai_menu_game( fit_to_window% = True )
 	End If
 End Function
 
+Function cash_appear( pos:POINT, value%, env:ENVIRONMENT )
+	Local p:PARTICLE
+	If value >= 0
+		p = get_particle( "cash_positive" )
+	Else
+		p = get_particle( "cash_negative" )
+	End If
+	p.str = "$" + format_number( value )
+	p.pos_x = pos.pos_x - p.font.width( p.str )/2
+	p.pos_y = pos.pos_y - 20.0
+	p.manage( env.particle_list_foreground )
+End Function
+
 '______________________________________________________________________________
 Function generate_sand_image:TImage( w%, h% )
 	Local pixmap:TPixmap = CreatePixmap( w,h, PF_RGB888 )

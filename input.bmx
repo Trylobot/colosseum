@@ -195,6 +195,7 @@ Function mouse_released_2%()
 End Function
 
 Function mouse_state_update()
+	'buttons
 	If MouseDown( 1 )
 		mouse_down_1 = True
 	Else

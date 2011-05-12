@@ -169,26 +169,18 @@ Function collision_projectile_agent( proj:PROJECTILE, ag:AGENT )
 	'process damage, death, cash and pickups resulting from it
 	game.deal_damage( ag, proj.damage )
 	'/////////
-	'if the player killed an enemy with this projectile, reward player
+	'show cash particle and update meter
 	If ag.dead() ..
 	And game.human_participation ..
 	And proj.source_id = get_player_id() ..
 	And COMPLEX_AGENT( ag ) 'ding! cash popup near splodey
-		Local p:PARTICLE
 		If COMPLEX_AGENT( ag ).alignment <> game.player.alignment
-			'killed enemy
-			p = get_particle( "cash_positive" )
 			record_player_kill( COMPLEX_AGENT( ag ).cash_value )
-			p.str = "$" + COMPLEX_AGENT( ag ).cash_value
+			cash_appear( ag, COMPLEX_AGENT( ag ).cash_value, game )
 		Else 'COMPLEX_AGENT( ag ).political_alignment == game.player.alignment
-			'killed ally
-			p = get_particle( "cash_negative" )
 			record_player_friendly_fire_kill( FRIENDLY_FIRE_PUNISHMENT_AMOUNT )
-			p.str = "$-" + FRIENDLY_FIRE_PUNISHMENT_AMOUNT
+			cash_appear( ag, -FRIENDLY_FIRE_PUNISHMENT_AMOUNT, game )
 		End If
-		p.pos_x = ag.pos_x - p.font.width( p.str )/2
-		p.pos_y = ag.pos_y - 20.0
-		p.manage( game.particle_list_foreground ) 'cash is always a foreground particle
 	End If
 	'activate projectile impact emitter
 	Local impact_sound:TSound
