@@ -14,6 +14,7 @@ Type FLAG
 	Global paused%
 	Global campaign_mode%
 	Global instaquit_plz%
+	Global camera_locked%
 	'audio
 	Global engine_ignition%
 	Global engine_running%

@@ -18,11 +18,13 @@ EndRem
 'Import "data.bmx"
 
 '______________________________________________________________________________
-Global last_menu_service_ts%
-
-
 Function get_all_input()
+	'always get mouse position
 	get_mouse_position( global_scale )
+	'set drawing origin based on mouse/player position
+	If game And Not game.paused
+		update_drawing_origin()
+	End If
 	
 	'hide/ignore mouse
 	If Not FLAG.in_menu And game <> Null And game.human_participation And game.player_brain <> Null
@@ -44,8 +46,7 @@ Function get_all_input()
 			current_menu = MENU_REGISTER.pause
 		End If
 		'service menu
-		current_menu.service( (now() - last_menu_service_ts) ) 'revisit this; possible repeat
-		last_menu_service_ts = now()
+		current_menu.service( global_elapsed ) 'revisit this; possible repeat
 		'back-up/back-out
 		If KeyHit( KEY_ESCAPE )|KeyHit( KEY_BACKSPACE )
 			If Not FLAG.paused

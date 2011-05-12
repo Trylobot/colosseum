@@ -309,7 +309,7 @@ Type ENVIRONMENT
 			walls,, 10, 1000, 1000 )
 		brain.manage( control_brain_list )
 		'///////////////////////////////////////////////////////////////////////////
-		'the following should come from an emitter event attached to the agent
+		'TODO: make this a core function, and also trigger it when player respawns
 		Local pt:POINT = Create_POINT( unit.pos_x, unit.pos_y )
 		Local em:PARTICLE_EMITTER = get_particle_emitter( "spawner" )
 		em.manage( environmental_emitter_list )
@@ -326,13 +326,16 @@ Type ENVIRONMENT
 	End Method
 	
 	Method deal_damage( ag:AGENT, damage# )
-		'actual damage assignment
+		'health meter update
 		ag.receive_damage( damage )
+		
 		'potential resulting death
 		If ag.dead() 'some agent was killed
+			'visual death effects
 			ag.die( particle_list_background, particle_list_foreground )
-			If human_participation And ag = player
-				respawn_player()
+			If human_participation And ag = player 'specifically the player died
+				deaths :+ 1
+				respawn_player_begin()
 			Else If human_participation 'ag <> player
 				'agent death animations and sounds, and memory cleanup
 				'shalt we spawneth teh phat lewts?! perhaps! perhaps.
@@ -371,6 +374,8 @@ Type ENVIRONMENT
 				Exit
 			End If
 		Next
+		'move and initialize player
+		respawn_player_begin( True )
 	End Method
 	
 	'Method insert_network_player( network_player:COMPLEX_AGENT, network_player_brain:CONTROL_BRAIN )
@@ -379,23 +384,34 @@ Type ENVIRONMENT
 	'	network_player_brain.manage( control_brain_list )
 	'End Method
 	
-	Method respawn_player()
+	Method respawn_player_begin( instant% = False )
+		'tween camera from position of death to position of respawn
 		If player <> Null And player_brain <> Null
 			player_spawn_point = random_spawn_point( POLITICAL_ALIGNMENT.FRIENDLY )
-			If player_spawn_point
-				player.move_to( player_spawn_point )
-				player.snap_all_turrets()
-			Else 'player_spawn_point invalid; assume debug mode
-				player.move_to( Create_POINT( lev.width/2, lev.height/2 ))
-				player.snap_all_turrets()
+			If Not player_spawn_point
+				'should only happen on horrible debug levels
+				player_spawn_point = Create_POINT( lev.width/2, lev.height/2 )
 				sandbox = True
 				battle_in_progress = True
 				battle_state_toggle_ts = now()
 			End If
-			player.refill_health_and_ammo()
-			player.manage( friendly_agent_list )
-			player_brain.manage( control_brain_list )
+			If Not instant
+				tween_camera_x = TWEEN.Create( player.pos_x, player_spawn_point.pos_x - player.pos_x, 2.0, TWEEN.sinusoidal_ease_in_out )
+				tween_camera_y = TWEEN.Create( player.pos_y, player_spawn_point.pos_y - player.pos_y, 2.0, TWEEN.sinusoidal_ease_in_out )
+				FLAG.camera_locked = True
+			Else 'instant
+				respawn_player_complete()
+			End If
 		End If
+	End Method
+	
+	Method respawn_player_complete()
+		player.move_to( player_spawn_point )
+		player.snap_all_turrets()
+		player.refill_health_and_ammo()
+		player.manage( friendly_agent_list )
+		player_brain.manage( control_brain_list )
+		FLAG.camera_locked = False
 	End Method
 	
 	'Method respawn_network_player( network_player:COMPLEX_AGENT )

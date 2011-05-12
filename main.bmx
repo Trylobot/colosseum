@@ -160,11 +160,18 @@ DebugLog "  All assets loaded at " + elapsed_str(load_start) + " sec. since prog
 debug_pre_main()
 ?
 
+
 DebugLog "  MAIN GAME LOOP started at " + elapsed_str(load_start) + " sec. since program start-up~n"
 '////////////////////////////////////////////////////////////////////////////////
 '///// main game loop
+Global last_service_ts% = now()
+Global global_elapsed% = 0
+
 Repeat
 	Cls()
+	'timing/service
+	global_elapsed = now() - last_service_ts
+	last_service_ts = now()
 	
 	'auto-selects the global environment reference
 	select_game()

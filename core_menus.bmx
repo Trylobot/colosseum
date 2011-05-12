@@ -376,7 +376,6 @@ Function initialize_menus()
 	MENU_REGISTER.root = splash_screen
 	MENU_REGISTER.push( MENU_REGISTER.root )
 	MENU_REGISTER.root.on_show()
-	last_menu_service_ts = now()
 
 End Function
 

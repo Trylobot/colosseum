@@ -98,7 +98,6 @@ Function play_level:ENVIRONMENT( level_reference:Object, player:COMPLEX_AGENT = 
 		'player stuff
 		Local player_brain:CONTROL_BRAIN = create_player_brain( player )
 		env.insert_player( player, player_brain )
-		env.respawn_player()
 		env.player_in_locker = True
 		env.waiting_for_player_to_enter_arena = True
 		FLAG.engine_ignition = True

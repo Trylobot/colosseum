@@ -23,9 +23,9 @@ Function debug_pre_load()
 End Function
 
 Function debug_pre_main()
+	play_debug_level()
 	'test_draw_rect_lines()
 	'show_me()
-	'play_debug_level()
 	'debug_graffiti_manager
 	'test_draw_kill_tally()
 	'play_debug_level()
@@ -52,9 +52,6 @@ Function debug_main()
 		SetOrigin( 0, 0 )
 		debug_overlay()
 		debug_fps()
-		If KeyHit( KEY_R )
-			game.respawn_player()
-		End If
 	End If
 	If profile
 		If KeyDown( KEY_NUMADD )
@@ -91,15 +88,16 @@ Global cb:CONTROL_BRAIN = Null
 Function play_debug_level()
 	Local lev:LEVEL = load_level( "levels/debug.level.json" )
 	'Local player:COMPLEX_AGENT = get_player_vehicle( "light_tank" )
-  Local player:COMPLEX_AGENT = get_player_vehicle( "medium_tank" )
-	'Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
+  'Local player:COMPLEX_AGENT = get_player_vehicle( "medium_tank" )
+	Local player:COMPLEX_AGENT = get_unit( "machine_gun_quad" )
 	main_game = play_level( lev, player )
 	game = main_game
-	player.move_to( Create_POINT( 0.45*lev.width, 0.5*lev.height, 0 ))
+	player.move_to( Create_POINT( 0.5*lev.width, 0.5*lev.height, 0 ))
 	player.snap_all_turrets()
 	player_has_entered_arena()
-	game.spawn_unit( "machine_gun_emplacement", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.55*lev.width, 0.5*lev.height, 0.0 ))
+	'game.spawn_unit( "machine_gun_emplacement", POLITICAL_ALIGNMENT.HOSTILE, Create_POINT( 0.55*lev.width, 0.5*lev.height, 0.0 ))
 	game.sandbox = True
+	FLAG_debug_overlay = True
 End Function
 
 Function test_tweens()
@@ -361,6 +359,11 @@ Function debug_overlay()
 		cb = closest_cb
 	Else If closest_cb <> Null
 		DrawOval( closest_cb.avatar.pos_x-15,closest_cb.avatar.pos_y-15, 30,30 )
+	End If
+	
+	'instantly kill
+	If KeyHit( KEY_X ) And game And closest_cb And closest_cb.avatar
+		game.deal_damage( closest_cb.avatar, closest_cb.avatar.cur_health )
 	End If
 	
 	'cause an explosion under cursor via mini-bomb self detonation

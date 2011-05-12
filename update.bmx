@@ -29,6 +29,8 @@ EndRem
 '______________________________________________________________________________
 Global player_health_last# 'for producing choppy bits of health on the HUD
 
+Global last_update_ts%
+
 'Physics and Timing Update
 Function update_all_objects()
 	'instaquit flag support
@@ -38,8 +40,6 @@ Function update_all_objects()
 	End If
 	'update body
 	If game And Not game.paused
-		'set drawing origin
-		update_drawing_origin()
 		'player and game-state flags
 		update_flags()
 		If Not game Then Return 'possibility exists that game will be freed after updating the flags
@@ -141,29 +141,33 @@ Function update_all_objects()
 	End If
 	
 End Function
+
 '______________________________________________________________________________
+Global tween_camera_x:TWEEN, tween_camera_y:TWEEN
+Global drawing_anchor:POINT = New POINT
+
 Function update_drawing_origin()
 	If game.human_participation And game.player <> Null
-		game_mouse.x = game.player.pos_x + (2.0 * (mouse.pos_x - SETTINGS_REGISTER.WINDOW_WIDTH.get()/2.0))
-		game_mouse.y = game.player.pos_y + (2.0 * (mouse.pos_y - SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2.0))
-		
-		'calculate position of camera based on position of player's avatar and the mouse (or keyboard)
-		'game.drawing_origin.x = 0
-		'game.drawing_origin.y = 0
-		Select game.player_brain.input_type
-			Case CONTROL_BRAIN.INPUT_KEYBOARD_MOUSE_HYBRID
-				game.drawing_origin.x = SETTINGS_REGISTER.WINDOW_WIDTH.get()/2.0 - (game.player.pos_x + game_mouse.x)/2.0
-				game.drawing_origin.y = SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2.0 - (game.player.pos_y + game_mouse.y)/2.0
-			Case CONTROL_BRAIN.INPUT_KEYBOARD
-				game.drawing_origin.x = SETTINGS_REGISTER.WINDOW_WIDTH.get()/2 - game.player.pos_x
-				game.drawing_origin.y = SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2 - game.player.pos_y
-		End Select
+		If tween_camera_x And tween_camera_y
+			tween_camera_x.service( global_elapsed )
+			tween_camera_y.service( global_elapsed )
+		End If
+		If Not FLAG.camera_locked 'normal
+			drawing_anchor.pos_x = game.player.pos_x
+			drawing_anchor.pos_y = game.player.pos_y
+		Else 'camera locked for respawn, and tweening to new respawn position probably
+			drawing_anchor.pos_x = tween_camera_x.get()
+			drawing_anchor.pos_y = tween_camera_y.get()
+		End If
+		game_mouse.x = drawing_anchor.pos_x + (2.0 * (mouse.pos_x - SETTINGS_REGISTER.WINDOW_WIDTH.get()/2.0))
+		game_mouse.y = drawing_anchor.pos_y + (2.0 * (mouse.pos_y - SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2.0))
+		game.drawing_origin.x = SETTINGS_REGISTER.WINDOW_WIDTH.get()/2.0 - (drawing_anchor.pos_x + game_mouse.x)/2.0
+		game.drawing_origin.y = SETTINGS_REGISTER.WINDOW_HEIGHT.get()/2.0 - (drawing_anchor.pos_y + game_mouse.y)/2.0
 		'enforce camera bounds
 		If      game.drawing_origin.x < game.origin_min_x Then game.drawing_origin.x = game.origin_min_x ..
 		Else If game.drawing_origin.x > game.origin_max_x Then game.drawing_origin.x = game.origin_max_x
 		If      game.drawing_origin.y < game.origin_min_y Then game.drawing_origin.y = game.origin_min_y ..
 		Else If game.drawing_origin.y > game.origin_max_y Then game.drawing_origin.y = game.origin_max_y
-		
 	Else 'for debug? I guess?
 		game_mouse.x = mouse.pos_x
 		game_mouse.y = mouse.pos_y
@@ -201,9 +205,9 @@ Function update_flags()
 			End If
 			'game over
 			If Not game.win And game.player.dead() 'player just died? (omgwtf)
-				game.respawn_player()
-				game.deaths :+ 1
-				'player_loses_game()
+				If FLAG.camera_locked And tween_camera_x.is_finished() 'respawn started earlier has now completed
+					game.respawn_player_complete() 'FLAG.camera_locked = false, player revived
+				End If
 			End If
 		End If
 	End If
