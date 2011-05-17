@@ -36,9 +36,6 @@ Type IMAGE_BUFFER
 		IB.Image = Image
 		IB.Frame = Frame
 		IB.GenerateFBO()
-		IB.BindBuffer()
-		DrawImage( Image, 0, 0 )
-		IB.UnBindBuffer()
 		Return IB
 	End Function
 	
@@ -90,20 +87,17 @@ Type IMAGE_BUFFER
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT , fb[0])
 		glMatrixMode GL_PROJECTION
 		glLoadIdentity
-		
-		'glOrtho 0,Image.Width,Image.Width,0,-1,1
 		glOrtho 0,Image.Width,0,Image.Height,-1,1
-
 		glMatrixMode GL_MODELVIEW 
 		glViewport(0 , 0 , Image.Width , Image.Height)
 		glScissor 0,0, Image.Width , Image.Height
 	End Method
 	
-	Method UnBindBuffer()
+	Method UnBindBuffer( scale# )
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT , 0)
 		glMatrixMode GL_PROJECTION
 		glLoadIdentity
-		glOrtho 0,OrigW ,Origh,0,-1,1
+		glOrtho 0,(Float(OrigW) / scale),(Float(OrigH) / scale),0,-1,1
 		glMatrixMode GL_MODELVIEW 
 		glViewport(0 , 0 , OrigW, OrigH)
 		glScissor 0,0, OrigW ,OrigH

@@ -38,11 +38,6 @@ Const cursor_blink% = 500
 'Drawing to Screen
 Function draw_all_graphics()
 	
-	If FLAG.upscale
-		upscale_buffer.BindBuffer()
-		Cls()
-	End If
-
 	SetBlend( ALPHABLEND )
 	SetOrigin( 0, 0 )
 	SetColor( 255, 255, 255 )
@@ -75,16 +70,6 @@ Function draw_all_graphics()
 	escape_key_update()
 	draw_instaquit_progress()
 	
-	If FLAG.upscale
-		upscale_buffer.UnBindBuffer()                                                                                                                                          
-		SetColor( 255, 255, 255 )
-		SetRotation( 0 )
-		SetAlpha( 1 )
-		SetScale( global_scale, global_scale )
-		'///
-		DrawImage( upscale_buffer_img, 0, 0 )
-	End If
-
 	'screenshot
 	If KeyHit( KEY_F12 ) Then screenshot()
 	

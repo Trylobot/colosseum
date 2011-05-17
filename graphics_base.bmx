@@ -40,23 +40,11 @@ Function init_graphics()
 	
 	glewInit() 'GL extension library
 
-	'SetVirtualResolution( ..
-	'	SETTINGS_REGISTER.WINDOW_WIDTH.get(), ..
-	'	SETTINGS_REGISTER.WINDOW_HEIGHT.get() )
-	
 	FLAG.upscale = SETTINGS_REGISTER.WINDOW_WIDTH.get() <> SETTINGS_REGISTER.ACTUAL_WINDOW_WIDTH.get() Or SETTINGS_REGISTER.WINDOW_HEIGHT.get() <> SETTINGS_REGISTER.ACTUAL_WINDOW_HEIGHT.get()
 
 	global_scale = Min( ..
 		Float(SETTINGS_REGISTER.ACTUAL_WINDOW_WIDTH.get())/Float(SETTINGS_REGISTER.WINDOW_WIDTH.get()), ..
 		Float(SETTINGS_REGISTER.ACTUAL_WINDOW_HEIGHT.get())/Float(SETTINGS_REGISTER.WINDOW_HEIGHT.get()) )
-	
-	If Not FLAG.upscale
-		upscale_buffer_img = Null
-		upscale_buffer = Null
-	Else 'upscale enabled
-		upscale_buffer_img = CreateImage( SETTINGS_REGISTER.WINDOW_WIDTH.get(), SETTINGS_REGISTER.WINDOW_HEIGHT.get(),, 0 )
-		upscale_buffer = IMAGE_BUFFER.CreateFromImage( upscale_buffer_img )
-	End If
 	
 	SetClsColor( 0, 0, 0 )
 	SetBlend( ALPHABLEND )

@@ -69,7 +69,7 @@ Function update_all_objects()
 				End If
 			Next
 			'resume normal draw behavior
-			game.graffiti.UnBindBuffer()
+			game.graffiti.UnBindBuffer( global_scale )
 		Next
 		'control brains
 		For Local cb:CONTROL_BRAIN = EachIn game.control_brain_list

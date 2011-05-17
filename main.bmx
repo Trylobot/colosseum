@@ -150,6 +150,7 @@ AppTitle :+ " DEBUG"
 'graphical window
 init_graphics()
 
+
 '////////////////////////////////
 'LOAD GAME ASSETS; fonts, sounds, images, unit parts, units, props, pickups, levels
 load_all_assets()
