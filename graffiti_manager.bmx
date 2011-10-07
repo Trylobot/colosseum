@@ -20,6 +20,7 @@ Type GRAFFITI_MANAGER
 		SetScale( 1, 1 )
 		SetRotation( 0 )
 		DrawImage( bg_clean, 0, 0 )
+		DrawImage( bg_clean, 0, 0 )
 		g.UnBindBuffer()
 		Return g
 	End Function

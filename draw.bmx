@@ -80,8 +80,10 @@ End Function
 Function draw_game()
 	
 	'clamp global origin to integer (pixel) boundaries to reduce flicker effect on straight edges when moving
-	Local ox% = game.drawing_origin.x 
-	Local oy% = game.drawing_origin.y
+	'Local ox% = game.drawing_origin.x 
+	'Local oy% = game.drawing_origin.y
+	Local ox# = game.drawing_origin.x 
+	Local oy# = game.drawing_origin.y
 	SetOrigin( ox, oy )
 	
 	SetColor( 255, 255, 255 )

@@ -46,9 +46,22 @@ Function init_graphics()
 		Float(SETTINGS_REGISTER.ACTUAL_WINDOW_WIDTH.get())/Float(SETTINGS_REGISTER.WINDOW_WIDTH.get()), ..
 		Float(SETTINGS_REGISTER.ACTUAL_WINDOW_HEIGHT.get())/Float(SETTINGS_REGISTER.WINDOW_HEIGHT.get()) )
 	
+	init_viewport( global_scale )
+	
 	SetClsColor( 0, 0, 0 )
 	SetBlend( ALPHABLEND )
 	Cls()
 End Function
 
+Function init_viewport( Scale# )
+	Local OrigX%, OrigY%, OrigW%, OrigH%
+	GetViewport(OrigX,OrigY,OrigW,OrigH)
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT , 0)
+	glMatrixMode GL_PROJECTION
+	glLoadIdentity
+	glOrtho 0,(Float(OrigW) / scale),(Float(OrigH) / scale),0,-1,1
+	glMatrixMode GL_MODELVIEW 
+	glViewport(0 , 0 , OrigW, OrigH)
+	glScissor 0,0, OrigW ,OrigH
+End Function
 

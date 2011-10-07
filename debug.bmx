@@ -23,7 +23,7 @@ Function debug_pre_load()
 End Function
 
 Function debug_pre_main()
-	play_debug_level()
+	'play_debug_level()
 	'test_draw_rect_lines()
 	'show_me()
 	'debug_graffiti_manager

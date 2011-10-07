@@ -47,8 +47,9 @@ End Function
 '______________________________________________________________________________
 Function initialize_menus()
 	AddHook( EmitEventHook, on_key_hit )
-	
-	Local white:TColor           = TColor.Create_by_RGB( 255, 255, 255 )
+	AutoMidHandle( False )
+
+	Local White:TColor           = TColor.Create_by_RGB( 255, 255, 255 )
 	Local light_gray:TColor      = TColor.Create_by_RGB( 205, 205, 205 )
 	Local dark_gray:TColor       = TColor.Create_by_RGB(  78,  78,  78 )
 	Local black:TColor           = TColor.Create_by_RGB(   0,   0,   0 )

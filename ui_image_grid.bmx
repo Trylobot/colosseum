@@ -82,7 +82,8 @@ Type TUIImageGrid Extends TUIObject
 		img_size = Min( (w / max_cols) - (2 * margin_x), (h / max_rows) - (2 * margin_y) )
 	End Method
 	
-	Method draw()
+	Method Draw()
+		SetOrigin( 0, 0 )
 		SetRotation( 0 )
 		SetAlpha( 0.775 )
 		SetColor( 0, 0, 0 )	
