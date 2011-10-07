@@ -56,11 +56,12 @@ Function update_all_objects()
 			proj.update()
 			proj.emit( game.particle_list_background, game.particle_list_foreground )
 		Next
+		'for the duration of the following loop, 
+		'redirect all draw calls to the graffiti texture
+		'they are permanently included in all future draws
+		game.graffiti.BindBuffer()
 		'particles
 		For Local list:TList = EachIn game.particle_lists
-			'for the duration of the loop, 
-			'redirect all draw calls to the graffiti texture
-			game.graffiti.BindBuffer()
 			'check each particle
 			For Local part:PARTICLE = EachIn list
 				part.update()
@@ -68,9 +69,9 @@ Function update_all_objects()
 					part.draw()
 				End If
 			Next
-			'resume normal draw behavior
-			game.graffiti.UnBindBuffer( global_scale )
 		Next
+		'resume normal draw behavior
+		game.graffiti.UnBindBuffer( global_scale )
 		'control brains
 		For Local cb:CONTROL_BRAIN = EachIn game.control_brain_list
 			If cb = game.player_brain Then Continue

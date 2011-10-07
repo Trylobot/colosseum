@@ -170,6 +170,8 @@ Type ENVIRONMENT
 		walls = merge_walls( lev )
 		'graffiti
 		graffiti = GRAFFITI_MANAGER.Create( background )
+		'background as a particle, to be included in regular draw cycle
+		PARTICLE(PARTICLE.Create( PARTICLE_TYPE_IMG, background,,,,, LAYER_BACKGROUND, True,,,,,,,, 0 )).manage( particle_list_background )
 		'props
 		For Local pd:ENTITY_DATA = EachIn lev.props
 			Local prop:AGENT = get_prop( pd.archetype )

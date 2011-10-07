@@ -2,7 +2,7 @@ Rem
 	Main.bmx
 	This is a COLOSSEUM project BlitzMax source file.
 	
-	author: Tyler W Cole, aka "Tylerbot"
+	author: Tyler W Cole, aka "Trylobot"
 	email: tylerbot@gmail.com
 	description: top-down tank fight
 EndRem
