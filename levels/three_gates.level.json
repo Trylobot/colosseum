@@ -1,13 +1,13 @@
 {
-	name: "three_gates",
-	width: 704,
-	height: 704,
-	row_count: 11,
-	col_count: 11,
-	hue: 0,
-	saturation: 0,
-	luminosity: 0.15,
-	horizontal_divs: [
+	"name": "three_gates",
+	"width": 704,
+	"height": 704,
+	"row_count": 11,
+	"col_count": 11,
+	"hue": 0,
+	"saturation": 0,
+	"luminosity": 0.15,
+	"horizontal_divs": [
 		0,
 		26,
 		96,
@@ -21,7 +21,7 @@
 		679,
 		704
 	],
-	vertical_divs: [
+	"vertical_divs": [
 		0,
 		26,
 		96,
@@ -35,7 +35,7 @@
 		679,
 		704
 	],
-	path_regions: [
+	"path_regions": [
 		[
 			true,
 			true,
@@ -180,21 +180,21 @@
 			true
 		]
 	],
-	unit_factories: [
+	"unit_factories": [
 		{
-			alignment: 1,
-			squads: null,
-			pos: {
-				pos_x: 353,
-				pos_y: 651,
-				ang: -90
+			"alignment": 1,
+			"squads": null,
+			"pos": {
+				"pos_x": 353,
+				"pos_y": 651,
+				"ang": -90
 			},
-			delay_time: null,
-			wave_index: null
+			"delay_time": null,
+			"wave_index": null
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"machine_gun_quad"
 				],
@@ -211,18 +211,18 @@
 					"armed_carrier"
 				]
 			],
-			pos: {
-				pos_x: 353,
-				pos_y: 54,
-				ang: 90
+			"pos": {
+				"pos_x": 353,
+				"pos_y": 54,
+				"ang": 90
 			},
-			delay_time: [
+			"delay_time": [
 				2000,
 				4000,
 				10000,
 				2000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0,
@@ -230,8 +230,8 @@
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"mini_bomb",
 					"mini_bomb",
@@ -257,12 +257,12 @@
 					"armed_carrier"
 				]
 			],
-			pos: {
-				pos_x: 651,
-				pos_y: 353,
-				ang: 180
+			"pos": {
+				"pos_x": 651,
+				"pos_y": 353,
+				"ang": 180
 			},
-			delay_time: [
+			"delay_time": [
 				1000,
 				3000,
 				5000,
@@ -270,7 +270,7 @@
 				10000,
 				1000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0,
@@ -280,8 +280,8 @@
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"mini_bomb",
 					"mini_bomb"
@@ -301,18 +301,18 @@
 					"armed_carrier"
 				]
 			],
-			pos: {
-				pos_x: 54,
-				pos_y: 353
+			"pos": {
+				"pos_x": 54,
+				"pos_y": 353
 			},
-			delay_time: [
+			"delay_time": [
 				5000,
 				6000,
 				7000,
 				12000,
 				1000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0,
@@ -321,44 +321,44 @@
 			]
 		}
 	],
-	immediate_units: [
+	"immediate_units": [
 		{
-			archetype: "cannon_emplacement",
-			pos: {
-				pos_x: 241,
-				pos_y: 241,
-				ang: 45
+			"archetype": "cannon_emplacement",
+			"pos": {
+				"pos_x": 241,
+				"pos_y": 241,
+				"ang": 45
 			},
-			alignment: 2
+			"alignment": 2
 		},
 		{
-			archetype: "machine_gun_emplacement",
-			pos: {
-				pos_x: 464,
-				pos_y: 241,
-				ang: 135
+			"archetype": "machine_gun_emplacement",
+			"pos": {
+				"pos_x": 464,
+				"pos_y": 241,
+				"ang": 135
 			},
-			alignment: 2
+			"alignment": 2
 		},
 		{
-			archetype: "rocket_emplacement",
-			pos: {
-				pos_x: 464,
-				pos_y: 464,
-				ang: -135
+			"archetype": "rocket_emplacement",
+			"pos": {
+				"pos_x": 464,
+				"pos_y": 464,
+				"ang": -135
 			},
-			alignment: 2
+			"alignment": 2
 		},
 		{
-			archetype: "machine_gun_emplacement",
-			pos: {
-				pos_x: 241,
-				pos_y: 464,
-				ang: -45
+			"archetype": "machine_gun_emplacement",
+			"pos": {
+				"pos_x": 241,
+				"pos_y": 464,
+				"ang": -45
 			},
-			alignment: 2
+			"alignment": 2
 		}
 	],
-	props: null,
-	player_vehicle: "light_tank"
+	"props": null,
+	"player_vehicle": "light_tank"
 }

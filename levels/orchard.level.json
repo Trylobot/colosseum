@@ -1,13 +1,13 @@
 {
-	name: "orchard",
-	width: 804,
-	height: 953,
-	row_count: 21,
-	col_count: 16,
-	hue: 0,
-	saturation: 0,
-	luminosity: 0.15,
-	horizontal_divs: [
+	"name": "orchard",
+	"width": 804,
+	"height": 953,
+	"row_count": 21,
+	"col_count": 16,
+	"hue": 0,
+	"saturation": 0,
+	"luminosity": 0.15,
+	"horizontal_divs": [
 		0,
 		50,
 		120,
@@ -31,7 +31,7 @@
 		903,
 		953
 	],
-	vertical_divs: [
+	"vertical_divs": [
 		0,
 		50,
 		120,
@@ -50,7 +50,7 @@
 		754,
 		804
 	],
-	path_regions: [
+	"path_regions": [
 		[
 			true,
 			true,
@@ -430,10 +430,10 @@
 			true
 		]
 	],
-	unit_factories: [
+	"unit_factories": [
 		{
-			alignment: 1,
-			squads: [
+			"alignment": 1,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -454,17 +454,17 @@
 					"light_tank"
 				]
 			],
-			pos: {
-				pos_x: 78,
-				pos_y: 201
+			"pos": {
+				"pos_x": 78,
+				"pos_y": 201
 			},
-			delay_time: [
+			"delay_time": [
 				1000,
 				4000,
 				0,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0,
@@ -472,8 +472,8 @@
 			]
 		},
 		{
-			alignment: 1,
-			squads: [
+			"alignment": 1,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -494,18 +494,18 @@
 					"light_tank"
 				]
 			],
-			pos: {
-				pos_x: 203,
-				pos_y: 78,
-				ang: 90
+			"pos": {
+				"pos_x": 203,
+				"pos_y": 78,
+				"ang": 90
 			},
-			delay_time: [
+			"delay_time": [
 				1000,
 				4000,
 				0,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0,
@@ -513,8 +513,8 @@
 			]
 		},
 		{
-			alignment: 1,
-			squads: [
+			"alignment": 1,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -535,18 +535,18 @@
 					"light_tank"
 				]
 			],
-			pos: {
-				pos_x: 604,
-				pos_y: 78,
-				ang: 90
+			"pos": {
+				"pos_x": 604,
+				"pos_y": 78,
+				"ang": 90
 			},
-			delay_time: [
+			"delay_time": [
 				1000,
 				4000,
 				0,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0,
@@ -554,8 +554,8 @@
 			]
 		},
 		{
-			alignment: 1,
-			squads: [
+			"alignment": 1,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -576,18 +576,18 @@
 					"light_tank"
 				]
 			],
-			pos: {
-				pos_x: 726,
-				pos_y: 201,
-				ang: 180
+			"pos": {
+				"pos_x": 726,
+				"pos_y": 201,
+				"ang": 180
 			},
-			delay_time: [
+			"delay_time": [
 				1000,
 				4000,
 				0,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0,
@@ -595,8 +595,8 @@
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -617,18 +617,18 @@
 					"light_tank"
 				]
 			],
-			pos: {
-				pos_x: 203,
-				pos_y: 875,
-				ang: -90
+			"pos": {
+				"pos_x": 203,
+				"pos_y": 875,
+				"ang": -90
 			},
-			delay_time: [
+			"delay_time": [
 				1000,
 				4000,
 				0,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0,
@@ -636,8 +636,8 @@
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -658,17 +658,17 @@
 					"light_tank"
 				]
 			],
-			pos: {
-				pos_x: 78,
-				pos_y: 755
+			"pos": {
+				"pos_x": 78,
+				"pos_y": 755
 			},
-			delay_time: [
+			"delay_time": [
 				1000,
 				4000,
 				0,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0,
@@ -676,8 +676,8 @@
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -698,18 +698,18 @@
 					"light_tank"
 				]
 			],
-			pos: {
-				pos_x: 726,
-				pos_y: 755,
-				ang: -180
+			"pos": {
+				"pos_x": 726,
+				"pos_y": 755,
+				"ang": -180
 			},
-			delay_time: [
+			"delay_time": [
 				1000,
 				4000,
 				0,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0,
@@ -717,8 +717,8 @@
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -739,18 +739,18 @@
 					"light_tank"
 				]
 			],
-			pos: {
-				pos_x: 604,
-				pos_y: 875,
-				ang: -90
+			"pos": {
+				"pos_x": 604,
+				"pos_y": 875,
+				"ang": -90
 			},
-			delay_time: [
+			"delay_time": [
 				1000,
 				4000,
 				0,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0,
@@ -758,127 +758,127 @@
 			]
 		}
 	],
-	immediate_units: null,
-	props: [
+	"immediate_units": null,
+	"props": [
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 590,
-				pos_y: 453
+			"archetype": "crate",
+			"pos": {
+				"pos_x": 590,
+				"pos_y": 453
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 619,
-				pos_y: 452
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 619,
+				"pos_y": 452
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 639,
-				pos_y: 435
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 639,
+				"pos_y": 435
 			}
 		},
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 665,
-				pos_y: 448
+			"archetype": "crate",
+			"pos": {
+				"pos_x": 665,
+				"pos_y": 448
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 601,
-				pos_y: 491
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 601,
+				"pos_y": 491
 			}
 		},
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 628,
-				pos_y: 497
+			"archetype": "crate",
+			"pos": {
+				"pos_x": 628,
+				"pos_y": 497
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 634,
-				pos_y: 525
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 634,
+				"pos_y": 525
 			}
 		},
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 659,
-				pos_y: 531
+			"archetype": "crate",
+			"pos": {
+				"pos_x": 659,
+				"pos_y": 531
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 225,
-				pos_y: 459
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 225,
+				"pos_y": 459
 			}
 		},
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 197,
-				pos_y: 451
+			"archetype": "crate",
+			"pos": {
+				"pos_x": 197,
+				"pos_y": 451
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 169,
-				pos_y: 450
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 169,
+				"pos_y": 450
 			}
 		},
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 141,
-				pos_y: 452
+			"archetype": "crate",
+			"pos": {
+				"pos_x": 141,
+				"pos_y": 452
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 134,
-				pos_y: 425
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 134,
+				"pos_y": 425
 			}
 		},
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 169,
-				pos_y: 497
+			"archetype": "crate",
+			"pos": {
+				"pos_x": 169,
+				"pos_y": 497
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 144,
-				pos_y: 491
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 144,
+				"pos_y": 491
 			}
 		},
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 137,
-				pos_y: 517
+			"archetype": "crate",
+			"pos": {
+				"pos_x": 137,
+				"pos_y": 517
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 223,
-				pos_y: 529
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 223,
+				"pos_y": 529
 			}
 		}
 	],
-	player_vehicle: "light_tank"
+	"player_vehicle": "light_tank"
 }

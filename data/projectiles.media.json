@@ -1,207 +1,207 @@
 [
 	{
-		class: "projectile",
-		key: "tank_cannon",
-		object: {
-      image_key: "projectile",
-      hitbox_image_key: "projectile_hitbox"
-			impact_sound_key: "cannon_hit",
-			damage: 50,
-			explosive_force_magnitude: 1000,
-			radius: 25,
-			mass: 0.03,
-			payload_emitters: [
+		"class": "projectile",
+		"key": "tank_cannon",
+		"object": {
+      "image_key": "projectile",
+      "hitbox_image_key": "projectile_hitbox",
+			"impact_sound_key": "cannon_hit",
+			"damage": 50,
+			"explosive_force_magnitude": 1000,
+			"radius": 25,
+			"mass": 0.03,
+			"payload_emitters": [
 				{
-					particle_emitter_key: "cannon_ricochet_spark",
-					attach_at: {
-						dist_ang_min: 135,
-						dist_ang_max: 225,
-						vel_min: 0.5,
-						vel_max: 2.5
+					"particle_emitter_key": "cannon_ricochet_spark",
+					"attach_at": {
+						"dist_ang_min": 135,
+						"dist_ang_max": 225,
+						"vel_min": 0.5,
+						"vel_max": 2.5
 					}
 				},
 				{
-					particle_emitter_key: "cannon_impact_halo",
-					attach_at: null
+					"particle_emitter_key": "cannon_impact_halo",
+					"attach_at": null
 				},
 				{
-					particle_emitter_key: "cannon_explosion",
-					attach_at: null
+					"particle_emitter_key": "cannon_explosion",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "projectile",
-		key: "machine_gun",
-		object: {
-      geometry: {
-        primitive: "rectangle",
-        width: 4,
-        height: 1,
+		"class": "projectile",
+		"key": "machine_gun",
+		"object": {
+      "geometry": {
+        "primitive": "rectangle",
+        "width": 4,
+        "height": 1,
       },
-			image_key: "mgun",
-			impact_sound_key: "mgun_hit",
-			damage: 5,
-			mass: 0.005,
-			payload_emitters: [
+			"image_key": "mgun",
+			"impact_sound_key": "mgun_hit",
+			"damage": 5,
+			"mass": 0.005,
+			"payload_emitters": [
 				{
-					particle_emitter_key: "machine_gun_ricochet_spark",
-					attach_at: {
-						dist_ang_min: 135,
-						dist_ang_max: 225,
-						vel_min: 0.5,
-						vel_max: 1
-					}
-				}
-			]
-		}
-	},
-	{
-		class: "projectile",
-		key: "energy_pellet",
-		object: {
-      geometry: {
-        primitive: "rectangle",
-        width: 3,
-        height: 1,
-      },
-			image_key: "energy_pellet",
-			impact_sound_key: "laser_hit",
-			damage: 1,
-			mass: 0.0025,
-			payload_emitters: [
-				{
-					particle_emitter_key: "machine_gun_ricochet_spark",
-					attach_at: {
-						dist_ang_min: 135,
-						dist_ang_max: 225,
-						vel_min: 0.5,
-						vel_max: 1
+					"particle_emitter_key": "machine_gun_ricochet_spark",
+					"attach_at": {
+						"dist_ang_min": 135,
+						"dist_ang_max": 225,
+						"vel_min": 0.5,
+						"vel_max": 1
 					}
 				}
 			]
 		}
 	},
 	{
-		class: "projectile",
-		key: "laser_red",
-		object: {
-      geometry: {
-        primitive: "rectangle",
-        width: 13,
-        height: 3,
+		"class": "projectile",
+		"key": "energy_pellet",
+		"object": {
+      "geometry": {
+        "primitive": "rectangle",
+        "width": 3,
+        "height": 1,
       },
-			image_key: "laser_red",
-			impact_sound_key: "laser_hit",
-			damage: 15,
-			mass: 0.0001,
-			ignore_other_projectiles: true
-			payload_emitters: [
+			"image_key": "energy_pellet",
+			"impact_sound_key": "laser_hit",
+			"damage": 1,
+			"mass": 0.0025,
+			"payload_emitters": [
 				{
-					particle_emitter_key: "laser_explosion",
-					attach_at: null
-				},
-				{
-					particle_emitter_key: "laser_secondary_explosion",
-					attach_at: {
-						dist_min: 5,
-						dist_max: 8,
-						dist_ang_min: -180,
-						dist_ang_max: 180,
-						vel_min: 1.3,
-						vel_max: 2.5
+					"particle_emitter_key": "machine_gun_ricochet_spark",
+					"attach_at": {
+						"dist_ang_min": 135,
+						"dist_ang_max": 225,
+						"vel_min": 0.5,
+						"vel_max": 1
 					}
-				},
-				{
-					particle_emitter_key: "laser_impact_halo",
-					attach_at: null
 				}
 			]
 		}
 	},
 	{
-		class: "projectile",
-		key: "laser_big",
-		object: {
-      geometry: {
-        primitive: "rectangle",
-        width: 15,
-        height: 3,
+		"class": "projectile",
+		"key": "laser_red",
+		"object": {
+      "geometry": {
+        "primitive": "rectangle",
+        "width": 13,
+        "height": 3,
       },
-			image_key: "laser_big",
-			impact_sound_key: "laser_hit",
-			damage: 40,
-			mass: 0.0001,
-			ignore_other_projectiles: true
-			payload_emitters: [
+			"image_key": "laser_red",
+			"impact_sound_key": "laser_hit",
+			"damage": 15,
+			"mass": 0.0001,
+			"ignore_other_projectiles": true,
+			"payload_emitters": [
 				{
-					particle_emitter_key: "medium_laser_explosion",
-					attach_at: null
+					"particle_emitter_key": "laser_explosion",
+					"attach_at": null
 				},
 				{
-					particle_emitter_key: "medium_laser_secondary_explosion",
-					attach_at: {
-						dist_min: 5,
-						dist_max: 8,
-						dist_ang_min: -180,
-						dist_ang_max: 180,
-						vel_min: 1.3,
-						vel_max: 2.5
+					"particle_emitter_key": "laser_secondary_explosion",
+					"attach_at": {
+						"dist_min": 5,
+						"dist_max": 8,
+						"dist_ang_min": -180,
+						"dist_ang_max": 180,
+						"vel_min": 1.3,
+						"vel_max": 2.5
 					}
 				},
 				{
-					particle_emitter_key: "laser_impact_halo",
-					attach_at: null
+					"particle_emitter_key": "laser_impact_halo",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "projectile",
-		key: "rocket",
-		object: {
-      geometry: {
-        primitive: "rectangle",
-        width: 11,
-        height: 3,
+		"class": "projectile",
+		"key": "laser_big",
+		"object": {
+      "geometry": {
+        "primitive": "rectangle",
+        "width": 15,
+        "height": 3,
       },
-			image_key: "rocket",
-			impact_sound_key: "cannon_hit",
-			damage: 100,
-			explosive_force_magnitude: 2000,
-			radius: 50,
-			max_vel: 16,
-			mass: 0.04,
-			frictional_coefficient: 0.00025,
-			constant_emitters: [
+			"image_key": "laser_big",
+			"impact_sound_key": "laser_hit",
+			"damage": 40,
+			"mass": 0.0001,
+			"ignore_other_projectiles": true,
+			"payload_emitters": [
 				{
-					particle_emitter_key: "rocket_thrust",
-					attach_at: {
-						offset_x: -11,
-						offset_y: 0
+					"particle_emitter_key": "medium_laser_explosion",
+					"attach_at": null
+				},
+				{
+					"particle_emitter_key": "medium_laser_secondary_explosion",
+					"attach_at": {
+						"dist_min": 5,
+						"dist_max": 8,
+						"dist_ang_min": -180,
+						"dist_ang_max": 180,
+						"vel_min": 1.3,
+						"vel_max": 2.5
 					}
 				},
 				{
-					particle_emitter_key: "rocket_smoke_trail",
-					attach_at: {
-						offset_x: -11,
-						offset_y: 0,
-						dist_min: 0,
-						dist_max: 11,
-						dist_ang_min: -30,
-						dist_ang_max: 30
-					}
+					"particle_emitter_key": "laser_impact_halo",
+					"attach_at": null
 				}
 			]
-			payload_emitters: [
+		}
+	},
+	{
+		"class": "projectile",
+		"key": "rocket",
+		"object": {
+      "geometry": {
+        "primitive": "rectangle",
+        "width": 11,
+        "height": 3,
+      },
+			"image_key": "rocket",
+			"impact_sound_key": "cannon_hit",
+			"damage": 100,
+			"explosive_force_magnitude": 2000,
+			"radius": 50,
+			"max_vel": 16,
+			"mass": 0.04,
+			"frictional_coefficient": 0.00025,
+			"constant_emitters": [
 				{
-					particle_emitter_key: "cannon_impact_halo",
-					attach_at: null
+					"particle_emitter_key": "rocket_thrust",
+					"attach_at": {
+						"offset_x": -11,
+						"offset_y": 0
+					}
 				},
 				{
-					particle_emitter_key: "cannon_explosion",
-					attach_at: null
+					"particle_emitter_key": "rocket_smoke_trail",
+					"attach_at": {
+						"offset_x": -11,
+						"offset_y": 0,
+						"dist_min": 0,
+						"dist_max": 11,
+						"dist_ang_min": -30,
+						"dist_ang_max": 30
+					}
+				}
+			],
+			"payload_emitters": [
+				{
+					"particle_emitter_key": "cannon_impact_halo",
+					"attach_at": null
+				},
+				{
+					"particle_emitter_key": "cannon_explosion",
+					"attach_at": null
 				}
 			]
 		}

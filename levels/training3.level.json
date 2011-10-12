@@ -1,13 +1,13 @@
 {
-	name: "training3",
-	width: 1079,
-	height: 834,
-	row_count: 14,
-	col_count: 18,
-	hue: 0,
-	saturation: 0,
-	luminosity: 0.3,
-	horizontal_divs: [
+	"name": "training3",
+	"width": 1079,
+	"height": 834,
+	"row_count": 14,
+	"col_count": 18,
+	"hue": 0,
+	"saturation": 0,
+	"luminosity": 0.3,
+	"horizontal_divs": [
 		0,
 		21,
 		91,
@@ -24,7 +24,7 @@
 		811,
 		834
 	],
-	vertical_divs: [
+	"vertical_divs": [
 		0,
 		22,
 		92,
@@ -45,7 +45,7 @@
 		984,
 		1079
 	],
-	path_regions: [
+	"path_regions": [
 		[
 			true,
 			true,
@@ -327,29 +327,29 @@
 			true
 		]
 	],
-	unit_factories: [
+	"unit_factories": [
 		{
-			alignment: 1,
-			squads: [
+			"alignment": 1,
+			"squads": [
 				[
 					"light_tank"
 				]
 			],
-			pos: {
-				pos_x: 187,
-				pos_y: 783,
-				ang: -90
+			"pos": {
+				"pos_x": 187,
+				"pos_y": 783,
+				"ang": -90
 			},
-			delay_time: [
+			"delay_time": [
 				0
 			],
-			wave_index: [
+			"wave_index": [
 				0
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"mr_the_box",
 					"mr_the_box"
@@ -358,22 +358,22 @@
 					"machine_gun_quad"
 				]
 			],
-			pos: {
-				pos_x: 50,
-				pos_y: 444
+			"pos": {
+				"pos_x": 50,
+				"pos_y": 444
 			},
-			delay_time: [
+			"delay_time": [
 				0,
 				0
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				1
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"mr_the_box",
 					"mr_the_box"
@@ -382,110 +382,110 @@
 					"machine_gun_quad"
 				]
 			],
-			pos: {
-				pos_x: 318,
-				pos_y: 444,
-				ang: 180
+			"pos": {
+				"pos_x": 318,
+				"pos_y": 444,
+				"ang": 180
 			},
-			delay_time: [
+			"delay_time": [
 				0,
 				0
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				1
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"machine_gun_quad"
 				]
 			],
-			pos: {
-				pos_x: 50,
-				pos_y: 172
+			"pos": {
+				"pos_x": 50,
+				"pos_y": 172
 			},
-			delay_time: [
+			"delay_time": [
 				0
 			],
-			wave_index: [
+			"wave_index": [
 				1
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"light_tank"
 				]
 			],
-			pos: {
-				pos_x: 891,
-				pos_y: 49,
-				ang: 90
+			"pos": {
+				"pos_x": 891,
+				"pos_y": 49,
+				"ang": 90
 			},
-			delay_time: [
+			"delay_time": [
 				0
 			],
-			wave_index: [
+			"wave_index": [
 				2
 			]
 		},
 		{
-			alignment: 2,
-			squads: null,
-			pos: {
-				pos_x: 392,
-				pos_y: 444
+			"alignment": 2,
+			"squads": null,
+			"pos": {
+				"pos_x": 392,
+				"pos_y": 444
 			},
-			delay_time: null,
-			wave_index: null
+			"delay_time": null,
+			"wave_index": null
 		},
 		{
-			alignment: 2,
-			squads: null,
-			pos: {
-				pos_x: 681,
-				pos_y: 444,
-				ang: 180
+			"alignment": 2,
+			"squads": null,
+			"pos": {
+				"pos_x": 681,
+				"pos_y": 444,
+				"ang": 180
 			},
-			delay_time: null,
-			wave_index: null
+			"delay_time": null,
+			"wave_index": null
 		},
 		{
-			alignment: 2,
-			squads: null,
-			pos: {
-				pos_x: 681,
-				pos_y: 172,
-				ang: 180
+			"alignment": 2,
+			"squads": null,
+			"pos": {
+				"pos_x": 681,
+				"pos_y": 172,
+				"ang": 180
 			},
-			delay_time: null,
-			wave_index: null
+			"delay_time": null,
+			"wave_index": null
 		}
 	],
-	immediate_units: [
+	"immediate_units": [
 		{
-			archetype: "rocket_emplacement",
-			pos: {
-				pos_x: 548,
-				pos_y: 118,
-				ang: 179.225784
+			"archetype": "rocket_emplacement",
+			"pos": {
+				"pos_x": 548,
+				"pos_y": 118,
+				"ang": 179.225784
 			},
-			alignment: 2
+			"alignment": 2
 		},
 		{
-			archetype: "cannon_emplacement",
-			pos: {
-				pos_x: 547,
-				pos_y: 161,
-				ang: 179.225784
+			"archetype": "cannon_emplacement",
+			"pos": {
+				"pos_x": 547,
+				"pos_y": 161,
+				"ang": 179.225784
 			},
-			alignment: 2
+			"alignment": 2
 		}
 	],
-	props: null,
-	player_vehicle: "light_tank"
+	"props": null,
+	"player_vehicle": "light_tank"
 }

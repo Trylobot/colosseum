@@ -1,13 +1,13 @@
 {
-	name: "training1",
-	width: 518,
-	height: 396,
-	row_count: 7,
-	col_count: 10,
-	hue: 0,
-	saturation: 0,
-	luminosity: 0.15,
-	horizontal_divs: [
+	"name": "training1",
+	"width": 518,
+	"height": 396,
+	"row_count": 7,
+	"col_count": 10,
+	"hue": 0,
+	"saturation": 0,
+	"luminosity": 0.15,
+	"horizontal_divs": [
 		0,
 		44,
 		106,
@@ -17,7 +17,7 @@
 		353,
 		396
 	],
-	vertical_divs: [
+	"vertical_divs": [
 		0,
 		28,
 		98,
@@ -30,7 +30,7 @@
 		491,
 		518
 	],
-	path_regions: [
+	"path_regions": [
 		[
 			true,
 			true,
@@ -116,20 +116,20 @@
 			true
 		]
 	],
-	unit_factories: [
+	"unit_factories": [
 		{
-			alignment: 1,
-			squads: null,
-			pos: {
-				pos_x: 56,
-				pos_y: 197
+			"alignment": 1,
+			"squads": null,
+			"pos": {
+				"pos_x": 56,
+				"pos_y": 197
 			},
-			delay_time: null,
-			wave_index: null
+			"delay_time": null,
+			"wave_index": null
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"mr_the_box",
 					"mr_the_box"
@@ -142,24 +142,24 @@
 					"mini_tank"
 				]
 			],
-			pos: {
-				pos_x: 269,
-				pos_y: 197
+			"pos": {
+				"pos_x": 269,
+				"pos_y": 197
 			},
-			delay_time: [
+			"delay_time": [
 				0,
 				0,
 				0
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				1,
 				2
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"mr_the_box",
 					"mr_the_box"
@@ -172,109 +172,109 @@
 					"mini_tank"
 				]
 			],
-			pos: {
-				pos_x: 463,
-				pos_y: 197,
-				ang: 180
+			"pos": {
+				"pos_x": 463,
+				"pos_y": 197,
+				"ang": 180
 			},
-			delay_time: [
+			"delay_time": [
 				0,
 				0,
 				0
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				1,
 				2
 			]
 		}
 	],
-	immediate_units: null,
-	props: [
+	"immediate_units": null,
+	"props": [
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 327,
-				pos_y: 264
+			"archetype": "crate",
+			"pos": {
+				"pos_x": 327,
+				"pos_y": 264
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 345,
-				pos_y: 238
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 345,
+				"pos_y": 238
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 352,
-				pos_y: 135
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 352,
+				"pos_y": 135
 			}
 		},
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 328,
-				pos_y: 132
+			"archetype": "crate",
+			"pos": {
+				"pos_x": 328,
+				"pos_y": 132
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 206,
-				pos_y: 295
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 206,
+				"pos_y": 295
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 201,
-				pos_y: 101
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 201,
+				"pos_y": 101
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 227,
-				pos_y: 300
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 227,
+				"pos_y": 300
 			}
 		},
 		{
-			archetype: "crate",
-			pos: {
-				pos_x: 358,
-				pos_y: 264
+			"archetype": "crate",
+			"pos": {
+				"pos_x": 358,
+				"pos_y": 264
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 370,
-				pos_y: 141
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 370,
+				"pos_y": 141
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 349,
-				pos_y: 110
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 349,
+				"pos_y": 110
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 375,
-				pos_y: 287
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 375,
+				"pos_y": 287
 			}
 		},
 		{
-			archetype: "crate_small",
-			pos: {
-				pos_x: 411,
-				pos_y: 158
+			"archetype": "crate_small",
+			"pos": {
+				"pos_x": 411,
+				"pos_y": 158
 			}
 		}
 	],
-	player_vehicle: "light_tank"
+	"player_vehicle": "light_tank"
 }

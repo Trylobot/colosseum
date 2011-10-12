@@ -1,343 +1,343 @@
 [
 	{
-		class: "particle",
-		key: "light_tank_track",
-		object: {
-			particle_type: 1,
-			image_key: "light_tank_track",
+		"class": "particle",
+		"key": "light_tank_track",
+		"object": {
+			"particle_type": 1,
+			"image_key": "light_tank_track",
 		}
 	},
 	{
-		class: "particle",
-		key: "light_tank_track_trail",
-		object: {
-			particle_type: 0,
-			image_key: "light_tank_track_trail",
-			layer: 2,
-			retain: true,
-			life_time: 0
+		"class": "particle",
+		"key": "light_tank_track_trail",
+		"object": {
+			"particle_type": 0,
+			"image_key": "light_tank_track_trail",
+			"layer": 2,
+			"retain": true,
+			"life_time": 0
 		}
 	},
 	{
-		class: "particle",
-		key: "med_tank_track",
-		object: {
-			particle_type: 1,
-			image_key: "med_tank_track",
+		"class": "particle",
+		"key": "med_tank_track",
+		"object": {
+			"particle_type": 1,
+			"image_key": "med_tank_track",
 		}
 	},
 	{
-		class: "particle",
-		key: "med_tank_track_trail",
-		object: {
-			particle_type: 0,
-			image_key: "med_tank_track_trail",
-			layer: 2,
-			retain: true,
-			life_time: 0
+		"class": "particle",
+		"key": "med_tank_track_trail",
+		"object": {
+			"particle_type": 0,
+			"image_key": "med_tank_track_trail",
+			"layer": 2,
+			"retain": true,
+			"life_time": 0
 		}
 	},
 	{
-		class: "particle",
-		key: "small_wheel",
-		object: {
-			particle_type: 0,
-			image_key: "small_wheel",
+		"class": "particle",
+		"key": "small_wheel",
+		"object": {
+			"particle_type": 0,
+			"image_key": "small_wheel",
 		}
 	},
 	{
-		class: "particle",
-		key: "light_quad_trail",
-		object: {
-			particle_type: 0,
-			image_key: "light_quad_trail",
-			layer: 2,
-			retain: true,
-			life_time: 0
+		"class": "particle",
+		"key": "light_quad_trail",
+		"object": {
+			"particle_type": 0,
+			"image_key": "light_quad_trail",
+			"layer": 2,
+			"retain": true,
+			"life_time": 0
 		}
 	},
 	{
-		class: "particle",
-		key: "cannon_muzzle_flash",
-		object: {
-			particle_type: 0,
-			image_key: "muzzle_flash",
-			layer: 1
+		"class": "particle",
+		"key": "cannon_muzzle_flash",
+		"object": {
+			"particle_type": 0,
+			"image_key": "muzzle_flash",
+			"layer": 1
 		}
 	},
 	{
-		class: "particle",
-		key: "cannon_shell_casing",
-		object: {
-			particle_type: 0,
-			image_key: "projectile_shell_casing",
-			layer: 1,
-			retain: true,
-			frictional_coefficient: 0.0100
+		"class": "particle",
+		"key": "cannon_shell_casing",
+		"object": {
+			"particle_type": 0,
+			"image_key": "projectile_shell_casing",
+			"layer": 1,
+			"retain": true,
+			"frictional_coefficient": 0.0100
 		}
 	},
 	{
-		class: "particle",
-		key: "cannon_muzzle_smoke",
-		object: {
-			particle_type: 0,
-			image_key: "muzzle_smoke",
-			layer: 1
+		"class": "particle",
+		"key": "cannon_muzzle_smoke",
+		"object": {
+			"particle_type": 0,
+			"image_key": "muzzle_smoke",
+			"layer": 1
 		}
 	},
 	{
-		class: "particle",
-		key: "explosion",
-		object: {
-			particle_type: 0,
-			image_key: "white_circle",
-			layer: 1,
-			retain: false,
-			frictional_coefficient: 0.0850
+		"class": "particle",
+		"key": "explosion",
+		"object": {
+			"particle_type": 0,
+			"image_key": "white_circle",
+			"layer": 1,
+			"retain": false,
+			"frictional_coefficient": 0.0850
 		}
 	},
 	{
-		class: "particle",
-		key: "dust",
-		object: {
-			particle_type: 0,
-			image_key: "white_circle",
-			layer: 2,
-			retain: false,
-			frictional_coefficient: 0.0850
+		"class": "particle",
+		"key": "dust",
+		"object": {
+			"particle_type": 0,
+			"image_key": "white_circle",
+			"layer": 2,
+			"retain": false,
+			"frictional_coefficient": 0.0850
 		}
 	},
 	{
-		class: "particle",
-		key: "ricochet_spark",
-		object: {
-			particle_type: 0,
-			image_key: "spark",
-			layer: 1,
-			retain: false,
-			frictional_coefficient: 0.0150
+		"class": "particle",
+		"key": "ricochet_spark",
+		"object": {
+			"particle_type": 0,
+			"image_key": "spark",
+			"layer": 1,
+			"retain": false,
+			"frictional_coefficient": 0.0150
 		}
 	},
 	{
-		class: "particle",
-		key: "impact_halo",
-		object: {
-			particle_type: 0,
-			image_key: "halo",
-			layer: 2,
-			retain: false
+		"class": "particle",
+		"key": "impact_halo",
+		"object": {
+			"particle_type": 0,
+			"image_key": "halo",
+			"layer": 2,
+			"retain": false
 		}
 	},
 	{
-		class: "particle",
-		key: "halo",
-		object: {
-			particle_type: 0,
-			image_key: "halo",
-			layer: 2,
-			retain: false,
-			life_time: 200,
-			alpha: 0.5,
-			scale_delta: -0.1000
+		"class": "particle",
+		"key": "halo",
+		"object": {
+			"particle_type": 0,
+			"image_key": "halo",
+			"layer": 2,
+			"retain": false,
+			"life_time": 200,
+			"alpha": 0.5,
+			"scale_delta": -0.1000
 		}
 	},
 	{
-		class: "particle",
-		key: "soft_glow",
-		object: {
-			particle_type: 0,
-			image_key: "halo",
-			layer: 1,
-			retain: false,
-			life_time: 1250,
-			alpha: 0.60,
-			alpha_delta: -0.012,
-			scale: 0.250,
-			scale_delta: 0.0015
+		"class": "particle",
+		"key": "soft_glow",
+		"object": {
+			"particle_type": 0,
+			"image_key": "halo",
+			"layer": 1,
+			"retain": false,
+			"life_time": 1250,
+			"alpha": 0.60,
+			"alpha_delta": -0.012,
+			"scale": 0.250,
+			"scale_delta": 0.0015
 		}
 	},
 	{
-		class: "particle",
-		key: "energy_mgun_flare",
-		object: {
-			particle_type: 0,
-			image_key: "energy_mgun_flare",
-			layer: 1
+		"class": "particle",
+		"key": "energy_mgun_flare",
+		"object": {
+			"particle_type": 0,
+			"image_key": "energy_mgun_flare",
+			"layer": 1
 		}
 	},
 	{
-		class: "particle",
-		key: "machine_gun_muzzle_flash",
-		object: {
-			particle_type: 0,
-			image_key: "mgun_muzzle_flash",
-			layer: 1
+		"class": "particle",
+		"key": "machine_gun_muzzle_flash",
+		"object": {
+			"particle_type": 0,
+			"image_key": "mgun_muzzle_flash",
+			"layer": 1
 		}
 	},
 	{
-		class: "particle",
-		key: "machine_gun_shell_casing",
-		object: {
-			particle_type: 0,
-			image_key: "mgun_shell_casing",
-			layer: 1,
-			retain: true,
-			frictional_coefficient: 0.0100
+		"class": "particle",
+		"key": "machine_gun_shell_casing",
+		"object": {
+			"particle_type": 0,
+			"image_key": "mgun_shell_casing",
+			"layer": 1,
+			"retain": true,
+			"frictional_coefficient": 0.0100
 		}
 	},
 	{
-		class: "particle",
-		key: "machine_gun_muzzle_smoke",
-		object: {
-			particle_type: 0,
-			image_key: "mgun_muzzle_smoke",
-			layer: 1
+		"class": "particle",
+		"key": "machine_gun_muzzle_smoke",
+		"object": {
+			"particle_type": 0,
+			"image_key": "mgun_muzzle_smoke",
+			"layer": 1
 		}
 	},
 	{
-		class: "particle",
-		key: "laser_muzzle_flare",
-		object: {
-			particle_type: 0,
-			image_key: "laser_muzzle_flare",
-			layer: 1,
-			retain: false
+		"class": "particle",
+		"key": "laser_muzzle_flare",
+		"object": {
+			"particle_type": 0,
+			"image_key": "laser_muzzle_flare",
+			"layer": 1,
+			"retain": false
 		}
 	},
 	{
-		class: "particle",
-		key: "medium_laser_muzzle_flare",
-		object: {
-			particle_type: 0,
-			image_key: "medium_laser_muzzle_flare",
-			layer: 1,
-			retain: false
+		"class": "particle",
+		"key": "medium_laser_muzzle_flare",
+		"object": {
+			"particle_type": 0,
+			"image_key": "medium_laser_muzzle_flare",
+			"layer": 1,
+			"retain": false
 		}
 	},
 	{
-		class: "particle",
-		key: "rocket_thrust",
-		object: {
-			particle_type: 0,
-			image_key: "rocket_thrust",
-			layer: 2
+		"class": "particle",
+		"key": "rocket_thrust",
+		"object": {
+			"particle_type": 0,
+			"image_key": "rocket_thrust",
+			"layer": 2
 		}
 	},
 	{
-		class: "particle",
-		key: "rocket_casing",
-		object: {
-			particle_type: 0,
-			image_key: "rocket_casing",
-			layer: 1,
-			retain: true,
-			frictional_coefficient: 0.0100
+		"class": "particle",
+		"key": "rocket_casing",
+		"object": {
+			"particle_type": 0,
+			"image_key": "rocket_casing",
+			"layer": 1,
+			"retain": true,
+			"frictional_coefficient": 0.0100
 		}
 	},
 	{
-		class: "particle",
-		key: "rocket_smoke_trail",
-		object: {
-			particle_type: 0,
-			image_key: "muzzle_smoke",
-			layer: 1
+		"class": "particle",
+		"key": "rocket_smoke_trail",
+		"object": {
+			"particle_type": 0,
+			"image_key": "muzzle_smoke",
+			"layer": 1
 		}
 	},
 	{
-		class: "particle",
-		key: "cash_positive",
-		object: {
-			particle_type: 2,
-			font_style: "cash_green",
-			layer: 1,
-			frictional_coefficient: 0.05,
-			life_time: 1250,
-			vel_y: -0.5,
-			alpha: 1.0,
-			alpha_delta: -0.020
+		"class": "particle",
+		"key": "cash_positive",
+		"object": {
+			"particle_type": 2,
+			"font_style": "cash_green",
+			"layer": 1,
+			"frictional_coefficient": 0.05,
+			"life_time": 1250,
+			"vel_y": -0.5,
+			"alpha": 1.0,
+			"alpha_delta": -0.020
 		}
 	},
 	{
-		class: "particle",
-		key: "cash_negative",
-		object: {
-			particle_type: 2,
-			font_style: "cash_red",
-			layer: 1,
-			frictional_coefficient: 0.05,
-			life_time: 1250,
-			vel_y: -0.5,
-			alpha: 1.0,
-			alpha_delta: -0.020
+		"class": "particle",
+		"key": "cash_negative",
+		"object": {
+			"particle_type": 2,
+			"font_style": "cash_red",
+			"layer": 1,
+			"frictional_coefficient": 0.05,
+			"life_time": 1250,
+			"vel_y": -0.5,
+			"alpha": 1.0,
+			"alpha_delta": -0.020
 		}
 	},
 	{
-		class: "particle",
-		key: "laser",
-		object: {
-			particle_type: 0,
-			image_key: "laser",
-			layer: 1,
-			retain: false
+		"class": "particle",
+		"key": "laser",
+		"object": {
+			"particle_type": 0,
+			"image_key": "laser",
+			"layer": 1,
+			"retain": false
 		}
 	},
 	{
-		class: "particle",
-		key: "door_servo",
-		object: {
-			particle_type: 1,
-			image_key: "door_servo",
+		"class": "particle",
+		"key": "door_servo",
+		"object": {
+			"particle_type": 1,
+			"image_key": "door_servo",
 		}
 	},
 	{
-		class: "particle",
-		key: "discarded_energy_core_red",
-		object: {
-			particle_type: 0,
-			image_key: "discarded_energy_core_red",
-			layer: 1,
-			retain: false,
-			frictional_coefficient: 0.0150
+		"class": "particle",
+		"key": "discarded_energy_core_red",
+		"object": {
+			"particle_type": 0,
+			"image_key": "discarded_energy_core_red",
+			"layer": 1,
+			"retain": false,
+			"frictional_coefficient": 0.0150
 		}
 	},
 	{
-		class: "particle",
-		key: "discarded_energy_core_big",
-		object: {
-			particle_type: 0,
-			image_key: "discarded_energy_core_big",
-			layer: 1,
-			retain: false,
-			frictional_coefficient: 0.0150
+		"class": "particle",
+		"key": "discarded_energy_core_big",
+		"object": {
+			"particle_type": 0,
+			"image_key": "discarded_energy_core_big",
+			"layer": 1,
+			"retain": false,
+			"frictional_coefficient": 0.0150
 		}
 	},
 	{
-		class: "particle",
-		key: "shockwave",
-		object: {
-			particle_type: 0,
-			image_key: "shockwave",
-			layer: 2,
-			retain: false,
+		"class": "particle",
+		"key": "shockwave",
+		"object": {
+			"particle_type": 0,
+			"image_key": "shockwave",
+			"layer": 2,
+			"retain": false,
 		}
 	},
 	{
-		class: "particle",
-		key: "mini_tank_track",
-		object: {
-			particle_type: 1,
-			image_key: "mini_tank_track",
+		"class": "particle",
+		"key": "mini_tank_track",
+		"object": {
+			"particle_type": 1,
+			"image_key": "mini_tank_track",
 		}
 	},
 	{
-		class: "particle",
-		key: "mini_tank_trail",
-		object: {
-			particle_type: 0,
-			image_key: "mini_tank_trail",
-			layer: 2,
-			retain: true,
-			life_time: 0
+		"class": "particle",
+		"key": "mini_tank_trail",
+		"object": {
+			"particle_type": 0,
+			"image_key": "mini_tank_trail",
+			"layer": 2,
+			"retain": true,
+			"life_time": 0
 		}
 	}
 ]

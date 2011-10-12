@@ -1,13 +1,13 @@
 {
-	name: "blitz",
-	width: 783,
-	height: 429,
-	row_count: 10,
-	col_count: 11,
-	hue: 0,
-	saturation: 0.45,
-	luminosity: 0.2,
-	horizontal_divs: [
+	"name": "blitz",
+	"width": 783,
+	"height": 429,
+	"row_count": 10,
+	"col_count": 11,
+	"hue": 0,
+	"saturation": 0.45,
+	"luminosity": 0.2,
+	"horizontal_divs": [
 		0,
 		15,
 		85,
@@ -20,7 +20,7 @@
 		414,
 		429
 	],
-	vertical_divs: [
+	"vertical_divs": [
 		0,
 		60,
 		135,
@@ -34,7 +34,7 @@
 		723,
 		783
 	],
-	path_regions: [
+	"path_regions": [
 		[
 			true,
 			true,
@@ -166,10 +166,10 @@
 			true
 		]
 	],
-	unit_factories: [
+	"unit_factories": [
 		{
-			alignment: 1,
-			squads: [
+			"alignment": 1,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -183,25 +183,25 @@
 					"armed_carrier"
 				]
 			],
-			pos: {
-				pos_x: 166,
-				pos_y: 43,
-				ang: 90
+			"pos": {
+				"pos_x": 166,
+				"pos_y": 43,
+				"ang": 90
 			},
-			delay_time: [
+			"delay_time": [
 				4000,
 				2000,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -215,25 +215,25 @@
 					"armed_carrier"
 				]
 			],
-			pos: {
-				pos_x: 166,
-				pos_y: 386,
-				ang: -90
+			"pos": {
+				"pos_x": 166,
+				"pos_y": 386,
+				"ang": -90
 			},
-			delay_time: [
+			"delay_time": [
 				4000,
 				2000,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -247,25 +247,25 @@
 					"armed_carrier"
 				]
 			],
-			pos: {
-				pos_x: 318,
-				pos_y: 386,
-				ang: -90
+			"pos": {
+				"pos_x": 318,
+				"pos_y": 386,
+				"ang": -90
 			},
-			delay_time: [
+			"delay_time": [
 				4000,
 				2000,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -279,25 +279,25 @@
 					"armed_carrier"
 				]
 			],
-			pos: {
-				pos_x: 470,
-				pos_y: 386,
-				ang: -90
+			"pos": {
+				"pos_x": 470,
+				"pos_y": 386,
+				"ang": -90
 			},
-			delay_time: [
+			"delay_time": [
 				4000,
 				2000,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0
 			]
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -311,25 +311,25 @@
 					"armed_carrier"
 				]
 			],
-			pos: {
-				pos_x: 622,
-				pos_y: 386,
-				ang: -90
+			"pos": {
+				"pos_x": 622,
+				"pos_y": 386,
+				"ang": -90
 			},
-			delay_time: [
+			"delay_time": [
 				4000,
 				2000,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0
 			]
 		},
 		{
-			alignment: 1,
-			squads: [
+			"alignment": 1,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -343,25 +343,25 @@
 					"armed_carrier"
 				]
 			],
-			pos: {
-				pos_x: 318,
-				pos_y: 43,
-				ang: 90
+			"pos": {
+				"pos_x": 318,
+				"pos_y": 43,
+				"ang": 90
 			},
-			delay_time: [
+			"delay_time": [
 				4000,
 				2000,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0
 			]
 		},
 		{
-			alignment: 1,
-			squads: [
+			"alignment": 1,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -375,25 +375,25 @@
 					"armed_carrier"
 				]
 			],
-			pos: {
-				pos_x: 470,
-				pos_y: 43,
-				ang: 90
+			"pos": {
+				"pos_x": 470,
+				"pos_y": 43,
+				"ang": 90
 			},
-			delay_time: [
+			"delay_time": [
 				4000,
 				2000,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0
 			]
 		},
 		{
-			alignment: 1,
-			squads: [
+			"alignment": 1,
+			"squads": [
 				[
 					"machine_gun_quad",
 					"machine_gun_quad",
@@ -407,24 +407,24 @@
 					"armed_carrier"
 				]
 			],
-			pos: {
-				pos_x: 622,
-				pos_y: 43,
-				ang: 90
+			"pos": {
+				"pos_x": 622,
+				"pos_y": 43,
+				"ang": 90
 			},
-			delay_time: [
+			"delay_time": [
 				4000,
 				2000,
 				10000
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				0,
 				0
 			]
 		}
 	],
-	immediate_units: null,
-	props: null,
-	player_vehicle: "light_tank"
+	"immediate_units": null,
+	"props": null,
+	"player_vehicle": "light_tank"
 }

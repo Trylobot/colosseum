@@ -1,28 +1,28 @@
 [
 	{
-		class: "prop",
-		key: "crate",
-		object:	{
-			image_key: "crate",
-			gibs_image_key: "crate_gibs",
-			max_health: 200.0,
-			mass: 400.0,
-			frictional_coefficient: 160.0,
-			physics_disabled: false,
-			destruct_on_contact: true
+		"class": "prop",
+		"key": "crate",
+		"object":	{
+			"image_key": "crate",
+			"gibs_image_key": "crate_gibs",
+			"max_health": 200.0,
+			"mass": 400.0,
+			"frictional_coefficient": 160.0,
+			"physics_disabled": false,
+			"destruct_on_contact": true
 		}
 	},
 	{
-		class: "prop",
-		key: "crate_small",
-		object:	{
-			image_key: "crate_small",
-			gibs_image_key: "crate_small_gibs",
-			max_health: 75.0,
-			mass: 300.0,
-			frictional_coefficient: 160.0,
-			physics_disabled: false,
-			destruct_on_contact: true
+		"class": "prop",
+		"key": "crate_small",
+		"object":	{
+			"image_key": "crate_small",
+			"gibs_image_key": "crate_small_gibs",
+			"max_health": 75.0,
+			"mass": 300.0,
+			"frictional_coefficient": 160.0,
+			"physics_disabled": false,
+			"destruct_on_contact": true
 		}
 	}
 ]

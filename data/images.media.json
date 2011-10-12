@@ -1,1200 +1,1200 @@
 [
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/light_tank/player_tank_chassis.png",
-			handle_x: 11.5,
-			handle_y: 6.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/light_tank/player_tank_chassis.png",
+			"handle_x": 11.5,
+			"handle_y": 6.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/light_tank/player_tank_chassis_lightmap.png",
-			handle_x: 11.5,
-			handle_y: 6.5,
-			frames: 4,
-			frame_width: 23,
-			frame_height: 13
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/light_tank/player_tank_chassis_lightmap.png",
+			"handle_x": 11.5,
+			"handle_y": 6.5,
+			"frames": 4,
+			"frame_width": 23,
+			"frame_height": 13
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/apc/apc_chassis.png",
-			handle_x: 13.5,
-			handle_y: 9.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/apc/apc_chassis.png",
+			"handle_x": 13.5,
+			"handle_y": 9.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/apc/apc_turret_base.png",
-			handle_x: 3.5,
-			handle_y: 5.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/apc/apc_turret_base.png",
+			"handle_x": 3.5,
+			"handle_y": 5.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/apc/apc_turret_barrel.png",
-			handle_x: 1.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/apc/apc_turret_barrel.png",
+			"handle_x": 1.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/light_tank/light_tank_track.png",
-			handle_x: 12.5,
-			handle_y: 3.0,
-			frames: 8,
-			frame_width: 25,
-			frame_height: 6
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/light_tank/light_tank_track.png",
+			"handle_x": 12.5,
+			"handle_y": 3.0,
+			"frames": 8,
+			"frame_width": 25,
+			"frame_height": 6
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/light_tank/light_tank_track_trail.png",
-			handle_x: 12.5,
-			handle_y: 3.0,
-			frames: 1,
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/light_tank/light_tank_track_trail.png",
+			"handle_x": 12.5,
+			"handle_y": 3.0,
+			"frames": 1,
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/light_tank/player_tank_turret_base.png",
-			handle_x: 6.5,
-			handle_y: 6.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/light_tank/player_tank_turret_base.png",
+			"handle_x": 6.5,
+			"handle_y": 6.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/light_tank/player_tank_turret_barrel.png",
-			handle_x: 3.5,
-			handle_y: 3.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/light_tank/player_tank_turret_barrel.png",
+			"handle_x": 3.5,
+			"handle_y": 3.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/light_tank/player_tank_mgun_turret.png",
-			handle_x: 3.5,
-			handle_y: 3.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/light_tank/player_tank_mgun_turret.png",
+			"handle_x": 3.5,
+			"handle_y": 3.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/medium_tank/player_tank_chassis_med.png",
-			handle_x: 16.5,
-			handle_y: 11.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/medium_tank/player_tank_chassis_med.png",
+			"handle_x": 16.5,
+			"handle_y": 11.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/medium_tank/med_tank_track.png",
-			handle_x: 16.5,
-			handle_y: 4.0,
-			frames: 8,
-			frame_width: 33,
-			frame_height: 8
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/medium_tank/med_tank_track.png",
+			"handle_x": 16.5,
+			"handle_y": 4.0,
+			"frames": 8,
+			"frame_width": 33,
+			"frame_height": 8
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/medium_tank/med_tank_track_trail.png",
-			handle_x: 16.5,
-			handle_y: 4.0,
-			frames: 1,
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/medium_tank/med_tank_track_trail.png",
+			"handle_x": 16.5,
+			"handle_y": 4.0,
+			"frames": 1,
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/medium_tank/player_tank_turret_med_base.png",
-			handle_x: 7.5,
-			handle_y: 11.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/medium_tank/player_tank_turret_med_base.png",
+			"handle_x": 7.5,
+			"handle_y": 11.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/medium_tank/player_tank_turret_med_barrel_right.png",
-			handle_x: 7.5,
-			handle_y: 11.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/medium_tank/player_tank_turret_med_barrel_right.png",
+			"handle_x": 7.5,
+			"handle_y": 11.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/medium_tank/player_tank_turret_med_barrel_left.png",
-			handle_x: 7.5,
-			handle_y: 11.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/medium_tank/player_tank_turret_med_barrel_left.png",
+			"handle_x": 7.5,
+			"handle_y": 11.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/medium_tank/player_tank_med_mgun_turret_barrel.png",
-			handle_x: 7.5,
-			handle_y: 11.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/medium_tank/player_tank_med_mgun_turret_barrel.png",
+			"handle_x": 7.5,
+			"handle_y": 11.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/medium_tank/ripper_machine_gun_turret_base.png",
-			handle_x: 8.5,
-			handle_y: 6.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/medium_tank/ripper_machine_gun_turret_base.png",
+			"handle_x": 8.5,
+			"handle_y": 6.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/medium_tank/ripper_machine_gun_turret_barrel.png",
-			handle_x: 1.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/medium_tank/ripper_machine_gun_turret_barrel.png",
+			"handle_x": 1.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/light_tank/laser_turret_base-barrel.png",
-			handle_x: 5.5,
-			handle_y: 5.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/light_tank/laser_turret_base-barrel.png",
+			"handle_x": 5.5,
+			"handle_y": 5.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/medium_tank/medium_laser_turret_base-barrel.png",
-			handle_x: 8.5,
-			handle_y: 6.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/medium_tank/medium_laser_turret_base-barrel.png",
+			"handle_x": 8.5,
+			"handle_y": 6.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/box/box.png",
-			handle_x: 8.5,
-			handle_y: 8.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/box/box.png",
+			"handle_x": 8.5,
+			"handle_y": 8.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/stationary/enemy_stationary-emplacement-1_chassis.png",
-			handle_x: 13.5,
-			handle_y: 13.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/stationary/enemy_stationary-emplacement-1_chassis.png",
+			"handle_x": 13.5,
+			"handle_y": 13.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/stationary/enemy_stationary-emplacement-1_turret-base.png",
-			handle_x: 11.5,
-			handle_y: 11.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/stationary/enemy_stationary-emplacement-1_turret-base.png",
+			"handle_x": 11.5,
+			"handle_y": 11.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/stationary/enemy_stationary-emplacement-1_turret-barrel.png",
-			handle_x: 11.5,
-			handle_y: 11.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/stationary/enemy_stationary-emplacement-1_turret-barrel.png",
+			"handle_x": 11.5,
+			"handle_y": 11.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/stationary/enemy_machine-gun_emplacement_turret-barrel.png",
-			handle_x: 2.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/stationary/enemy_machine-gun_emplacement_turret-barrel.png",
+			"handle_x": 2.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/bomb/nme_mobile_bomb.png",
-			handle_x: 3.5,
-			handle_y: 5.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/bomb/nme_mobile_bomb.png",
+			"handle_x": 3.5,
+			"handle_y": 5.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/spider/limb.png",
-			handle_x: 2.5,
-			handle_y: 3.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/spider/limb.png",
+			"handle_x": 2.5,
+			"handle_y": 3.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/quad/light_quad_trail.png",
-			handle_x: 9,
-			handle_y: 2.5,
-			frames: 1
-      filtered: false,
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/quad/light_quad_trail.png",
+			"handle_x": 9,
+			"handle_y": 2.5,
+			"frames": 1,
+      "filtered": false
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/quad/enemy_quad_chassis.png",
-			handle_x: 9.5,
-			handle_y: 7.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/quad/enemy_quad_chassis.png",
+			"handle_x": 9.5,
+			"handle_y": 7.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/quad/small_wheel.png",
-			handle_x: 4,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/quad/small_wheel.png",
+			"handle_x": 4,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/quad/enemy_light_mgun_turret_base.png",
-			handle_x: 3.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/quad/enemy_light_mgun_turret_base.png",
+			"handle_x": 3.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/quad/enemy_light_mgun_turret_barrel.png",
-			handle_x: 3.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/quad/enemy_light_mgun_turret_barrel.png",
+			"handle_x": 3.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/muzzle_flash.png",
-			handle_x: 0.5,
-			handle_y: 12.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/muzzle_flash.png",
+			"handle_x": 0.5,
+			"handle_y": 12.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/energy_mgun_flare.png",
-			handle_x: 0.5,
-			handle_y: 7.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/energy_mgun_flare.png",
+			"handle_x": 0.5,
+			"handle_y": 7.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/mgun_muzzle_flash.png",
-			handle_x: 0.5,
-			handle_y: 7.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/mgun_muzzle_flash.png",
+			"handle_x": 0.5,
+			"handle_y": 7.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/muzzle_smoke.png",
-			handle_x: 15.5,
-			handle_y: 15.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/muzzle_smoke.png",
+			"handle_x": 15.5,
+			"handle_y": 15.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/mgun_muzzle_smoke.png",
-			handle_x: 8.5,
-			handle_y: 8.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/mgun_muzzle_smoke.png",
+			"handle_x": 8.5,
+			"handle_y": 8.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/mgun_shell_casing.png",
-			handle_x: 3.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/mgun_shell_casing.png",
+			"handle_x": 3.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/projectile_shell_casing.png",
-			handle_x: 5.5,
-			handle_y: 3.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/projectile_shell_casing.png",
+			"handle_x": 5.5,
+			"handle_y": 3.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/rocket_thrust.png",
-			handle_x: 16.5,
-			handle_y: 6.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/rocket_thrust.png",
+			"handle_x": 16.5,
+			"handle_y": 6.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/rocket_casing.png",
-			handle_x: 6.5,
-			handle_y: 3.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/rocket_casing.png",
+			"handle_x": 6.5,
+			"handle_y": 3.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/halo.png",
-			handle_x: 100.0,
-			handle_y: 100.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/halo.png",
+			"handle_x": 100.0,
+			"handle_y": 100.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/spotlight.png",
-			handle_x: 100.0,
-			handle_y: 100.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/spotlight.png",
+			"handle_x": 100.0,
+			"handle_y": 100.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/spark.png",
-			handle_x: 0.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/spark.png",
+			"handle_x": 0.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/laser_muzzle_flare.png",
-			handle_x: 1.5,
-			handle_y: 7.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/laser_muzzle_flare.png",
+			"handle_x": 1.5,
+			"handle_y": 7.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/medium_laser_muzzle_flare.png",
-			handle_x: 1.5,
-			handle_y: 7.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/medium_laser_muzzle_flare.png",
+			"handle_x": 1.5,
+			"handle_y": 7.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/white_circle.png",
-			handle_x: 25.0,
-			handle_y: 25.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/white_circle.png",
+			"handle_x": 25.0,
+			"handle_y": 25.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/projectile.png",
-			handle_x: 6.5,
-			handle_y: 3.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/projectile.png",
+			"handle_x": 6.5,
+			"handle_y": 3.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/projectile_hitbox.png",
-			handle_x: 6.5,
-			handle_y: 3.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/projectile_hitbox.png",
+			"handle_x": 6.5,
+			"handle_y": 3.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/mgun.png",
-			handle_x: 4.5,
-			handle_y: 1.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/mgun.png",
+			"handle_x": 4.5,
+			"handle_y": 1.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/laser_red.png",
-			handle_x: 13.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/laser_red.png",
+			"handle_x": 13.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/laser.png",
-			handle_x: 13.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/laser.png",
+			"handle_x": 13.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/rocket.png",
-			handle_x: 10.5,
-			handle_y: 3.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/rocket.png",
+			"handle_x": 10.5,
+			"handle_y": 3.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/box/box_gib.png",
-			handle_x: 8.5,
-			handle_y: 8.5,
-			frames: 6,
-			frame_width: 17,
-			frame_height: 17
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/box/box_gib.png",
+			"handle_x": 8.5,
+			"handle_y": 8.5,
+			"frames": 6,
+			"frame_width": 17,
+			"frame_height": 17
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/stationary/tower_gibs.png",
-			handle_x: 11.5,
-			handle_y: 11.5,
-			frames: 11,
-			frame_width: 23,
-			frame_height: 23
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/stationary/tower_gibs.png",
+			"handle_x": 11.5,
+			"handle_y": 11.5,
+			"frames": 11,
+			"frame_width": 23,
+			"frame_height": 23
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/bomb/bomb_gibs.png",
-			handle_x: 3.5,
-			handle_y: 5.5,
-			frames: 7,
-			frame_width: 15,
-			frame_height: 11
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/bomb/bomb_gibs.png",
+			"handle_x": 3.5,
+			"handle_y": 5.5,
+			"frames": 7,
+			"frame_width": 15,
+			"frame_height": 11
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/props/crate_gibs.png",
-			handle_x: 16.0,
-			handle_y: 16.0,
-			frames: 26,
-			frame_width: 32,
-			frame_height: 32
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/props/crate_gibs.png",
+			"handle_x": 16.0,
+			"handle_y": 16.0,
+			"frames": 26,
+			"frame_width": 32,
+			"frame_height": 32
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/props/crate_small_gibs.png",
-			handle_x: 10.0,
-			handle_y: 10.0,
-			frames: 18,
-			frame_width: 20,
-			frame_height: 20
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/props/crate_small_gibs.png",
+			"handle_x": 10.0,
+			"handle_y": 10.0,
+			"frames": 18,
+			"frame_width": 20,
+			"frame_height": 20
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/stickies.png",
-			handle_x: 7.5,
-			handle_y: 7.5,
-			frames: 5,
-			frame_width: 16,
-			frame_height: 16
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/stickies.png",
+			"handle_x": 7.5,
+			"handle_y": 7.5,
+			"frames": 5,
+			"frame_width": 16,
+			"frame_height": 16
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/glow.png",
-			handle_x: 7.5,
-			handle_y: 7.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/glow.png",
+			"handle_x": 7.5,
+			"handle_y": 7.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/items/pickup_ammo.png",
-			handle_x: 8.0,
-			handle_y: 8.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/items/pickup_ammo.png",
+			"handle_x": 8.0,
+			"handle_y": 8.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/items/pickup_health.png",
-			handle_x: 16.0,
-			handle_y: 9.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/items/pickup_health.png",
+			"handle_x": 16.0,
+			"handle_y": 9.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/items/pickup_cooldown.png",
-			handle_x: 16.0,
-			handle_y: 9.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/items/pickup_cooldown.png",
+			"handle_x": 16.0,
+			"handle_y": 9.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/health_mini.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/health_mini.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/icon_music_note.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/icon_music_note.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/icon_speaker_on.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/icon_speaker_on.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/icon_speaker_off.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/icon_speaker_off.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/icon_player_cannon_ammo.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/icon_player_cannon_ammo.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/kb_key_left.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/kb_key_left.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/kb_key_mid.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/kb_key_mid.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/kb_key_right.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/kb_key_right.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/bar_shine.png",
-			handle_x: 15.0,
-			handle_y: 0.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/bar_shine.png",
+			"handle_x": 15.0,
+			"handle_y": 0.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/door/door.png",
-			handle_x: 1.0,
-			handle_y: 7.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/door/door.png",
+			"handle_x": 1.0,
+			"handle_y": 7.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/props/crate.png",
-			handle_x: 16.0,
-			handle_y: 16.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/props/crate.png",
+			"handle_x": 16.0,
+			"handle_y": 16.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/props/crate_small.png",
-			handle_x: 10.0,
-			handle_y: 10.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/props/crate_small.png",
+			"handle_x": 10.0,
+			"handle_y": 10.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/reticle.png",
-			handle_x: 22.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/reticle.png",
+			"handle_x": 22.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/ghost_reticle.png",
-			handle_x: 3.5,
-			handle_y: 3.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/ghost_reticle.png",
+			"handle_x": 3.5,
+			"handle_y": 3.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/reticle_simple.png",
-      filtered: false,
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/reticle_simple.png",
+      "filtered": false,
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/door/door_bg.png",
-			handle_x: 35.0,
-			handle_y: 74.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/door/door_bg.png",
+			"handle_x": 35.0,
+			"handle_y": 74.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/door/door_fg.png",
-			handle_x: 35.0,
-			handle_y: 74.0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/door/door_fg.png",
+			"handle_x": 35.0,
+			"handle_y": 74.0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/light_tank/light_tank_hitbox.png",
-			handle_x: 12.5,
-			handle_y: 9.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/light_tank/light_tank_hitbox.png",
+			"handle_x": 12.5,
+			"handle_y": 9.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/medium_tank/medium_tank_hitbox.png",
-			handle_x: 16.5,
-			handle_y: 11.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/medium_tank/medium_tank_hitbox.png",
+			"handle_x": 16.5,
+			"handle_y": 11.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/carrier/carrier_chassis.png",
-			handle_x: 17,
-			handle_y: 13,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/carrier/carrier_chassis.png",
+			"handle_x": 17,
+			"handle_y": 13,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/carrier/carrier_gibs.png",
-			handle_x: 17,
-			handle_y: 13,
-			frames: 21,
-			frame_width: 35,
-			frame_height: 26
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/carrier/carrier_gibs.png",
+			"handle_x": 17,
+			"handle_y": 13,
+			"frames": 21,
+			"frame_width": 35,
+			"frame_height": 26
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/carrier/carrier_hitbox.png",
-			handle_x: 17,
-			handle_y: 13,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/carrier/carrier_hitbox.png",
+			"handle_x": 17,
+			"handle_y": 13,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "bay_door_clockwise",
-		object: {
-			path: "art/units/carrier/bay_door.png",
-			handle_x: 3,
-			handle_y: 2,
-			frames: 1
+		"class": "image",
+		"key": "bay_door_clockwise",
+		"object": {
+			"path": "art/units/carrier/bay_door.png",
+			"handle_x": 3,
+			"handle_y": 2,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "bay_door_counter_clockwise",
-		object: {
-			path: "art/units/carrier/bay_door.png",
-			handle_x: 3,
-			handle_y: 10,
-			frames: 1,
-			flip_vertical: true
+		"class": "image",
+		"key": "bay_door_counter_clockwise",
+		"object": {
+			"path": "art/units/carrier/bay_door.png",
+			"handle_x": 3,
+			"handle_y": 10,
+			"frames": 1,
+			"flip_vertical": true
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/carrier/ramp.png",
-			handle_x: 1,
-			handle_y: 4,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/carrier/ramp.png",
+			"handle_x": 1,
+			"handle_y": 4,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/arrow.png",
-			handle_x: 23,
-			handle_y: 19,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/arrow.png",
+			"handle_x": 23,
+			"handle_y": 19,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/door/door_servo.png",
-			handle_x: 0,
-			handle_y: 6,
-			frames: 7,
-			frame_width: 9,
-			frame_height: 12
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/door/door_servo.png",
+			"handle_x": 0,
+			"handle_y": 6,
+			"frames": 7,
+			"frame_width": 9,
+			"frame_height": 12
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/laser_big.png",
-			handle_x: 15,
-			handle_y: 3.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/laser_big.png",
+			"handle_x": 15,
+			"handle_y": 3.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/lightbulb.png",
-			handle_x: 9.5,
-			handle_y: 9.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/lightbulb.png",
+			"handle_x": 9.5,
+			"handle_y": 9.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/skull_1x.png",
-			handle_x: 0,
-			handle_y: 0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/skull_1x.png",
+			"handle_x": 0,
+			"handle_y": 0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/discarded_energy_core_red.png",
-			handle_x: 3,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/discarded_energy_core_red.png",
+			"handle_x": 3,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/discarded_energy_core_big.png",
-			handle_x: 3.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/discarded_energy_core_big.png",
+			"handle_x": 3.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/lock.png",
-			handle_x: 6,
-			handle_y: 9,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/lock.png",
+			"handle_x": 6,
+			"handle_y": 9,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/warning.png",
-			handle_x: 0,
-			handle_y: 0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/warning.png",
+			"handle_x": 0,
+			"handle_y": 0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/information.png",
-			handle_x: 0,
-			handle_y: 0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/information.png",
+			"handle_x": 0,
+			"handle_y": 0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/shockwave.png",
-			handle_x: 75.5,
-			handle_y: 75.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/shockwave.png",
+			"handle_x": 75.5,
+			"handle_y": 75.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/reload_bar.png",
-			handle_x: 0,
-			handle_y: 0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/reload_bar.png",
+			"handle_x": 0,
+			"handle_y": 0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/reload_marker.png",
-			handle_x: 0,
-			handle_y: 0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/reload_marker.png",
+			"handle_x": 0,
+			"handle_y": 0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/recharge_bar.png",
-			handle_x: 0,
-			handle_y: 0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/recharge_bar.png",
+			"handle_x": 0,
+			"handle_y": 0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/effects/energy_pellet.png",
-			handle_x: 2,
-			handle_y: 2,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/effects/energy_pellet.png",
+			"handle_x": 2,
+			"handle_y": 2,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/light_tank/pellet_turret_base.png",
-			handle_x: 1,
-			handle_y: 1,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/light_tank/pellet_turret_base.png",
+			"handle_x": 1,
+			"handle_y": 1,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/menu_back_arrow_solid.png",
-			handle_x: 0, 
-			handle_y: 0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/menu_back_arrow_solid.png",
+			"handle_x": 0, 
+			"handle_y": 0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/menu_back_arrow_outline.png",
-			handle_x: 0, 
-			handle_y: 0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/menu_back_arrow_outline.png",
+			"handle_x": 0, 
+			"handle_y": 0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/ui/menu_back_arrow_extra_lines.png",
-			handle_x: 0, 
-			handle_y: 0,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/ui/menu_back_arrow_extra_lines.png",
+			"handle_x": 0, 
+			"handle_y": 0,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/mini_tank/mini_tank_chassis.png",
-			handle_x: 8.0,
-			handle_y: 4.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/mini_tank/mini_tank_chassis.png",
+			"handle_x": 8.0,
+			"handle_y": 4.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/mini_tank/mini_tank_track.png",
-			handle_x: 6.5,
-			handle_y: 2.5,
-			frames: 8,
-			frame_width: 13,
-			frame_height: 5
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/mini_tank/mini_tank_track.png",
+			"handle_x": 6.5,
+			"handle_y": 2.5,
+			"frames": 8,
+			"frame_width": 13,
+			"frame_height": 5
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/mini_tank/mini_tank_turret.png",
-			handle_x: 2.5,
-			handle_y: 2.5,
-			frames: 1
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/mini_tank/mini_tank_turret.png",
+			"handle_x": 2.5,
+			"handle_y": 2.5,
+			"frames": 1
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/units/mini_tank/mini_tank_trail.png",
-			handle_x: 6.5,
-			handle_y: 2.5,
-			frames: 1,
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/units/mini_tank/mini_tank_trail.png",
+			"handle_x": 6.5,
+			"handle_y": 2.5,
+			"frames": 1,
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/fonts/04b11_6pt.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1,
-      filtered: false,
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/fonts/04b11_6pt.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1,
+      "filtered": false,
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/fonts/04b11_6pt_outline.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1,
-      filtered: false,
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/fonts/04b11_6pt_outline.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1,
+      "filtered": false,
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/fonts/PressStartK_6pt.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1,
-      filtered: false,
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/fonts/PressStartK_6pt.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1,
+      "filtered": false,
 		}
 	},
 	{
-		class: "image",
-		key: "{path}",
-		object: {
-			path: "art/fonts/PressStartK_6pt_outline.png",
-			handle_x: 0.0,
-			handle_y: 0.0,
-			frames: 1,
-      filtered: false,
+		"class": "image",
+		"key": "{path}",
+		"object": {
+			"path": "art/fonts/PressStartK_6pt_outline.png",
+			"handle_x": 0.0,
+			"handle_y": 0.0,
+			"frames": 1,
+      "filtered": false,
 		}
 	},
   {
-    class: "image",
-    key: "{path}",
-    object: {
-      path: "art/ui/col_title.png",
-      handle_x: 500.0,
-      handle_y: 0.0,
-      frames: 1,
+    "class": "image",
+    "key": "{path}",
+    "object": {
+      "path": "art/ui/col_title.png",
+      "handle_x": 500.0,
+      "handle_y": 0.0,
+      "frames": 1,
     }
   },
 ]

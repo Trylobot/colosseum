@@ -1,13 +1,13 @@
 {
-	name: "debug",
-	width: 640,
-	height: 480,
-	row_count: 6,
-	col_count: 6,
-	hue: 0,
-	saturation: 0,
-	luminosity: 0.3,
-	horizontal_divs: [
+	"name": "debug",
+	"width": 640,
+	"height": 480,
+	"row_count": 6,
+	"col_count": 6,
+	"hue": 0,
+	"saturation": 0,
+	"luminosity": 0.3,
+	"horizontal_divs": [
 		0,
 		40,
 		140,
@@ -16,7 +16,7 @@
 		440,
 		480
 	],
-	vertical_divs: [
+	"vertical_divs": [
 		0,
 		40,
 		180,
@@ -25,7 +25,7 @@
 		600,
 		640
 	],
-	path_regions: [
+	"path_regions": [
 		[
 			true,
 			true,
@@ -75,8 +75,8 @@
 			true
 		]
 	],
-	unit_factories: null,
-	immediate_units: null,
-	props: null,
-	player_vehicle: "light_tank"
+	"unit_factories": null,
+	"immediate_units": null,
+	"props": null,
+	"player_vehicle": "light_tank"
 }

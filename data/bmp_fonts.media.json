@@ -1,15 +1,15 @@
 [
 	{
-		class: "bmp_font",
-		key: "small_5",
-		object: {
-			image_key: "04b11_6pt",
-      offset_x: 0,
-      offset_y: 0,
-      baseline_y: 6,
-      char_spacing: 0,
-      line_spacing: 0,
-      char_widths: [
+		"class": "bmp_font",
+		"key": "small_5",
+		"object": {
+			"image_key": "04b11_6pt",
+      "offset_x": 0,
+      "offset_y": 0,
+      "baseline_y": 6,
+      "char_spacing": 0,
+      "line_spacing": 0,
+      "char_widths": [
         4,
         3,
         6,
@@ -109,32 +109,32 @@
 		}
 	},
 	{
-		class: "bmp_font_copy",
-		key: "small_10",
-		object: {
-			base_font: "small_5",
-			scale: 2,
+		"class": "bmp_font_copy",
+		"key": "small_10",
+		"object": {
+			"base_font": "small_5",
+			"scale": 2,
 		}
 	},
 	{
-		class: "bmp_font_copy",
-		key: "small_15",
-		object: {
-			base_font: "small_5",
-			scale: 3,
+		"class": "bmp_font_copy",
+		"key": "small_15",
+		"object": {
+			"base_font": "small_5",
+			"scale": 3,
 		}
 	},
 	{
-		class: "bmp_font",
-		key: "small_5_outline",
-		object: {
-			image_key: "04b11_6pt_outline",
-      offset_x: 1,
-      offset_y: 1,
-      baseline_y: 7,
-      char_spacing: -2,
-      line_spacing: -2,
-      char_widths: [
+		"class": "bmp_font",
+		"key": "small_5_outline",
+		"object": {
+			"image_key": "04b11_6pt_outline",
+      "offset_x": 1,
+      "offset_y": 1,
+      "baseline_y": 7,
+      "char_spacing": -2,
+      "line_spacing": -2,
+      "char_widths": [
         6,
         5,
         8,
@@ -234,32 +234,32 @@
 		}
 	},
 	{
-		class: "bmp_font_copy",
-		key: "small_10_outline",
-		object: {
-			base_font: "small_5_outline",
-			scale: 2,
+		"class": "bmp_font_copy",
+		"key": "small_10_outline",
+		"object": {
+			"base_font": "small_5_outline",
+			"scale": 2,
 		}
 	},
 	{
-		class: "bmp_font_copy",
-		key: "small_15_outline",
-		object: {
-			base_font: "small_5_outline",
-			scale: 3,
+		"class": "bmp_font_copy",
+		"key": "small_15_outline",
+		"object": {
+			"base_font": "small_5_outline",
+			"scale": 3,
 		}
 	},
   {
-    class: "bmp_font",
-    key: "arcade_7",
-    object: {
-      image_key: "PressStartK_6pt",
-      offset_x: 0,
-      offset_y: 0,
-      baseline_y: 8,
-      char_spacing: 0,
-      line_spacing: 0,
-      char_widths: [
+    "class": "bmp_font",
+    "key": "arcade_7",
+    "object": {
+      "image_key": "PressStartK_6pt",
+      "offset_x": 0,
+      "offset_y": 0,
+      "baseline_y": 8,
+      "char_spacing": 0,
+      "line_spacing": 0,
+      "char_widths": [
         5,
         5,
         6,
@@ -359,40 +359,40 @@
     }
   },
 	{
-		class: "bmp_font_copy",
-		key: "arcade_14",
-		object: {
-			base_font: "arcade_7",
-			scale: 2,
+		"class": "bmp_font_copy",
+		"key": "arcade_14",
+		"object": {
+			"base_font": "arcade_7",
+			"scale": 2,
 		}
 	},
 	{
-		class: "bmp_font_copy",
-		key: "arcade_21",
-		object: {
-			base_font: "arcade_7",
-			scale: 3,
+		"class": "bmp_font_copy",
+		"key": "arcade_21",
+		"object": {
+			"base_font": "arcade_7",
+			"scale": 3,
 		}
 	},
 	{
-		class: "bmp_font_copy",
-		key: "arcade_28",
-		object: {
-			base_font: "arcade_7",
-			scale: 4,
+		"class": "bmp_font_copy",
+		"key": "arcade_28",
+		"object": {
+			"base_font": "arcade_7",
+			"scale": 4,
 		}
 	},
   {
-    class: "bmp_font",
-    key: "arcade_7_outline",
-    object: {
-      image_key: "PressStartK_6pt_outline",
-      offset_x: 1,
-      offset_y: 1,
-      baseline_y: 9,
-      char_spacing: -2,
-      line_spacing: -2,
-      char_widths: [
+    "class": "bmp_font",
+    "key": "arcade_7_outline",
+    "object": {
+      "image_key": "PressStartK_6pt_outline",
+      "offset_x": 1,
+      "offset_y": 1,
+      "baseline_y": 9,
+      "char_spacing": -2,
+      "line_spacing": -2,
+      "char_widths": [
         7,
         7,
         8,
@@ -492,27 +492,27 @@
     }
   },
 	{
-		class: "bmp_font_copy",
-		key: "arcade_14_outline",
-		object: {
-			base_font: "arcade_7_outline",
-			scale: 2,
+		"class": "bmp_font_copy",
+		"key": "arcade_14_outline",
+		"object": {
+			"base_font": "arcade_7_outline",
+			"scale": 2,
 		}
 	},
 	{
-		class: "bmp_font_copy",
-		key: "arcade_21_outline",
-		object: {
-			base_font: "arcade_7_outline",
-			scale: 3,
+		"class": "bmp_font_copy",
+		"key": "arcade_21_outline",
+		"object": {
+			"base_font": "arcade_7_outline",
+			"scale": 3,
 		}
 	},
 	{
-		class: "bmp_font_copy",
-		key: "arcade_28_outline",
-		object: {
-			base_font: "arcade_7_outline",
-			scale: 4,
+		"class": "bmp_font_copy",
+		"key": "arcade_28_outline",
+		"object": {
+			"base_font": "arcade_7_outline",
+			"scale": 4,
 		}
 	}
 ]

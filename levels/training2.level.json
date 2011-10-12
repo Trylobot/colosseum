@@ -1,13 +1,13 @@
 {
-	name: "training2",
-	width: 715,
-	height: 788,
-	row_count: 14,
-	col_count: 11,
-	hue: 0,
-	saturation: 0,
-	luminosity: 0.3,
-	horizontal_divs: [
+	"name": "training2",
+	"width": 715,
+	"height": 788,
+	"row_count": 14,
+	"col_count": 11,
+	"hue": 0,
+	"saturation": 0,
+	"luminosity": 0.3,
+	"horizontal_divs": [
 		0,
 		22,
 		92,
@@ -24,7 +24,7 @@
 		765,
 		788
 	],
-	vertical_divs: [
+	"vertical_divs": [
 		0,
 		83,
 		137,
@@ -38,7 +38,7 @@
 		628,
 		715
 	],
-	path_regions: [
+	"path_regions": [
 		[
 			true,
 			true,
@@ -222,21 +222,21 @@
 			true
 		]
 	],
-	unit_factories: [
+	"unit_factories": [
 		{
-			alignment: 1,
-			squads: null,
-			pos: {
-				pos_x: 168,
-				pos_y: 50,
-				ang: 90
+			"alignment": 1,
+			"squads": null,
+			"pos": {
+				"pos_x": 168,
+				"pos_y": 50,
+				"ang": 90
 			},
-			delay_time: null,
-			wave_index: null
+			"delay_time": null,
+			"wave_index": null
 		},
 		{
-			alignment: 2,
-			squads: [
+			"alignment": 2,
+			"squads": [
 				[
 					"mr_the_box",
 					"mr_the_box",
@@ -250,79 +250,79 @@
 					"machine_gun_quad"
 				]
 			],
-			pos: {
-				pos_x: 542,
-				pos_y: 737,
-				ang: -90
+			"pos": {
+				"pos_x": 542,
+				"pos_y": 737,
+				"ang": -90
 			},
-			delay_time: [
+			"delay_time": [
 				0,
 				0,
 				0
 			],
-			wave_index: [
+			"wave_index": [
 				0,
 				1,
 				2
 			]
 		}
 	],
-	immediate_units: [
+	"immediate_units": [
 		{
-			archetype: "machine_gun_emplacement",
-			pos: {
-				pos_x: 356,
-				pos_y: 324,
-				ang: -89.020683
+			"archetype": "machine_gun_emplacement",
+			"pos": {
+				"pos_x": 356,
+				"pos_y": 324,
+				"ang": -89.020683
 			},
-			alignment: 2
+			"alignment": 2
 		},
 		{
-			archetype: "machine_gun_emplacement",
-			pos: {
-				pos_x: 425,
-				pos_y: 360,
-				ang: -43.970844
+			"archetype": "machine_gun_emplacement",
+			"pos": {
+				"pos_x": 425,
+				"pos_y": 360,
+				"ang": -43.970844
 			},
-			alignment: 2
+			"alignment": 2
 		},
 		{
-			archetype: "machine_gun_emplacement",
-			pos: {
-				pos_x: 427,
-				pos_y: 409,
-				ang: 49.053555
+			"archetype": "machine_gun_emplacement",
+			"pos": {
+				"pos_x": 427,
+				"pos_y": 409,
+				"ang": 49.053555
 			},
-			alignment: 2
+			"alignment": 2
 		},
 		{
-			archetype: "machine_gun_emplacement",
-			pos: {
-				pos_x: 357,
-				pos_y: 449,
-				ang: 89.599335
+			"archetype": "machine_gun_emplacement",
+			"pos": {
+				"pos_x": 357,
+				"pos_y": 449,
+				"ang": 89.599335
 			},
-			alignment: 2
+			"alignment": 2
 		},
 		{
-			archetype: "machine_gun_emplacement",
-			pos: {
-				pos_x: 281,
-				pos_y: 413,
-				ang: 134.3013
+			"archetype": "machine_gun_emplacement",
+			"pos": {
+				"pos_x": 281,
+				"pos_y": 413,
+				"ang": 134.3013
 			},
-			alignment: 2
+			"alignment": 2
 		},
 		{
-			archetype: "machine_gun_emplacement",
-			pos: {
-				pos_x: 281,
-				pos_y: 362,
-				ang: -131.146515
+			"archetype": "machine_gun_emplacement",
+			"pos": {
+				"pos_x": 281,
+				"pos_y": 362,
+				"ang": -131.146515
 			},
-			alignment: 2
+			"alignment": 2
 		}
 	],
-	props: null,
-	player_vehicle: "light_tank"
+	"props": null,
+	"player_vehicle": "light_tank"
 }

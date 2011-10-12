@@ -1,423 +1,423 @@
 [
 	{
-		class: "turret",
-		key: "light_cannon",
-		object: {
-			name: "light cannon",
-			class: 2,
-			priority: 1,
-			image_key: "player_tank_turret_base",
-			firing_sound_key: "cannon",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 2.75,
-			max_ammo: 40,
-			effective_range: 500.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "light_cannon",
+		"object": {
+			"name": "light cannon",
+			"class": 2,
+			"priority": 1,
+			"image_key": "player_tank_turret_base",
+			"firing_sound_key": "cannon",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 2.75,
+			"max_ammo": 40,
+			"effective_range": 500.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "light_cannon",
-					attach_at: null
+					"turret_barrel_key": "light_cannon",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "light_machine_gun",
-		object: {
-			name: "light machine-gun",
-			class: 2,
-			priority: 2,
-			image_key: null,
-			firing_sound_key: "mgun",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 2.25,
-			heat_based: true,
-			heat_per_shot_min: 0.0400,
-			heat_per_shot_max: 0.0400,
-			cooling_rate: 0.0050,
-			overheat_delay: 1500,
-			effective_range: 250.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "light_machine_gun",
+		"object": {
+			"name": "light machine-gun",
+			"class": 2,
+			"priority": 2,
+			"image_key": null,
+			"firing_sound_key": "mgun",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 2.25,
+			"heat_based": true,
+			"heat_per_shot_min": 0.0400,
+			"heat_per_shot_max": 0.0400,
+			"cooling_rate": 0.0050,
+			"overheat_delay": 1500,
+			"effective_range": 250.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "light_co_axial_machine_gun",
-					attach_at: null
+					"turret_barrel_key": "light_co_axial_machine_gun",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "mini_tank_turret",
-		object: {
-			name: "light machine-gun",
-			class: 2,
-			priority: 2,
-			image_key: "mini_tank_turret",
-			firing_sound_key: "mgun",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 2.25,
-			heat_based: true,
-			heat_per_shot_min: 0.0400,
-			heat_per_shot_max: 0.0400,
-			cooling_rate: 0.0050,
-			overheat_delay: 1500,
-			effective_range: 250.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "mini_tank_turret",
+		"object": {
+			"name": "light machine-gun",
+			"class": 2,
+			"priority": 2,
+			"image_key": "mini_tank_turret",
+			"firing_sound_key": "mgun",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 2.25,
+			"heat_based": true,
+			"heat_per_shot_min": 0.0400,
+			"heat_per_shot_max": 0.0400,
+			"cooling_rate": 0.0050,
+			"overheat_delay": 1500,
+			"effective_range": 250.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "light_co_axial_machine_gun",
-					attach_at: null
+					"turret_barrel_key": "light_co_axial_machine_gun",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "light_energy_mgun",
-		object: {
-			name: "light plasma sprayer",
-			class: 1,
-			priority: 2,
-			firing_sound_key: "energy_mgun",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 2.25,
-			heat_based: true,
-			heat_per_shot_min: 0.0200,
-			heat_per_shot_max: 0.0200,
-			cooling_rate: 0.0050,
-			overheat_delay: 1500,
-			effective_range: 200.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "light_energy_mgun",
+		"object": {
+			"name": "light plasma sprayer",
+			"class": 1,
+			"priority": 2,
+			"firing_sound_key": "energy_mgun",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 2.25,
+			"heat_based": true,
+			"heat_per_shot_min": 0.0200,
+			"heat_per_shot_max": 0.0200,
+			"cooling_rate": 0.0050,
+			"overheat_delay": 1500,
+			"effective_range": 200.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "light_energy_mgun_barrel",
-					attach_at: {
-						offset_x: 1,
-						offset_y: 2
+					"turret_barrel_key": "light_energy_mgun_barrel",
+					"attach_at": {
+						"offset_x": 1,
+						"offset_y": 2
 					}
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "light_laser",
-		object: {
-			name: "light laser",
-			class: 1,
-			priority: 1,
-			image_key: "laser_turret_base-barrel",
-			firing_sound_key: "laser_small",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 2.25,
-			heat_based: true,
-			heat_per_shot_min: 0.1800,
-			heat_per_shot_max: 0.1800,
-			cooling_rate: 0.0100,
-			overheat_delay: 2500,
-			effective_range: 400.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "light_laser",
+		"object": {
+			"name": "light laser",
+			"class": 1,
+			"priority": 1,
+			"image_key": "laser_turret_base-barrel",
+			"firing_sound_key": "laser_small",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 2.25,
+			"heat_based": true,
+			"heat_per_shot_min": 0.1800,
+			"heat_per_shot_max": 0.1800,
+			"cooling_rate": 0.0100,
+			"overheat_delay": 2500,
+			"effective_range": 400.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "light_laser",
-					attach_at: null
+					"turret_barrel_key": "light_laser",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "dual_light_cannon",
-		object: {
-			name: "dual light cannon",
-			class: 2,
-			priority: 1,
-			image_key: "player_tank_turret_med_base",
-			firing_sound_key: "cannon",
-			turret_barrel_count: 2,
-			firing_sequence: [[0],[1]]
-			max_ang_vel: 2.00,
-			max_ammo: 80,
-			effective_range: 500.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "dual_light_cannon",
+		"object": {
+			"name": "dual light cannon",
+			"class": 2,
+			"priority": 1,
+			"image_key": "player_tank_turret_med_base",
+			"firing_sound_key": "cannon",
+			"turret_barrel_count": 2,
+			"firing_sequence": [[0],[1]],
+			"max_ang_vel": 2.00,
+			"max_ammo": 80,
+			"effective_range": 500.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "dual_light_cannon_left",
-					attach_at: null
+					"turret_barrel_key": "dual_light_cannon_left",
+					"attach_at": null
 				},
 				{
-					turret_barrel_key: "dual_light_cannon_right",
-					attach_at: null
+					"turret_barrel_key": "dual_light_cannon_right",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "medium_machine_gun",
-		object: {
-			name: "medium machine-gun",
-			class: 2,
-			priority: 2,
-			image_key: null,
-			firing_sound_key: "mgun",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 2.00,
-			heat_based: true,
-			heat_per_shot_min: 0.0380,
-			heat_per_shot_max: 0.0380,
-			cooling_rate: 0.0050,
-			overheat_delay: 1500,
-			effective_range: 250.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "medium_machine_gun",
+		"object": {
+			"name": "medium machine-gun",
+			"class": 2,
+			"priority": 2,
+			"image_key": null,
+			"firing_sound_key": "mgun",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 2.00,
+			"heat_based": true,
+			"heat_per_shot_min": 0.0380,
+			"heat_per_shot_max": 0.0380,
+			"cooling_rate": 0.0050,
+			"overheat_delay": 1500,
+			"effective_range": 250.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "light_co_axial_machine_gun_2",
-					attach_at: null
+					"turret_barrel_key": "light_co_axial_machine_gun_2",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "medium_laser",
-		object: {
-			name: "medium laser",
-			class: 1,
-			priority: 1,
-			image_key: "medium_laser_turret_base-barrel",
-			firing_sound_key: "laser_big",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 2.00,
-			heat_based: true,
-			heat_per_shot_min: 0.1800,
-			heat_per_shot_max: 0.1800,
-			cooling_rate: 0.0112,
-			overheat_delay: 3000,
-			effective_range: 600.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "medium_laser",
+		"object": {
+			"name": "medium laser",
+			"class": 1,
+			"priority": 1,
+			"image_key": "medium_laser_turret_base-barrel",
+			"firing_sound_key": "laser_big",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 2.00,
+			"heat_based": true,
+			"heat_per_shot_min": 0.1800,
+			"heat_per_shot_max": 0.1800,
+			"cooling_rate": 0.0112,
+			"overheat_delay": 3000,
+			"effective_range": 600.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "medium_laser",
-					attach_at: null
+					"turret_barrel_key": "medium_laser",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "stationary_emplacement_machine_gun",
-		object: {
-			class: 2,
-			priority: 1,
-			image_key: "enemy_stationary-emplacement-1_turret-base",
-			firing_sound_key: "mgun",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 0.80,
-			heat_based: true,
-			heat_per_shot_min: 0.0400,
-			heat_per_shot_max: 0.0400,
-			cooling_rate: 0.0030,
-			overheat_delay: 2000,
-			effective_range: 300.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "stationary_emplacement_machine_gun",
+		"object": {
+			"class": 2,
+			"priority": 1,
+			"image_key": "enemy_stationary-emplacement-1_turret-base",
+			"firing_sound_key": "mgun",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 0.80,
+			"heat_based": true,
+			"heat_per_shot_min": 0.0400,
+			"heat_per_shot_max": 0.0400,
+			"cooling_rate": 0.0030,
+			"overheat_delay": 2000,
+			"effective_range": 300.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "emplacement_light_machine_gun",
-					attach_at: null
+					"turret_barrel_key": "emplacement_light_machine_gun",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "stationary_emplacement_light_cannon",
-		object: {
-			class: 2,
-			priority: 1,
-			image_key: "enemy_stationary-emplacement-1_turret-base",
-			firing_sound_key: "cannon",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 0.50,
-			effective_range: 600.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "stationary_emplacement_light_cannon",
+		"object": {
+			"class": 2,
+			"priority": 1,
+			"image_key": "enemy_stationary-emplacement-1_turret-base",
+			"firing_sound_key": "cannon",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 0.50,
+			"effective_range": 600.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "emplacement_light_cannon",
-					attach_at: null
+					"turret_barrel_key": "emplacement_light_cannon",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "stationary_emplacement_rocket_launcher",
-		object: {
-			class: 2,
-			priority: 1,
-			image_key: "enemy_stationary-emplacement-1_turret-base",
-			firing_sound_key: "rocket_launch",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 0.50,
-			effective_range: 600.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "stationary_emplacement_rocket_launcher",
+		"object": {
+			"class": 2,
+			"priority": 1,
+			"image_key": "enemy_stationary-emplacement-1_turret-base",
+			"firing_sound_key": "rocket_launch",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 0.50,
+			"effective_range": 600.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "emplacement_rocket_launcher",
-					attach_at: null
+					"turret_barrel_key": "emplacement_rocket_launcher",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "mounted_sub_machine_gun",
-		object: {
-			class: 2,
-			priority: 1,
-			image_key: "enemy_light_mgun_turret_base",
-			firing_sound_key: "mgun",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 2.00,
-			heat_based: true,
-			heat_per_shot_min: 0.0500,
-			heat_per_shot_max: 0.0500,
-			cooling_rate: 0.00225,
-			overheat_delay: 2000,
-			effective_range: 250.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "mounted_sub_machine_gun",
+		"object": {
+			"class": 2,
+			"priority": 1,
+			"image_key": "enemy_light_mgun_turret_base",
+			"firing_sound_key": "mgun",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 2.00,
+			"heat_based": true,
+			"heat_per_shot_min": 0.0500,
+			"heat_per_shot_max": 0.0500,
+			"cooling_rate": 0.00225,
+			"overheat_delay": 2000,
+			"effective_range": 250.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "light_machine_gun",
-					attach_at: null
+					"turret_barrel_key": "light_machine_gun",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "apc_machine_gun",
-		object: {
-			name: "dual machine-gun",
-			class: 2,
-			priority: 1,
-			image_key: "apc_turret_base",
-			firing_sound_key: "mgun",
-			turret_barrel_count: 2,
-			firing_sequence: [[0],[1]],
-			max_ang_vel: 2.25,
-			heat_based: true,
-			heat_per_shot_min: 0.0400,
-			heat_per_shot_max: 0.0400,
-			cooling_rate: 0.0052,
-			overheat_delay: 1250,
-			effective_range: 300.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "apc_machine_gun",
+		"object": {
+			"name": "dual machine-gun",
+			"class": 2,
+			"priority": 1,
+			"image_key": "apc_turret_base",
+			"firing_sound_key": "mgun",
+			"turret_barrel_count": 2,
+			"firing_sequence": [[0],[1]],
+			"max_ang_vel": 2.25,
+			"heat_based": true,
+			"heat_per_shot_min": 0.0400,
+			"heat_per_shot_max": 0.0400,
+			"cooling_rate": 0.0052,
+			"overheat_delay": 1250,
+			"effective_range": 300.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "apc_machine_gun_barrel",
-					attach_at: {
-						offset_x: 3,
-						offset_y: -1
-					}
-				},
-				{
-					turret_barrel_key: "apc_machine_gun_barrel",
-					attach_at: {
-						offset_x: 3,
-						offset_y: 1
-					}
-				}
-			]
-		}
-	},
-	{
-		class: "turret",
-		key: "ripper_machine_gun",
-		object: {
-			name: "triple machine-gun",
-			class: 2,
-			priority: 1,
-			image_key: "ripper_machine_gun_turret_base",
-			firing_sound_key: "mgun",
-			turret_barrel_count: 3,
-			firing_sequence: [[0],[1],[2]],
-			max_ang_vel: 2.00,
-			heat_based: true,
-			heat_per_shot_min: 0.0400,
-			heat_per_shot_max: 0.0400,
-			cooling_rate: 0.0075,
-			overheat_delay: 1000,
-			effective_range: 400.0,
-			turret_barrels: [
-				{
-					turret_barrel_key: "ripper_machine_gun_barrel",
-					attach_at: {
-						offset_x: 5,
-						offset_y: -2
+					"turret_barrel_key": "apc_machine_gun_barrel",
+					"attach_at": {
+						"offset_x": 3,
+						"offset_y": -1
 					}
 				},
 				{
-					turret_barrel_key: "ripper_machine_gun_barrel",
-					attach_at: {
-						offset_x: 5,
-						offset_y: 0
+					"turret_barrel_key": "apc_machine_gun_barrel",
+					"attach_at": {
+						"offset_x": 3,
+						"offset_y": 1
+					}
+				}
+			]
+		}
+	},
+	{
+		"class": "turret",
+		"key": "ripper_machine_gun",
+		"object": {
+			"name": "triple machine-gun",
+			"class": 2,
+			"priority": 1,
+			"image_key": "ripper_machine_gun_turret_base",
+			"firing_sound_key": "mgun",
+			"turret_barrel_count": 3,
+			"firing_sequence": [[0],[1],[2]],
+			"max_ang_vel": 2.00,
+			"heat_based": true,
+			"heat_per_shot_min": 0.0400,
+			"heat_per_shot_max": 0.0400,
+			"cooling_rate": 0.0075,
+			"overheat_delay": 1000,
+			"effective_range": 400.0,
+			"turret_barrels": [
+				{
+					"turret_barrel_key": "ripper_machine_gun_barrel",
+					"attach_at": {
+						"offset_x": 5,
+						"offset_y": -2
 					}
 				},
 				{
-					turret_barrel_key: "ripper_machine_gun_barrel",
-					attach_at: {
-						offset_x: 5,
-						offset_y: 2
+					"turret_barrel_key": "ripper_machine_gun_barrel",
+					"attach_at": {
+						"offset_x": 5,
+						"offset_y": 0
+					}
+				},
+				{
+					"turret_barrel_key": "ripper_machine_gun_barrel",
+					"attach_at": {
+						"offset_x": 5,
+						"offset_y": 2
 					}
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "npc_light_cannon",
-		object: {
-			name: "light cannon",
-			class: 2,
-			priority: 1,
-			image_key: "player_tank_turret_base",
-			firing_sound_key: "cannon",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 2.25,
-			max_ammo: 40,
-			effective_range: 500.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "npc_light_cannon",
+		"object": {
+			"name": "light cannon",
+			"class": 2,
+			"priority": 1,
+			"image_key": "player_tank_turret_base",
+			"firing_sound_key": "cannon",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 2.25,
+			"max_ammo": 40,
+			"effective_range": 500.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "npc_light_cannon",
-					attach_at: null
+					"turret_barrel_key": "npc_light_cannon",
+					"attach_at": null
 				}
 			]
 		}
 	},
 	{
-		class: "turret",
-		key: "npc_light_machine_gun",
-		object: {
-			name: "light machine-gun",
-			class: 2,
-			priority: 2,
-			image_key: null,
-			firing_sound_key: "mgun",
-			turret_barrel_count: 1,
-			firing_sequence: [[0]],
-			max_ang_vel: 2.25,
-			heat_based: true,
-			heat_per_shot_min: 0.0500,
-			heat_per_shot_max: 0.0500,
-			cooling_rate: 0.0040,
-			overheat_delay: 2000,
-			effective_range: 250.0,
-			turret_barrels: [
+		"class": "turret",
+		"key": "npc_light_machine_gun",
+		"object": {
+			"name": "light machine-gun",
+			"class": 2,
+			"priority": 2,
+			"image_key": null,
+			"firing_sound_key": "mgun",
+			"turret_barrel_count": 1,
+			"firing_sequence": [[0]],
+			"max_ang_vel": 2.25,
+			"heat_based": true,
+			"heat_per_shot_min": 0.0500,
+			"heat_per_shot_max": 0.0500,
+			"cooling_rate": 0.0040,
+			"overheat_delay": 2000,
+			"effective_range": 250.0,
+			"turret_barrels": [
 				{
-					turret_barrel_key: "npc_light_co_axial_machine_gun",
-					attach_at: null
+					"turret_barrel_key": "npc_light_co_axial_machine_gun",
+					"attach_at": null
 				}
 			]
 		}

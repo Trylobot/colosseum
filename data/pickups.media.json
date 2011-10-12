@@ -1,35 +1,35 @@
 [
 	{
-		class: "pickup",
-		key: "ammo",
-		object: {
-			image_key: "pickup_ammo",
-			sound_key: "ammo_pickup_sound",
-			pickup_type: 1,
-			pickup_amount: 20,
-			life_time: 60000
+		"class": "pickup",
+		"key": "ammo",
+		"object": {
+			"image_key": "pickup_ammo",
+			"sound_key": "ammo_pickup_sound",
+			"pickup_type": 1,
+			"pickup_amount": 20,
+			"life_time": 60000
 		}
 	},
 	{
-		class: "pickup",
-		key: "health",
-		object: {
-			image_key: "pickup_health",
-			sound_key: "repair_pickup_sound",
-			pickup_type: 2,
-			pickup_amount: 200,
-			life_time: 60000
+		"class": "pickup",
+		"key": "health",
+		"object": {
+			"image_key": "pickup_health",
+			"sound_key": "repair_pickup_sound",
+			"pickup_type": 2,
+			"pickup_amount": 200,
+			"life_time": 60000
 		}
 	},
 	{
-		class: "pickup",
-		key: "cooldown",
-		object: {
-			image_key: "pickup_cooldown",
-			sound_key: "cooling_pickup_sound",
-			pickup_type: 3,
-			pickup_amount: 4000,
-			life_time: 60000
+		"class": "pickup",
+		"key": "cooldown",
+		"object": {
+			"image_key": "pickup_cooldown",
+			"sound_key": "cooling_pickup_sound",
+			"pickup_type": 3,
+			"pickup_amount": 4000,
+			"life_time": 60000
 		}
 	}
 ]

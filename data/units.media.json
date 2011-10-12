@@ -1,413 +1,413 @@
 [
 	{
-		class: "unit",
-		key: "mr_the_box",
-		object: {
-			name: "mr. the box",
-			image_key: "box",
-			gibs_image_key: "box_gib",
-			ai_name: "wildlife",
-			cash_value: 25,
-			max_health: 35,
-			mass: 50,
-			frictional_coefficient: 8,
-			driving_force_magnitude: 2,
-			turning_force_magnitude: 7,
-			death_package: true
+		"class": "unit",
+		"key": "mr_the_box",
+		"object": {
+			"name": "mr. the box",
+			"image_key": "box",
+			"gibs_image_key": "box_gib",
+			"ai_name": "wildlife",
+			"cash_value": 25,
+			"max_health": 35,
+			"mass": 50,
+			"frictional_coefficient": 8,
+			"driving_force_magnitude": 2,
+			"turning_force_magnitude": 7,
+			"death_package": true
 		}
 	},
 	{
-		class: "unit",
-		key: "mini_bomb",
-		object: {
-			name: "hunter-seeker",
-			image_key: "nme_mobile_bomb",
-			gibs_image_key: "bomb_gibs",
-			ai_name: "bomb",
-			cash_value: 75,
-			max_health: 50,
-			mass: 200,
-			frictional_coefficient: 10,
-			driving_force_magnitude: 7.5,
-			turning_force_magnitude: 30,
-			death_package: true,
-			widgets: [
+		"class": "unit",
+		"key": "mini_bomb",
+		"object": {
+			"name": "hunter-seeker",
+			"image_key": "nme_mobile_bomb",
+			"gibs_image_key": "bomb_gibs",
+			"ai_name": "bomb",
+			"cash_value": 75,
+			"max_health": 50,
+			"mass": 200,
+			"frictional_coefficient": 10,
+			"driving_force_magnitude": 7.5,
+			"turning_force_magnitude": 30,
+			"death_package": true,
+			"widgets": [
 				{
-					widget_key: "lightbulb",
-					type: 3
+					"widget_key": "lightbulb",
+					"type": 3
 				}
 			]
 		}
 	},
 	{
-		class: "unit",
-		key: "machine_gun_quad",
-		object: {
-			name: "light quad",
-			image_key: "enemy_quad_chassis",
-      gibs_key: "quad"
-			ai_name: "vehicle",
-			cash_value: 100,
-			max_health: 50,
-			mass: 400,
-			frictional_coefficient: 25,
-			driving_force_magnitude: 35,
-			turning_force_magnitude: 55,
-			death_package: true,
-			steering_wheels: [
+		"class": "unit",
+		"key": "machine_gun_quad",
+		"object": {
+			"name": "light quad",
+			"image_key": "enemy_quad_chassis",
+      "gibs_key": "quad",
+			"ai_name": "vehicle",
+			"cash_value": 100,
+			"max_health": 50,
+			"mass": 400,
+			"frictional_coefficient": 25,
+			"driving_force_magnitude": 35,
+			"turning_force_magnitude": 55,
+			"death_package": true,
+			"steering_wheels": [
 				{
-					particle_key: "small_wheel",
-					offset_x: 6,
-					offset_y: -5
+					"particle_key": "small_wheel",
+					"offset_x": 6,
+					"offset_y": -5
 				},
 				{
-					particle_key: "small_wheel",
-					offset_x: 6,
-					offset_y: 5
+					"particle_key": "small_wheel",
+					"offset_x": 6,
+					"offset_y": 5
 				}
 			],
-			dust_cloud_package: {
-				offset_x: 0,
-				separation_x: 8,
-				separation_y: 5,
-				dist_min: 0,
-				dist_max: 1,
-				dist_ang_min: -25,
-				dist_ang_max: 25,
-				vel_min: 0.5,
-				vel_max: 1.0,
+			"dust_cloud_package": {
+				"offset_x": 0,
+				"separation_x": 8,
+				"separation_y": 5,
+				"dist_min": 0,
+				"dist_max": 1,
+				"dist_ang_min": -25,
+				"dist_ang_max": 25,
+				"vel_min": 0.5,
+				"vel_max": 1.0,
 			},
-			vehicle_trail_package: {
-				particle_key: "light_quad_trail",
-				offset_x: 0,
-				separation_y: 5,
-				trail_emit_distance_threshold: 2.0,
-				trail_emit_angular_threshold: 5.0
-			}
-			turret_anchors: [
+			"vehicle_trail_package": {
+				"particle_key": "light_quad_trail",
+				"offset_x": 0,
+				"separation_y": 5,
+				"trail_emit_distance_threshold": 2.0,
+				"trail_emit_angular_threshold": 5.0
+			},
+			"turret_anchors": [
 				{
-					offset_x: -6,
-					offset_y: 0
+					"offset_x": -6,
+					"offset_y": 0
 				}
 			],
-			turrets: [
+			"turrets": [
 				{
-					turret_key: "mounted_sub_machine_gun",
-					anchor: 0
+					"turret_key": "mounted_sub_machine_gun",
+					"anchor": 0
 				}
 			]
 		}
 	},
 	{
-		class: "unit",
-		key: "mini_tank",
-		object: {
-			name: "mini tank",
-			image_key: "mini_tank_chassis",
-			gibs_image_key: "quad_gibs",
-			ai_name: "vehicle",
-			cash_value: 100,
-			max_health: 50,
-			mass: 400,
-			frictional_coefficient: 25,
-			driving_force_magnitude: 35,
-			turning_force_magnitude: 55,
-			death_package: true,
-			tank_tracks: [
+		"class": "unit",
+		"key": "mini_tank",
+		"object": {
+			"name": "mini tank",
+			"image_key": "mini_tank_chassis",
+			"gibs_image_key": "quad_gibs",
+			"ai_name": "vehicle",
+			"cash_value": 100,
+			"max_health": 50,
+			"mass": 400,
+			"frictional_coefficient": 25,
+			"driving_force_magnitude": 35,
+			"turning_force_magnitude": 55,
+			"death_package": true,
+			"tank_tracks": [
 				{
-					particle_key: "mini_tank_track",
-					offset_x: 0,
-					offset_y: 5.5,
-					orientation: 2
+					"particle_key": "mini_tank_track",
+					"offset_x": 0,
+					"offset_y": 5.5,
+					"orientation": 2
 				},
 				{
-					particle_key: "mini_tank_track",
-					offset_x: 0,
-					offset_y: -5.5,
-					orientation: 1
+					"particle_key": "mini_tank_track",
+					"offset_x": 0,
+					"offset_y": -5.5,
+					"orientation": 1
 				}
 			],
-			dust_cloud_package: {
-				offset_x: 0,
-				separation_x: 8,
-				separation_y: 5,
-				dist_min: 0,
-				dist_max: 1,
-				dist_ang_min: -25,
-				dist_ang_max: 25,
-				vel_min: 0.5,
-				vel_max: 1.0,
+			"dust_cloud_package": {
+				"offset_x": 0,
+				"separation_x": 8,
+				"separation_y": 5,
+				"dist_min": 0,
+				"dist_max": 1,
+				"dist_ang_min": -25,
+				"dist_ang_max": 25,
+				"vel_min": 0.5,
+				"vel_max": 1.0,
 			},
-			vehicle_trail_package: {
-				particle_key: "mini_tank_trail",
-				offset_x: 0,
-				separation_y: 5,
-				trail_emit_distance_threshold: 5,
-				trail_emit_angular_threshold: 5
-			}
-			turret_anchors: [
+			"vehicle_trail_package": {
+				"particle_key": "mini_tank_trail",
+				"offset_x": 0,
+				"separation_y": 5,
+				"trail_emit_distance_threshold": 5,
+				"trail_emit_angular_threshold": 5
+			},
+			"turret_anchors": [
 				{
-					offset_x: -6,
-					offset_y: 0
+					"offset_x": -6,
+					"offset_y": 0
 				}
 			],
-			turrets: [
+			"turrets": [
 				{
-					turret_key: "mini_tank_turret",
-					anchor: 0
+					"turret_key": "mini_tank_turret",
+					"anchor": 0
 				}
 			]
 		}
 	},
 	{
-		class: "unit",
-		key: "light_tank",
-		object: {
-			name: "light tank",
-			image_key: "player_tank_chassis",
-			hitbox_image_key: "light_tank_hitbox"
-			lightmap_image_key: "player_tank_chassis_lightmap",
-			gibs_image_key: "quad_gibs",
-			ai_name: "vehicle",
-			cash_value: 300,
-			max_health: 175,
-			mass: 800,
-			frictional_coefficient: 75,
-			driving_force_magnitude: 50,
-			turning_force_magnitude: 65,
-			death_package: true,
-			tank_tracks: [
+		"class": "unit",
+		"key": "light_tank",
+		"object": {
+			"name": "light tank",
+			"image_key": "player_tank_chassis",
+			"hitbox_image_key": "light_tank_hitbox",
+			"lightmap_image_key": "player_tank_chassis_lightmap",
+			"gibs_image_key": "quad_gibs",
+			"ai_name": "vehicle",
+			"cash_value": 300,
+			"max_health": 175,
+			"mass": 800,
+			"frictional_coefficient": 75,
+			"driving_force_magnitude": 50,
+			"turning_force_magnitude": 65,
+			"death_package": true,
+			"tank_tracks": [
 				{
-					particle_key: "light_tank_track",
-					offset_x: 0,
-					offset_y: 7.5,
-					orientation: 2
+					"particle_key": "light_tank_track",
+					"offset_x": 0,
+					"offset_y": 7.5,
+					"orientation": 2
 				},
 				{
-					particle_key: "light_tank_track",
-					offset_x: 0,
-					offset_y: -7.5,
-					orientation: 1
+					"particle_key": "light_tank_track",
+					"offset_x": 0,
+					"offset_y": -7.5,
+					"orientation": 1
 				}
 			],
-			dust_cloud_package: {
-				offset_x: 0,
-				separation_x: 12,
-				separation_y: 7,
-				dist_min: 0,
-				dist_max: 1,
-				dist_ang_min: -25,
-				dist_ang_max: 25,
-				vel_min: 0.5,
-				vel_max: 1.0,
+			"dust_cloud_package": {
+				"offset_x": 0,
+				"separation_x": 12,
+				"separation_y": 7,
+				"dist_min": 0,
+				"dist_max": 1,
+				"dist_ang_min": -25,
+				"dist_ang_max": 25,
+				"vel_min": 0.5,
+				"vel_max": 1.0,
 			},
-			vehicle_trail_package: {
-				particle_key: "light_tank_track_trail",
-				offset_x: 0,
-				separation_y: 7.5,
-				trail_emit_distance_threshold: 24,
-				trail_emit_angular_threshold: 5
-			}
-			turret_anchors: [
+			"vehicle_trail_package": {
+				"particle_key": "light_tank_track_trail",
+				"offset_x": 0,
+				"separation_y": 7.5,
+				"trail_emit_distance_threshold": 24,
+				"trail_emit_angular_threshold": 5
+			},
+			"turret_anchors": [
 				{
-					offset_x: -5,
-					offset_y: 0
+					"offset_x": -5,
+					"offset_y": 0
 				}
 			],
-			turrets: [
+			"turrets": [
 				{
-					turret_key: "npc_light_cannon",
-					anchor: 0
+					"turret_key": "npc_light_cannon",
+					"anchor": 0
 				},
 				{
-					turret_key: "npc_light_machine_gun",
-					anchor: 0
+					"turret_key": "npc_light_machine_gun",
+					"anchor": 0
 				}
 			]
 		}
 	},
 	{
-		class: "unit",
-		key: "armed_carrier",
-		object: {
-			name: "armed hunter-seeker carrier",
-			image_key: "carrier_chassis",
-			hitbox_image_key: "carrier_hitbox"
-			gibs_image_key: "carrier_gibs",
-			ai_name: "armed_carrier",
-			cash_value: 375,
-			max_health: 300,
-			mass: 1200,
-			frictional_coefficient: 125,
-			driving_force_magnitude: 70,
-			turning_force_magnitude: 95,
-			death_package: true,
-			tank_tracks: [
+		"class": "unit",
+		"key": "armed_carrier",
+		"object": {
+			"name": "armed hunter-seeker carrier",
+			"image_key": "carrier_chassis",
+			"hitbox_image_key": "carrier_hitbox",
+			"gibs_image_key": "carrier_gibs",
+			"ai_name": "armed_carrier",
+			"cash_value": 375,
+			"max_health": 300,
+			"mass": 1200,
+			"frictional_coefficient": 125,
+			"driving_force_magnitude": 70,
+			"turning_force_magnitude": 95,
+			"death_package": true,
+			"tank_tracks": [
 				{
-					particle_key: "light_tank_track",
-					offset_x: 1,
-					offset_y: 9.5,
-					orientation: 2
+					"particle_key": "light_tank_track",
+					"offset_x": 1,
+					"offset_y": 9.5,
+					"orientation": 2
 				},
 				{
-					particle_key: "light_tank_track",
-					offset_x: 1,
-					offset_y: -9.5,
-					orientation: 1
+					"particle_key": "light_tank_track",
+					"offset_x": 1,
+					"offset_y": -9.5,
+					"orientation": 1
 				}
 			],
-			dust_cloud_package: {
-				offset_x: 0,
-				separation_x: 16,
-				separation_y: 8,
-				dist_min: 0,
-				dist_max: 1,
-				dist_ang_min: -25,
-				dist_ang_max: 25,
-				vel_min: 0.5,
-				vel_max: 1.0,
+			"dust_cloud_package": {
+				"offset_x": 0,
+				"separation_x": 16,
+				"separation_y": 8,
+				"dist_min": 0,
+				"dist_max": 1,
+				"dist_ang_min": -25,
+				"dist_ang_max": 25,
+				"vel_min": 0.5,
+				"vel_max": 1.0,
 			},
-			vehicle_trail_package: {
-				particle_key: "med_tank_track_trail",
-				offset_x: 1,
-				separation_y: 9.5,
-				trail_emit_distance_threshold: 30,
-				trail_emit_angular_threshold: 5
-			}
-			widgets: [
+			"vehicle_trail_package": {
+				"particle_key": "med_tank_track_trail",
+				"offset_x": 1,
+				"separation_y": 9.5,
+				"trail_emit_distance_threshold": 30,
+				"trail_emit_angular_threshold": 5
+			},
+			"widgets": [
 				{
-					widget_key: "bay_door_clockwise",
-					type: 2,
-					attach_at: {
-						offset_x: -16,
-						offset_y: -9,
-						mute_offset_ang: true
+					"widget_key": "bay_door_clockwise",
+					"type": 2,
+					"attach_at": {
+						"offset_x": -16,
+						"offset_y": -9,
+						"mute_offset_ang": true
 					}
 				},
 				{
-					widget_key: "bay_door_counter_clockwise",
-					type: 2,
-					attach_at: {
-						offset_x: -16,
-						offset_y: 9,
-						mute_offset_ang: true
+					"widget_key": "bay_door_counter_clockwise",
+					"type": 2,
+					"attach_at": {
+						"offset_x": -16,
+						"offset_y": 9,
+						"mute_offset_ang": true
 					}
 				},
 				{
-					widget_key: "ramp",
-					type: 2,
-					attach_at: {
-						offset_x: -15,
-						offset_y: 0,
-						mute_offset_ang: true
+					"widget_key": "ramp",
+					"type": 2,
+					"attach_at": {
+						"offset_x": -15,
+						"offset_y": 0,
+						"mute_offset_ang": true
 					}
 				}
 			],
-			turret_anchors: [
+			"turret_anchors": [
 				{
-					offset_x: 10,
-					offset_y: -10
+					"offset_x": 10,
+					"offset_y": -10
 				},
 				{
-					offset_x: 10,
-					offset_y: 10
+					"offset_x": 10,
+					"offset_y": 10
 				}
 			],
-			turrets: [
+			"turrets": [
 				{
-					turret_key: "mounted_sub_machine_gun",
-					anchor: 0
+					"turret_key": "mounted_sub_machine_gun",
+					"anchor": 0
 				},
 				{
-					turret_key: "mounted_sub_machine_gun",
-					anchor: 1
+					"turret_key": "mounted_sub_machine_gun",
+					"anchor": 1
 				}
 			],
-			factory_units: [
+			"factory_units": [
 				{
-					unit_key: "mini_bomb",
-					count: 4
+					"unit_key": "mini_bomb",
+					"count": 4
 				}
 			]
 		}
 	},
 	{
-		class: "unit",
-		key: "machine_gun_emplacement",
-		object: {
-			name: "machine-gun fortification",
-			image_key: "enemy_stationary-emplacement-1_chassis",
-			gibs_image_key: "tower_gibs",
-			ai_name: "turret",
-			cash_value: 100,
-			max_health: 100,
-			mass: 1000,
-			physics_disabled: true,
-			death_package: true,
-			turret_anchors: [
+		"class": "unit",
+		"key": "machine_gun_emplacement",
+		"object": {
+			"name": "machine-gun fortification",
+			"image_key": "enemy_stationary-emplacement-1_chassis",
+			"gibs_image_key": "tower_gibs",
+			"ai_name": "turret",
+			"cash_value": 100,
+			"max_health": 100,
+			"mass": 1000,
+			"physics_disabled": true,
+			"death_package": true,
+			"turret_anchors": [
 				{
-					offset_x: 0,
-					offset_y: 0
+					"offset_x": 0,
+					"offset_y": 0
 				}
 			],
-			turrets: [
+			"turrets": [
 				{
-					turret_key: "stationary_emplacement_machine_gun",
-					anchor: 0
+					"turret_key": "stationary_emplacement_machine_gun",
+					"anchor": 0
 				}
 			]
 		}
 	},
 	{
-		class: "unit",
-		key: "cannon_emplacement",
-		object: {
-			name: "cannon fortification",
-			image_key: "enemy_stationary-emplacement-1_chassis",
-			gibs_image_key: "tower_gibs",
-			ai_name: "turret",
-			cash_value: 100,
-			max_health: 100,
-			mass: 1000,
-			physics_disabled: true,
-			death_package: true,
-			turret_anchors: [
+		"class": "unit",
+		"key": "cannon_emplacement",
+		"object": {
+			"name": "cannon fortification",
+			"image_key": "enemy_stationary-emplacement-1_chassis",
+			"gibs_image_key": "tower_gibs",
+			"ai_name": "turret",
+			"cash_value": 100,
+			"max_health": 100,
+			"mass": 1000,
+			"physics_disabled": true,
+			"death_package": true,
+			"turret_anchors": [
 				{
-					offset_x: 0,
-					offset_y: 0
+					"offset_x": 0,
+					"offset_y": 0
 				}
 			],
-			turrets: [
+			"turrets": [
 				{
-					turret_key: "stationary_emplacement_light_cannon",
-					anchor: 0
+					"turret_key": "stationary_emplacement_light_cannon",
+					"anchor": 0
 				}
 			]
 		}
 	},
 	{
-		class: "unit",
-		key: "rocket_emplacement",
-		object: {
-			name: "rocket fortification",
-			image_key: "enemy_stationary-emplacement-1_chassis",
-			gibs_image_key: "tower_gibs",
-			ai_name: "turret",
-			cash_value: 150,
-			max_health: 100,
-			mass: 1000,
-			physics_disabled: true,
-			death_package: true,
-			turret_anchors: [
+		"class": "unit",
+		"key": "rocket_emplacement",
+		"object": {
+			"name": "rocket fortification",
+			"image_key": "enemy_stationary-emplacement-1_chassis",
+			"gibs_image_key": "tower_gibs",
+			"ai_name": "turret",
+			"cash_value": 150,
+			"max_health": 100,
+			"mass": 1000,
+			"physics_disabled": true,
+			"death_package": true,
+			"turret_anchors": [
 				{
-					offset_x: 0,
-					offset_y: 0
+					"offset_x": 0,
+					"offset_y": 0
 				}
 			],
-			turrets: [
+			"turrets": [
 				{
-					turret_key: "stationary_emplacement_rocket_launcher",
-					anchor: 0
+					"turret_key": "stationary_emplacement_rocket_launcher",
+					"anchor": 0
 				}
 			]
 		}
