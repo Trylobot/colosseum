@@ -7,46 +7,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "data_structures.bmx",
-			"settings":
-			{
-				"buffer_size": 210,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "data_test.bmx",
-			"settings":
-			{
-				"buffer_size": 201,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/Dev/System/BlitzMax/mod/twrc.mod/rjson.mod/rjson.bmx",
-			"settings":
-			{
-				"buffer_size": 35148,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/Dev/BlitzMax/starfarer_ship_editor/sf-ship-ed.bmx",
-			"settings":
-			{
-				"buffer_size": 44916,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "data/gibs.media.json",
-			"settings":
-			{
-				"buffer_size": 1498,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -72,6 +32,12 @@
 	},
 	"file_history":
 	[
+		"/C/Dev/BlitzMax/starfarer_ship_editor/sf-ship-ed.bmx",
+		"/C/Dev/System/BlitzMax/mod/twrc.mod/rjson.mod/rjson.bmx",
+		"/C/Games/Colosseum/data_structures.bmx",
+		"/C/Games/Colosseum/data/gibs.media.json",
+		"/C/Games/Colosseum/Colosseum.sublime-project",
+		"/C/Games/Colosseum/data_test.bmx",
 		"/C/Dev/BlitzMax/starfarer_ship_editor/libs/rjson.bmx",
 		"/C/Users/tbot/AppData/Local/Temp/7zE82D8.tmp/rjson.bmx",
 		"/C/Dev/BlitzMax/colosseum/main.bmx",
@@ -109,7 +75,6 @@
 		"/C/Program Files (x86)/Sublime Text 2/Data/Packages/Default/Base File.sublime-settings",
 		"/C/Program Files (x86)/Sublime Text 2/Data/Packages/User/Base File.sublime-settings",
 		"/C/Games/Colosseum/data/font_styles.media.json",
-		"/C/Games/Colosseum/data/gibs.media.json",
 		"/C/Games/Colosseum/data/projectiles.media.json",
 		"/C/Games/Colosseum/data/projectile_launchers.media.json",
 		"/C/Games/Colosseum/data/player_vehicles.media.json",
@@ -161,149 +126,8 @@
 	"groups":
 	[
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "data_structures.bmx",
-					"settings":
-					{
-						"buffer_size": 210,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								210,
-								210
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/User/BlitzMax.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "data_test.bmx",
-					"settings":
-					{
-						"buffer_size": 201,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								150,
-								150
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/User/BlitzMax.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/C/Dev/System/BlitzMax/mod/twrc.mod/rjson.mod/rjson.bmx",
-					"settings":
-					{
-						"buffer_size": 35148,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/User/BlitzMax.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/C/Dev/BlitzMax/starfarer_ship_editor/sf-ship-ed.bmx",
-					"settings":
-					{
-						"buffer_size": 44916,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								249,
-								261
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/User/BlitzMax.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 4,
-					"file": "data/gibs.media.json",
-					"settings":
-					{
-						"buffer_size": 1498,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1466,
-								1466
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.tmLanguage",
-							"tab_size": 2.0,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -324,18 +148,11 @@
 				0,
 				1,
 				1
-			],
-			[
-				1,
-				0,
-				2,
-				1
 			]
 		],
 		"cols":
 		[
 			0.0,
-			0.5,
 			1.0
 		],
 		"rows":
@@ -367,9 +184,9 @@
 		"width": 0.0
 	},
 	"show_minimap": true,
-	"show_open_files": false,
+	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 229.0,
+	"side_bar_width": 206.0,
 	"status_bar_visible": true
 }
