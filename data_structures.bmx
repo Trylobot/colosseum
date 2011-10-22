@@ -2,6 +2,7 @@
 SuperStrict
 Import TWRC.rJSON
 
+'//////////////////////////////////////////////////////////////////////////////
 'data base class
 Type serializable Abstract
 	Global type_id:TTypeId
@@ -18,6 +19,7 @@ Type serializable Abstract
 	EndFunction
 EndType
 
+'//////////////////////////////////////////////////////////////////////////////
 'gibs
 gibset_meta.type_id = TTypeId.ForName("gibset_meta")
 Type gibset_meta Extends serializable
@@ -30,9 +32,10 @@ Type gibset_data
 EndType
 Type gib_data
 	Field image_path$
-	Field offset_x#
-	Field offset_y#
-	Field speed#
+	Field offset_x!
+	Field offset_y!
+	Field speed!
 EndType
 
 
+'//////////////////////////////////////////////////////////////////////////////

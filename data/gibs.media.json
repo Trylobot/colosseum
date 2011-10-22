@@ -1,63 +1,63 @@
 [
   {
-		"class": "gibs",
-		"key": "quad",
-		"object": {
+    "class": "gibs",
+    "key": "quad",
+    "object": {
       "gibs": [
         {
           "image_path": "art/units/quad/quad_gib_0.png",
           "offset_x": 5.5,
-          "offset_y": 0.0,
-          "speed": 1.3,
+          "offset_y": 0,
+          "speed": 1.3
         },
         {
           "image_path": "art/units/quad/quad_gib_1.png",
           "offset_x": -4.5,
-          "offset_y": 0.0,
-          "speed": 1.4,
+          "offset_y": 0,
+          "speed": 1.4
         },
         {
           "image_path": "art/units/quad/quad_gib_2.png",
           "offset_x": -0.5,
-          "offset_y": 0.0,
-          "speed": 0.85,
+          "offset_y": 0,
+          "speed": 0.85
         },
         {
           "image_path": "art/units/quad/quad_gib_3.png",
-          "offset_x": -6.0,
+          "offset_x": -6,
           "offset_y": -4.5,
-          "speed": 2.0,
+          "speed": 2
         },
         {
           "image_path": "art/units/quad/quad_gib_4.png",
-          "offset_x": -6.0,
+          "offset_x": -6,
           "offset_y": 4.5,
-          "speed": 2.0,
+          "speed": 2
         },
         {
           "image_path": "art/units/quad/quad_gib_5.png",
-          "offset_x": 6.0,
-          "offset_y": -5.0,
-          "speed": 2.0,
+          "offset_x": 6,
+          "offset_y": -5,
+          "speed": 2
         },
         {
           "image_path": "art/units/quad/quad_gib_6.png",
-          "offset_x": 6.0,
-          "offset_y": 5.0,
-          "speed": 2.0,
+          "offset_x": 6,
+          "offset_y": 5,
+          "speed": 2
         },
         {
           "image_path": "art/units/quad/quad_gib_7.png",
-          "offset_x": 0.0,
-          "offset_y": 0.0,
-          "speed": -0.12,
+          "offset_x": 0,
+          "offset_y": 0,
+          "speed": -0.12
         },
         {
           "image_path": "art/units/quad/quad_gib_8.png",
           "offset_x": -2.5,
-          "offset_y": 0.0,
-          "speed": 0.85,
-        },
+          "offset_y": 0,
+          "speed": 0.85
+        }
       ]
     }
   }
