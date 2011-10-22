@@ -8,7 +8,7 @@ Import "data_structures.bmx"
 Const W% = 1024
 Const H% = 768
 Const data_path$ = "data/gibs.media.json"
-Const font_path$ = ""
+Const font_path$ = "/WINDOWS/Fonts/monaco.ttf"
 
 'externs and containers
 Global all_gibsets:gibset_meta[]
@@ -107,4 +107,28 @@ Type entity
 	Field gibs:gib_data[]
 	Field images:TImage[]
 EndType
+
+Type message
+	Global list:TList
+	Function create:message( str$ )
+		Local m:message = New Message
+		m.text = TextWidget.Create( str )
+		m.created = MilliSecs()
+		list.AddLast( m )
+		Return m
+	EndFunction
+	Function update()
+		For Local m:message = EachIn list
+			'If m.alpha()
+		Next
+	EndFunction
+	
+	Field text:TextWidget
+	Field created%
+	Method alpha%()
+		Local life_time% = 2000
+		Return Float( MilliSecs() - created ) / Float( life_time )
+	EndMethod
+EndType
+
 

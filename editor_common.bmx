@@ -144,20 +144,4 @@ Type TextWidget
   End Method
 End Type
 
-Type TKeyboardHelpWidget
-	Field key$
-	Field desc$
-	Field show_key_as_icon%
-	Field enabled%
-	Field margin_bottom%
-	
-	Function Create:TKeyboardHelpWidget( key$, desc$, show_key_as_icon%, enabled%, margin_bottom% )
-		Local w:TKeyboardHelpWidget = New TKeyboardHelpWidget
-		w.key = key
-		w.desc = desc
-		w.show_key_as_icon = show_key_as_icon
-		w.enabled = enabled
-		w.margin_bottom = margin_bottom
-		Return w
-	End Function
-End Type
+
