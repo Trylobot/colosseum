@@ -5,10 +5,7 @@ SuperStrict
 Import TWRC.rJSON
 Import "editor_common.bmx"
 Import "data_structures.bmx"
-Const W% = 1024
-Const H% = 768
 Const data_path$ = "data/gibs.media.json"
-Const font_path$ = "/WINDOWS/Fonts/monaco.ttf"
 
 'externs and containers
 Global all_gibsets:gibset_meta[]
@@ -28,12 +25,16 @@ Repeat
 	'update
 	check_commands()
 	update_zoom()
+	message.update()
+	escape_key_update()
 
 	'draw
 	draw_entity( entities[current_entity] )
+	draw_messages()
+	draw_instaquit_progress() 
 
 	Flip
-Until AppTerminate()
+Until AppTerminate() Or FLAG_instaquit_plz
 
 
 '//////////////////////////////////////////////////////////////////////////////
@@ -63,12 +64,13 @@ EndFunction
 
 Function check_commands()
 	Local CTRL% = KeyDown( KEY_LCONTROL ) Or KeyDown( KEY_RCONTROL )
-	Local S% = KeyDown( KEY_S )
+	Local S% = KeyHit( KEY_S )
 	'Save
 	If CTRL and S
 		Local gibs_json_str$
 		gibs_json_str = gibset_meta.encode( all_gibsets )
 		SaveString( gibs_json_str, data_path )
+		message.create( "Saved "+data_path )
 	EndIf
 EndFunction
 
@@ -98,6 +100,7 @@ EndFunction
 Function init_graphics()
 	Graphics( W, H )
 	SetBlend( ALPHABLEND )
+	SetImageFont( editor_font )
 EndFunction
 
 '//////////////////////////////////////////////////////////////////////////////
@@ -107,28 +110,4 @@ Type entity
 	Field gibs:gib_data[]
 	Field images:TImage[]
 EndType
-
-Type message
-	Global list:TList
-	Function create:message( str$ )
-		Local m:message = New Message
-		m.text = TextWidget.Create( str )
-		m.created = MilliSecs()
-		list.AddLast( m )
-		Return m
-	EndFunction
-	Function update()
-		For Local m:message = EachIn list
-			'If m.alpha()
-		Next
-	EndFunction
-	
-	Field text:TextWidget
-	Field created%
-	Method alpha%()
-		Local life_time% = 2000
-		Return Float( MilliSecs() - created ) / Float( life_time )
-	EndMethod
-EndType
-
 
