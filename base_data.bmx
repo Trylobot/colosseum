@@ -32,7 +32,6 @@ Global asset_files$[] = [ ..
 	"images", ..
 	"bmp_fonts", ..
 	"font_styles", ..
-	"props", ..
 	"particles", ..
 	"particle_emitters", ..
 	"projectiles", ..
@@ -42,8 +41,9 @@ Global asset_files$[] = [ ..
 	"turret_barrels", ..
 	"turrets", ..
 	"ai_types", ..
-	"player_vehicles", ..
 	"gibs", ..
+	"props", ..
+	"player_vehicles", ..
 	"units" ..
 ]
 

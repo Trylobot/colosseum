@@ -26,10 +26,10 @@ Type GIB_SYSTEM
 			speed = vary( speed, variance )
 			gib.pos_x = spawn.pos_x + gib.offset*Cos( gib.offset_ang + spawn.ang )
 			gib.pos_y = spawn.pos_y + gib.offset*Sin( gib.offset_ang + spawn.ang )
-			gib.ang = spawn.ang
+			gib.ang = vary( spawn.ang, variance )
 			gib.vel_x = spawn.vel_x + speed*Cos( gib.offset_ang + spawn.ang )
 			gib.vel_y = spawn.vel_y + speed*Sin( gib.offset_ang + spawn.ang )
-			gib.ang_vel = spawn.ang_vel
+			gib.ang_vel = vary( spawn.ang_vel, variance )
 			gib.created_ts = now()
 			gib.manage( background_particle_manager )
 		Next

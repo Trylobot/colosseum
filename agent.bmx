@@ -156,7 +156,7 @@ Function Create_AGENT_from_json:AGENT( json:TJSON )
 	'read and assign optional fields as available
 	If JSON.TypeOf( "image_key" ) <> JSON_UNDEFINED              Then a.img = get_image( JSON.GetString( "image_key" ))
 	a.hitbox_img = a.img
-	'If json.TypeOf( "gibs_image_key" ) <> JSON_UNDEFINED         Then a.gibs = get_image( json.GetString( "gibs_image_key" ))
+	If JSON.TypeOf( "gibs_key" ) <> JSON_UNDEFINED               Then a.gibs = get_gibs( JSON.GetString( "gibs_key" ))
 	If json.TypeOf( "max_health" ) <> JSON_UNDEFINED             Then a.max_health = json.GetNumber( "max_health" )
 	If json.TypeOf( "mass" ) <> JSON_UNDEFINED                   Then a.mass = json.GetNumber( "mass" )
 	If json.TypeOf( "frictional_coefficient" ) <> JSON_UNDEFINED Then a.frictional_coefficient = json.GetNumber( "frictional_coefficient" )
