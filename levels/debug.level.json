@@ -78,5 +78,5 @@
 	"unit_factories": null,
 	"immediate_units": null,
 	"props": null,
-	"player_vehicle": "light_tank"
+	"player_vehicle": "medium_tank"
 }
